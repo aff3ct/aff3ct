@@ -1,17 +1,17 @@
 #ifndef FACTORY_ENCODER_TURBO_PRODUCT_HPP
 #define FACTORY_ENCODER_TURBO_PRODUCT_HPP
 
+#include <vector>
 #include <string>
-#include <type_traits>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
+#include "Tools/auto_cloned_unique_ptr.hpp"
+#include "Module/Encoder/BCH/Encoder_BCH.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
 #include "Module/Encoder/Turbo_product/Encoder_turbo_product.hpp"
-
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 #include "Factory/Module/Encoder/BCH/Encoder_BCH.hpp"
-
-#include "Tools/auto_cloned_unique_ptr.hpp"
-
 #include "Factory/Module/Encoder/Encoder.hpp"
 
 namespace aff3ct
@@ -50,8 +50,8 @@ struct Encoder_turbo_product : public Encoder
 		// builder
 		template <typename B = int>
 		module::Encoder_turbo_product<B>* build(const module::Interleaver<B> &itl,
-		                                                   module::Encoder_BCH<B> &enc_r,
-		                                                   module::Encoder_BCH<B> &enc_c) const;
+		                                              module::Encoder_BCH<B> &enc_r,
+		                                              module::Encoder_BCH<B> &enc_c) const;
 	};
 
 	template <typename B = int>

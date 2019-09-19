@@ -1,9 +1,10 @@
 #ifndef CODEC_RSC_HPP_
 #define CODEC_RSC_HPP_
 
+#include <vector>
+
 #include "Factory/Module/Encoder/RSC/Encoder_RSC.hpp"
 #include "Factory/Module/Decoder/RSC/Decoder_RSC.hpp"
-
 #include "Module/Codec/Codec_SISO_SIHO.hpp"
 
 namespace aff3ct

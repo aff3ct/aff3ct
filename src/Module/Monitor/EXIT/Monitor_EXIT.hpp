@@ -1,8 +1,8 @@
 #ifndef MONITOR_EXIT_HPP_
 #define MONITOR_EXIT_HPP_
 
-#include <chrono>
 #include <vector>
+#include <memory>
 #include <functional>
 
 #include "Module/Monitor/Monitor.hpp"

@@ -1,8 +1,8 @@
+#include <utility>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Module/Encoder/NO/Encoder_NO.hpp"
-
 #include "Factory/Module/Encoder/NO/Encoder_NO.hpp"
 
 using namespace aff3ct;

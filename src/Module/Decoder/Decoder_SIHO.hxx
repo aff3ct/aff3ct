@@ -1,15 +1,6 @@
-/*!
- * \file
- * \brief A Decoder is an algorithm dedicated to find the initial sequence of information bits (before the noise).
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
- */
-#ifndef DECODER_SIHO_HXX_
-#define DECODER_SIHO_HXX_
-
-#include <cmath>
+#include <string>
 #include <sstream>
+#include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
 
@@ -21,8 +12,8 @@ namespace module
 {
 
 template <typename B, typename R>
-Decoder_SIHO<B,R>::
-Decoder_SIHO(const int K, const int N, const int n_frames, const int simd_inter_frame_level)
+Decoder_SIHO<B,R>
+::Decoder_SIHO(const int K, const int N, const int n_frames, const int simd_inter_frame_level)
 : Decoder(K, N, n_frames, simd_inter_frame_level),
   Y_N    (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0),
   V_KN   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0)
@@ -63,8 +54,8 @@ Decoder_SIHO(const int K, const int N, const int n_frames, const int simd_inter_
 
 template <typename B, typename R>
 template <class AR, class AB>
-void Decoder_SIHO<B,R>::
-decode_siho(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_K, const int frame_id)
+void Decoder_SIHO<B,R>
+::decode_siho(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_K, const int frame_id)
 {
 	if (this->N * this->n_frames != (int)Y_N.size())
 	{
@@ -94,8 +85,8 @@ decode_siho(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_K, const int fram
 }
 
 template <typename B, typename R>
-void Decoder_SIHO<B,R>::
-decode_siho(const R *Y_N, B *V_K, const int frame_id)
+void Decoder_SIHO<B,R>
+::decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	if (frame_id < 0 || this->simd_inter_frame_level == 1)
 	{
@@ -147,8 +138,8 @@ decode_siho(const R *Y_N, B *V_K, const int frame_id)
 
 template <typename B, typename R>
 template <class AR, class AB>
-void Decoder_SIHO<B,R>::
-decode_siho_cw(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_N, const int frame_id)
+void Decoder_SIHO<B,R>
+::decode_siho_cw(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_N, const int frame_id)
 {
 	if (this->N * this->n_frames != (int)Y_N.size())
 	{
@@ -178,8 +169,8 @@ decode_siho_cw(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_N, const int f
 }
 
 template <typename B, typename R>
-void Decoder_SIHO<B,R>::
-decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
+void Decoder_SIHO<B,R>
+::decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 	if (frame_id < 0 || this->simd_inter_frame_level == 1)
 	{
@@ -230,20 +221,18 @@ decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 }
 
 template <typename B, typename R>
-void Decoder_SIHO<B,R>::
-_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+void Decoder_SIHO<B,R>
+::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R>
-void Decoder_SIHO<B,R>::
-_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
+void Decoder_SIHO<B,R>
+::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 }
 }
-
-#endif

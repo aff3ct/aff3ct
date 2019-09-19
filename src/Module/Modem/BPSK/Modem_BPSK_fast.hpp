@@ -1,6 +1,8 @@
 #ifndef MODEM_BPSK_FAST_HPP_
 #define MODEM_BPSK_FAST_HPP_
 
+#include "Tools/Noise/Noise.hpp"
+#include "Tools/Noise/Sigma.hpp"
 #include "Module/Modem/Modem.hpp"
 
 namespace aff3ct

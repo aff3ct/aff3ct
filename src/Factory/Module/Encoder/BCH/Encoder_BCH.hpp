@@ -2,10 +2,11 @@
 #define FACTORY_ENCODER_BCH_HPP
 
 #include <string>
+#include <map>
 
-#include "Module/Encoder/BCH/Encoder_BCH.hpp"
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Tools/Code/BCH/BCH_polynomial_generator.hpp"
-
+#include "Module/Encoder/BCH/Encoder_BCH.hpp"
 #include "Factory/Module/Encoder/Encoder.hpp"
 
 namespace aff3ct

@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"
-
 #include "Module/Encoder/Encoder.hpp"
 
 namespace aff3ct

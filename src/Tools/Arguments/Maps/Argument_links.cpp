@@ -1,5 +1,4 @@
 #include <stdexcept>
-#include <utility>
 #include <algorithm>
 
 #include "Tools/Arguments/Maps/Argument_links.hpp"

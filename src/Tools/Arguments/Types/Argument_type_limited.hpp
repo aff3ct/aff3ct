@@ -1,8 +1,10 @@
 #ifndef ARGUMENT_TYPE_LIMITED_HPP_
 #define ARGUMENT_TYPE_LIMITED_HPP_
 
-#include <string>
+#include <type_traits>
 #include <stdexcept>
+#include <vector>
+#include <string>
 
 #include "Tools/Arguments/Ranges/Argument_range.hpp"
 #include "Tools/Arguments/Types/Argument_type.hpp"

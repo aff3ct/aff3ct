@@ -1,9 +1,4 @@
-#include <algorithm>
-#include <cmath>
-#include <map>
-
-#include <iostream>
-#include <fstream>
+#include <string>
 
 #include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_naive_sys.hpp"
 

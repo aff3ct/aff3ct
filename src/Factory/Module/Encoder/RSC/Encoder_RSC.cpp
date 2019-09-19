@@ -1,12 +1,13 @@
-#include <algorithm>
+#include <utility>
+#include <sstream>
+#include <cstdio>
 #include <cmath>
+#include <ios>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Module/Encoder/RSC/Encoder_RSC_generic_sys.hpp"
 #include "Module/Encoder/RSC/Encoder_RSC_generic_json_sys.hpp"
-
 #include "Factory/Module/Encoder/RSC/Encoder_RSC.hpp"
 
 using namespace aff3ct;

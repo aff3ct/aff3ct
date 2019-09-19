@@ -1,12 +1,15 @@
 #ifndef FUNCTIONS_POLAR_INTER_H_
 #define FUNCTIONS_POLAR_INTER_H_
 
-#include <algorithm>
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
+#include <cmath>
+#include <limits>
 #include <mipp.h>
 
 #include "Tools/Math/utils.h"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
-
 #include "Tools/Code/Polar/API/functions_polar_inter_intra.h"
 
 namespace aff3ct

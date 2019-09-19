@@ -1,9 +1,8 @@
 #ifndef ARGUMENT_TYPE_TEXT_HPP_
 #define ARGUMENT_TYPE_TEXT_HPP_
 
-#include <string>
 #include <stdexcept>
-#include <type_traits>
+#include <string>
 
 #include "Tools/Arguments/Types/Argument_type_limited.hpp"
 

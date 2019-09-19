@@ -1,15 +1,15 @@
+#include <string>
 #include <cmath>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Decoder/Decoder.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
 
-Decoder::
-Decoder(const int K, const int N, const int n_frames, const int simd_inter_frame_level)
+Decoder
+::Decoder(const int K, const int N, const int n_frames, const int simd_inter_frame_level)
 : Module(n_frames),
   n_inter_frame_rest(this->n_frames % simd_inter_frame_level),
   K(K),
@@ -53,32 +53,32 @@ Decoder(const int K, const int N, const int n_frames, const int simd_inter_frame
 	this->tasks_with_nullptr.resize((size_t)dec::tsk::SIZE);
 }
 
-int Decoder::
-get_K() const
+int Decoder
+::get_K() const
 {
 	return this->K;
 }
 
-int Decoder::
-get_N() const
+int Decoder
+::get_N() const
 {
 	return this->N;
 }
 
-int Decoder::
-get_simd_inter_frame_level() const
+int Decoder
+::get_simd_inter_frame_level() const
 {
 	return this->simd_inter_frame_level;
 }
 
-int Decoder::
-get_n_dec_waves() const
+int Decoder
+::get_n_dec_waves() const
 {
 	return this->n_dec_waves;
 }
 
-void Decoder::
-reset()
+void Decoder
+::reset()
 {
 
 }

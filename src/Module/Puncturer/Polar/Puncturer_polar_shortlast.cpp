@@ -1,9 +1,10 @@
 #include <cmath>
+#include <string>
 #include <sstream>
+#include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
-
 #include "Module/Puncturer/Polar/Puncturer_polar_shortlast.hpp"
 
 using namespace aff3ct;

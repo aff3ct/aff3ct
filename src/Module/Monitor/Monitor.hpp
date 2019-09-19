@@ -8,13 +8,7 @@
 #ifndef MONITOR_HPP_
 #define MONITOR_HPP_
 
-#include <functional>
-#include <chrono>
-#include <vector>
-#include <string>
-#include <sstream>
-
-#include "Tools/Exception/exception.hpp"
+#include <cstdint>
 
 #include "Module/Module.hpp"
 

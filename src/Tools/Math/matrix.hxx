@@ -1,7 +1,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Math/matrix.h"
 
 namespace aff3ct
@@ -9,10 +8,10 @@ namespace aff3ct
 namespace tools
 {
 template <typename T, class AT>
-inline void rgemm(const int M, const int N, const int K,
-                  const std::vector<T,AT> &A,
-                  const std::vector<T,AT> &tB,
-                        std::vector<T,AT> &tC)
+void rgemm(const int M, const int N, const int K,
+           const std::vector<T,AT> &A,
+           const std::vector<T,AT> &tB,
+                 std::vector<T,AT> &tC)
 {
 	if (A.size() != unsigned(M * K))
 	{
@@ -42,10 +41,10 @@ inline void rgemm(const int M, const int N, const int K,
 }
 
 template <typename T>
-inline void rgemm(const int M, const int N, const int K,
-                  const T *A,
-                  const T *tB,
-                        T *tC)
+void rgemm(const int M, const int N, const int K,
+           const T *A,
+           const T *tB,
+                 T *tC)
 {
 	for (auto i = 0; i < M; i++)
 		for (auto j = 0; j < N; j++)
@@ -59,10 +58,10 @@ inline void rgemm(const int M, const int N, const int K,
 }
 
 template <typename T, class AT>
-inline void cgemm(const int M, const int N, const int K,
-                  const std::vector<T,AT> &A,
-                  const std::vector<T,AT> &tB,
-                        std::vector<T,AT> &tC)
+void cgemm(const int M, const int N, const int K,
+           const std::vector<T,AT> &A,
+           const std::vector<T,AT> &tB,
+                 std::vector<T,AT> &tC)
 {
 	if (A.size() != unsigned(M * K * 2))
 	{
@@ -92,10 +91,10 @@ inline void cgemm(const int M, const int N, const int K,
 }
 
 template <typename T>
-inline void cgemm(const int M, const int N, const int K,
-                  const T *A,
-                  const T *tB,
-                        T *tC)
+void cgemm(const int M, const int N, const int K,
+           const T *A,
+           const T *tB,
+                 T *tC)
 {
 	const T*  A_real =  A;
 	const T*  A_imag =  A + ((M * K) >> 1);
@@ -122,10 +121,10 @@ inline void cgemm(const int M, const int N, const int K,
 }
 
 template <typename T, class AT>
-inline void cgemm_r(const int M, const int N, const int K,
-                    const std::vector<T,AT> &A,
-                    const std::vector<T,AT> &tB,
-                          std::vector<T,AT> &tC)
+void cgemm_r(const int M, const int N, const int K,
+             const std::vector<T,AT> &A,
+             const std::vector<T,AT> &tB,
+                   std::vector<T,AT> &tC)
 {
 	if (A.size() != unsigned(M * K * 2))
 	{
@@ -155,10 +154,10 @@ inline void cgemm_r(const int M, const int N, const int K,
 }
 
 template <typename T>
-inline void cgemm_r(const int M, const int N, const int K,
-                    const T *A,
-                    const T *tB,
-                          T *tC)
+void cgemm_r(const int M, const int N, const int K,
+             const T *A,
+             const T *tB,
+                   T *tC)
 {
 	const T*  A_real =  A;
 	const T*  A_imag =  A + ((M * K) >> 1);
@@ -180,9 +179,9 @@ inline void cgemm_r(const int M, const int N, const int K,
 }
 
 template <typename T, class AT>
-inline void real_transpose(const int M, const int N,
-                           const std::vector<T,AT> &A,
-                                 std::vector<T,AT> &B)
+void real_transpose(const int M, const int N,
+                    const std::vector<T,AT> &A,
+                          std::vector<T,AT> &B)
 {
 	if (A.size() != unsigned(M * N))
 	{
@@ -204,9 +203,9 @@ inline void real_transpose(const int M, const int N,
 }
 
 template <typename T>
-inline void real_transpose(const int M, const int N,
-                           const T *A,
-                                 T *B)
+void real_transpose(const int M, const int N,
+                    const T *A,
+                          T *B)
 {
 	for (auto i = 0; i < M; i++)
 		for (auto j = 0; j < N; j++)
@@ -214,9 +213,9 @@ inline void real_transpose(const int M, const int N,
 }
 
 template <typename T, class AT>
-inline void complex_transpose(const int M, const int N,
-                              const std::vector<T,AT> &A,
-                                    std::vector<T,AT> &B)
+void complex_transpose(const int M, const int N,
+                       const std::vector<T,AT> &A,
+                             std::vector<T,AT> &B)
 {
 	if (A.size() != unsigned(M * N * 2))
 	{
@@ -238,9 +237,9 @@ inline void complex_transpose(const int M, const int N,
 }
 
 template <typename T>
-inline void complex_transpose(const int M, const int N,
-                              const T *A,
-                                    T *B)
+void complex_transpose(const int M, const int N,
+                       const T *A,
+                             T *B)
 {
 	const T* A_real = A;
 	const T* A_imag = A + M * N;

@@ -8,6 +8,8 @@
 #ifndef BINARY_TREE_HPP_
 #define BINARY_TREE_HPP_
 
+#include <vector>
+
 #include "Tools/Algo/Tree/Binary/Binary_node.hpp"
 
 namespace aff3ct

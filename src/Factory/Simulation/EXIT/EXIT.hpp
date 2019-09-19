@@ -3,17 +3,19 @@
 #ifndef FACTORY_SIMULATION_EXIT_HPP_
 #define FACTORY_SIMULATION_EXIT_HPP_
 
+#include <vector>
 #include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
+#include "Tools/auto_cloned_unique_ptr.hpp"
 #include "Factory/Module/Source/Source.hpp"
 #include "Factory/Module/Modem/Modem.hpp"
-#include "Factory/Module/Codec/Codec.hpp"
 #include "Factory/Module/Channel/Channel.hpp"
 #include "Factory/Module/Quantizer/Quantizer.hpp"
 #include "Factory/Module/Monitor/EXIT/Monitor_EXIT.hpp"
 #include "Factory/Module/Codec/Codec_SISO.hpp"
 #include "Factory/Tools/Display/Terminal/Terminal.hpp"
-
 #include "Factory/Simulation/Simulation.hpp"
 
 namespace aff3ct
@@ -41,7 +43,7 @@ struct EXIT : Simulation
 		std::vector<float> sig_a_range;
 
 		// optional parameters
-		std::string snr_type   = "ES";
+		std::string snr_type = "ES";
 
 		// module parameters
 		tools::auto_cloned_unique_ptr<Source      ::parameters> src;
@@ -62,13 +64,13 @@ struct EXIT : Simulation
 		virtual std::vector<std::string> get_prefixes   () const;
 
 		// setters
-		void set_src(Source       ::parameters *src);
-		void set_cdc(Codec_SISO   ::parameters *cdc);
-		void set_mdm(Modem        ::parameters *mdm);
-		void set_chn(Channel      ::parameters *chn);
-		void set_qnt(Quantizer    ::parameters *qnt);
-		void set_mnt(Monitor_EXIT ::parameters *mnt);
-		void set_ter(Terminal     ::parameters *ter);
+		void set_src(Source      ::parameters *src);
+		void set_cdc(Codec_SISO  ::parameters *cdc);
+		void set_mdm(Modem       ::parameters *mdm);
+		void set_chn(Channel     ::parameters *chn);
+		void set_qnt(Quantizer   ::parameters *qnt);
+		void set_mnt(Monitor_EXIT::parameters *mnt);
+		void set_ter(Terminal    ::parameters *ter);
 
 		// parameters construction
 		void get_description(tools::Argument_map_info &args) const;

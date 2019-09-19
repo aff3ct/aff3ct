@@ -1,10 +1,13 @@
 #ifndef DECODER_POLAR_MK_ASCL_NAIVE_CA_SYS
 #define DECODER_POLAR_MK_ASCL_NAIVE_CA_SYS
 
+#include <functional>
+#include <vector>
+
+#include "Tools/Code/Polar/Polar_code.hpp"
+#include "Module/CRC/CRC.hpp"
 #include "Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive_sys.hpp"
 #include "Module/Decoder/Polar_MK/SCL/CRC/Decoder_polar_MK_SCL_naive_CA_sys.hpp"
-
-#include "Module/CRC/CRC.hpp"
 
 namespace aff3ct
 {

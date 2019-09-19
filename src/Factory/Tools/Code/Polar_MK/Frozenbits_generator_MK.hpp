@@ -1,9 +1,12 @@
 #ifndef FACTORY_FROZENBITS_GENERATOR_MK_HPP
 #define FACTORY_FROZENBITS_GENERATOR_MK_HPP
 
+#include <string>
+#include <map>
+
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 #include "Tools/Code/Polar/Polar_code.hpp"
-
 #include "Factory/Factory.hpp"
 
 namespace aff3ct

@@ -1,5 +1,5 @@
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 
 #include "Tools/Code/Turbo/Post_processing_SISO/Flip_and_check/Flip_and_check.hpp"
 

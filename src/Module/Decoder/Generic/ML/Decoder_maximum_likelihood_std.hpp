@@ -1,6 +1,9 @@
 #ifndef DECODER_MAXIMUM_LIKELIHOOD_STD_HPP_
 #define DECODER_MAXIMUM_LIKELIHOOD_STD_HPP_
 
+#include <cstdint>
+
+#include "Module/Encoder/Encoder.hpp"
 #include "Module/Decoder/Generic/ML/Decoder_maximum_likelihood.hpp"
 
 namespace aff3ct

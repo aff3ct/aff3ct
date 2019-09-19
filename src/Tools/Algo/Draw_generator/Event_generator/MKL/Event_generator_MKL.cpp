@@ -1,9 +1,10 @@
 #ifdef AFF3CT_CHANNEL_MKL
 
+#include <algorithm>
+#include <vector>
 #include <mkl_vsl.h>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Algo/Draw_generator/Event_generator/MKL/Event_generator_MKL.hpp"
 
 using namespace aff3ct;

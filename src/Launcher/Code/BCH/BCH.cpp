@@ -1,7 +1,4 @@
-#include <iostream>
-
 #include "Factory/Module/Codec/BCH/Codec_BCH.hpp"
-
 #include "Launcher/Code/BCH/BCH.hpp"
 
 using namespace aff3ct;

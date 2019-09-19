@@ -1,13 +1,14 @@
-#ifndef MODEM_SCMA_HXX_
-#define MODEM_SCMA_HXX_
-
-#include <cassert>
-#include <iomanip>
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
+#include <cmath>
+#include <string>
+#include <complex>
+#include <algorithm>
 #include <type_traits>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Modem/SCMA/Modem_SCMA.hpp"
 
 namespace aff3ct
@@ -387,5 +388,3 @@ int Modem_SCMA<B,R,Q,PSI>
 
 }
 }
-
-#endif // MODEM_SCMA_HXX_

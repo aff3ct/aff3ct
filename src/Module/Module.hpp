@@ -8,26 +8,18 @@
 #ifndef MODULE_HPP_
 #define MODULE_HPP_
 
-#include <string>
-
-#include <typeinfo>
-#include <typeindex>
-#include <unordered_map>
-#include <map>
+#include <type_traits>
 #include <functional>
+#include <cstddef>
+#include <vector>
 #include <memory>
+#include <string>
 
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
 #ifdef AFF3CT_SYSTEMC_MODULE
 #include "Module/SC_Module.hpp"
 #endif
-
-// convert strongly typed enum to integer
-template <typename E>
-constexpr typename std::underlying_type<E>::type operator+(E e) noexcept {
-	return static_cast<typename std::underlying_type<E>::type>(e);
-}
 
 namespace aff3ct
 {
@@ -101,6 +93,7 @@ protected:
 };
 }
 }
+
 #include "Module/Module.hxx"
 
 #endif /* MODULE_HPP_ */

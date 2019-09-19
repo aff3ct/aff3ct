@@ -1,9 +1,9 @@
-#include <vector>
+#include <string>
 #include <cmath>
 #include <sstream>
+#include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Encoder/Polar/Encoder_polar.hpp"
 
 using namespace aff3ct::module;

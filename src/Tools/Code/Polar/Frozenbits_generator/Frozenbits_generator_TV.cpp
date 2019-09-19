@@ -5,16 +5,13 @@
 #endif
 #include <dirent.h>
 #include <errno.h>
-
-#include <iostream>
-#include <fstream>
 #include <sstream>
 #include <iomanip>
 #include <cmath>
+#include <mutex>
+#include <ios>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Display/rang_format/rang_format.h"
-
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_TV.hpp"
 
 using namespace aff3ct::tools;

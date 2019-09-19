@@ -1,7 +1,8 @@
+#include <utility>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
-
 #include "Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive.hpp"
 #include "Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive_sys.hpp"
 #include "Module/Decoder/Polar_MK/SCL/Decoder_polar_MK_SCL_naive.hpp"
@@ -10,7 +11,6 @@
 #include "Module/Decoder/Polar_MK/SCL/CRC/Decoder_polar_MK_SCL_naive_CA_sys.hpp"
 #include "Module/Decoder/Polar_MK/ASCL/Decoder_polar_MK_ASCL_naive_CA.hpp"
 #include "Module/Decoder/Polar_MK/ASCL/Decoder_polar_MK_ASCL_naive_CA_sys.hpp"
-
 #include "Factory/Module/Decoder/Polar_MK/Decoder_polar_MK.hpp"
 
 using namespace aff3ct;

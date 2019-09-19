@@ -1,9 +1,12 @@
+#include <ios>
+#include <string>
+#include <cstdint>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
-
 #include "Module/Encoder/User/Encoder_user.hpp"
 
 using namespace aff3ct;

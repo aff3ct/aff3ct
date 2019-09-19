@@ -1,8 +1,9 @@
 #include <algorithm>
+#include <sstream>
+#include <utility>
 
 #include "Tools/general_utils.h"
 #include "Tools/Math/utils.h"
-
 #include "Factory/Module/Codec/Codec.hpp"
 
 using namespace aff3ct;

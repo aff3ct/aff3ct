@@ -1,11 +1,7 @@
-#include <sstream>
-
 #include "Factory/Module/Encoder/LDPC/Encoder_LDPC.hpp"
 #include "Factory/Module/Puncturer/LDPC/Puncturer_LDPC.hpp"
 #include "Factory/Module/Decoder/LDPC/Decoder_LDPC.hpp"
-
 #include "Tools/Exception/exception.hpp"
-
 #include "Factory/Module/Codec/LDPC/Codec_LDPC.hpp"
 
 using namespace aff3ct;

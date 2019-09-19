@@ -3,10 +3,6 @@
 #ifndef TRANSPOSE_NEON_H
 #define TRANSPOSE_NEON_H
 
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-
 #include <arm_neon.h>
 
 namespace aff3ct

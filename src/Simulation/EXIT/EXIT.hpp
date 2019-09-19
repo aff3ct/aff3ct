@@ -4,20 +4,17 @@
 #define SIMULATION_EXIT_HPP_
 
 #include <vector>
+#include <memory>
 
+#include "Tools/Display/Terminal/Terminal.hpp"
+#include "Tools/Noise/Sigma.hpp"
+#include "Tools/Display/Reporter/Reporter.hpp"
 #include "Module/Source/Source.hpp"
 #include "Module/Codec/Codec_SISO.hpp"
 #include "Module/Modem/Modem.hpp"
 #include "Module/Channel/Channel.hpp"
 #include "Module/Decoder/Decoder_SISO.hpp"
 #include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
-
-#include "Tools/Display/Terminal/Terminal.hpp"
-#include "Tools/Noise/Noise.hpp"
-
-#include "Tools/Display/Reporter/EXIT/Reporter_EXIT.hpp"
-#include "Tools/Display/Reporter/Noise/Reporter_noise.hpp"
-#include "Tools/Display/Reporter/Throughput/Reporter_throughput.hpp"
 
 #include "Factory/Simulation/EXIT/EXIT.hpp"
 
@@ -51,7 +48,6 @@ protected:
 	// terminal and reporters (for the output of the code)
 	std::vector<std::unique_ptr<tools::Reporter>> reporters;
 	std::unique_ptr<tools::Terminal>              terminal;
-
 
 public:
 	explicit EXIT(const factory::EXIT::parameters &params_EXIT);

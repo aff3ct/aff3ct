@@ -1,8 +1,9 @@
 #ifndef DECODER_LDPC_BIT_FLIPPING_HARD_HPP_
 #define DECODER_LDPC_BIT_FLIPPING_HARD_HPP_
 
-#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
+#include <vector>
 
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 #include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
 
 namespace aff3ct

@@ -1,7 +1,8 @@
+#include <string>
 #include <sstream>
+#include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Decoder/RSC/BCJR/Seq/Decoder_RSC_BCJR_seq_very_fast.hpp"
 
 namespace aff3ct

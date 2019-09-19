@@ -1,5 +1,7 @@
+#include <algorithm>
 #include <fstream>
 #include <sstream>
+#include <ios>
 
 #include "Tools/Exception/exception.hpp"
 

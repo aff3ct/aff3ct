@@ -3,8 +3,6 @@
 
 #include <vector>
 
-#include "Tools/Code/BCH/BCH_polynomial_generator.hpp"
-
 #include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
 
 namespace aff3ct

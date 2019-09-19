@@ -20,7 +20,7 @@
 #ifndef PRNG_MT19937_SIMD_HPP
 #define PRNG_MT19937_SIMD_HPP
 
-#include <vector>
+#include <cstdint>
 #include <mipp.h>
 
 namespace aff3ct

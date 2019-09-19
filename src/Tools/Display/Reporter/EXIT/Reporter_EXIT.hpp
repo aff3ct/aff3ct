@@ -1,12 +1,8 @@
 #ifndef Reporter_EXIT_HPP_
 #define Reporter_EXIT_HPP_
 
-#include <string>
-#include <chrono>
-
 #include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
 #include "Tools/Noise/Noise.hpp"
-
 #include "Tools/Display/Reporter/Reporter_monitor.hpp"
 
 namespace aff3ct

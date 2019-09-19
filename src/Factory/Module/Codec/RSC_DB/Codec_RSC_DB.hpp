@@ -2,13 +2,13 @@
 #define FACTORY_CODEC_RSC_DB_HPP
 
 #include <string>
-#include <cmath>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
+#include "Module/CRC/CRC.hpp"
+#include "Module/Codec/RSC_DB/Codec_RSC_DB.hpp"
 #include "Factory/Module/Encoder/RSC_DB/Encoder_RSC_DB.hpp"
 #include "Factory/Module/Decoder/RSC_DB/Decoder_RSC_DB.hpp"
-
-#include "Module/Codec/RSC_DB/Codec_RSC_DB.hpp"
-
 #include "Factory/Module/Codec/Codec_SISO_SIHO.hpp"
 
 namespace aff3ct

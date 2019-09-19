@@ -1,5 +1,4 @@
-#include <vector>
-#include <cmath>
+#include <string>
 
 #include "Module/Encoder/RSC/Encoder_RSC3_CPE_sys.hpp"
 

@@ -1,6 +1,8 @@
 #ifndef DVBS2_CONSTANTS_64800_HPP_
 #define DVBS2_CONSTANTS_64800_HPP_
 
+#include <vector>
+
 #include "Tools/Code/LDPC/Standard/DVBS2/DVBS2_constants.hpp"
 
 namespace aff3ct

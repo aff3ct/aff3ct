@@ -1,6 +1,8 @@
+#include <algorithm>
+#include <utility>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Module/Decoder/Polar/SC/Decoder_polar_SC_naive.hpp"
 #include "Module/Decoder/Polar/SC/Decoder_polar_SC_naive_sys.hpp"
 #include "Module/Decoder/Polar/SC/Decoder_polar_SC_fast_sys.hpp"
@@ -18,9 +20,7 @@
 #include "Module/Decoder/Polar/SCL/CRC/Decoder_polar_SCL_MEM_fast_CA_sys.hpp"
 #include "Module/Decoder/Polar/ASCL/Decoder_polar_ASCL_fast_CA_sys.hpp"
 #include "Module/Decoder/Polar/ASCL/Decoder_polar_ASCL_MEM_fast_CA_sys.hpp"
-
 //#define API_POLAR_DYNAMIC 1
-
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
 #include "Tools/Code/Polar/API/API_polar_dynamic_intra.hpp"
 #ifdef API_POLAR_DYNAMIC
@@ -34,9 +34,7 @@
 #include "Tools/Code/Polar/API/API_polar_static_intra_16bit.hpp"
 #include "Tools/Code/Polar/API/API_polar_static_intra_32bit.hpp"
 #endif
-
 #include "Tools/Code/Polar/Nodes_parser.h"
-
 #include "Factory/Module/Decoder/Polar/Decoder_polar.hpp"
 
 using namespace aff3ct;

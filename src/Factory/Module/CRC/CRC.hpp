@@ -2,10 +2,10 @@
 #define FACTORY_CRC_HPP
 
 #include <string>
-#include <sstream>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Module/CRC/CRC.hpp"
-
 #include "Factory/Factory.hpp"
 
 namespace aff3ct

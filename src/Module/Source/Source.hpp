@@ -8,9 +8,9 @@
 #ifndef SOURCE_HPP_
 #define SOURCE_HPP_
 
+#include <cstdint>
+#include <memory>
 #include <vector>
-#include <string>
-#include <iostream>
 
 #include "Module/Module.hpp"
 

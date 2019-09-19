@@ -1,6 +1,3 @@
-#ifndef GENERAL_UTILS_HXX
-#define GENERAL_UTILS_HXX
-
 #include <algorithm>
 #include <cassert>
 #include <sstream>
@@ -148,7 +145,11 @@ std::string get_time_format(T secondes)
 	return time_format.str();
 }
 
-}
+template<typename T, typename U>
+constexpr size_t offsetOf(U T::*member)
+{
+    return (char*)&((T*)nullptr->*member) - (char*)nullptr;
 }
 
-#endif //GENERAL_UTILS_HXX
+}
+}

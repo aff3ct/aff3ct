@@ -1,8 +1,9 @@
 #ifndef CRC_CHECKER_HPP
 #define CRC_CHECKER_HPP
 
-#include "Module/CRC/CRC.hpp"
+#include <mipp.h>
 
+#include "Module/CRC/CRC.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/Post_processing_SISO.hpp"
 
 namespace aff3ct

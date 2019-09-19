@@ -1,15 +1,14 @@
 #ifndef FACTORY_MODEM_HPP
 #define FACTORY_MODEM_HPP
 
-#include <memory>
 #include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Tools/Math/max.h"
-
-#include "Module/Modem/Modem.hpp"
 #include "Tools/Math/Distribution/Distributions.hpp"
 #include "Tools/Constellation/Constellation.hpp"
-
+#include "Module/Modem/Modem.hpp"
 #include "Factory/Factory.hpp"
 
 namespace aff3ct
@@ -47,17 +46,17 @@ struct Modem : public Factory
 		int         N_mod          = 0;         // frame size at the output of the modulator
 
 		// ------- demodulator parameters
-		std::string max        = "MAX";     // max to use in the demodulation (MAX = max, MAXL = max_linear, MAXS = max_star)
-		std::string psi        = "PSI0";    // psi function to use in the SCMA demodulation (PSI0, PSI1, PSI2, PSI3)
-		bool        no_sig2    = false;     // do not divide by (sig^2) / 2 in the demodulation
-		int         n_ite      = 1;         // number of demodulations/decoding sessions to perform in the BFERI simulations
-		int         N_fil      = 0;         // frame size at the output of the filter
-		float       noise      = -1.f;      // noise value
-		int         rop_est_bits = 0;       // The number of bits known by the Modem_OOK_optical_rop_estimate demodulator
-		                                    // to estimate the ROP
+		std::string max          = "MAX";  // max to use in the demodulation (MAX = max, MAXL = max_linear, MAXS = max_star)
+		std::string psi          = "PSI0"; // psi function to use in the SCMA demodulation (PSI0, PSI1, PSI2, PSI3)
+		bool        no_sig2      = false;  // do not divide by (sig^2) / 2 in the demodulation
+		int         n_ite        = 1;      // number of demodulations/decoding sessions to perform in the BFERI simulations
+		int         N_fil        = 0;      // frame size at the output of the filter
+		float       noise        = -1.f;   // noise value
+		int         rop_est_bits = 0;      // The number of bits known by the Modem_OOK_optical_rop_estimate demodulator
+		                                   // to estimate the ROP
 
 		// ------- common parameters
-		int         n_frames   = 1;
+		int         n_frames     = 1;
 		std::string channel_type = "AWGN"; // the channel type used to build correct OOK modulation
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
@@ -86,7 +85,6 @@ struct Modem : public Factory
 		template <typename R = float>
 		tools::Constellation<R>* build_constellation() const;
 	};
-
 
 	template <typename B = int, typename R = float, typename Q = R>
 	static module::Modem<B,R,Q>* build(const parameters &params);

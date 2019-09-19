@@ -1,8 +1,8 @@
+#include <string>
 #include <sstream>
+#include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/general_utils.h"
-
 #include "Module/Puncturer/LDPC/Puncturer_LDPC.hpp"
 
 using namespace aff3ct;

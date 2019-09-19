@@ -1,8 +1,8 @@
+#include <algorithm>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Bit_packer.hpp"
-
 #include "Module/CRC/Polynomial/CRC_polynomial_fast.hpp"
 
 using namespace aff3ct;

@@ -1,11 +1,7 @@
-#include <chrono>
-#include <limits>
-#include <algorithm>
+#include <string>
+#include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Perf/Reorderer/Reorderer.hpp"
-#include "Tools/Math/utils.h"
-
 #include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB_RCS2.hpp"
 
 namespace aff3ct

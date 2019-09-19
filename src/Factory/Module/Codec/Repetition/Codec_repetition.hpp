@@ -2,10 +2,11 @@
 #define FACTORY_CODEC_REPETITION_HPP
 
 #include <string>
-#include <cmath>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
+#include "Module/CRC/CRC.hpp"
 #include "Module/Codec/Repetition/Codec_repetition.hpp"
-
 #include "Factory/Module/Codec/Codec_SIHO.hpp"
 
 namespace aff3ct

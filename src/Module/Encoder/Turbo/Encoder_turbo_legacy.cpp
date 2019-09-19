@@ -1,9 +1,8 @@
-#include <vector>
+#include <string>
 #include <cmath>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Encoder/Turbo/Encoder_turbo_legacy.hpp"
 
 using namespace aff3ct;

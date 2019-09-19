@@ -2,7 +2,9 @@
 #define ENCODER_CPE_RIMOLDI_HPP_
 
 #include <vector>
+#include <string>
 
+#include "Tools/Code/CPM/CPM_parameters.hpp"
 #include "Tools/Code/CPM/CPE/Encoder_CPE.hpp"
 
 namespace aff3ct
@@ -13,7 +15,7 @@ template <typename SIN = int, typename SOUT = int>
 class Encoder_CPE_Rimoldi : public Encoder_CPE<SIN, SOUT>
 {
 protected:
-	std::vector<SIN>  tail_symb_transition;
+	std::vector<SIN> tail_symb_transition;
 
 public:
 	Encoder_CPE_Rimoldi(const int N, const CPM_parameters<SIN,SOUT>& cpm);

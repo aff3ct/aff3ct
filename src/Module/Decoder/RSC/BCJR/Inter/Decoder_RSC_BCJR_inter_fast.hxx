@@ -1,5 +1,8 @@
+#include <limits>
+#include <string>
 #include <mipp.h>
 
+#include "Tools/Exception/exception.hpp"
 #include "Module/Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter_fast.hpp"
 
 namespace aff3ct

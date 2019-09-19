@@ -8,12 +8,12 @@
 #ifndef MODEM_HPP_
 #define MODEM_HPP_
 
-#include <string>
+#include <cstdint>
 #include <memory>
 #include <vector>
 
-#include "Tools/Noise/noise_utils.h"
-
+#include "Tools/Noise/Noise.hpp"
+#include "Tools/Noise/Sigma.hpp"
 #include "Module/Module.hpp"
 
 namespace aff3ct

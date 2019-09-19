@@ -1,14 +1,15 @@
 #ifndef LDPC_MATRIX_HANDLER_HPP_
 #define LDPC_MATRIX_HANDLER_HPP_
 
+#include <cstdint>
+#include <cstddef>
+#include <fstream>
+#include <utility>
 #include <vector>
-#include <algorithm>
-#include <functional>
-#include <numeric>
 #include <string>
-#include <mipp.h>
 
-#include "Tools/Algo/Matrix/matrix_utils.h"
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
+#include "Tools/Algo/Matrix/Full_matrix/Full_matrix.hpp"
 
 namespace aff3ct
 {

@@ -1,3 +1,8 @@
+#include <algorithm>
+#include <iomanip>
+#include <string>
+#include <limits>
+
 #include "Module/Decoder/RSC/BCJR/Seq_generic/Decoder_RSC_BCJR_seq_generic_std_json.hpp"
 
 namespace aff3ct

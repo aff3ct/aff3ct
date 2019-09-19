@@ -1,6 +1,8 @@
+#include <utility>
+#include <algorithm>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Module/Channel/NO/Channel_NO.hpp"
 #include "Module/Channel/User/Channel_user.hpp"
 #include "Module/Channel/User/Channel_user_add.hpp"
@@ -12,7 +14,6 @@
 #include "Module/Channel/Optical/Channel_optical.hpp"
 #include "Module/Channel/Binary_erasure/Channel_binary_erasure.hpp"
 #include "Module/Channel/Binary_symmetric/Channel_binary_symmetric.hpp"
-
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Fast/Gaussian_noise_generator_fast.hpp"
 #include "Tools/Algo/Draw_generator/Event_generator/Standard/Event_generator_std.hpp"
@@ -29,7 +30,6 @@
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/GSL/Gaussian_noise_generator_GSL.hpp"
 #include "Tools/Algo/Draw_generator/User_pdf_noise_generator/GSL/User_pdf_noise_generator_GSL.hpp"
 #endif
-
 #include "Factory/Module/Channel/Channel.hpp"
 
 using namespace aff3ct;

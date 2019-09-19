@@ -8,10 +8,10 @@
 #ifndef PUNCTURER_HXX_
 #define PUNCTURER_HXX_
 
+#include <string>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Puncturer/Puncturer.hpp"
 
 namespace aff3ct

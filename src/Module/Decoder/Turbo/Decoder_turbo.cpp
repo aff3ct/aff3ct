@@ -1,13 +1,9 @@
 #include <string>
-#include <fstream>
-#include <iostream>
-#include <algorithm>
-#include <stdexcept>
 #include <sstream>
+#include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
-
 #include "Module/Decoder/Turbo/Decoder_turbo.hpp"
 
 using namespace aff3ct;

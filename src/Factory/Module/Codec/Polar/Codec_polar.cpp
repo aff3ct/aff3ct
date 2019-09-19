@@ -1,7 +1,6 @@
 #include "Factory/Module/Encoder/Polar/Encoder_polar.hpp"
 #include "Factory/Module/Decoder/Polar/Decoder_polar.hpp"
 #include "Factory/Module/Puncturer/Polar/Puncturer_polar.hpp"
-
 #include "Factory/Module/Codec/Polar/Codec_polar.hpp"
 
 using namespace aff3ct;

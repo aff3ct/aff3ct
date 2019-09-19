@@ -9,6 +9,7 @@
 #define FRAME_TRACE_HPP
 
 #include <vector>
+#include <memory>
 #include <iostream>
 
 namespace aff3ct
@@ -40,10 +41,7 @@ public:
 	 * \param n_bits: number of bits to display per frame (if n_bits = 0, display all the bits of the frame).
 	 * \param stream: stream to trace the frame(s).
 	 */
-	explicit Frame_trace(const int n_bits = 0, const int prec = 5, std::ostream &stream = std::cout)
-	: stream(stream), n_bits(n_bits), prec(prec)
-	{
-	}
+	explicit Frame_trace(const int n_bits = 0, const int prec = 5, std::ostream &stream = std::cout);
 
 	/*!
 	 * \brief Display a vector (= a frame) of bits (0 or 1).

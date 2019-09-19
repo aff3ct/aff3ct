@@ -24,17 +24,10 @@ private:
 	Predicate &p;
 
 public:
-	SC_Predicate(Predicate &p, sc_core::sc_module_name name)
-	: sc_module(name), s_in("s_in"), p(p)
-	{
-		s_in.register_b_transport(this, &SC_Predicate::b_transport);
-	}
+	SC_Predicate(Predicate &p, sc_core::sc_module_name name);
 
 private:
-	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
-	{
-		p.reset();
-	}
+	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t);
 };
 }
 }

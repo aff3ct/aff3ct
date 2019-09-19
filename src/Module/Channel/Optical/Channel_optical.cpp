@@ -1,5 +1,7 @@
-#include "Tools/Exception/exception.hpp"
+#include <algorithm>
+#include <string>
 
+#include "Tools/Exception/exception.hpp"
 #include "Module/Channel/Optical/Channel_optical.hpp"
 
 using namespace aff3ct;

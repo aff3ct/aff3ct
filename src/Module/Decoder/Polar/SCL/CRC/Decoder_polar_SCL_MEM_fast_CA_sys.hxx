@@ -1,4 +1,6 @@
+#include <string>
 #include <sstream>
+#include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Code/Polar/fb_extract.h"

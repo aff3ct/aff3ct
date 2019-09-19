@@ -1,8 +1,8 @@
+#include <utility>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Module/Monitor/MI/Monitor_MI.hpp"
-
 #include "Factory/Module/Monitor/MI/Monitor_MI.hpp"
 
 using namespace aff3ct;

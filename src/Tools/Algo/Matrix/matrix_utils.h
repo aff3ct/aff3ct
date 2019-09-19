@@ -57,7 +57,7 @@ Full_matrix<T> bgemmt(const Full_matrix<T>& A, const Full_matrix<T>& tB);
  * \param tB must be of size N * M
  * \return C of size L * N
  */
-Sparse_matrix  bgemmt(const Sparse_matrix&  A, const Sparse_matrix&  tB);
+Sparse_matrix bgemmt(const Sparse_matrix& A, const Sparse_matrix& tB);
 
 /*
  * \brief check if all elements of the matrix are zero

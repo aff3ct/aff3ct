@@ -1,9 +1,9 @@
 #ifndef ARGUMENT_TYPE_FILE_SYSTEM_HPP_
 #define ARGUMENT_TYPE_FILE_SYSTEM_HPP_
 
-#include <string>
-#include <iostream>
 #include <stdexcept>
+#include <algorithm>
+#include <string>
 
 #include "Tools/system_functions.h"
 #include "Tools/version.h"
@@ -26,7 +26,7 @@ std::string modify_path(const std::string& val)
 		std::string basedir, filename;
 		split_path(binary_path, basedir, filename);
 
-		std::string aff3ct_version = aff3ct::version();
+		std::string aff3ct_version = version();
 		if (!aff3ct_version.empty() && aff3ct_version[0] == 'v')
 			aff3ct_version.erase(0, 1); // rm the 'v'
 

@@ -2,8 +2,6 @@
 #ifdef __cpp_aligned_new
 #define UPDATE_RULE_AMS_SIMD_HPP
 
-#include <vector>
-#include <limits>
 #include <string>
 #include <mipp.h>
 
@@ -30,87 +28,41 @@ protected:
 	int ite;
 
 public:
-	Update_rule_AMS_simd()
-	: name("AMS"), false_msk(false), max(std::numeric_limits<R>::max()), zero((R)0), sign(false), min(max),
-	  delta_min(max), delta(max), n_ite(0), ite(0)
-	{
-	}
+	Update_rule_AMS_simd();
 
-	virtual ~Update_rule_AMS_simd()
-	{
-	}
+	virtual ~Update_rule_AMS_simd() = default;
 
-	std::string get_name() const
-	{
-		return this->name;
-	}
+	inline std::string get_name() const;
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// ----------------------------------------------------------------------------------------------------------------
 
-	inline void begin_decoding(const int n_ite)
-	{
-		this->n_ite = n_ite;
-	}
+	inline void begin_decoding(const int n_ite);
 
-	inline void begin_ite(const int ite)
-	{
-		this->ite = ite;
-	}
+	inline void begin_ite(const int ite);
 
 	// incoming values from the variable nodes into the check nodes
-	inline void begin_chk_node_in(const int chk_id, const int chk_degree)
-	{
-		this->sign      = this->false_msk;
-		this->min       = this->max;
-		this->delta_min = this->max;
-	}
+	inline void begin_chk_node_in(const int chk_id, const int chk_degree);
 
-	inline void compute_chk_node_in(const int var_id, const mipp::Reg<R> var_val)
-	{
-		const auto var_abs = mipp::abs(var_val);
-		const auto var_sgn = mipp::sign(var_val);
-		const auto tmp     = this->min;
+	inline void compute_chk_node_in(const int var_id, const mipp::Reg<R> var_val);
 
-		this->sign     ^= var_sgn;
-		this->min       = mipp::min(this->min, var_abs);
-		this->delta_min = MIN(this->delta_min, mipp::blend(tmp, var_abs, var_abs == this->min));
-	}
-
-	inline void end_chk_node_in()
-	{
-		this->delta     = mipp::max(zero, MIN(this->delta_min, this->min));
-		this->delta_min = mipp::max(zero, this->delta_min);
-	}
+	inline void end_chk_node_in();
 
 	// outcomming values from the check nodes into the variable nodes
-	inline void begin_chk_node_out(const int chk_id, const int chk_degree)
-	{
-	}
+	inline void begin_chk_node_out(const int chk_id, const int chk_degree);
 
-	inline mipp::Reg<R> compute_chk_node_out(const int var_id, const mipp::Reg<R> var_val)
-	{
-		const auto var_abs = mipp::abs(var_val);
-		      auto res_abs = mipp::blend(this->delta_min, this->delta, var_abs == this->min);
-		const auto res_sgn = this->sign ^ mipp::sign(var_val);
+	inline mipp::Reg<R> compute_chk_node_out(const int var_id, const mipp::Reg<R> var_val);
 
-		return mipp::copysign(res_abs, res_sgn);
-	}
+	inline void end_chk_node_out();
 
-	inline void end_chk_node_out()
-	{
-	}
+	inline void end_ite();
 
-	inline void end_ite()
-	{
-	}
-
-	inline void end_decoding()
-	{
-	}
+	inline void end_decoding();
 };
 }
 }
+
+#include "Tools/Code/LDPC/Update_rule/AMS/Update_rule_AMS_simd.hxx"
 
 #endif
 #endif /* UPDATE_RULE_AMS_SIMD_HPP */

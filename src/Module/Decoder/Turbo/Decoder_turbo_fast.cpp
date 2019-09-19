@@ -1,12 +1,9 @@
-#include <chrono>
+#include <vector>
 #include <string>
-#include <fstream>
-#include <iostream>
 #include <algorithm>
 
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
-
 #include "Module/Decoder/Turbo/Decoder_turbo_fast.hpp"
 
 using namespace aff3ct;

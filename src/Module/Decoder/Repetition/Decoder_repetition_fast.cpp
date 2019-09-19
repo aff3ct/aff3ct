@@ -1,8 +1,8 @@
-#include <algorithm>
 #include <sstream>
+#include <string>
+#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Decoder/Repetition/Decoder_repetition_fast.hpp"
 
 using namespace aff3ct;

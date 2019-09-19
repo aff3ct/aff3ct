@@ -1,15 +1,16 @@
 #ifndef FACTORY_DECODER_POLAR_HPP
 #define FACTORY_DECODER_POLAR_HPP
 
-#include <string>
 #include <vector>
-#include <cmath>
+#include <string>
+#include <memory>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Module/CRC/CRC.hpp"
-#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
-#include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Module/Encoder/Encoder.hpp"
-
+#include "Module/Decoder/Decoder_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 #include "Factory/Module/Decoder/Decoder.hpp"
 
 namespace aff3ct

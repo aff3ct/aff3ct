@@ -1,8 +1,9 @@
 #ifndef DECODER_MAXIMUM_LIKELIHOO_HPP_
 #define DECODER_MAXIMUM_LIKELIHOO_HPP_
 
-#include "Module/Encoder/Encoder.hpp"
+#include <vector>
 
+#include "Module/Encoder/Encoder.hpp"
 #include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
 
 namespace aff3ct

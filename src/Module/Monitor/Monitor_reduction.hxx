@@ -1,11 +1,7 @@
-#ifndef MONITOR_REDUCTION_HXX_
-#define MONITOR_REDUCTION_HXX_
-
 #include <sstream>
 #include <numeric>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Monitor/Monitor_reduction.hpp"
 
 namespace aff3ct
@@ -119,4 +115,3 @@ void Monitor_reduction_M<M>
 
 }
 }
-#endif // MONITOR_REDUCTION_HXX_

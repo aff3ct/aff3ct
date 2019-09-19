@@ -1,16 +1,16 @@
+#include <algorithm>
 #include <fstream>
+#include <sstream>
 #include <regex>
 #include <map>
 
 #ifndef AFF3CT_EXT_STRINGS
-#include "strings.cpp"
+#include "Tools/Documentation/strings.cpp"
 #endif
-
 #include "Tools/version.h"
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/system_functions.h"
-
 #include "Tools/Documentation/documentation.h"
 
 using namespace aff3ct;
@@ -124,7 +124,7 @@ std::string extract_documentation(const std::string &key)
 			std::string basedir, filename;
 			split_path(binary_path, basedir, filename);
 
-			std::string aff3ct_version = aff3ct::version();
+			std::string aff3ct_version = version();
 			if (!aff3ct_version.empty() && aff3ct_version[0] == 'v')
 				aff3ct_version.erase(0, 1); // rm the 'v'
 

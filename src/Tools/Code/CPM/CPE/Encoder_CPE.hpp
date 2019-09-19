@@ -2,6 +2,7 @@
 #define ENCODER_CPE_HPP_
 
 #include <vector>
+#include <string>
 
 #include "Tools/Code/CPM/CPM_parameters.hpp"
 

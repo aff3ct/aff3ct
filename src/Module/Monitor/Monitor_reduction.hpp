@@ -2,9 +2,10 @@
 #define MONITOR_REDUCTION_HPP_
 
 #include <thread>
-#include <string>
+#include <chrono>
 #include <vector>
-#include <cassert>
+#include <memory>
+#include <type_traits>
 
 #include "Module/Monitor/Monitor.hpp"
 
@@ -48,7 +49,7 @@ public:
 	 */
 	static void reset_all();
 
-	static void set_master_thread_id(std::thread::id          t);
+	static void set_master_thread_id(std::thread::id t);
 
 	static void set_reduce_frequency(std::chrono::nanoseconds d);
 

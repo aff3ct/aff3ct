@@ -1,9 +1,10 @@
 #ifndef GENERAL_UTILS_H_
 #define GENERAL_UTILS_H_
 
+#include <cstddef>
 #include <vector>
 #include <string>
-#include <sstream>
+#include <iostream>
 
 namespace aff3ct
 {
@@ -35,7 +36,6 @@ R ebn0_to_esn0(const R ebn0, const R bit_rate = 1, const int bps = 1);
  */
 template <typename R = float>
 std::vector<R> generate_range(const std::vector<std::vector<R>>& range_description, const R default_step = (R)0.1);
-
 
 /*
  * Get the nearest position of value in range [first, last[.
@@ -77,7 +77,6 @@ inline void mutual_unique(std::vector<Ta>& vec_abscissa, std::vector<To>& vec_or
 template <typename Ta, typename To>
 inline void mutual_unique(std::vector<Ta>& vec_abscissa, std::vector<std::vector<To>>& vec_ordinate);
 
-
 /*
  * Convert the number of seconds into a __h__'__ string format
  * For exemple 3662 secondes would be displayed as "01h01'02".
@@ -91,11 +90,7 @@ std::string get_time_format(T secondes);
  * Source : https://stackoverflow.com/a/20141143/7219905
  */
 template<typename T, typename U>
-constexpr size_t offsetOf(U T::*member)
-{
-    return (char*)&((T*)nullptr->*member) - (char*)nullptr;
-}
-
+constexpr size_t offsetOf(U T::*member);
 }
 }
 

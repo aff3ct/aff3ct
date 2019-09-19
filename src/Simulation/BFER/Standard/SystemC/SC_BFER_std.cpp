@@ -1,9 +1,8 @@
 #ifdef AFF3CT_SYSTEMC_SIMU
 
-#include <iostream>
+#include <string>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Simulation/BFER/Standard/SystemC/SC_BFER_std.hpp"
 
 using namespace aff3ct;

@@ -3,6 +3,7 @@
 
 #include <limits>
 #include <vector>
+#include <string>
 
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 

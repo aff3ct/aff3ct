@@ -1,18 +1,8 @@
-/*!
- * \file
- * \brief A SISO (Soft Input Soft Output) is a type of decoder which takes a soft input and return a soft output.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
- */
-#ifndef DECODER_SISO_HXX_
-#define DECODER_SISO_HXX_
-
-#include <cmath>
+#include <string>
 #include <sstream>
+#include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Decoder/Decoder_SISO.hpp"
 
 namespace aff3ct
@@ -21,8 +11,8 @@ namespace module
 {
 
 template <typename R>
-Decoder_SISO<R>::
-Decoder_SISO(const int K, const int N, const int n_frames, const int simd_inter_frame_level)
+Decoder_SISO<R>
+::Decoder_SISO(const int K, const int N, const int n_frames, const int simd_inter_frame_level)
 : Decoder(K, N, n_frames, simd_inter_frame_level),
   Y_N1   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0),
   Y_N2   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0)
@@ -44,9 +34,9 @@ Decoder_SISO(const int K, const int N, const int n_frames, const int simd_inter_
 
 template <typename R>
 template <class A>
-void Decoder_SISO<R>::
-decode_siso(const std::vector<R,A> &sys, const std::vector<R,A> &par, std::vector<R,A> &ext,
-            const int n_frames, const int frame_id)
+void Decoder_SISO<R>
+::decode_siso(const std::vector<R,A> &sys, const std::vector<R,A> &par, std::vector<R,A> &ext,
+              const int n_frames, const int frame_id)
 {
 	if (n_frames != -1 && n_frames <= 0)
 	{
@@ -100,8 +90,8 @@ decode_siso(const std::vector<R,A> &sys, const std::vector<R,A> &par, std::vecto
 }
 
 template <typename R>
-void Decoder_SISO<R>::
-decode_siso(const R *sys, const R *par, R *ext, const int n_frames, const int frame_id)
+void Decoder_SISO<R>
+::decode_siso(const R *sys, const R *par, R *ext, const int n_frames, const int frame_id)
 {
 	const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
 
@@ -119,8 +109,8 @@ decode_siso(const R *sys, const R *par, R *ext, const int n_frames, const int fr
 
 template <typename R>
 template <class A>
-void Decoder_SISO<R>::
-decode_siso(const std::vector<R,A> &Y_N1, std::vector<R,A> &Y_N2, const int frame_id)
+void Decoder_SISO<R>
+::decode_siso(const std::vector<R,A> &Y_N1, std::vector<R,A> &Y_N2, const int frame_id)
 {
 	if (this->N * this->n_frames != (int)Y_N1.size())
 	{
@@ -150,8 +140,8 @@ decode_siso(const std::vector<R,A> &Y_N1, std::vector<R,A> &Y_N2, const int fram
 }
 
 template <typename R>
-void Decoder_SISO<R>::
-decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
+void Decoder_SISO<R>
+::decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	if (frame_id < 0 || this->simd_inter_frame_level == 1)
 	{
@@ -202,27 +192,25 @@ decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 }
 
 template <typename R>
-int Decoder_SISO<R>::
-tail_length() const
+int Decoder_SISO<R>
+::tail_length() const
 {
 	return 0;
 }
 
 template <typename R>
-void Decoder_SISO<R>::
-_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
+void Decoder_SISO<R>
+::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename R>
-void Decoder_SISO<R>::
-_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
+void Decoder_SISO<R>
+::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 }
 }
-
-#endif

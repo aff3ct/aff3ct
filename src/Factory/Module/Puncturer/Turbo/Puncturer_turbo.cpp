@@ -1,12 +1,13 @@
+#include <stdexcept>
+#include <utility>
+#include <tuple>
+
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
 #include "Module/Puncturer/Turbo/Puncturer_turbo.hpp"
-
 #include "Factory/Module/Puncturer/Turbo/Puncturer_turbo.hpp"
-
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
 using PT = aff3ct::module::Puncturer_turbo<B_32,Q_32>;
@@ -17,10 +18,8 @@ using PT = aff3ct::module::Puncturer_turbo<B,Q>;
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-
 const std::string aff3ct::factory::Puncturer_turbo_name   = "Puncturer Turbo";
 const std::string aff3ct::factory::Puncturer_turbo_prefix = "pct";
-
 
 Puncturer_turbo::parameters
 ::parameters(const std::string &prefix)

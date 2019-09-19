@@ -1,16 +1,15 @@
 #ifndef MODEM_SCMA_HPP_
 #define MODEM_SCMA_HPP_
 
-#include <complex>
-#include <vector>
-#include <string>
+#include <memory>
 
-#include "Tools/Code/SCMA/modem_SCMA_functions.hpp"
+#include "Tools/Noise/Noise.hpp"
+#include "Tools/Noise/Sigma.hpp"
 #include "Tools/Code/SCMA/Codebook.hpp"
+#include "Tools/Code/SCMA/modem_SCMA_functions.hpp"
 #include "Tools/Algo/Multidimensional_vector/Vector_2D.hpp"
 #include "Tools/Algo/Multidimensional_vector/Vector_3D.hpp"
 #include "Tools/Algo/Multidimensional_vector/Vector_4D.hpp"
-
 #include "Module/Modem/Modem.hpp"
 
 namespace aff3ct
@@ -25,13 +24,13 @@ private:
 	std::unique_ptr<const tools::Codebook<R>> CB_ptr;
 	const tools::Codebook<R>& CB;
 
-	tools::Vector_4D<Q>      arr_phi;
-	tools::Vector_3D<Q>      msg_user_to_resources;
-	tools::Vector_3D<Q>      msg_resource_to_users;
-	tools::Vector_2D<Q>      guess;
-	const bool               disable_sig2;
-	      R                  n0; // 1 / n0 = 179.856115108
-	const int                n_ite;
+	tools::Vector_4D<Q> arr_phi;
+	tools::Vector_3D<Q> msg_user_to_resources;
+	tools::Vector_3D<Q> msg_resource_to_users;
+	tools::Vector_2D<Q> guess;
+	const bool          disable_sig2;
+	      R             n0; // 1 / n0 = 179.856115108
+	const int           n_ite;
 
 public:
 	Modem_SCMA(const int N, std::unique_ptr<const tools::Codebook<R>>&& CB, const tools::Noise<R>& noise = tools::Sigma<R>(),

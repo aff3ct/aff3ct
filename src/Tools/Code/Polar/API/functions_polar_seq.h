@@ -2,12 +2,12 @@
 #define FUNCTIONS_POLAR_SEQ_H_
 
 #include <algorithm>
+#include <limits>
 #ifdef _MSC_VER
 #include <iterator>
 #endif
 
 #include "Tools/Math/utils.h"
-
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
 namespace aff3ct

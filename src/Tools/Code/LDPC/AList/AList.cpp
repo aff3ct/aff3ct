@@ -1,7 +1,7 @@
-#include <string>
-#include <sstream>
-#include <vector>
+#include <stdexcept>
 #include <algorithm>
+#include <sstream>
+#include <string>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"

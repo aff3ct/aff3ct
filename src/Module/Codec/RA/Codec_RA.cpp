@@ -1,8 +1,10 @@
+#include <sstream>
+#include <string>
+
 #include "Tools/Exception/exception.hpp"
-
 #include "Factory/Tools/Interleaver/Interleaver_core.hpp"
+#include "Factory/Module/Encoder/Encoder.hpp"
 #include "Factory/Module/Puncturer/Puncturer.hpp"
-
 #include "Module/Codec/RA/Codec_RA.hpp"
 
 using namespace aff3ct;

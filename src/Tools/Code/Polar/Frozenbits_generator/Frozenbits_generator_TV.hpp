@@ -2,8 +2,6 @@
 #define FROZENBITS_GENERATOR_TV_HPP_
 
 #include <string>
-#include <vector>
-#include <mutex>
 
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_file.hpp"
 

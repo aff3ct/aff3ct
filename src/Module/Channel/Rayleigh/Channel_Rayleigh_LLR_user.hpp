@@ -3,9 +3,10 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Gaussian_noise_generator.hpp"
-
+#include "Tools/Noise/Noise.hpp"
 #include "Module/Channel/Channel.hpp"
 
 namespace aff3ct

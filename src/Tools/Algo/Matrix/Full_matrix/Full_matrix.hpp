@@ -1,10 +1,9 @@
 #ifndef FULL_MATRIX_HPP_
 #define FULL_MATRIX_HPP_
 
-#include <vector>
-#include <string>
 #include <iostream>
-#include <algorithm>
+#include <cstddef>
+#include <vector>
 
 #include "Tools/Algo/Matrix/Matrix.hpp"
 

@@ -1,23 +1,16 @@
-#include <rang.hpp>
+#include <stdexcept>
 #include <cstdlib>
-#include <sstream>
-#include <iostream>
-#include <algorithm>
-#include <functional>
 #include <regex>
 #include <date.h>
-
-#include "Tools/Display/Terminal/Terminal.hpp"
-
 #ifdef AFF3CT_MPI
 #include <mpi.h>
 #endif
 
+#include "Tools/Display/Terminal/Terminal.hpp"
 #include "Tools/general_utils.h"
 #include "Tools/system_functions.h"
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Exception/exception.hpp"
-
 #include "Factory/Module/Source/Source.hpp"
 #include "Factory/Module/CRC/CRC.hpp"
 #include "Factory/Module/Encoder/Encoder.hpp"

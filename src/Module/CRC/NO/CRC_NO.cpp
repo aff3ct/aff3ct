@@ -1,3 +1,6 @@
+#include <algorithm>
+#include <string>
+
 #include "Module/CRC/NO/CRC_NO.hpp"
 
 using namespace aff3ct::module;

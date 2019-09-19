@@ -1,7 +1,4 @@
-#include <iostream>
-
 #include "Factory/Module/Codec/RA/Codec_RA.hpp"
-
 #include "Launcher/Code/RA/RA.hpp"
 
 using namespace aff3ct;

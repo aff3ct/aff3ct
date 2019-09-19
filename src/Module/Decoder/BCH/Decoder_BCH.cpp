@@ -1,10 +1,8 @@
-#include <chrono>
 #include <sstream>
+#include <string>
 
-#include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
-
 #include "Module/Decoder/BCH/Decoder_BCH.hpp"
 
 using namespace aff3ct;

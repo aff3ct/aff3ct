@@ -1,18 +1,20 @@
 #include <functional>
+#include <stdexcept>
+#include <algorithm>
 #include <sstream>
-#include <fstream>
+#include <numeric>
+#include <mipp.h>
 
 #include "Tools/Code/LDPC/AList/AList.hpp"
 #include "Tools/Code/LDPC/QC/QC.hpp"
 #include "Tools/general_utils.h"
 #include "Tools/Math/matrix.h"
-
 #include "Tools/Exception/exception.hpp"
-
+#include "Tools/Algo/Matrix/matrix_utils.h"
 #include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::tools;
-
 
 LDPC_matrix_handler::Matrix_format LDPC_matrix_handler
 ::get_matrix_format(const std::string& filename)

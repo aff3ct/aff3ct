@@ -1,14 +1,12 @@
 #ifndef DISTANCE_H__
 #define DISTANCE_H__
 
-#include <limits>
-#include <cmath>
+#include <cstddef>
 
 namespace aff3ct
 {
 namespace tools
 {
-
 /*
  * \brief compute the distance between the arrays 'in1' and 'in2' of length 'size'
  * \param Fdiffcnt is called each time to compare in1 and in2
@@ -37,7 +35,6 @@ inline size_t distance(const T *in1, const T *in2, const unsigned size);
  */
 template <typename T, class Fdiffcnt>
 inline size_t distance(const T *in, const unsigned size);
-
 }
 }
 

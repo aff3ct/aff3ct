@@ -2,11 +2,11 @@
 #define FACTORY_CHANNEL_HPP
 
 #include <string>
-#include <memory>
+#include <map>
 
-#include "Module/Channel/Channel.hpp"
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Tools/Math/Distribution/Distributions.hpp"
-
+#include "Module/Channel/Channel.hpp"
 #include "Factory/Factory.hpp"
 
 namespace aff3ct

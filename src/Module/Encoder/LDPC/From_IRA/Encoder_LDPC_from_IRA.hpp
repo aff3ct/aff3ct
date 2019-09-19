@@ -1,11 +1,8 @@
 #ifndef ENCODER_LDPC_FROM_IRA_HPP_
 #define ENCODER_LDPC_FROM_IRA_HPP_
 
-#include <vector>
-
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
-
-#include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
 
 namespace aff3ct
 {

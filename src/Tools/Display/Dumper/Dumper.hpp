@@ -1,11 +1,11 @@
 #ifndef DUMPER_HPP_
 #define DUMPER_HPP_
 
-#include <tuple>
+#include <typeindex>
+#include <fstream>
+#include <memory>
 #include <string>
 #include <vector>
-#include <fstream>
-#include <typeindex>
 
 namespace aff3ct
 {

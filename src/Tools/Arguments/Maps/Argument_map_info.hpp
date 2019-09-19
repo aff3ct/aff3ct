@@ -2,7 +2,6 @@
 #define ARGUMENT_MAP_INFO_HPP_
 
 #include <string>
-#include <vector>
 #include <map>
 
 #include "Tools/Arguments/Maps/Argument_info.hpp"

@@ -1,12 +1,12 @@
-#include <chrono>
+#include <string>
 #include <sstream>
+#include <algorithm>
 
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Perf/distance/distance.h"
 #include "Tools/Perf/distance/Bitwise_diff.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Bit_packer.hpp"
-
 #include "Module/Decoder/RS/Genius/Decoder_RS_genius.hpp"
 
 using namespace aff3ct;
@@ -14,7 +14,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_RS_genius<B,R>
-::Decoder_RS_genius(const int K, const int N, const tools::RS_polynomial_generator &GF, Encoder<B> &encoder, const int n_frames)
+::Decoder_RS_genius(const int K, const int N, const tools::RS_polynomial_generator &GF, Encoder<B> &encoder,
+                    const int n_frames)
 : Decoder        (K * GF.get_m(), N * GF.get_m(), n_frames, 1),
   Decoder_RS<B,R>(K, N, GF, n_frames                         ),
   encoder        (encoder                                    ),

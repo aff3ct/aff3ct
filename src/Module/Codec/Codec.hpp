@@ -1,13 +1,12 @@
 #ifndef CODEC_HPP_
 #define CODEC_HPP_
 
+#include <cstdint>
+#include <vector>
 #include <memory>
 
 #include "Tools/Interleaver/Interleaver_core.hpp"
-#include "Tools/Noise/noise_utils.h"
-
-#include "Factory/Module/Interleaver/Interleaver.hpp"
-
+#include "Tools/Noise/Noise.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
 #include "Module/Encoder/Encoder.hpp"
 #include "Module/Puncturer/Puncturer.hpp"

@@ -2,9 +2,10 @@
 #define FACTORY_INTERLEAVER_CORE_HPP
 
 #include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Tools/Interleaver/Interleaver_core.hpp"
-
 #include "Factory/Factory.hpp"
 
 namespace aff3ct
@@ -26,10 +27,10 @@ struct Interleaver_core : public Factory
 		std::string type       = "RANDOM";
 		std::string path       = "";
 		std::string read_order = "TOP_LEFT";
-		int         n_cols     = 4; // number of columns of the columns interleaver
+		int         n_cols     = 4;          // number of columns of the columns interleaver
 		int         n_frames   = 1;
 		int         seed       = 0;
-		bool        uniform    = false; // set at true to regenerate the interleaver at each new frame
+		bool        uniform    = false;      // set at true to regenerate the interleaver at each new frame
 
 		// ---------------------------------------------------------------------------------------------------- METHODS
 		explicit parameters(const std::string &p = Interleaver_core_prefix);

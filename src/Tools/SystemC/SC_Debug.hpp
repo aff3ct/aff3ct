@@ -4,13 +4,10 @@
 #define SC_DEBUG_HPP_
 
 #include <string>
-#include <typeinfo>
 #include <systemc>
 #include <tlm>
 #include <tlm_utils/simple_target_socket.h>
 #include <tlm_utils/simple_initiator_socket.h>
-
-#include "Tools/Display/Frame_trace/Frame_trace.hpp"
 
 namespace aff3ct
 {
@@ -31,36 +28,15 @@ private:
 
 public:
 	SC_Debug(const std::string &message = std::string("Debug:\n"), const int debug_limit = 0,
-	         sc_core::sc_module_name name = "SC_Debug")
-	: sc_module(name), s_in("s_in"), s_out("s_out"), message(message), debug_limit(debug_limit)
-	{
-		s_in.register_b_transport(this, &SC_Debug::b_transport);
-	}
+	         sc_core::sc_module_name name = "SC_Debug");
 
 private:
-	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
-	{
-		T* buffer = (T*)trans.get_data_ptr();
-		int length = trans.get_data_length() / sizeof(T);
-
-		std::vector<T> data_in(length);
-		std::copy(buffer, buffer + length, data_in.begin());
-
-		// display input data
-		Frame_trace<T> ft(debug_limit);
-		std::cout << message;
-		if (typeid(T) == typeid(float) || typeid(T) == typeid(double))
-			ft.display_real_vector(data_in);
-		else
-			ft.display_bit_vector(data_in);
-		std::cout << std::endl;
-
-		sc_core::sc_time zero_time(sc_core::SC_ZERO_TIME);
-		s_out->b_transport(trans, zero_time);
-	}
+	void b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t);
 };
 }
 }
+
+#include "Tools/SystemC/SC_Debug.hxx"
 
 #endif /* SC_DEBUG_HPP_ */
 

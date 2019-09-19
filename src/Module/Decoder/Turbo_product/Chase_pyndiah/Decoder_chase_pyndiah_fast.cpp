@@ -1,11 +1,7 @@
-#include <iostream>
-#include <sstream>
-#include <algorithm>
 #include <cmath>
-
-#include "Tools/Exception/exception.hpp"
-#include "Tools/Perf/common/hard_decide.h"
-#include "Tools/Perf/compute_parity.h"
+#include <string>
+#include <limits>
+#include <algorithm>
 
 #include "Module/Decoder/Turbo_product/Chase_pyndiah/Decoder_chase_pyndiah_fast.hpp"
 
@@ -15,13 +11,13 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_chase_pyndiah_fast<B,R>
 ::Decoder_chase_pyndiah_fast(const int K, const int N, // N includes the parity bit if any
-                        const int n_frames,
-                        Decoder_BCH<B,R> &dec_,
-                        Encoder    <B  > &enc_,
-                        const int n_least_reliable_positions_,
-                        const int n_test_vectors_,
-                        const int n_competitors_,
-                        const std::vector<float>& cp_coef)
+                             const int n_frames,
+                             Decoder_BCH<B,R> &dec_,
+                             Encoder    <B  > &enc_,
+                             const int n_least_reliable_positions_,
+                             const int n_test_vectors_,
+                             const int n_competitors_,
+                             const std::vector<float>& cp_coef)
 : Decoder(K, N, n_frames),
   Decoder_chase_pyndiah<B,R>(K, N, n_frames, dec_, enc_, n_least_reliable_positions_, n_test_vectors_, n_competitors_, cp_coef)
 {
@@ -34,7 +30,6 @@ void Decoder_chase_pyndiah_fast<B,R>
 ::compute_metrics(const R* Y_N)
 {
 	const auto N_loop_size = (this->N / mipp::nElReg<B>()) * mipp::nElReg<B>();
-
 
 	std::fill(this->metrics.begin(), this->metrics.end(), (R)0);
 
@@ -78,8 +73,8 @@ void Decoder_chase_pyndiah_fast<B,R>
 	using I = typename Decoder_chase_pyndiah<B,R>::info; // trick to avoid g++4.x compilation error
 
 	std::sort(this->competitors.begin(), this->competitors.end(),
-	         [](const I& a,
-	            const I& b) { return a.metric < b.metric; });
+	          [](const I& a,
+	             const I& b) { return a.metric < b.metric; });
 }
 
 template <typename B, typename R>

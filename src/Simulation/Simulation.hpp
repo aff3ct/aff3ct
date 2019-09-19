@@ -8,11 +8,15 @@
 #ifndef SIMULATION_HPP_
 #define SIMULATION_HPP_
 
+#include <type_traits>
+#include <vector>
 #include <memory>
+#include <string>
+#include <map>
 
-#include "Module/Module.hpp"
 #include "Tools/Display/Terminal/Terminal.hpp"
 #include "Factory/Simulation/Simulation.hpp"
+#include "Module/Module.hpp"
 
 namespace aff3ct
 {
@@ -61,12 +65,12 @@ protected:
 	// cast module T in module::Module
 	template <typename T>
 	typename std::enable_if<std::is_base_of<module::Module, T>::value, void>::type
-		set_module(const std::string& module_name, const int tid, const std::shared_ptr<T>& mod);
+	set_module(const std::string& module_name, const int tid, const std::shared_ptr<T>& mod);
 
 	// cast module T in module::Module
 	template <typename T>
 	typename std::enable_if<std::is_base_of<module::Module, T>::value, void>::type
-		set_module(const std::string& module_name, const int tid, const std::unique_ptr<T>& mod);
+	set_module(const std::string& module_name, const int tid, const std::unique_ptr<T>& mod);
 };
 }
 }

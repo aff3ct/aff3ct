@@ -1,11 +1,4 @@
-#if (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__))
-#include <unistd.h>
-#include <cstdlib>
-#include <iostream>
-#endif
-
 #include "Tools/system_functions.h"
-
 #include "Tools/Exception/exception.hpp"
 
 using namespace aff3ct::tools;

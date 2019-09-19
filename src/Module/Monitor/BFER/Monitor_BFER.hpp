@@ -1,8 +1,11 @@
 #ifndef MONITOR_BFER_HPP_
 #define MONITOR_BFER_HPP_
 
-#include "Tools/Algo/Histogram.hpp"
+#include <vector>
+#include <memory>
+#include <functional>
 
+#include "Tools/Algo/Histogram.hpp"
 #include "Module/Monitor/Monitor.hpp"
 
 namespace aff3ct

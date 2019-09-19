@@ -1,6 +1,8 @@
 #ifndef LAUNCHER_POLAR_MK_HPP_
 #define LAUNCHER_POLAR_MK_HPP_
 
+#include <iostream>
+
 #include "Factory/Module/Codec/Polar_MK/Codec_polar_MK.hpp"
 
 namespace aff3ct

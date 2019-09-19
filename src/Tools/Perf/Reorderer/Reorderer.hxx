@@ -1,10 +1,8 @@
-#include <cmath>
 #include <sstream>
 #include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
-
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 
 #ifdef _MSC_VER
@@ -73,7 +71,7 @@ void Reorderer<T>
 template <typename T, int N_FRAMES, int J, int K>
 struct Reorderer_static_core
 {
-	static inline void compute(mipp::reg regs_inter[N_FRAMES])
+	static void compute(mipp::reg regs_inter[N_FRAMES])
 	{
 		constexpr auto J_2 = J/2;
 		for (auto k = 0; k < K; k++)
@@ -101,7 +99,7 @@ struct Reorderer_static_core
 template <typename T, int N_FRAMES, int K>
 struct Reorderer_static_core <T,N_FRAMES,2,K>
 {
-	static inline void compute(mipp::reg regs_inter[N_FRAMES])
+	static void compute(mipp::reg regs_inter[N_FRAMES])
 	{
 		constexpr auto J = 2;
 		constexpr auto J_2 = J/2;
@@ -118,7 +116,7 @@ struct Reorderer_static_core <T,N_FRAMES,2,K>
 template <typename T, int N_FRAMES, int K>
 struct Reorderer_static_core <T,N_FRAMES,1,K>
 {
-	static inline void compute(mipp::reg regs_inter[N_FRAMES])
+	static void compute(mipp::reg regs_inter[N_FRAMES])
 	{
 	}
 };
@@ -128,7 +126,7 @@ struct Reorderer_static_core <T,N_FRAMES,1,K>
 template <typename T, int N_FRAMES, int J>
 struct Reorderer_static_core <T,N_FRAMES,J,16384>
 {
-	static inline void compute(mipp::reg regs_inter[N_FRAMES])
+	static void compute(mipp::reg regs_inter[N_FRAMES])
 	{
 	}
 };
@@ -279,7 +277,7 @@ void Reorderer<T>
 template <typename T, int N_FRAMES, int J, int K, int L>
 struct Reorderer_static_core_rev
 {
-	static inline int compute(mipp::reg regs_inter[N_FRAMES])
+	static int compute(mipp::reg regs_inter[N_FRAMES])
 	{
 		for (auto k = 0; k < K; k++)
 		{
@@ -307,7 +305,7 @@ struct Reorderer_static_core_rev
 template <typename T, int N_FRAMES, int J, int K>
 struct Reorderer_static_core_rev <T,N_FRAMES,J,K,0>
 {
-	static inline int compute(mipp::reg regs_inter[N_FRAMES])
+	static int compute(mipp::reg regs_inter[N_FRAMES])
 	{
 		constexpr auto NEXT_J = J;
 		constexpr auto NEXT_K = 1;
@@ -321,7 +319,7 @@ struct Reorderer_static_core_rev <T,N_FRAMES,J,K,0>
 // template <typename T, int N_FRAMES, int K, int L>
 // struct Reorderer_static_core_rev <T,N_FRAMES,2,K,L>
 // {
-// 	static inline int compute(mipp::reg regs_inter[N_FRAMES])
+// 	static int compute(mipp::reg regs_inter[N_FRAMES])
 // 	{
 // 		mipp::reg regs_inter_tmp[N_FRAMES];
 
@@ -346,7 +344,7 @@ struct Reorderer_static_core_rev <T,N_FRAMES,J,K,0>
 // template <typename T, int N_FRAMES, int K>
 // struct Reorderer_static_core_rev <T,N_FRAMES,2,K,0>
 // {
-// 	static inline int compute(mipp::reg regs_inter[N_FRAMES])
+// 	static int compute(mipp::reg regs_inter[N_FRAMES])
 // 	{
 // 		constexpr auto NEXT_J = 2;
 // 		constexpr auto NEXT_K = 1;
@@ -360,7 +358,7 @@ struct Reorderer_static_core_rev <T,N_FRAMES,J,K,0>
 template <typename T, int N_FRAMES, int K, int L>
 struct Reorderer_static_core_rev <T,N_FRAMES,1,K,L>
 {
-	static inline int compute(mipp::reg regs_inter[N_FRAMES])
+	static int compute(mipp::reg regs_inter[N_FRAMES])
 	{
 		return K >> 1;
 	}
@@ -369,7 +367,7 @@ struct Reorderer_static_core_rev <T,N_FRAMES,1,K,L>
 template <typename T, int N_FRAMES, int K>
 struct Reorderer_static_core_rev <T,N_FRAMES,1,K,0>
 {
-	static inline int compute(mipp::reg regs_inter[N_FRAMES])
+	static int compute(mipp::reg regs_inter[N_FRAMES])
 	{
 		return K >> 1;
 	}

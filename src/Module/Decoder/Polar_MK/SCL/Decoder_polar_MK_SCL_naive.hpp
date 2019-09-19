@@ -1,13 +1,15 @@
 #ifndef DECODER_POLAR_MK_SCL_NAIVE
 #define DECODER_POLAR_MK_SCL_NAIVE
 
-#include <set>
+#include <functional>
+#include <cstdint>
 #include <vector>
+#include <set>
 
 #include "Tools/Algo/Tree/Generic/Generic_tree_metric.hpp"
+#include "Tools/Algo/Tree/Generic/Generic_node.hpp"
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"
 #include "Tools/Code/Polar/Polar_code.hpp"
-
 #include "Module/Decoder/Decoder_SIHO.hpp"
 
 namespace aff3ct

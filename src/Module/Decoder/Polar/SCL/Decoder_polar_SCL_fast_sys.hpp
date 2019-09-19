@@ -1,15 +1,16 @@
 #ifndef DECODER_POLAR_SCL_FAST_SYS
 #define DECODER_POLAR_SCL_FAST_SYS
 
+#include <memory>
 #include <vector>
 #include <mipp.h>
 
-#include "Tools/Code/Polar/Pattern_polar_parser.hpp"
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
 #include "Tools/Algo/Sort/LC_sorter.hpp"
-//#include "Tools/Algo/Sort/LC_sorter_simd.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"
+#include "Tools/Code/Polar/Pattern_polar_parser.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
 
 #include "Module/Decoder/Decoder_SIHO.hpp"
 

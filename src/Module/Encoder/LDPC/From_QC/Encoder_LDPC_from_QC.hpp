@@ -1,10 +1,8 @@
 #ifndef ENCODER_LDPC_FROM_QC_HPP_
 #define ENCODER_LDPC_FROM_QC_HPP_
 
-#include <vector>
-
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
-
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
 
 namespace aff3ct

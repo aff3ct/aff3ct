@@ -1,10 +1,10 @@
-#ifndef CODEC_HXX_
-#define CODEC_HXX_
-
 #include <sstream>
+#include <string>
+
+#include "Tools/Noise/noise_utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/common/hard_decide.h"
-
+#include "Factory/Module/Interleaver/Interleaver.hpp"
 #include "Module/Codec/Codec.hpp"
 
 namespace aff3ct
@@ -13,8 +13,8 @@ namespace module
 {
 
 template <typename B, typename Q>
-Codec<B,Q>::
-Codec(const int K, const int N_cw, const int N, const int tail_length, const int n_frames)
+Codec<B,Q>
+::Codec(const int K, const int N_cw, const int N, const int tail_length, const int n_frames)
 : Module(n_frames),
   K(K), N_cw(N_cw), N(N), tail_length(tail_length),
   n(nullptr)
@@ -107,8 +107,8 @@ Codec(const int K, const int N_cw, const int N, const int tail_length, const int
 }
 
 template <typename B, typename Q>
-std::unique_ptr<tools::Interleaver_core<>>& Codec<B,Q>::
-get_interleaver()
+std::unique_ptr<tools::Interleaver_core<>>& Codec<B,Q>
+::get_interleaver()
 {
 	if (this->interleaver_core == nullptr)
 	{
@@ -121,8 +121,8 @@ get_interleaver()
 }
 
 template <typename B, typename Q>
-std::unique_ptr<Encoder<B>>& Codec<B,Q>::
-get_encoder()
+std::unique_ptr<Encoder<B>>& Codec<B,Q>
+::get_encoder()
 {
 	if (this->encoder == nullptr)
 	{
@@ -135,8 +135,8 @@ get_encoder()
 }
 
 template <typename B, typename Q>
-std::unique_ptr<Puncturer<B,Q>>& Codec<B,Q>::
-get_puncturer()
+std::unique_ptr<Puncturer<B,Q>>& Codec<B,Q>
+::get_puncturer()
 {
 	if (this->puncturer == nullptr)
 	{
@@ -149,8 +149,8 @@ get_puncturer()
 }
 
 template <typename B, typename Q>
-const tools::Noise<float>& Codec<B,Q>::
-current_noise() const
+const tools::Noise<float>& Codec<B,Q>
+::current_noise() const
 {
 	return *this->n;
 }
@@ -171,8 +171,8 @@ void Codec<B,Q>
 
 template <typename B, typename Q>
 template <class A>
-void Codec<B,Q>::
-extract_sys_llr(const std::vector<Q,A> &Y_N, std::vector<Q,A> &Y_K, const int frame_id)
+void Codec<B,Q>
+::extract_sys_llr(const std::vector<Q,A> &Y_N, std::vector<Q,A> &Y_K, const int frame_id)
 {
 	if (this->N_cw * this->n_frames != (int)Y_N.size())
 	{
@@ -202,8 +202,8 @@ extract_sys_llr(const std::vector<Q,A> &Y_N, std::vector<Q,A> &Y_K, const int fr
 }
 
 template <typename B, typename Q>
-void Codec<B,Q>::
-extract_sys_llr(const Q *Y_N, Q *Y_K, const int frame_id)
+void Codec<B,Q>
+::extract_sys_llr(const Q *Y_N, Q *Y_K, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -216,8 +216,8 @@ extract_sys_llr(const Q *Y_N, Q *Y_K, const int frame_id)
 
 template <typename B, typename Q>
 template <class AQ, class AB>
-void Codec<B,Q>::
-extract_sys_bit(const std::vector<Q,AQ> &Y_N, std::vector<B,AB> &V_K, const int frame_id)
+void Codec<B,Q>
+::extract_sys_bit(const std::vector<Q,AQ> &Y_N, std::vector<B,AB> &V_K, const int frame_id)
 {
 	if (this->N_cw * this->n_frames != (int)Y_N.size())
 	{
@@ -247,8 +247,8 @@ extract_sys_bit(const std::vector<Q,AQ> &Y_N, std::vector<B,AB> &V_K, const int 
 }
 
 template <typename B, typename Q>
-void Codec<B,Q>::
-extract_sys_bit(const Q *Y_N, B *V_K, const int frame_id)
+void Codec<B,Q>
+::extract_sys_bit(const Q *Y_N, B *V_K, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -261,8 +261,8 @@ extract_sys_bit(const Q *Y_N, B *V_K, const int frame_id)
 
 template <typename B, typename Q>
 template <class A>
-void Codec<B,Q>::
-extract_sys_par(const std::vector<Q,A> &Y_N, std::vector<Q,A> &sys, std::vector<Q,A> &par, const int frame_id)
+void Codec<B,Q>
+::extract_sys_par(const std::vector<Q,A> &Y_N, std::vector<Q,A> &sys, std::vector<Q,A> &par, const int frame_id)
 {
 	const auto tb_2 = this->tail_length / 2;
 
@@ -303,8 +303,8 @@ extract_sys_par(const std::vector<Q,A> &Y_N, std::vector<Q,A> &sys, std::vector<
 }
 
 template <typename B, typename Q>
-void Codec<B,Q>::
-extract_sys_par(const Q *Y_N, Q *sys, Q *par, const int frame_id)
+void Codec<B,Q>
+::extract_sys_par(const Q *Y_N, Q *sys, Q *par, const int frame_id)
 {
 	const auto tb_2 = this->tail_length / 2;
 
@@ -320,8 +320,8 @@ extract_sys_par(const Q *Y_N, Q *sys, Q *par, const int frame_id)
 
 template <typename B, typename Q>
 template <class A>
-void Codec<B,Q>::
-add_sys_ext(const std::vector<Q,A> &ext, std::vector<Q,A> &Y_N, const int frame_id)
+void Codec<B,Q>
+::add_sys_ext(const std::vector<Q,A> &ext, std::vector<Q,A> &Y_N, const int frame_id)
 {
 	if (this->K * this->n_frames != (int)ext.size())
 	{
@@ -351,8 +351,8 @@ add_sys_ext(const std::vector<Q,A> &ext, std::vector<Q,A> &Y_N, const int frame_
 }
 
 template <typename B, typename Q>
-void Codec<B,Q>::
-add_sys_ext(const Q *ext, Q *Y_N, const int frame_id)
+void Codec<B,Q>
+::add_sys_ext(const Q *ext, Q *Y_N, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -364,61 +364,63 @@ add_sys_ext(const Q *ext, Q *Y_N, const int frame_id)
 }
 
 template <typename B, typename Q>
-void Codec<B,Q>::
-reset() {}
+void Codec<B,Q>
+::reset()
+{
+}
 
 template <typename B, typename Q>
-void Codec<B,Q>::
-_extract_sys_llr(const Q *Y_N, Q *Y_K, const int frame_id)
+void Codec<B,Q>
+::_extract_sys_llr(const Q *Y_N, Q *Y_K, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q>
-void Codec<B,Q>::
-_extract_sys_bit(const Q *Y_N, B *V_K, const int frame_id)
+void Codec<B,Q>
+::_extract_sys_bit(const Q *Y_N, B *V_K, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q>
-void Codec<B,Q>::
-_extract_sys_par(const Q *Y_N, Q *sys, Q *par, const int frame_id)
+void Codec<B,Q>
+::_extract_sys_par(const Q *Y_N, Q *sys, Q *par, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q>
-void Codec<B,Q>::
-_add_sys_ext(const Q *ext, Q *Y_N, const int frame_id)
+void Codec<B,Q>
+::_add_sys_ext(const Q *ext, Q *Y_N, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q>
-void Codec<B,Q>::
-set_interleaver(tools::Interleaver_core<>* itl)
+void Codec<B,Q>
+::set_interleaver(tools::Interleaver_core<>* itl)
 {
 	this->set_interleaver(std::unique_ptr<tools::Interleaver_core<>>(itl));
 }
 
 template <typename B, typename Q>
-void Codec<B,Q>::
-set_encoder(Encoder<B>* enc)
+void Codec<B,Q>
+::set_encoder(Encoder<B>* enc)
 {
 	this->set_encoder(std::unique_ptr<Encoder<B>>(enc));
 }
 
 template <typename B, typename Q>
-void Codec<B,Q>::
-set_puncturer(Puncturer<B,Q>* pct)
+void Codec<B,Q>
+::set_puncturer(Puncturer<B,Q>* pct)
 {
 	this->set_puncturer(std::unique_ptr<Puncturer<B,Q>>(pct));
 }
 
 template <typename B, typename Q>
-void Codec<B,Q>::
-set_interleaver(std::unique_ptr<tools::Interleaver_core<>>&& itl)
+void Codec<B,Q>
+::set_interleaver(std::unique_ptr<tools::Interleaver_core<>>&& itl)
 {
 	this->interleaver_core = std::move(itl);
 	this->interleaver_bit.reset(factory::Interleaver::build<B>(*this->interleaver_core));
@@ -426,34 +428,32 @@ set_interleaver(std::unique_ptr<tools::Interleaver_core<>>&& itl)
 }
 
 template <typename B, typename Q>
-void Codec<B,Q>::
-set_encoder(std::unique_ptr<Encoder<B>>&& enc)
+void Codec<B,Q>
+::set_encoder(std::unique_ptr<Encoder<B>>&& enc)
 {
 	this->encoder = std::move(enc);
 }
 
 template <typename B, typename Q>
-void Codec<B,Q>::
-set_puncturer(std::unique_ptr<Puncturer<B,Q>>&& pct)
+void Codec<B,Q>
+::set_puncturer(std::unique_ptr<Puncturer<B,Q>>&& pct)
 {
 	this->puncturer = std::move(pct);
 }
 
 template <typename B, typename Q>
-const Interleaver<B>& Codec<B,Q>::
-get_interleaver_bit()
+const Interleaver<B>& Codec<B,Q>
+::get_interleaver_bit()
 {
 	return *this->interleaver_bit;
 }
 
 template <typename B, typename Q>
-const Interleaver<Q>& Codec<B,Q>::
-get_interleaver_llr()
+const Interleaver<Q>& Codec<B,Q>
+::get_interleaver_llr()
 {
 	return *this->interleaver_llr;
 }
 
 }
 }
-
-#endif

@@ -1,10 +1,9 @@
-#include <vector>
+#include <string>
 #include <cmath>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/compute_parity.h"
-
 #include "Module/Encoder/Turbo_product/Encoder_turbo_product.hpp"
 
 using namespace aff3ct;

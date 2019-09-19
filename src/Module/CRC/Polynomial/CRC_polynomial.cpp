@@ -1,10 +1,10 @@
+#include <algorithm>
 #include <sstream>
-#include <iostream>
+#include <string>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Bit_packer.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
-
 #include "Module/CRC/Polynomial/CRC_polynomial.hpp"
 
 using namespace aff3ct;

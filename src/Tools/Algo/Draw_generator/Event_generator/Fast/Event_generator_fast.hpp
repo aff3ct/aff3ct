@@ -1,9 +1,9 @@
 #ifndef EVENT_GENERATOR_FAST_HPP
 #define EVENT_GENERATOR_FAST_HPP
 
+#include "Tools/types.h"
 #include "Tools/Algo/PRNG/PRNG_MT19937.hpp"
 #include "Tools/Algo/PRNG/PRNG_MT19937_simd.hpp"
-
 #include "Tools/Algo/Draw_generator/Event_generator/Event_generator.hpp"
 
 namespace aff3ct

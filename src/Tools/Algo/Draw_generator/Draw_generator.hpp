@@ -1,8 +1,6 @@
 #ifndef DRAW_GENERATOR_HPP_
 #define DRAW_GENERATOR_HPP_
 
-#include "Tools/Exception/exception.hpp"
-
 namespace aff3ct
 {
 namespace tools

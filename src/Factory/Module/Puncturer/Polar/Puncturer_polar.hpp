@@ -1,10 +1,12 @@
 #ifndef FACTORY_PUNCTURER_POLAR_HPP
 #define FACTORY_PUNCTURER_POLAR_HPP
 
+#include <string>
+#include <map>
+
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
-
 #include "Module/Puncturer/Polar/Puncturer_polar_shortlast.hpp"
-
 #include "Factory/Module/Puncturer/Puncturer.hpp"
 
 namespace aff3ct
@@ -38,7 +40,7 @@ struct Puncturer_polar : public Puncturer
 
 	template <typename B = int, typename Q = float>
 	static module::Puncturer_polar_shortlast<B,Q>* build(const parameters                  &params,
-	                                                   const tools::Frozenbits_generator &fb_generator);
+	                                                     const tools::Frozenbits_generator &fb_generator);
 };
 }
 }

@@ -1,9 +1,6 @@
 #ifndef CHANNELS_NO_HPP_
 #define CHANNELS_NO_HPP_
 
-#include <vector>
-#include <mipp.h>
-
 #include "Module/Channel/Channel.hpp"
 
 namespace aff3ct

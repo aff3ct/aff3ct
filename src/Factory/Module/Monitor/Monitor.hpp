@@ -2,9 +2,9 @@
 #define FACTORY_MONITOR_HPP
 
 #include <string>
+#include <map>
 
-#include "Module/Monitor/Monitor.hpp"
-
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Factory/Factory.hpp"
 
 namespace aff3ct

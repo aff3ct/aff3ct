@@ -1,12 +1,8 @@
-#include <cmath>
-#include <chrono>
-#include <sstream>
 #include <algorithm>
+#include <sstream>
 
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Math/utils.h"
-
 #include "Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive.hpp"
 
 using namespace aff3ct;

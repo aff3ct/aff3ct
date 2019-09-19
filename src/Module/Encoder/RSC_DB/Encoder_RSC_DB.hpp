@@ -1,6 +1,7 @@
 #ifndef ENCODER_RSC_DB_HPP_
 #define ENCODER_RSC_DB_HPP_
 
+#include <string>
 #include <vector>
 
 #include "Module/Encoder/Encoder.hpp"

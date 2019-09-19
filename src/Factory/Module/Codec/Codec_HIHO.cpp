@@ -1,6 +1,5 @@
-#include "BCH/Codec_BCH.hpp"
-#include "RS/Codec_RS.hpp"
-
+#include "Factory/Module/Codec/BCH/Codec_BCH.hpp"
+#include "Factory/Module/Codec/RS/Codec_RS.hpp"
 #include "Factory/Module/Codec/Codec_HIHO.hpp"
 
 using namespace aff3ct;

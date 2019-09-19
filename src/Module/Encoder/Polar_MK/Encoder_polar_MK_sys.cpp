@@ -1,13 +1,7 @@
-#include <vector>
-#include <cmath>
-#include <map>
 #include <sstream>
-#include <fstream>
+#include <string>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Math/utils.h"
-#include "Tools/general_utils.h"
-
 #include "Module/Encoder/Polar_MK/Encoder_polar_MK_sys.hpp"
 
 using namespace aff3ct;

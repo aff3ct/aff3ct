@@ -1,10 +1,7 @@
-#ifdef _MSC_VER
-#include <iterator>
-#endif
+#include <string>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Encoder/RSC/Encoder_RSC_sys.hpp"
 
 using namespace aff3ct;

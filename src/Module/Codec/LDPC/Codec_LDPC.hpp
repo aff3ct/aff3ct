@@ -1,16 +1,15 @@
 #ifndef CODEC_LDPC_HPP_
 #define CODEC_LDPC_HPP_
 
-#include <cstdint>
+#include <memory>
+#include <vector>
 
 #include "Factory/Module/Encoder/LDPC/Encoder_LDPC.hpp"
 #include "Factory/Module/Puncturer/LDPC/Puncturer_LDPC.hpp"
 #include "Factory/Module/Decoder/LDPC/Decoder_LDPC.hpp"
-
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Code/LDPC/Standard/DVBS2/DVBS2_constants.hpp"
 #include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
-
 #include "Module/Codec/Codec_SISO_SIHO.hpp"
 
 namespace aff3ct

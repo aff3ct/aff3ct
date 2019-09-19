@@ -1,13 +1,10 @@
-#include <iostream>
-#include <vector>
-#include <numeric>
-#include <functional>
 #include <sstream>
 #include <fstream>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Algo/Matrix/Matrix.hpp"
 #include "Tools/Code/LDPC/AList/AList.hpp"
-
+#include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
 #include "Module/Encoder/LDPC/From_H/Encoder_LDPC_from_H.hpp"
 
 using namespace aff3ct;

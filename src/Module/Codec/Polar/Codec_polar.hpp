@@ -1,16 +1,18 @@
 #ifndef CODEC_POLAR_HPP_
 #define CODEC_POLAR_HPP_
 
+#include <vector>
+#include <memory>
+
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"
-
+#include "Tools/Noise/Noise.hpp"
+#include "Module/CRC/CRC.hpp"
 #include "Module/Puncturer/Polar/Puncturer_polar_shortlast.hpp"
-
 #include "Factory/Module/Encoder/Polar/Encoder_polar.hpp"
 #include "Factory/Module/Decoder/Polar/Decoder_polar.hpp"
 #include "Factory/Module/Puncturer/Polar/Puncturer_polar.hpp"
 #include "Factory/Tools/Code/Polar/Frozenbits_generator.hpp"
-
 #include "Module/Codec/Codec_SISO_SIHO.hpp"
 
 namespace aff3ct

@@ -1,10 +1,9 @@
-#include <vector>
 #include <cmath>
 #include <sstream>
 #include <iomanip>
+#include <ios>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Encoder/RSC/Encoder_RSC_generic_json_sys.hpp"
 
 using namespace aff3ct;

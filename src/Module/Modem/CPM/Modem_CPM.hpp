@@ -1,16 +1,14 @@
 #ifndef MODEM_CPM_HPP_
 #define MODEM_CPM_HPP_
 
-#include <cmath>
-#include <fstream>
 #include <string>
 #include <vector>
 
 #include "Tools/Math/max.h"
+#include "Tools/Noise/Noise.hpp"
 #include "Tools/Code/CPM/CPM_parameters.hpp"
 #include "Tools/Code/CPM/CPE/Encoder_CPE_Rimoldi.hpp"
 #include "Tools/Code/CPM/BCJR/CPM_BCJR.hpp"
-
 #include "Module/Modem/Modem.hpp"
 
 namespace aff3ct

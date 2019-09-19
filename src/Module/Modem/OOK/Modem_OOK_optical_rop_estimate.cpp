@@ -1,12 +1,12 @@
 #include <type_traits>
-#include <sstream>
-#include <cmath>
 #include <algorithm>
 #include <numeric>
+#include <sstream>
+#include <cmath>
 
+#include "Tools/Noise/Received_optical_power.hpp"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
-
 #include "Module/Modem/OOK/Modem_OOK_optical_rop_estimate.hpp"
 
 using namespace aff3ct;

@@ -1,7 +1,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Code/CPM/CPE/Encoder_CPE.hpp"
 
 using namespace aff3ct;

@@ -1,11 +1,10 @@
-#include <chrono>
+#include <string>
 #include <sstream>
 
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 #include "Tools/Algo/Bit_packer.hpp"
-
 #include "Module/Decoder/RS/Decoder_RS.hpp"
 
 using namespace aff3ct;

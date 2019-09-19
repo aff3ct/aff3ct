@@ -2,10 +2,8 @@
 #define DECODER_RSC_BCJR_INTER_INTRA_FAST_X2_SSE_HPP_
 
 #include <vector>
-#include <mipp.h>
 
 #include "Tools/Math/max.h"
-
 #include "Module/Decoder/RSC/BCJR/Inter_intra/Decoder_RSC_BCJR_inter_intra.hpp"
 
 namespace aff3ct

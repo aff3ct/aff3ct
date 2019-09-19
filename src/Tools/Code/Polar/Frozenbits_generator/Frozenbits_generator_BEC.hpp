@@ -1,7 +1,7 @@
 #ifndef FROZENBITS_GENERATOR_BEC_HPP_
 #define FROZENBITS_GENERATOR_BEC_HPP_
 
-#include <limits>
+#include <string>
 #include <vector>
 
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"

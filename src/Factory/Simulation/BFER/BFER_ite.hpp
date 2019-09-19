@@ -1,11 +1,14 @@
 #ifndef FACTORY_SIMULATION_BFER_ITE_HPP_
 #define FACTORY_SIMULATION_BFER_ITE_HPP_
 
+#include <vector>
 #include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
+#include "Tools/auto_cloned_unique_ptr.hpp"
 #include "Factory/Module/Interleaver/Interleaver.hpp"
 #include "Factory/Module/Codec/Codec_SISO_SIHO.hpp"
-
 #include "Factory/Simulation/BFER/BFER.hpp"
 
 namespace aff3ct

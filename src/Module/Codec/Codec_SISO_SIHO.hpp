@@ -1,8 +1,9 @@
 #ifndef CODEC_SISO_SIHO_HPP_
 #define CODEC_SISO_SIHO_HPP_
 
-#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
+#include <memory>
 
+#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 #include "Module/Codec/Codec_SISO.hpp"
 #include "Module/Codec/Codec_SIHO.hpp"
 

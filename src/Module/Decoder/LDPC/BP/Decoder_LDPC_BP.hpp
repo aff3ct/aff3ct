@@ -2,7 +2,6 @@
 #define DECODER_LDPC_BP_HPP_
 
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
-#include "Tools/Code/LDPC/Syndrome/LDPC_syndrome.hpp"
 
 namespace aff3ct
 {

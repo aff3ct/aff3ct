@@ -1,9 +1,8 @@
-#include <vector>
-#include <cmath>
+#include <string>
+#include <algorithm>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Encoder/Repetition/Encoder_repetition_sys.hpp"
 
 using namespace aff3ct;

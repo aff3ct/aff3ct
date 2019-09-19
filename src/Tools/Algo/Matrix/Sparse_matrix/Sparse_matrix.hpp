@@ -1,10 +1,10 @@
 #ifndef SPARSE_MATRIX_HPP_
 #define SPARSE_MATRIX_HPP_
 
-#include <vector>
-#include <string>
 #include <iostream>
-#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <vector>
 
 #include "Tools/Algo/Matrix/Matrix.hpp"
 
@@ -21,30 +21,15 @@ public:
 
 	virtual ~Sparse_matrix() = default;
 
-	inline const std::vector<Idx_t>& get_cols_from_row(const size_t row_index) const
-	{
-		return this->row_to_cols[row_index];
-	}
+	inline const std::vector<Idx_t>& get_cols_from_row(const size_t row_index) const;
 
-	inline const std::vector<Idx_t>& get_rows_from_col(const size_t col_index) const
-	{
-		return this->col_to_rows[col_index];
-	}
+	inline const std::vector<Idx_t>& get_rows_from_col(const size_t col_index) const;
 
-	inline const std::vector<Idx_t>& operator[](const size_t col_index) const
-	{
-		return this->get_rows_from_col(col_index);
-	}
+	inline const std::vector<Idx_t>& operator[](const size_t col_index) const;
 
-	inline const std::vector<std::vector<Idx_t>>& get_row_to_cols() const
-	{
-		return this->row_to_cols;
-	}
+	inline const std::vector<std::vector<Idx_t>>& get_row_to_cols() const;
 
-	inline const std::vector<std::vector<Idx_t>>& get_col_to_rows() const
-	{
-		return this->col_to_rows;
-	}
+	inline const std::vector<std::vector<Idx_t>>& get_col_to_rows() const;
 
 	/*
 	 * return true if there is a connection there
@@ -115,7 +100,6 @@ private:
 	std::vector<std::vector<Idx_t>> row_to_cols;
 	std::vector<std::vector<Idx_t>> col_to_rows;
 
-
 	/*
 	 * Compute the rows and cols degrees values when the matrix values have been modified
 	 * without the use of 'add_connection' and 'rm_connection' interface, so after any modification
@@ -125,4 +109,7 @@ private:
 };
 }
 }
+
+#include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hxx"
+
 #endif /* SPARSE_MATRIX_HPP_ */

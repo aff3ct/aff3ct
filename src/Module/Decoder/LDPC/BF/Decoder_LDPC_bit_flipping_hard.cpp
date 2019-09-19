@@ -1,12 +1,10 @@
-#include <chrono>
+#include <algorithm>
 #include <numeric>
-#include <limits>
 #include <sstream>
+#include <string>
 
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Math/utils.h"
-
 #include "Module/Decoder/LDPC/BF/Decoder_LDPC_bit_flipping_hard.hpp"
 
 using namespace aff3ct;

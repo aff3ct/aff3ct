@@ -1,8 +1,9 @@
 #ifndef CRC_POLYNOMIAL_INTER_HPP_
 #define CRC_POLYNOMIAL_INTER_HPP_
 
-#include <map>
+#include <string>
 
+#include "Module/CRC/CRC.hpp"
 #include "Module/CRC/Polynomial/CRC_polynomial.hpp"
 
 namespace aff3ct

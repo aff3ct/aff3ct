@@ -3,9 +3,7 @@
 #ifndef TRANSPOSE_SSE_H
 #define	TRANSPOSE_SSE_H
 
-#include <xmmintrin.h>
 #include <smmintrin.h>
-#include <immintrin.h>
 
 namespace aff3ct
 {

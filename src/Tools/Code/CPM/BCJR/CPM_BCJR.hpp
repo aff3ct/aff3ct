@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "Tools/Math/max.h"
-
 #include "Tools/Code/CPM/CPM_parameters.hpp"
 
 namespace aff3ct

@@ -1,7 +1,8 @@
+#include <algorithm>
+
 #include "Factory/Module/Encoder/Turbo/Encoder_turbo.hpp"
 #include "Factory/Module/Decoder/Turbo/Decoder_turbo.hpp"
 #include "Factory/Module/Puncturer/Turbo/Puncturer_turbo.hpp"
-
 #include "Factory/Module/Codec/Turbo/Codec_turbo.hpp"
 
 using namespace aff3ct;

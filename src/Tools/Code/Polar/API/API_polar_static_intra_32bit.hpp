@@ -1,15 +1,15 @@
 #ifndef API_POLAR_STATIC_INTRA_32BIT_HPP_
 #define API_POLAR_STATIC_INTRA_32BIT_HPP_
 
-#include <algorithm>
+#include <cstdint>
+#include <memory>
+#include <vector>
+#include <mipp.h>
 
-#include "Tools/Math/utils.h"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
-
 #include "Tools/Code/Polar/API/functions_polar_inter_intra.h"
 #include "Tools/Code/Polar/API/functions_polar_intra_32bit.h"
 #include "Tools/Code/Polar/API/functions_polar_seq.h"
-
 #include "Tools/Code/Polar/API/API_polar.hpp"
 
 namespace aff3ct

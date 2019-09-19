@@ -1,10 +1,7 @@
 #ifndef ENCODER_LDPC_HPP_
 #define ENCODER_LDPC_HPP_
 
-#include <vector>
-
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
-
 #include "Module/Encoder/Encoder.hpp"
 
 namespace aff3ct

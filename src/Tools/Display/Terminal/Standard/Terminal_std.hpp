@@ -9,14 +9,11 @@
 #define TERMINAL_STD_HPP_
 
 #include <iostream>
-#include <sstream>
-#include <iomanip>
 #include <vector>
-#include <utility>
 #include <string>
 #include <memory>
+#include <rang.hpp>
 
-#include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Display/Reporter/Reporter.hpp"
 #include "Tools/Display/Terminal/Terminal.hpp"
 

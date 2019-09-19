@@ -1,15 +1,14 @@
-#include <chrono>
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
 #include <algorithm>
-#include <iostream>
-#include <fstream>
 #include <sstream>
 #include <limits>
 #include <cmath>
-#include <map>
+#include <tuple>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
-
 #include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_naive.hpp"
 
 namespace aff3ct

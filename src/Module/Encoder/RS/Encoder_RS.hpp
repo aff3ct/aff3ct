@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "Tools/Code/RS/RS_polynomial_generator.hpp"
-
 #include "Module/Encoder/Encoder.hpp"
 
 /* source : http://www.eccpage.com/  */

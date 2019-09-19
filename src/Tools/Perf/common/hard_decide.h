@@ -1,8 +1,6 @@
 #ifndef HARD_DECIDE_H_
 #define HARD_DECIDE_H_
 
-#include <mipp.h>
-
 namespace aff3ct
 {
 namespace tools
@@ -36,7 +34,6 @@ void hard_decide(const Q *in, B *out, const unsigned size);
  */
 template <typename B = int, typename Q = float>
 void hard_decide_unk(const Q *in, B *out, const unsigned size);
-
 }
 }
 

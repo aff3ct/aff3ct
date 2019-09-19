@@ -1,10 +1,10 @@
 #include <type_traits>
 #include <sstream>
 #include <cmath>
+#include <string>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
-
 #include "Module/Modem/OOK/Modem_OOK_optical.hpp"
 
 using namespace aff3ct;

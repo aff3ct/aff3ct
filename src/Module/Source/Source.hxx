@@ -1,17 +1,7 @@
-/*!
- * \file
- * \brief Generates a message.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
- */
-#ifndef SOURCE_HXX_
-#define SOURCE_HXX_
-
+#include <string>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Source/Source.hpp"
 
 namespace aff3ct
@@ -20,8 +10,8 @@ namespace module
 {
 
 template <typename B>
-Source<B>::
-Source(const int K, const int n_frames)
+Source<B>
+::Source(const int K, const int n_frames)
 : Module(n_frames), K(K)
 {
 	const std::string name = "Source";
@@ -46,16 +36,16 @@ Source(const int K, const int n_frames)
 }
 
 template <typename B>
-int Source<B>::
-get_K() const
+int Source<B>
+::get_K() const
 {
 	return K;
 }
 
 template <typename B>
 template <class A>
-void Source<B>::
-generate(std::vector<B,A>& U_K, const int frame_id)
+void Source<B>
+::generate(std::vector<B,A>& U_K, const int frame_id)
 {
 	if (this->K * this->n_frames != (int)U_K.size())
 	{
@@ -69,8 +59,8 @@ generate(std::vector<B,A>& U_K, const int frame_id)
 }
 
 template <typename B>
-void Source<B>::
-generate(B *U_K, const int frame_id)
+void Source<B>
+::generate(B *U_K, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -79,13 +69,11 @@ generate(B *U_K, const int frame_id)
 		this->_generate(U_K + f * this->K, f);
 }
 template <typename B>
-void Source<B>::
-_generate(B *U_K, const int frame_id)
+void Source<B>
+::_generate(B *U_K, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 }
 }
-
-#endif

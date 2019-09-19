@@ -1,13 +1,10 @@
 #ifndef CHANNEL_BSC_HPP_
 #define CHANNEL_BSC_HPP_
 
-#include <vector>
-#include <mipp.h>
-
-#include <random>
+#include <memory>
 
 #include "Tools/Algo/Draw_generator/Event_generator/Event_generator.hpp"
-
+#include "Tools/Noise/Event_probability.hpp"
 #include "Module/Channel/Channel.hpp"
 
 namespace aff3ct

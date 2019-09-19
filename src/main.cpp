@@ -1,14 +1,12 @@
-#include <cstdlib>
-#include <iostream>
 #include <exception>
+#include <iostream>
+#include <cstdlib>
+#include <vector>
 #include <string>
-#include <map>
 #include <mipp.h>
-
 #ifdef AFF3CT_MPI
 #include <mpi.h>
 #endif
-
 #ifdef AFF3CT_SYSTEMC_SIMU
 #include <systemc>
 #endif
@@ -17,8 +15,6 @@
 #include "Tools/version.h"
 #include "Tools/Arguments/Argument_handler.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
-#include "Tools/system_functions.h"
-
 #include "Launcher/Launcher.hpp"
 #include "Factory/Launcher/Launcher.hpp"
 
@@ -69,7 +65,7 @@ void print_version()
 	std::string compiler = "Unknown compiler";
 	std::string compiler_version = "";
 #endif
-	std::string affect_version = version() == "GIT-NOTFOUND" ? "" : version();
+	std::string affect_version = tools::version() == "GIT-NOTFOUND" ? "" : tools::version();
 
 #if defined(AFF3CT_MULTI_PREC)
 	std::string precision = "8/16/32/64-bit";
@@ -222,7 +218,7 @@ int sc_main(int argc, char **argv)
 #ifdef AFF3CT_MULTI_PREC
 		switch (params.sim_prec)
 		{
-			case 8 : launcher = factory::Launcher::build<B_8, R_8, Q_8 >(params, argc, (const char**)argv); break;
+			case  8: launcher = factory::Launcher::build<B_8, R_8, Q_8 >(params, argc, (const char**)argv); break;
 			case 16: launcher = factory::Launcher::build<B_16,R_16,Q_16>(params, argc, (const char**)argv); break;
 			case 32: launcher = factory::Launcher::build<B_32,R_32,Q_32>(params, argc, (const char**)argv); break;
 			case 64: launcher = factory::Launcher::build<B_64,R_64,Q_64>(params, argc, (const char**)argv); break;

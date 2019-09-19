@@ -1,19 +1,9 @@
-/*!
- * \file
- * \brief Encodes a vector of information bits (a message) and adds some redundancy (parity bits).
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
- */
-#ifndef ENCODER_HXX_
-#define ENCODER_HXX_
-
+#include <string>
 #include <sstream>
 #include <numeric>
 #include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Encoder/Encoder.hpp"
 
 namespace aff3ct
@@ -252,5 +242,3 @@ set_sys(const bool sys)
 
 }
 }
-
-#endif

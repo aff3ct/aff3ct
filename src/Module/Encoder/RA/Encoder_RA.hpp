@@ -1,6 +1,8 @@
 #ifndef ENCODER_RA_HPP_
 #define ENCODER_RA_HPP_
 
+#include <vector>
+
 #include "Module/Interleaver/Interleaver.hpp"
 #include "Module/Encoder/Encoder.hpp"
 

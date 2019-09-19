@@ -1,3 +1,7 @@
+#include <algorithm>
+#include <sstream>
+#include <string>
+
 #include "Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive_sys.hpp"
 
 using namespace aff3ct;

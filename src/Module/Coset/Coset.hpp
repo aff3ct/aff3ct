@@ -8,8 +8,9 @@
 #ifndef COSET_HPP_
 #define COSET_HPP_
 
+#include <cstdint>
 #include <vector>
-#include <string>
+#include <memory>
 
 #include "Module/Module.hpp"
 

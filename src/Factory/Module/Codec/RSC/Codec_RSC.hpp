@@ -2,10 +2,11 @@
 #define FACTORY_CODEC_RSC_HPP
 
 #include <string>
-#include <cmath>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
+#include "Module/CRC/CRC.hpp"
 #include "Module/Codec/RSC/Codec_RSC.hpp"
-
 #include "Factory/Module/Codec/Codec_SISO_SIHO.hpp"
 
 namespace aff3ct

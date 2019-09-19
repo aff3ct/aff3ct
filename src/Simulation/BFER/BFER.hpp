@@ -1,33 +1,24 @@
 #ifndef SIMULATION_BFER_HPP_
 #define SIMULATION_BFER_HPP_
 
-#include <map>
+#include <mutex>
 #include <chrono>
 #include <vector>
 #include <memory>
 
-#include "Tools/Display/Reporter/BFER/Reporter_BFER.hpp"
-#include "Tools/Display/Reporter/MI/Reporter_MI.hpp"
-#include "Tools/Display/Reporter/Noise/Reporter_noise.hpp"
-#include "Tools/Display/Reporter/Throughput/Reporter_throughput.hpp"
-
+#include "Factory/Simulation/BFER/BFER.hpp"
+#include "Tools/Display/Reporter/Reporter.hpp"
 #include "Tools/Display/Terminal/Terminal.hpp"
 #include "Tools/Display/Dumper/Dumper.hpp"
 #include "Tools/Display/Dumper/Dumper_reduction.hpp"
 #include "Tools/Math/Distribution/Distributions.hpp"
 #include "Tools/Noise/Noise.hpp"
-
-#include "Module/Module.hpp"
 #include "Module/Monitor/MI/Monitor_MI.hpp"
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
 #include "Module/Monitor/Monitor_reduction.hpp"
-
 #ifdef AFF3CT_MPI
 #include "Module/Monitor/Monitor_reduction_MPI.hpp"
 #endif
-
-#include "Factory/Simulation/BFER/BFER.hpp"
-
 #include "Simulation/Simulation.hpp"
 
 namespace aff3ct
@@ -63,21 +54,20 @@ protected:
 	using Monitor_MI_reduction_type   = module::Monitor_reduction_M<Monitor_MI_type  >;
 #endif
 
-	std::vector<std::unique_ptr<Monitor_MI_type>>   monitor_mi;
-	std::unique_ptr<Monitor_MI_reduction_type>      monitor_mi_red;
+	std::vector<std::unique_ptr<Monitor_MI_type          >> monitor_mi;
+	            std::unique_ptr<Monitor_MI_reduction_type>  monitor_mi_red;
 
-	std::vector<std::unique_ptr<Monitor_BFER_type>> monitor_er;
-	std::unique_ptr<Monitor_BFER_reduction_type>    monitor_er_red;
-
+	std::vector<std::unique_ptr<Monitor_BFER_type          >> monitor_er;
+	            std::unique_ptr<Monitor_BFER_reduction_type>  monitor_er_red;
 
 	// dump frames into files
-	std::vector<std::unique_ptr<tools::Dumper         >> dumper;
-	            std::unique_ptr<tools::Dumper_reduction> dumper_red;
+	std::vector<std::unique_ptr<tools::Dumper          >> dumper;
+	            std::unique_ptr<tools::Dumper_reduction>  dumper_red;
 
 
 	// terminal and reporters (for the output of the simu)
 	std::vector<std::unique_ptr<tools::Reporter>> reporters;
-	std::unique_ptr<tools::Terminal>              terminal;
+	            std::unique_ptr<tools::Terminal>  terminal;
 
 	// noise distribution
 	std::unique_ptr<tools::Distributions<R>> distributions;

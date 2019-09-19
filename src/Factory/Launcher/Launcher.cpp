@@ -1,5 +1,4 @@
-#include <vector>
-#include <cstdint>
+#include <chrono>
 #include <sstream>
 #include <typeinfo>
 #include <typeindex>
@@ -12,7 +11,6 @@
 #include "Tools/Documentation/documentation.h"
 #include "Tools/types.h"
 #include "Tools/version.h"
-
 #include "Launcher/Launcher.hpp"
 #include "Launcher/Code/BCH/BCH.hpp"
 #include "Launcher/Code/LDPC/LDPC.hpp"
@@ -30,7 +28,6 @@
 #include "Launcher/Simulation/BFER_ite.hpp"
 #include "Launcher/Simulation/BFER_std.hpp"
 #include "Launcher/Simulation/EXIT.hpp"
-
 #include "Factory/Module/Codec/BCH/Codec_BCH.hpp"
 #include "Factory/Module/Codec/LDPC/Codec_LDPC.hpp"
 #include "Factory/Module/Codec/Polar/Codec_polar.hpp"
@@ -41,7 +38,6 @@
 #include "Factory/Module/Codec/Turbo/Codec_turbo.hpp"
 #include "Factory/Module/Codec/Turbo_DB/Codec_turbo_DB.hpp"
 #include "Factory/Module/Codec/Uncoded/Codec_uncoded.hpp"
-
 #include "Factory/Launcher/Launcher.hpp"
 
 using namespace aff3ct;
@@ -235,8 +231,8 @@ void factory::Launcher::parameters
 	date << std::chrono::system_clock::now();
 	auto split_date = tools::split(date.str(), '.');
 	params_headers[p].push_back(std::make_pair("Date (UTC)", split_date[0]));
-	if (version() != "GIT-NOTFOUND")
-		params_headers[p].push_back(std::make_pair("Git version", version()));
+	if (tools::version() != "GIT-NOTFOUND")
+		params_headers[p].push_back(std::make_pair("Git version", tools::version()));
 
 	params_headers[p].push_back(std::make_pair("Code type (C)", this->cde_type));
 }

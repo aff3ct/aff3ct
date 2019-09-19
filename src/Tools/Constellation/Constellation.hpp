@@ -1,9 +1,11 @@
 #ifndef CONSTELLATION_HPP__
 #define CONSTELLATION_HPP__
 
+#include <cstdint>
+#include <cstddef>
+#include <complex>
 #include <string>
 #include <vector>
-#include <complex>
 
 namespace aff3ct
 {

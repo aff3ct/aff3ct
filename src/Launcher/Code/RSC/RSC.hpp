@@ -1,6 +1,8 @@
 #ifndef LAUNCHER_RSC_HPP_
 #define LAUNCHER_RSC_HPP_
 
+#include <iostream>
+
 #include "Factory/Module/Codec/RSC/Codec_RSC.hpp"
 
 namespace aff3ct

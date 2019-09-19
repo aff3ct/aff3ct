@@ -1,9 +1,12 @@
+#include <algorithm>
+#include <typeinfo>
 #include <iostream>
+#include <sstream>
 #include <iomanip>
 #include <ios>
-
 #include <rang.hpp>
 
+#include "Tools/Exception/exception.hpp"
 #include "Module/Module.hpp"
 #include "Module/Socket.hpp"
 #include "Module/Task.hpp"

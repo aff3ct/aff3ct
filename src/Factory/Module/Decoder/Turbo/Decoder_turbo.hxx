@@ -1,9 +1,10 @@
+#include <type_traits>
+#include <utility>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Module/Decoder/Turbo/Decoder_turbo_std.hpp"
 #include "Module/Decoder/Turbo/Decoder_turbo_fast.hpp"
-
 #include "Factory/Module/Decoder/Turbo/Decoder_turbo.hpp"
 
 namespace aff3ct

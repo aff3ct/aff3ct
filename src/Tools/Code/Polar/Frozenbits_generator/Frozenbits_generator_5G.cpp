@@ -1,15 +1,12 @@
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
-
+#include <cstdint>
+#include <vector>
+#include <string>
 #include <cmath>
-#include <limits>
-#include <fstream>
-#include <iostream>
-#include <algorithm>
 
 #include "Tools/Arguments/Types/File_system/File_system.hpp"
-
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_5G.hpp"
 
 using namespace aff3ct::tools;

@@ -1,10 +1,10 @@
 #ifndef MODEM_OOK_OPTICAL_ROP_ESTIMATE_HPP_
 #define MODEM_OOK_OPTICAL_ROP_ESTIMATE_HPP_
 
+#include <cstddef>
 #include <vector>
 
 #include "Tools/Math/Distribution/Distributions.hpp"
-
 #include "Module/Modem/OOK/Modem_OOK.hpp"
 
 namespace aff3ct

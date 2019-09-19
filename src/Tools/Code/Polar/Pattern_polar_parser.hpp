@@ -11,12 +11,10 @@
 
 #include <utility>
 #include <vector>
-#include <initializer_list>
 #include <memory>
 
 #include "Tools/Algo/Tree/Binary/Binary_tree.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
-#include "Tools/Code/Polar/Frozenbits_notifier.hpp"
 
 namespace aff3ct
 {
@@ -134,10 +132,7 @@ public:
 	 *
 	 * \return the type of the node.
 	 */
-	inline polar_node_t get_node_type(const int node_id) const
-	{
-		return (polar_node_t)pattern_types[node_id];
-	}
+	inline polar_node_t get_node_type(const int node_id) const;
 
 	/*!
 	 * \brief Check if a node type exists in the the tree.
@@ -147,35 +142,7 @@ public:
 	 *
 	 * \return true if the node type exists, false otherwise.
 	 */
-	inline bool exist_node_type(const polar_node_t node_type, const int rev_depth = -1) const
-	{
-		if (rev_depth <= 0)
-		{
-			if (node_type == polar_node_t::RATE_0) return true;
-			if (node_type == polar_node_t::RATE_1) return true;
-		}
-
-		for (auto i = 0; i < (int)patterns.size(); i++)
-			if (patterns[i]->type() == node_type)
-			{
-				if (rev_depth == -1)
-				{
-					return true;
-				}
-				else
-				{
-					auto min_lvl = patterns[i]->get_min_lvl();
-					auto max_lvl = patterns[i]->get_max_lvl();
-
-					if (rev_depth >= min_lvl && (rev_depth <= max_lvl || max_lvl == -1))
-						return true;
-					else
-						return false;
-				}
-			}
-
-		return false;
-	}
+	inline bool exist_node_type(const polar_node_t node_type, const int rev_depth = -1) const;
 
 private:
 	void recursive_allocate_nodes_patterns  (      Binary_node<Pattern_polar_i>* node_curr);
@@ -192,5 +159,7 @@ private:
 };
 }
 }
+
+#include "Tools/Code/Polar/Pattern_polar_parser.hxx"
 
 #endif /* PATTERN_POLAR_PARSER_HPP */

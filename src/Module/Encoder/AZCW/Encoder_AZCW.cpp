@@ -1,3 +1,7 @@
+#include <string>
+#include <algorithm>
+
+#include "Tools/Exception/exception.hpp"
 #include "Module/Encoder/AZCW/Encoder_AZCW.hpp"
 
 using namespace aff3ct::module;

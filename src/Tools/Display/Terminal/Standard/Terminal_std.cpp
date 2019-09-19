@@ -1,8 +1,11 @@
+#include <algorithm>
 #include <cassert>
+#include <iomanip>
+#include <cmath>
+#include <ios>
 
-#include "Tools/Exception/exception.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
-
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Display/Terminal/Standard/Terminal_std.hpp"
 
 using namespace aff3ct;

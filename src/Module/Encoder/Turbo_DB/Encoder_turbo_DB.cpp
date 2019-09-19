@@ -1,8 +1,9 @@
+#include <string>
 #include <vector>
-#include <cmath>
+#include <sstream>
+#include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Encoder/Turbo_DB/Encoder_turbo_DB.hpp"
 
 using namespace aff3ct;

@@ -1,13 +1,10 @@
 #ifndef MUTUAL_INFO_H__
 #define MUTUAL_INFO_H__
 
-#include <mipp.h>
-
 namespace aff3ct
 {
 namespace tools
 {
-
 /*
  * compute the mutal information between 'ref' and 'llr' of length 'size'
  * with the histogram method
@@ -23,7 +20,6 @@ R mutual_info_histo_seq(const B* ref, const R* llr, const unsigned size);
  */
 template <typename B, typename R>
 R mutual_info_histo(const B* ref, const R* llr, const unsigned size);
-
 }
 }
 #endif // MUTUAL_INFO_H__

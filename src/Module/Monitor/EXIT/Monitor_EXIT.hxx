@@ -1,3 +1,6 @@
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 #include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
 
 namespace aff3ct

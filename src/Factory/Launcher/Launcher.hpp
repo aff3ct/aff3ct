@@ -2,7 +2,9 @@
 #define FACTORY_SIMULATION_MAIN_H_
 
 #include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Factory/Factory.hpp"
 
 namespace aff3ct

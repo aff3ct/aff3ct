@@ -1,8 +1,7 @@
 #include <algorithm>
-#include <iostream>
 #include <utility>
 #include <sstream>
-#include <vector>
+#include <cmath>
 
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/general_utils.h"

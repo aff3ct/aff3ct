@@ -1,10 +1,10 @@
 #ifdef AFF3CT_SYSTEMC_SIMU
 
-#include "Factory/Module/Coset/Coset.hpp"
+#include <string>
 
+#include "Factory/Module/Coset/Coset.hpp"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Predicate_ite.hpp"
-
 #include "Simulation/BFER/Iterative/SystemC/SC_BFER_ite.hpp"
 
 using namespace aff3ct;

@@ -9,10 +9,6 @@
 #ifndef PREDICATE_ITE_HPP
 #define PREDICATE_ITE_HPP
 
-#include <sstream>
-
-#include "Tools/Exception/exception.hpp"
-
 #include "Tools/Algo/Predicate.hpp"
 
 namespace aff3ct
@@ -31,32 +27,17 @@ private:
 	      int cur_ite;
 
 public:
-	explicit Predicate_ite(const int n_ite)
-	: n_ite(n_ite), cur_ite(0)
-	{
-		if (n_ite <= 0)
-		{
-			std::stringstream message;
-			message << "'n_ite' has to be equal or greater than 0 ('n_ite' = " << n_ite << ").";
-			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-	}
+	explicit Predicate_ite(const int n_ite);
 
 	virtual ~Predicate_ite() = default;
 
-	bool operator()()
-	{
-		const bool predicate = cur_ite >= n_ite;
-		cur_ite++;
-		return predicate;
-	}
+	bool operator()();
 
-	void reset()
-	{
-		cur_ite = 0;
-	}
+	void reset();
 };
 }
 }
+
+#include "Tools/Algo/Predicate_ite.hxx"
 
 #endif /* PREDICATE_ITE_HPP */

@@ -1,10 +1,10 @@
-#include <chrono>
+#include <string>
 #include <sstream>
+#include <algorithm>
 
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Perf/distance/hamming_distance.h"
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Decoder/BCH/Genius/Decoder_BCH_genius.hpp"
 
 using namespace aff3ct;

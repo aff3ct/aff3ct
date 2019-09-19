@@ -1,8 +1,8 @@
 #include <algorithm>
 #include <iomanip>
+#include <ios>
 
 #include "Tools/Display/rang_format/rang_format.h"
-
 #include "Tools/Display/Statistics/Statistics.hpp"
 
 using namespace aff3ct;

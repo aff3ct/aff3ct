@@ -970,7 +970,7 @@
 #ifndef USER_PDF_NOISE_GENERATOR_HPP
 #include <Tools/Algo/Draw_generator/User_pdf_noise_generator/User_pdf_noise_generator.hpp>
 #endif
-#ifndef HISTOGRAM_H__
+#ifndef HISTOGRAM_HPP__
 #include <Tools/Algo/Histogram.hpp>
 #endif
 #ifndef FULL_MATRIX_HPP_
@@ -1518,9 +1518,6 @@
 #endif
 #ifndef INTERPOLATION_H_
 #include <Tools/Math/interpolation.h>
-#endif
-#ifndef MATH_CONSTANTS_H
-#include <Tools/Math/math_constants.h>
 #endif
 #ifndef MATRIX_H
 #include <Tools/Math/matrix.h>

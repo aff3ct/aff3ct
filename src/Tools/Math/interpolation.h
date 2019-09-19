@@ -2,7 +2,6 @@
 #define INTERPOLATION_H_
 
 #include <vector>
-#include <utility>
 
 namespace aff3ct
 {

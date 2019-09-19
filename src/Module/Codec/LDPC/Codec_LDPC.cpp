@@ -1,18 +1,12 @@
-#include <string>
-#include <fstream>
+#include <algorithm>
+#include <stdexcept>
 #include <sstream>
 #include <numeric>
-#include <algorithm>
+#include <string>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/general_utils.h"
-
+#include "Factory/Module/Encoder/Encoder.hpp"
 #include "Factory/Module/Puncturer/Puncturer.hpp"
-
-#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
-#include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
-#include "Module/Puncturer/LDPC/Puncturer_LDPC.hpp"
-
 #include "Module/Codec/LDPC/Codec_LDPC.hpp"
 
 using namespace aff3ct;
@@ -81,10 +75,9 @@ Codec_LDPC<B,Q>
 
 	if (dec_params.H_reorder != "NONE")
 	{	// reorder the H matrix following the check node degrees
-		H.sort_cols_per_density(dec_params.H_reorder == "ASC" ? tools::Matrix::Sort::ASCENDING : tools::Matrix::Sort::DESCENDING);
+		H.sort_cols_per_density(dec_params.H_reorder == "ASC" ? tools::Matrix::Sort::ASCENDING :
+		                                                        tools::Matrix::Sort::DESCENDING);
 	}
-
-
 
 	if (info_bits_pos.empty())
 	{
@@ -119,7 +112,6 @@ Codec_LDPC<B,Q>
 			this->set_puncturer(factory::Puncturer::build<B,Q>(*pct_params));
 		}
 	}
-
 
 	try
 	{

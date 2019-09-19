@@ -2,9 +2,10 @@
 #define FACTORY_SOURCE_HPP
 
 #include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Module/Source/Source.hpp"
-
 #include "Factory/Factory.hpp"
 
 namespace aff3ct

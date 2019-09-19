@@ -2,9 +2,10 @@
 #define FACTORY_MONITOR_MI_HPP
 
 #include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Module/Monitor/MI/Monitor_MI.hpp"
-
 #include "Factory/Module/Monitor/Monitor.hpp"
 
 namespace aff3ct
@@ -23,7 +24,7 @@ struct Monitor_MI : public Monitor
 		int         N = 0;
 
 		// optional parameters
-		std::string type = "STD";
+		std::string type     = "STD";
 		int         n_trials = 200;
 		int         n_frames = 1;
 

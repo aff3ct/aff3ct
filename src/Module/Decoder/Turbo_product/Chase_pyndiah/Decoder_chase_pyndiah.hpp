@@ -1,11 +1,11 @@
 #ifndef DECODER_CHASE_PYNDIAH_HPP_
 #define	DECODER_CHASE_PYNDIAH_HPP_
 
+#include <cstdint>
 #include <vector>
 
 #include "Module/Decoder/BCH/Decoder_BCH.hpp"
 #include "Module/Encoder/Encoder.hpp"
-
 #include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 
 namespace aff3ct

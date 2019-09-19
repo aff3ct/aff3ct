@@ -1,11 +1,12 @@
+#include <algorithm>
 #include <sstream>
+#include <utility>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/Distribution/Distributions.hpp"
 #include "Tools/general_utils.h"
 #include "Tools/Noise/noise_utils.h"
 #include "Tools/Documentation/documentation.h"
-
 #include "Factory/Tools/Noise/Noise.hpp"
 
 using namespace aff3ct;

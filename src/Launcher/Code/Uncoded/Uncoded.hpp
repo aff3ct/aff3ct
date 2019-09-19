@@ -1,6 +1,8 @@
 #ifndef LAUNCHER_UNCODED_HPP_
 #define LAUNCHER_UNCODED_HPP_
 
+#include <iostream>
+
 #include "Factory/Module/Codec/Uncoded/Codec_uncoded.hpp"
 
 namespace aff3ct

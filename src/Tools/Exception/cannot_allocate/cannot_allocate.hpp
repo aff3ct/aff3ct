@@ -1,6 +1,8 @@
 #ifndef CANNOT_ALLOCATE_HPP_
 #define CANNOT_ALLOCATE_HPP_
 
+#include <string>
+
 #include "Tools/Exception/exception.hpp"
 
 namespace aff3ct

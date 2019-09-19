@@ -6,9 +6,8 @@
 #include <string>
 
 #include "Tools/Arguments/Argument_handler.hpp"
-#include "Tools/system_functions.h"
-#include "Tools/Exception/exception.hpp"
-
+#include "Tools/Arguments/Maps/Argument_map_info.hpp"
+#include "Tools/Arguments/Maps/Argument_tag.hpp"
 #include "Factory/Factory.hpp"
 
 namespace aff3ct
@@ -24,16 +23,12 @@ private:
 	std::ostream& err_stream;
 	std::vector<std::string> warnings;
 	std::vector<std::string> errors;
-
 	tools::Argument_map_info args;
-
 	static const tools::Argument_tag help_tag;
 	bool help_asked;
 
 public:
-	Command_parser(int argc, char** argv,
-	               std::vector<Factory::parameters*> &params,
-	               bool add_help_tag = false,
+	Command_parser(int argc, char** argv, std::vector<Factory::parameters*> &params, bool add_help_tag = false,
 	               std::ostream& err_stream = std::cerr);
 
 	void print_help    ();

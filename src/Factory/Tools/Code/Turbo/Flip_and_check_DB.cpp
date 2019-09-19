@@ -1,5 +1,4 @@
 #include "Tools/Exception/exception.hpp"
-
 #include "Factory/Tools/Code/Turbo/Flip_and_check_DB.hpp"
 
 using namespace aff3ct;

@@ -1,12 +1,13 @@
+#include <utility>
+#include <sstream>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
 #include "Tools/types.h"
-
 #include "Module/CRC/NO/CRC_NO.hpp"
 #include "Module/CRC/Polynomial/CRC_polynomial.hpp"
 #include "Module/CRC/Polynomial/CRC_polynomial_fast.hpp"
 #include "Module/CRC/Polynomial/CRC_polynomial_inter.hpp"
-
 #include "Factory/Module/CRC/CRC.hpp"
 
 using namespace aff3ct;

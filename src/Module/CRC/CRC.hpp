@@ -8,7 +8,8 @@
 #ifndef CRC_HPP_
 #define CRC_HPP_
 
-#include <string>
+#include <cstdint>
+#include <memory>
 #include <vector>
 
 #include "Module/Module.hpp"

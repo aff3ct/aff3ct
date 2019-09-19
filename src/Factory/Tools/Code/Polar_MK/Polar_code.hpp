@@ -1,8 +1,12 @@
 #ifndef FACTORY_POLAR_CODE_HPP
 #define FACTORY_POLAR_CODE_HPP
 
-#include "Tools/Code/Polar/Polar_code.hpp"
+#include <vector>
+#include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
+#include "Tools/Code/Polar/Polar_code.hpp"
 #include "Factory/Factory.hpp"
 
 namespace aff3ct

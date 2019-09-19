@@ -1,22 +1,25 @@
-#include <iostream>
+#define NDEBUG_TPC
+
+#include <cmath>
+#include <string>
+#include <limits>
+#include <numeric>
 #include <sstream>
 #include <algorithm>
-#include <cmath>
+#ifndef NDEBUG_TPC
+#include <iostream>
+#endif
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Perf/compute_parity.h"
-
+#ifndef NDEBUG_TPC
+#include "Tools/Display/Frame_trace/Frame_trace.hpp"
+#endif
 #include "Module/Decoder/Turbo_product/Chase_pyndiah/Decoder_chase_pyndiah.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
-
-#define NDEBUG_TPC
-
-#ifndef NDEBUG_TPC
-#include "Tools/Display/Frame_trace/Frame_trace.hpp"
-#endif
 
 template <typename B, typename R>
 Decoder_chase_pyndiah<B,R>

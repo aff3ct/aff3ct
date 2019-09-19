@@ -1,9 +1,7 @@
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
 #include "Module/Puncturer/Turbo_DB/Puncturer_turbo_DB.hpp"
-
 #include "Factory/Module/Puncturer/Turbo_DB/Puncturer_turbo_DB.hpp"
 
 using namespace aff3ct;

@@ -1,3 +1,6 @@
+#include <string>
+#include <algorithm>
+
 #include "Module/Decoder/Polar/SCF/Decoder_polar_SCF_naive_sys.hpp"
 
 namespace aff3ct

@@ -1,7 +1,7 @@
 #ifndef CONSTELLATION_QAM_HPP__
 #define CONSTELLATION_QAM_HPP__
 
-#include <vector>
+#include <cstdint>
 
 #include "Tools/Constellation/Constellation.hpp"
 

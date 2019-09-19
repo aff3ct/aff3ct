@@ -1,10 +1,6 @@
-#include <cmath>
-
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
-
 #include "Module/Encoder/BCH/Encoder_BCH.hpp"
-
 #include "Factory/Module/Encoder/BCH/Encoder_BCH.hpp"
 
 using namespace aff3ct;

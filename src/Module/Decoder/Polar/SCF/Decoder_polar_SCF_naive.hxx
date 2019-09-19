@@ -1,3 +1,12 @@
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
+#include <cmath>
+#include <string>
+#include <sstream>
+#include <algorithm>
+
+#include "Tools/Exception/exception.hpp"
 #include "Module/Decoder/Polar/SCF/Decoder_polar_SCF_naive.hpp"
 
 namespace aff3ct

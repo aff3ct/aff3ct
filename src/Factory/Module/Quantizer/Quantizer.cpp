@@ -1,13 +1,11 @@
-#include <type_traits>
+#include <utility>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Module/Quantizer/Pow2/Quantizer_pow2.hpp"
 #include "Module/Quantizer/Pow2/Quantizer_pow2_fast.hpp"
 #include "Module/Quantizer/Custom/Quantizer_custom.hpp"
 #include "Module/Quantizer/NO/Quantizer_NO.hpp"
-
 #include "Factory/Module/Quantizer/Quantizer.hpp"
 
 using namespace aff3ct;

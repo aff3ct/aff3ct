@@ -2,9 +2,11 @@
 #define FACTORY_FLIP_AND_CHECK_HPP
 
 #include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/Flip_and_check/Flip_and_check.hpp"
-
+#include "Module/CRC/CRC.hpp"
 #include "Factory/Factory.hpp"
 
 namespace aff3ct

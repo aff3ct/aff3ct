@@ -1,17 +1,7 @@
-/*!
- * \file
- * \brief Adds/builds and checks a Cyclic Redundancy Check (CRC) for a set of information bits.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
- */
-#ifndef CRC_HXX_
-#define CRC_HXX_
-
+#include <string>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/CRC/CRC.hpp"
 
 namespace aff3ct
@@ -20,8 +10,8 @@ namespace module
 {
 
 template <typename B>
-CRC<B>::
-CRC(const int K, const int size, const int n_frames)
+CRC<B>
+::CRC(const int K, const int size, const int n_frames)
 : Module(n_frames), K(K), size(size)
 {
 	const std::string name = "CRC";
@@ -66,16 +56,16 @@ CRC(const int K, const int size, const int n_frames)
 }
 
 template <typename B>
-int CRC<B>::
-get_K() const
+int CRC<B>
+::get_K() const
 {
 	return this->K;
 }
 
 
 template <typename B>
-int CRC<B>::
-get_size()
+int CRC<B>
+::get_size()
 {
 	return size;
 }
@@ -83,8 +73,8 @@ get_size()
 
 template <typename B>
 template <class A>
-void CRC<B>::
-build(const std::vector<B,A>& U_K1, std::vector<B,A>& U_K2, const int frame_id)
+void CRC<B>
+::build(const std::vector<B,A>& U_K1, std::vector<B,A>& U_K2, const int frame_id)
 {
 	if (this->K * this->n_frames != (int)U_K1.size())
 	{
@@ -115,8 +105,8 @@ build(const std::vector<B,A>& U_K1, std::vector<B,A>& U_K2, const int frame_id)
 }
 
 template <typename B>
-void CRC<B>::
-build(const B *U_K1, B *U_K2, const int frame_id)
+void CRC<B>
+::build(const B *U_K1, B *U_K2, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -129,8 +119,8 @@ build(const B *U_K1, B *U_K2, const int frame_id)
 
 template <typename B>
 template <class A>
-void CRC<B>::
-extract(const std::vector<B,A>& V_K1, std::vector<B,A>& V_K2, const int frame_id)
+void CRC<B>
+::extract(const std::vector<B,A>& V_K1, std::vector<B,A>& V_K2, const int frame_id)
 {
 	if ((this->K + this->get_size()) * this->n_frames != (int)V_K1.size())
 	{
@@ -161,8 +151,8 @@ extract(const std::vector<B,A>& V_K1, std::vector<B,A>& V_K2, const int frame_id
 }
 
 template <typename B>
-void CRC<B>::
-extract(const B *V_K1, B *V_K2, const int frame_id)
+void CRC<B>
+::extract(const B *V_K1, B *V_K2, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -176,8 +166,8 @@ extract(const B *V_K1, B *V_K2, const int frame_id)
 
 template <typename B>
 template <class A>
-bool CRC<B>::
-check(const std::vector<B,A>& V_K, const int n_frames, const int frame_id)
+bool CRC<B>
+::check(const std::vector<B,A>& V_K, const int n_frames, const int frame_id)
 {
 	if (n_frames <= 0 && n_frames != -1)
 	{
@@ -208,8 +198,8 @@ check(const std::vector<B,A>& V_K, const int n_frames, const int frame_id)
 }
 
 template <typename B>
-bool CRC<B>::
-check(const B *V_K, const int n_frames, const int frame_id)
+bool CRC<B>
+::check(const B *V_K, const int n_frames, const int frame_id)
 {
 	const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
 
@@ -225,8 +215,8 @@ check(const B *V_K, const int n_frames, const int frame_id)
 
 template <typename B>
 template <class A>
-bool CRC<B>::
-check_packed(const std::vector<B,A>& V_K, const int n_frames, const int frame_id)
+bool CRC<B>
+::check_packed(const std::vector<B,A>& V_K, const int n_frames, const int frame_id)
 {
 	if (n_frames <= 0 && n_frames != -1)
 	{
@@ -257,8 +247,8 @@ check_packed(const std::vector<B,A>& V_K, const int n_frames, const int frame_id
 }
 
 template <typename B>
-bool CRC<B>::
-check_packed(const B *V_K, const int n_frames, const int frame_id)
+bool CRC<B>
+::check_packed(const B *V_K, const int n_frames, const int frame_id)
 {
 	const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
 
@@ -273,30 +263,30 @@ check_packed(const B *V_K, const int n_frames, const int frame_id)
 }
 
 template <typename B>
-void CRC<B>::
-_build(const B *U_K1, B *U_K2, const int frame_id)
+void CRC<B>
+::_build(const B *U_K1, B *U_K2, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B>
-void CRC<B>::
-_extract(const B *V_K1, B *V_K2, const int frame_id)
+void CRC<B>
+::_extract(const B *V_K1, B *V_K2, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B>
-bool CRC<B>::
-_check(const B *V_K, const int frame_id)
+bool CRC<B>
+::_check(const B *V_K, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	return false;
 }
 
 template <typename B>
-bool CRC<B>::
-_check_packed(const B *V_K, const int frame_id)
+bool CRC<B>
+::_check_packed(const B *V_K, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	return false;
@@ -304,5 +294,3 @@ _check_packed(const B *V_K, const int frame_id)
 
 }
 }
-
-#endif

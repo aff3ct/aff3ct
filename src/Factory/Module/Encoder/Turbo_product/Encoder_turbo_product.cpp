@@ -1,8 +1,8 @@
+#include <utility>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Module/Encoder/Turbo_product/Encoder_turbo_product.hpp"
-
 #include "Factory/Module/Encoder/Turbo_product/Encoder_turbo_product.hpp"
 
 const std::string aff3ct::factory::Encoder_turbo_product_name   = "Encoder Turbo Product Code";

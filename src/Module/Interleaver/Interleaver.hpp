@@ -1,11 +1,11 @@
 #ifndef INTERLEAVER_HPP_
 #define INTERLEAVER_HPP_
 
-#include <string>
+#include <cstdint>
+#include <memory>
 #include <vector>
 
 #include "Tools/Interleaver/Interleaver_core.hpp"
-
 #include "Module/Module.hpp"
 
 namespace aff3ct

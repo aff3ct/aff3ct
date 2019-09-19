@@ -1,6 +1,9 @@
 #ifndef FLIP_AND_CHECK_HPP
 #define FLIP_AND_CHECK_HPP
 
+#include <mipp.h>
+
+#include "Module/CRC/CRC.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/CRC/CRC_checker.hpp"
 
 namespace aff3ct

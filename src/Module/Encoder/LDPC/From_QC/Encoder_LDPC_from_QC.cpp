@@ -1,12 +1,9 @@
-#include <iostream>
-#include <vector>
-#include <numeric>
-#include <functional>
+#include <string>
+#include <cstdint>
 #include <sstream>
+#include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Math/matrix.h"
-
 #include "Module/Encoder/LDPC/From_QC/Encoder_LDPC_from_QC.hpp"
 
 using namespace aff3ct;

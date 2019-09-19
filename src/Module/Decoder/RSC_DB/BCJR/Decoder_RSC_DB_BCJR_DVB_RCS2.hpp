@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "Tools/Math/max.h"
-
 #include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR.hpp"
 
 namespace aff3ct

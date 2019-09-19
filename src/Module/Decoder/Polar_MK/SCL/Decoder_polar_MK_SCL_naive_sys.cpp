@@ -1,10 +1,7 @@
-#include <algorithm>
-#include <cmath>
-#include <map>
+#include <sstream>
+#include <string>
 
-#include <iostream>
-#include <fstream>
-
+#include "Tools/Exception/exception.hpp"
 #include "Module/Decoder/Polar_MK/SCL/Decoder_polar_MK_SCL_naive_sys.hpp"
 
 using namespace aff3ct;

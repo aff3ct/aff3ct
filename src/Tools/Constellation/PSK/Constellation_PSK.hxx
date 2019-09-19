@@ -1,11 +1,13 @@
-#ifndef CONSTELLATION_PSK_HXX__
-#define CONSTELLATION_PSK_HXX__
-
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
 #include <cmath>
 
-#include "Tools/Math/math_constants.h"
-
 #include "Tools/Constellation/PSK/Constellation_PSK.hpp"
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 namespace aff3ct
 {
@@ -13,16 +15,16 @@ namespace tools
 {
 
 template <typename R>
-Constellation_PSK<R>::
-Constellation_PSK(const unsigned n_bps)
+Constellation_PSK<R>
+::Constellation_PSK(const unsigned n_bps)
 : Constellation<R>(n_bps, "PSK")
 {
 	this->build();
 }
 
 template <typename R>
-inline typename Constellation_PSK<R>::S Constellation_PSK<R>::
-bits_to_symbol(const uint8_t bits[]) const
+typename Constellation_PSK<R>::S Constellation_PSK<R>
+::bits_to_symbol(const uint8_t bits[]) const
 {
 	auto symbol = (R)1.0 - ((R)bits[0] + (R)bits[0]);
 	for (unsigned j = 1; j < this->get_n_bits_per_symbol(); j++)
@@ -34,4 +36,3 @@ bits_to_symbol(const uint8_t bits[]) const
 
 }
 }
-#endif // CONSTELLATION_PSK_HXX__

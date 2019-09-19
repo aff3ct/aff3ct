@@ -1,10 +1,13 @@
 #include <cmath>
 #include <string>
+#include <limits>
 #include <vector>
-#include <stdexcept>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename B, typename R>

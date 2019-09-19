@@ -2,7 +2,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Interleaver/CCSDS/Interleaver_core_CCSDS.hpp"
 
 using namespace aff3ct;

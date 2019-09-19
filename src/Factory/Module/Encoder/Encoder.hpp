@@ -2,9 +2,10 @@
 #define FACTORY_ENCODER_HPP
 
 #include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Module/Encoder/Encoder.hpp"
-
 #include "Factory/Factory.hpp"
 
 namespace aff3ct

@@ -1,11 +1,12 @@
 #ifndef FACTORY_NOISE_HPP
 #define FACTORY_NOISE_HPP
 
-#include <string>
 #include <vector>
+#include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Tools/Noise/Noise.hpp"
-
 #include "Factory/Factory.hpp"
 
 namespace aff3ct
@@ -43,7 +44,7 @@ struct Noise : public Factory
 	};
 
 	template <typename R = float>
-	static tools::Noise<R>* build(const aff3ct::factory::Noise::parameters& params, R noise_val, R bit_rate = 1., int bps = 1, int upf = 1);
+	static tools::Noise<R>* build(const parameters& params, R noise_val, R bit_rate = 1., int bps = 1, int upf = 1);
 };
 }
 }

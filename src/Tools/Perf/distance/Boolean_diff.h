@@ -1,7 +1,6 @@
 #ifndef BOOLEAN_DIFF_H__
 #define BOOLEAN_DIFF_H__
 
-#include <cmath>
 #include <mipp.h>
 
 namespace aff3ct

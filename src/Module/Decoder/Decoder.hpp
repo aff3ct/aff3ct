@@ -1,9 +1,7 @@
 #ifndef DECODER_HPP_
 #define DECODER_HPP_
 
-#include <chrono>
-#include <string>
-#include <vector>
+#include <cstdint>
 
 #include "Module/Module.hpp"
 

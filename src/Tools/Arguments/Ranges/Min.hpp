@@ -1,6 +1,10 @@
 #ifndef ARGUMENT_MIN_RANGE_HPP_
 #define ARGUMENT_MIN_RANGE_HPP_
 
+#include <string>
+#include <sstream>
+#include <stdexcept>
+
 #include "Tools/Arguments/Ranges/Argument_range.hpp"
 
 namespace aff3ct

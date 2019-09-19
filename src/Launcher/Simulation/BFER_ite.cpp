@@ -1,10 +1,9 @@
+#include <type_traits>
 #include <string>
-#include <iostream>
 
+#include "Tools/Display/rang_format/rang_format.h"
 #include "Factory/Module/Monitor/BFER/Monitor_BFER.hpp"
-
 #include "Simulation/BFER/Iterative/BFER_ite.hpp"
-
 #include "Launcher/Simulation/BFER_ite.hpp"
 
 using namespace aff3ct;
@@ -31,16 +30,16 @@ void BFER_ite<B,R,Q>
 {
 	Launcher::get_description_args();
 
-	params.     get_description(this->args);
-	params.src->get_description(this->args);
-	params.crc->get_description(this->args);
-	params.itl->get_description(this->args);
-	params.mdm->get_description(this->args);
-	params.chn->get_description(this->args);
+	params.        get_description(this->args);
+	params.src   ->get_description(this->args);
+	params.crc   ->get_description(this->args);
+	params.itl   ->get_description(this->args);
+	params.mdm   ->get_description(this->args);
+	params.chn   ->get_description(this->args);
 	if (std::is_integral<Q>())
-	params.qnt->get_description(this->args);
+	params.qnt   ->get_description(this->args);
 	params.mnt_er->get_description(this->args);
-	params.ter->get_description(this->args);
+	params.ter   ->get_description(this->args);
 
 	auto psrc = params.src     ->get_prefix();
 	auto pcrc = params.crc     ->get_prefix();

@@ -1,11 +1,12 @@
 #ifndef FACTORY_ENCODER_POLAR_HPP
 #define FACTORY_ENCODER_POLAR_HPP
 
-#include <string>
 #include <vector>
+#include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Module/Encoder/Polar/Encoder_polar.hpp"
-
 #include "Factory/Module/Encoder/Encoder.hpp"
 
 namespace aff3ct

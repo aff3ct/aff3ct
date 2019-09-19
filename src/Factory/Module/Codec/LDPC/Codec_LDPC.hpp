@@ -2,10 +2,11 @@
 #define FACTORY_CODEC_LDPC_HPP
 
 #include <string>
-#include <cmath>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
+#include "Module/CRC/CRC.hpp"
 #include "Module/Codec/LDPC/Codec_LDPC.hpp"
-
 #include "Factory/Module/Codec/Codec_SISO_SIHO.hpp"
 
 namespace aff3ct

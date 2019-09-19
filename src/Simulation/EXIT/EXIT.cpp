@@ -1,14 +1,23 @@
 #if !defined(AFF3CT_8BIT_PREC) && !defined(AFF3CT_16BIT_PREC)
 
-#include <cmath>
+#include <functional>
 #include <algorithm>
+#include <iostream>
+#include <cstdint>
+#include <sstream>
+#include <chrono>
+#include <limits>
+#include <string>
+#include <cmath>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Display/Statistics/Statistics.hpp"
 #include "Tools/general_utils.h"
 #include "Tools/Math/utils.h"
-
+#include "Tools/Display/Reporter/EXIT/Reporter_EXIT.hpp"
+#include "Tools/Display/Reporter/Noise/Reporter_noise.hpp"
+#include "Tools/Display/Reporter/Throughput/Reporter_throughput.hpp"
 #include "Simulation/EXIT/EXIT.hpp"
 
 using namespace aff3ct;

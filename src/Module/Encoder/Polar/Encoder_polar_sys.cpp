@@ -1,6 +1,4 @@
-#include <vector>
-#include <cmath>
-#include <iostream>
+#include <string>
 
 #include "Module/Encoder/Polar/Encoder_polar_sys.hpp"
 

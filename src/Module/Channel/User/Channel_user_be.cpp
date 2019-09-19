@@ -1,8 +1,7 @@
-#include <sstream>
+#include <string>
 #include <mipp.h>
 
-#include "Tools/Exception/exception.hpp"
-
+#include "Tools/Noise/noise_utils.h"
 #include "Module/Channel/User/Channel_user_be.hpp"
 
 using namespace aff3ct;

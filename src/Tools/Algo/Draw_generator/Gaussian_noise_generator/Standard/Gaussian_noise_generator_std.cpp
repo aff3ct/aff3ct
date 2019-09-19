@@ -1,6 +1,3 @@
-#include <stdexcept>
-#include <algorithm>
-
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
 
 using namespace aff3ct::tools;

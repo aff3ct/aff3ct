@@ -1,12 +1,12 @@
+#include <utility>
 #include <sstream>
+#include <vector>
 
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Module/Puncturer/NO/Puncturer_NO.hpp"
 #include "Module/Puncturer/LDPC/Puncturer_LDPC.hpp"
-
 #include "Factory/Module/Puncturer/LDPC/Puncturer_LDPC.hpp"
 
 using namespace aff3ct;

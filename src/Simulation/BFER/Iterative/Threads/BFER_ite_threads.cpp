@@ -1,12 +1,12 @@
-#include <cstring>
+#include <stdexcept>
+#include <algorithm>
+#include <iostream>
 #include <string>
 #include <vector>
-#include <chrono>
 #include <thread>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
-
 #include "Simulation/BFER/Iterative/Threads/BFER_ite_threads.hpp"
 
 using namespace aff3ct;

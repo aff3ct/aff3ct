@@ -1,10 +1,10 @@
 #include <sstream>
+#include <string>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
-
 #include "Factory/Module/Puncturer/Puncturer.hpp"
-
+#include "Factory/Module/Encoder/Encoder.hpp"
 #include "Module/Codec/RS/Codec_RS.hpp"
 
 using namespace aff3ct;

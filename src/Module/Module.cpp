@@ -1,7 +1,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Module.hpp"
 
 using namespace aff3ct;

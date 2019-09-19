@@ -2,9 +2,10 @@
 #define CHANNEL_RAYLEIGH_LLR_HPP_
 
 #include <vector>
+#include <memory>
 
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Gaussian_noise_generator.hpp"
-
+#include "Tools/Noise/Noise.hpp"
 #include "Module/Channel/Channel.hpp"
 
 namespace aff3ct

@@ -2,9 +2,10 @@
 #define FACTORY_MONITOR_EXIT_HPP
 
 #include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
-
 #include "Factory/Module/Monitor/Monitor.hpp"
 
 namespace aff3ct

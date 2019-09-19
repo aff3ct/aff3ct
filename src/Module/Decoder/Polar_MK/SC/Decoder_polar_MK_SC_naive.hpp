@@ -1,9 +1,12 @@
 #ifndef DECODER_POLAR_MK_SC_NAIVE_
 #define DECODER_POLAR_MK_SC_NAIVE_
 
+#include <functional>
+#include <cstdint>
 #include <vector>
 
 #include "Tools/Algo/Tree/Generic/Generic_tree.hpp"
+#include "Tools/Algo/Tree/Generic/Generic_node.hpp"
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"
 #include "Tools/Code/Polar/Polar_code.hpp"
 

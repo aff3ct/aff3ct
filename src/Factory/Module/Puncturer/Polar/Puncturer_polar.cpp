@@ -1,7 +1,6 @@
 #include <cmath>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Factory/Module/Puncturer/Polar/Puncturer_polar.hpp"
 
 using namespace aff3ct;

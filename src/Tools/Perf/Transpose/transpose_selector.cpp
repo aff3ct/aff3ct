@@ -1,9 +1,6 @@
-#include <iostream>
 #include <limits>
-#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
-
 #ifdef __AVX2__
 #include "Tools/Perf/Transpose/transpose_AVX.h"
 #elif defined(__SSE4_1__)
@@ -12,7 +9,6 @@
 #if defined(__ARM_NEON__) || defined(__ARM_NEON)
 #include "Tools/Perf/Transpose/transpose_NEON.h"
 #endif
-
 #include "Tools/Perf/Transpose/transpose_selector.h"
 
 bool aff3ct::tools::char_transpose(const signed char *src, signed char *dst, int n)

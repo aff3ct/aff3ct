@@ -1,9 +1,9 @@
+#include <utility>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Module/Decoder/Repetition/Decoder_repetition_std.hpp"
 #include "Module/Decoder/Repetition/Decoder_repetition_fast.hpp"
-
 #include "Factory/Module/Decoder/Repetition/Decoder_repetition.hpp"
 
 using namespace aff3ct;

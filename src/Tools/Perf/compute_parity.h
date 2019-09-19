@@ -1,8 +1,6 @@
 #ifndef COMPUTE_PARITY_H_
 #define COMPUTE_PARITY_H_
 
-#include <mipp.h>
-
 namespace aff3ct
 {
 namespace tools

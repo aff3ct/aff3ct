@@ -1,6 +1,8 @@
 #ifndef MODEM_OOK_AWGN_HPP_
 #define MODEM_OOK_AWGN_HPP_
 
+#include "Tools/Noise/Noise.hpp"
+#include "Tools/Noise/Sigma.hpp"
 #include "Module/Modem/OOK/Modem_OOK.hpp"
 
 namespace aff3ct

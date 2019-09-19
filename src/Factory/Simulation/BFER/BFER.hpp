@@ -1,8 +1,13 @@
 #ifndef FACTORY_SIMULATION_BFER_HPP_
 #define FACTORY_SIMULATION_BFER_HPP_
 
+#include <chrono>
+#include <vector>
 #include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
+#include "Tools/auto_cloned_unique_ptr.hpp"
 #include "Factory/Module/Channel/Channel.hpp"
 #include "Factory/Module/CRC/CRC.hpp"
 #include "Factory/Module/Codec/Codec.hpp"
@@ -12,7 +17,6 @@
 #include "Factory/Module/Monitor/MI/Monitor_MI.hpp"
 #include "Factory/Module/Monitor/BFER/Monitor_BFER.hpp"
 #include "Factory/Tools/Display/Terminal/Terminal.hpp"
-
 #include "Factory/Simulation/Simulation.hpp"
 
 namespace aff3ct

@@ -2,6 +2,7 @@
 #define CHANNEL_USER_HPP_
 
 #include <vector>
+#include <string>
 
 #include "Module/Channel/Channel.hpp"
 

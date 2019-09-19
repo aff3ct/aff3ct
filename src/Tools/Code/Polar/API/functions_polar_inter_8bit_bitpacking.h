@@ -1,6 +1,11 @@
 #ifndef FUNCTIONS_POLAR_INTER_8BIT_BITPACKING_H_
 #define FUNCTIONS_POLAR_INTER_8BIT_BITPACKING_H_
 
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
+#include <cmath>
+#include <limits>
 #include <algorithm>
 #ifdef _MSC_VER
 #include <iterator>
@@ -9,7 +14,6 @@
 
 #include "Tools/Math/utils.h"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
-
 #include "Tools/Code/Polar/API/functions_polar_inter.h"
 
 namespace aff3ct

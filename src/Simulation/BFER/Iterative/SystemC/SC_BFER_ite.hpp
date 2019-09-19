@@ -3,13 +3,16 @@
 #ifndef SC_SIMULATION_BFER_ITE_HPP_
 #define SC_SIMULATION_BFER_ITE_HPP_
 
-#include "Tools/SystemC/SC_Debug.hpp"
+#include <vector>
+#include <memory>
+
 #include "Tools/SystemC/SC_Router.hpp"
 #include "Tools/SystemC/SC_Funnel.hpp"
 #include "Tools/SystemC/SC_Predicate.hpp"
 #include "Tools/SystemC/SC_Duplicator.hpp"
 #include "Tools/Display/Terminal/Terminal.hpp"
-
+#include "Factory/Simulation/BFER/BFER_ite.hpp"
+#include "Module/Coset/Coset.hpp"
 #include "Simulation/BFER/Iterative/BFER_ite.hpp"
 
 namespace aff3ct
@@ -21,10 +24,10 @@ class SC_BFER_ite : public BFER_ite<B,R,Q>
 {
 protected:
 	std::vector<std::unique_ptr<tools::SC_Duplicator>> duplicator;
-	std::unique_ptr<module::Coset<B,Q>>                coset_real_i;
-	std::unique_ptr<tools::SC_Router   >               router;
-	std::unique_ptr<tools::SC_Funnel   >               funnel;
-	std::unique_ptr<tools::SC_Predicate>               predicate;
+	            std::unique_ptr<module::Coset<B,Q>>    coset_real_i;
+	            std::unique_ptr<tools::SC_Router>      router;
+	            std::unique_ptr<tools::SC_Funnel>      funnel;
+	            std::unique_ptr<tools::SC_Predicate>   predicate;
 
 public:
 	explicit SC_BFER_ite(const factory::BFER_ite::parameters &params_BFER_ite);

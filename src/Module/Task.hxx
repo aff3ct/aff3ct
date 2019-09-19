@@ -1,9 +1,61 @@
+#include <algorithm>
+
 #include "Module/Task.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
+bool Task::is_autoalloc() const
+{
+	return this->autoalloc;
+}
+
+bool Task::is_autoexec() const
+{
+	return this->autoexec;
+}
+
+bool Task::is_stats() const
+{
+	return this->stats;
+}
+
+bool Task::is_fast() const
+{
+	return this->fast;
+}
+
+bool Task::is_debug() const
+{
+	return this->debug;
+}
+
+bool Task::is_debug_hex() const
+{
+	return this->debug_hex;
+}
+
+bool Task::is_last_input_socket(const Socket &s_in) const
+{
+	return last_input_socket == &s_in;
+}
+
+const Module& Task::get_module() const
+{
+	return this->module;
+}
+
+std::string Task::get_name() const
+{
+	return this->name;
+}
+
+uint32_t Task::get_n_calls() const
+{
+	return this->n_calls;
+}
+
 Socket& Task
 ::operator[](const int id)
 {

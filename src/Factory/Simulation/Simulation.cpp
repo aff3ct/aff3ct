@@ -1,14 +1,11 @@
-#include <fstream>
-#include <algorithm>
-#include <rang.hpp>
-
+#include <utility>
+#include <sstream>
 #ifdef AFF3CT_MPI
 #include <mpi.h>
 #endif
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Factory/Simulation/Simulation.hpp"
 
 using namespace aff3ct;

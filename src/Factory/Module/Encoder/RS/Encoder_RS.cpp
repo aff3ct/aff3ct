@@ -1,10 +1,6 @@
-#include <cmath>
-
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
-
 #include "Module/Encoder/RS/Encoder_RS.hpp"
-
 #include "Factory/Module/Encoder/RS/Encoder_RS.hpp"
 
 using namespace aff3ct;

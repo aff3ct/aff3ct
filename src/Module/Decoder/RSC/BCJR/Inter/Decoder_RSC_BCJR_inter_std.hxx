@@ -1,5 +1,11 @@
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
+#include <string>
+#include <cmath>
 #include <mipp.h>
 
+#include "Tools/Exception/exception.hpp"
 #include "Module/Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter_std.hpp"
 
 namespace aff3ct

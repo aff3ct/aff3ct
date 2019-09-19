@@ -1,12 +1,12 @@
-#include <chrono>
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
+#include <algorithm>
 #include <sstream>
-#include <iostream>
-#include <iomanip>
 #include <cmath>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
-
 #include "Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive.hpp"
 
 namespace aff3ct

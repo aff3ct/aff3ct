@@ -1,8 +1,9 @@
+#include <algorithm>
 #include <sstream>
+#include <string>
 #include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/CRC/Polynomial/CRC_polynomial_inter.hpp"
 
 using namespace aff3ct;

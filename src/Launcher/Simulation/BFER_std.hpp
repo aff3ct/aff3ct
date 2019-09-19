@@ -1,8 +1,10 @@
 #ifndef LAUNCHER_BFER_STD_HPP_
 #define LAUNCHER_BFER_STD_HPP_
 
-#include "Factory/Simulation/BFER/BFER_std.hpp"
+#include <iostream>
 
+#include "Factory/Simulation/BFER/BFER_std.hpp"
+#include "Simulation/Simulation.hpp"
 #include "Launcher/Launcher.hpp"
 
 namespace aff3ct

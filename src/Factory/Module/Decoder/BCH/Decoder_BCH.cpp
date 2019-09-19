@@ -1,12 +1,12 @@
+#include <utility>
 #include <sstream>
+#include <cmath>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-
 #include "Module/Decoder/BCH/Standard/Decoder_BCH_std.hpp"
 #include "Module/Decoder/BCH/Genius/Decoder_BCH_genius.hpp"
 #include "Module/Decoder/BCH/Fast/Decoder_BCH_fast.hpp"
-
 #include "Factory/Module/Decoder/BCH/Decoder_BCH.hpp"
 
 using namespace aff3ct;

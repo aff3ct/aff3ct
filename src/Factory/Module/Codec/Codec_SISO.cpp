@@ -1,10 +1,9 @@
-#include "LDPC/Codec_LDPC.hpp"
-#include "Polar/Codec_polar.hpp"
-#include "RSC/Codec_RSC.hpp"
-#include "RSC_DB/Codec_RSC_DB.hpp"
-#include "Uncoded/Codec_uncoded.hpp"
-#include "Turbo_product/Codec_turbo_product.hpp"
-
+#include "Factory/Module/Codec/LDPC/Codec_LDPC.hpp"
+#include "Factory/Module/Codec/Polar/Codec_polar.hpp"
+#include "Factory/Module/Codec/RSC/Codec_RSC.hpp"
+#include "Factory/Module/Codec/RSC_DB/Codec_RSC_DB.hpp"
+#include "Factory/Module/Codec/Uncoded/Codec_uncoded.hpp"
+#include "Factory/Module/Codec/Turbo_product/Codec_turbo_product.hpp"
 #include "Factory/Module/Codec/Codec_SISO.hpp"
 
 using namespace aff3ct;

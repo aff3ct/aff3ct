@@ -1,6 +1,7 @@
+#include <type_traits>
 #include <string>
-#include <iostream>
 
+#include "Tools/Display/rang_format/rang_format.h"
 #include "Factory/Module/Monitor/BFER/Monitor_BFER.hpp"
 #include "Factory/Module/Monitor/MI/Monitor_MI.hpp"
 #include "Factory/Module/Interleaver/Interleaver.hpp"
@@ -17,14 +18,14 @@ BFER_std<B,R,Q>
 ::BFER_std(const int argc, const char **argv, std::ostream &stream)
 : Launcher(argc, argv, params, stream)
 {
-	params.set_src(new factory::Source      ::parameters("src"));
-	params.set_crc(new factory::CRC         ::parameters("crc"));
-	params.set_mdm(new factory::Modem       ::parameters("mdm"));
-	params.set_chn(new factory::Channel     ::parameters("chn"));
-	params.set_qnt(new factory::Quantizer   ::parameters("qnt"));
+	params.set_src   (new factory::Source      ::parameters("src"));
+	params.set_crc   (new factory::CRC         ::parameters("crc"));
+	params.set_mdm   (new factory::Modem       ::parameters("mdm"));
+	params.set_chn   (new factory::Channel     ::parameters("chn"));
+	params.set_qnt   (new factory::Quantizer   ::parameters("qnt"));
 	params.set_mnt_mi(new factory::Monitor_MI  ::parameters("mnt"));
 	params.set_mnt_er(new factory::Monitor_BFER::parameters("mnt"));
-	params.set_ter(new factory::Terminal    ::parameters("ter"));
+	params.set_ter   (new factory::Terminal    ::parameters("ter"));
 }
 
 template <typename B, typename R, typename Q>
@@ -33,16 +34,16 @@ void BFER_std<B,R,Q>
 {
 	Launcher::get_description_args();
 
-	params.     get_description(this->args);
-	params.src->get_description(this->args);
-	params.crc->get_description(this->args);
-	params.mdm->get_description(this->args);
-	params.chn->get_description(this->args);
+	params.        get_description(this->args);
+	params.src   ->get_description(this->args);
+	params.crc   ->get_description(this->args);
+	params.mdm   ->get_description(this->args);
+	params.chn   ->get_description(this->args);
 	if (std::is_integral<Q>())
-	params.qnt->get_description(this->args);
+	params.qnt   ->get_description(this->args);
 	params.mnt_er->get_description(this->args);
 	params.mnt_mi->get_description(this->args);
-	params.ter->get_description(this->args);
+	params.ter   ->get_description(this->args);
 
 	auto psrc = params.src     ->get_prefix();
 	auto pcrc = params.crc     ->get_prefix();

@@ -1,17 +1,15 @@
-#include <chrono>
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
 #include <algorithm>
-#include <iostream>
-#include <fstream>
 #include <sstream>
 #include <numeric>
+#include <string>
 #include <limits>
 #include <cmath>
-#include <map>
-#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
-
 #include "Tools/Code/Polar/Patterns/Pattern_polar_r0.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_r0_left.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_r1.hpp"
@@ -19,10 +17,8 @@
 #include "Tools/Code/Polar/Patterns/Pattern_polar_rep_left.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_spc.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_std.hpp"
-
 #include "Tools/Code/Polar/Pattern_polar_parser.hpp"
 #include "Tools/Code/Polar/fb_extract.h"
-
 #include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_fast_sys.hpp"
 
 namespace aff3ct

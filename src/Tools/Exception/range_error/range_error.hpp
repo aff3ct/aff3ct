@@ -1,6 +1,8 @@
 #ifndef RANGE_ERROR_HPP_
 #define RANGE_ERROR_HPP_
 
+#include <string>
+
 #include "Tools/Exception/exception.hpp"
 
 namespace aff3ct

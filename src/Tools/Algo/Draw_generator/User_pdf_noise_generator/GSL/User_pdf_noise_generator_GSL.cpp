@@ -1,6 +1,5 @@
 #ifdef AFF3CT_CHANNEL_GSL
 
-#include <sstream>
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
 

@@ -1,6 +1,5 @@
 #include "Factory/Module/Encoder/NO/Encoder_NO.hpp"
 #include "Factory/Module/Decoder/NO/Decoder_NO.hpp"
-
 #include "Factory/Module/Codec/Uncoded/Codec_uncoded.hpp"
 
 using namespace aff3ct;

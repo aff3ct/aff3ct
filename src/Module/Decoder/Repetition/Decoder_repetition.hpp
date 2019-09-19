@@ -1,7 +1,6 @@
 #ifndef DECODER_REPETITION
 #define DECODER_REPETITION
 
-#include <vector>
 #include <mipp.h>
 
 #include "Module/Decoder/Decoder_SISO_SIHO.hpp"

@@ -1,12 +1,9 @@
 #ifndef REPORTER_NOISE_HPP_
 #define REPORTER_NOISE_HPP_
 
-#include <string>
-#include <chrono>
 #include <memory>
 
-#include "Tools/Noise/noise_utils.h"
-
+#include "Tools/Noise/Noise.hpp"
 #include "Tools/Display/Reporter/Reporter.hpp"
 
 namespace aff3ct

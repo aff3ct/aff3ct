@@ -1,9 +1,12 @@
+#include <algorithm>
 #include <sstream>
+#include <string>
 
 #include "Tools/Exception/exception.hpp"
-
+#include "Tools/Noise/Sigma.hpp"
+#include "Tools/Noise/Event_probability.hpp"
+#include "Factory/Module/Encoder/Encoder.hpp"
 #include "Factory/Module/Puncturer/Puncturer.hpp"
-
 #include "Module/Codec/Polar_MK/Codec_polar_MK.hpp"
 
 using namespace aff3ct;

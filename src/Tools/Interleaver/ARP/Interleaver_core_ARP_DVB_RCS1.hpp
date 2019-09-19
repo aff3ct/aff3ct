@@ -1,6 +1,9 @@
 #ifndef INTERLEAVER_CORE_ARP_DVB1_HPP
 #define INTERLEAVER_CORE_ARP_DVB1_HPP
 
+#include <vector>
+#include <cstdint>
+
 #include "Tools/Interleaver/Interleaver_core.hpp"
 
 namespace aff3ct

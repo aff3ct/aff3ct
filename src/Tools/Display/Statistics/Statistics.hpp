@@ -1,9 +1,12 @@
 #ifndef STATISTICS_HPP_
 #define STATISTICS_HPP_
 
-#include <vector>
 #include <iostream>
-#include <memory>
+#include <cstdint>
+#include <cstddef>
+#include <vector>
+#include <chrono>
+#include <string>
 
 #include "Module/Module.hpp"
 #include "Module/Task.hpp"

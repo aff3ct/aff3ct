@@ -1,11 +1,11 @@
-#ifndef CODEBOOK_HXX_
-#define CODEBOOK_HXX_
-
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
 #include <sstream>
 #include <fstream>
+#include <cmath>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Code/SCMA/Codebook.hpp"
 
 namespace aff3ct
@@ -165,7 +165,7 @@ void Codebook<R>
 		}
 	}
 
-	system_bps = log2((float)codebook_size) * (float)number_of_users / (float)number_of_resources;
+	system_bps = std::log2((float)codebook_size) * (float)number_of_users / (float)number_of_resources;
 }
 
 template <typename R>
@@ -239,5 +239,3 @@ inline float Codebook<R>
 
 }
 }
-
-#endif // CODEBOOK_HXX_

@@ -2,9 +2,10 @@
 #define FACTORY_PONCTURER_HPP_
 
 #include <string>
+#include <map>
 
+#include "Tools/Arguments/Argument_tools.hpp"
 #include "Module/Puncturer/Puncturer.hpp"
-
 #include "Factory/Factory.hpp"
 
 namespace aff3ct

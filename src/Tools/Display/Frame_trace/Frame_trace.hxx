@@ -1,16 +1,22 @@
 #include <sstream>
 #include <iomanip>
-
+#include <ios>
 #include <rang.hpp>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Display/Frame_trace/Frame_trace.hpp"
 
 namespace aff3ct
 {
 namespace tools
 {
+template <typename B>
+Frame_trace<B>
+::Frame_trace(const int n_bits, const int prec, std::ostream &stream)
+: stream(stream), n_bits(n_bits), prec(prec)
+{
+}
+
 template <typename B>
 template <typename D, class AD, class AB>
 void Frame_trace<B>

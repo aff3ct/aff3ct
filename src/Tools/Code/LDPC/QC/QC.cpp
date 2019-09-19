@@ -1,12 +1,15 @@
-#include <string>
+#include <stdexcept>
+#include <cstdint>
 #include <sstream>
+#include <string>
+#include <mipp.h>
 
 #include "Tools/Code/LDPC/AList/AList.hpp"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/general_utils.h"
-
 #include "Tools/Code/LDPC/QC/QC.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::tools;
 
 Sparse_matrix QC

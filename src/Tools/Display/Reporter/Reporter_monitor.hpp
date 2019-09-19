@@ -1,10 +1,9 @@
 #ifndef REPORTER_MONITOR_HPP_
 #define REPORTER_MONITOR_HPP_
 
+#include <vector>
+#include <utility>
 #include <string>
-#include <chrono>
-
-#include "Module/Monitor/Monitor_reduction.hpp"
 
 #include "Tools/Display/Reporter/Reporter.hpp"
 
@@ -17,21 +16,18 @@ class Reporter_monitor : public Reporter
 {
 public:
 	using M = M_t;
+
 protected:
 	const M& monitor;
-
 	group_t monitor_group;
 
 public:
-
-	explicit Reporter_monitor(const M &monitor)
-	: Reporter   (       ),
-	  monitor    (monitor)
-	 {}
-
+	explicit Reporter_monitor(const M &monitor);
 	virtual ~Reporter_monitor() = default;
 };
 }
 }
+
+#include "Tools/Display/Reporter/Reporter_monitor.hxx"
 
 #endif /* REPORTER_MONITOR_HPP_ */

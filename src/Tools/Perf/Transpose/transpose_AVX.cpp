@@ -1,9 +1,10 @@
 #ifdef __AVX2__
 
+#include <xmmintrin.h>
+#include <smmintrin.h>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Perf/Transpose/transpose_AVX.h"
 
 inline void _MM_TRANSPOSE8_PS(__m256 &row0, __m256 &row1, __m256 &row2, __m256 &row3, __m256 &row4, __m256 &row5,

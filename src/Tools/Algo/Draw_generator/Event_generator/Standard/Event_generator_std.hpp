@@ -3,6 +3,7 @@
 
 #include <random>
 
+#include "Tools/types.h"
 #include "Tools/Algo/Draw_generator/Event_generator/Event_generator.hpp"
 
 namespace aff3ct

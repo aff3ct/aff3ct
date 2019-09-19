@@ -1,7 +1,6 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/Interleaver/ARP/Interleaver_core_ARP_DVB_RCS1.hpp"
 
 using namespace aff3ct;

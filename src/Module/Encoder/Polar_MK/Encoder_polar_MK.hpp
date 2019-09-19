@@ -2,11 +2,9 @@
 #define ENCODER_POLAR_MK_HPP_
 
 #include <vector>
-#include <string>
 
 #include "Tools/Code/Polar/Frozenbits_notifier.hpp"
 #include "Tools/Code/Polar/Polar_code.hpp"
-
 #include "Module/Encoder/Encoder.hpp"
 
 namespace aff3ct

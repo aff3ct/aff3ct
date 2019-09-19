@@ -1,15 +1,9 @@
 #ifndef REPORTER_HPP__
 #define REPORTER_HPP__
 
-#include <chrono>
-#include <iostream>
-#include <sstream>
-#include <iomanip>
 #include <vector>
 #include <utility>
 #include <string>
-
-#include "Tools/Display/rang_format/rang_format.h"
 
 namespace aff3ct
 {

@@ -1,10 +1,11 @@
 #if !defined(AFF3CT_8BIT_PREC) && !defined(AFF3CT_16BIT_PREC)
 
-#include "Tools/Documentation/documentation.h"
+#include <utility>
+#include <tuple>
 
+#include "Tools/Documentation/documentation.h"
 #include "Simulation/EXIT/EXIT.hpp"
 #include "Tools/general_utils.h"
-
 #include "Factory/Simulation/EXIT/EXIT.hpp"
 
 using namespace aff3ct;

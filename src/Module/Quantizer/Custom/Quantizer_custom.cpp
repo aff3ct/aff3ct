@@ -4,7 +4,6 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
-
 #include "Module/Quantizer/Custom/Quantizer_custom.hpp"
 
 using namespace aff3ct;

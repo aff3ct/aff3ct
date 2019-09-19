@@ -1,3 +1,6 @@
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
 
 namespace aff3ct

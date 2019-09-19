@@ -1,10 +1,8 @@
-#include <limits>
+#include <string>
 #include <sstream>
-#include <typeinfo>
+#include <type_traits>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Math/utils.h"
-
 #include "Module/Decoder/LDPC/BF/PPBF/Decoder_LDPC_probabilistic_parallel_bit_flipping.hpp"
 
 using namespace aff3ct;

@@ -1,18 +1,16 @@
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
-
-#include <cmath>
-#include <limits>
-#include <numeric>
-#include <fstream>
-#include <iostream>
 #include <algorithm>
+#include <numeric>
+#include <limits>
+#include <cmath>
 
 #include "Tools/Exception/exception.hpp"
-
+#include "Tools/Noise/Noise.hpp"
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_GA_Arikan.hpp"
 
+using namespace aff3ct;
 using namespace aff3ct::tools;
 
 Frozenbits_generator_GA_Arikan

@@ -1,7 +1,6 @@
 #ifndef ENCODER_TURBO_PRODUCT_HPP_
 #define ENCODER_TURBO_PRODUCT_HPP_
 
-#include <string>
 #include <vector>
 
 #include "Module/Interleaver/Interleaver.hpp"

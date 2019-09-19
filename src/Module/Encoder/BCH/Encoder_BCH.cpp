@@ -1,7 +1,8 @@
-#include <vector>
-#include <cmath>
-#include <iostream>
+#include <numeric>
+#include <sstream>
+#include <algorithm>
 
+#include "Tools/Exception/exception.hpp"
 #include "Module/Encoder/BCH/Encoder_BCH.hpp"
 
 using namespace aff3ct;

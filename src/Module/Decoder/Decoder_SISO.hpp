@@ -8,7 +8,7 @@
 #ifndef DECODER_SISO_HPP_
 #define DECODER_SISO_HPP_
 
-#include <string>
+#include <memory>
 #include <vector>
 
 #include "Module/Decoder/Decoder.hpp"

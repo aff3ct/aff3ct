@@ -1,9 +1,6 @@
 #ifndef DECODER_REPETITION_STD
 #define DECODER_REPETITION_STD
 
-#include <vector>
-#include <mipp.h>
-
 #include "Module/Decoder/Repetition/Decoder_repetition.hpp"
 
 namespace aff3ct

@@ -13,16 +13,13 @@
 #include <Windows.h>
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <vector>
-#include <iostream>
-#include <sstream>
-#include <string>
 #include <stdexcept>
+#include <sstream>
+#include <cstdlib>
+#include <cstdio>
+#include <vector>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Tools/system_functions.h"
 
 std::string aff3ct::tools::get_back_trace(int first_call)

@@ -1,12 +1,9 @@
-#include <iostream>
-#include <algorithm>
-#include <cmath>
 #include <sstream>
+#include <cmath>
 #include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
-
 #include "Module/Quantizer/Pow2/Quantizer_pow2_fast.hpp"
 
 using namespace aff3ct;

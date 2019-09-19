@@ -8,7 +8,8 @@
 #ifndef ENCODER_HPP_
 #define ENCODER_HPP_
 
-#include <string>
+#include <cstdint>
+#include <memory>
 #include <vector>
 
 #include "Module/Module.hpp"

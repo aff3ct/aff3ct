@@ -1,22 +1,20 @@
+#include <utility>
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
 #include "Tools/Arguments/Splitter/Splitter.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Math/max.h"
-
 #include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
-
 #include "Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding.hpp"
 #include "Module/Decoder/LDPC/BP/Horizontal_layered/Decoder_LDPC_BP_horizontal_layered.hpp"
 #include "Module/Decoder/LDPC/BP/Vertical_layered/Decoder_LDPC_BP_vertical_layered.hpp"
-
 #include "Tools/Code/LDPC/Update_rule/SPA/Update_rule_SPA.hpp"
 #include "Tools/Code/LDPC/Update_rule/LSPA/Update_rule_LSPA.hpp"
 #include "Tools/Code/LDPC/Update_rule/MS/Update_rule_MS.hpp"
 #include "Tools/Code/LDPC/Update_rule/OMS/Update_rule_OMS.hpp"
 #include "Tools/Code/LDPC/Update_rule/NMS/Update_rule_NMS.hpp"
 #include "Tools/Code/LDPC/Update_rule/AMS/Update_rule_AMS.hpp"
-
 #ifdef __cpp_aligned_new
 #include "Module/Decoder/LDPC/BP/Horizontal_layered/Decoder_LDPC_BP_horizontal_layered_inter.hpp"
 #include "Module/Decoder/LDPC/BP/Vertical_layered/Decoder_LDPC_BP_vertical_layered_inter.hpp"
@@ -28,7 +26,6 @@
 #include "Tools/Code/LDPC/Update_rule/NMS/Update_rule_NMS_simd.hpp"
 #include "Tools/Code/LDPC/Update_rule/AMS/Update_rule_AMS_simd.hpp"
 #endif
-
 #include "Module/Decoder/LDPC/BP/Horizontal_layered/ONMS/Decoder_LDPC_BP_horizontal_layered_ONMS_inter.hpp"
 #include "Module/Decoder/LDPC/BP/Flooding/Gallager/Decoder_LDPC_BP_flooding_Gallager_A.hpp"
 #include "Module/Decoder/LDPC/BP/Flooding/Gallager/Decoder_LDPC_BP_flooding_Gallager_B.hpp"
@@ -37,7 +34,6 @@
 #include "Module/Decoder/LDPC/BP/Peeling/Decoder_LDPC_BP_peeling.hpp"
 #include "Module/Decoder/LDPC/BF/OMWBF/Decoder_LDPC_bit_flipping_OMWBF.hpp"
 #include "Module/Decoder/LDPC/BF/PPBF/Decoder_LDPC_probabilistic_parallel_bit_flipping.hpp"
-
 #include "Factory/Module/Decoder/LDPC/Decoder_LDPC.hpp"
 
 using namespace aff3ct;

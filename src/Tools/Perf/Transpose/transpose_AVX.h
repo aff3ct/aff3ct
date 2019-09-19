@@ -3,8 +3,6 @@
 #ifndef TRANSPOSE_AVX_H
 #define	TRANSPOSE_AVX_H
 
-#include <xmmintrin.h>
-#include <smmintrin.h>
 #include <immintrin.h>
 
 namespace aff3ct

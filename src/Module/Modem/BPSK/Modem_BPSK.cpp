@@ -1,7 +1,8 @@
+#include <string>
+#include <algorithm>
 #include <type_traits>
 
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Modem/BPSK/Modem_BPSK.hpp"
 
 using namespace aff3ct;

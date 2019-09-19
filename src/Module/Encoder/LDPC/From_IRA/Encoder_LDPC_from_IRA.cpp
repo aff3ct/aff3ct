@@ -1,12 +1,8 @@
-#include <iostream>
-#include <vector>
-#include <numeric>
-#include <functional>
+#include <string>
+#include <algorithm>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Math/matrix.h"
-
 #include "Module/Encoder/LDPC/From_IRA/Encoder_LDPC_from_IRA.hpp"
 
 using namespace aff3ct;

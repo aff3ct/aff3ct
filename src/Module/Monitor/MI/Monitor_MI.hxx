@@ -1,3 +1,6 @@
+#include <sstream>
+
+#include "Tools/Exception/exception.hpp"
 #include "Module/Monitor/MI/Monitor_MI.hpp"
 
 namespace aff3ct

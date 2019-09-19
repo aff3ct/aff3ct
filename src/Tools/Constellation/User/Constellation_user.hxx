@@ -1,6 +1,6 @@
-#ifndef CONSTELLATION_USER_HXX__
-#define CONSTELLATION_USER_HXX__
-
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
 #include <fstream>
 #include <cmath>
 #include <iterator>
@@ -14,15 +14,15 @@ namespace aff3ct
 namespace tools
 {
 template <typename R>
-Constellation_user<R>::
-Constellation_user(const std::string& const_path)
+Constellation_user<R>
+::Constellation_user(const std::string& const_path)
 : Constellation<R>(read_constellation(const_path), "User<C>")
 {
 }
 
 template <typename R>
-std::vector<typename Constellation_user<R>::S> Constellation_user<R>::
-read_constellation(const std::string& const_path)
+std::vector<typename Constellation_user<R>::S> Constellation_user<R>
+::read_constellation(const std::string& const_path)
 {
 	if (const_path.empty())
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'const_path' should not be empty.");
@@ -70,4 +70,3 @@ read_constellation(const std::string& const_path)
 
 }
 }
-#endif // CONSTELLATION_USER_HXX__
