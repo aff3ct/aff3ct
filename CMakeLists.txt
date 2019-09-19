@@ -11,7 +11,6 @@ endif()
 
 project(aff3ct)
 
-
 # ---------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------- CMAKE OPTIONS
 # ---------------------------------------------------------------------------------------------------------------------
@@ -96,8 +95,6 @@ else()
     set(GIT_VERSION ${AFF3CT_OVERRIDE_VERSION})
 endif()
 
-
-
 string(REGEX REPLACE "^v"                ""    AFF3CT_VERSION_FULL  ${GIT_VERSION})
 string(REGEX REPLACE "-.*"               ""    AFF3CT_VERSION       ${AFF3CT_VERSION_FULL})
 string(REGEX REPLACE "^.*-"              ""    AFF3CT_HASH          ${AFF3CT_VERSION_FULL})
@@ -106,7 +103,6 @@ string(      REPLACE "${AFF3CT_VERSION}" ""    AFF3CT_BUILD         ${AFF3CT_BUI
 string(REGEX REPLACE "(.*)\\..*\\..*"    "\\1" AFF3CT_VERSION_MAJOR ${AFF3CT_VERSION})
 string(REGEX REPLACE ".*\\.(.*)\\..*"    "\\1" AFF3CT_VERSION_MINOR ${AFF3CT_VERSION})
 string(REGEX REPLACE ".*\\..*\\.(.*)"    "\\1" AFF3CT_VERSION_PATCH ${AFF3CT_VERSION})
-
 
 if(NOT "${AFF3CT_BUILD}" STREQUAL "")
     string(REPLACE "${AFF3CT_HASH}" "" AFF3CT_BUILD ${AFF3CT_BUILD})
