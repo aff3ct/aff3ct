@@ -35,8 +35,8 @@ void SC_BFER_ite<B,R,Q>
 
 	this->set_module("coset_real_i", tid, coset_real_i);
 
-	this->interleaver_bit[tid]->set_name(this->interleaver_llr[tid]->get_name() + "_bit");
-	this->interleaver_llr[tid]->set_name(this->interleaver_llr[tid]->get_name() + "_llr");
+	this->interleaver_bit[tid]->set_custom_name(this->interleaver_llr[tid]->get_name() + "_bit");
+	this->interleaver_llr[tid]->set_custom_name(this->interleaver_llr[tid]->get_name() + "_llr");
 
 	this->monitor_er[tid]->add_handler_check([&]() -> void
 	{
@@ -272,7 +272,7 @@ std::unique_ptr<module::Coset<B,Q>> SC_BFER_ite<B,R,Q>
 	cst_params.n_frames = this->params_BFER_ite.src->n_frames;
 
 	this->coset_real_i.reset(cst_params.template build_real<B,Q>());
-	this->coset_real_i->set_name("Coset_real_i");
+	this->coset_real_i->set_custom_name("Coset_real_i");
 
 	return std::unique_ptr<module::Coset<B,Q>>(cst_params.template build_real<B,Q>());
 }
