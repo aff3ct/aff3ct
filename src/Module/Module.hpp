@@ -33,9 +33,10 @@ namespace module
 class Module
 {
 protected:
-	int         n_frames;    /*!< Number of frames to process in this Module */
-	std::string name;        /*!< Name of the Module. */
-	std::string short_name;  /*!< Short name of the Module. */
+	int         n_frames;     /*!< Number of frames to process in this Module */
+	std::string name;         /*!< Name of the Module. */
+	std::string short_name;   /*!< Short name of the Module. */
+	std::string custom_name;  /*!< Custom name of the Module. */
 	std::vector<std::shared_ptr<Task>> tasks_with_nullptr;
 
 public:
@@ -65,17 +66,23 @@ public:
 	 */
 	virtual int get_n_frames() const;
 
-	void set_name(const std::string &name);
-
 	const std::string& get_name() const;
 
-	void set_short_name(const std::string &short_name);
-
 	const std::string& get_short_name() const;
+
+	void set_custom_name(const std::string &custom_name);
+
+	const std::string& get_custom_name() const;
+
+	void remove_custom_name();
 
 	Task& operator[](const int id);
 
 protected:
+	void set_name(const std::string &name);
+
+	void set_short_name(const std::string &short_name);
+
 	Task& create_task(const std::string &name, const int id = -1);
 
 	template <typename T>

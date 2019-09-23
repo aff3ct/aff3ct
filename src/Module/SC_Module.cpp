@@ -10,7 +10,8 @@
 using namespace aff3ct;
 using namespace aff3ct::module;
 
-SC_Module::SC_Module(Task &task, sc_core::sc_module_name sc_name)
+SC_Module
+::SC_Module(Task &task, sc_core::sc_module_name sc_name)
 : sc_module(sc_name),
   task(task),
   indirect_sockets_in (task.sockets.size()),
@@ -102,7 +103,8 @@ SC_Module::SC_Module(Task &task, sc_core::sc_module_name sc_name)
 	}
 }
 
-void SC_Module::b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t, Socket &socket)
+void SC_Module
+::b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t, Socket &socket)
 {
 	if (trans.get_data_length() != socket.get_databytes())
 	{
@@ -126,7 +128,8 @@ void SC_Module::b_transport(tlm::tlm_generic_payload& trans, sc_core::sc_time& t
 	socket.bind((void*)trans.get_data_ptr());
 }
 
-void SC_Module::b_transport_and_exec(tlm::tlm_generic_payload& trans, sc_core::sc_time& t, Socket &socket)
+void SC_Module
+::b_transport_and_exec(tlm::tlm_generic_payload& trans, sc_core::sc_time& t, Socket &socket)
 {
 	b_transport(trans, t, socket);
 
@@ -146,55 +149,64 @@ void SC_Module::b_transport_and_exec(tlm::tlm_generic_payload& trans, sc_core::s
 	}
 }
 
-void SC_Module::b_transport1(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
+void SC_Module
+::b_transport1(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 {
 	if (ptr_input_sockets.size() == 1) b_transport_and_exec(trans, t, *ptr_input_sockets[0]);
 	else                               b_transport         (trans, t, *ptr_input_sockets[0]);
 }
 
-void SC_Module::b_transport2(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
+void SC_Module
+::b_transport2(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 {
 	if (ptr_input_sockets.size() == 2) b_transport_and_exec(trans, t, *ptr_input_sockets[1]);
 	else                               b_transport         (trans, t, *ptr_input_sockets[1]);
 }
 
-void SC_Module::b_transport3(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
+void SC_Module
+::b_transport3(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 {
 	if (ptr_input_sockets.size() == 3) b_transport_and_exec(trans, t, *ptr_input_sockets[2]);
 	else                               b_transport         (trans, t, *ptr_input_sockets[2]);
 }
 
-void SC_Module::b_transport4(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
+void SC_Module
+::b_transport4(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 {
 	if (ptr_input_sockets.size() == 4) b_transport_and_exec(trans, t, *ptr_input_sockets[3]);
 	else                               b_transport         (trans, t, *ptr_input_sockets[3]);
 }
 
-void SC_Module::b_transport5(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
+void SC_Module
+::b_transport5(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 {
 	if (ptr_input_sockets.size() == 5) b_transport_and_exec(trans, t, *ptr_input_sockets[4]);
 	else                               b_transport         (trans, t, *ptr_input_sockets[4]);
 }
 
-void SC_Module::b_transport6(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
+void SC_Module
+::b_transport6(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 {
 	if (ptr_input_sockets.size() == 6) b_transport_and_exec(trans, t, *ptr_input_sockets[5]);
 	else                               b_transport         (trans, t, *ptr_input_sockets[5]);
 }
 
-void SC_Module::b_transport7(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
+void SC_Module
+::b_transport7(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 {
 	if (ptr_input_sockets.size() == 7) b_transport_and_exec(trans, t, *ptr_input_sockets[6]);
 	else                               b_transport         (trans, t, *ptr_input_sockets[6]);
 }
 
-void SC_Module::b_transport8(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
+void SC_Module
+::b_transport8(tlm::tlm_generic_payload& trans, sc_core::sc_time& t)
 {
 	if (ptr_input_sockets.size() == 8) b_transport_and_exec(trans, t, *ptr_input_sockets[7]);
 	else                               b_transport         (trans, t, *ptr_input_sockets[7]);
 }
 
-void SC_Module::start_sc_thread()
+void SC_Module
+::start_sc_thread()
 {
 	// infinite loop, can be stopped by calling 'sc_core::sc_stop()'
 	while (true)
@@ -232,12 +244,14 @@ void SC_Module::start_sc_thread()
 
 
 
-SC_Module_container::SC_Module_container(Module &module)
+SC_Module_container
+::SC_Module_container(Module &module)
 : module(module), sc_modules()
 {
 }
 
-void SC_Module_container::create_module(const int id)
+void SC_Module_container
+::create_module(const int id)
 {
 	if (module.tasks_with_nullptr.size() != sc_modules.size())
 	{
@@ -260,7 +274,8 @@ void SC_Module_container::create_module(const int id)
 	}
 }
 
-void SC_Module_container::erase_module(const int id)
+void SC_Module_container
+::erase_module(const int id)
 {
 	if ((size_t)id < sc_modules.size() && sc_modules[id] != nullptr)
 	{
