@@ -28,11 +28,11 @@ public:
 	/*
 	 * @precision the number of decimal took into account in the given values
 	 */
-	explicit Histogram(unsigned precision = 3);
+	inline explicit Histogram(unsigned precision = 3);
 
 	~Histogram() = default;
 
-	Histogram<R>& operator=(const Histogram<R>& other);
+	inline Histogram<R>& operator=(const Histogram<R>& other);
 
 	inline void add_values(const Histogram<R>& other);
 
@@ -65,7 +65,7 @@ public:
 	/*
 	 * call dump by setting the hist_min and hist_max values as, respectively, get_hist_min() and get_hist_max()
 	 */
-	int dump(std::ofstream& hist_file) const;
+	inline int dump(std::ofstream& hist_file) const;
 
 	/*
 	 * @hist_file is the output stream where will be dump the histogram with one (x,y) couple per line
@@ -74,7 +74,7 @@ public:
 	 * @n_rung is the number of values plotted on the abscissa in the asked range (if 0 then dump directly the values)
 	 * @return 1 when there is an error in given limits
 	 */
-	int dump(std::ofstream& hist_file, R hist_min, R hist_max) const;
+	inline int dump(std::ofstream& hist_file, R hist_min, R hist_max) const;
 
 	/*
 	 * Reset histogram values but not the options.
@@ -92,9 +92,9 @@ public:
 	inline size_t get_n_values() const;
 
 private:
-	int dump_all_values(std::ofstream& hist_file, R hist_min, R hist_max) const;
+	inline int dump_all_values(std::ofstream& hist_file, R hist_min, R hist_max) const;
 
-	int dump_intervals(std::ofstream& hist_file, R hist_min, R hist_max) const;
+	inline int dump_intervals(std::ofstream& hist_file, R hist_min, R hist_max) const;
 
 private:
 	bool        _norm_sum_to_1  = false;
