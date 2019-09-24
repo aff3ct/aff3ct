@@ -27,13 +27,13 @@ private:
 	      int cur_ite;
 
 public:
-	explicit Predicate_ite(const int n_ite);
+	inline explicit Predicate_ite(const int n_ite);
 
 	virtual ~Predicate_ite() = default;
 
-	bool operator()();
+	inline bool operator()();
 
-	void reset();
+	inline void reset();
 };
 }
 }

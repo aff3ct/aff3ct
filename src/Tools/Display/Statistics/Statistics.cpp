@@ -39,7 +39,7 @@ void Statistics
 
 void Statistics
 ::show_task(const float                    total_sec,
-            const std::string&             module_sname,
+            const std::string&             module_name,
             const std::string&             task_name,
             const size_t                   task_n_elmts,
             const uint32_t                 task_n_calls,
@@ -73,7 +73,7 @@ void Statistics
 	std::stringstream ssavg_thr, ssmin_thr, ssmax_thr;
 	std::stringstream ssavg_lat, ssmin_lat, ssmax_lat;
 
-	ssmodule  << std::setprecision(                        2) <<                                        std::fixed  << std::setw(12) << module_sname;
+	ssmodule  << std::setprecision(                        2) <<                                        std::fixed  << std::setw(12) << module_name;
 	ssprocess << std::setprecision(                        2) <<                                        std::fixed  << std::setw(17) << task_name;
 	sssp      << std::setprecision(                        2) <<                                        std::fixed  << std::setw( 7) << "*";
 	ssn_calls << std::setprecision(task_n_calls > l1 ? P : 2) << (task_n_calls > l1 ? std::scientific : std::fixed) << std::setw( 8) << task_n_calls;
@@ -242,7 +242,8 @@ void Statistics
 
 		for (auto *t : tasks)
 		{
-			auto module_sname      = t->get_module().get_short_name();
+			auto module_name       = t->get_module().get_custom_name().empty() ? t->get_module().get_short_name() :
+			                                                                     t->get_module().get_custom_name();
 			auto task_n_elmts      = t->sockets.back()->get_n_elmts();
 			auto task_name         = t->get_name          ();
 			auto task_n_calls      = t->get_n_calls       ();
@@ -253,7 +254,7 @@ void Statistics
 			ttask_min_duration += (task_min_duration * task_n_calls) / ttask_n_calls;
 			ttask_max_duration += (task_max_duration * task_n_calls) / ttask_n_calls;
 
-			Statistics::show_task(total_sec, module_sname, task_name, task_n_elmts, task_n_calls,
+			Statistics::show_task(total_sec, module_name, task_name, task_n_elmts, task_n_calls,
 			                      task_tot_duration, task_min_duration, task_max_duration, stream);
 
 			auto task_total_sec = ((float)task_tot_duration.count()) * 0.000000001f;
@@ -372,7 +373,10 @@ void Statistics
 
 		for (auto &vt : tasks)
 		{
-			auto module_sname      = vt[0]->get_module().get_short_name();
+
+			auto module_name       = vt[0]->get_module().get_custom_name().empty() ?
+			                         vt[0]->get_module().get_short_name() :
+			                         vt[0]->get_module().get_custom_name();
 			auto task_n_elmts      = vt[0]->sockets.back()->get_n_elmts();
 			auto task_name         = vt[0]->get_name();
 			auto task_n_calls      = 0;
@@ -391,7 +395,7 @@ void Statistics
 			ttask_min_duration += (task_min_duration * task_n_calls) / ttask_n_calls;
 			ttask_max_duration += (task_max_duration * task_n_calls) / ttask_n_calls;
 
-			Statistics::show_task(total_sec, module_sname, task_name, task_n_elmts, task_n_calls,
+			Statistics::show_task(total_sec, module_name, task_name, task_n_elmts, task_n_calls,
 			                      task_tot_duration, task_min_duration, task_max_duration, stream);
 
 			auto task_total_sec = ((float)task_tot_duration.count()) * 0.000000001f;

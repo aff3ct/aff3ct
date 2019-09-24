@@ -6,8 +6,8 @@
 using namespace aff3ct;
 using namespace aff3ct::module;
 
-Module::
-Module(const int n_frames)
+Module
+::Module(const int n_frames)
 : n_frames(n_frames), name("Module"), short_name("Module")
 #ifdef AFF3CT_SYSTEMC_MODULE
 , sc(*this)
@@ -21,44 +21,62 @@ Module(const int n_frames)
 	}
 }
 
-int Module::
-get_n_frames() const
+int Module
+::get_n_frames() const
 {
 	return n_frames;
 }
 
-void Module::
-set_name(const std::string &name)
+void Module
+::set_name(const std::string &name)
 {
 	this->name = name;
 }
 
-const std::string& Module::
-get_name() const
+const std::string& Module
+::get_name() const
 {
 	return this->name;
 }
 
-void Module::
-set_short_name(const std::string &short_name)
+void Module
+::set_short_name(const std::string &short_name)
 {
 	this->short_name = short_name;
 }
 
-const std::string& Module::
-get_short_name() const
+const std::string& Module
+::get_short_name() const
 {
 	return this->short_name;
 }
 
-Task& Module::
-operator[](const int id)
+void Module
+::set_custom_name(const std::string &custom_name)
+{
+	this->custom_name = custom_name;
+}
+
+const std::string& Module
+::get_custom_name() const
+{
+	return this->custom_name;
+}
+
+void Module
+::remove_custom_name()
+{
+	this->custom_name = "";
+}
+
+Task& Module
+::operator[](const int id)
 {
 	return *tasks_with_nullptr[id];
 }
 
-Task& Module::
-create_task(const std::string &name, const int id)
+Task& Module
+::create_task(const std::string &name, const int id)
 {
 	bool autoalloc = false, autoexec = false, stats = false, fast = false, debug = false;
 	auto t = std::make_shared<Task>(*this, name, autoalloc, autoexec, stats, fast, debug);
@@ -85,14 +103,14 @@ create_task(const std::string &name, const int id)
 	return *tasks.back();
 }
 
-void Module::
-create_codelet(Task& task, std::function<int(void)> codelet)
+void Module
+::create_codelet(Task& task, std::function<int(void)> codelet)
 {
 	task.create_codelet(codelet);
 }
 
-void Module::
-register_timer(Task& task, const std::string &key)
+void Module
+::register_timer(Task& task, const std::string &key)
 {
 	task.register_timer(key);
 }

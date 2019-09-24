@@ -14,7 +14,8 @@
 using namespace aff3ct;
 using namespace aff3ct::module;
 
-Task::Task(const Module &module, const std::string &name, const bool autoalloc, const bool autoexec,
+Task
+::Task(const Module &module, const std::string &name, const bool autoalloc, const bool autoexec,
            const bool stats, const bool fast, const bool debug)
 : module(module),
   name(name),
@@ -36,7 +37,8 @@ Task::Task(const Module &module, const std::string &name, const bool autoalloc, 
 {
 }
 
-void Task::set_autoalloc(const bool autoalloc)
+void Task
+::set_autoalloc(const bool autoalloc)
 {
 	if (autoalloc != this->autoalloc)
 	{
@@ -61,12 +63,14 @@ void Task::set_autoalloc(const bool autoalloc)
 	}
 }
 
-void Task::set_autoexec(const bool autoexec)
+void Task
+::set_autoexec(const bool autoexec)
 {
 	this->autoexec = autoexec;
 }
 
-void Task::set_stats(const bool stats)
+void Task
+::set_stats(const bool stats)
 {
 	this->stats = stats;
 
@@ -74,7 +78,8 @@ void Task::set_stats(const bool stats)
 		this->set_fast(false);
 }
 
-void Task::set_fast(const bool fast)
+void Task
+::set_fast(const bool fast)
 {
 	this->fast = fast;
 	if (this->fast)
@@ -87,7 +92,8 @@ void Task::set_fast(const bool fast)
 		sockets[i]->set_fast(this->fast);
 }
 
-void Task::set_debug(const bool debug)
+void Task
+::set_debug(const bool debug)
 {
 	this->debug = debug;
 
@@ -95,22 +101,26 @@ void Task::set_debug(const bool debug)
 		this->set_fast(false);
 }
 
-void Task::set_debug_hex(const bool debug_hex)
+void Task
+::set_debug_hex(const bool debug_hex)
 {
 	this->debug_hex = debug_hex;
 }
 
-void Task::set_debug_limit(const uint32_t limit)
+void Task
+::set_debug_limit(const uint32_t limit)
 {
 	this->debug_limit = (int32_t)limit;
 }
 
-void Task::set_debug_precision(const uint8_t prec)
+void Task
+::set_debug_precision(const uint8_t prec)
 {
 	this->debug_precision = prec;
 }
 
-void Task::set_debug_frame_max(const uint32_t limit)
+void Task
+::set_debug_frame_max(const uint32_t limit)
 {
 	this->debug_frame_max = limit;
 }
@@ -204,7 +214,8 @@ static inline void display_data(const T *data,
 	std::cout.flags(f);
 }
 
-int Task::exec()
+int Task
+::exec()
 {
 	if (fast)
 	{
@@ -220,8 +231,10 @@ int Task::exec()
 		{
 			auto n_fra = (size_t)this->module.get_n_frames();
 
+			std::string module_name = module.get_custom_name().empty() ? module.get_name() : module.get_custom_name();
+
 			std::cout << "# ";
-			std::cout << rang::style::bold << rang::fg::green << module.get_name() << rang::style::reset
+			std::cout << rang::style::bold << rang::fg::green << module_name << rang::style::reset
 			          << "::"
 			          << rang::style::bold << rang::fg::magenta << get_name() << rang::style::reset
 			          << "(";
@@ -330,7 +343,8 @@ int Task::exec()
 }
 
 template <typename T>
-Socket& Task::create_socket(const std::string &name, const size_t n_elmts)
+Socket& Task
+::create_socket(const std::string &name, const size_t n_elmts)
 {
 	if (name.empty())
 	{
@@ -358,7 +372,8 @@ Socket& Task::create_socket(const std::string &name, const size_t n_elmts)
 }
 
 template <typename T>
-Socket& Task::create_socket_in(const std::string &name, const size_t n_elmts)
+Socket& Task
+::create_socket_in(const std::string &name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
 
@@ -369,7 +384,8 @@ Socket& Task::create_socket_in(const std::string &name, const size_t n_elmts)
 }
 
 template <typename T>
-Socket& Task::create_socket_in_out(const std::string &name, const size_t n_elmts)
+Socket& Task
+::create_socket_in_out(const std::string &name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
 
@@ -380,7 +396,8 @@ Socket& Task::create_socket_in_out(const std::string &name, const size_t n_elmts
 }
 
 template <typename T>
-Socket& Task::create_socket_out(const std::string &name, const size_t n_elmts)
+Socket& Task
+::create_socket_out(const std::string &name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
 
@@ -396,12 +413,14 @@ Socket& Task::create_socket_out(const std::string &name, const size_t n_elmts)
 	return s;
 }
 
-void Task::create_codelet(std::function<int(void)> &codelet)
+void Task
+::create_codelet(std::function<int(void)> &codelet)
 {
 	this->codelet = codelet;
 }
 
-bool Task::can_exec() const
+bool Task
+::can_exec() const
 {
 	for (size_t i = 0; i < sockets.size(); i++)
 		if (sockets[i]->dataptr == nullptr)
@@ -409,52 +428,62 @@ bool Task::can_exec() const
 	return true;
 }
 
-std::chrono::nanoseconds Task::get_duration_total() const
+std::chrono::nanoseconds Task
+::get_duration_total() const
 {
 	return this->duration_total;
 }
 
-std::chrono::nanoseconds Task::get_duration_avg() const
+std::chrono::nanoseconds Task
+::get_duration_avg() const
 {
 	return this->duration_total / this->n_calls;
 }
 
-std::chrono::nanoseconds Task::get_duration_min() const
+std::chrono::nanoseconds Task
+::get_duration_min() const
 {
 	return this->duration_min;
 }
 
-std::chrono::nanoseconds Task::get_duration_max() const
+std::chrono::nanoseconds Task
+::get_duration_max() const
 {
 	return this->duration_max;
 }
 
-const std::vector<std::string>& Task::get_timers_name() const
+const std::vector<std::string>& Task
+::get_timers_name() const
 {
 	return this->timers_name;
 }
 
-const std::vector<uint32_t>& Task::get_timers_n_calls() const
+const std::vector<uint32_t>& Task
+::get_timers_n_calls() const
 {
 	return this->timers_n_calls;
 }
 
-const std::vector<std::chrono::nanoseconds>& Task::get_timers_total() const
+const std::vector<std::chrono::nanoseconds>& Task
+::get_timers_total() const
 {
 	return this->timers_total;
 }
 
-const std::vector<std::chrono::nanoseconds>& Task::get_timers_min() const
+const std::vector<std::chrono::nanoseconds>& Task
+::get_timers_min() const
 {
 	return this->timers_min;
 }
 
-const std::vector<std::chrono::nanoseconds>& Task::get_timers_max() const
+const std::vector<std::chrono::nanoseconds>& Task
+::get_timers_max() const
 {
 	return this->timers_max;
 }
 
-socket_t Task::get_socket_type(const Socket &s) const
+socket_t Task
+::get_socket_type(const Socket &s) const
 {
 	for (size_t i = 0; i < sockets.size(); i++)
 		if (sockets[i].get() == &s)
@@ -466,7 +495,8 @@ socket_t Task::get_socket_type(const Socket &s) const
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 }
 
-void Task::register_timer(const std::string &name)
+void Task
+::register_timer(const std::string &name)
 {
 	this->timers_name   .push_back(name                       );
 	this->timers_n_calls.push_back(0                          );
@@ -475,7 +505,8 @@ void Task::register_timer(const std::string &name)
 	this->timers_min    .push_back(std::chrono::nanoseconds(0));
 }
 
-void Task::reset_stats()
+void Task
+::reset_stats()
 {
 	this->n_calls        =                          0;
 	this->duration_total = std::chrono::nanoseconds(0);
