@@ -28,6 +28,34 @@ analysis-cppcheck:
   script:
     - ./ci/analysis-cppcheck.sh
 
+analysis-clang:
+  stage: analysis
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  except:
+    - schedules
+  artifacts:
+    name: analysis-clang-reports
+    when: always
+    paths:
+      - clang_reports/
+  only:
+    - master
+    - development
+  tags:
+    - linux
+    - clang
+    - scan-build
+    - clang-tidy
+    - python
+  script:
+    - export CFLAGS="-pedantic -fdiagnostics-show-option -Wall -Wno-overloaded-virtual"
+    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=OFF -DAFF3CT_COMPILE_SHARED_LIB=OFF -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
+    - export NAME="build_analysis_clang"
+    - export REPORTS_DIR="clang_reports"
+    - source ./ci/tools/threads.sh
+    - ./ci/analysis-clang.sh
+
 analysis-headers:
   stage: analysis
   except:
@@ -1162,18 +1190,24 @@ coverage-linux:
 
 deploy-sonarqube-linux:
   stage: deploy
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
   dependencies:
     - analysis-cppcheck
     - coverage-linux
+    - analysis-clang
   tags:
+    - linux
     - sonarqube
+    - gcc
   only:
     - master
     - development
   allow_failure: true
   script:
+    - export REPORTS_DIR="clang_reports"
     - source ./ci/tools/git-tag.sh
     - source ./ci/tools/git-branch.sh
     - ./ci/deploy-sonarqube-linux.sh

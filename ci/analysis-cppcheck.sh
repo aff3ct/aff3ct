@@ -6,8 +6,6 @@ cppcheck --version
 mkdir cppcheck
 #cppcheck --suppress=missingIncludeSystem -I./src/ --force --enable=all --std=c++11 -U_MSC_VER ./src/ 2> cppcheck_all.log
 find .\/src\/ -type f -follow -print | grep "[.]h$\|[.]hpp$\|[.]hxx$\|[.]cpp$" > src_files.txt
-sed -i -e 's/.\/src\/Tools\/date.h//g' src_files.txt
-sed -i -e 's/.\/src\/Tools\/MSVC\/dirent.h//g' src_files.txt
 # cppcheck for sonarqube
 cppcheck --language=c++ --suppress=missingIncludeSystem --force --enable=all --std=c++11 -U_MSC_VER --file-list=src_files.txt --xml --xml-version=2 2> cppcheck/cppcheck.xml
 cppcheck --language=c++ --suppress=missingIncludeSystem --force --enable=all --std=c++11 -U_MSC_VER --file-list=src_files.txt 2> cppcheck/cppcheck_all.log
