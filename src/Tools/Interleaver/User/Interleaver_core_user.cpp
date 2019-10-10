@@ -105,6 +105,8 @@ Interleaver_core_user<T>
 		message << "Can't open '" + filename + "' file.";
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	this->init();
 }
 
 template <typename T>

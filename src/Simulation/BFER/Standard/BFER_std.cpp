@@ -71,7 +71,6 @@ void BFER_std<B,R,Q>
 	try
 	{
 		auto& interleaver = codec[tid]->get_interleaver(); // can raise an exceptions
-		interleaver->init();
 		if (interleaver->is_uniform())
 			this->monitor_er[tid]->add_handler_check(std::bind(&tools::Interleaver_core<>::refresh, interleaver.get()));
 

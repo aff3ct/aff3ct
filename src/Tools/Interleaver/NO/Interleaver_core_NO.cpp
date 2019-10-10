@@ -10,6 +10,7 @@ Interleaver_core_NO<T>
 ::Interleaver_core_NO(const int size, const int n_frames)
 : Interleaver_core<T>(size, "NO", false, n_frames)
 {
+	this->init();
 }
 
 template <typename T>

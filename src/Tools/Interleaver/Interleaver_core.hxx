@@ -40,6 +40,12 @@ template <typename T>
 const std::vector<T>& Interleaver_core<T>
 ::get_lut() const
 {
+	if (!this->is_initialized())
+	{
+		std::string message = "The 'init()' method has to be called before trying to get the lookup table.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message);
+	}
+
 	return pi;
 }
 
@@ -47,6 +53,12 @@ template <typename T>
 const std::vector<T>& Interleaver_core<T>
 ::get_lut_inv() const
 {
+	if (!this->is_initialized())
+	{
+		std::string message = "The 'init()' method has to be called before trying to get the inverse lookup table.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message);
+	}
+
 	return pi_inv;
 }
 

@@ -12,6 +12,7 @@ Interleaver_core_CCSDS<T>
 ::Interleaver_core_CCSDS(const int size, const int n_frames)
 : Interleaver_core<T>(size, "CCSDS", false, n_frames)
 {
+	this->init();
 }
 
 template <typename T>

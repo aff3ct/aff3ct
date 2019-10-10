@@ -101,7 +101,7 @@ interleave(const D *nat, D *itl, const int frame_id) const
 template <typename D, typename T>
 void Interleaver<D,T>::
 interleave(const D *nat, D *itl, const int frame_id, const int n_frames,
-                       const bool frame_reordering) const
+           const bool frame_reordering) const
 {
 	this->_interleave(nat, itl, core.get_lut(), frame_reordering, n_frames, frame_id);
 }
@@ -163,17 +163,11 @@ deinterleave(const D *itl, D *nat, const int frame_id, const int n_frames,
 template <typename D, typename T>
 void Interleaver<D,T>::
 _interleave(const D *in_vec, D *out_vec,
-                        const std::vector<T> &lookup_table,
-                        const bool frame_reordering,
-                        const int  n_frames,
-                        const int  frame_id) const
+            const std::vector<T> &lookup_table,
+            const bool frame_reordering,
+            const int  n_frames,
+            const int  frame_id) const
 {
-	if (!core.is_initialized())
-	{
-		std::string message = "'init' method has to be called first, before trying to (de)interleave something.";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message);
-	}
-
 	if (frame_reordering)
 	{
 		if (!this->core.is_uniform())

@@ -14,6 +14,8 @@ Interleaver_core_golden<T>
 : Interleaver_core<T>(size, "golden", uniform, n_frames), gen(), dist(0.0, size * 0.1)
 {
 	gen.seed(seed);
+
+	this->init();
 }
 
 template <typename T>
