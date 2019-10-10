@@ -44,15 +44,15 @@ public:
 
 	bool is_uniform() const;
 
-	bool is_initialized() const;
-
 	std::string get_name() const;
-
-	void init();
 
 	void refresh();
 
 protected:
+	bool is_initialized() const;
+
+	void init();
+
 	virtual void gen_lut(T *lut, const int frame_id) = 0;
 };
 }
