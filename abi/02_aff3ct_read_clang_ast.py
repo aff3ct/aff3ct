@@ -608,7 +608,7 @@ def process_ast(ast_filename):
                     # ignore 'enum classes' for now
                     if not filter_out and (scope == 'namespace' or scope == '<toplevel>') and not line.startswith('enum class '):
                         # try to match a class
-                        m = re.match(r'^(.*)class ([_a-zA-Z][_a-zA-Z0-9]*)(?: : ((?:public )?(?:[_a-zA-Z][_a-zA-Z0-9]*::)*[_a-zA-Z][_a-zA-Z0-9]*(?:<[^{]+>)?))? {', line)
+                        m = re.match(r'^(.*)class ([_a-zA-Z][_a-zA-Z0-9]*)(?: : ((?:(?:virtual )?public )?(?:[_a-zA-Z][_a-zA-Z0-9]*::)*[_a-zA-Z][_a-zA-Z0-9]*(?:<[^{]+>)?))? {', line)
                         if m is not None:
                             # push previous class on the class stack
                             class_stack.append((class_name, class_access, class_entry))
