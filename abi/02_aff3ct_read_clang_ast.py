@@ -595,7 +595,10 @@ def process_ast(ast_filename):
                         # - currently supported:
                         #   - alt3r::module namespace
                         #   - aff3ct::module namespace
-                        if filter_out and (name_path_str == 'alt3r::module' or name_path_str == 'aff3ct::module'):
+                        if filter_out and (name_path_str == 'alt3r::module' or name_path_str == 'aff3ct::module' or name_path_str == 'aff3ct::tools'):
+                            # wanted namespace found
+                            filter_out_threshold = len(namespace_stack) # record nesting level
+                            filter_out = False  # disable filtering until nesting level is left):
                             # wanted namespace found
                             filter_out_threshold = len(namespace_stack) # record nesting level
                             filter_out = False  # disable filtering until nesting level is left
