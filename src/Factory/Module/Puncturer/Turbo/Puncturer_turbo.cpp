@@ -46,7 +46,7 @@ struct sub_same_length
 };
 
 void Puncturer_turbo::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Puncturer::parameters::get_description(args);
 
@@ -55,22 +55,22 @@ void Puncturer_turbo::parameters
 
 	args.erase({p+"-fra-size", "N"});
 
-	tools::add_options(args.at({p+"-type"}), 0, "TURBO");
+	cli::add_options(args.at({p+"-type"}), 0, "TURBO");
 
 	tools::add_arg(args, p, class_name+"p+pattern",
-		tools::List2D<bool>(tools::Boolean(),
-	 	                    std::make_tuple(tools::Length(3, 3), tools::Function<sub_same_length>("elements of same length")),
-	 	                    std::make_tuple(tools::Length(1))));
+		cli::List2D<bool>(cli::Boolean(),
+	 	                  std::make_tuple(cli::Length(3, 3), cli::Function<sub_same_length>("elements of same length")),
+	 	                  std::make_tuple(cli::Length(1))));
 
 	tools::add_arg(args, p, class_name+"p+tail-length",
-		tools::Integer(tools::Positive()));
+		cli::Integer(cli::Positive()));
 
 	tools::add_arg(args, p, class_name+"p+no-buff",
-		tools::None());
+		cli::None());
 }
 
 void Puncturer_turbo::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Puncturer::parameters::store(vals);
 

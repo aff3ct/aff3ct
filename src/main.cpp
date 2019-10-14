@@ -10,10 +10,10 @@
 #ifdef AFF3CT_SYSTEMC_SIMU
 #include <systemc>
 #endif
+#include <cli.hpp>
 
 #include "Tools/types.h"
 #include "Tools/version.h"
-#include "Tools/Arguments/Argument_handler.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Launcher/Launcher.hpp"
 #include "Factory/Launcher/Launcher.hpp"
@@ -156,10 +156,10 @@ void print_version()
 
 int read_arguments(const int argc, const char** argv, factory::Launcher::parameters &params)
 {
-	tools::Argument_handler ah(argc, argv);
+	cli::Argument_handler ah(argc, argv);
 
-	tools::Argument_map_info args;
-	tools::Argument_map_group arg_group;
+	cli::Argument_map_info args;
+	cli::Argument_map_group arg_group;
 
 	std::vector<std::string> cmd_warn, cmd_error;
 

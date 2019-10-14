@@ -85,7 +85,7 @@ std::vector<std::string> BFER::parameters
 }
 
 void BFER::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Simulation::parameters::get_description(args);
 
@@ -93,51 +93,51 @@ void BFER::parameters
 	const std::string class_name = "factory::BFER::parameters::";
 
 	tools::add_arg(args, p, class_name+"p+coset,c",
-		tools::None());
+		cli::None());
 
 	tools::add_arg(args, p, class_name+"p+err-trk",
-		tools::None(),
-		tools::arg_rank::ADV);
+		cli::None(),
+		cli::arg_rank::ADV);
 
 	tools::add_arg(args, p, class_name+"p+err-trk-rev",
-		tools::None(),
-		tools::arg_rank::ADV);
+		cli::None(),
+		cli::arg_rank::ADV);
 
 	tools::add_arg(args, p, class_name+"p+err-trk-path",
-		tools::File(tools::openmode::read_write),
-		tools::arg_rank::ADV);
+		cli::File(cli::openmode::read_write),
+		cli::arg_rank::ADV);
 
 	tools::add_arg(args, p, class_name+"p+err-trk-thold",
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		tools::arg_rank::ADV);
+		cli::Integer(cli::Positive(), cli::Non_zero()),
+		cli::arg_rank::ADV);
 
 	tools::add_arg(args, p, class_name+"p+coded",
-		tools::None());
+		cli::None());
 
 	auto pter = ter->get_prefix();
 
 	tools::add_arg(args, pter, class_name+"p+sigma",
-		tools::None());
+		cli::None());
 
 	auto pmnt = mnt_er->get_prefix();
 
 	tools::add_arg(args, pmnt, class_name+"p+mutinfo",
-		tools::None());
+		cli::None());
 
 #ifdef AFF3CT_MPI
 	tools::add_arg(args, pmnt, class_name+"p+mpi-comm-freq",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 #else
 	tools::add_arg(args, pmnt, class_name+"p+red-lazy",
-		tools::None());
+		cli::None());
 
 	tools::add_arg(args, pmnt, class_name+"p+red-lazy-freq",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 #endif
 }
 
 void BFER::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	using namespace std::chrono;
 

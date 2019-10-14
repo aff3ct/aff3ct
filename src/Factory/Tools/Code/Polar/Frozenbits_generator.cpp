@@ -19,9 +19,9 @@ Frozenbits_generator::parameters
 ::parameters(const std::string &prefix)
 : Factory::parameters(Frozenbits_generator_name, Frozenbits_generator_name, prefix)
 {
-	if (!tools::Is_path::check(this->path_fb))
+	if (!cli::Is_path::check(this->path_fb))
 	{
-		auto new_path_fb = tools::modify_path<tools::Is_path>(this->path_fb);
+		auto new_path_fb = cli::modify_path<cli::Is_path>(this->path_fb);
 		if (!new_path_fb.empty())
 			this->path_fb = new_path_fb;
 	}
@@ -34,39 +34,39 @@ Frozenbits_generator::parameters* Frozenbits_generator::parameters
 }
 
 void Frozenbits_generator::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::Frozenbits_generator::parameters::";
 
 	tools::add_arg(args, p, class_name+"p+info-bits,K",
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		tools::arg_rank::REQ);
+		cli::Integer(cli::Positive(), cli::Non_zero()),
+		cli::arg_rank::REQ);
 
 	tools::add_arg(args, p, class_name+"p+cw-size,N",
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		tools::arg_rank::REQ);
+		cli::Integer(cli::Positive(), cli::Non_zero()),
+		cli::arg_rank::REQ);
 
 	tools::add_arg(args, p, class_name+"p+noise",
-		tools::Real(tools::Positive(), tools::Non_zero()));
+		cli::Real(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+gen-method",
-		tools::Text(tools::Including_set("GA", "FILE", "5G", "TV", "BEC")));
+		cli::Text(cli::Including_set("GA", "FILE", "5G", "TV", "BEC")));
 
 	tools::add_arg(args, p, class_name+"p+awgn-path",
-		tools::Path(tools::openmode::read));
+		cli::Path(cli::openmode::read));
 
 	tools::add_arg(args, p, class_name+"p+dump-path",
-		tools::Folder(tools::openmode::write));
+		cli::Folder(cli::openmode::write));
 
 #ifdef AFF3CT_POLAR_BOUNDS
 	tools::add_arg(args, p, class_name+"p+pb-path",
-		tools::File(tools::openmode::read));
+		cli::File(cli::openmode::read));
 #endif
 }
 
 void Frozenbits_generator::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 

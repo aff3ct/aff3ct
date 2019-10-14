@@ -24,21 +24,21 @@ Encoder_polar::parameters* Encoder_polar::parameters
 }
 
 void Encoder_polar::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::Encoder_polar::parameters::";
 
-	tools::add_options(args.at({p+"-type"}), 0, "POLAR");
+	cli::add_options(args.at({p+"-type"}), 0, "POLAR");
 
 	tools::add_arg(args, p, class_name+"p+no-sys",
-		tools::None());
+		cli::None());
 }
 
 void Encoder_polar::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Encoder::parameters::store(vals);
 }

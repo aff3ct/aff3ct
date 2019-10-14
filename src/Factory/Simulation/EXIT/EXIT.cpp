@@ -79,7 +79,7 @@ std::vector<std::string> EXIT::parameters
 }
 
 void EXIT::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Simulation::parameters::get_description(args);
 
@@ -87,26 +87,26 @@ void EXIT::parameters
 	const std::string class_name = "factory::EXIT::parameters::";
 
 	tools::add_arg(args, p, class_name+"p+siga-range",
-		tools::Matlab_vector<float>(tools::Real(tools::Positive()), std::make_tuple(tools::Length(1)), std::make_tuple(tools::Length(1,3))),
-		tools::arg_rank::REQ);
+		cli::Matlab_vector<float>(cli::Real(cli::Positive()), std::make_tuple(cli::Length(1)), std::make_tuple(cli::Length(1,3))),
+		cli::arg_rank::REQ);
 
 	tools::add_arg(args, p, class_name+"p+siga-min,a",
-		tools::Real(tools::Positive()),
-		tools::arg_rank::REQ);
+		cli::Real(cli::Positive()),
+		cli::arg_rank::REQ);
 
 	tools::add_arg(args, p, class_name+"p+siga-max,A",
-		tools::Real(tools::Positive()),
-		tools::arg_rank::REQ);
+		cli::Real(cli::Positive()),
+		cli::arg_rank::REQ);
 
 	tools::add_arg(args, p, class_name+"p+siga-step",
-		tools::Real(tools::Positive(), tools::Non_zero()));
+		cli::Real(cli::Positive(), cli::Non_zero()));
 
 	args.add_link({p+"-siga-range"}, {p+"-siga-min", "a"});
 	args.add_link({p+"-siga-range"}, {p+"-siga-max", "A"});
 }
 
 void EXIT::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Simulation::parameters::store(vals);
 

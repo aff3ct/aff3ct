@@ -26,7 +26,7 @@ Codec_RS::parameters* Codec_RS::parameters
 }
 
 void Codec_RS::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Codec_SIHO_HIHO::parameters::get_description(args);
 
@@ -45,7 +45,7 @@ void Codec_RS::parameters
 }
 
 void Codec_RS::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Codec_SIHO_HIHO::parameters::store(vals);
 

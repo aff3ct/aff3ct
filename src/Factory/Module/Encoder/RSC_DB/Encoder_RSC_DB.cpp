@@ -24,7 +24,7 @@ Encoder_RSC_DB::parameters* Encoder_RSC_DB::parameters
 }
 
 void Encoder_RSC_DB::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Encoder::parameters::get_description(args);
 
@@ -33,17 +33,17 @@ void Encoder_RSC_DB::parameters
 
 	args.erase({p+"-cw-size", "N"});
 
-	tools::add_options(args.at({p+"-type"}), 0, "RSC_DB");
+	cli::add_options(args.at({p+"-type"}), 0, "RSC_DB");
 
 	tools::add_arg(args, p, class_name+"p+std",
-		tools::Text(tools::Including_set("DVB-RCS1", "DVB-RCS2")));
+		cli::Text(cli::Including_set("DVB-RCS1", "DVB-RCS2")));
 
 	tools::add_arg(args, p, class_name+"p+no-buff",
-		tools::None());
+		cli::None());
 }
 
 void Encoder_RSC_DB::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Encoder::parameters::store(vals);
 

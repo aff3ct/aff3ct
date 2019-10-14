@@ -2,7 +2,6 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-#include "Tools/Arguments/Splitter/Splitter.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Math/max.h"
 #include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
@@ -64,12 +63,12 @@ struct Real_splitter
 		const std::string queue     = "})]";
 		const std::string separator = ",";
 
-		return tools::Splitter::split(val, head, queue, separator);
+		return cli::Splitter::split(val, head, queue, separator);
 	}
 };
 
 void Decoder_LDPC::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Decoder::parameters::get_description(args);
 
@@ -77,52 +76,52 @@ void Decoder_LDPC::parameters
 	const std::string class_name = "factory::Decoder_LDPC::parameters::";
 
 	tools::add_arg(args, p, class_name+"p+h-path",
-		tools::File(tools::openmode::read),
-		tools::arg_rank::REQ);
+		cli::File(cli::openmode::read),
+		cli::arg_rank::REQ);
 
 	args.add_link({p+"-h-path"}, {p+"-cw-size",   "N"}); // N_cw is H width
 	args.add_link({p+"-h-path"}, {p+"-info-bits", "K"}); // if there is no K, then H is considered regular,
 	                                                     // so K is the N - H's height
 
-	tools::add_options(args.at({p+"-type", "D"}), 0, "BP_FLOODING", "BP_HORIZONTAL_LAYERED", "BP_VERTICAL_LAYERED", "BP_PEELING", "BIT_FLIPPING");
+	cli::add_options(args.at({p+"-type", "D"}), 0, "BP_FLOODING", "BP_HORIZONTAL_LAYERED", "BP_VERTICAL_LAYERED", "BP_PEELING", "BIT_FLIPPING");
 #ifdef __cpp_aligned_new
-	tools::add_options(args.at({p+"-type", "D"}), 0, "BP_HORIZONTAL_LAYERED_LEGACY");
+	cli::add_options(args.at({p+"-type", "D"}), 0, "BP_HORIZONTAL_LAYERED_LEGACY");
 #endif
-	tools::add_options(args.at({p+"-implem"   }), 0, "SPA", "LSPA", "MS", "OMS", "NMS", "AMS", "GALA", "GALB", "GALE", "WBF", "MWBF",  "PPBF");
+	cli::add_options(args.at({p+"-implem"   }), 0, "SPA", "LSPA", "MS", "OMS", "NMS", "AMS", "GALA", "GALB", "GALE", "WBF", "MWBF",  "PPBF");
 
 	tools::add_arg(args, p, class_name+"p+ite,i",
-		tools::Integer(tools::Positive()));
+		cli::Integer(cli::Positive()));
 
 	tools::add_arg(args, p, class_name+"p+off",
-		tools::Real());
+		cli::Real());
 
 	tools::add_arg(args, p, class_name+"p+mwbf-factor",
-		tools::Real());
+		cli::Real());
 
 	tools::add_arg(args, p, class_name+"p+norm",
-		tools::Real(tools::Positive()));
+		cli::Real(cli::Positive()));
 
 	tools::add_arg(args, p, class_name+"p+no-synd",
-		tools::None());
+		cli::None());
 
 	tools::add_arg(args, p, class_name+"p+synd-depth",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+simd",
-		tools::Text(tools::Including_set("INTER", "INTRA")));
+		cli::Text(cli::Including_set("INTER", "INTRA")));
 
 	tools::add_arg(args, p, class_name+"p+min",
-		tools::Text(tools::Including_set("MIN", "MINL", "MINS")));
+		cli::Text(cli::Including_set("MIN", "MINL", "MINS")));
 
 	tools::add_arg(args, p, class_name+"p+h-reorder",
-		tools::Text(tools::Including_set("NONE", "ASC", "DSC")));
+		cli::Text(cli::Including_set("NONE", "ASC", "DSC")));
 
 	tools::add_arg(args, p, class_name+"p+ppbf-proba",
-		tools::List<float,Real_splitter>(tools::Real(), tools::Length(1)));
+		cli::List<float,Real_splitter>(cli::Real(), cli::Length(1)));
 }
 
 void Decoder_LDPC::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 

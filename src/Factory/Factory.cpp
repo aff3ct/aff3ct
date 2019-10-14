@@ -62,10 +62,10 @@ std::vector<std::string> Factory::parameters
 	return p;
 }
 
-tools::Argument_map_info Factory
+cli::Argument_map_info Factory
 ::get_description(const std::vector<Factory::parameters*> &params)
 {
-	tools::Argument_map_info args;
+	cli::Argument_map_info args;
 
 	get_description(params, args);
 
@@ -73,24 +73,24 @@ tools::Argument_map_info Factory
 }
 
 void Factory
-::get_description(const std::vector<Factory::parameters*> &params, tools::Argument_map_info &args)
+::get_description(const std::vector<Factory::parameters*> &params, cli::Argument_map_info &args)
 {
 	for (auto *p : params)
 		p->get_description(args);
 }
 
 void Factory
-::store(std::vector<Factory::parameters*> &params, const tools::Argument_map_value &vals)
+::store(std::vector<Factory::parameters*> &params, const cli::Argument_map_value &vals)
 {
 	for (auto *p : params)
 		p->store(vals);
 }
 
-tools::Argument_map_group Factory
+cli::Argument_map_group Factory
 ::create_groups(const std::vector<Factory::parameters*> &params)
 {
 	// create groups of arguments
-	tools::Argument_map_group grps;
+	cli::Argument_map_group grps;
 	for (auto *p : params)
 	{
 		auto prefixes    = p->get_prefixes   ();

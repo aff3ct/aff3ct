@@ -28,28 +28,28 @@ Noise::parameters* Noise::parameters
 }
 
 void Noise::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::Noise::parameters::";
 
 	tools::add_arg(args, p, class_name+"p+noise-range,R",
-		tools::Matlab_vector<float>(tools::Real(), std::make_tuple(tools::Length(1)), std::make_tuple(tools::Length(1,3))),
-		tools::arg_rank::REQ);
+		cli::Matlab_vector<float>(cli::Real(), std::make_tuple(cli::Length(1)), std::make_tuple(cli::Length(1,3))),
+		cli::arg_rank::REQ);
 
 	tools::add_arg(args, p, class_name+"p+noise-min,m",
-		tools::Real(),
-		tools::arg_rank::REQ);
+		cli::Real(),
+		cli::arg_rank::REQ);
 
 	tools::add_arg(args, p, class_name+"p+noise-max,M",
-		tools::Real(),
-		tools::arg_rank::REQ);
+		cli::Real(),
+		cli::arg_rank::REQ);
 
 	tools::add_arg(args, p, class_name+"p+noise-step,s",
-		tools::Real(tools::Positive(), tools::Non_zero()));
+		cli::Real(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+pdf-path",
-		tools::File(tools::openmode::read));
+		cli::File(cli::openmode::read));
 
 	args.add_link({p+"-noise-range", "R"}, {p+"-noise-min", "m"});
 	args.add_link({p+"-noise-range", "R"}, {p+"-noise-max", "M"});
@@ -58,11 +58,11 @@ void Noise::parameters
 	args.add_link({p+"-pdf-path"        }, {p+"-noise-max",   "M"});
 
 	tools::add_arg(args, p, class_name+"p+noise-type,E",
-		tools::Text(tools::Including_set("ESN0", "EBN0", "ROP", "EP")));
+		cli::Text(cli::Including_set("ESN0", "EBN0", "ROP", "EP")));
 }
 
 void Noise::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 

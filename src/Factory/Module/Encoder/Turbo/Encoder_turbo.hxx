@@ -65,7 +65,7 @@ std::vector<std::string> Encoder_turbo::parameters<E1,E2>
 
 template <class E1, class E2>
 void Encoder_turbo::parameters<E1,E2>
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Encoder::parameters::get_description(args);
 
@@ -84,10 +84,10 @@ void Encoder_turbo::parameters<E1,E2>
 		args.erase({pi+"-fra", "F"});
 	}
 
-	tools::add_options(args.at({p+"-type"}), 0, "TURBO");
+	cli::add_options(args.at({p+"-type"}), 0, "TURBO");
 
 	tools::add_arg(args, p, class_name+"p+json-path",
-		tools::File(tools::openmode::write));
+		cli::File(cli::openmode::write));
 
 	sub1->get_description(args);
 
@@ -115,7 +115,7 @@ void Encoder_turbo::parameters<E1,E2>
 
 template <class E1, class E2>
 void Encoder_turbo::parameters<E1,E2>
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Encoder::parameters::store(vals);
 

@@ -28,7 +28,7 @@ Decoder_RSC_DB::parameters* Decoder_RSC_DB::parameters
 }
 
 void Decoder_RSC_DB::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Decoder::parameters::get_description(args);
 
@@ -37,18 +37,18 @@ void Decoder_RSC_DB::parameters
 
 	args.erase({p+"-cw-size", "N"});
 
-	tools::add_options(args.at({p+"-type", "D"}), 0, "BCJR");
-	tools::add_options(args.at({p+"-implem"   }), 0, "GENERIC", "DVB-RCS1", "DVB-RCS2");
+	cli::add_options(args.at({p+"-type", "D"}), 0, "BCJR");
+	cli::add_options(args.at({p+"-implem"   }), 0, "GENERIC", "DVB-RCS1", "DVB-RCS2");
 
 	tools::add_arg(args, p, class_name+"p+max",
-		tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")));
+		cli::Text(cli::Including_set("MAX", "MAXL", "MAXS")));
 
 	tools::add_arg(args, p, class_name+"p+no-buff",
-		tools::None());
+		cli::None());
 }
 
 void Decoder_RSC_DB::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 

@@ -51,56 +51,56 @@ Channel::parameters* Channel::parameters
 }
 
 void Channel::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::Channel::parameters::";
 
 	tools::add_arg(args, p, class_name+"p+fra-size,N",
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		tools::arg_rank::REQ);
+		cli::Integer(cli::Positive(), cli::Non_zero()),
+		cli::arg_rank::REQ);
 
 	tools::add_arg(args, p, class_name+"p+fra,F",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+type",
-		tools::Text(tools::Including_set("NO", "AWGN", "RAYLEIGH", "RAYLEIGH_USER", "BEC", "BSC", "OPTICAL", "USER",
-		                                 "USER_ADD", "USER_BEC", "USER_BSC")));
+		cli::Text(cli::Including_set("NO", "AWGN", "RAYLEIGH", "RAYLEIGH_USER", "BEC", "BSC", "OPTICAL", "USER",
+		                             "USER_ADD", "USER_BEC", "USER_BSC")));
 
 	tools::add_arg(args, p, class_name+"p+implem",
-		tools::Text(tools::Including_set("STD", "FAST")));
+		cli::Text(cli::Including_set("STD", "FAST")));
 
 #ifdef AFF3CT_CHANNEL_GSL
-	tools::add_options(args.at({p+"-implem"}), 0, "GSL");
+	cli::add_options(args.at({p+"-implem"}), 0, "GSL");
 #endif
 #ifdef AFF3CT_CHANNEL_MKL
-	tools::add_options(args.at({p+"-implem"}), 0, "MKL");
+	cli::add_options(args.at({p+"-implem"}), 0, "MKL");
 #endif
 
 	tools::add_arg(args, p, class_name+"p+path",
-		tools::File(tools::openmode::read));
+		cli::File(cli::openmode::read));
 
 	tools::add_arg(args, p, class_name+"p+blk-fad",
-		tools::Text(tools::Including_set("NO", "FRAME", "ONETAP")));
+		cli::Text(cli::Including_set("NO", "FRAME", "ONETAP")));
 
 	tools::add_arg(args, p, class_name+"p+noise",
-		tools::Real(tools::Positive(), tools::Non_zero()));
+		cli::Real(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+seed,S",
-		tools::Integer(tools::Positive()));
+		cli::Integer(cli::Positive()));
 
 	tools::add_arg(args, p, class_name+"p+add-users",
-		tools::None());
+		cli::None());
 
 	tools::add_arg(args, p, class_name+"p+complex",
-		tools::None());
+		cli::None());
 
 	tools::add_arg(args, p, class_name+"p+gain-occur",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 }
 
 void Channel::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 

@@ -48,7 +48,7 @@ std::vector<std::string> Encoder_RA::parameters
 }
 
 void Encoder_RA::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Encoder::parameters::get_description(args);
 
@@ -64,11 +64,11 @@ void Encoder_RA::parameters
 
 	auto p = this->get_prefix();
 
-	tools::add_options(args.at({p+"-type"}), 0, "RA");
+	cli::add_options(args.at({p+"-type"}), 0, "RA");
 }
 
 void Encoder_RA::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Encoder::parameters::store(vals);
 

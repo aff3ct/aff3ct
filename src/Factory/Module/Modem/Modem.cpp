@@ -41,78 +41,78 @@ Modem::parameters* Modem::parameters
 }
 
 void Modem::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::Modem::parameters::";
 
 	// ----------------------------------------------------------------------------------------------------- modulator
 	tools::add_arg(args, p, class_name+"p+fra-size,N",
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		tools::arg_rank::REQ);
+		cli::Integer(cli::Positive(), cli::Non_zero()),
+		cli::arg_rank::REQ);
 
 	tools::add_arg(args, p, class_name+"p+fra,F",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+type",
-		tools::Text(tools::Including_set("BPSK", "OOK", "PSK", "PAM", "QAM", "CPM", "USER", "SCMA")));
+		cli::Text(cli::Including_set("BPSK", "OOK", "PSK", "PAM", "QAM", "CPM", "USER", "SCMA")));
 
 	tools::add_arg(args, p, class_name+"p+implem",
-		tools::Text(tools::Including_set("STD", "FAST")));
+		cli::Text(cli::Including_set("STD", "FAST")));
 
 	tools::add_arg(args, p, class_name+"p+bps",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+const-path",
-		tools::File(tools::openmode::read_write));
+		cli::File(cli::openmode::read_write));
 
 	tools::add_arg(args, p, class_name+"p+codebook",
-		tools::File(tools::openmode::read));
+		cli::File(cli::openmode::read));
 
 	tools::add_arg(args, p, class_name+"p+cpm-std",
-		tools::Text(tools::Including_set("GSM")));
+		cli::Text(cli::Including_set("GSM")));
 
 	tools::add_arg(args, p, class_name+"p+cpm-L",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+cpm-k",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+cpm-p",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+cpm-upf",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+cpm-map",
-		tools::Text(tools::Including_set("NATURAL", "GRAY")));
+		cli::Text(cli::Including_set("NATURAL", "GRAY")));
 
 	tools::add_arg(args, p, class_name+"p+cpm-ws",
-		tools::Text(tools::Including_set("GMSK", "REC", "RCOS")));
+		cli::Text(cli::Including_set("GMSK", "REC", "RCOS")));
 
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	tools::add_arg(args, p, class_name+"p+max",
-		tools::Text(tools::Including_set("MAX", "MAXL", "MAXS", "MAXSS")));
+		cli::Text(cli::Including_set("MAX", "MAXL", "MAXS", "MAXSS")));
 
 	tools::add_arg(args, p, class_name+"p+noise",
-		tools::Real(tools::Positive(), tools::Non_zero()));
+		cli::Real(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+no-sig2",
-		tools::None());
+		cli::None());
 
 	tools::add_arg(args, p, class_name+"p+psi",
-		tools::Text(tools::Including_set("PSI0", "PSI1", "PSI2", "PSI3")));
+		cli::Text(cli::Including_set("PSI0", "PSI1", "PSI2", "PSI3")));
 
 	tools::add_arg(args, p, class_name+"p+ite",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+rop-est",
-		tools::Integer(tools::Positive()));
+		cli::Integer(cli::Positive()));
 }
 
 void Modem::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 

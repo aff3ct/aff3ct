@@ -21,13 +21,13 @@ Interleaver::parameters* Interleaver::parameters
 }
 
 void Interleaver::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	core->get_description(args);
 }
 
 void Interleaver::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	core->store(vals);
 }

@@ -25,40 +25,40 @@ Decoder::parameters* Decoder::parameters
 }
 
 void Decoder::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::Decoder::parameters::";
 
 	tools::add_arg(args, p, class_name+"p+cw-size,N",
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		tools::arg_rank::REQ);
+		cli::Integer(cli::Positive(), cli::Non_zero()),
+		cli::arg_rank::REQ);
 
 	tools::add_arg(args, p, class_name+"p+info-bits,K",
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		tools::arg_rank::REQ);
+		cli::Integer(cli::Positive(), cli::Non_zero()),
+		cli::arg_rank::REQ);
 
 	tools::add_arg(args, p, class_name+"p+fra,F",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+type,D",
-		tools::Text(tools::Including_set("ML", "CHASE")));
+		cli::Text(cli::Including_set("ML", "CHASE")));
 
 	tools::add_arg(args, p, class_name+"p+implem",
-		tools::Text(tools::Including_set("STD", "NAIVE")));
+		cli::Text(cli::Including_set("STD", "NAIVE")));
 
 	tools::add_arg(args, p, class_name+"p+hamming",
-		tools::None());
+		cli::None());
 
 	tools::add_arg(args, p, class_name+"p+flips",
-		tools::Integer(tools::Positive()));
+		cli::Integer(cli::Positive()));
 
 	tools::add_arg(args, p, class_name+"p+seed",
-		tools::Integer(tools::Positive()));
+		cli::Integer(cli::Positive()));
 }
 
 void Decoder::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 

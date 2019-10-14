@@ -43,7 +43,7 @@ Decoder_RSC::parameters* Decoder_RSC::parameters
 }
 
 void Decoder_RSC::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Decoder::parameters::get_description(args);
 
@@ -52,27 +52,27 @@ void Decoder_RSC::parameters
 
 	args.erase({p+"-cw-size", "N"});
 
-	tools::add_options(args.at({p+"-type", "D"}), 0, "BCJR");
-	tools::add_options(args.at({p+"-implem"   }), 0, "GENERIC", "FAST", "VERY_FAST");
+	cli::add_options(args.at({p+"-type", "D"}), 0, "BCJR");
+	cli::add_options(args.at({p+"-implem"   }), 0, "GENERIC", "FAST", "VERY_FAST");
 
 	tools::add_arg(args, p, class_name+"p+simd",
-		tools::Text(tools::Including_set("INTRA", "INTER")));
+		cli::Text(cli::Including_set("INTRA", "INTER")));
 
 	tools::add_arg(args, p, class_name+"p+max",
-		tools::Text(tools::Including_set("MAX", "MAXL", "MAXS")));
+		cli::Text(cli::Including_set("MAX", "MAXL", "MAXS")));
 
 	tools::add_arg(args, p, class_name+"p+no-buff",
-		tools::None());
+		cli::None());
 
 	tools::add_arg(args, p, class_name+"p+poly",
-		tools::Text());
+		cli::Text());
 
 	tools::add_arg(args, p, class_name+"p+std",
-		tools::Text(tools::Including_set("LTE", "CCSDS")));
+		cli::Text(cli::Including_set("LTE", "CCSDS")));
 }
 
 void Decoder_RSC::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 

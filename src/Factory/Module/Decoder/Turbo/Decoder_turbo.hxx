@@ -73,7 +73,7 @@ std::vector<std::string> Decoder_turbo::parameters<D1,D2>
 
 template <class D1, class D2>
 void Decoder_turbo::parameters<D1,D2>
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Decoder::parameters::get_description(args);
 
@@ -92,20 +92,20 @@ void Decoder_turbo::parameters<D1,D2>
 		args.erase({pi+"-fra", "F"});
 	}
 
-	tools::add_options(args.at({p+"-type", "D"}), 0, "TURBO"      );
-	tools::add_options(args.at({p+"-implem"   }), 0, "STD", "FAST");
+	cli::add_options(args.at({p+"-type", "D"}), 0, "TURBO"      );
+	cli::add_options(args.at({p+"-implem"   }), 0, "STD", "FAST");
 
 	tools::add_arg(args, p, class_name+"p+ite,i",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+sc",
-		tools::None());
+		cli::None());
 
 	tools::add_arg(args, p, class_name+"p+json",
-		tools::None());
+		cli::None());
 
 	tools::add_arg(args, p, class_name+"p+crc-start",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	sf->get_description(args);
 
@@ -143,7 +143,7 @@ void Decoder_turbo::parameters<D1,D2>
 
 template <class D1, class D2>
 void Decoder_turbo::parameters<D1,D2>
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 

@@ -3,8 +3,8 @@
 
 #include <string>
 #include <map>
+#include <cli.hpp>
 
-#include "Tools/Arguments/Argument_tools.hpp"
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
 #include "Factory/Module/Monitor/Monitor.hpp"
 
@@ -37,8 +37,8 @@ struct Monitor_BFER : public Monitor
 		Monitor_BFER::parameters* clone() const;
 
 		// parameters construction
-		void get_description(tools::Argument_map_info &args) const;
-		void store          (const tools::Argument_map_value &vals);
+		void get_description(cli::Argument_map_info &args) const;
+		void store          (const cli::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

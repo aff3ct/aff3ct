@@ -50,7 +50,7 @@ std::vector<std::string> Decoder_RA::parameters
 }
 
 void Decoder_RA::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Decoder::parameters::get_description(args);
 
@@ -67,15 +67,15 @@ void Decoder_RA::parameters
 		args.erase({pi+"-fra", "F"});
 	}
 
-	tools::add_options(args.at({p+"-type", "D"}), 0, "RA");
-	tools::add_options(args.at({p+"-implem"   }), 0, "STD");
+	cli::add_options(args.at({p+"-type", "D"}), 0, "RA");
+	cli::add_options(args.at({p+"-implem"   }), 0, "STD");
 
 	tools::add_arg(args, p, class_name+"p+ite,i",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 }
 
 void Decoder_RA::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 

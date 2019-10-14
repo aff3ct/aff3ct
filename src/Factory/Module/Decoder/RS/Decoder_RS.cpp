@@ -29,7 +29,7 @@ Decoder_RS::parameters* Decoder_RS::parameters
 }
 
 void Decoder_RS::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Decoder::parameters::get_description(args);
 
@@ -37,16 +37,16 @@ void Decoder_RS::parameters
 	const std::string class_name = "factory::Decoder_RS::parameters::";
 
 	tools::add_arg(args, p, class_name+"p+corr-pow,T",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	args.add_link({p+"-corr-pow", "T"}, {p+"-info-bits", "K"});
 
-	tools::add_options(args.at({p+"-type", "D"}), 0, "ALGEBRAIC");
-	tools::add_options(args.at({p+"-implem"   }), 0, "GENIUS");
+	cli::add_options(args.at({p+"-type", "D"}), 0, "ALGEBRAIC");
+	cli::add_options(args.at({p+"-implem"   }), 0, "GENIUS");
 }
 
 void Decoder_RS::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 

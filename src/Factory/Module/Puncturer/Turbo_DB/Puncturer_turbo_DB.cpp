@@ -24,17 +24,17 @@ Puncturer_turbo_DB::parameters* Puncturer_turbo_DB::parameters
 }
 
 void Puncturer_turbo_DB::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Puncturer::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	tools::add_options(args.at({p+"-type"}), 0, "TURBO_DB");
+	cli::add_options(args.at({p+"-type"}), 0, "TURBO_DB");
 }
 
 void Puncturer_turbo_DB::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Puncturer::parameters::store(vals);
 

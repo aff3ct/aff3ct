@@ -29,7 +29,7 @@ Puncturer_LDPC::parameters* Puncturer_LDPC::parameters
 }
 
 void Puncturer_LDPC::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Puncturer::parameters::get_description(args);
 
@@ -37,13 +37,13 @@ void Puncturer_LDPC::parameters
 	const std::string class_name = "factory::Puncturer_LDPC::parameters::";
 
 	tools::add_arg(args, p, class_name+"p+cw-size,N_cw",
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		tools::arg_rank::REQ);
+		cli::Integer(cli::Positive(), cli::Non_zero()),
+		cli::arg_rank::REQ);
 
-	tools::add_options(args.at({p+"-type"}), 0, "LDPC");
+	cli::add_options(args.at({p+"-type"}), 0, "LDPC");
 
 	tools::add_arg(args, p, class_name+"p+pattern",
-		tools::Text());
+		cli::Text());
 }
 
 std::vector<bool> generate_punct_vector(const std::string &pattern)
@@ -70,7 +70,7 @@ std::vector<bool> generate_punct_vector(const std::string &pattern)
 }
 
 void Puncturer_LDPC::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	auto save_N_cw = this->N_cw;
 	Puncturer::parameters::store(vals);

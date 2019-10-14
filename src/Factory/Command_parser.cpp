@@ -7,7 +7,7 @@
 using namespace aff3ct;
 using namespace factory;
 
-const tools::Argument_tag aff3ct::factory::Command_parser::help_tag = {"help", "h"};
+const cli::Argument_tag aff3ct::factory::Command_parser::help_tag = {"help", "h"};
 
 Command_parser
 ::Command_parser(int argc, char** argv,
@@ -27,7 +27,7 @@ void Command_parser
 
 	if (add_help_tag && !args.exist(Command_parser::help_tag))
 	{
-		args.add(Command_parser::help_tag, tools::None(), "print this help.");
+		args.add(Command_parser::help_tag, cli::None(), "print this help.");
 	}
 
 	// parse the argument from the command line
@@ -66,7 +66,7 @@ void Command_parser
 	else if (args.exist(Command_parser::help_tag))
 	{
 		std::string message = "For more information please display the help (\"";
-		message += tools::Argument_handler::print_tag(Command_parser::help_tag) += "\").";
+		message += cli::Argument_handler::print_tag(Command_parser::help_tag) += "\").";
 
 		err_stream << rang::tag::info << message << std::endl << std::endl;
 	}

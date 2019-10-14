@@ -3,8 +3,8 @@
 
 #include <string>
 #include <map>
+#include <cli.hpp>
 
-#include "Tools/Arguments/Argument_tools.hpp"
 #include "Module/CRC/CRC.hpp"
 #include "Module/Codec/LDPC/Codec_LDPC.hpp"
 #include "Factory/Module/Codec/Codec_SISO_SIHO.hpp"
@@ -26,8 +26,8 @@ struct Codec_LDPC : public Codec_SISO_SIHO
 		void enable_puncturer();
 
 		// parameters construction
-		void get_description(tools::Argument_map_info &args) const;
-		void store          (const tools::Argument_map_value &vals);
+		void get_description(cli::Argument_map_info &args) const;
+		void store          (const cli::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

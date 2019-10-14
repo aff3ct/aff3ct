@@ -3,8 +3,8 @@
 
 #include <string>
 #include <map>
+#include <cli.hpp>
 
-#include "Tools/Arguments/Argument_tools.hpp"
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Code/LDPC/Standard/DVBS2/DVBS2_constants.hpp"
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
@@ -39,8 +39,8 @@ struct Encoder_LDPC : public Encoder
 		Encoder_LDPC::parameters* clone() const;
 
 		// parameters construction
-		void get_description(tools::Argument_map_info &args) const;
-		void store          (const tools::Argument_map_value &vals);
+		void get_description(cli::Argument_map_info &args) const;
+		void store          (const cli::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

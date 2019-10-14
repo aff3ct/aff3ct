@@ -5,8 +5,8 @@
 #include <string>
 #include <memory>
 #include <map>
+#include <cli.hpp>
 
-#include "Tools/Arguments/Argument_tools.hpp"
 #include "Tools/auto_cloned_unique_ptr.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
 #include "Module/Encoder/Turbo/Encoder_turbo.hpp"
@@ -45,8 +45,8 @@ struct Encoder_turbo : public Encoder
 		virtual std::vector<std::string> get_prefixes   () const;
 
 		// parameters construction
-		void get_description(tools::Argument_map_info &args) const;
-		void store          (const tools::Argument_map_value &vals);
+		void get_description(cli::Argument_map_info &args) const;
+		void store          (const cli::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

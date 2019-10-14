@@ -30,7 +30,7 @@ Decoder_BCH::parameters* Decoder_BCH::parameters
 }
 
 void Decoder_BCH::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Decoder::parameters::get_description(args);
 
@@ -38,16 +38,16 @@ void Decoder_BCH::parameters
 	const std::string class_name = "factory::Decoder_BCH::parameters::";
 
 	tools::add_arg(args, p, class_name+"p+corr-pow,T",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	args.add_link({p+"-corr-pow", "T"}, {p+"-info-bits", "K"});
 
-	tools::add_options(args.at({p+"-type", "D"}), 0, "ALGEBRAIC");
-	tools::add_options(args.at({p+"-implem"   }), 0, "GENIUS", "FAST");
+	cli::add_options(args.at({p+"-type", "D"}), 0, "ALGEBRAIC");
+	cli::add_options(args.at({p+"-implem"   }), 0, "GENIUS", "FAST");
 }
 
 void Decoder_BCH::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 

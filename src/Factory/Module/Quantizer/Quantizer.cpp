@@ -27,36 +27,36 @@ Quantizer::parameters* Quantizer::parameters
 }
 
 void Quantizer::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::Quantizer::parameters::";
 
 	tools::add_arg(args, p, class_name+"p+size,N",
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		tools::arg_rank::REQ);
+		cli::Integer(cli::Positive(), cli::Non_zero()),
+		cli::arg_rank::REQ);
 
 	tools::add_arg(args, p, class_name+"p+fra,F",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+type",
-		tools::Text(tools::Including_set("POW2", "CUSTOM")));
+		cli::Text(cli::Including_set("POW2", "CUSTOM")));
 
 	tools::add_arg(args, p, class_name+"p+implem",
-		tools::Text(tools::Including_set("STD", "FAST")));
+		cli::Text(cli::Including_set("STD", "FAST")));
 
 	tools::add_arg(args, p, class_name+"p+dec",
-		tools::Integer(tools::Positive()));
+		cli::Integer(cli::Positive()));
 
 	tools::add_arg(args, p, class_name+"p+bits",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+range",
-		tools::Real(tools::Positive(), tools::Non_zero()));
+		cli::Real(cli::Positive(), cli::Non_zero()));
 }
 
 void Quantizer::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 

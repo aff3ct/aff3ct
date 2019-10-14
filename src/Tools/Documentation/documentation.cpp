@@ -18,7 +18,7 @@ using namespace aff3ct::tools;
 
 std::map<std::string,std::string> Documentation;
 
-Argument_tag extract_tags(const std::string &key, const std::string &prefix)
+cli::Argument_tag extract_tags(const std::string &key, const std::string &prefix)
 {
 	auto key_cpy = key;
 	const std::string pcode = "p+";
@@ -175,10 +175,10 @@ std::string extract_documentation(const std::string &key)
 		return Documentation[key];
 }
 
-void aff3ct::tools::add_arg(Argument_map_info &args, const std::string &prefix, const std::string &key,
-                            Argument_type *arg_t, const arg_rank rank)
+void aff3ct::tools::add_arg(cli::Argument_map_info &args, const std::string &prefix, const std::string &key,
+                            cli::Argument_type *arg_t, const cli::arg_rank rank)
 {
-	const Argument_tag tags = extract_tags(key, prefix);
+	const cli::Argument_tag tags = extract_tags(key, prefix);
 	const std::string doc = extract_documentation(key);
 	args.add(tags, arg_t, doc, rank, key);
 }

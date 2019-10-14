@@ -3,7 +3,6 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
 #include "Tools/general_utils.h"
-#include "Tools/Arguments/Splitter/Splitter.hpp"
 #include "Module/Decoder/Turbo_product/Chase_pyndiah/Decoder_chase_pyndiah.hpp"
 #include "Module/Decoder/Turbo_product/Decoder_turbo_product.hpp"
 #include "Factory/Module/Decoder/Turbo_product/Decoder_turbo_product.hpp"
@@ -65,12 +64,12 @@ struct Real_splitter
 		const std::string queue     = "})]";
 		const std::string separator = ",";
 
-		return tools::Splitter::split(val, head, queue, separator);
+		return cli::Splitter::split(val, head, queue, separator);
 	}
 };
 
 void Decoder_turbo_product::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Decoder::parameters::get_description(args);
 
@@ -90,32 +89,32 @@ void Decoder_turbo_product::parameters
 		args.erase({pi+"-fra", "F"});
 	}
 
-	tools::add_options(args.at({p+"-type", "D"}), 0, "CP");
-	tools::add_options(args.at({p+"-implem"   }), 0, "FAST");
+	cli::add_options(args.at({p+"-type", "D"}), 0, "CP");
+	cli::add_options(args.at({p+"-implem"   }), 0, "FAST");
 
 	tools::add_arg(args, p, class_name+"p+ite,i",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+alpha",
-		tools::List<float,Real_splitter>(tools::Real(), tools::Length(1)));
+		cli::List<float,Real_splitter>(cli::Real(), cli::Length(1)));
 
 	tools::add_arg(args, p, class_name+"p+beta",
-		tools::List<float,Real_splitter>(tools::Real(tools::Positive()), tools::Length(1)));
+		cli::List<float,Real_splitter>(cli::Real(cli::Positive()), cli::Length(1)));
 
 	tools::add_arg(args, p, class_name+"p+p",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+t",
-		tools::Integer(tools::Positive()));
+		cli::Integer(cli::Positive()));
 
 	tools::add_arg(args, p, class_name+"p+c",
-		tools::Integer(tools::Positive()));
+		cli::Integer(cli::Positive()));
 
 	tools::add_arg(args, p, class_name+"p+ext",
-		tools::None());
+		cli::None());
 
 	tools::add_arg(args, p, class_name+"p+cp-coef",
-		tools::List<float,Real_splitter>(tools::Real(), tools::Length(5,5)));
+		cli::List<float,Real_splitter>(cli::Real(), cli::Length(5,5)));
 
 	sub->get_description(args);
 
@@ -125,7 +124,7 @@ void Decoder_turbo_product::parameters
 }
 
 void Decoder_turbo_product::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 

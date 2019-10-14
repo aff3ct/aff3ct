@@ -32,7 +32,7 @@ Simulation::parameters* Simulation::parameters
 }
 
 void Simulation::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Launcher::parameters::get_description(args);
 
@@ -42,47 +42,47 @@ void Simulation::parameters
 	const std::string class_name = "factory::Simulation::parameters::";
 
 	tools::add_arg(args, p, class_name+"p+meta",
-		tools::Text());
+		cli::Text());
 
 	tools::add_arg(args, p, class_name+"p+stop-time",
-		tools::Integer(tools::Positive()),
-		tools::arg_rank::ADV);
+		cli::Integer(cli::Positive()),
+		cli::arg_rank::ADV);
 
 	tools::add_arg(args, p, class_name+"p+max-fra,n",
-		tools::Integer(tools::Positive()),
-		tools::arg_rank::ADV);
+		cli::Integer(cli::Positive()),
+		cli::arg_rank::ADV);
 
 	tools::add_arg(args, p, class_name+"p+crit-nostop",
-		tools::None(),
-		tools::arg_rank::ADV);
+		cli::None(),
+		cli::arg_rank::ADV);
 
 	tools::add_arg(args, p, class_name+"p+dbg",
-		tools::None());
+		cli::None());
 
 	tools::add_arg(args, p, class_name+"p+dbg-hex",
-		tools::None());
+		cli::None());
 
 	tools::add_arg(args, p, class_name+"p+dbg-prec",
-		tools::Integer(tools::Positive()));
+		cli::Integer(cli::Positive()));
 
 	tools::add_arg(args, p, class_name+"p+dbg-limit,d",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+dbg-fra",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+stats",
-		tools::None());
+		cli::None());
 
 	tools::add_arg(args, p, class_name+"p+threads,t",
-		tools::Integer(tools::Positive()));
+		cli::Integer(cli::Positive()));
 
 	tools::add_arg(args, p, class_name+"p+seed,S",
-		tools::Integer(tools::Positive()));
+		cli::Integer(cli::Positive()));
 }
 
 void Simulation::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	using namespace std::chrono;
 

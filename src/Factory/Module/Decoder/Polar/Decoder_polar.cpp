@@ -66,38 +66,38 @@ Decoder_polar::parameters* Decoder_polar::parameters
 }
 
 void Decoder_polar::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::Decoder_polar::parameters::";
 
-	tools::add_options(args.at({p+"-type", "D"}), 0, "SC", "SCL", "SCL_MEM", "ASCL", "ASCL_MEM", "SCAN", "SCF");
+	cli::add_options(args.at({p+"-type", "D"}), 0, "SC", "SCL", "SCL_MEM", "ASCL", "ASCL_MEM", "SCAN", "SCF");
 
-	args.at({p+"-implem"})->change_type(tools::Text(tools::Example_set("FAST", "NAIVE")));
+	args.at({p+"-implem"})->change_type(cli::Text(cli::Example_set("FAST", "NAIVE")));
 
 	tools::add_arg(args, p, class_name+"p+ite,i",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+lists,L",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+simd",
-		tools::Text(tools::Including_set("INTRA", "INTER")));
+		cli::Text(cli::Including_set("INTRA", "INTER")));
 
 	tools::add_arg(args, p, class_name+"p+polar-nodes",
-		tools::Text());
+		cli::Text());
 
 	tools::add_arg(args, p, class_name+"p+partial-adaptive",
-		tools::None());
+		cli::None());
 
 	tools::add_arg(args, p, class_name+"p+no-sys",
-		tools::None());
+		cli::None());
 }
 
 void Decoder_polar::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 
