@@ -181,6 +181,22 @@ endfunction(assign_source_group)
 assign_source_group(${source_files})
 
 # ---------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------------- SUB-PROJECT
+# ---------------------------------------------------------------------------------------------------------------------
+
+# cli
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/cli/src/cli.hpp")
+    option(CLI_COMPILE_STATIC_LIB "" OFF)
+    option(CLI_COMPILE_SHARED_LIB "" OFF)
+    option(CLI_STATUS_MESSAGE_QUIET "" ON)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/cli/ EXCLUDE_FROM_ALL)
+    message(STATUS "AFF3CT - Sub-project found: cli")
+else()
+    message(FATAL_ERROR "AFF3CT - cli can't be found, try to init the submodule with the following cmd:\n"
+                        "$ git submodule update --init --recursive")
+endif()
+
+# ---------------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------- OBJECTS/LIBS/EXE
 # ---------------------------------------------------------------------------------------------------------------------
 
@@ -198,7 +214,7 @@ endif()
 
 # Binary
 if(AFF3CT_COMPILE_EXE)
-    add_executable(aff3ct-bin $<TARGET_OBJECTS:aff3ct-obj>)
+    add_executable(aff3ct-bin $<TARGET_OBJECTS:aff3ct-obj> $<TARGET_OBJECTS:cli-obj>)
     set_target_properties(aff3ct-bin PROPERTIES
                                      OUTPUT_NAME aff3ct-${AFF3CT_VERSION_FULL}
                                      POSITION_INDEPENDENT_CODE ON) # set -fpie
@@ -207,14 +223,14 @@ endif(AFF3CT_COMPILE_EXE)
 
 # Library
 if(AFF3CT_COMPILE_SHARED_LIB)
-    add_library(aff3ct-shared-lib SHARED $<TARGET_OBJECTS:aff3ct-obj>)
+    add_library(aff3ct-shared-lib SHARED $<TARGET_OBJECTS:aff3ct-obj> $<TARGET_OBJECTS:cli-obj>)
     set_target_properties(aff3ct-shared-lib PROPERTIES
                                             OUTPUT_NAME aff3ct-${AFF3CT_VERSION_FULL}
                                             POSITION_INDEPENDENT_CODE ON) # set -fpic
     message(STATUS "AFF3CT - Compile: shared library")
 endif(AFF3CT_COMPILE_SHARED_LIB)
 if(AFF3CT_COMPILE_STATIC_LIB)
-    add_library(aff3ct-static-lib STATIC $<TARGET_OBJECTS:aff3ct-obj>)
+    add_library(aff3ct-static-lib STATIC $<TARGET_OBJECTS:aff3ct-obj> $<TARGET_OBJECTS:cli-obj>)
     set_target_properties(aff3ct-static-lib PROPERTIES
                                             OUTPUT_NAME aff3ct-${AFF3CT_VERSION_FULL}
                                             POSITION_INDEPENDENT_CODE ON) # set -fpic
@@ -337,6 +353,9 @@ endmacro()
 
 # AFF3CT headers
 aff3ct_target_include_directories(PUBLIC "src" "aff3ct")
+
+# cli headers
+aff3ct_target_include_directories(PUBLIC "lib/cli/src" "cli")
 
 # MSVC dirent.h
 if(MSVC)
@@ -484,23 +503,6 @@ set(CMAKE_THREAD_PREFER_PTHREAD ON)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 aff3ct_target_link_libraries(PUBLIC Threads::Threads)
-
-# ---------------------------------------------------------------------------------------------------------------------
-# --------------------------------------------------------------------------------------------------------- SUB-PROJECT
-# ---------------------------------------------------------------------------------------------------------------------
-
-# cli
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/cli/src/cli.hpp")
-    option(CLI_COMPILE_STATIC_LIB "" ON)
-    option(CLI_STATUS_MESSAGE_QUIET "" ON)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/cli/ EXCLUDE_FROM_ALL)
-    aff3ct_target_include_directories(PUBLIC "lib/cli/src" "cli")
-    aff3ct_target_link_libraries(PRIVATE cli-static-lib)
-    message(STATUS "AFF3CT - Sub-project found: cli")
-else()
-    message(FATAL_ERROR "AFF3CT - cli can't be found, try to init the submodule with the following cmd:\n"
-                        "$ git submodule update --init --recursive")
-endif()
 
 # ---------------------------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------------------- EXPORT
