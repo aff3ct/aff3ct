@@ -6,8 +6,8 @@
 #include <string>
 #include <memory>
 #include <map>
+#include <cli.hpp>
 
-#include "Tools/Arguments/Argument_tools.hpp"
 #include "Tools/Math/max.h"
 #include "Module/Encoder/Encoder.hpp"
 #include "Module/Decoder/Decoder_SIHO.hpp"
@@ -39,8 +39,8 @@ struct Decoder_RSC : public Decoder
 		Decoder_RSC::parameters* clone() const;
 
 		// parameters construction
-		void get_description(tools::Argument_map_info &args) const;
-		void store          (const tools::Argument_map_value &vals);
+		void get_description(cli::Argument_map_info &args) const;
+		void store          (const cli::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

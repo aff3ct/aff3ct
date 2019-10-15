@@ -25,23 +25,23 @@ Encoder_NO::parameters* Encoder_NO::parameters
 }
 
 void Encoder_NO::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::Encoder_NO::parameters::";
 
 	tools::add_arg(args, p, class_name+"p+info-bits,K",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+fra,F",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+type",
-		tools::Text(tools::Including_set("NO")));
+		cli::Text(cli::Including_set("NO")));
 }
 
 void Encoder_NO::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 

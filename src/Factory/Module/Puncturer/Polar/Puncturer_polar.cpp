@@ -23,17 +23,17 @@ Puncturer_polar::parameters* Puncturer_polar::parameters
 }
 
 void Puncturer_polar::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Puncturer::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	tools::add_options(args.at({p+"-type"}), 0, "SHORTLAST");
+	cli::add_options(args.at({p+"-type"}), 0, "SHORTLAST");
 }
 
 void Puncturer_polar::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Puncturer::parameters::store(vals);
 	this->N_cw = (int)std::exp2((int)std::ceil(std::log2(this->N)));

@@ -42,6 +42,8 @@ Interleaver_core_column_row<T>
 		        << ", 'n_rows' = " << n_rows << ", 'n_cols' = " << n_cols << ").";
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	this->init();
 }
 
 template <typename T>

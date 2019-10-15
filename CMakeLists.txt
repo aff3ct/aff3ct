@@ -181,6 +181,22 @@ endfunction(assign_source_group)
 assign_source_group(${source_files})
 
 # ---------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------------- SUB-PROJECT
+# ---------------------------------------------------------------------------------------------------------------------
+
+# cli
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/cli/src/cli.hpp")
+    option(CLI_COMPILE_STATIC_LIB "" OFF)
+    option(CLI_COMPILE_SHARED_LIB "" OFF)
+    option(CLI_STATUS_MESSAGE_QUIET "" ON)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/cli/ EXCLUDE_FROM_ALL)
+    message(STATUS "AFF3CT - Sub-project found: cli")
+else()
+    message(FATAL_ERROR "AFF3CT - cli can't be found, try to init the submodule with the following cmd:\n"
+                        "$ git submodule update --init --recursive")
+endif()
+
+# ---------------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------- OBJECTS/LIBS/EXE
 # ---------------------------------------------------------------------------------------------------------------------
 
@@ -198,7 +214,7 @@ endif()
 
 # Binary
 if(AFF3CT_COMPILE_EXE)
-    add_executable(aff3ct-bin $<TARGET_OBJECTS:aff3ct-obj>)
+    add_executable(aff3ct-bin $<TARGET_OBJECTS:aff3ct-obj> $<TARGET_OBJECTS:cli-obj>)
     set_target_properties(aff3ct-bin PROPERTIES
                                      OUTPUT_NAME aff3ct-${AFF3CT_VERSION_FULL}
                                      POSITION_INDEPENDENT_CODE ON) # set -fpie
@@ -207,14 +223,14 @@ endif(AFF3CT_COMPILE_EXE)
 
 # Library
 if(AFF3CT_COMPILE_SHARED_LIB)
-    add_library(aff3ct-shared-lib SHARED $<TARGET_OBJECTS:aff3ct-obj>)
+    add_library(aff3ct-shared-lib SHARED $<TARGET_OBJECTS:aff3ct-obj> $<TARGET_OBJECTS:cli-obj>)
     set_target_properties(aff3ct-shared-lib PROPERTIES
                                             OUTPUT_NAME aff3ct-${AFF3CT_VERSION_FULL}
                                             POSITION_INDEPENDENT_CODE ON) # set -fpic
     message(STATUS "AFF3CT - Compile: shared library")
 endif(AFF3CT_COMPILE_SHARED_LIB)
 if(AFF3CT_COMPILE_STATIC_LIB)
-    add_library(aff3ct-static-lib STATIC $<TARGET_OBJECTS:aff3ct-obj>)
+    add_library(aff3ct-static-lib STATIC $<TARGET_OBJECTS:aff3ct-obj> $<TARGET_OBJECTS:cli-obj>)
     set_target_properties(aff3ct-static-lib PROPERTIES
                                             OUTPUT_NAME aff3ct-${AFF3CT_VERSION_FULL}
                                             POSITION_INDEPENDENT_CODE ON) # set -fpic
@@ -335,12 +351,30 @@ macro(aff3ct_target_include_directories privacy dir_build dir_install)
     endif()
 endmacro()
 
+macro(aff3ct_target_include_directories2 privacy dir)
+    if(AFF3CT_COMPILE_OBJ)
+        target_include_directories(aff3ct-obj ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
+    endif()
+    if(AFF3CT_COMPILE_EXE)
+        target_include_directories(aff3ct-bin ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
+    endif()
+    if(AFF3CT_COMPILE_SHARED_LIB)
+        target_include_directories(aff3ct-shared-lib ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
+    endif()
+    if(AFF3CT_COMPILE_STATIC_LIB)
+        target_include_directories(aff3ct-static-lib ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
+    endif()
+endmacro()
+
 # AFF3CT headers
 aff3ct_target_include_directories(PUBLIC "src" "aff3ct")
 
+# cli headers
+aff3ct_target_include_directories(PUBLIC "lib/cli/src" "cli")
+
 # MSVC dirent.h
 if(MSVC)
-    aff3ct_target_include_directories(PUBLIC "lib/MSVC/include" "dirent")
+    aff3ct_target_include_directories(PRIVATE "lib/MSVC/include" "dirent")
 endif()
 
 # MIPP
@@ -387,21 +421,6 @@ macro(aff3ct_target_link_libraries privacy lib)
     endif(AFF3CT_COMPILE_STATIC_LIB)
 endmacro()
 
-macro(aff3ct_target_include_directories privacy dir)
-    if(AFF3CT_COMPILE_OBJ)
-        target_include_directories(aff3ct-obj ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
-    endif()
-    if(AFF3CT_COMPILE_EXE)
-        target_include_directories(aff3ct-bin ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
-    endif()
-    if(AFF3CT_COMPILE_SHARED_LIB)
-        target_include_directories(aff3ct-shared-lib ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
-    endif()
-    if(AFF3CT_COMPILE_STATIC_LIB)
-        target_include_directories(aff3ct-static-lib ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
-    endif()
-endmacro()
-
 # SystemC (it is very important to have SystemC linked before the other libraries !!!)
 if(AFF3CT_SYSTEMC_SIMU OR AFF3CT_SYSTEMC_MODULE)
     if(AFF3CT_SYSTEMC_SIMU)
@@ -414,14 +433,14 @@ if(AFF3CT_SYSTEMC_SIMU OR AFF3CT_SYSTEMC_MODULE)
     find_package(SystemC REQUIRED QUIET)
     if(SystemC_FOUND)
         message(STATUS "AFF3CT - Library found: SystemC")
-        aff3ct_target_include_directories(PUBLIC "${SystemC_INCLUDE_DIRS}")
+        aff3ct_target_include_directories2(PUBLIC "${SystemC_INCLUDE_DIRS}")
         aff3ct_target_link_libraries(PUBLIC "${SystemC_LIBRARIES}")
     endif(SystemC_FOUND)
 
     find_package(TLM REQUIRED QUIET)
     if(TLM_FOUND)
         message(STATUS "AFF3CT - Library found: TLM")
-        aff3ct_target_include_directories(PUBLIC "${TLM_INCLUDE_DIRS}")
+        aff3ct_target_include_directories2(PUBLIC "${TLM_INCLUDE_DIRS}")
     endif(TLM_FOUND)
 endif()
 
@@ -444,7 +463,7 @@ if(AFF3CT_LINK_MKL)
     find_package(MKL REQUIRED QUIET)
     if(MKL_FOUND)
         message(STATUS "AFF3CT - Library found: MKL")
-        aff3ct_target_include_directories(PUBLIC "${MKL_INCLUDE_DIRS}")
+        aff3ct_target_include_directories2(PUBLIC "${MKL_INCLUDE_DIRS}")
         aff3ct_target_link_libraries(PUBLIC "${MKL_MINIMAL_LIBRARIES}")
     endif(MKL_FOUND)
 endif(AFF3CT_LINK_MKL)
@@ -458,7 +477,7 @@ if(AFF3CT_MPI)
 
         message(STATUS "AFF3CT - Library found: MPI")
         if(${CMAKE_VERSION} VERSION_LESS "3.9.6")
-            aff3ct_target_include_directories(PUBLIC "${MPI_CXX_INCLUDE_PATH}")
+            aff3ct_target_include_directories2(PUBLIC "${MPI_CXX_INCLUDE_PATH}")
             aff3ct_target_link_libraries(PUBLIC "${MPI_CXX_LIBRARIES}")
 
             if(MPI_CXX_COMPILE_FLAGS)
@@ -582,14 +601,18 @@ if (AFF3CT_COMPILE_SHARED_LIB OR AFF3CT_COMPILE_STATIC_LIB)
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/MIPP
             COMPONENT headers
             FILES_MATCHING PATTERN "*.hxx")
-    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/MSVC/include/"
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/dirent
-            COMPONENT headers
-            FILES_MATCHING PATTERN "*.h")
     install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/rang/include/"
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/rang
             COMPONENT headers
             FILES_MATCHING PATTERN "*.hpp")
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/cli/src/"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/cli
+            COMPONENT headers
+            FILES_MATCHING PATTERN "*.hpp")
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/cli/src/"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/cli
+            COMPONENT headers
+            FILES_MATCHING PATTERN "*.hxx")
 endif()
 
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/build/latex/AFF3CT.pdf")

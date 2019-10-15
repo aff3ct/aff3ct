@@ -26,34 +26,34 @@ Frozenbits_generator_MK::parameters* Frozenbits_generator_MK::parameters
 }
 
 void Frozenbits_generator_MK::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::Frozenbits_generator_MK::parameters::";
 
 	tools::add_arg(args, p, class_name+"p+info-bits,K",
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		tools::arg_rank::REQ);
+		cli::Integer(cli::Positive(), cli::Non_zero()),
+		cli::arg_rank::REQ);
 
 	tools::add_arg(args, p, class_name+"p+cw-size,N",
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		tools::arg_rank::REQ);
+		cli::Integer(cli::Positive(), cli::Non_zero()),
+		cli::arg_rank::REQ);
 
 	tools::add_arg(args, p, class_name+"p+noise",
-		tools::Real(tools::Positive(), tools::Non_zero()));
+		cli::Real(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+gen-method",
-		tools::Text(tools::Including_set("FILE", "GA", "GAA")));
+		cli::Text(cli::Including_set("FILE", "GA", "GAA")));
 
 	tools::add_arg(args, p, class_name+"p+awgn-path",
-		tools::File(tools::openmode::read));
+		cli::File(cli::openmode::read));
 
 	tools::add_arg(args, p, class_name+"p+dump-path",
-		tools::Folder(tools::openmode::write));
+		cli::Folder(cli::openmode::write));
 }
 
 void Frozenbits_generator_MK::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 

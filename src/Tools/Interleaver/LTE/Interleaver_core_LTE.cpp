@@ -12,6 +12,7 @@ Interleaver_core_LTE<T>
 ::Interleaver_core_LTE(const int size, const int n_frames)
 : Interleaver_core<T>(size, "LTE", false, n_frames)
 {
+	this->init();
 }
 
 template <typename T>

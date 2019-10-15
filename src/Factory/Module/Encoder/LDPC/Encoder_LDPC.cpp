@@ -31,40 +31,40 @@ Encoder_LDPC::parameters* Encoder_LDPC::parameters
 }
 
 void Encoder_LDPC::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::Encoder_LDPC::parameters::";
 
-	tools::add_options(args.at({p+"-type"}), 0, "LDPC", "LDPC_H", "LDPC_DVBS2", "LDPC_QC", "LDPC_IRA");
+	cli::add_options(args.at({p+"-type"}), 0, "LDPC", "LDPC_H", "LDPC_DVBS2", "LDPC_QC", "LDPC_IRA");
 
 	tools::add_arg(args, p, class_name+"p+h-path",
-		tools::File(tools::openmode::read));
+		cli::File(cli::openmode::read));
 
 	args.add_link({p+"-h-path"}, {p+"-cw-size",   "N"}); // N_cw is H width
 	args.add_link({p+"-h-path"}, {p+"-info-bits", "K"}); // if there is no K, then H is considered regular,
 	                                                     // so K is the N - H's height
 
 	tools::add_arg(args, p, class_name+"p+g-path",
-		tools::File(tools::openmode::read));
+		cli::File(cli::openmode::read));
 
 	args.add_link({p+"-g-path"}, {p+"-info-bits", "K"});
 	args.add_link({p+"-g-path"}, {p+"-cw-size",   "N"});
 
 	tools::add_arg(args, p, class_name+"p+h-reorder",
-		tools::Text(tools::Including_set("NONE", "ASC", "DSC")));
+		cli::Text(cli::Including_set("NONE", "ASC", "DSC")));
 
 	tools::add_arg(args, p, class_name+"p+g-method",
-		tools::Text(tools::Including_set("IDENTITY", "LU_DEC")));
+		cli::Text(cli::Including_set("IDENTITY", "LU_DEC")));
 
 	tools::add_arg(args, p, class_name+"p+g-save-path",
-		tools::File(tools::openmode::write));
+		cli::File(cli::openmode::write));
 }
 
 void Encoder_LDPC::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 

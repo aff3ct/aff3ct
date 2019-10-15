@@ -12,6 +12,8 @@ Interleaver_core_random<T>
 : Interleaver_core<T>(size, "random", uniform, n_frames), rd_engine()
 {
 	rd_engine.seed(seed);
+
+	this->init();
 }
 
 template <typename T>

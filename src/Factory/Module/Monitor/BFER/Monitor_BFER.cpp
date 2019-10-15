@@ -24,7 +24,7 @@ Monitor_BFER::parameters* Monitor_BFER::parameters
 }
 
 void Monitor_BFER::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Monitor::parameters::get_description(args);
 
@@ -32,28 +32,28 @@ void Monitor_BFER::parameters
 	const std::string class_name = "factory::Monitor_BFER::parameters::";
 
 	tools::add_arg(args, p, class_name+"p+info-bits,K",
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		tools::arg_rank::REQ);
+		cli::Integer(cli::Positive(), cli::Non_zero()),
+		cli::arg_rank::REQ);
 
 	tools::add_arg(args, p, class_name+"p+fra,F",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+max-fe,e",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+max-fra,n",
-		tools::Integer(tools::Positive()),
-		tools::arg_rank::ADV);
+		cli::Integer(cli::Positive()),
+		cli::arg_rank::ADV);
 
 	tools::add_arg(args, p, class_name+"p+err-hist",
-		tools::Integer(tools::Positive()));
+		cli::Integer(cli::Positive()));
 
 	tools::add_arg(args, p, class_name+"p+err-hist-path",
-		tools::File(tools::openmode::write));
+		cli::File(cli::openmode::write));
 }
 
 void Monitor_BFER::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Monitor::parameters::store(vals);
 

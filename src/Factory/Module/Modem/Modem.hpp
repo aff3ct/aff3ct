@@ -3,8 +3,8 @@
 
 #include <string>
 #include <map>
+#include <cli.hpp>
 
-#include "Tools/Arguments/Argument_tools.hpp"
 #include "Tools/Math/max.h"
 #include "Tools/Math/Distribution/Distributions.hpp"
 #include "Tools/Constellation/Constellation.hpp"
@@ -65,8 +65,8 @@ struct Modem : public Factory
 		Modem::parameters* clone() const;
 
 		// parameters construction
-		void get_description(tools::Argument_map_info &args) const;
-		void store          (const tools::Argument_map_value &vals);
+		void get_description(cli::Argument_map_info &args) const;
+		void store          (const cli::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

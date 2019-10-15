@@ -29,12 +29,12 @@ Monitor::parameters* Monitor::parameters
 }
 
 void Monitor::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 }
 
 void Monitor::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 }
 

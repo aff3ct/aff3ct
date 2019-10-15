@@ -3,8 +3,8 @@
 
 #include <string>
 #include <map>
+#include <cli.hpp>
 
-#include "Tools/Arguments/Argument_tools.hpp"
 #include "Module/CRC/CRC.hpp"
 #include "Factory/Module/Encoder/Turbo_DB/Encoder_turbo_DB.hpp"
 #include "Factory/Module/Decoder/Turbo_DB/Decoder_turbo_DB.hpp"
@@ -29,8 +29,8 @@ struct Codec_turbo_DB : public Codec_SIHO
 		void enable_puncturer();
 
 		// parameters construction
-		void get_description(tools::Argument_map_info &args) const;
-		void store          (const tools::Argument_map_value &vals);
+		void get_description(cli::Argument_map_info &args) const;
+		void store          (const cli::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

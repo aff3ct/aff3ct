@@ -4,10 +4,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <cli.hpp>
 
-#include "Tools/Arguments/Argument_handler.hpp"
-#include "Tools/Arguments/Maps/Argument_map_info.hpp"
-#include "Tools/Arguments/Maps/Argument_tag.hpp"
 #include "Factory/Factory.hpp"
 
 namespace aff3ct
@@ -18,13 +16,13 @@ namespace factory
 class Command_parser
 {
 private:
-	tools::Argument_handler ahandler;
+	cli::Argument_handler ahandler;
 	std::vector<Factory::parameters*> &params;
 	std::ostream& err_stream;
 	std::vector<std::string> warnings;
 	std::vector<std::string> errors;
-	tools::Argument_map_info args;
-	static const tools::Argument_tag help_tag;
+	cli::Argument_map_info args;
+	static const cli::Argument_tag help_tag;
 	bool help_asked;
 
 public:

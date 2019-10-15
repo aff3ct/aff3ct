@@ -23,17 +23,17 @@ Encoder_BCH::parameters* Encoder_BCH::parameters
 }
 
 void Encoder_BCH::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 
-	tools::add_options(args.at({p+"-type"}), 0, "BCH");
+	cli::add_options(args.at({p+"-type"}), 0, "BCH");
 }
 
 void Encoder_BCH::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Encoder::parameters::store(vals);
 }

@@ -24,7 +24,7 @@ Monitor_MI::parameters* Monitor_MI::parameters
 }
 
 void Monitor_MI::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Monitor::parameters::get_description(args);
 
@@ -32,18 +32,18 @@ void Monitor_MI::parameters
 	const std::string class_name = "factory::Monitor_MI::parameters::";
 
 	tools::add_arg(args, p, class_name+"p+fra-size,N",
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		tools::arg_rank::REQ);
+		cli::Integer(cli::Positive(), cli::Non_zero()),
+		cli::arg_rank::REQ);
 
 	tools::add_arg(args, p, class_name+"p+fra,F",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+trials,n",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 }
 
 void Monitor_MI::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Monitor::parameters::store(vals);
 

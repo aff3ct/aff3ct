@@ -12,10 +12,8 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <cli.hpp>
 
-#include "Tools/Arguments/Argument_handler.hpp"
-#include "Tools/Arguments/Maps/Argument_map_info.hpp"
-#include "Tools/Arguments/Maps/Argument_map_value.hpp"
 #include "Factory/Simulation/Simulation.hpp"
 #include "Simulation/Simulation.hpp"
 
@@ -37,9 +35,9 @@ private:
 	std::vector<std::string>                cmd_warn;
 
 protected:
-	tools::Argument_handler          ah;             /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
-	tools::Argument_map_info         args;           /*!< List of the arguments to find in the command line */
-	tools::Argument_map_value        arg_vals;       /*!< List of the arguments with their values */
+	cli::Argument_handler            ah;             /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
+	cli::Argument_map_info           args;           /*!< List of the arguments to find in the command line */
+	cli::Argument_map_value          arg_vals;       /*!< List of the arguments with their values */
 	factory::Simulation::parameters &params_common;  /*!< A structure of parameters to store and pass to the simulation. */
 	std::ostream                    &stream;         /*!< The dedicated stream in which the Launcher writes the parameters. */
 

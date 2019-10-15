@@ -29,30 +29,30 @@ CRC::parameters* CRC::parameters
 }
 
 void CRC::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::CRC::parameters::";
 
 	tools::add_arg(args, p, class_name+"p+info-bits,K",
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		tools::arg_rank::REQ);
+		cli::Integer(cli::Positive(), cli::Non_zero()),
+		cli::arg_rank::REQ);
 
 	tools::add_arg(args, p, class_name+"p+fra,F",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+type,p+poly",
-		tools::Text());
+		cli::Text());
 
 	tools::add_arg(args, p, class_name+"p+implem",
-		tools::Text(tools::Including_set("STD", "FAST", "INTER")));
+		cli::Text(cli::Including_set("STD", "FAST", "INTER")));
 
 	tools::add_arg(args, p, class_name+"p+size",
-		tools::Integer(tools::Positive()));
+		cli::Integer(cli::Positive()));
 }
 
 void CRC::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 

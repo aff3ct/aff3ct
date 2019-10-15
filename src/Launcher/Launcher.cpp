@@ -95,10 +95,10 @@ int Launcher::read_arguments()
 		// print the help tags
 		if (!cmd_error.empty() && !params_common.display_help)
 		{
-			tools::Argument_tag help_tag = {"help", "h"};
+			cli::Argument_tag help_tag = {"help", "h"};
 
 			std::string message = "For more information please display the help (\"";
-			message += tools::Argument_handler::print_tag(help_tag) += "\").";
+			message += cli::Argument_handler::print_tag(help_tag) += "\").";
 
 			std::cerr << std::endl << rang::tag::info << message << std::endl;
 		}

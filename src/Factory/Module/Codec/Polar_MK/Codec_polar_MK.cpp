@@ -102,7 +102,7 @@ std::vector<std::string> Codec_polar_MK::parameters
 }
 
 void Codec_polar_MK::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Codec_SIHO::parameters::get_description(args);
 
@@ -125,7 +125,7 @@ void Codec_polar_MK::parameters
 }
 
 void Codec_polar_MK::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Codec_SIHO::parameters::store(vals);
 

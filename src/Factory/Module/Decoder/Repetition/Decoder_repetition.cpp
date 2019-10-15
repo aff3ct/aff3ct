@@ -27,22 +27,22 @@ Decoder_repetition::parameters* Decoder_repetition::parameters
 }
 
 void Decoder_repetition::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::Decoder_repetition::parameters::";
 
-	tools::add_options(args.at({p+"-type", "D"}), 0, "REPETITION" );
-	tools::add_options(args.at({p+"-implem"   }), 0, "STD", "FAST");
+	cli::add_options(args.at({p+"-type", "D"}), 0, "REPETITION" );
+	cli::add_options(args.at({p+"-implem"   }), 0, "STD", "FAST");
 
 	tools::add_arg(args, p, class_name+"p+no-buff",
-		tools::None());
+		cli::None());
 }
 
 void Decoder_repetition::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 

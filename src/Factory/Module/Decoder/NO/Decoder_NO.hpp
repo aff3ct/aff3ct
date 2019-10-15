@@ -4,8 +4,8 @@
 #include <string>
 #include <memory>
 #include <map>
+#include <cli.hpp>
 
-#include "Tools/Arguments/Argument_tools.hpp"
 #include "Module/Encoder/Encoder.hpp"
 #include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Module/Decoder/Decoder_SISO_SIHO.hpp"
@@ -31,8 +31,8 @@ struct Decoder_NO : public Decoder
 		Decoder_NO::parameters* clone() const;
 
 		// parameters construction
-		void get_description(tools::Argument_map_info &args) const;
-		void store          (const tools::Argument_map_value &vals);
+		void get_description(cli::Argument_map_info &args) const;
+		void store          (const cli::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

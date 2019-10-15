@@ -4,8 +4,8 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <cli.hpp>
 
-#include "Tools/Arguments/Argument_tools.hpp"
 #include "Tools/Code/Polar/Polar_code.hpp"
 #include "Module/Encoder/Polar_MK/Encoder_polar_MK.hpp"
 #include "Factory/Module/Encoder/Encoder.hpp"
@@ -30,8 +30,8 @@ struct Encoder_polar_MK : public Encoder
 		Encoder_polar_MK::parameters* clone() const;
 
 		// parameters construction
-		void get_description(tools::Argument_map_info &args) const;
-		void store          (const tools::Argument_map_value &vals);
+		void get_description(cli::Argument_map_info &args) const;
+		void store          (const cli::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

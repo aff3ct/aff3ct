@@ -23,6 +23,8 @@ Interleaver_core_random_column<T>
 	}
 
 	rd_engine.seed(seed);
+
+	this->init();
 }
 
 template <typename T>

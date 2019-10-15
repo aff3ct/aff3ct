@@ -13,3 +13,6 @@
 [submodule "lib/date"]
 	path = lib/date
 	url = https://github.com/HowardHinnant/date.git
+[submodule "lib/cli"]
+	path = lib/cli
+	url = ../cli

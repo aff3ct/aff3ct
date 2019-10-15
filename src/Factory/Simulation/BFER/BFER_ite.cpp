@@ -91,7 +91,7 @@ std::vector<std::string> BFER_ite::parameters
 }
 
 void BFER_ite::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	BFER::parameters::get_description(args);
 
@@ -99,14 +99,14 @@ void BFER_ite::parameters
 	const std::string class_name = "factory::BFER_ite::parameters::";
 
 	tools::add_arg(args, p, class_name+"p+ite,I",
-		tools::Integer(tools::Positive()));
+		cli::Integer(cli::Positive()));
 
 	tools::add_arg(args, p, class_name+"p+crc-start",
-		tools::Integer(tools::Positive()));
+		cli::Integer(cli::Positive()));
 }
 
 void BFER_ite::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	BFER::parameters::store(vals);
 

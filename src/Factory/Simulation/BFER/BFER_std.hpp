@@ -3,8 +3,8 @@
 
 #include <string>
 #include <map>
+#include <cli.hpp>
 
-#include "Tools/Arguments/Argument_tools.hpp"
 #include "Factory/Module/Codec/Codec_SIHO.hpp"
 #include "Factory/Simulation/BFER/BFER.hpp"
 
@@ -42,8 +42,8 @@ struct BFER_std : BFER
 		const Codec_SIHO::parameters* get_cdc() const;
 
 		// parameters construction
-		void get_description(tools::Argument_map_info &args) const;
-		void store          (const tools::Argument_map_value &vals);
+		void get_description(cli::Argument_map_info &args) const;
+		void store          (const cli::Argument_map_value &vals);
 		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 		// builder

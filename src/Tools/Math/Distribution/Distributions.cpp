@@ -2,9 +2,9 @@
 #include <iostream>
 #include <sstream>
 #include <ios>
+#include <cli.hpp>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Arguments/Splitter/Splitter.hpp"
 #include "Tools/Math/Distribution/Distributions.hpp"
 
 using namespace aff3ct;
@@ -69,7 +69,7 @@ read_noise_range()
 	std::string line;
 	my_getline(f_distributions, line);
 
-	this->desc = tools::Splitter::split(line, "", "", " ");
+	this->desc = cli::Splitter::split(line, "", "", " ");
 
 	// get the data order
 	this->ROP_pos = std::distance(this->desc.begin(), std::find(this->desc.begin(), this->desc.end(), "ROP"));
@@ -236,11 +236,11 @@ read_distribution_from_file(unsigned index)
 		if (i == ROP_pos)
 			ROP  = std::move(line);
 		else if (i == x_pos)
-			v_x  = tools::Splitter::split(line, "", "", " ");
+			v_x  = cli::Splitter::split(line, "", "", " ");
 		else if (i == y0_pos)
-			v_y0 = tools::Splitter::split(line, "", "", " ");
+			v_y0 = cli::Splitter::split(line, "", "", " ");
 		else if (i == y1_pos)
-			v_y1 = tools::Splitter::split(line, "", "", " ");
+			v_y1 = cli::Splitter::split(line, "", "", " ");
 		else
 			tools::runtime_error(__FILE__, __LINE__, __func__);
 	}

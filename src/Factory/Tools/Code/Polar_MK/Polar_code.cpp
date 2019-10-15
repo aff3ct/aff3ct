@@ -38,26 +38,26 @@ struct sub_same_length
 };
 
 void Polar_code::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::Polar_code::parameters::";
 
 	tools::add_arg(args, p, class_name+"p+cw-size,N",
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		tools::arg_rank::REQ);
+		cli::Integer(cli::Positive(), cli::Non_zero()),
+		cli::arg_rank::REQ);
 
 	tools::add_arg(args, p, class_name+"p+kernel",
-		tools::List2D<bool>(tools::Boolean(),
-		                    std::make_tuple(tools::Length(1), tools::Function<sub_same_length>("elements of same length")),
-		                    std::make_tuple(tools::Length(1))));
+		cli::List2D<bool>(cli::Boolean(),
+		                  std::make_tuple(cli::Length(1), cli::Function<sub_same_length>("elements of same length")),
+		                  std::make_tuple(cli::Length(1))));
 
 	tools::add_arg(args, p, class_name+"p+path",
-		tools::File(tools::openmode::read));
+		cli::File(cli::openmode::read));
 }
 
 void Polar_code::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 

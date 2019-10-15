@@ -30,7 +30,7 @@ Encoder_RSC::parameters* Encoder_RSC::parameters
 }
 
 void Encoder_RSC::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Encoder::parameters::get_description(args);
 
@@ -39,20 +39,20 @@ void Encoder_RSC::parameters
 
 	args.erase({p+"-cw-size", "N"});
 
-	tools::add_options(args.at({p+"-type"}), 0, "RSC");
+	cli::add_options(args.at({p+"-type"}), 0, "RSC");
 
 	tools::add_arg(args, p, class_name+"p+no-buff",
-		tools::None());
+		cli::None());
 
 	tools::add_arg(args, p, class_name+"p+poly",
-		tools::Text());
+		cli::Text());
 
 	tools::add_arg(args, p, class_name+"p+std",
-		tools::Text(tools::Including_set("LTE", "CCSDS")));
+		cli::Text(cli::Including_set("LTE", "CCSDS")));
 }
 
 void Encoder_RSC::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Encoder::parameters::store(vals);
 

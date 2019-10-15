@@ -29,42 +29,42 @@ Flip_and_check::parameters* Flip_and_check::parameters
 }
 
 void Flip_and_check::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::Flip_and_check::parameters::";
 
 	tools::add_arg(args, p, class_name+"p+size",
-		tools::Integer(tools::Positive(), tools::Non_zero()),
-		tools::arg_rank::REQ);
+		cli::Integer(cli::Positive(), cli::Non_zero()),
+		cli::arg_rank::REQ);
 
 	tools::add_arg(args, p, class_name+"p+fra,F",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+",
-		tools::None());
+		cli::None());
 
 	tools::add_arg(args, p, class_name+"p+q",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+ite-m",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+ite-M",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+ite-s",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+ite,i",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+crc-start",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 }
 
 void Flip_and_check::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 

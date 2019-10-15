@@ -70,12 +70,12 @@ std::vector<std::string> Codec::parameters
 }
 
 void Codec::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 }
 
 void Codec::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 }
 

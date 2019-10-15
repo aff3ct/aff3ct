@@ -35,13 +35,13 @@ BFER_std::parameters* BFER_std::parameters
 }
 
 void BFER_std::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	BFER::parameters::get_description(args);
 }
 
 void BFER_std::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	BFER::parameters::store(vals);
 }

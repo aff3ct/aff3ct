@@ -3,8 +3,8 @@
 
 #include <string>
 #include <map>
+#include <cli.hpp>
 
-#include "Tools/Arguments/Argument_tools.hpp"
 #include "Factory/Factory.hpp"
 
 namespace aff3ct
@@ -23,8 +23,8 @@ struct Monitor : public Factory
 		virtual Monitor::parameters* clone() const;
 
 		// parameters construction
-		virtual void get_description(tools::Argument_map_info &args) const;
-		virtual void store          (const tools::Argument_map_value &vals);
+		virtual void get_description(cli::Argument_map_info &args) const;
+		virtual void store          (const cli::Argument_map_value &vals);
 		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
 	protected:

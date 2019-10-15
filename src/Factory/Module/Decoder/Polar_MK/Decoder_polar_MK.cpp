@@ -42,26 +42,26 @@ Decoder_polar_MK::parameters* Decoder_polar_MK::parameters
 }
 
 void Decoder_polar_MK::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Decoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::Decoder_polar_MK::parameters::";
 
-	tools::add_options(args.at({p+"-type", "D"}), 0, "SC", "SCL", "ASCL");
+	cli::add_options(args.at({p+"-type", "D"}), 0, "SC", "SCL", "ASCL");
 
-	args.at({p+"-implem"})->change_type(tools::Text(tools::Example_set("NAIVE")));
+	args.at({p+"-implem"})->change_type(cli::Text(cli::Example_set("NAIVE")));
 
 	tools::add_arg(args, p, class_name+"p+lists,L",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+node-type",
-		tools::Text(tools::Including_set("MS", "SPA")));
+		cli::Text(cli::Including_set("MS", "SPA")));
 }
 
 void Decoder_polar_MK::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Decoder::parameters::store(vals);
 

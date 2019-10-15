@@ -54,7 +54,7 @@ std::vector<std::string> Encoder_turbo_product::parameters
 }
 
 void Encoder_turbo_product::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Encoder::parameters::get_description(args);
 
@@ -74,10 +74,10 @@ void Encoder_turbo_product::parameters
 		args.erase({pi+"-fra", "F"});
 	}
 
-	tools::add_options(args.at({p+"-type"}), 0, "TPC");
+	cli::add_options(args.at({p+"-type"}), 0, "TPC");
 
 	tools::add_arg(args, p, class_name+"p+ext",
-		tools::None());
+		cli::None());
 
 	sub->get_description(args);
 
@@ -88,7 +88,7 @@ void Encoder_turbo_product::parameters
 }
 
 void Encoder_turbo_product::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Encoder::parameters::store(vals);
 

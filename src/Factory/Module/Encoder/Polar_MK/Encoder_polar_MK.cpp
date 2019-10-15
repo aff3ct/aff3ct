@@ -36,21 +36,21 @@ struct sub_same_length
 };
 
 void Encoder_polar_MK::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Encoder::parameters::get_description(args);
 
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::Encoder_polar_MK::parameters::";
 
-	tools::add_options(args.at({p+"-type"}), 0, "POLAR_MK");
+	cli::add_options(args.at({p+"-type"}), 0, "POLAR_MK");
 
 	tools::add_arg(args, p, class_name+"p+sys",
-		tools::None());
+		cli::None());
 }
 
 void Encoder_polar_MK::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Encoder::parameters::store(vals);
 

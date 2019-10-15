@@ -29,20 +29,20 @@ Scaling_factor::parameters* Scaling_factor::parameters
 }
 
 void Scaling_factor::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
 	const std::string class_name = "factory::Scaling_factor::parameters::";
 
 	tools::add_arg(args, p, class_name+"p+type",
-		tools::Text(tools::Including_set("CST", "LTE", "LTE_VEC", "ARRAY", "ADAPTIVE")));
+		cli::Text(cli::Including_set("CST", "LTE", "LTE_VEC", "ARRAY", "ADAPTIVE")));
 
 	tools::add_arg(args, p, class_name+"p+ite",
-		tools::Integer(tools::Positive(), tools::Non_zero()));
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 }
 
 void Scaling_factor::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
 

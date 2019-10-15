@@ -32,7 +32,7 @@ void Codec_turbo_DB::parameters
 }
 
 void Codec_turbo_DB::parameters
-::get_description(tools::Argument_map_info &args) const
+::get_description(cli::Argument_map_info &args) const
 {
 	Codec_SIHO::parameters::get_description(args);
 
@@ -49,7 +49,7 @@ void Codec_turbo_DB::parameters
 		args.erase({ppct+"-fra",       "F"});
 		args.erase({ppct+"-tail-length"   });
 
-		args[{ppct+"-fra-size", "N"}]->rank = tools::arg_rank::OPT;
+		args[{ppct+"-fra-size", "N"}]->rank = cli::arg_rank::OPT;
 	}
 
 	enc->get_description(args);
@@ -78,7 +78,7 @@ void Codec_turbo_DB::parameters
 }
 
 void Codec_turbo_DB::parameters
-::store(const tools::Argument_map_value &vals)
+::store(const cli::Argument_map_value &vals)
 {
 	Codec_SIHO::parameters::store(vals);
 

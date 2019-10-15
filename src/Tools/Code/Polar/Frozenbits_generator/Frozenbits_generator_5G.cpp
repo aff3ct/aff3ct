@@ -5,8 +5,8 @@
 #include <vector>
 #include <string>
 #include <cmath>
+#include <cli.hpp>
 
-#include "Tools/Arguments/Types/File_system/File_system.hpp"
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_5G.hpp"
 
 using namespace aff3ct::tools;
@@ -14,7 +14,7 @@ using namespace aff3ct::tools;
 Frozenbits_generator_5G
 ::Frozenbits_generator_5G(const int K, const int N)
 : Frozenbits_generator_file(K, N,
-                            tools::modify_path<tools::Is_file>("conf/cde/awgn_polar_codes/5G/N_1024.pc")),
+                            cli::modify_path<cli::Is_file>("conf/cde/awgn_polar_codes/5G/N_1024.pc")),
   m((int)std::log2(N))
 {
 	std::string message = "5G frozen bits generation undefined for N > " + std::to_string(N_max);
@@ -44,4 +44,3 @@ void Frozenbits_generator_5G
 	if (j != this->N)
 		throw runtime_error(__FILE__, __LINE__, __func__, "Wrong size.");
 }
-

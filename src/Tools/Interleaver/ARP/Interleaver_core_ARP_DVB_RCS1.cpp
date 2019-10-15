@@ -92,6 +92,8 @@ Interleaver_core_ARP_DVB_RCS1<T>
 			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 			break;
 	}
+
+	this->init();
 }
 
 template <typename T>
