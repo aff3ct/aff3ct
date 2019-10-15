@@ -351,6 +351,21 @@ macro(aff3ct_target_include_directories privacy dir_build dir_install)
     endif()
 endmacro()
 
+macro(aff3ct_target_include_directories2 privacy dir)
+    if(AFF3CT_COMPILE_OBJ)
+        target_include_directories(aff3ct-obj ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
+    endif()
+    if(AFF3CT_COMPILE_EXE)
+        target_include_directories(aff3ct-bin ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
+    endif()
+    if(AFF3CT_COMPILE_SHARED_LIB)
+        target_include_directories(aff3ct-shared-lib ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
+    endif()
+    if(AFF3CT_COMPILE_STATIC_LIB)
+        target_include_directories(aff3ct-static-lib ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
+    endif()
+endmacro()
+
 # AFF3CT headers
 aff3ct_target_include_directories(PUBLIC "src" "aff3ct")
 
@@ -359,7 +374,7 @@ aff3ct_target_include_directories(PUBLIC "lib/cli/src" "cli")
 
 # MSVC dirent.h
 if(MSVC)
-    aff3ct_target_include_directories(PUBLIC "lib/MSVC/include" "dirent")
+    aff3ct_target_include_directories2(PRIVATE "lib/MSVC/include")
 endif()
 
 # MIPP
@@ -404,21 +419,6 @@ macro(aff3ct_target_link_libraries privacy lib)
     if(AFF3CT_COMPILE_STATIC_LIB)
         target_link_libraries(aff3ct-static-lib ${privacy} ${lib})
     endif(AFF3CT_COMPILE_STATIC_LIB)
-endmacro()
-
-macro(aff3ct_target_include_directories2 privacy dir)
-    if(AFF3CT_COMPILE_OBJ)
-        target_include_directories(aff3ct-obj ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
-    endif()
-    if(AFF3CT_COMPILE_EXE)
-        target_include_directories(aff3ct-bin ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
-    endif()
-    if(AFF3CT_COMPILE_SHARED_LIB)
-        target_include_directories(aff3ct-shared-lib ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
-    endif()
-    if(AFF3CT_COMPILE_STATIC_LIB)
-        target_include_directories(aff3ct-static-lib ${privacy} $<BUILD_INTERFACE:${dir}> $<INSTALL_INTERFACE:${dir}>)
-    endif()
 endmacro()
 
 # SystemC (it is very important to have SystemC linked before the other libraries !!!)
@@ -601,10 +601,6 @@ if (AFF3CT_COMPILE_SHARED_LIB OR AFF3CT_COMPILE_STATIC_LIB)
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/MIPP
             COMPONENT headers
             FILES_MATCHING PATTERN "*.hxx")
-    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/MSVC/include/"
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/dirent
-            COMPONENT headers
-            FILES_MATCHING PATTERN "*.h")
     install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/rang/include/"
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/rang
             COMPONENT headers
