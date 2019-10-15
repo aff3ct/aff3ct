@@ -1082,10 +1082,13 @@ ast_filename = 'aff3ct_ast.txt'
 argparser = argparse.ArgumentParser(description='Build json database from Clang AST, and optional additional sources.')
 argparser.add_argument('-m', '--modules', metavar='MODULE_JSON', help='specify a .json file listing module tasks and sockets')
 argparser.add_argument('-f', '--fixes', metavar='FIXES_JSON', help='specify a .json file containing manual fixes')
+argparser.add_argument('-d', '--debug', help='enable debug mode', action='store_true')
 argparser.add_argument('ast_filename', metavar='AST', nargs=argparse.REMAINDER, help='Clang AST obtained from @PROJECT_NAME@_dump_clang_ast.sh')
 
 # parse command line args
 args = argparser.parse_args()
+if args.debug:
+    debug_mode = True
 
 # the first positional arg, if any, should be an alternate Clang AST print file
 if len(args.ast_filename) > 0:
