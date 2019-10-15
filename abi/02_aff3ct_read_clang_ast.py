@@ -12,6 +12,7 @@ debug_mode = False
 
 setting_keep_task_method = True
 
+reserved_keywords = [ 'class', 'enum', 'exception', 'for', 'if', 'public', 'protected', 'private', 'struct', 'throw', 'throws', 'union', 'virtual', 'while' ]
 # process one method argument
 def process_arg(arg_signature, arg_rank):
     arg_is_const = False
@@ -295,6 +296,8 @@ def add_method(class_entry, method, method_is_inline, method_suffix, method_temp
     class_short_name = class_entry['class_short_name']
     method_is_virtual = False
     method_is_pure_virtual = False
+    method_has_throw = False
+    method_output = None
 
     # apply some heuristics to detect method kind
     if method.startswith('static '):
@@ -348,19 +351,29 @@ def add_method(class_entry, method, method_is_inline, method_suffix, method_temp
         method_is_inline = True
         method_str = re.sub(r'\binline\b ', '', method_str)
 
+    # record and remove throw keyword
+    m = re.search(r'\bthrow\b', method_str)
+    if m is not None:
+        method_has_throw = True
+        method_str = re.sub(r'\bthrow(?:\([^)]*\))?', '', method_str)
+
     # extract method components (output, name, args) according to kind
     if method_kind == 'constructor':
         method_short_name = class_short_name
         m = re.match(r'(?:explicit )?[_a-zA-Z][_a-zA-Z0-9]*(?: *<[^<>]*>)?[^()]*\((.*)\)$', method_str)
         if m is not None:
             method_args = m.group(1).strip()
+        else:
+            return None
     elif method_kind == 'destructor':
         method_short_name = '~'+class_short_name
         m = re.match(r'~[_a-zA-Z][_a-zA-Z0-9]*(?: *<[^<>]>)?[^()]*\((.*)\)(?: *noexcept)?(?: *= default)? *$', method_str)
         if m is not None:
             method_args = m.group(1).strip()
+        else:
+            return None
     elif method_kind == 'operator':
-        m = re.match(r'(.*)(operator(?:(?:\(\))|(?:\[\])|(?:[^(]=?))) *\((.*)\)$', method_str)
+        m = re.match(r'(.*)(operator(?:(?:\(\))|(?:\[\])|(?:->)|(?:[^(]=?))) *\((.*)\)$', method_str)
         method_short_name = None
         if m is not None:
             method_output = m.group(1).strip()
@@ -373,7 +386,7 @@ def add_method(class_entry, method, method_is_inline, method_suffix, method_temp
         if method_kind == 'static':
             method_str = re.sub(r'\bstatic\b ', '', method_str)
         # method_str or static method_str
-        m = re.match(r'(.*[^_a-zA-Z])([_a-zA-Z][_a-zA-Z0-9]*)\((.*)\)$', method_str)
+        m = re.match(r'(.*[^_a-zA-Z])([_a-zA-Z][_a-zA-Z0-9]*)\(((?:.*[_a-zA-Z].*)?)\)$', method_str)
         if m is not None:
             method_output = m.group(1).strip()
             method_short_name = m.group(2)
@@ -382,12 +395,16 @@ def add_method(class_entry, method, method_is_inline, method_suffix, method_temp
             # skip, did not recognize a method
             return None
 
+    if method_short_name in reserved_keywords:
+        return None
+
     # record all method infos in a method_entry
     method_entry['method_signature'] = method
     method_entry['method_kind'] = method_kind
     method_entry['method_is_virtual'] = method_is_virtual
     method_entry['method_is_pure_virtual'] = method_is_pure_virtual
     method_entry['method_is_inline'] = method_is_inline
+    method_entry['method_has_throw'] = method_has_throw
     method_entry['method_short_name'] = method_short_name
     method_entry['method_name'] = class_entry['class_name']+'::'+method_short_name
     if method_short_name in class_entry['class_name_accounting']:
@@ -535,253 +552,264 @@ def process_ast(ast_filename):
 
     # Main loop processing the pretty-printed AST
     with fileinput.input(ast_filename) as finput:
-        for line in finput:
-            # if debugging, print the line being processed
-            if debug_mode:
-                sys.stdout.write('# '+line)
+        for l in finput:
+            # workaround on merged lines ending with '= default'
+            last_l = False
+            while not last_l:
+                line_array = l.split(' = default ', 1)
+                if len(line_array) > 1:
+                    line = line_array[0]+ ' = default '
+                    l = line_array[1]
+                else:
+                    line = line_array[0]
+                    last_l = True
 
-            # basic sanity checks
-            line = line.strip()
-            if line == '':
-                continue;
-            if line == ';':
-                continue;
+                # if debugging, print the line being processed
+                if debug_mode:
+                    sys.stdout.write('# '+line)
 
-            # skip using namespace statements for now
-            m = re.match(r'^using namespace ', line)
-            if m is not None:
-                continue
+                # basic sanity checks
+                line = line.strip()
+                if line == '':
+                    continue;
+                if line == ';':
+                    continue;
 
-            # remove literal string contents to avoid mis-counting curly braces
-            line = re.sub(r'\\"','', line)
-            line = re.sub(r'"[^"]+"','""', line)
-            line = re.sub(r"'[^']+'","''", line)
+                # skip using namespace statements for now
+                m = re.match(r'^using namespace ', line)
+                if m is not None:
+                    continue
 
-            # count number of opening and closing curlies to detect if a scope boundary is reached
-            open_curlies = line.count('{')
-            close_curlies = line.count('}')
+                # remove literal string contents to avoid mis-counting curly braces
+                line = re.sub(r'\\"','', line)
+                line = re.sub(r'"[^"]+"','""', line)
+                line = re.sub(r"'[^']+'","''", line)
 
-            # if the number of open curlies does not match the number of closed curlies,
-            # this is a scope boundary
-            if open_curlies - close_curlies != 0:
+                # count number of opening and closing curlies to detect if a scope boundary is reached
+                open_curlies = line.count('{')
+                close_curlies = line.count('}')
 
-                # if the number of open curlies is larger than the number of close curlies, we are entering some scope(s) (we assume a single scope is entered
-                if open_curlies > close_curlies:
-                    # apply some heuristics to detect which kind of scope is entered
-                    # - only namespace, class and method scopes are supported for now
-                    # - other kinds of scopes (class, union, ...) and basic blocks are ignored
+                # if the number of open curlies does not match the number of closed curlies,
+                # this is a scope boundary
+                if open_curlies - close_curlies != 0:
 
-                    # try to match a namespace
-                    m = re.match(r'^namespace (.*) {', line)
-                    if m is not None:
-                        # push previous namespace on the namespace stack
-                        namespace_stack.append((namespace_name))
+                    # if the number of open curlies is larger than the number of close curlies, we are entering some scope(s) (we assume a single scope is entered
+                    if open_curlies > close_curlies:
+                        # apply some heuristics to detect which kind of scope is entered
+                        # - only namespace, class and method scopes are supported for now
+                        # - other kinds of scopes (class, union, ...) and basic blocks are ignored
 
-                        # store current scope elements in the scope nesting list
-                        scopes.append((scope, scope_entry, block_nest_level))
-
-                        # entering namespace
-                        namespace_short_name = m.group(1)
-                        name_path.append(namespace_short_name)
-                        name_path_str = '::'.join(name_path)
-                        namespace_name = name_path_str
-
-                        # create new scope
-                        scope = 'namespace'
-                        scope_entry = add_scope(internal_db, scope_entry, name_path_str, namespace_short_name, scope)
-                        block_nest_level = 1 # 1 accounts for the namespace opening '{'
-
-                        # check if if some wanted namespace is reached
-                        # - currently supported:
-                        #   - alt3r::module namespace
-                        #   - aff3ct::module namespace
-                        if filter_out and (name_path_str == 'alt3r::module' or name_path_str == 'aff3ct::module' or name_path_str == 'aff3ct::tools'):
-                            # wanted namespace found
-                            filter_out_threshold = len(namespace_stack) # record nesting level
-                            filter_out = False  # disable filtering until nesting level is left):
-                            # wanted namespace found
-                            filter_out_threshold = len(namespace_stack) # record nesting level
-                            filter_out = False  # disable filtering until nesting level is left
-
-                        if not filter_out:
-                            if debug_mode:
-                                print('--> namespace:', namespace_name)
-                        continue
-
-                    # ignore 'enum classes' for now
-                    if not filter_out and (scope == 'namespace' or scope == '<toplevel>') and not line.startswith('enum class '):
-                        # try to match a class
-                        m = re.match(r'^(.*)class ([_a-zA-Z][_a-zA-Z0-9]*)(?: : ((?:(?:virtual )?public )?(?:[_a-zA-Z][_a-zA-Z0-9]*::)*[_a-zA-Z][_a-zA-Z0-9]*(?:<[^{]+>)?))? {', line)
+                        # try to match a namespace
+                        m = re.match(r'^namespace (.*) {', line)
                         if m is not None:
-                            # push previous class on the class stack
-                            class_stack.append((class_name, class_access, class_entry))
+                            # push previous namespace on the namespace stack
+                            namespace_stack.append((namespace_name))
+
+                            # store current scope elements in the scope nesting list
                             scopes.append((scope, scope_entry, block_nest_level))
 
-                            # entering class
-                            class_template_part = m.group(1).strip()
-                            class_short_name = m.group(2)
-                            class_inheritence = m.group(3)
-                            class_access = default_class_access
-                            name_path.append(class_short_name)
+                            # entering namespace
+                            namespace_short_name = m.group(1)
+                            name_path.append(namespace_short_name)
                             name_path_str = '::'.join(name_path)
-                            class_name = name_path_str
+                            namespace_name = name_path_str
 
-                            # if class not already known, add it to 'db'
-                            if name_path_str not in db:
-                                add_class(db, name_path_str, class_short_name, class_inheritence, class_template_part)
+                            # create new scope
+                            scope = 'namespace'
+                            scope_entry = add_scope(internal_db, scope_entry, name_path_str, namespace_short_name, scope)
+                            block_nest_level = 1 # 1 accounts for the namespace opening '{'
 
-                            class_entry = db[name_path_str]
-                            scope = 'class'
-                            scope_entry = add_scope(internal_db, scope_entry, name_path_str, class_short_name, scope)
-                            block_nest_level = 1 # 1 accounts for the class opening '{'
+                            # check if if some wanted namespace is reached
+                            # - currently supported:
+                            #   - alt3r::module namespace
+                            #   - aff3ct::module namespace
+                            if filter_out and (name_path_str == 'alt3r::module' or name_path_str == 'aff3ct::module' or name_path_str == 'aff3ct::tools'):
+                                # wanted namespace found
+                                filter_out_threshold = len(namespace_stack) # record nesting level
+                                filter_out = False  # disable filtering until nesting level is left):
+                                # wanted namespace found
+                                filter_out_threshold = len(namespace_stack) # record nesting level
+                                filter_out = False  # disable filtering until nesting level is left
 
                             if not filter_out:
                                 if debug_mode:
-                                    print('==> class_name:', class_name)
-                                if class_template_part != '':
-                                    if debug_mode:
-                                        print('=== class template part:', class_template_part)
+                                    print('--> namespace:', namespace_name)
                             continue
 
-                    # try to match a method definition (e.g. with associated block of code)
-                    m = re.match(r'^(.*\)) *{', line)
-                    # filter out nested functions
-                    if m is not None and scope != 'method':
-                        method_stack.append(method)
-                        scopes.append((scope, scope_entry, block_nest_level))
-                        prev_scope_entry = scope_entry
-                        method = m.group(1)
-                        (method, method_templates) = split_templates(method)
-                        if ' : ' in method:
-                            # remove any member initializer in constructor
-                            method = re.sub(' : .*$', '', method)
-                        previous_scope = scope
-                        scope = 'method'
-                        block_nest_level = 1 # 1 accounts for the namespace opening '{'
-                        scope_entry = None
-                        if not filter_out:
-                            # only record public class members
-                            if previous_scope == 'class' and class_access == 'public':
-                                method_entry = add_method(class_entry, method, True, '', method_templates)
-                                if method_entry is not None:
-                                    method_unique_name = method_entry['method_unique_name']
-                                    method_unique_short_name = method_entry['method_unique_short_name']
-                                    scope_entry = add_scope(internal_db, prev_scope_entry, method_unique_name, method_unique_short_name, scope)
+                        # ignore 'enum classes' for now
+                        if not filter_out and (scope == 'namespace' or scope == '<toplevel>') and not line.startswith('enum class '):
+                            # try to match a class
+                            m = re.match(r'^(.*)class ([_a-zA-Z][_a-zA-Z0-9]*)(?: : ((?:(?:virtual )?public )?(?:[_a-zA-Z][_a-zA-Z0-9]*::)*[_a-zA-Z][_a-zA-Z0-9]*(?:<[^{]+>)?))? {', line)
+                            if m is not None:
+                                # push previous class on the class stack
+                                class_stack.append((class_name, class_access, class_entry))
+                                scopes.append((scope, scope_entry, block_nest_level))
+
+                                # entering class
+                                class_template_part = m.group(1).strip()
+                                class_short_name = m.group(2)
+                                class_inheritence = m.group(3)
+                                class_access = default_class_access
+                                name_path.append(class_short_name)
+                                name_path_str = '::'.join(name_path)
+                                class_name = name_path_str
+
+                                # if class not already known, add it to 'db'
+                                if name_path_str not in db:
+                                    add_class(db, name_path_str, class_short_name, class_inheritence, class_template_part)
+
+                                class_entry = db[name_path_str]
+                                scope = 'class'
+                                scope_entry = add_scope(internal_db, scope_entry, name_path_str, class_short_name, scope)
+                                block_nest_level = 1 # 1 accounts for the class opening '{'
+
+                                if not filter_out:
                                     if debug_mode:
-                                        print('**> method:', method)
-                        continue
+                                        print('==> class_name:', class_name)
+                                    if class_template_part != '':
+                                        if debug_mode:
+                                            print('=== class template part:', class_template_part)
+                                continue
 
-                # did not detect any scope of interest, process other cases
+                        # try to match a method definition (e.g. with associated block of code)
+                        m = re.match(r'^(.*\)) *{', line)
+                        # filter out nested functions
+                        if m is not None and scope != 'method':
+                            method_stack.append(method)
+                            scopes.append((scope, scope_entry, block_nest_level))
+                            prev_scope_entry = scope_entry
+                            method = m.group(1)
+                            (method, method_templates) = split_templates(method)
+                            if ' : ' in method:
+                                # remove any member initializer in constructor
+                                method = re.sub(' : .*$', '', method)
+                            previous_scope = scope
+                            scope = 'method'
+                            block_nest_level = 1 # 1 accounts for the namespace opening '{'
+                            scope_entry = None
+                            if not filter_out:
+                                # only record public class members
+                                if previous_scope == 'class' and class_access == 'public':
+                                    method_entry = add_method(class_entry, method, True, '', method_templates)
+                                    if method_entry is not None:
+                                        method_unique_name = method_entry['method_unique_name']
+                                        method_unique_short_name = method_entry['method_unique_short_name']
+                                        scope_entry = add_scope(internal_db, prev_scope_entry, method_unique_name, method_unique_short_name, scope)
+                                        if debug_mode:
+                                            print('**> method:', method)
+                            continue
+
+                    # did not detect any scope of interest, process other cases
 
 
-                # update block nesting level in current scope
-                block_nest_level = block_nest_level + open_curlies - close_curlies
+                    # update block nesting level in current scope
+                    block_nest_level = block_nest_level + open_curlies - close_curlies
 
-                # sanity check: nesting level should never become negative
-                if block_nest_level < 0:
-                    sys.stderr.write('parse_error: block_nest_level = %d\n' % (block_nest_level))
-                    sys.exit(1)
+                    # sanity check: nesting level should never become negative
+                    if block_nest_level < 0:
+                        sys.stderr.write('parse_error: block_nest_level = %d\n' % (block_nest_level))
+                        sys.exit(1)
 
-                # nesting level reached 0 for current scope: leaving current scope
-                if block_nest_level == 0:
-                    if scope == 'namespace':
-                        if not filter_out:
+                    # nesting level reached 0 for current scope: leaving current scope
+                    if block_nest_level == 0:
+                        if scope == 'namespace':
+                            if not filter_out:
+                                if debug_mode:
+                                    print('<-- namespace:', namespace_name)
+                                    print()
+
+                            # leaving a namespace scope
+                            namespace_level = len(namespace_stack)
+                            namespace_name = namespace_stack.pop()
+                            name_path.pop()
+                            name_path_str = '::'.join(name_path)
+
+                            if not filter_out and namespace_level == filter_out_threshold:
+                                filter_out = True
+                            scope, scope_entry, block_nest_level = scopes.pop()
+                            continue
+
+                        elif scope == 'class':
+                            if not filter_out:
+                                if debug_mode:
+                                    print('<== class_name:', class_name)
+
+                            # leaving a class scope
+                            class_name, class_access, class_entry = class_stack.pop()
+                            name_path.pop()
+                            name_path_str = '::'.join(name_path)
+                            scope, scope_entry, block_nest_level = scopes.pop()
+                            continue
+
+                        elif scope == 'method':
+                            if not filter_out:
+                                if debug_mode:
+                                    print('<** method:', method)
+
+                            # leaving a method scope
+                            method = method_stack.pop()
+                            scope, scope_entry, block_nest_level = scopes.pop()
+                            continue
+
+                        elif scope != '<toplevel>':
+                            # leaving any other scope we may have entered
+                            # except for toplevel (which should not happen)
+                            scope, scope_entry, block_nest_level = scopes.pop()
+
+                # we are not entering or leaving a scope
+                elif not filter_out:
+                    # detect class access specifiers
+                    if scope == 'class' and (line == 'public:' or line == 'protected:' or line == 'private:'):
+                        if class_name != '':
+                            class_access = line[:-1]
                             if debug_mode:
-                                print('<-- namespace:', namespace_name)
-                                print()
+                                print('=== class access:', class_access)
+                            continue
 
-                        # leaving a namespace scope
-                        namespace_level = len(namespace_stack)
-                        namespace_name = namespace_stack.pop()
-                        name_path.pop()
-                        name_path_str = '::'.join(name_path)
-
-                        if not filter_out and namespace_level == filter_out_threshold:
-                            filter_out = True
-                        scope, scope_entry, block_nest_level = scopes.pop()
-                        continue
-
-                    elif scope == 'class':
-                        if not filter_out:
-                            if debug_mode:
-                                print('<== class_name:', class_name)
-
-                        # leaving a class scope
-                        class_name, class_access, class_entry = class_stack.pop()
-                        name_path.pop()
-                        name_path_str = '::'.join(name_path)
-                        scope, scope_entry, block_nest_level = scopes.pop()
-                        continue
-
-                    elif scope == 'method':
-                        if not filter_out:
-                            if debug_mode:
-                                print('<** method:', method)
-
-                        # leaving a method scope
-                        method = method_stack.pop()
-                        scope, scope_entry, block_nest_level = scopes.pop()
-                        continue
-
-                    elif scope != '<toplevel>':
-                        # leaving any other scope we may have entered
-                        # except for toplevel (which should not happen)
-                        scope, scope_entry, block_nest_level = scopes.pop()
-
-            # we are not entering or leaving a scope
-            elif not filter_out:
-                # detect class access specifiers
-                if scope == 'class' and (line == 'public:' or line == 'protected:' or line == 'private:'):
-                    if class_name != '':
-                        class_access = line[:-1]
-                        if debug_mode:
-                            print('=== class access:', class_access)
-                        continue
-
-                # filter out forward declarations
-                m = re.match(r'(?:class|enum|struct|union) (?:[_a-zA-Z][_a-zA-Z0-9]*::)*[_a-zA-Z][_a-zA-Z0-9]*;', line)
-                if m is not None:
-                    continue
-
-                # filter out remaining 'using' statements for now
-                m = re.match(r'using [^;]+;', line)
-                if m is not None:
-                    continue
-
-                # detect method declarations in classes
-                if scope == 'class' and class_access == 'public':
-                    method = None
-
-                    (method_line_perhaps, method_templates) = split_templates(line.strip())
-                    # heuristic to match a method declaration
-                    m = re.match(r'(.*\))([^)]*);', method_line_perhaps)
+                    # filter out forward declarations
+                    m = re.match(r'(?:class|enum|struct|union) (?:[_a-zA-Z][_a-zA-Z0-9]*::)*[_a-zA-Z][_a-zA-Z0-9]*;', line)
                     if m is not None:
-                        method = m.group(1)
-                        method_suffix = m.group(2)
-                    else:
-                        # special case for '= default' (no trailing ';' in Clang AST print)
-                        method_line_perhaps = re.sub(r' throw\(\)', '', method_line_perhaps)
-                        m = re.match(r'(.*\))[^)]*( = default)$', method_line_perhaps)
+                        continue
+
+                    # filter out remaining 'using' statements for now
+                    m = re.match(r'using [^;]+;', line)
+                    if m is not None:
+                        continue
+
+                    # detect method declarations in classes
+                    if scope == 'class' and class_access == 'public':
+                        method = None
+
+                        (method_line_perhaps, method_templates) = split_templates(line.strip())
+                        # heuristic to match a method declaration
+                        m = re.match(r'(.*\))([^)]*);', method_line_perhaps)
                         if m is not None:
                             method = m.group(1)
                             method_suffix = m.group(2)
-                    if method is not None:
-                        # some method found, add it to db
-                        method_entry = add_method(class_entry, method, False, method_suffix, method_templates)
-                        if method_entry is not None:
-                            method_unique_name = method_entry['method_unique_name']
-                            method_unique_short_name = method_entry['method_unique_short_name']
-                            # record a 'pseudo' scope in internal_db
-                            add_scope(internal_db, scope_entry, method_unique_name, method_unique_short_name, 'method')
-                            if debug_mode:
-                                print ('>>> '+method)
-                        continue
+                        else:
+                            # special case for '= default' (no trailing ';' in Clang AST print)
+                            method_line_perhaps = re.sub(r' throw\(\)', '', method_line_perhaps)
+                            m = re.match(r'(.*\))[^)]*( = default)$', method_line_perhaps)
+                            if m is not None:
+                                method = m.group(1)
+                                method_suffix = m.group(2)
+                        if method is not None:
+                            # some method found, add it to db
+                            method_entry = add_method(class_entry, method, False, method_suffix, method_templates)
+                            if method_entry is not None:
+                                method_unique_name = method_entry['method_unique_name']
+                                method_unique_short_name = method_entry['method_unique_short_name']
+                                # record a 'pseudo' scope in internal_db
+                                add_scope(internal_db, scope_entry, method_unique_name, method_unique_short_name, 'method')
+                                if debug_mode:
+                                    print ('>>> '+method)
+                            continue
 
-            if not filter_out:
-                if scope == 'class' and class_access == 'public':
-                    # only consider class members, and only public ones
-                    if debug_mode:
-                        print(line)
+                if not filter_out:
+                    if scope == 'class' and class_access == 'public':
+                        # only consider class members, and only public ones
+                        if debug_mode:
+                            print(line)
     if debug_mode:
         # if debug_mode, dump internal_db
         internal_db_filename = 'internal_db.json'
