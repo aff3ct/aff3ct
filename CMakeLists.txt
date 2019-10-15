@@ -374,7 +374,7 @@ aff3ct_target_include_directories(PUBLIC "lib/cli/src" "cli")
 
 # MSVC dirent.h
 if(MSVC)
-    aff3ct_target_include_directories2(PRIVATE "lib/MSVC/include")
+    aff3ct_target_include_directories(PRIVATE "lib/MSVC/include" "dirent")
 endif()
 
 # MIPP
