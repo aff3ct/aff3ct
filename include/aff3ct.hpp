@@ -1288,6 +1288,24 @@
 #ifndef TRANSPOSE_SELECTOR_H
 #include <Tools/Perf/Transpose/transpose_selector.h>
 #endif
+#ifndef SC_DEBUG_HPP_
+#include <Tools/SystemC/SC_Debug.hpp>
+#endif
+#ifndef SC_DUMMY_HPP_
+#include <Tools/SystemC/SC_Dummy.hpp>
+#endif
+#ifndef SC_DUPLICATOR_HPP_
+#include <Tools/SystemC/SC_Duplicator.hpp>
+#endif
+#ifndef SC_FUNNEL_HPP_
+#include <Tools/SystemC/SC_Funnel.hpp>
+#endif
+#ifndef SC_PREDICATE_HPP_
+#include <Tools/SystemC/SC_Predicate.hpp>
+#endif
+#ifndef SC_ROUTER_HPP_
+#include <Tools/SystemC/SC_Router.hpp>
+#endif
 #ifndef TYPES_H_
 #include <Tools/types.h>
 #endif
