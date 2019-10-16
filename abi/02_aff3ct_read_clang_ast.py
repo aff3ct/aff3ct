@@ -12,7 +12,17 @@ debug_mode = False
 
 setting_keep_task_method = True
 
-reserved_keywords = [ 'class', 'enum', 'exception', 'for', 'if', 'public', 'protected', 'private', 'struct', 'throw', 'throws', 'union', 'virtual', 'while' ]
+reserved_keywords_list = [ 'auto', 'bool', 'break', 'case', 'catch', 'char', 'class', 'const', 'continue',
+        'default', 'delete', 'double', 'else' 'enum', 'exception', 'explicit', 'export', 'extern',
+        'false', 'float', 'for', 'friend', 'goto', 'if', 'inline', 'int', 'long', 'namespace', 'new',
+        'private', 'protected', 'public', 'register', 'return', 'short', 'signed', 'sizeof', 'static', 'struct', 'switch',
+        'throw', 'true', 'try', 'typedef', 'typename', 'union', 'unsigned', 'using', 'virtual', 'void', 'while'
+        ]
+
+reserved_keywords = dict()
+for keyword in reserved_keywords_list:
+    reserved_keywords[keyword] = True
+
 # process one method argument
 def process_arg(arg_signature, arg_rank):
     arg_is_const = False
@@ -1040,15 +1050,15 @@ def dump_db(db, output_filename, summary_output_filename):
             # remove name accounting dict to avoid dumping it in the json db
             del class_entry['class_name_accounting']
 
-            for method in class_entry['class_constructors'].keys():
+            for method in sorted(class_entry['class_constructors'].keys()):
                 write_method(fsummary_output, class_entry['class_constructors'][method], True)
-            for method in class_entry['class_destructors'].keys():
+            for method in sorted(class_entry['class_destructors'].keys()):
                 write_method(fsummary_output, class_entry['class_destructors'][method], True)
-            for method in class_entry['class_methods'].keys():
+            for method in sorted(class_entry['class_methods'].keys()):
                 write_method(fsummary_output, class_entry['class_methods'][method], True)
-            for method in class_entry['class_static_methods'].keys():
+            for method in sorted(class_entry['class_static_methods'].keys()):
                 write_method(fsummary_output, class_entry['class_static_methods'][method], True)
-            for method in class_entry['class_operators'].keys():
+            for method in sorted(class_entry['class_operators'].keys()):
                 write_method(fsummary_output, class_entry['class_operators'][method], True)
         # list unresolved issues separately
         first = True
@@ -1064,7 +1074,7 @@ def dump_db(db, output_filename, summary_output_filename):
                 fsummary_output.write('=======================\n')
                 fsummary_output.write('Warning, fixme methods:\n')
             fsummary_output.write('%s\n' % (class_name))
-            for method in class_entry['class_fixme_methods'].keys():
+            for method in sorted(class_entry['class_fixme_methods'].keys()):
                 write_method(fsummary_output, class_entry['class_fixme_methods'][method], False)
 
     # dump db into a .json file
