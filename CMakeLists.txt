@@ -367,7 +367,8 @@ macro(aff3ct_target_include_directories2 privacy dir)
 endmacro()
 
 # AFF3CT headers
-aff3ct_target_include_directories(PUBLIC "src" "aff3ct")
+aff3ct_target_include_directories(PUBLIC "src"     "aff3ct")
+aff3ct_target_include_directories(PUBLIC "include" "aff3ct")
 
 # cli headers
 aff3ct_target_include_directories(PUBLIC "lib/cli/src" "cli")
@@ -576,15 +577,15 @@ if (AFF3CT_COMPILE_SHARED_LIB OR AFF3CT_COMPILE_STATIC_LIB)
             DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/aff3ct-${AFF3CT_VERSION_FULL}/"
             COMPONENT library)
 
-    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/"
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct
             COMPONENT headers
             FILES_MATCHING PATTERN "*.h")
-    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/"
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct
             COMPONENT headers
             FILES_MATCHING PATTERN "*.hpp")
-    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/"
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct
             COMPONENT headers
             FILES_MATCHING PATTERN "*.hxx")

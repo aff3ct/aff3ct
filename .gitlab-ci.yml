@@ -69,7 +69,7 @@ analysis-headers:
     - linux
   script:
     - ./scripts/generate_aff3ct_header.sh aff3ct.hpp
-    - diff aff3ct.hpp src/aff3ct.hpp
+    - diff aff3ct.hpp include/aff3ct.hpp
 
 analysis-git-submodules:
   stage: analysis
