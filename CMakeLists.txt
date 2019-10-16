@@ -367,8 +367,8 @@ macro(aff3ct_target_include_directories2 privacy dir)
 endmacro()
 
 # AFF3CT headers
-aff3ct_target_include_directories(PUBLIC "src"     "aff3ct")
-aff3ct_target_include_directories(PUBLIC "include" "aff3ct")
+aff3ct_target_include_directories(PRIVATE "src"     "aff3ct")
+aff3ct_target_include_directories(PUBLIC  "include" "aff3ct")
 
 # cli headers
 aff3ct_target_include_directories(PUBLIC "lib/cli/src" "cli")
