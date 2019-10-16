@@ -825,7 +825,7 @@ def process_ast(ast_filename):
         internal_db_filename = 'internal_db.json'
         with open(internal_db_filename, 'w') as foutput:
             print("[debug mode] dumping internal_db to '%s'" % (internal_db_filename))
-            json.dump(internal_db, foutput)
+            json.dump(internal_db, foutput, sort_keys=True)
 
     return db
 
@@ -1080,7 +1080,7 @@ def dump_db(db, output_filename, summary_output_filename):
     # dump db into a .json file
     print("dumping db to '%s'" % (output_filename))
     with open(output_filename, 'w') as foutput:
-        json.dump(db, foutput)
+        json.dump(db, foutput, sort_keys=True)
 
 #-------------
 # main program
