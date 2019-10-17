@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Functions for matrices.
+ */
 #ifndef MATRIX_H
 #define MATRIX_H
 

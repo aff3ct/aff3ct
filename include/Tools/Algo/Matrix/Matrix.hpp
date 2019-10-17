@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Matrix.
+ */
 #ifndef MATRIX_HPP_
 #define MATRIX_HPP_
 

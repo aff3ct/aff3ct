@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Constellation_QAM.
+ */
 #ifndef CONSTELLATION_QAM_HPP__
 #define CONSTELLATION_QAM_HPP__
 

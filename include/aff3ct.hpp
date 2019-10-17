@@ -1,3 +1,11 @@
+/*!
+ * \file
+ * \brief AFF3CT main header file, include all the other headers.
+ *
+ * \section LICENSE
+ * This file is under MIT license (https://opensource.org/licenses/MIT).
+ */
+
 #ifndef AFF3CT_HPP
 #define AFF3CT_HPP
 

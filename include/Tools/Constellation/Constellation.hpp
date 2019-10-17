@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Constellation.
+ */
 #ifndef CONSTELLATION_HPP__
 #define CONSTELLATION_HPP__
 

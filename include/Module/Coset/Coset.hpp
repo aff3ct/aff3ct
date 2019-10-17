@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief Performs the coset approach (flips the bits or the signs depending on the initial codeword).
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class module::Coset.
  */
 #ifndef COSET_HPP_
 #define COSET_HPP_

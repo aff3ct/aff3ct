@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Channel_NO.
+ */
 #ifndef CHANNELS_NO_HPP_
 #define CHANNELS_NO_HPP_
 

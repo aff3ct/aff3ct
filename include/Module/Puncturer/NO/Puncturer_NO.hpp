@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Puncturer_NO.
+ */
 #ifndef PUNCTURER_NO_HPP_
 #define PUNCTURER_NO_HPP_
 

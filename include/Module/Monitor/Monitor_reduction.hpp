@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Monitor_reduction.
+ */
 #ifndef MONITOR_REDUCTION_HPP_
 #define MONITOR_REDUCTION_HPP_
 

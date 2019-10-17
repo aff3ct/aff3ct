@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Puncturer_LDPC::parameters.
+ */
 #ifndef FACTORY_PUNCTURER_LDPC_HPP
 #define FACTORY_PUNCTURER_LDPC_HPP
 

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_LDPC_BP_vertical_layered.
+ */
 #ifndef DECODER_LDPC_BP_VERTICAL_LAYERED_HPP_
 #define DECODER_LDPC_BP_VERTICAL_LAYERED_HPP_
 

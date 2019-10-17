@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Encoder_LDPC_DVBS2.
+ */
 #ifndef ENCODER_LDPC_DVBS2_HPP_
 #define ENCODER_LDPC_DVBS2_HPP_
 

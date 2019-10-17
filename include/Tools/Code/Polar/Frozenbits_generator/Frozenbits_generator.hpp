@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief Determines the frozen bit positions in a frame.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class tools::Frozenbits_generator.
  */
 #ifndef FROZENBITS_GENERATOR_HPP_
 #define FROZENBITS_GENERATOR_HPP_

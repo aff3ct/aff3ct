@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief Monitors the simulated frames, tells if there is a frame errors and counts the number of bit errors.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class module::Monitor.
  */
 #ifndef MONITOR_HPP_
 #define MONITOR_HPP_

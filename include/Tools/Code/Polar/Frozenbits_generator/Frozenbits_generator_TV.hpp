@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Frozenbits_generator_TV.
+ */
 #ifndef FROZENBITS_GENERATOR_TV_HPP_
 #define FROZENBITS_GENERATOR_TV_HPP_
 

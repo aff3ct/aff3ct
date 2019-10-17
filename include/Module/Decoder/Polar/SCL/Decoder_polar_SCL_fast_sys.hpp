@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_polar_SCL_fast_sys.
+ */
 #ifndef DECODER_POLAR_SCL_FAST_SYS
 #define DECODER_POLAR_SCL_FAST_SYS
 

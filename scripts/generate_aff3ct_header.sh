@@ -7,7 +7,14 @@ else
   AFF3CT_HEADER="$1"
 fi
 
-echo -e "#ifndef AFF3CT_HPP\n#define AFF3CT_HPP\n" > $AFF3CT_HEADER # create the aff3ct header file with the c++ header
+echo    "/*!"                                                                      >  $AFF3CT_HEADER
+echo    " * \\file"                                                                >> $AFF3CT_HEADER
+echo    " * \\brief AFF3CT main header file, include all the other headers."       >> $AFF3CT_HEADER
+echo    " *"                                                                       >> $AFF3CT_HEADER
+echo    " * \\section LICENSE"                                                     >> $AFF3CT_HEADER
+echo    " * This file is under MIT license (https://opensource.org/licenses/MIT)." >> $AFF3CT_HEADER
+echo -e " */\n"                                                                    >> $AFF3CT_HEADER
+echo -e "#ifndef AFF3CT_HPP\n#define AFF3CT_HPP\n" >> $AFF3CT_HEADER # create the aff3ct header file with the c++ header
 
 headersh=$(find .\/include\/ -type f -follow -print | # find all source files
            grep "[.]h$" |                             # take all .h files

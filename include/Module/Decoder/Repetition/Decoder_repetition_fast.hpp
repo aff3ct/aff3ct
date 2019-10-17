@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_repetition_fast.
+ */
 #ifndef DECODER_REPETITION_FAST
 #define DECODER_REPETITION_FAST
 

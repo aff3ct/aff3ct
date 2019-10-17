@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Channel_user_be.
+ */
 #ifndef CHANNEL_USER_BE_HPP_
 #define CHANNEL_USER_BE_HPP_
 

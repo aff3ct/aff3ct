@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Struct tools::AList.
+ */
 #ifndef ALIST_HPP_
 #define ALIST_HPP_
 

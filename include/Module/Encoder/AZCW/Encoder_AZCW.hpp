@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Encoder_AZCW.
+ */
 #ifndef ENCODER_AZCW_HPP_
 #define ENCODER_AZCW_HPP_
 

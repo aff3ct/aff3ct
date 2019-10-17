@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Flip_and_check.
+ */
 #ifndef FLIP_AND_CHECK_HPP
 #define FLIP_AND_CHECK_HPP
 

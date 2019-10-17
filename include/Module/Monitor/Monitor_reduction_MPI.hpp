@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Monitor_reduction_MPI.
+ */
 #ifdef AFF3CT_MPI
 
 #ifndef MONITOR_REDUCTION_MPI_HPP_

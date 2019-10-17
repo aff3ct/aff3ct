@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Source_random_fast.
+ */
 #ifndef SOURCE_RANDOM_FAST_HPP_
 #define SOURCE_RANDOM_FAST_HPP_
 

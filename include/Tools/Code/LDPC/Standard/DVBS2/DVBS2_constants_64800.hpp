@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Struct tools::dvbs2_values_64800_6480.
+ */
 #ifndef DVBS2_CONSTANTS_64800_HPP_
 #define DVBS2_CONSTANTS_64800_HPP_
 

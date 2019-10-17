@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::LC_sorter_simd.
+ */
 #ifndef LC_SORTER_SIMD_HPP
 #define LC_SORTER_SIMD_HPP
 

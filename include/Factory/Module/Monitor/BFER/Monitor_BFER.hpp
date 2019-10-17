@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Monitor_BFER::parameters.
+ */
 #ifndef FACTORY_MONITOR_BFER_HPP
 #define FACTORY_MONITOR_BFER_HPP
 

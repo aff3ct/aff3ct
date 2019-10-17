@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_RSC_BCJR_seq_fast.
+ */
 #ifndef DECODER_RSC_BCJR_SEQ_FAST_HPP_
 #define DECODER_RSC_BCJR_SEQ_FAST_HPP_
 

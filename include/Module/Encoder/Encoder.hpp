@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief Encodes a vector of information bits (a message) and adds some redundancy (parity bits).
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class module::Encoder.
  */
 #ifndef ENCODER_HPP_
 #define ENCODER_HPP_

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_LDPC_BP_flooding.
+ */
 #ifndef DECODER_LDPC_BP_FLOODING_HPP_
 #define DECODER_LDPC_BP_FLOODING_HPP_
 

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Noise::parameters.
+ */
 #ifndef FACTORY_NOISE_HPP
 #define FACTORY_NOISE_HPP
 

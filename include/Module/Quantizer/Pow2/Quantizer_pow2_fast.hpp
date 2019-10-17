@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Quantizer_pow2_fast.
+ */
 #ifndef QUANTIZER_POW2_FAST_HPP_
 #define QUANTIZER_POW2_FAST_HPP_
 

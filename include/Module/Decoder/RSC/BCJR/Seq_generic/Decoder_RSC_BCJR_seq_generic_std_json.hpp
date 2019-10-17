@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_RSC_BCJR_seq_generic_std_json.
+ */
 #ifndef DECODER_RSC_BCJR_STD_GENERIC_SEQ_JSON_HPP_
 #define DECODER_RSC_BCJR_STD_GENERIC_SEQ_JSON_HPP_
 

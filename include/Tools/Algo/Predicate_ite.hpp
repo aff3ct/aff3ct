@@ -1,11 +1,7 @@
 /*!
  * \file
- * \brief A predicate: return true if it has been called n times or more.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class tools::Predicate_ite.
  */
-
 #ifndef PREDICATE_ITE_HPP
 #define PREDICATE_ITE_HPP
 

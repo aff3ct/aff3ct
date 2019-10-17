@@ -1,10 +1,6 @@
 /*!
  * \file
- * \brief Parses a polar code (represented as a tree) and returns a simplified tree with specialized nodes and tree
- *        cuts when possible.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class tools::Pattern_polar_parser.
  */
 #ifndef PATTERN_POLAR_PARSER_HPP
 #define PATTERN_POLAR_PARSER_HPP

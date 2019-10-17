@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Noise.
+ */
 #ifndef NOISE_HPP__
 #define NOISE_HPP__
 

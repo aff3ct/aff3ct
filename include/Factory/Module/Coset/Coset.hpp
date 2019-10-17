@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Coset::parameters.
+ */
 #ifndef FACTORY_COSET_HPP
 #define FACTORY_COSET_HPP
 

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Frozenbits_notifier.
+ */
 #ifndef FROZENBITS_NOTIFIER_HPP
 #define FROZENBITS_NOTIFIER_HPP
 

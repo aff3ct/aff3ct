@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::API_polar_static_seq.
+ */
 #ifndef API_POLAR_STATIC_SEQ_HPP_
 #define API_POLAR_STATIC_SEQ_HPP_
 

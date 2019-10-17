@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_NO.
+ */
 #ifndef DECODER_NO_HPP_
 #define DECODER_NO_HPP_
 

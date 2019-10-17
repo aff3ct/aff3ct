@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Update_rule_LSPA.
+ */
 #ifndef UPDATE_RULE_LSPA_HPP
 #define UPDATE_RULE_LSPA_HPP
 

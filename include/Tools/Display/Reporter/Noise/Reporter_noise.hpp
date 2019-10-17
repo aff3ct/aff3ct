@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Reporter_noise.
+ */
 #ifndef REPORTER_NOISE_HPP_
 #define REPORTER_NOISE_HPP_
 

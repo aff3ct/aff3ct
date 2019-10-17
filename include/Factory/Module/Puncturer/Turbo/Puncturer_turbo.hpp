@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Puncturer_turbo::parameters.
+ */
 #ifndef FACTORY_PUNCTURER_TURBO_HPP
 #define FACTORY_PUNCTURER_TURBO_HPP
 

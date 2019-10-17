@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Update_rule_SPA.
+ */
 #ifndef UPDATE_RULE_SPA_HPP
 #define UPDATE_RULE_SPA_HPP
 

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Channel_binary_symmetric.
+ */
 #ifndef CHANNEL_BSC_HPP_
 #define CHANNEL_BSC_HPP_
 

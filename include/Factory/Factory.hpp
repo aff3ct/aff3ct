@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief Class builder.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class factory::Factory::parameters and struct factory::Header.
  */
 #ifndef FACTORY_HPP
 #define FACTORY_HPP

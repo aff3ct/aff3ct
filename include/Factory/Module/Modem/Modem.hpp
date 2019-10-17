@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Modem::parameters.
+ */
 #ifndef FACTORY_MODEM_HPP
 #define FACTORY_MODEM_HPP
 

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_LDPC_BP_peeling.
+ */
 #ifndef DECODER_LDPC_BP_PEELING_HPP
 #define DECODER_LDPC_BP_PEELING_HPP
 

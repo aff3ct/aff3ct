@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Source_user.
+ */
 #ifndef SOURCE_USER_HPP_
 #define SOURCE_USER_HPP_
 

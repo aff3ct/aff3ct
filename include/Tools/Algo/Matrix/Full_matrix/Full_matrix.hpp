@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Full_matrix.
+ */
 #ifndef FULL_MATRIX_HPP_
 #define FULL_MATRIX_HPP_
 

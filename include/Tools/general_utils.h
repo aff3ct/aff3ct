@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Functions for general operations.
+ */
 #ifndef GENERAL_UTILS_H_
 #define GENERAL_UTILS_H_
 

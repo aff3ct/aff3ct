@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::BCH_polynomial_generator.
+ */
 #ifndef BCH_POLYNOMIAL_GENERATOR_HPP
 #define BCH_POLYNOMIAL_GENERATOR_HPP
 

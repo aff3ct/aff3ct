@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Event_generator_GSL.
+ */
 #ifdef AFF3CT_CHANNEL_GSL
 
 #ifndef EVENT_GENERATOR_GSL_HPP

@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief Quantizes floating-point data to fixed-point representation.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class module::Quantizer.
  */
 #ifndef QUANTIZER_HPP_
 #define QUANTIZER_HPP_

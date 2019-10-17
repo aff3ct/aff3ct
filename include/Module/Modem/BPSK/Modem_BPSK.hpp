@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Modem_BPSK.
+ */
 #ifndef MODEM_BPSK_HPP_
 #define MODEM_BPSK_HPP_
 

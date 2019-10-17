@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Frozenbits_generator_BEC.
+ */
 #ifndef FROZENBITS_GENERATOR_BEC_HPP_
 #define FROZENBITS_GENERATOR_BEC_HPP_
 

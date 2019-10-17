@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Puncturer_turbo_DB.
+ */
 #ifndef PUNCTURER_TURBO_DB_HPP_
 #define PUNCTURER_TURBO_DB_HPP_
 

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Quantizer_custom.
+ */
 #ifndef QUANTIZER_CUSTOM_HPP_
 #define QUANTIZER_CUSTOM_HPP_
 

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_RSC_BCJR_inter_intra.
+ */
 #ifndef DECODER_RSC_BCJR_INTER_INTRA_HPP_
 #define DECODER_RSC_BCJR_INTER_INTRA_HPP_
 

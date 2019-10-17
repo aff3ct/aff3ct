@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Encoder_user.
+ */
 #ifndef ENCODER_USER_HPP_
 #define ENCODER_USER_HPP_
 

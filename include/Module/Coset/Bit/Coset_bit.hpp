@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Coset_bit.
+ */
 #ifndef COSET_BIT_HPP_
 #define COSET_BIT_HPP_
 

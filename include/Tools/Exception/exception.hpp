@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::exception.
+ */
 #ifndef EXCEPTION_HPP_
 #define EXCEPTION_HPP_
 

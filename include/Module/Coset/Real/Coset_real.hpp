@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Coset_real.
+ */
 #ifndef COSET_REAL_HPP_
 #define COSET_REAL_HPP_
 

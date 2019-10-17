@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Codec_RS.
+ */
 #ifndef CODEC_RS_HPP_
 #define CODEC_RS_HPP_
 

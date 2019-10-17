@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::SC_Dummy.
+ */
 #if defined(AFF3CT_SYSTEMC_SIMU) || defined(AFF3CT_SYSTEMC_MODULE)
 
 #ifndef SC_DUMMY_HPP_

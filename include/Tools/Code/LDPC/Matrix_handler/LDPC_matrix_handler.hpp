@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Struct tools::LDPC_matrix_handler.
+ */
 #ifndef LDPC_MATRIX_HANDLER_HPP_
 #define LDPC_MATRIX_HANDLER_HPP_
 

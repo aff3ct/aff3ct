@@ -13,13 +13,13 @@
  * This code has been designed as a drop-in replacement for libc rand and
  * srand().
  *
+ * This file is under BSD license.
+ *
  * \author Christian Stigen Larsen
  * \author Adrien Cassagne
  *
  * \date 2015-02-17
  *
- * \section LICENSE
- * This file is under BSD license.
  */
 
 #ifndef PRNG_MT19937_HPP

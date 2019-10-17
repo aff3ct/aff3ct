@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Functions for numerical integrations.
+ */
 #ifndef NUMERICAL_INTEGRATION_H_
 #define NUMERICAL_INTEGRATION_H_
 

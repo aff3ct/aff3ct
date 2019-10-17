@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Decoder_BCH::parameters.
+ */
 #ifndef FACTORY_DECODER_BCH_HPP
 #define FACTORY_DECODER_BCH_HPP
 

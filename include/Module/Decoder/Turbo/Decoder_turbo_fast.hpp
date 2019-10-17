@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_turbo_fast.
+ */
 #ifndef DECODER_TURBO_FAST_SYS_
 #define DECODER_TURBO_FAST_SYS_
 

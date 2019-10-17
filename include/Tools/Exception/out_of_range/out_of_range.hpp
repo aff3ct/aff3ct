@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::out_of_range.
+ */
 #ifndef OUT_OF_RANGE_HPP_
 #define OUT_OF_RANGE_HPP_
 

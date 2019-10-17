@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Encoder_CPE.
+ */
 #ifndef ENCODER_CPE_HPP_
 #define ENCODER_CPE_HPP_
 

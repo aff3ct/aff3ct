@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Modem_OOK_optical.
+ */
 #ifndef MODEM_OOK_OPTICAL_HPP_
 #define MODEM_OOK_OPTICAL_HPP_
 

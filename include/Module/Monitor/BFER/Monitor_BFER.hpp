@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Monitor_BFER.
+ */
 #ifndef MONITOR_BFER_HPP_
 #define MONITOR_BFER_HPP_
 

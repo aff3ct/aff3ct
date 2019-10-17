@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Interleaver::parameters.
+ */
 #ifndef FACTORY_INTERLEAVER_HPP
 #define FACTORY_INTERLEAVER_HPP
 

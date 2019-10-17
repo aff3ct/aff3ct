@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Scaling_factor_array.
+ */
 #ifndef SCALING_FACTOR_ARRAY_HPP
 #define SCALING_FACTOR_ARRAY_HPP
 

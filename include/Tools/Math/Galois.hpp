@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Galois.
+ */
 #ifndef GALOIS_HPP
 #define GALOIS_HPP
 

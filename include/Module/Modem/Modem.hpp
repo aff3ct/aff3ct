@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief Modulates, filters and/or demodulates a signal.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class module::Modem.
  */
 #ifndef MODEM_HPP_
 #define MODEM_HPP_

@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief A Decoder is an algorithm dedicated to find the initial sequence of information bits (before the noise).
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class module::Decoder_HIHO.
  */
 #ifndef DECODER_HIHO_HPP_
 #define DECODER_HIHO_HPP_

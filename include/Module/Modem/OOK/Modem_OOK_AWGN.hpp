@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Modem_OOK_AWGN.
+ */
 #ifndef MODEM_OOK_AWGN_HPP_
 #define MODEM_OOK_AWGN_HPP_
 

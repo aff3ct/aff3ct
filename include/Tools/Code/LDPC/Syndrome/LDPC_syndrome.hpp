@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Struct tools::LDPC_syndrome.
+ */
 #ifndef LDPC_SYNDROME_HPP_
 #define LDPC_SYNDROME_HPP_
 

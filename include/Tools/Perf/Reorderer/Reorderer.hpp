@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief Reorders a list of frames.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Struct tools::Reorderer.
  */
 #ifndef REORDERER_HPP_
 #define REORDERER_HPP_

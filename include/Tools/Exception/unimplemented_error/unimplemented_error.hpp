@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::unimplemented_error.
+ */
 #ifndef UNIMPLEMENTED_ERROR_HPP_
 #define UNIMPLEMENTED_ERROR_HPP_
 

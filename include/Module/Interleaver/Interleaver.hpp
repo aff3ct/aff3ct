@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Interleaver.
+ */
 #ifndef INTERLEAVER_HPP_
 #define INTERLEAVER_HPP_
 

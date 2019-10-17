@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_BCH_genius.
+ */
 #ifndef DECODER_BCH_GENIUS
 #define DECODER_BCH_GENIUS
 

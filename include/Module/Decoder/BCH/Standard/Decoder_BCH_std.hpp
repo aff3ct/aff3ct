@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_BCH_std.
+ */
 #ifndef DECODER_BCH_STD
 #define DECODER_BCH_STD
 

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Reporter_monitor.
+ */
 #ifndef REPORTER_MONITOR_HPP_
 #define REPORTER_MONITOR_HPP_
 

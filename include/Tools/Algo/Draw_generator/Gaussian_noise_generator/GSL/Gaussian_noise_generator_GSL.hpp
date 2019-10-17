@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Gaussian_noise_generator_GSL.
+ */
 #ifdef AFF3CT_CHANNEL_GSL
 
 #ifndef GAUSSIAN_NOISE_GENERATOR_GSL_HPP_

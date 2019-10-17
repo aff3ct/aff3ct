@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief A SISO (Soft Input Soft Output) is a type of decoder which takes a soft input and return a soft output.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class module::Decoder_SISO.
  */
 #ifndef DECODER_SISO_HPP_
 #define DECODER_SISO_HPP_

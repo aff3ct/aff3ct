@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::SC_Module, module::SC_Socket_in, module::SC_Socket_out and module::SC_Module_container.
+ */
 #ifdef AFF3CT_SYSTEMC_MODULE
 
 #ifndef SC_MODULE_HPP_

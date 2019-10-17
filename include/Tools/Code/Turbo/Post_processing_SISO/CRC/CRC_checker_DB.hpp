@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::CRC_checker_DB.
+ */
 #ifndef CRC_CHECKER_DB_HPP
 #define CRC_CHECKER_DB_HPP
 

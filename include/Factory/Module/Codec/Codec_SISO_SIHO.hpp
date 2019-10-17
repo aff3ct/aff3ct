@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Codec_SISO_SIHO::parameters.
+ */
 #ifndef FACTORY_CODEC_SISO_SIHO_HPP_
 #define FACTORY_CODEC_SISO_SIHO_HPP_
 

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Modem_OOK_BSC.
+ */
 #ifndef MODEM_OOK_BSC_HPP_
 #define MODEM_OOK_BSC_HPP_
 

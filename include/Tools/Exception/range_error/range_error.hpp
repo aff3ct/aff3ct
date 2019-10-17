@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::range_error.
+ */
 #ifndef RANGE_ERROR_HPP_
 #define RANGE_ERROR_HPP_
 

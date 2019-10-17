@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Functions for the Polar API in intra-SIMD (16-bit).
+ */
 #ifndef FUNCTIONS_POLAR_INTRA_16BIT_H_
 #define FUNCTIONS_POLAR_INTRA_16BIT_H_
 

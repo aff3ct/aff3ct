@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_LDPC_BP_horizontal_layered_inter.
+ */
 #ifndef DECODER_LDPC_BP_HORIZONTAL_LAYERED_INTER_HPP_
 #ifdef __cpp_aligned_new
 #define DECODER_LDPC_BP_HORIZONTAL_LAYERED_INTER_HPP_

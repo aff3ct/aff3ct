@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Gaussian_noise_generator.
+ */
 #ifndef GAUSSIAN_NOISE_GENERATOR_HPP_
 #define GAUSSIAN_NOISE_GENERATOR_HPP_
 

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Monitor_MI.
+ */
 #ifndef MONITOR_MI_HPP_
 #define MONITOR_MI_HPP_
 

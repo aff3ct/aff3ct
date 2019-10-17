@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Channel::parameters.
+ */
 #ifndef FACTORY_CHANNEL_HPP
 #define FACTORY_CHANNEL_HPP
 

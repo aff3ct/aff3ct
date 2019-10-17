@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief The Channel is the physical transmission medium.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class module::Channel.
  */
 #ifndef CHANNEL_HPP_
 #define CHANNEL_HPP_

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Functions to compute hard decision.
+ */
 #ifndef HARD_DECIDE_H_
 #define HARD_DECIDE_H_
 

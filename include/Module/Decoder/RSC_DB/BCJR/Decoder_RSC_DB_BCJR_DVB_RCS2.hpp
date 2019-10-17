@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_RSC_DB_BCJR_DVB_RCS2.
+ */
 #ifndef DECODER_RSC_DB_BCJR_DVB_RCS2_HPP_
 #define DECODER_RSC_DB_BCJR_DVB_RCS2_HPP_
 

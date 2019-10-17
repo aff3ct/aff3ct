@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_chase_std.
+ */
 #ifndef DECODER_CHASE_STD_HPP_
 #define DECODER_CHASE_STD_HPP_
 

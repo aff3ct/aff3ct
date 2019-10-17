@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Codec_SISO_SIHO.
+ */
 #ifndef CODEC_SISO_SIHO_HPP_
 #define CODEC_SISO_SIHO_HPP_
 

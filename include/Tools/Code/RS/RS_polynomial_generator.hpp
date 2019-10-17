@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::RS_polynomial_generator.
+ */
 #ifndef RS_POLYNOMIAL_GENERATOR_HPP
 #define RS_POLYNOMIAL_GENERATOR_HPP
 

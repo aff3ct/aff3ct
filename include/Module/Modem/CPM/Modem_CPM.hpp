@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Modem_CPM.
+ */
 #ifndef MODEM_CPM_HPP_
 #define MODEM_CPM_HPP_
 

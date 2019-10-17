@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Encoder_LDPC_from_IRA.
+ */
 #ifndef ENCODER_LDPC_FROM_IRA_HPP_
 #define ENCODER_LDPC_FROM_IRA_HPP_
 

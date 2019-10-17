@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Frozenbits_generator_5G.
+ */
 #ifndef FROZENBITS_GENERATOR_5G_HPP_
 #define FROZENBITS_GENERATOR_5G_HPP_
 

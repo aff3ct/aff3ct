@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Modem_generic.
+ */
 #ifndef MODEM_GENERIC_HPP_
 #define MODEM_GENERIC_HPP_
 

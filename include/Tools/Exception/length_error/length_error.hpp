@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::length_error.
+ */
 #ifndef LENGTH_ERROR_HPP_
 #define LENGTH_ERROR_HPP_
 

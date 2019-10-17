@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_LDPC_bit_flipping_hard.
+ */
 #ifndef DECODER_LDPC_BIT_FLIPPING_HARD_HPP_
 #define DECODER_LDPC_BIT_FLIPPING_HARD_HPP_
 

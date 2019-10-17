@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::invalid_argument.
+ */
 #ifndef INVALID_ARGUMENT_HPP_
 #define INVALID_ARGUMENT_HPP_
 

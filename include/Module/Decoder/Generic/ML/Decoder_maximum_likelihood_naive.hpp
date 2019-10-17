@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_maximum_likelihood_naive.
+ */
 #ifndef DECODER_MAXIMUM_LIKELIHOOD_NAIVE_HPP_
 #define DECODER_MAXIMUM_LIKELIHOOD_NAIVE_HPP_
 

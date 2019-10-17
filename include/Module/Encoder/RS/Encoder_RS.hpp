@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Encoder_RS.
+ */
 #ifndef ENCODER_RS_HPP_
 #define ENCODER_RS_HPP_
 

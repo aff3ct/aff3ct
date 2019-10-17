@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Scaling_factor_vec.
+ */
 #ifndef SCALING_FACTOR_VEC_HPP
 #define SCALING_FACTOR_VEC_HPP
 

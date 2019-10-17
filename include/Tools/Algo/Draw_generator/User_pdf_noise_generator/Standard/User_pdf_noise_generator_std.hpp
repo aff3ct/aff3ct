@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::User_pdf_noise_generator_std.
+ */
 #ifndef USER_PDF_NOISE_GENERATOR_STD_HPP_
 #define USER_PDF_NOISE_GENERATOR_STD_HPP_
 

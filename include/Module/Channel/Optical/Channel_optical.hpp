@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Channel_optical.
+ */
 #ifndef CHANNEL_OPTICAL_HPP_
 #define CHANNEL_OPTICAL_HPP_
 

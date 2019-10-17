@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Gaussian_noise_generator_MKL.
+ */
 #ifdef AFF3CT_CHANNEL_MKL
 
 #ifndef GAUSSIAN_NOISE_GENERATOR_MKL_HPP_

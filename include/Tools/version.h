@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Functions for the code version.
+ */
 #ifndef VERSION_H_
 #define VERSION_H_
 

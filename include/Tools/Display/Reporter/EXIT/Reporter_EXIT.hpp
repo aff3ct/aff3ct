@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Reporter_EXIT.
+ */
 #ifndef Reporter_EXIT_HPP_
 #define Reporter_EXIT_HPP_
 

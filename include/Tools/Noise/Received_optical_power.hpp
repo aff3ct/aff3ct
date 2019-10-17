@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Received_optical_power.
+ */
 #ifndef RECEIVED_OPTICAL_POWER_HPP_
 #define RECEIVED_OPTICAL_POWER_HPP_
 

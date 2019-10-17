@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Encoder_coset.
+ */
 #ifndef ENCODER_COSET_HPP_
 #define ENCODER_COSET_HPP_
 

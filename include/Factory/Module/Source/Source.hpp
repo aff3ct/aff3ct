@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Source::parameters.
+ */
 #ifndef FACTORY_SOURCE_HPP
 #define FACTORY_SOURCE_HPP
 

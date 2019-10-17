@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Channel_binary_erasure.
+ */
 #ifndef CHANNEL_BEC_HPP_
 #define CHANNEL_BEC_HPP_
 

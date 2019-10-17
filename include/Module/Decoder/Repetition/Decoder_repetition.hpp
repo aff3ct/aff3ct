@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_repetition.
+ */
 #ifndef DECODER_REPETITION
 #define DECODER_REPETITION
 

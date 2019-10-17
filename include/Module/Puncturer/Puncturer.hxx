@@ -1,13 +1,3 @@
-/*!
- * \file
- * \brief Punctures a codeword to match a frame size.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
- */
-#ifndef PUNCTURER_HXX_
-#define PUNCTURER_HXX_
-
 #include <string>
 #include <sstream>
 
@@ -213,5 +203,3 @@ _depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id) const
 
 }
 }
-
-#endif

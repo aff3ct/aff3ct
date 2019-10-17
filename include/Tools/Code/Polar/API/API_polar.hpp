@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::API_polar.
+ */
 #ifndef API_POLAR_HPP_
 #define API_POLAR_HPP_
 

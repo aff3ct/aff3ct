@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Codec_uncoded.
+ */
 #ifndef CODEC_UNCODED_HPP_
 #define CODEC_UNCODED_HPP_
 

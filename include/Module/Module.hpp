@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief A Module is an abstract concept. Basically, all the objects used in a Simulation are a Module.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class module::Module.
  */
 #ifndef MODULE_HPP_
 #define MODULE_HPP_

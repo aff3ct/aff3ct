@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Update_rule_NMS.
+ */
 #ifndef UPDATE_RULE_NMS_HPP
 #define UPDATE_RULE_NMS_HPP
 

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Description of the main templatized types.
+ */
 #ifndef TYPES_H_
 #define TYPES_H_
 
@@ -5,10 +9,6 @@
 #include <cstddef>
 
 // type for the bits
-//using B_8  = signed char;
-//using B_16 = short;
-//using B_32 = int;
-//using B_64 = long long;
 using B_8  = int8_t;
 using B_16 = int16_t;
 using B_32 = int32_t;
@@ -55,7 +55,6 @@ namespace tools
 template<size_t precision> // the wanted precision 8, 16, 32, 64
 struct types_from_prec
 {
-
 };
 
 template<>
@@ -94,6 +93,7 @@ template<typename T> // give a type T and get the B R Q of the same size
 struct matching_types : types_from_prec<sizeof(T) * 8>
 {
 };
+
 }
 }
 

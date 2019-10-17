@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Puncturer_LDPC.
+ */
 #ifndef PUNCTURER_LDPC_HPP_
 #define PUNCTURER_LDPC_HPP_
 

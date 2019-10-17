@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Post_processing_SISO.
+ */
 #ifndef POST_PROCESSING_SISO_HPP
 #define POST_PROCESSING_SISO_HPP
 

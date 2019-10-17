@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Interleaver_core_random_column.
+ */
 #ifndef INTERLEAVER_CORE_RANDOM_COLUMN_HPP
 #define INTERLEAVER_CORE_RANDOM_COLUMN_HPP
 

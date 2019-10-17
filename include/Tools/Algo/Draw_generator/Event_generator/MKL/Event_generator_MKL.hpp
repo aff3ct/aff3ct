@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Event_generator_MKL.
+ */
 #ifdef AFF3CT_CHANNEL_MKL
 
 #ifndef EVENT_GENERATOR_MKL_HPP

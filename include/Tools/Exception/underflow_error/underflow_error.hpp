@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::underflow_error.
+ */
 #ifndef UNDERFLOW_ERROR_HPP_
 #define UNDERFLOW_ERROR_HPP_
 

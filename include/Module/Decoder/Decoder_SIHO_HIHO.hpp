@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief A Decoder_SISO is both a "Soft Input Hard Output" decoder and a "Hard Input Hard Output" decoder.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class module::Decoder_SIHO_HIHO.
  */
 #ifndef DECODER_SIHO_HIHO_HPP_
 #define DECODER_SIHO_HIHO_HPP_

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_chase_pyndiah.
+ */
 #ifndef DECODER_CHASE_PYNDIAH_HPP_
 #define	DECODER_CHASE_PYNDIAH_HPP_
 

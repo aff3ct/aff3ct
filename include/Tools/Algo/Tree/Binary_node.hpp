@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief Binary node structure.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class tools::Binary_node.
  */
 #ifndef BINARY_NODE_HPP_
 #define BINARY_NODE_HPP_

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::LC_sorter.
+ */
 #ifndef LC_SORTER_HPP
 #define LC_SORTER_HPP
 

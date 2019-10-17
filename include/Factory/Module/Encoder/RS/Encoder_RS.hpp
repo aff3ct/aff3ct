@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Encoder_RS::parameters.
+ */
 #ifndef FACTORY_ENCODER_RS_HPP
 #define FACTORY_ENCODER_RS_HPP
 

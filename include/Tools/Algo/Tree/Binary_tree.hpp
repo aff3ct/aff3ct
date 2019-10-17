@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief Binary tree structure.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class tools::Binary_tree.
  */
 #ifndef BINARY_TREE_HPP_
 #define BINARY_TREE_HPP_

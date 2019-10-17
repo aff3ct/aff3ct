@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Command_parser.
+ */
 #ifndef COMMAND_PARSER_HPP
 #define COMMAND_PARSER_HPP
 

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Encoder_BCH.
+ */
 #ifndef ENCODER_BCH_HPP_
 #define ENCODER_BCH_HPP_
 

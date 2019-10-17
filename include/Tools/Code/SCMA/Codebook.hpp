@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Codebook.
+ */
 #ifndef CODEBOOK_HPP_
 #define CODEBOOK_HPP_
 

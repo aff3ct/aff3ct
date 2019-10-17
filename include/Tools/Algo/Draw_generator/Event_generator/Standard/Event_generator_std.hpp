@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Event_generator_std.
+ */
 #ifndef EVENT_GENERATOR_STD_HPP
 #define EVENT_GENERATOR_STD_HPP
 

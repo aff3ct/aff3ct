@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Codec_BCH.
+ */
 #ifndef CODEC_BCH_HPP_
 #define CODEC_BCH_HPP_
 

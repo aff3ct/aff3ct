@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_RS_genius.
+ */
 #ifndef DECODER_RS_GENIUS
 #define DECODER_RS_GENIUS
 

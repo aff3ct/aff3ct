@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief Punctures a codeword to match a frame size.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class module::Puncturer.
  */
 #ifndef PUNCTURER_HPP_
 #define PUNCTURER_HPP_

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Modem_SCMA.
+ */
 #ifndef MODEM_SCMA_HPP_
 #define MODEM_SCMA_HPP_
 

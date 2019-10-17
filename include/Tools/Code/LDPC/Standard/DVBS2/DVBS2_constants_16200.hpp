@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Struct tools::dvbs2_values_16200_1800.
+ */
 #ifndef DVBS2_CONSTANTS_16200_HPP_
 #define DVBS2_CONSTANTS_16200_HPP_
 

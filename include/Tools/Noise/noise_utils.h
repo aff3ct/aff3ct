@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Functions for noise management.
+ */
 #ifndef NOISE_UTILS_HPP__
 #define NOISE_UTILS_HPP__
 

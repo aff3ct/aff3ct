@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Flip_and_check_DB.
+ */
 #ifndef FLIP_AND_CHECK_DB_HPP
 #define FLIP_AND_CHECK_DB_HPP
 

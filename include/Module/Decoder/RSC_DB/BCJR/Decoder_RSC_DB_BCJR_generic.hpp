@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_RSC_DB_BCJR_generic.
+ */
 #ifndef DECODER_RSC_DB_BCJR_GENERIC_HPP_
 #define DECODER_RSC_DB_BCJR_GENERIC_HPP_
 

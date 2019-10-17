@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief The terminal_std display.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class tools::Terminal_std.
  */
 #ifndef TERMINAL_STD_HPP_
 #define TERMINAL_STD_HPP_

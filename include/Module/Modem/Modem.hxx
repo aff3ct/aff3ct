@@ -1,13 +1,3 @@
-/*!
- * \file
- * \brief Modulates, filters and/or demodulates a signal.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
- */
-#ifndef MODEM_HXX_
-#define MODEM_HXX_
-
 #include <string>
 #include <sstream>
 
@@ -631,5 +621,3 @@ check_noise()
 
 }
 }
-
-#endif

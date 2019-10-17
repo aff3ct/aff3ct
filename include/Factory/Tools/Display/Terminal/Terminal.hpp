@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Terminal::parameters.
+ */
 #ifndef FACTORY_TERMINAL_HPP_
 #define FACTORY_TERMINAL_HPP_
 

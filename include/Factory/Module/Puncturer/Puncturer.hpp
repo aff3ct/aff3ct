@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Puncturer::parameters.
+ */
 #ifndef FACTORY_PONCTURER_HPP_
 #define FACTORY_PONCTURER_HPP_
 

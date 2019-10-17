@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Event_probability.
+ */
 #ifndef ERASED_PROBABILITY_HPP_
 #define ERASED_PROBABILITY_HPP_
 

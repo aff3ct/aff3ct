@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Channel_AWGN_LLR.
+ */
 #ifndef CHANNEL_AWGN_LLR_HPP_
 #define CHANNEL_AWGN_LLR_HPP_
 

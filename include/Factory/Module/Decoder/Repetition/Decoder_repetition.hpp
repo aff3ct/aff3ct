@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Decoder_repetition::parameters.
+ */
 #ifndef FACTORY_DECODER_REPETITION_HPP
 #define FACTORY_DECODER_REPETITION_HPP
 

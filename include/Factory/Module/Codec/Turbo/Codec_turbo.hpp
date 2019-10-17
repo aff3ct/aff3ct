@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Codec_turbo::parameters.
+ */
 #ifndef FACTORY_CODEC_TURBO_HPP
 #define FACTORY_CODEC_TURBO_HPP
 

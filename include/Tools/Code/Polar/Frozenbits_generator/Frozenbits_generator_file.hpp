@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Frozenbits_generator_file.
+ */
 #ifndef FROZENBITS_GENERATOR_FILE_HPP_
 #define FROZENBITS_GENERATOR_FILE_HPP_
 

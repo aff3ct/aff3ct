@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Monitor_EXIT.
+ */
 #ifndef MONITOR_EXIT_HPP_
 #define MONITOR_EXIT_HPP_
 

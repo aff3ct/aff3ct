@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::CPM_parameters.
+ */
 #ifndef CPM_PARAMETERS_HPP_
 #define CPM_PARAMETERS_HPP_
 

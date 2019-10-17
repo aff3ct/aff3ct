@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Task.
+ */
 #ifndef TASK_HPP_
 #define TASK_HPP_
 

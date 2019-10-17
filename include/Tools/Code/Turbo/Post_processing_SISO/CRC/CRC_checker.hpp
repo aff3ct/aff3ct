@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::CRC_checker.
+ */
 #ifndef CRC_CHECKER_HPP
 #define CRC_CHECKER_HPP
 

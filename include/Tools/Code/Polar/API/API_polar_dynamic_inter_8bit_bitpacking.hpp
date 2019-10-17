@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::API_polar_dynamic_inter_8bit_bitpacking.
+ */
 #ifndef API_POLAR_DYNAMIC_INTER_8BIT_BITPACKING_HPP_
 #define API_POLAR_DYNAMIC_INTER_8BIT_BITPACKING_HPP_
 

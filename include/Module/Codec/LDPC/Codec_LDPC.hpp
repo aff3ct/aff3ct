@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Codec_LDPC.
+ */
 #ifndef CODEC_LDPC_HPP_
 #define CODEC_LDPC_HPP_
 

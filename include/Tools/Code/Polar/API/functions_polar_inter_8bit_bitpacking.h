@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Functions for the Polar API in inter-SIMD (8-bit).
+ */
 #ifndef FUNCTIONS_POLAR_INTER_8BIT_BITPACKING_H_
 #define FUNCTIONS_POLAR_INTER_8BIT_BITPACKING_H_
 

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Update_rule_AMS.
+ */
 #ifndef UPDATE_RULE_AMS_HPP
 #define UPDATE_RULE_AMS_HPP
 

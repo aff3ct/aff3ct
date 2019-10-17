@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Codec_RSC_DB::parameters.
+ */
 #ifndef FACTORY_CODEC_RSC_DB_HPP
 #define FACTORY_CODEC_RSC_DB_HPP
 

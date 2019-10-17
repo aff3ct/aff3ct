@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::domain_error.
+ */
 #ifndef DOMAIN_ERROR_HPP_
 #define DOMAIN_ERROR_HPP_
 

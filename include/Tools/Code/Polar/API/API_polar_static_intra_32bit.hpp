@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::API_polar_static_intra_32bit.
+ */
 #ifndef API_POLAR_STATIC_INTRA_32BIT_HPP_
 #define API_POLAR_STATIC_INTRA_32BIT_HPP_
 

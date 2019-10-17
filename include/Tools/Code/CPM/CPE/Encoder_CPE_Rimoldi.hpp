@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Encoder_CPE_Rimoldi.
+ */
 #ifndef ENCODER_CPE_RIMOLDI_HPP_
 #define ENCODER_CPE_RIMOLDI_HPP_
 

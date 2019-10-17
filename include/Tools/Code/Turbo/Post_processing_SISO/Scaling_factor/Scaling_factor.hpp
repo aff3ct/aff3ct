@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief Re-scales the extrinsic information (used in the turbo decoding process).
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class tools::Scaling_factor.
  */
 #ifndef SCALING_FACTOR_HPP
 #define SCALING_FACTOR_HPP

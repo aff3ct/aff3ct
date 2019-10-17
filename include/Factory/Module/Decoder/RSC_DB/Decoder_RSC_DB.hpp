@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Decoder_RSC_DB::parameters.
+ */
 #ifndef FACTORY_DECODER_RSC_DB_HPP
 #define FACTORY_DECODER_RSC_DB_HPP
 

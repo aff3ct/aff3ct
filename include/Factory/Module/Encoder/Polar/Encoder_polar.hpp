@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Encoder_polar::parameters.
+ */
 #ifndef FACTORY_ENCODER_POLAR_HPP
 #define FACTORY_ENCODER_POLAR_HPP
 

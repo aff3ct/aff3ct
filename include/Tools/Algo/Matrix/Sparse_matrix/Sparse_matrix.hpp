@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Sparse_matrix.
+ */
 #ifndef SPARSE_MATRIX_HPP_
 #define SPARSE_MATRIX_HPP_
 

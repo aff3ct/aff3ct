@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_LDPC_BP_horizontal_layered_ONMS_inter.
+ */
 #ifndef DECODER_LDPC_BP_HORIZONTAL_LAYERED_ONMS_INTER_HPP_
 #define DECODER_LDPC_BP_HORIZONTAL_LAYERED_ONMS_INTER_HPP_
 

@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief Generates a message.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class module::Source.
  */
 #ifndef SOURCE_HPP_
 #define SOURCE_HPP_

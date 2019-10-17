@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Scaling_factor::parameters.
+ */
 #ifndef FACTORY_SCALING_FACTOR_HPP
 #define FACTORY_SCALING_FACTOR_HPP
 

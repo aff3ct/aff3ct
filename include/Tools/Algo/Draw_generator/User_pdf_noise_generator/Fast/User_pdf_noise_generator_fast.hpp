@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::User_pdf_noise_generator_fast.
+ */
 #ifndef User_pdf_noise_generator_fast_HPP_
 #define User_pdf_noise_generator_fast_HPP_
 

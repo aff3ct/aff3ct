@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::CRC::parameters.
+ */
 #ifndef FACTORY_CRC_HPP
 #define FACTORY_CRC_HPP
 

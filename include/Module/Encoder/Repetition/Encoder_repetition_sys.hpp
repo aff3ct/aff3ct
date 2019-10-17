@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Encoder_repetition_sys.
+ */
 #ifndef ENCODER_REPETITION_SYS_HPP_
 #define ENCODER_REPETITION_SYS_HPP_
 

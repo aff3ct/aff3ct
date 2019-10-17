@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief A predicate.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class tools::Predicate.
  */
 #ifndef PREDICATE_HPP
 #define PREDICATE_HPP

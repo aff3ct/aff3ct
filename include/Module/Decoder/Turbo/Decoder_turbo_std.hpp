@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_turbo_std.
+ */
 #ifndef DECODER_TURBO_NAIVE_HPP
 #define DECODER_TURBO_NAIVE_HPP
 

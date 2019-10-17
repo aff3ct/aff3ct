@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Encoder_polar.
+ */
 #ifndef ENCODER_POLAR_HPP_
 #define ENCODER_POLAR_HPP_
 

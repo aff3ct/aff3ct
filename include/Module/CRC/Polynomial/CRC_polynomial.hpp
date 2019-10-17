@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::CRC_polynomial.
+ */
 #ifndef CRC_POLYNOMIAL_HPP_
 #define CRC_POLYNOMIAL_HPP_
 

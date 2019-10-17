@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::auto_cloned_unique_ptr.
+ */
 #ifndef AUTO_CLONED_UNIQUE_PTR_HPP__
 #define AUTO_CLONED_UNIQUE_PTR_HPP__
 

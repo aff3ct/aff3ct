@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Statistics.
+ */
 #ifndef STATISTICS_HPP_
 #define STATISTICS_HPP_
 

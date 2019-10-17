@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_LDPC_probabilistic_parallel_bit_flipping.
+ */
 #ifndef DECODER_LDPC_PROBABILISTIC_PARALLEL_BIT_FLIPPING_HPP_
 #define DECODER_LDPC_PROBABILISTIC_PARALLEL_BIT_FLIPPING_HPP_
 

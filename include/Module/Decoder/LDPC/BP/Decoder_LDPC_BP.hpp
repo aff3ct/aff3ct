@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_LDPC_BP.
+ */
 #ifndef DECODER_LDPC_BP_HPP_
 #define DECODER_LDPC_BP_HPP_
 

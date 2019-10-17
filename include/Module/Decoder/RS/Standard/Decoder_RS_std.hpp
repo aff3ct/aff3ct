@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_RS_std.
+ */
 #ifndef DECODER_RS_STD
 #define DECODER_RS_STD
 

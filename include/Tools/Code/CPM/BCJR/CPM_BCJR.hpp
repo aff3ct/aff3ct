@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::CPM_BCJR.
+ */
 #ifndef CPM_BCJR_HPP_
 #define CPM_BCJR_HPP_
 

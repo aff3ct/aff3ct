@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Codec_turbo.
+ */
 #ifndef CODEC_TURBO_HPP_
 #define CODEC_TURBO_HPP_
 

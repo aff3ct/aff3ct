@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Socket.
+ */
 #ifndef SOCKET_HPP_
 #define SOCKET_HPP_
 

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Encoder_turbo_product.
+ */
 #ifndef ENCODER_TURBO_PRODUCT_HPP_
 #define ENCODER_TURBO_PRODUCT_HPP_
 

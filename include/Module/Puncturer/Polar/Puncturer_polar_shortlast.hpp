@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Puncturer_polar_shortlast.
+ */
 #ifndef PUNCTURER_POLAR_SHORTLAST_HPP_
 #define PUNCTURER_POLAR_SHORTLAST_HPP_
 

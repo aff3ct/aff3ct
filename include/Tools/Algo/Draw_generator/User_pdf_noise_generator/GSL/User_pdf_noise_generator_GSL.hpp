@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::User_pdf_noise_generator_fast.
+ */
 #ifdef AFF3CT_CHANNEL_GSL
 
 #ifndef User_pdf_noise_generator_GSL_HPP_

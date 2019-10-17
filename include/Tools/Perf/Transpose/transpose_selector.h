@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Functions for SIMD transpositions.
+ */
 #ifndef TRANSPOSE_SELECTOR_H
 #define	TRANSPOSE_SELECTOR_H
 

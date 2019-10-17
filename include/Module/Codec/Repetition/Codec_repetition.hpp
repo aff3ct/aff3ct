@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Codec_repetition.
+ */
 #ifndef CODEC_REPETITION_HPP_
 #define CODEC_REPETITION_HPP_
 

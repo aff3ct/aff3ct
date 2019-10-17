@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Sigma.
+ */
 #ifndef SIGMA_HPP_
 #define SIGMA_HPP_
 

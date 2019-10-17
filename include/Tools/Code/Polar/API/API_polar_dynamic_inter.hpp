@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::API_polar_dynamic_inter.
+ */
 #ifndef API_POLAR_DYNAMIC_INTER_HPP_
 #define API_POLAR_DYNAMIC_INTER_HPP_
 

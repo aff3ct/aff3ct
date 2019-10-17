@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_polar_SCL_naive_CA.
+ */
 #ifndef DECODER_POLAR_SCL_NAIVE_CA_
 #define DECODER_POLAR_SCL_NAIVE_CA_
 

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Dumper.
+ */
 #ifndef DUMPER_HPP_
 #define DUMPER_HPP_
 

@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief Binary tree structure with a metric.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class tools::Binary_tree_metric.
  */
 #ifndef BINARY_TREE_METRIC_HPP_
 #define BINARY_TREE_METRIC_HPP_

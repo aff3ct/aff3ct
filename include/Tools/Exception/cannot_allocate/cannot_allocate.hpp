@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::cannot_allocate.
+ */
 #ifndef CANNOT_ALLOCATE_HPP_
 #define CANNOT_ALLOCATE_HPP_
 

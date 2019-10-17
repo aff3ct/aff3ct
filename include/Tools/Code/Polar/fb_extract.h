@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Function to extract the information bit from a Polar codeword.
+ */
 #ifndef FB_EXTRACT_HPP
 #define FB_EXTRACT_HPP
 

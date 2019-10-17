@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Constellation_PSK.
+ */
 #ifndef CONSTELLATION_PSK_HPP__
 #define CONSTELLATION_PSK_HPP__
 

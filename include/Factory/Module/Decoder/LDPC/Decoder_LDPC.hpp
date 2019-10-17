@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Decoder_LDPC::parameters.
+ */
 #ifndef FACTORY_DECODER_LDPC_HPP
 #define FACTORY_DECODER_LDPC_HPP
 

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::logic_error.
+ */
 #ifndef LOGIC_ERROR_HPP_
 #define LOGIC_ERROR_HPP_
 

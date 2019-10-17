@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::User_pdf_noise_generator_MKL.
+ */
 #ifdef AFF3CT_CHANNEL_MKL
 
 #ifndef User_pdf_noise_generator_MKL_HPP_

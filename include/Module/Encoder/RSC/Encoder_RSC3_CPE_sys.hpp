@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Encoder_RSC3_CPE_sys.
+ */
 #ifndef ENCODER_RSC3_CPE_SYS_HPP_
 #define ENCODER_RSC3_CPE_SYS_HPP_
 

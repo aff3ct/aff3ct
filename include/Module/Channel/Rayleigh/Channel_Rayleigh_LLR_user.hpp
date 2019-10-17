@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Channel_Rayleigh_LLR_user.
+ */
 #ifndef CHANNEL_RAYLEIGH_LLR_USER_HPP_
 #define CHANNEL_RAYLEIGH_LLR_USER_HPP_
 

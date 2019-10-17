@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Distributions.
+ */
 #ifndef DISTRIBUTIONS_HPP
 #define DISTRIBUTIONS_HPP
 

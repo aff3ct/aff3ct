@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Monitor_EXIT::parameters.
+ */
 #ifndef FACTORY_MONITOR_EXIT_HPP
 #define FACTORY_MONITOR_EXIT_HPP
 

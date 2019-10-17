@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Frozenbits_generator::parameters.
+ */
 #ifndef FACTORY_FROZENBITS_GENERATOR_HPP
 #define FACTORY_FROZENBITS_GENERATOR_HPP
 

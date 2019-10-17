@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Encoder_turbo_legacy.
+ */
 #ifndef ENCODER_TURBO_LEGACY_HPP_
 #define ENCODER_TURBO_LEGACY_HPP_
 

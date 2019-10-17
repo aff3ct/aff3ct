@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Functions to compute mutual information.
+ */
 #ifndef MUTUAL_INFO_H__
 #define MUTUAL_INFO_H__
 

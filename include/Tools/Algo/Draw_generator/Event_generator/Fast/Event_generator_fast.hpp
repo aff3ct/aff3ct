@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Event_generator_fast.
+ */
 #ifndef EVENT_GENERATOR_FAST_HPP
 #define EVENT_GENERATOR_FAST_HPP
 

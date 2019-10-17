@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::overflow_error.
+ */
 #ifndef OVERFLOW_ERROR_HPP_
 #define OVERFLOW_ERROR_HPP_
 

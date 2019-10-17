@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Encoder_NO::parameters.
+ */
 #ifndef FACTORY_ENCODER_NO_HPP
 #define FACTORY_ENCODER_NO_HPP
 

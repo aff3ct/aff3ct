@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Pattern_polar_rep_left.
+ */
 #ifndef PATTERN_POLAR_REP_LEFT_HPP_
 #define PATTERN_POLAR_REP_LEFT_HPP_
 

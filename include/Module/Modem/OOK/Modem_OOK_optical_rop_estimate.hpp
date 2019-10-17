@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Modem_OOK_optical_rop_estimate.
+ */
 #ifndef MODEM_OOK_OPTICAL_ROP_ESTIMATE_HPP_
 #define MODEM_OOK_OPTICAL_ROP_ESTIMATE_HPP_
 

@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief Adds/builds and checks a Cyclic Redundancy Check (CRC) for a set of information bits.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class module::CRC.
  */
 #ifndef CRC_HPP_
 #define CRC_HPP_

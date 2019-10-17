@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Pattern_polar_r1.
+ */
 #ifndef PATTERN_POLAR_RATE_1_HPP_
 #define PATTERN_POLAR_RATE_1_HPP_
 

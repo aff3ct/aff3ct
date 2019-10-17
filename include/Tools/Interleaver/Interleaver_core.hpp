@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Interleaver_core.
+ */
 #ifndef INTERLEAVER_CORE_HPP_
 #define INTERLEAVER_CORE_HPP_
 

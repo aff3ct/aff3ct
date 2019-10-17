@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Interleaver_core_CCSDS.
+ */
 #ifndef INTERLEAVER_CORE_CCSDS_HPP
 #define INTERLEAVER_CORE_CCSDS_HPP
 

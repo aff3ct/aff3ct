@@ -1,9 +1,6 @@
 /*!
  * \file
- * \brief Traces a frame.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Class tools::Frame_trace.
  */
 #ifndef FRAME_TRACE_HPP
 #define FRAME_TRACE_HPP

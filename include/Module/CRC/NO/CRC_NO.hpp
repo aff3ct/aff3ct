@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::CRC_NO.
+ */
 #ifndef CRC_NO_HPP_
 #define CRC_NO_HPP_
 

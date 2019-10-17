@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Source_AZCW.
+ */
 #ifndef SOURCE_AZCW_HPP_
 #define SOURCE_AZCW_HPP_
 

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Quantizer::parameters.
+ */
 #ifndef FACTORY_QUANTIZER_HPP
 #define FACTORY_QUANTIZER_HPP
 

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Functions for the Polar API in sequential.
+ */
 #ifndef FUNCTIONS_POLAR_SEQ_H_
 #define FUNCTIONS_POLAR_SEQ_H_
 

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_BCH_fast.
+ */
 #ifndef DECODER_BCH_FAST
 #define DECODER_BCH_FAST
 

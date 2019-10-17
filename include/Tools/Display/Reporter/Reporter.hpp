@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Reporter.
+ */
 #ifndef REPORTER_HPP__
 #define REPORTER_HPP__
 

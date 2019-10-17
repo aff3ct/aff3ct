@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::API_polar_dynamic_seq.
+ */
 #ifndef API_POLAR_DYNAMIC_SEQ_HPP_
 #define API_POLAR_DYNAMIC_SEQ_HPP_
 

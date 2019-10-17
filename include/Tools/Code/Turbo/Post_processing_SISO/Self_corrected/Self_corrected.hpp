@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Self_corrected.
+ */
 #ifndef SELF_CORRECTED_HPP
 #define SELF_CORRECTED_HPP
 

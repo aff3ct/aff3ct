@@ -13,8 +13,6 @@
  * This implementation is inspired by: https://github.com/cslarsen/mersenne-twister.
  * It takes advantage of the fast SIMD instructions of the modern CPUs.
  *
- * \section LICENSE
- * This file is under MIT license.
  */
 
 #ifndef PRNG_MT19937_SIMD_HPP

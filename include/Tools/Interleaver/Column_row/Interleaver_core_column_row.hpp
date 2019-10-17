@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Interleaver_core_column_row.
+ */
 #ifndef INTERLEAVER_CORE_COLUMN_ROW_HPP
 #define INTERLEAVER_CORE_COLUMN_ROW_HPP
 

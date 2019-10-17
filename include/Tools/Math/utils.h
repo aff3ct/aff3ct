@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Functions for generic math utils.
+ */
 #ifndef MATH_UTILS_H
 #define MATH_UTILS_H
 

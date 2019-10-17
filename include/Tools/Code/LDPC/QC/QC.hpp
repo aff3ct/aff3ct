@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Struct tools::QC.
+ */
 #ifndef QC_HPP_
 #define QC_HPP_
 

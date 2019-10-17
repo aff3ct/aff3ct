@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Histogram.
+ */
 #ifndef HISTOGRAM_HPP__
 #define HISTOGRAM_HPP__
 

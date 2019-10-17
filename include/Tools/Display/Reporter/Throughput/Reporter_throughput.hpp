@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Reporter_throughput.
+ */
 #ifndef REPORTER_THROUGHPUT_HPP_
 #define REPORTER_THROUGHPUT_HPP_
 

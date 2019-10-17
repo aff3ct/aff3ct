@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Draw_generator.
+ */
 #ifndef DRAW_GENERATOR_HPP_
 #define DRAW_GENERATOR_HPP_
 

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::runtime_error.
+ */
 #ifndef RUNTIME_ERROR_HPP_
 #define RUNTIME_ERROR_HPP_
 

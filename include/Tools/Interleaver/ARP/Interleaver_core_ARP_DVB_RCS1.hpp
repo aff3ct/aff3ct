@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Interleaver_core_ARP_DVB_RCS1.
+ */
 #ifndef INTERLEAVER_CORE_ARP_DVB1_HPP
 #define INTERLEAVER_CORE_ARP_DVB1_HPP
 

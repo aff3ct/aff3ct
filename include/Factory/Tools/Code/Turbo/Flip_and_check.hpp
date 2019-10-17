@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class factory::Flip_and_check::parameters.
+ */
 #ifndef FACTORY_FLIP_AND_CHECK_HPP
 #define FACTORY_FLIP_AND_CHECK_HPP
 

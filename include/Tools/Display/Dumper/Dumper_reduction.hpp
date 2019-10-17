@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Dumper_reduction.
+ */
 #ifndef DUMPER_REDUCTION_HPP_
 #define DUMPER_REDUCTION_HPP_
 

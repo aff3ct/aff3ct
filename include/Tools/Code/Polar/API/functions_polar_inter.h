@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Functions for the Polar API in inter-SIMD.
+ */
 #ifndef FUNCTIONS_POLAR_INTER_H_
 #define FUNCTIONS_POLAR_INTER_H_
 

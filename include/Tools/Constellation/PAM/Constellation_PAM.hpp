@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Constellation_PAM.
+ */
 #ifndef CONSTELLATION_PAM_HPP__
 #define CONSTELLATION_PAM_HPP__
 

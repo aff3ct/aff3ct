@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Decoder_SIHO_HIHO.
+ */
 #ifndef DECODER_BCH
 #define DECODER_BCH
 

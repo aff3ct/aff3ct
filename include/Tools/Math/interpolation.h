@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Functions for interpolations.
+ */
 #ifndef INTERPOLATION_H_
 #define INTERPOLATION_H_
 

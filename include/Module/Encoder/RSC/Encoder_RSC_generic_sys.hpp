@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class module::Encoder_RSC_generic_sys.
+ */
 #ifndef ENCODER_RSC_GENERIC_SYS_HPP_
 #define ENCODER_RSC_GENERIC_SYS_HPP_
 

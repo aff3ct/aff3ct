@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Scaling_factor_constant.
+ */
 #ifndef SCALING_FACTOR_CONSTANT_HPP
 #define SCALING_FACTOR_CONSTANT_HPP
 

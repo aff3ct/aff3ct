@@ -1,10 +1,6 @@
-
 /*!
  * \file
- * \brief Packs and unpacks bits.
- *
- * \section LICENSE
- * This file is under MIT license (https://opensource.org/licenses/MIT).
+ * \brief Struct tools::Bit_packer.
  */
 #ifndef BIT_PACKER_HPP_
 #define BIT_PACKER_HPP_

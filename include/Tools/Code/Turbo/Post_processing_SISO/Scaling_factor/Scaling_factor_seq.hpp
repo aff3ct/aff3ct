@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Scaling_factor_seq.
+ */
 #ifndef SCALING_FACTOR_SEQ_HPP
 #define SCALING_FACTOR_SEQ_HPP
 

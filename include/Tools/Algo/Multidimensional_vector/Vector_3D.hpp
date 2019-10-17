@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Vector_3D.
+ */
 #ifndef VECTOR_3D_HPP_
 #define VECTOR_3D_HPP_
 

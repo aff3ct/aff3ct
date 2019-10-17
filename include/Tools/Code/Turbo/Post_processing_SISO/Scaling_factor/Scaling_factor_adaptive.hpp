@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Class tools::Scaling_factor_adaptive.
+ */
 #ifndef SCALING_FACTOR_ADAPTIVE_HPP
 #define SCALING_FACTOR_ADAPTIVE_HPP
 
