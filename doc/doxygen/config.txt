@@ -1928,11 +1928,16 @@ INCLUDE_FILE_PATTERNS  =
 # recursively expanded use the := operator instead of the = operator.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-PREDEFINED             = "SYSTEMC"            \
-                         "CHANNEL_MKL"        \
-                         "CHANNEL_GSL"        \
-                         "ENABLE_BIT_PACKING" \
-                         "MULTI_PREC"
+PREDEFINED             = "AFF3CT_SYSTEMC_MODULE"     \
+                         "AFF3CT_CHANNEL_MKL"        \
+                         "AFF3CT_CHANNEL_GSL"        \
+                         "AFF3CT_BACKTRACE"          \
+                         "AFF3CT_COLORS"             \
+                         "AFF3CT_POLAR_BIT_PACKING"  \
+                         "AFF3CT_POLAR_BOUNDS"       \
+                         "AFF3CT_MULTI_PREC"         \
+                         "DOXYGEN_SHOULD_SKIP_THIS"  \
+                         "__cpp_aligned_new"
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The

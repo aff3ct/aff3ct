@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <type_traits>
 #include <utility>
 
@@ -261,3 +263,5 @@ module::Decoder_SIHO<B,Q>* Decoder_turbo
 }
 }
 }
+
+#endif

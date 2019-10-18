@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <algorithm>
 #include <string>
 
@@ -117,3 +119,5 @@ void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
 }
 }
 }
+
+#endif

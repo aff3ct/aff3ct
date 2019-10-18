@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <mipp.h>
 
 #include "Tools/Math/utils.h"
@@ -341,3 +343,5 @@ R simps_integral_seq(Function f, const R min, const R max, const int number_step
 
 }
 }
+
+#endif

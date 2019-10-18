@@ -57,7 +57,6 @@ public:
 	 * \param N:        size of one frame.
 	 * \param N_cw:     real size of the codeword (Puncturer::N_cw >= Puncturer::N).
 	 * \param n_frames: number of frames to process in the Puncturer.
-	 * \param name:     Puncturer's name.
 	 */
 	Puncturer(const int K, const int N, const int N_cw, const int n_frames = 1);
 

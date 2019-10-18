@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #ifdef AFF3CT_MPI
 
 #ifndef MONITOR_REDUCTION_MPI_HXX_
@@ -85,3 +87,5 @@ void Monitor_reduction_MPI<M>
 #endif // MONITOR_REDUCTION_MPI_HXX_
 
 #endif // AFF3CT_MPI
+
+#endif // DOXYGEN_SHOULD_SKIP_THIS

@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <string>
 #include <algorithm>
 
@@ -82,3 +84,5 @@ void Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
 }
 }
 }
+
+#endif

@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <sstream>
 #include <string>
 
@@ -61,3 +63,5 @@ void Codec_SISO<B,Q>
 
 }
 }
+
+#endif

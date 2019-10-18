@@ -50,7 +50,6 @@ public:
 	 *
 	 * \param K:        number of information bits in the frame.
 	 * \param n_frames: number of frames to process in the Source.
-	 * \param name:     Source's name.
 	 */
 	Source(const int K, const int n_frames = 1);
 

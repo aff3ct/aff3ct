@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <limits>
 #include <string>
 
@@ -243,3 +245,5 @@ struct RSC_BCJR_seq_normalize <signed char>
 };
 }
 }
+
+#endif

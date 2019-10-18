@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <algorithm>
 #include <limits>
 #include <string>
@@ -460,3 +462,5 @@ void Decoder_RSC_BCJR_seq_scan<B,R,RD>
 }
 }
 }
+
+#endif

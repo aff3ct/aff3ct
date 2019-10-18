@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <string>
 #include <sstream>
 
@@ -77,3 +79,5 @@ void Source<B>
 
 }
 }
+
+#endif

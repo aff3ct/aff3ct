@@ -40,9 +40,6 @@ public:
 	 * \brief Constructor.
 	 *
 	 * Registers the SIGINT (signal interrupt or ctrl+C) interruption.
-	 *
-	 * \param K: number of bits of information
-	 * \param N: number of coded bits
 	 */
 	explicit Monitor(int n_frames = 1);
 

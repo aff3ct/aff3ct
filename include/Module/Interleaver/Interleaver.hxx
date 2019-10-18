@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <string>
 #include <sstream>
 #include <mipp.h>
@@ -232,3 +234,5 @@ _interleave(const D *in_vec, D *out_vec,
 
 }
 }
+
+#endif

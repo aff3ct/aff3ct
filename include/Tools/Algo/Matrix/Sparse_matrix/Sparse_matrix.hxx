@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 
 namespace aff3ct
@@ -35,3 +37,5 @@ const std::vector<std::vector<uint32_t>>& Sparse_matrix
 }
 }
 }
+
+#endif

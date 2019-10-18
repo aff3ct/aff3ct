@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
@@ -255,3 +257,5 @@ struct RSC_BCJR_inter_intra_normalize <signed char, I>
 };
 }
 }
+
+#endif

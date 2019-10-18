@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include "Module/CRC/Polynomial/CRC_polynomial.hpp"
 
 namespace aff3ct
@@ -62,3 +64,5 @@ const std::map<std::string, std::tuple<unsigned, int>> CRC_polynomial<B>::known_
    {"1-PAR"          , std::make_tuple(0x1       ,  1)}};
 }
 }
+
+#endif

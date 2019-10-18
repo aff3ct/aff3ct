@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <limits>
 
 #include "Tools/Code/LDPC/Update_rule/AMS/Update_rule_AMS_simd.hpp"
@@ -100,3 +102,5 @@ void Update_rule_AMS_simd<R,MIN>
 }
 }
 }
+
+#endif

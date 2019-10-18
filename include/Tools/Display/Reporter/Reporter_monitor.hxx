@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include "Tools/Display/Reporter/Reporter_monitor.hpp"
 
 namespace aff3ct
@@ -11,3 +13,5 @@ Reporter_monitor<M_t>::Reporter_monitor(const M &monitor)
 }
 }
 }
+
+#endif

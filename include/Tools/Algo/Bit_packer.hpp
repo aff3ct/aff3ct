@@ -36,11 +36,11 @@ struct Bit_packer
 	/*!
 	 * \brief Packs bits into symbols of type S
 	 *
-	 * \param vec_in:          an input vector of unpacked bits (only 1 bit per element is used to transport data)
-	 * \param vec_out:         an output vector of packed bits in symbols of type S
-	 * \param n_bits_per_frame:the number of bits that has to be extracted from vec_in and stocked in vec_out
-	 * \param msb_to_lsb:      pack from MSB to LSB else from LSB to MSB
- 	 * \param Nbps:            the number of bits packed in one symbol (between 1 and (sizeof(S) * CHAR_BIT)).
+	 * \param vec_in:           an input vector of unpacked bits (only 1 bit per element is used to transport data)
+	 * \param vec_out:          an output vector of packed bits in symbols of type S
+	 * \param n_bits_per_frame: the number of bits that has to be extracted from vec_in and stocked in vec_out
+	 * \param msb_to_lsb:       pack from MSB to LSB else from LSB to MSB
+ 	 * \param Nbps:             the number of bits packed in one symbol (between 1 and (sizeof(S) * CHAR_BIT)).
 	 */
 	template <typename B, typename S>
 	static inline void pack(const B *vec_in, S *vec_out, const int n_bits_per_frame,
@@ -77,11 +77,11 @@ struct Bit_packer
 	/*!
 	 * \brief Unpacks bits from symbols of type S.
 	 *
-	 * \param vec_in:          an input vector of packed bits in symbols S.
-	 * \param vec_out:         an output vector of unpacked bits (1 bit per element)
-	 * \param n_bits_per_frame:the number of bits that has to be extracted from vec_in and stocked in vec_out
-	 * \param msb_to_lsb:      unpack from MSB to LSB else from LSB to MSB.
- 	 * \param Nbps:            the number of bits packed in one symbol (between 1 and (sizeof(S) * CHAR_BIT)).
+	 * \param vec_in:           an input vector of packed bits in symbols S.
+	 * \param vec_out:          an output vector of unpacked bits (1 bit per element)
+	 * \param n_bits_per_frame: the number of bits that has to be extracted from vec_in and stocked in vec_out
+	 * \param msb_to_lsb:       unpack from MSB to LSB else from LSB to MSB.
+ 	 * \param Nbps:             the number of bits packed in one symbol (between 1 and (sizeof(S) * CHAR_BIT)).
 	 */
 	template <typename B, typename S>
 	static inline void unpack(const S *vec_in, B *vec_out, const int n_bits_per_frame,

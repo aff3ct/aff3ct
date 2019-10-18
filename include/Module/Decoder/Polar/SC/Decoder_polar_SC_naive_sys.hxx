@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <string>
 #include <algorithm>
 
@@ -35,3 +37,5 @@ void Decoder_polar_SC_naive_sys<B,R,F,G,H>
 }
 }
 }
+
+#endif

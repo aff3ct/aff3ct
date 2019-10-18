@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #if defined(AFF3CT_SYSTEMC_SIMU) || defined(AFF3CT_SYSTEMC_MODULE)
 
 #include <algorithm>
@@ -46,3 +48,5 @@ void SC_Debug<T>
 }
 
 #endif /* AFF3CT_SYSTEMC_SIMU */
+
+#endif

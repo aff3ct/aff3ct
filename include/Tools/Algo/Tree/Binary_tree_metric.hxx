@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include "Tools/Algo/Tree/Binary_tree_metric.hpp"
 
 namespace aff3ct
@@ -30,3 +32,5 @@ Binary_tree_metric<T,R>
 }
 }
 }
+
+#endif

@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <sstream>
 #include <cassert>
 #include <limits>
@@ -118,3 +120,5 @@ inline void Update_rule_SPA_simd<R>
 }
 }
 }
+
+#endif

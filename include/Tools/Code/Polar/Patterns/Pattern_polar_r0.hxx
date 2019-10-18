@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include "Tools/Code/Polar/Patterns/Pattern_polar_r0.hpp"
 
 namespace aff3ct
@@ -109,3 +111,5 @@ bool Pattern_polar_r0
 }
 }
 }
+
+#endif

@@ -47,7 +47,6 @@ public:
 	 * \brief Constructor.
 	 *
 	 * \param n_frames: number of frames to process in this Module.
-	 * \param name    : Module's name.
 	 */
 	explicit Module(const int n_frames = 1);
 

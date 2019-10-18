@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <string>
 #include <sstream>
 #include <algorithm>
@@ -214,3 +216,5 @@ void Decoder_SISO<R>
 
 }
 }
+
+#endif

@@ -58,9 +58,6 @@ public:
 	 * \brief Compares two messages and counts the number of frame errors and bit errors.
 	 *
 	 * Typically this method is called at the very end of a communication chain.
-	 *
-	 * \param U: the original message (from the Source or the CRC).
-	 * \param V: the decoded message (from the Decoder).
 	 */
 	template <class AB = std::allocator<B>, class AR = std::allocator<R>>
 	void check_mutual_info(const std::vector<B,AB>& bits,

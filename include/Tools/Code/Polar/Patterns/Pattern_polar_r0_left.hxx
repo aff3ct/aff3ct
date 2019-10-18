@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
@@ -111,3 +113,5 @@ bool Pattern_polar_r0_left
 }
 }
 }
+
+#endif

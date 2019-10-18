@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
@@ -148,3 +150,5 @@ inline void Update_rule_NMS_simd<R,F>
 }
 }
 }
+
+#endif

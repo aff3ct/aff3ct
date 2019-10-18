@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <sstream>
 #include <vector>
 
@@ -47,3 +49,5 @@ void User_pdf_noise_generator<R>
 }
 }
 }
+
+#endif

@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <sstream>
 #include <mipp.h>
 
@@ -432,4 +434,6 @@ void Reorderer_static<T,N_FRAMES>
 
 #ifdef _MSC_VER
 #pragma warning( default : 4717 )
+#endif
+
 #endif

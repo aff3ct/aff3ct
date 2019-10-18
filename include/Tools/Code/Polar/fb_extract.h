@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 /*!
  * \file
  * \brief Function to extract the information bit from a Polar codeword.
@@ -20,3 +22,5 @@ inline void fb_extract(const std::vector<std::pair<unsigned char, int>> &leaves_
 #include "Tools/Code/Polar/fb_extract.hxx"
 
 #endif /* FB_EXTRACT_HPP */
+
+#endif

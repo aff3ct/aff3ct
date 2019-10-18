@@ -52,7 +52,6 @@ public:
 	 *
 	 * \param N:        size of one frame.
 	 * \param n_frames: number of frames to process in the Decoder.
-	 * \param name:     Quantizer's name.
 	 */
 	Quantizer(const int N, const int n_frames = 1);
 

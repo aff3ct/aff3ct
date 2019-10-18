@@ -55,7 +55,6 @@ public:
 	 *
 	 * \param K:        number of information bits (the CRC bits are included in K).
 	 * \param n_frames: number of frames to process in the CRC.
-	 * \param name:     CRC's name.
 	 */
 	CRC(const int K, const int size, const int n_frames = 1);
 
@@ -76,9 +75,6 @@ public:
 	/*!
 	 * \brief Computes and adds the CRC in the vector of information bits (the CRC bits are often put at the end of the
 	 *        vector).
-	 *
-	 * \param U_K: a vector (size = K - CRC<B>::size()) containing the information bits, adds "CRC<B>::size()" bits in
-	 *             U_K.
 	 */
 	template <class A = std::allocator<B>>
 	void build(const std::vector<B,A>& U_K1, std::vector<B,A>& U_K2, const int frame_id = -1);

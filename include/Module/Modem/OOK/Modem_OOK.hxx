@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include "Module/Modem/OOK/Modem_OOK.hpp"
 
 namespace aff3ct
@@ -33,3 +35,5 @@ int Modem_OOK<B,R,Q>
 }
 }
 }
+
+#endif

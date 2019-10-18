@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include "Tools/Algo/Tree/Binary_node.hpp"
 
 namespace aff3ct
@@ -124,3 +126,5 @@ void Binary_node<T>
 }
 }
 }
+
+#endif

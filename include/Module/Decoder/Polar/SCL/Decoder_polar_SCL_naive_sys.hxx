@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <string>
 
 #include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_naive_sys.hpp"
@@ -34,3 +36,5 @@ void Decoder_polar_SCL_naive_sys<B,R,F,G>
 }
 }
 }
+
+#endif

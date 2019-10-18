@@ -51,7 +51,6 @@ public:
 	 *
 	 * \param size:     size of the input data.
 	 * \param n_frames: number of frames to process in the Source.
-	 * \param name:     Source's name.
 	 */
 	Coset(const int size, const int n_frames = 1);
 
@@ -67,9 +66,9 @@ public:
 	 *
 	 * Flips the bits or the signs depending on the reference (flips if bit ref = 1, do nothing else).
 	 *
-	 * \param ref:      the ref codeword.
-	 * \param in_data:  the input data to apply the coset on.
-	 * \param out_data: the output data after the coset application.
+	 * \param ref: the ref codeword.
+	 * \param in:  the input data to apply the coset on.
+	 * \param out: the output data after the coset application.
 	 */
 	template <class AB = std::allocator<B>, class AD = std::allocator<D>>
 	void apply(const std::vector<B,AB>& ref, const std::vector<D,AD> &in, std::vector<D,AD> &out,

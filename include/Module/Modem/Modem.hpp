@@ -74,7 +74,6 @@ public:
 	 * \param N_mod:    number of transmitted elements after the modulation (could be smaller, bigger or equal to N).
 	 * \param N_fil:    number of transmitted elements after the filtering process.
 	 * \param n_frames: number of frames to process in the Modem.
-	 * \param name:     Modem's name.
 	 */
 	Modem(const int N, const int N_mod, const int N_fil, const tools::Noise<R>& noise = tools::Sigma<R>(), const int n_frames = 1);
 
@@ -84,7 +83,6 @@ public:
 	 * \param N:        size of one frame (= number of bits in one frame).
 	 * \param N_mod:    number of transmitted elements after the modulation (could be smaller, bigger or equal to N).
 	 * \param n_frames: number of frames to process in the Modem.
-	 * \param name:     Modem's name.
 	 */
 	Modem(const int N, const int N_mod, const tools::Noise<R>& noise = tools::Sigma<R>(), const int n_frames = 1);
 
@@ -93,7 +91,6 @@ public:
 	 *
 	 * \param N:        size of one frame (= number of bits in one frame).
 	 * \param n_frames: number of frames to process in the Modem.
-	 * \param name:     Modem's name.
 	 */
 	Modem(const int N, const tools::Noise<R>& noise = tools::Sigma<R>(), const int n_frames = 1);
 

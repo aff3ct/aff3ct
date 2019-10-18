@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include "Tools/Algo/Multidimensional_vector/Vector_3D.hpp"
 
 namespace aff3ct
@@ -26,3 +28,5 @@ T const & Vector_3D<T>
 }
 }
 }
+
+#endif

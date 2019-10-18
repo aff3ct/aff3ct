@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <string>
 #include <sstream>
 
@@ -621,3 +623,5 @@ check_noise()
 
 }
 }
+
+#endif

@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
@@ -192,3 +194,5 @@ void Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>
 }
 }
 }
+
+#endif

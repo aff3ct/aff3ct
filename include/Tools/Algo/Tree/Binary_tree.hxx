@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Tree/Binary_tree.hpp"
 
@@ -87,3 +89,5 @@ std::vector<Binary_node<T>*> Binary_tree<T>
 }
 }
 }
+
+#endif

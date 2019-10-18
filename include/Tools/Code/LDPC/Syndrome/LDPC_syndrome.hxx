@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include "Tools/Code/LDPC/Syndrome/LDPC_syndrome.hpp"
 
 namespace aff3ct
@@ -77,3 +79,5 @@ bool LDPC_syndrome
 
 }
 }
+
+#endif

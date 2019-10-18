@@ -45,7 +45,6 @@ public:
 	 * \param N:                      size of one frame.
 	 * \param n_frames:               number of frames to process in the Decoder.
 	 * \param simd_inter_frame_level: number of frames absorbed by the SIMD instructions.
-	 * \param name:                   Decoder's name.
 	 */
 	Decoder_SIHO(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1);
 

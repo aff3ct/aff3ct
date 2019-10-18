@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <sstream>
 #include <string>
 
@@ -230,3 +232,5 @@ void Channel<R>
 
 }
 }
+
+#endif

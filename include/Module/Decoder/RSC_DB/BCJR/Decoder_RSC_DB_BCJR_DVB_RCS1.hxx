@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <string>
 #include <sstream>
 
@@ -186,3 +188,4 @@ void Decoder_RSC_DB_BCJR_DVB_RCS1<B,R,MAX>
 }
 }
 
+#endif

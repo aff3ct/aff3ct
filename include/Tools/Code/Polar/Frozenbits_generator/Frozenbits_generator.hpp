@@ -57,14 +57,14 @@ public:
 	/*!
 	 * \brief Sets the current noise to apply to the input signal
 	 *
-	 * \param sigma: the current noise to apply to the input signal
+	 * \param noise: the current noise to apply to the input signal
 	 */
 	void set_noise(const tools::Noise<float>& noise);
 
 	/*!
 	 * \brief Sets the current noise to apply to the input signal
 	 *
-	 * \param sigma: the current noise to apply to the input signal
+	 * \param noise: the current noise to apply to the input signal
 	 */
 	void set_noise(const tools::Noise<double>& noise);
 

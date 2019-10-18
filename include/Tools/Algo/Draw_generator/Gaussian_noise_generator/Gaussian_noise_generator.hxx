@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Gaussian_noise_generator.hpp"
 
 namespace aff3ct
@@ -13,3 +15,5 @@ void Gaussian_noise_generator<R>
 }
 }
 }
+
+#endif

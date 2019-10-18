@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
@@ -56,3 +58,5 @@ std::string type_to_str(Noise_type t)
 }
 }
 }
+
+#endif

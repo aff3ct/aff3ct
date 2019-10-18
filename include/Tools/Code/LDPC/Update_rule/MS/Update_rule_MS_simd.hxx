@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <limits>
 
 #include "Tools/Code/LDPC/Update_rule/MS/Update_rule_MS_simd.hpp"
@@ -100,3 +102,5 @@ inline void Update_rule_MS_simd<R>
 }
 }
 }
+
+#endif

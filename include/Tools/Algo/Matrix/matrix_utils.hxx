@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <sstream>
 #include <mipp.h>
 
@@ -128,3 +130,5 @@ bool all_zeros(const Full_matrix<T>& M)
 
 }
 }
+
+#endif

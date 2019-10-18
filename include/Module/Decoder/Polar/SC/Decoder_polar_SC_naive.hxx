@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
@@ -233,3 +235,5 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 }
 }
 }
+
+#endif

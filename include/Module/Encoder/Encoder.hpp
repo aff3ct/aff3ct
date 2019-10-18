@@ -58,7 +58,6 @@ public:
 	 * \param K:        number of information bits in the frame.
 	 * \param N:        size of one frame.
 	 * \param n_frames: number of frames to process in the Encoder.
-	 * \param name:     Encoder's name.
 	 */
 	Encoder(const int K, const int N, const int n_frames = 1);
 

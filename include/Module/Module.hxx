@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include "Module/Module.hpp"
 
 namespace aff3ct
@@ -26,3 +28,5 @@ inline Socket& Module
 }
 }
 }
+
+#endif

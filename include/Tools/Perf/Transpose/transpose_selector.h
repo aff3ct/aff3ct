@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 /*!
  * \file
  * \brief Functions for SIMD transpositions.
@@ -15,3 +17,5 @@ bool char_itranspose(const signed char *src, signed char *dst, int n);
 }
 
 #endif /* TRANSPOSE_SELECTOR_H */
+
+#endif

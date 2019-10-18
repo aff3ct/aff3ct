@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <algorithm>
 
 #include "Module/Task.hpp"
@@ -93,3 +95,5 @@ void Task
 }
 }
 }
+
+#endif

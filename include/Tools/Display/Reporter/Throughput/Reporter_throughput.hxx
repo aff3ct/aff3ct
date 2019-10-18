@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <sstream>
 #include <iomanip>
 #include <utility>
@@ -117,3 +119,5 @@ void Reporter_throughput<T>
 }
 }
 }
+
+#endif

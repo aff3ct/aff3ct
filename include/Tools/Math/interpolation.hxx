@@ -1,5 +1,4 @@
-#ifndef INTERPOLATION_HXX_
-#define INTERPOLATION_HXX_
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include <algorithm>
 #include <cassert>

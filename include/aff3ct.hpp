@@ -993,35 +993,8 @@
 #ifndef API_POLAR_STATIC_SEQ_HPP_
 #include <Tools/Code/Polar/API/API_polar_static_seq.hpp>
 #endif
-#ifndef FUNCTIONS_POLAR_INTER_8BIT_BITPACKING_H_
-#include <Tools/Code/Polar/API/functions_polar_inter_8bit_bitpacking.h>
-#endif
-#ifndef FUNCTIONS_POLAR_INTER_H_
-#include <Tools/Code/Polar/API/functions_polar_inter.h>
-#endif
-#ifndef FUNCTIONS_POLAR_INTER_INTRA_H_
-#include <Tools/Code/Polar/API/functions_polar_inter_intra.h>
-#endif
-#ifndef FUNCTIONS_POLAR_INTRA_16BIT_H_
-#include <Tools/Code/Polar/API/functions_polar_intra_16bit.h>
-#endif
-#ifndef FUNCTIONS_POLAR_INTRA_32BIT_H_
-#include <Tools/Code/Polar/API/functions_polar_intra_32bit.h>
-#endif
-#ifndef FUNCTIONS_POLAR_INTRA_8BIT_H_
-#include <Tools/Code/Polar/API/functions_polar_intra_8bit.h>
-#endif
-#ifndef FUNCTIONS_POLAR_INTRA_H_
-#include <Tools/Code/Polar/API/functions_polar_intra.h>
-#endif
-#ifndef FUNCTIONS_POLAR_SEQ_H_
-#include <Tools/Code/Polar/API/functions_polar_seq.h>
-#endif
 #ifndef DECODER_POLAR_FUNCTIONS_H
 #include <Tools/Code/Polar/decoder_polar_functions.h>
-#endif
-#ifndef FB_EXTRACT_HPP
-#include <Tools/Code/Polar/fb_extract.h>
 #endif
 #ifndef FROZENBITS_GENERATOR_5G_HPP_
 #include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_5G.hpp>
@@ -1292,9 +1265,6 @@
 #endif
 #ifndef REORDERER_HPP_
 #include <Tools/Perf/Reorderer/Reorderer.hpp>
-#endif
-#ifndef TRANSPOSE_SELECTOR_H
-#include <Tools/Perf/Transpose/transpose_selector.h>
 #endif
 #ifndef SC_DEBUG_HPP_
 #include <Tools/SystemC/SC_Debug.hpp>

@@ -25,7 +25,6 @@ public:
 	/*!
 	 * \brief Constructor.
 	 *
-	 * \param K:     number of information bits in the frame.
 	 * \param n_ite: number of iterations in the turbo decoding process.
 	 */
 	explicit Scaling_factor(const int n_ite);

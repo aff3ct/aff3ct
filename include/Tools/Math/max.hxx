@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
@@ -151,3 +153,5 @@ inline mipp::Reg<R> min_star_i(const mipp::Reg<R> a, const mipp::Reg<R> b)
 }
 }
 }
+
+#endif

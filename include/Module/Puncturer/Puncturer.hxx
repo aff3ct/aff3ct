@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <string>
 #include <sstream>
 
@@ -203,3 +205,5 @@ _depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id) const
 
 }
 }
+
+#endif

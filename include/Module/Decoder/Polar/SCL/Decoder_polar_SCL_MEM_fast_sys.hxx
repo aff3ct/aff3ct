@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
@@ -1379,3 +1381,5 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 }
 }
 }
+
+#endif

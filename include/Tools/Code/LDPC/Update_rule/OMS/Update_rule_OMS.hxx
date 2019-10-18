@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <algorithm>
 
 #include "Tools/Code/LDPC/Update_rule/OMS/Update_rule_OMS.hpp"
@@ -94,3 +96,5 @@ inline void Update_rule_OMS<R>
 }
 }
 }
+
+#endif

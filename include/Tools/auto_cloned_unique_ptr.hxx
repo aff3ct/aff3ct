@@ -1,3 +1,5 @@
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <algorithm>
 #include <utility>
 
@@ -156,3 +158,5 @@ bool operator!=(std::nullptr_t, const auto_cloned_unique_ptr<_Up>& y)
 }
 }
 }
+
+#endif
