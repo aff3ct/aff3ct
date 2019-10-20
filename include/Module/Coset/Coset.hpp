@@ -81,6 +81,9 @@ protected:
 };
 }
 }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Coset/Coset.hxx"
+#endif
 
 #endif /* COSET_HPP_ */

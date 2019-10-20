@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <limits>
 #include <string>
 #include <mipp.h>
@@ -264,5 +262,3 @@ void Decoder_RSC_BCJR_inter_fast<B,R,MAX>
 }
 }
 }
-
-#endif

@@ -81,6 +81,8 @@ private:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Modem/CPM/Modem_CPM.hxx"
+#endif
 
 #endif /* MODEM_CPM_HPP_ */

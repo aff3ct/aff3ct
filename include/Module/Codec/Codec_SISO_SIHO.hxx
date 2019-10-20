@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <string>
 
 #include "Module/Codec/Codec_SISO_SIHO.hpp"
@@ -43,5 +41,3 @@ void Codec_SISO_SIHO<B,Q>
 
 }
 }
-
-#endif

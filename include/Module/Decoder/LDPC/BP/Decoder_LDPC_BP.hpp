@@ -41,6 +41,8 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hxx"
+#endif
 
 #endif /* DECODER_LDPC_BP_HPP_ */

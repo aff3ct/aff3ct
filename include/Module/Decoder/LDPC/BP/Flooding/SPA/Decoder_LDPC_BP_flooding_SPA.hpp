@@ -37,6 +37,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/LDPC/BP/Flooding/SPA/Decoder_LDPC_BP_flooding_SPA.hxx"
+#endif
 
 #endif /* DECODER_LDPC_BP_FLOODING_SPA_HPP_ */

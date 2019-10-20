@@ -90,6 +90,8 @@ struct Decoder_turbo : public Decoder
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Factory/Module/Decoder/Turbo/Decoder_turbo.hxx"
+#endif
 
 #endif /* FACTORY_DECODER_TURBO_HPP */

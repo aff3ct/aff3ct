@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <sstream>
 #include <iomanip>
 #include <ios>
@@ -183,5 +181,3 @@ void Frame_trace<B>
 }
 }
 }
-
-#endif

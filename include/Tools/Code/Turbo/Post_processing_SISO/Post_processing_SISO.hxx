@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include "Tools/Code/Turbo/Post_processing_SISO/Post_processing_SISO.hpp"
 
 namespace aff3ct
@@ -32,5 +30,3 @@ void Post_processing_SISO<B,R>
 }
 }
 }
-
-#endif

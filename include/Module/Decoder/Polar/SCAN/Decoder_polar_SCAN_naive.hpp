@@ -58,6 +58,8 @@ private:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive.hxx"
+#endif
 
 #endif	/* DECODER_POLAR_SCAN_NAIVE_H_ */

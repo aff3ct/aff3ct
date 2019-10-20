@@ -98,6 +98,8 @@ constexpr size_t offsetOf(U T::*member);
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/general_utils.hxx"
+#endif
 
 #endif /* GENERAL_UTILS_H_*/

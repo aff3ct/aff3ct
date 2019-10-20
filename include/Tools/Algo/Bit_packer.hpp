@@ -112,6 +112,8 @@ private:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Algo/Bit_packer.hxx"
+#endif
 
 #endif

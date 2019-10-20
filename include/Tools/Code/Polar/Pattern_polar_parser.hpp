@@ -156,6 +156,8 @@ private:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Code/Polar/Pattern_polar_parser.hxx"
+#endif
 
 #endif /* PATTERN_POLAR_PARSER_HPP */

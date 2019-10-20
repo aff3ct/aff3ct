@@ -40,7 +40,9 @@ private:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/SystemC/SC_Debug.hxx"
+#endif
 
 #endif /* SC_DEBUG_HPP_ */
 

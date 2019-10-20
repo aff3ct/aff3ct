@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include "Tools/Math/utils.h"
 #include "Tools/Noise/Sigma.hpp"
 #include "Tools/Noise/Sigma.hpp"
@@ -86,5 +84,3 @@ mipp::Msk<mipp::N<R>()> is_unknown_llr(const mipp::Reg<R>& q_in)
 }
 }
 }
-
-#endif

@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
@@ -72,5 +70,3 @@ std::vector<typename Constellation_user<R>::S> Constellation_user<R>
 
 }
 }
-
-#endif

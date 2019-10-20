@@ -53,6 +53,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Noise/Noise.hxx"
+#endif
 
 #endif // NOISE_HPP__

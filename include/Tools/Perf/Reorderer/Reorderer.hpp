@@ -78,6 +78,8 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Perf/Reorderer/Reorderer.hxx"
+#endif
 
 #endif /* REORDERER_HPP_ */

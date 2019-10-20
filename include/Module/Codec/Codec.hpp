@@ -118,6 +118,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Codec/Codec.hxx"
+#endif
 
 #endif /* CODEC_HPP_ */

@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
@@ -259,5 +257,3 @@ void complex_transpose(const int M, const int N,
 }
 }
 }
-
-#endif

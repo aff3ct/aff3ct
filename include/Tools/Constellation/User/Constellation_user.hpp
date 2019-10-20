@@ -31,6 +31,8 @@ private:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Constellation/User/Constellation_user.hxx"
+#endif
 
 #endif // CONSTELLATION_USER_HPP__

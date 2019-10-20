@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include "Tools/Code/LDPC/Update_rule/OMS/Update_rule_OMS_simd.hpp"
 
 namespace aff3ct
@@ -94,5 +92,3 @@ inline void Update_rule_OMS_simd<R>
 }
 }
 }
-
-#endif

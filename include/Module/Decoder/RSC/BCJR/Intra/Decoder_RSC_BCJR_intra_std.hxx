@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
@@ -180,5 +178,3 @@ void Decoder_RSC_BCJR_intra_std<B,R,MAX>
 }
 }
 }
-
-#endif

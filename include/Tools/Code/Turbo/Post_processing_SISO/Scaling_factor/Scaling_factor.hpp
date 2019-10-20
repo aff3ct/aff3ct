@@ -37,6 +37,8 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Code/Turbo/Post_processing_SISO/Scaling_factor/Scaling_factor.hxx"
+#endif
 
 #endif /* SCALING_FACTOR_HPP */

@@ -34,6 +34,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive_sys.hxx"
+#endif
 
 #endif /* DECODER_POLAR_SCAN_NAIVE_SYS_ */

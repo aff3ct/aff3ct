@@ -75,6 +75,9 @@ protected:
 };
 }
 }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Source/Source.hxx"
+#endif
 
 #endif /* SOURCE_HPP_ */

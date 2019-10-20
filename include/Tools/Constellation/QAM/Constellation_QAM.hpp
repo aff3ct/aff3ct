@@ -31,6 +31,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Constellation/QAM/Constellation_QAM.hxx"
+#endif
 
 #endif // CONSTELLATION_QAM_HPP__

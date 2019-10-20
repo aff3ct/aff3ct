@@ -54,6 +54,8 @@ private:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Code/CPM/BCJR/CPM_BCJR.hxx"
+#endif
 
 #endif /* CPM_BCJR_HPP_ */

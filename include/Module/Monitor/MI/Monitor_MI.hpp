@@ -108,6 +108,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Monitor/MI/Monitor_MI.hxx"
+#endif
 
 #endif /* MONITOR_MI_HPP_ */

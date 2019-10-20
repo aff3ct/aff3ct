@@ -36,6 +36,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Codec/Codec_HIHO.hxx"
+#endif
 
 #endif /* CODEC_HIHO_HPP_ */

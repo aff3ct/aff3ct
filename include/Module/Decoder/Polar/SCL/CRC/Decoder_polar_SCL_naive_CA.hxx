@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <string>
 #include <sstream>
 
@@ -52,5 +50,3 @@ void Decoder_polar_SCL_naive_CA<B,R,F,G>
 }
 }
 }
-
-#endif

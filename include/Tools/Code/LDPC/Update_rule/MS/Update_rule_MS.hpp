@@ -65,6 +65,8 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Code/LDPC/Update_rule/MS/Update_rule_MS.hxx"
+#endif
 
 #endif /* UPDATE_RULE_MS_HPP */

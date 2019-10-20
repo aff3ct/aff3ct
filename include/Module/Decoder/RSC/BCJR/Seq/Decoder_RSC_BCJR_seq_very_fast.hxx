@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <string>
 #include <sstream>
 #include <algorithm>
@@ -267,5 +265,3 @@ void Decoder_RSC_BCJR_seq_very_fast<B,R,RD,MAX1,MAX2>
 }
 }
 }
-
-#endif

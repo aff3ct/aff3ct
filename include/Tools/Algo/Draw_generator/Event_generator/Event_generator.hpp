@@ -31,6 +31,8 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Algo/Draw_generator/Event_generator/Event_generator.hxx"
+#endif
 
 #endif //EVENT_GENERATOR_HPP

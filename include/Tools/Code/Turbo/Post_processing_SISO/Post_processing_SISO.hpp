@@ -31,6 +31,8 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Code/Turbo/Post_processing_SISO/Post_processing_SISO.hxx"
+#endif
 
 #endif /* POST_PROCESSING_SISO_HPP */

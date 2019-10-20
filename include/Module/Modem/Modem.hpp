@@ -261,6 +261,9 @@ protected:
 };
 }
 }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Modem/Modem.hxx"
+#endif
 
 #endif /* MODEM_HPP_ */

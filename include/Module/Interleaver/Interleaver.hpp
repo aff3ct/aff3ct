@@ -70,6 +70,9 @@ private:
 };
 }
 }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Interleaver/Interleaver.hxx"
+#endif
 
 #endif /* INTERLEAVER_HPP_ */

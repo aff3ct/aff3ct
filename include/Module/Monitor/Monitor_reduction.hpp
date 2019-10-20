@@ -153,6 +153,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Monitor/Monitor_reduction.hxx"
+#endif
 
 #endif /* MONITOR_REDUCTION_HPP_ */

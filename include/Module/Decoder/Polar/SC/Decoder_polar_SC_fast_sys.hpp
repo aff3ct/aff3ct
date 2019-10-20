@@ -70,6 +70,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/Polar/SC/Decoder_polar_SC_fast_sys.hxx"
+#endif
 
 #endif /* DECODER_POLAR_SC_FAST_SYS_ */

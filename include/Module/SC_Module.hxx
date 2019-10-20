@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include "Module/SC_Module.hpp"
 
 // convert strongly typed enum to integer
@@ -49,5 +47,3 @@ SC_Module& SC_Module_container
 }
 }
 }
-
-#endif

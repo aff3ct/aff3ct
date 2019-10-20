@@ -75,6 +75,9 @@ protected:
 };
 }
 }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/Decoder_HIHO.hxx"
+#endif
 
 #endif /* DECODER_HIHO_HPP_ */

@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include "Tools/Algo/Matrix/Matrix.hpp"
 
 namespace aff3ct
@@ -37,5 +35,3 @@ size_t Matrix
 }
 }
 }
-
-#endif

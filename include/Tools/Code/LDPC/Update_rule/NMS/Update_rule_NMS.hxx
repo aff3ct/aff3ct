@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <algorithm>
 #include <sstream>
 
@@ -132,5 +130,3 @@ inline void Update_rule_NMS<R>
 }
 }
 }
-
-#endif

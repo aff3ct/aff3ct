@@ -101,6 +101,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Monitor/EXIT/Monitor_EXIT.hxx"
+#endif
 
 #endif /* MONITOR_EXIT_HPP_ */

@@ -46,6 +46,8 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Code/Polar/Patterns/Pattern_polar_r1.hxx"
+#endif
 
 #endif /* PATTERN_POLAR_RATE_1_HPP_ */

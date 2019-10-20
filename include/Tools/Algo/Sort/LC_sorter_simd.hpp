@@ -35,6 +35,8 @@ private:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Algo/Sort/LC_sorter_simd.hxx"
+#endif
 
 #endif /* LC_SORTER_SIMD_HPP */

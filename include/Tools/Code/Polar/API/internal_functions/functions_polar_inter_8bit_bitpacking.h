@@ -264,7 +264,9 @@ struct xo0_inter_8bit_bitpacking <B, 1>
 }
 }
 
-#include "Tools/Code/Polar/API/functions_polar_inter_8bit_bitpacking.hxx"
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#include "Tools/Code/Polar/API/internal_functions/functions_polar_inter_8bit_bitpacking.hxx"
+#endif
 
 #endif /* FUNCTIONS_POLAR_INTER_8BIT_BITPACKING_HPP_ */
 

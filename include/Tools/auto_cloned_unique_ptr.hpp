@@ -70,6 +70,8 @@ using ac_unique_ptr = auto_cloned_unique_ptr<D>;
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/auto_cloned_unique_ptr.hxx"
+#endif
 
 #endif // AUTO_CLONED_UNIQUE_PTR_HPP__

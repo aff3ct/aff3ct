@@ -67,6 +67,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Modem/Generic/Modem_generic.hxx"
+#endif
 
 #endif // MODEM_GENERIC_HPP_

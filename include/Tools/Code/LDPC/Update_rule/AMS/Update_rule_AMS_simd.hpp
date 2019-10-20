@@ -66,7 +66,9 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Code/LDPC/Update_rule/AMS/Update_rule_AMS_simd.hxx"
+#endif
 
 #endif
 #endif /* UPDATE_RULE_AMS_SIMD_HPP */

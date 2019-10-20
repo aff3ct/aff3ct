@@ -32,6 +32,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Constellation/PAM/Constellation_PAM.hxx"
+#endif
 
 #endif // CONSTELLATION_PAM_HPP__

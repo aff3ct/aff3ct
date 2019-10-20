@@ -32,6 +32,8 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Display/Reporter/Reporter_monitor.hxx"
+#endif
 
 #endif /* REPORTER_MONITOR_HPP_ */

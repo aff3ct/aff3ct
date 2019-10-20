@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
@@ -224,5 +222,3 @@ void LC_sorter_simd<T>
 }
 }
 }
-
-#endif

@@ -57,6 +57,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Algo/Sort/LC_sorter.hxx"
+#endif
 
 #endif /* LC_SORTER_HPP */

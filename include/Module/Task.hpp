@@ -134,6 +134,8 @@ private:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Task.hxx"
+#endif
 
 #endif /* TASK_HPP_ */

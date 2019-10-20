@@ -62,6 +62,8 @@ private:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Modem/SCMA/Modem_SCMA.hxx"
+#endif
 
 #endif /* MODEM_SCMA_HPP_ */

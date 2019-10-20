@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <type_traits>
 #include <utility>
 
@@ -210,5 +208,3 @@ module::Encoder_turbo<B>* Encoder_turbo
 }
 }
 }
-
-#endif

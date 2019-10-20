@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <string>
 #include <limits>
 #include <algorithm>
@@ -101,5 +99,3 @@ void Decoder_RSC_DB_BCJR_generic<B,R,MAX>
 }
 }
 }
-
-#endif

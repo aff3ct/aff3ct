@@ -116,6 +116,8 @@ bool has_complex_symbols(const Constellation<R>& cstl);
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Constellation/Constellation.hxx"
+#endif
 
 #endif // CONSTELLATION_HPP__

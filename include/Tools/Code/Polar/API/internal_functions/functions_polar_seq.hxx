@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <algorithm>
 #include <limits>
 #ifdef _MSC_VER
@@ -7,7 +5,7 @@
 #endif
 
 #include "Tools/Math/utils.h"
-#include "Tools/Code/Polar/API/functions_polar_seq.h"
+#include "Tools/Code/Polar/API/internal_functions/functions_polar_seq.h"
 
 namespace aff3ct
 {
@@ -299,5 +297,3 @@ void xo0_seq<B,0>
 
 }
 }
-
-#endif

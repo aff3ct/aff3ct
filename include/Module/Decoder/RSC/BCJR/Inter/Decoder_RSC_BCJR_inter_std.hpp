@@ -35,6 +35,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/RSC/BCJR/Inter/Decoder_RSC_BCJR_inter_std.hxx"
+#endif
 
 #endif /* DECODER_RSC_BCJR_INTER_STD_HPP_ */

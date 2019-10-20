@@ -77,6 +77,8 @@ void nearest_interpolation(const std::vector<T>& x_data, const std::vector<T>& y
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Math/interpolation.hxx"
+#endif
 
 #endif // INTERPOLATION_H_

@@ -31,6 +31,8 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Code/LDPC/Syndrome/LDPC_syndrome.hxx"
+#endif
 
 #endif /* LDPC_SYNDROME_HPP_ */

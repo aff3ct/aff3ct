@@ -99,7 +99,9 @@ struct spc_intra <B, R, HI, 0>
 }
 }
 
-#include "Tools/Code/Polar/API/functions_polar_intra.hxx"
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#include "Tools/Code/Polar/API/internal_functions/functions_polar_intra.hxx"
+#endif
 
 #endif /* FUNCTIONS_POLAR_INTRA_H_ */
 

@@ -133,6 +133,8 @@ protected:
 
 std::ostream& operator<<(std::ostream& os, const aff3ct::tools::Matrix& sm);
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Algo/Matrix/Matrix.hxx"
+#endif
 
 #endif /* MATRIX_HPP_ */

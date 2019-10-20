@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <sstream>
 #include <cstdint>
 #include <string>
@@ -75,5 +73,3 @@ uint32_t Decoder_maximum_likelihood<B,R>
 }
 }
 }
-
-#endif

@@ -31,6 +31,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/RSC/BCJR/Seq_generic/Decoder_RSC_BCJR_seq_generic.hxx"
+#endif
 
 #endif /* DECODER_RSC_BCJR_SEQ_GENERIC_HPP_ */

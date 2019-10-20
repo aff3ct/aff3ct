@@ -64,6 +64,8 @@ inline bool signbit(T arg);
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Math/utils.hxx"
+#endif
 
 #endif /* MATH_UTILS_H */

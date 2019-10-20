@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
@@ -50,5 +48,3 @@ CPM_parameters<SIN,SOUT>
 }
 }
 }
-
-#endif

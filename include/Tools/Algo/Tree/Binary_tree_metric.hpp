@@ -60,7 +60,9 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Algo/Tree/Binary_tree_metric.hxx"
+#endif
 
 #endif /* BINARY_TREE_METRIC_HPP_ */
 

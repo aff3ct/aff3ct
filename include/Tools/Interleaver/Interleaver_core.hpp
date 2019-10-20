@@ -62,6 +62,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Interleaver/Interleaver_core.hxx"
+#endif
 
 #endif /* INTERLEAVER_CORE_HPP_ */

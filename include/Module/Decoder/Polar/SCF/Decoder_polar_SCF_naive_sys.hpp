@@ -33,6 +33,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/Polar/SCF/Decoder_polar_SCF_naive_sys.hxx"
+#endif
 
 #endif /* DECODER_POLAR_SCF_NAIVE_SYS_ */

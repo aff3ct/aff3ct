@@ -35,6 +35,9 @@ protected:
 };
 }
 }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Codec/Codec_SIHO.hxx"
+#endif
 
 #endif /* CODEC_SIHO_HPP_ */

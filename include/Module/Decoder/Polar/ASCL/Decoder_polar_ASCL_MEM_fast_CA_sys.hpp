@@ -55,6 +55,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/Polar/ASCL/Decoder_polar_ASCL_MEM_fast_CA_sys.hxx"
+#endif
 
 #endif /* DECODER_POLAR_ASCL_MEM_FAST_SYS_CA */

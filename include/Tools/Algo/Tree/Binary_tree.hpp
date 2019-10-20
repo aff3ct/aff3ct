@@ -67,6 +67,8 @@ private:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Algo/Tree/Binary_tree.hxx"
+#endif
 
 #endif /* BINARY_TREE_HPP_ */

@@ -31,6 +31,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Modem/OOK/Modem_OOK.hxx"
+#endif
 
 #endif /* MODEM_OOK_HPP_ */

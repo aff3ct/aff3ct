@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <string>
 #include <sstream>
 
@@ -101,5 +99,3 @@ _process(const R *Y_N1, Q *Y_N2, const int frame_id)
 
 }
 }
-
-#endif

@@ -113,6 +113,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Channel/Channel.hxx"
+#endif
 
 #endif /* CHANNEL_HPP_ */

@@ -32,6 +32,8 @@ inline R psi_3(const std::complex<R>& d, const R& n0);
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Code/SCMA/modem_SCMA_functions.hxx"
+#endif
 
 #endif /* MODEM_SCMA_FUNCTIONS_HPP */

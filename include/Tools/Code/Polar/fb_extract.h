@@ -19,7 +19,9 @@ inline void fb_extract(const std::vector<std::pair<unsigned char, int>> &leaves_
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Code/Polar/fb_extract.hxx"
+#endif
 
 #endif /* FB_EXTRACT_HPP */
 

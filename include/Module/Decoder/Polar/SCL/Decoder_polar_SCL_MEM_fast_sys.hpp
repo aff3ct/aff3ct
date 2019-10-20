@@ -113,6 +113,8 @@ private:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_MEM_fast_sys.hxx"
+#endif
 
 #endif /* DECODER_POLAR_SCL_MEM_FAST_SYS_ */

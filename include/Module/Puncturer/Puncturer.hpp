@@ -101,6 +101,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Puncturer/Puncturer.hxx"
+#endif
 
 #endif /* PUNCTURER_HPP_ */

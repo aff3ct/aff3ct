@@ -44,6 +44,8 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Code/Polar/Patterns/Pattern_polar_r0_left.hxx"
+#endif
 
 #endif /* PATTERN_POLAR_RATE_0_LEFT_HPP_ */

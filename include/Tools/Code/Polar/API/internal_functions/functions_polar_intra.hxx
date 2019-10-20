@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
@@ -8,8 +6,8 @@
 #include <mipp.h>
 
 #include "Tools/Math/utils.h"
-#include "Tools/Code/Polar/API/functions_polar_inter_intra.h"
-#include "Tools/Code/Polar/API/functions_polar_intra.h"
+#include "Tools/Code/Polar/API/internal_functions/functions_polar_inter_intra.h"
+#include "Tools/Code/Polar/API/internal_functions/functions_polar_intra.h"
 
 namespace aff3ct
 {
@@ -257,5 +255,3 @@ bool spc_intra<B,R,HI,0>
 
 }
 }
-
-#endif

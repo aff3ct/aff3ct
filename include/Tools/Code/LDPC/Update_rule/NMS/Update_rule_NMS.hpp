@@ -54,6 +54,8 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Code/LDPC/Update_rule/NMS/Update_rule_NMS.hxx"
+#endif
 
 #endif /* UPDATE_RULE_NMS_HPP */

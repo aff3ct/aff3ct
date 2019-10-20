@@ -117,6 +117,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Monitor/BFER/Monitor_BFER.hxx"
+#endif
 
 #endif /* MONITOR_BFER_HPP_ */

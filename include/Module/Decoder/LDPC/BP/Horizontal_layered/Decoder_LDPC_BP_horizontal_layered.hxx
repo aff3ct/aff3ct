@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <string>
 #include <algorithm>
 
@@ -175,5 +173,3 @@ void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 }
 }
 }
-
-#endif

@@ -55,6 +55,8 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Code/LDPC/Update_rule/LSPA/Update_rule_LSPA.hxx"
+#endif
 
 #endif /* UPDATE_RULE_LSPA_HPP */

@@ -48,6 +48,9 @@ public:
 };
 }
 }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/Decoder_SIHO_HIHO.hxx"
+#endif
 
 #endif /* DECODER_SIHO_HIHO_HPP_ */

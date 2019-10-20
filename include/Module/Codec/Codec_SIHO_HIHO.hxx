@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <string>
 
 #include "Module/Codec/Codec_SIHO_HIHO.hpp"
@@ -44,5 +42,3 @@ void Codec_SIHO_HIHO<B,Q>
 
 }
 }
-
-#endif

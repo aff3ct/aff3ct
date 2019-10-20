@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <algorithm>
 #include <cassert>
 #include <sstream>
@@ -155,5 +153,3 @@ constexpr size_t offsetOf(U T::*member)
 
 }
 }
-
-#endif

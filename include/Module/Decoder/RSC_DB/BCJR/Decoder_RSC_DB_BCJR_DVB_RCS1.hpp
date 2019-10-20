@@ -30,6 +30,9 @@ protected:
 };
 }
 }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB_RCS1.hxx"
+#endif
 
 #endif /* DECODER_RSC_DB_BCJR_DVB_RCS1_HPP_ */

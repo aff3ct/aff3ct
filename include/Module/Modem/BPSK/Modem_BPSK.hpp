@@ -42,6 +42,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Modem/BPSK/Modem_BPSK.hxx"
+#endif
 
 #endif /* MODEM_BPSK_HPP_ */

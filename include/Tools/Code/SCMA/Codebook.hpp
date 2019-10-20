@@ -53,6 +53,8 @@ private:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Code/SCMA/Codebook.hxx"
+#endif
 
 #endif // CODEBOOK_HPP_

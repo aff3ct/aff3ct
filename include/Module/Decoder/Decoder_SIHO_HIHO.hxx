@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <string>
 
 #include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
@@ -22,5 +20,3 @@ Decoder_SIHO_HIHO<B,R>
 
 }
 }
-
-#endif

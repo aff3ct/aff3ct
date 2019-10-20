@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
@@ -42,5 +40,3 @@ R Monitor_MI<B,R>
 }
 }
 }
-
-#endif

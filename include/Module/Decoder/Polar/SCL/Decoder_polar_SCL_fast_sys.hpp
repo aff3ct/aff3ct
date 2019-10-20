@@ -104,6 +104,8 @@ private:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_fast_sys.hxx"
+#endif
 
 #endif /* DECODER_POLAR_SCL_FAST_SYS_ */

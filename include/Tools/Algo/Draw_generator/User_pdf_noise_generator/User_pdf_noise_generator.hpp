@@ -46,6 +46,8 @@ using User_pdf_gen = User_pdf_noise_generator<R>;
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Algo/Draw_generator/User_pdf_noise_generator/User_pdf_noise_generator.hxx"
+#endif
 
 #endif /* USER_PDF_NOISE_GENERATOR_HPP */

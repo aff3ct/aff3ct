@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <sstream>
 #include <string>
 #include <limits>
@@ -379,5 +377,3 @@ void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAX>
 }
 }
 }
-
-#endif

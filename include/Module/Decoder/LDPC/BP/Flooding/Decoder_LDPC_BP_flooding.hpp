@@ -56,6 +56,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding.hxx"
+#endif
 
 #endif /* DECODER_LDPC_BP_FLOODING_HPP_ */

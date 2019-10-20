@@ -48,6 +48,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/CRC/Polynomial/CRC_polynomial.hxx"
+#endif
 
 #endif /* CRC_POLYNOMIAL_HPP_ */

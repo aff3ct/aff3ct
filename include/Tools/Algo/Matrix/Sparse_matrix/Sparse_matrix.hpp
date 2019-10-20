@@ -114,6 +114,8 @@ private:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hxx"
+#endif
 
 #endif /* SPARSE_MATRIX_HPP_ */

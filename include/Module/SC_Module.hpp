@@ -117,7 +117,9 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/SC_Module.hxx"
+#endif
 
 #endif /* SC_MODULE_HPP_ */
 

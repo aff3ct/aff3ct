@@ -32,6 +32,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/RSC/BCJR/Intra/Decoder_RSC_BCJR_intra_fast.hxx"
+#endif
 
 #endif /* DECODER_RSC_BCJR_INTRA_FAST_HPP_ */

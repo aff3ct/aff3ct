@@ -2,10 +2,12 @@
 
 /*!
  * \file
- * \brief Functions for the Polar API in sequential.
+ * \brief Functions for the Polar API in inter/intra-SIMD.
  */
-#ifndef FUNCTIONS_POLAR_SEQ_H_
-#define FUNCTIONS_POLAR_SEQ_H_
+#ifndef FUNCTIONS_POLAR_INTER_INTRA_H_
+#define FUNCTIONS_POLAR_INTER_INTRA_H_
+
+#include <mipp.h>
 
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 
@@ -13,18 +15,30 @@ namespace aff3ct
 {
 namespace tools
 {
+// ========================================================================================================= saturate()
+// ====================================================================================================================
+// ====================================================================================================================
+
+template <typename T>
+struct API_polar_inter_intra_saturate
+{
+	static inline mipp::reg init();
+
+	static inline mipp::reg perform(const mipp::reg r_lambda, const mipp::reg r_sat);
+};
+
 // ================================================================================================================ f()
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename R, proto_f<R> F, int N_ELMTS = 0>
-struct f_seq
+template <typename R, proto_f_i<R> FI, int N_ELMTS = 0, int N_FRAMES = 1>
+struct f_inter_intra
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0);
 };
 
-template <typename R, proto_f<R> F>
-struct f_seq <R, F, 0>
+template <typename R, proto_f_i<R> FI, int N_FRAMES>
+struct f_inter_intra <R, FI, 0, N_FRAMES>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0);
 };
@@ -33,15 +47,15 @@ struct f_seq <R, F, 0>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, typename R, proto_g<B,R> G, int N_ELMTS = 0>
-struct g_seq
+template <typename B, typename R, proto_g_i<B,R> GI, int N_ELMTS = 0, int N_FRAMES = 1>
+struct g_inter_intra
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
 	                  const int n_elmts = 0);
 };
 
-template <typename B, typename R, proto_g<B,R> G>
-struct g_seq <B, R, G, 0>
+template <typename B, typename R, proto_g_i<B,R> GI, int N_FRAMES>
+struct g_inter_intra <B, R, GI, 0, N_FRAMES>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
 	                  const int n_elmts = 0);
@@ -51,14 +65,14 @@ struct g_seq <B, R, G, 0>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename R, proto_g0<R> G0, int N_ELMTS = 0>
-struct g0_seq
+template <typename R, proto_g0_i<R> G0I, int N_ELMTS = 0, int N_FRAMES = 1>
+struct g0_inter_intra
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0);
 };
 
-template <typename R, proto_g0<R> G0>
-struct g0_seq <R, G0, 0>
+template <typename R, proto_g0_i<R> G0I, int N_FRAMES>
+struct g0_inter_intra <R,G0I,0,N_FRAMES>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, R *__restrict l_c, const int n_elmts = 0);
 };
@@ -67,15 +81,15 @@ struct g0_seq <R, G0, 0>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, typename R, proto_g<B,R> G, int N_ELMTS = 0>
-struct gr_seq
+template <typename B, typename R, proto_g_i<B,R> GI, int N_ELMTS = 0, int N_FRAMES = 1>
+struct gr_inter_intra
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
 	                  const int n_elmts = 0);
 };
 
-template <typename B, typename R, proto_g<B,R> G>
-struct gr_seq <B, R, G, 0>
+template <typename B, typename R, proto_g_i<B,R> GI, int N_FRAMES>
+struct gr_inter_intra <B,R,GI,0,N_FRAMES>
 {
 	static void apply(const R *__restrict l_a, const R *__restrict l_b, const B *__restrict s_a, R *__restrict l_c,
 	                  const int n_elmts = 0);
@@ -85,14 +99,14 @@ struct gr_seq <B, R, G, 0>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, typename R, proto_h<B,R> H, int N_ELMTS = 0>
-struct h_seq
+template <typename B, typename R, proto_h_i<B,R> HI, int N_ELMTS = 0, int N_FRAMES = 1>
+struct h_inter_intra
 {
 	static void apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0);
 };
 
-template <typename B, typename R, proto_h<B,R> H>
-struct h_seq <B, R, H, 0>
+template <typename B, typename R, proto_h_i<B,R> HI, int N_FRAMES>
+struct h_inter_intra <B,R,HI,0,N_FRAMES>
 {
 	static void apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0);
 };
@@ -101,75 +115,31 @@ struct h_seq <B, R, H, 0>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, int N_ELMTS = 0>
-struct h0_seq
+template <typename B, int N_ELMTS = 0, int N_FRAMES = 1>
+struct h0_inter_intra
 {
 	static void apply(B *__restrict s_a, const int n_elmts = 0);
 };
 
-template <typename B>
-struct h0_seq <B, 0>
+template <typename B, int N_FRAMES>
+struct h0_inter_intra <B,0,N_FRAMES>
 {
 	static void apply(B *__restrict s_a, const int n_elmts = 0);
-};
-
-// ============================================================================================================== rep()
-// ====================================================================================================================
-// ====================================================================================================================
-
-template <typename B, typename R, proto_h<B,R> H, int N_ELMTS = 0>
-struct rep_seq
-{
-	static void apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0);
-};
-
-template <typename B, proto_h<B,signed char> H, int N_ELMTS>
-struct rep_seq<B, signed char, H, N_ELMTS>
-{
-	static void apply(const signed char *__restrict l_a, B *__restrict s_a, const int n_elmts = 0);
-};
-
-template <typename B, typename R, proto_h<B,R> H>
-struct rep_seq <B, R, H, 0>
-{
-	static void apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0);
-};
-
-template <typename B, proto_h<B,signed char> H>
-struct rep_seq <B, signed char, H, 0>
-{
-	static void apply(const signed char *__restrict l_a, B *__restrict s_a, const int n_elmts = 0);
-};
-
-// ============================================================================================================== spc()
-// ====================================================================================================================
-// ====================================================================================================================
-
-template <typename B, typename R, proto_h<B,R> H, int N_ELMTS = 0>
-struct spc_seq
-{
-	static bool apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0);
-};
-
-template <typename B, typename R, proto_h<B,R> H>
-struct spc_seq <B, R, H, 0>
-{
-	static bool apply(const R *__restrict l_a, B *__restrict s_a, const int n_elmts = 0);
 };
 
 // ================================================================================================================ x()
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, proto_xo<B> X, int N_ELMTS = 0>
-struct xo_seq
+template <typename B, proto_xo_i<B> XOI, int N_ELMTS = 0, int N_FRAMES = 1>
+struct xo_inter_intra
 {
 	static void apply(const B *__restrict s_a, const B *__restrict s_b, B *__restrict s_c,
 	                  const int n_elmts = 0);
 };
 
-template <typename B, proto_xo<B> X>
-struct xo_seq <B, X, 0>
+template <typename B, proto_xo_i<B> XOI, int N_FRAMES>
+struct xo_inter_intra <B,XOI,0,N_FRAMES>
 {
 	static void apply(const B *__restrict s_a, const B *__restrict s_b, B *__restrict s_c,
 	                  const int n_elmts = 0);
@@ -179,22 +149,24 @@ struct xo_seq <B, X, 0>
 // ====================================================================================================================
 // ====================================================================================================================
 
-template <typename B, int N_ELMTS = 0>
-struct xo0_seq
+template <typename B, int N_ELMTS = 0, int N_FRAMES = 1>
+struct xo0_inter_intra
 {
 	static void apply(const B *__restrict s_b, B *__restrict s_c, const int n_elmts = 0);
 };
 
-template <typename B>
-struct xo0_seq <B, 0>
+template <typename B, int N_FRAMES>
+struct xo0_inter_intra <B,0,N_FRAMES>
 {
 	static void apply(const B *__restrict s_b, B *__restrict s_c, const int n_elmts = 0);
 };
 }
 }
 
-#include "Tools/Code/Polar/API/functions_polar_seq.hxx"
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#include "Tools/Code/Polar/API/internal_functions/functions_polar_inter_intra.hxx"
+#endif
 
-#endif /* FUNCTIONS_POLAR_SEQ_H_ */
+#endif /* FUNCTIONS_POLAR_INTER_INTRA_H_ */
 
 #endif

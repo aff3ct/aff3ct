@@ -48,7 +48,9 @@ struct spc_inter <B, R, HI, 0>
 }
 }
 
-#include "Tools/Code/Polar/API/functions_polar_inter.hxx"
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#include "Tools/Code/Polar/API/internal_functions/functions_polar_inter.hxx"
+#endif
 
 #endif /* FUNCTIONS_POLAR_INTER_H_ */
 

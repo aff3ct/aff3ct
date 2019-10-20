@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <algorithm>
 #include <cassert>
 
@@ -83,5 +81,3 @@ void nearest_interpolation(const std::vector<T>& x_data, const std::vector<T>& y
 
 }
 }
-
-#endif

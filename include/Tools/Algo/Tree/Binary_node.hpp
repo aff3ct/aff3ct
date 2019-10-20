@@ -164,6 +164,8 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Algo/Tree/Binary_node.hxx"
+#endif
 
 #endif /* BINARY_NODE_HPP_ */

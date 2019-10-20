@@ -37,6 +37,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/Generic/ML/Decoder_maximum_likelihood.hxx"
+#endif
 
 #endif /* DECODER_MAXIMUM_LIKELIHOO_HPP_ */

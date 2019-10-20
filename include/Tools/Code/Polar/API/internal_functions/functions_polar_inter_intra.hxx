@@ -1,12 +1,9 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <algorithm>
 #ifdef _MSC_VER
 #include <iterator>
 #endif
 
-#include "Tools/Code/Polar/decoder_polar_functions.h"
-#include "Tools/Code/Polar/API/functions_polar_inter_intra.h"
+#include "Tools/Code/Polar/API/internal_functions/functions_polar_inter_intra.h"
 
 namespace aff3ct
 {
@@ -328,5 +325,3 @@ void xo0_inter_intra<B,0,N_FRAMES>
 
 }
 }
-
-#endif

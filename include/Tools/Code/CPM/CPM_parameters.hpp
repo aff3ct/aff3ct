@@ -72,6 +72,8 @@ public :
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Code/CPM/CPM_parameters.hxx"
+#endif
 
 #endif /* CPM_PARAMETERS_HPP_ */

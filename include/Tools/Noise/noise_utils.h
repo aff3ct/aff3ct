@@ -36,6 +36,8 @@ inline mipp::Msk<mipp::N<R>()> is_unknown_llr(const mipp::Reg<R>& q_in);
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Noise/noise_utils.hxx"
+#endif
 
 #endif // NOISE_UTILS_HPP__

@@ -115,6 +115,9 @@ protected:
 };
 }
 }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Encoder/Encoder.hxx"
+#endif
 
 #endif /* ENCODER_HPP_ */

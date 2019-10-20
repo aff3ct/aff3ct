@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include "Tools/Code/Polar/Pattern_polar_parser.hpp"
 
 namespace aff3ct
@@ -44,5 +42,3 @@ bool Pattern_polar_parser
 }
 }
 }
-
-#endif

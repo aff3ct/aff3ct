@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
@@ -36,5 +34,3 @@ inline R psi_3(const std::complex<R>& d, const R& n0)
 }
 }
 }
-
-#endif

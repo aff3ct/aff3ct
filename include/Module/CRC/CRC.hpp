@@ -126,6 +126,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/CRC/CRC.hxx"
+#endif
 
 #endif

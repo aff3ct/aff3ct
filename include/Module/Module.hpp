@@ -97,6 +97,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Module.hxx"
+#endif
 
 #endif /* MODULE_HPP_ */

@@ -31,6 +31,8 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Codec/Codec_SIHO_HIHO.hxx"
+#endif
 
 #endif /* CODEC_SIHO_HIHO_HPP_ */

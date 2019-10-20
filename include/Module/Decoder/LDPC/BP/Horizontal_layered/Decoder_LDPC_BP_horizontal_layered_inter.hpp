@@ -62,7 +62,9 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/LDPC/BP/Horizontal_layered/Decoder_LDPC_BP_horizontal_layered_inter.hxx"
+#endif
 
 #endif
 #endif /* DECODER_LDPC_BP_HORIZONTAL_LAYERED_INTER_HPP_ */

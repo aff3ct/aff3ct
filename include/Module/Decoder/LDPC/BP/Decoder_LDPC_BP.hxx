@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include "Tools/Code/LDPC/Syndrome/LDPC_syndrome.hpp"
 #include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp"
 
@@ -36,5 +34,3 @@ bool Decoder_LDPC_BP
 }
 }
 }
-
-#endif

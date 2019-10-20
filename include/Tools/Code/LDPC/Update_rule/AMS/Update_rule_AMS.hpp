@@ -57,6 +57,8 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Code/LDPC/Update_rule/AMS/Update_rule_AMS.hxx"
+#endif
 
 #endif /* UPDATE_RULE_AMS_HPP */

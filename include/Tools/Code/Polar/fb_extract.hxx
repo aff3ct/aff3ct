@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
@@ -57,5 +55,3 @@ void fb_extract(const std::vector<std::pair<unsigned char, int>> &leaves_pattern
 }
 }
 }
-
-#endif

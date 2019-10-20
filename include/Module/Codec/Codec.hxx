@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <sstream>
 #include <string>
 
@@ -458,5 +456,3 @@ const Interleaver<Q>& Codec<B,Q>
 
 }
 }
-
-#endif

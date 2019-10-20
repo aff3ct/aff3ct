@@ -76,6 +76,9 @@ protected:
 };
 }
 }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/Decoder_SIHO.hxx"
+#endif
 
 #endif /* DECODER_SIHO_HPP_ */

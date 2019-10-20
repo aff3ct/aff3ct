@@ -73,6 +73,8 @@ bool all_zeros(const Sparse_matrix& );
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Algo/Matrix/matrix_utils.hxx"
+#endif
 
 #endif // MATRIX_UTILS_H__

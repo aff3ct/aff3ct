@@ -57,6 +57,8 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Display/Reporter/Throughput/Reporter_throughput.hxx"
+#endif
 
 #endif /* REPORTER_THROUGHPUT_HPP_ */

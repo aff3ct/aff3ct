@@ -117,6 +117,8 @@ inline int compute_depth(int index, int tree_depth);
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Code/Polar/decoder_polar_functions.hxx"
+#endif
 
 #endif /* DECODER_POLAR_FUNCTIONS_H */

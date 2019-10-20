@@ -46,6 +46,8 @@ template <typename R> inline mipp::Reg<R> min_star_i        (const mipp::Reg<R> 
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Math/max.hxx"
+#endif
 
 #endif /* MAX_H */

@@ -46,6 +46,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/RSC/BCJR/Decoder_RSC_BCJR.hxx"
+#endif
 
 #endif /* DECODER_RSC_BCJR_HPP_ */

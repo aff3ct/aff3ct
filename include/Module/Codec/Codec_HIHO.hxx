@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <string>
 #include <sstream>
 
@@ -63,5 +61,3 @@ void Codec_HIHO<B,Q>
 
 }
 }
-
-#endif

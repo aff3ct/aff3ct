@@ -53,6 +53,8 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Code/LDPC/Update_rule/OMS/Update_rule_OMS.hxx"
+#endif
 
 #endif /* UPDATE_RULE_OMS_HPP */

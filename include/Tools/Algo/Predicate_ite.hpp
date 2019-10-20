@@ -34,6 +34,8 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Algo/Predicate_ite.hxx"
+#endif
 
 #endif /* PREDICATE_ITE_HPP */

@@ -71,6 +71,8 @@ struct Encoder_turbo : public Encoder
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Factory/Module/Encoder/Turbo/Encoder_turbo.hxx"
+#endif
 
 #endif /* FACTORY_ENCODER_TURBO_HPP */

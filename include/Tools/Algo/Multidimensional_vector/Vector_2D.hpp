@@ -29,6 +29,8 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Algo/Multidimensional_vector/Vector_2D.hxx"
+#endif
 
 #endif // VECTOR_2D_HPP_

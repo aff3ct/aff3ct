@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <string>
 #include <limits>
 #include <mipp.h>
@@ -224,5 +222,3 @@ struct RSC_BCJR_inter_post <signed char>
 };
 }
 }
-
-#endif

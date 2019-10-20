@@ -29,6 +29,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_naive_sys.hxx"
+#endif
 
 #endif /* DECODER_POLAR_SCL_NAIVE_SYS */

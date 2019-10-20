@@ -113,6 +113,8 @@ private:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Algo/Histogram.hxx"
+#endif
 
 #endif // HISTOGRAM_H__

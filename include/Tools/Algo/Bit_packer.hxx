@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
@@ -395,5 +393,3 @@ int main(int argc, char** argv)
 	std::cout << "Same in and unpacked = " << same << std::endl;
 }
 */
-
-#endif

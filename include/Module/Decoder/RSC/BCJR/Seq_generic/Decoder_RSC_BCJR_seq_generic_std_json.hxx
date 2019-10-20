@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <algorithm>
 #include <iomanip>
 #include <string>
@@ -208,5 +206,3 @@ void Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
 }
 }
 }
-
-#endif

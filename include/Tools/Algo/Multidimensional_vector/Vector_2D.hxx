@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include "Tools/Algo/Multidimensional_vector/Vector_2D.hpp"
 
 namespace aff3ct
@@ -28,5 +26,3 @@ T const& Vector_2D<T>
 }
 }
 }
-
-#endif

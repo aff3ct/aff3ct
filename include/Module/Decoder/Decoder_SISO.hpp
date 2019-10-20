@@ -89,6 +89,9 @@ protected:
 };
 }
 }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Module/Decoder/Decoder_SISO.hxx"
+#endif
 
 #endif /* DECODER_SISO_HPP_ */

@@ -30,6 +30,8 @@ protected:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Constellation/PSK/Constellation_PSK.hxx"
+#endif
 
 #endif // CONSTELLATION_PSK_HPP__

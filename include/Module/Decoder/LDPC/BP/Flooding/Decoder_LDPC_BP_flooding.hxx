@@ -1,5 +1,3 @@
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <algorithm>
 #include <sstream>
 #include <string>
@@ -259,5 +257,3 @@ void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 }
 }
 }
-
-#endif

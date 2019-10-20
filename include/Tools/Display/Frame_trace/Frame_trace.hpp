@@ -121,6 +121,8 @@ private:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Display/Frame_trace/Frame_trace.hxx"
+#endif
 
 #endif /* FRAME_TRACE_HPP */
