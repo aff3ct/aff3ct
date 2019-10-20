@@ -720,12 +720,6 @@
 #ifndef MONITOR_HPP_
 #include <Module/Monitor/Monitor.hpp>
 #endif
-#ifndef MONITOR_REDUCTION_HPP_
-#include <Module/Monitor/Monitor_reduction.hpp>
-#endif
-#ifndef MONITOR_REDUCTION_MPI_HPP_
-#include <Module/Monitor/Monitor_reduction_MPI.hpp>
-#endif
 #ifndef PUNCTURER_LDPC_HPP_
 #include <Module/Puncturer/LDPC/Puncturer_LDPC.hpp>
 #endif
@@ -1241,6 +1235,12 @@
 #endif
 #ifndef MATH_UTILS_H
 #include <Tools/Math/utils.h>
+#endif
+#ifndef MONITOR_REDUCTION_HPP_
+#include <Tools/Monitor/Monitor_reduction.hpp>
+#endif
+#ifndef MONITOR_REDUCTION_MPI_HPP_
+#include <Tools/Monitor/Monitor_reduction_MPI.hpp>
 #endif
 #ifndef ERASED_PROBABILITY_HPP_
 #include <Tools/Noise/Event_probability.hpp>

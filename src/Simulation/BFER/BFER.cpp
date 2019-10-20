@@ -170,11 +170,11 @@ void BFER<B,R,Q>
 		try
 		{
 			this->_launch();
-			module::Monitor_reduction::is_done_all(true, true); // final reduction
+			tools::Monitor_reduction::is_done_all(true, true); // final reduction
 		}
 		catch (std::exception const& e)
 		{
-			module::Monitor_reduction::is_done_all(true, true); // final reduction
+			tools::Monitor_reduction::is_done_all(true, true); // final reduction
 
 			terminal->final_report(std::cout); // display final report to not lost last line overwritten by the error
 			                                   // messages
@@ -270,7 +270,7 @@ void BFER<B,R,Q>
 					for (auto &t : mm->tasks)
 						t->reset_stats();
 
-		module::Monitor_reduction::reset_all();
+		tools::Monitor_reduction::reset_all();
 		tools::Terminal::reset();
 	}
 }
@@ -352,9 +352,9 @@ void BFER<B,R,Q>
 		this->monitor_mi_red.reset(new Monitor_MI_reduction_type(this->monitor_mi));
 	}
 
-	module::Monitor_reduction::set_master_thread_id(std::this_thread::get_id());
+	tools::Monitor_reduction::set_master_thread_id(std::this_thread::get_id());
 #ifdef AFF3CT_MPI
-	module::Monitor_reduction::set_reduce_frequency(params_BFER.mnt_mpi_comm_freq);
+	tools::Monitor_reduction::set_reduce_frequency(params_BFER.mnt_mpi_comm_freq);
 #else
 	auto freq = std::chrono::milliseconds(0);
 	if (params_BFER.mnt_red_lazy)
@@ -364,11 +364,11 @@ void BFER<B,R,Q>
 		else
 			freq = std::chrono::milliseconds(1000); // default value when lazy reduction and no terminal refresh
 	}
-	module::Monitor_reduction::set_reduce_frequency(freq);
+	tools::Monitor_reduction::set_reduce_frequency(freq);
 #endif
 
-	module::Monitor_reduction::reset_all();
-	module::Monitor_reduction::check_reducible();
+	tools::Monitor_reduction::reset_all();
+	tools::Monitor_reduction::check_reducible();
 }
 
 template <typename B, typename R, typename Q>
@@ -415,7 +415,7 @@ bool BFER<B,R,Q>
 {
 	// communication chain execution
 	return !(tools::Terminal::is_interrupt() // if user stopped the simulation
-	         || module::Monitor_reduction::is_done_all() // while any monitor criteria is not reached -> do reduction
+	         || tools::Monitor_reduction::is_done_all() // while any monitor criteria is not reached -> do reduction
 	         || this->stop_time_reached());
 }
 

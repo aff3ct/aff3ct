@@ -11,11 +11,11 @@
 #include <memory>
 #include <mpi.h>
 
-#include "Module/Monitor/Monitor_reduction.hpp"
+#include "Tools/Monitor/Monitor_reduction.hpp"
 
 namespace aff3ct
 {
-namespace module
+namespace tools
 {
 template <class M> // M is the monitor on which must be applied the reduction
 class Monitor_reduction_MPI : public Monitor_reduction_M<M>
@@ -43,7 +43,7 @@ private:
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#include "Module/Monitor/Monitor_reduction_MPI.hxx"
+#include "Tools/Monitor/Monitor_reduction_MPI.hxx"
 #endif
 
 #endif /* MONITOR_REDUCTION_MPI_HPP_ */

@@ -5,16 +5,16 @@
 #endif
 
 #include "Tools/Exception/exception.hpp"
-#include "Module/Monitor/Monitor_reduction.hpp"
+#include "Tools/Monitor/Monitor_reduction.hpp"
 
 using namespace aff3ct;
-using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
-bool                                                                         aff3ct::module::Monitor_reduction::stop_loop = false;
-std::vector<aff3ct::module::Monitor_reduction*>                              aff3ct::module::Monitor_reduction::monitors;
-std::thread::id                                                              aff3ct::module::Monitor_reduction::master_thread_id = std::this_thread::get_id();
-std::chrono::nanoseconds                                                     aff3ct::module::Monitor_reduction::d_reduce_frequency = std::chrono::milliseconds(1000);
-std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> aff3ct::module::Monitor_reduction::t_last_reduction;
+bool                                                                         aff3ct::tools::Monitor_reduction::stop_loop = false;
+std::vector<aff3ct::tools::Monitor_reduction*>                               aff3ct::tools::Monitor_reduction::monitors;
+std::thread::id                                                              aff3ct::tools::Monitor_reduction::master_thread_id = std::this_thread::get_id();
+std::chrono::nanoseconds                                                     aff3ct::tools::Monitor_reduction::d_reduce_frequency = std::chrono::milliseconds(1000);
+std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> aff3ct::tools::Monitor_reduction::t_last_reduction;
 
 Monitor_reduction
 ::Monitor_reduction()

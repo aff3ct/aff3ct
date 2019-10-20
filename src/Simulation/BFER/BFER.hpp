@@ -12,13 +12,13 @@
 #include "Tools/Display/Dumper/Dumper.hpp"
 #include "Tools/Display/Dumper/Dumper_reduction.hpp"
 #include "Tools/Math/Distribution/Distributions.hpp"
+#include "Tools/Monitor/Monitor_reduction.hpp"
+#ifdef AFF3CT_MPI
+#include "Tools/Monitor/Monitor_reduction_MPI.hpp"
+#endif
 #include "Tools/Noise/Noise.hpp"
 #include "Module/Monitor/MI/Monitor_MI.hpp"
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
-#include "Module/Monitor/Monitor_reduction.hpp"
-#ifdef AFF3CT_MPI
-#include "Module/Monitor/Monitor_reduction_MPI.hpp"
-#endif
 #include "Simulation/Simulation.hpp"
 
 namespace aff3ct
@@ -47,11 +47,11 @@ protected:
 	using Monitor_MI_type   = module::Monitor_MI<B,R>;
 
 #ifdef AFF3CT_MPI
-	using Monitor_BFER_reduction_type = module::Monitor_reduction_MPI<Monitor_BFER_type>;
-	using Monitor_MI_reduction_type   = module::Monitor_reduction_MPI<Monitor_MI_type  >;
+	using Monitor_BFER_reduction_type = tools::Monitor_reduction_MPI<Monitor_BFER_type>;
+	using Monitor_MI_reduction_type   = tools::Monitor_reduction_MPI<Monitor_MI_type  >;
 #else
-	using Monitor_BFER_reduction_type = module::Monitor_reduction_M<Monitor_BFER_type>;
-	using Monitor_MI_reduction_type   = module::Monitor_reduction_M<Monitor_MI_type  >;
+	using Monitor_BFER_reduction_type = tools::Monitor_reduction_M<Monitor_BFER_type>;
+	using Monitor_MI_reduction_type   = tools::Monitor_reduction_M<Monitor_MI_type  >;
 #endif
 
 	std::vector<std::unique_ptr<Monitor_MI_type          >> monitor_mi;

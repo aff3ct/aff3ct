@@ -2,11 +2,11 @@
 #include <numeric>
 
 #include "Tools/Exception/exception.hpp"
-#include "Module/Monitor/Monitor_reduction.hpp"
+#include "Tools/Monitor/Monitor_reduction.hpp"
 
 namespace aff3ct
 {
-namespace module
+namespace tools
 {
 
 template <class M>

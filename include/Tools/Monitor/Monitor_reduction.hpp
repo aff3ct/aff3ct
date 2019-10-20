@@ -15,7 +15,7 @@
 
 namespace aff3ct
 {
-namespace module
+namespace tools
 {
 
 class Monitor_reduction
@@ -120,7 +120,7 @@ private:
 template <class M> // M is the monitor on which must be applied the reduction
 class Monitor_reduction_M : public Monitor_reduction, public M
 {
-	static_assert(std::is_base_of<Monitor, M>::value, "M have to be based on a module::Monitor class.");
+	static_assert(std::is_base_of<module::Monitor, M>::value, "M have to be based on a module::Monitor class.");
 
 private:
 	const std::vector<std::unique_ptr<M>>& monitors;
@@ -154,7 +154,7 @@ protected:
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#include "Module/Monitor/Monitor_reduction.hxx"
+#include "Tools/Monitor/Monitor_reduction.hxx"
 #endif
 
 #endif /* MONITOR_REDUCTION_HPP_ */

@@ -6,11 +6,11 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-#include "Module/Monitor/Monitor_reduction_MPI.hpp"
+#include "Tools/Monitor/Monitor_reduction_MPI.hpp"
 
 namespace aff3ct
 {
-namespace module
+namespace tools
 {
 
 template <class M>
