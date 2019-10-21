@@ -95,8 +95,8 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
          "usr/include/aff3ct-${AFF3CT_VERSION_FULL}/*\n")
 
     file(WRITE "${DEBIAN_SOURCE_DIR}/debian/${CPACK_DEBIAN_PACKAGE_NAME}-doc.install"
-         "doc/sphinx/built/html/* usr/share/aff3ct-${AFF3CT_VERSION_FULL}/doc/html\n"
-         "doc/sphinx/built/latex/AFF3CT.pdf usr/share/aff3ct-${AFF3CT_VERSION_FULL}/doc/pdf/\n")
+         "doc/built/html/* usr/share/aff3ct-${AFF3CT_VERSION_FULL}/doc/html\n"
+         "doc/built/latex/AFF3CT.pdf usr/share/aff3ct-${AFF3CT_VERSION_FULL}/doc/pdf/\n")
 
     ##############################################################################
     # debian/copyright
@@ -131,7 +131,7 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
 
     if(EXISTS ${CPACK_DEBIAN_RESOURCE_FILE_CHANGELOG})
         configure_file(${CPACK_DEBIAN_RESOURCE_FILE_CHANGELOG} ${DEBIAN_CHANGELOG} COPYONLY)
-      
+
         if(CPACK_DEBIAN_UPDATE_CHANGELOG)
             file(READ ${DEBIAN_CHANGELOG} DEBIAN_CHANGELOG_content)
             execute_process(COMMAND date -R

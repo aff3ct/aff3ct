@@ -94,13 +94,15 @@ documentation-sphinx:
     name: documentation-sphinx
     when: always
     paths:
-      - doc/sphinx/build/html
-      - doc/sphinx/build/latex
+      - doc/build/html
+      - doc/build/latex
+      - doc/build/doxygen
   tags:
     - sphinx
     - latex
   script:
-    - cd doc/sphinx
+    - cd doc/
+    - pip3 install -r requirements.txt
     - make html
     - make latexpdf
 

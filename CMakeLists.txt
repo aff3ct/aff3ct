@@ -616,13 +616,13 @@ if (AFF3CT_COMPILE_SHARED_LIB OR AFF3CT_COMPILE_STATIC_LIB)
             FILES_MATCHING PATTERN "*.hxx")
 endif()
 
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/build/latex/AFF3CT.pdf")
-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/build/latex/AFF3CT.pdf"
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc/build/latex/AFF3CT.pdf")
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/doc/build/latex/AFF3CT.pdf"
             DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/aff3ct-${AFF3CT_VERSION_FULL}/doc/pdf
             COMPONENT documentation)
 endif()
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/build/html/")
-    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/build/html/"
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc/build/html/")
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/doc/build/html/"
             DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/aff3ct-${AFF3CT_VERSION_FULL}/doc/html
             COMPONENT documentation)
 endif()
