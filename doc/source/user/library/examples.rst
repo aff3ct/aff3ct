@@ -864,7 +864,7 @@ each threads gets its own local ``m``.
 		std::vector<std::unique_ptr<tools::Reporter>>        reporters;     // list of reporters displayed in the terminal
 		std::unique_ptr<tools::Terminal>                     terminal;      // manage the output text in the terminal
 		std::vector<std::unique_ptr<module::Monitor_BFER<>>> monitors;      // list of the monitors from all the threads
-		std::unique_ptr<module::Monitor_BFER_reduction>      monitor_red;   // main monitor object that reduce all the thread monitors
+		std::unique_ptr<tools::Monitor_BFER_reduction>       monitor_red;   // main monitor object that reduce all the thread monitors
 		std::vector<std::vector<const module::Module*>>      modules;       // list of the allocated modules
 		std::vector<std::vector<const module::Module*>>      modules_stats; // list of the allocated modules reorganized for the statistics
 	};
@@ -936,7 +936,7 @@ pointer is assigned to ``m``. At line ``57`` a list of the modules is stored in
 	void init_utils4(const params3 &p, utils4 &u)
 	{
 		// allocate a common monitor module to reduce all the monitors
-		u.monitor_red = std::unique_ptr<module::Monitor_BFER_reduction>(new module::Monitor_BFER_reduction(u.monitors));
+		u.monitor_red = std::unique_ptr<tools::Monitor_BFER_reduction>(new tools::Monitor_BFER_reduction(u.monitors));
 		u.monitor_red->set_reduce_frequency(std::chrono::milliseconds(500));
 		// create a sigma noise type
 		u.noise = std::unique_ptr<tools::Sigma<>>(new tools::Sigma<>());
