@@ -97,10 +97,11 @@ documentation-sphinx:
       - doc/sphinx/build/html
       - doc/sphinx/build/latex
   tags:
-    - sphinx
     - latex
+    - pip3
   script:
     - cd doc/sphinx
+    - pip3 install --user -r requirements.txt
     - make html
     - make latexpdf
 
