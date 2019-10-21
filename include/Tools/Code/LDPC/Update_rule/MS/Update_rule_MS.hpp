@@ -17,8 +17,10 @@ template <typename R> class Update_rule_NMS;
 template <typename R = float>
 class Update_rule_MS // Min Sum
 {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 	friend Update_rule_OMS<R>;
 	friend Update_rule_NMS<R>;
+#endif
 
 protected:
 	const std::string name;

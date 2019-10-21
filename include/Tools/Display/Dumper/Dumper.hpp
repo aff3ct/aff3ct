@@ -18,7 +18,9 @@ namespace tools
 class Dumper_reduction;
 class Dumper
 {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 	friend Dumper_reduction;
+#endif
 
 protected:
 	static const std::string default_ext;

@@ -24,8 +24,10 @@ enum class socket_t : uint8_t { SIN, SIN_SOUT, SOUT };
 
 class Task
 {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 	friend Socket;
 	friend Module;
+#endif
 
 protected:
 	const Module &module;

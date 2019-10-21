@@ -19,7 +19,9 @@ namespace module
 {
 class Socket
 {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 	friend Task;
+#endif
 protected:
 	Task &task;
 

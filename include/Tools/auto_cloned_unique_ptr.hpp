@@ -54,7 +54,8 @@ public:
 	inline const pointer get()        const;
 	inline void reset(pointer __p = pointer()) noexcept;
 
-	protected:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+protected:
 	template <typename T>
 	friend bool operator==(const auto_cloned_unique_ptr<T>& x, const auto_cloned_unique_ptr<T>& y);
 	template <typename T>
@@ -63,6 +64,7 @@ public:
 	friend bool operator!=(const auto_cloned_unique_ptr<T>& x, const auto_cloned_unique_ptr<T>& y);
 	template <typename T>
 	friend bool operator!=(const auto_cloned_unique_ptr<T>& x, std::nullptr_t) noexcept;
+#endif
 };
 
 template <typename D>

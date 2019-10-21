@@ -31,7 +31,9 @@ class SC_Module;
 template <class C>
 class SC_Socket_in
 {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 	friend SC_Module;
+#endif
 protected:
 	std::vector<std::unique_ptr<tlm_utils::simple_target_socket<C>>> &sockets;
 	const Task &task;
@@ -47,7 +49,9 @@ public:
 template <class C>
 class SC_Socket_out
 {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 	friend SC_Module;
+#endif
 protected:
 	std::vector<std::unique_ptr<tlm_utils::simple_initiator_socket<C>>> &sockets;
 	const Task &task;

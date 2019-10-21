@@ -22,7 +22,9 @@ class Binary_tree;
 template <typename T = float>
 class Binary_node
 {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 	friend Binary_tree<T>;
+#endif
 
 private:
 	Binary_node<T>* father; /*!< Pointer to the father node      (nullptr if this node is the root). */

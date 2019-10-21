@@ -39,7 +39,9 @@ protected:
 public:
 	std::vector<std::shared_ptr<Task>> tasks;
 #ifdef AFF3CT_SYSTEMC_MODULE
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 	friend SC_Module_container;
+#endif
 	SC_Module_container sc;
 #endif
 

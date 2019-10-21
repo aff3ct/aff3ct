@@ -34,8 +34,10 @@ template <typename B = int, typename R = float,
                                                                tools::xo_STD<B  >>>
 class Decoder_polar_SC_fast_sys : public Decoder_SIHO<B,R>, public tools::Frozenbits_notifier
 {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 	friend Decoder_polar_ASCL_fast_CA_sys    <B,R,API_polar>;
 	friend Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>;
+#endif
 
 protected:
 	const int                m;            // graph depth

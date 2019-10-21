@@ -18,7 +18,9 @@ class LC_sorter_simd;
 template <typename T>
 class LC_sorter
 {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 	friend LC_sorter_simd<T>;
+#endif
 
 private:
 	int              max_elmts;

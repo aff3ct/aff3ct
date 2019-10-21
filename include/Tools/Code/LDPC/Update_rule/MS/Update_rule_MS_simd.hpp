@@ -19,6 +19,7 @@ template <typename R, int N> class Update_rule_NMS_simd;
 template <typename R = float>
 class Update_rule_MS_simd // Min Sum
 {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 	friend Update_rule_OMS_simd<R  >;
 	friend Update_rule_NMS_simd<R,0>;
 	friend Update_rule_NMS_simd<R,1>;
@@ -29,6 +30,7 @@ class Update_rule_MS_simd // Min Sum
 	friend Update_rule_NMS_simd<R,6>;
 	friend Update_rule_NMS_simd<R,7>;
 	friend Update_rule_NMS_simd<R,8>;
+#endif
 
 protected:
 	const std::string name;

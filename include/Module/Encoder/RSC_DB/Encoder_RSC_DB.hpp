@@ -21,7 +21,9 @@ class Encoder_turbo_DB;
 template <typename B = int>
 class Encoder_RSC_DB: public Encoder<B>
 {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 	friend Encoder_turbo_DB<B>;
+#endif
 
 private:
 	static const std::string default_std;
