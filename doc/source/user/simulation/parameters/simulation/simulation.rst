@@ -18,7 +18,7 @@ possible to enable debug and benchmarking tools.
    :Default: ``BFER``
    :Examples: ``--sim-type BFERI``
 
-|factory::Launcher::parameters::p+type|
+|factory::Launcher::p+type|
 
 Description of the allowed values:
 
@@ -62,7 +62,7 @@ Description of the allowed values:
                     ``RSC_DB`` ``TURBO`` ``TURBO_DB`` ``TURBO_PROD`` ``UNCODED``
    :Examples: ``-C BCH``
 
-|factory::Launcher::parameters::p+cde-type,C|
+|factory::Launcher::p+cde-type,C|
 
 Description of the allowed values:
 
@@ -121,7 +121,7 @@ Description of the allowed values:
    :Allowed values: ``8`` ``16`` ``32`` ``64``
    :Examples: ``--sim-prec 8``
 
-|factory::Launcher::parameters::p+prec,p|
+|factory::Launcher::p+prec,p|
 
 64-bit and 32-bit precisions imply a floating-point representation of the real
 numbers. 16-bit and 8-bit imply a fixed-point representation of the real numbers
@@ -156,7 +156,7 @@ Description of the allowed values:
    :Default: ``EBN0``
    :Examples: ``-E EBN0``
 
-|factory::Noise::parameters::p+noise-type,E|
+|factory::Noise::p+noise-type,E|
 
 Description of the allowed values:
 
@@ -201,7 +201,7 @@ where :math:`R` is the bit rate and :math:`bps` the number of bits per symbol.
    :Type: real number
    :Examples: ``-m 0.0``
 
-|factory::Noise::parameters::p+noise-min,m|
+|factory::Noise::p+noise-min,m|
 
 .. attention:: This argument is another way to set the noise range to simulate.
    It is ignored or not required if the :ref:`sim-sim-noise-range` argument is
@@ -216,7 +216,7 @@ where :math:`R` is the bit rate and :math:`bps` the number of bits per symbol.
    :Type: real number
    :Examples: ``-M 5.0``
 
-|factory::Noise::parameters::p+noise-max,M|
+|factory::Noise::p+noise-max,M|
 
 .. attention:: This argument is another way to set the noise range to simulate.
    It is ignored or not required if the :ref:`sim-sim-noise-range` argument is
@@ -231,7 +231,7 @@ where :math:`R` is the bit rate and :math:`bps` the number of bits per symbol.
    :Default:  0.1
    :Examples: ``-s 1.0``
 
-|factory::Noise::parameters::p+noise-step,s|
+|factory::Noise::p+noise-step,s|
 
 .. attention:: This argument is another way to set the noise range to simulate.
    It is ignored or not required if the :ref:`sim-sim-noise-range` argument is
@@ -246,7 +246,7 @@ where :math:`R` is the bit rate and :math:`bps` the number of bits per symbol.
    :Default:  step of 0.1
    :Examples: ``-R "0.5:1,1:0.05:1.2,1.21"``
 
-|factory::Noise::parameters::p+noise-range,R|
+|factory::Noise::p+noise-range,R|
 
 The above example will run the following noise points::
 
@@ -268,7 +268,7 @@ The above example will run the following noise points::
    :Rights: read only
    :Examples: ``--sim-pdf-path example/path/to/the/right/file``
 
-|factory::Noise::parameters::p+pdf-path|
+|factory::Noise::p+pdf-path|
 
 To use with the ``OPTICAL`` :ref:`channel <chn-chn-type>`. It sets the noise
 range from the given ones in the file. However, it is overwritten by
@@ -284,7 +284,7 @@ between two values.
    :Type: text
    :Examples: ``--sim-meta "TITLE"``
 
-|factory::Simulation::parameters::p+meta|
+|factory::Simulation::p+meta|
 
 .. note:: :ref:`PyBER <user_pyber_overview>`, our |GUI| tool, can take advantage
    of those meta-data to enhance the display of the simulated curves.
@@ -294,7 +294,7 @@ between two values.
 ``--sim-coded``
 """""""""""""""
 
-|factory::BFER::parameters::p+coded|
+|factory::BFER::p+coded|
 
 By default, in the simulation, the information bits are extracted from the
 decoded codewords and then they are compared to the initially generated
@@ -311,7 +311,7 @@ directly compared with the initially encoded codewords.
 ``--sim-coset, -c``
 """""""""""""""""""
 
-|factory::BFER::parameters::p+coset,c|
+|factory::BFER::p+coset,c|
 
 The *coset* approach is a "trick" to simulate |BFER| performance **without an
 encoder**. It is based on the |AZCW| technique (see the :ref:`src-src-type`
@@ -334,7 +334,7 @@ when a bit is 1, then the corresponding output bit is flipped.
 ``--sim-dbg``
 """""""""""""
 
-|factory::Simulation::parameters::p+dbg|
+|factory::Simulation::p+dbg|
 
 .. code-block:: bash
 
@@ -389,7 +389,7 @@ when a bit is 1, then the corresponding output bit is flipped.
 ``--sim-dbg-hex``
 """""""""""""""""
 
-|factory::Simulation::parameters::p+dbg-hex|
+|factory::Simulation::p+dbg-hex|
 
 .. code-block:: bash
 
@@ -415,7 +415,7 @@ when a bit is 1, then the corresponding output bit is flipped.
    :Default: 0
    :Examples: ``--sim-dbg-limit 1``
 
-|factory::Simulation::parameters::p+dbg-limit,d|
+|factory::Simulation::p+dbg-limit,d|
 
 .. code-block:: bash
 
@@ -441,7 +441,7 @@ when a bit is 1, then the corresponding output bit is flipped.
    :Default: 0
    :Examples: ``--sim-dbg-fra 10``
 
-|factory::Simulation::parameters::p+dbg-fra|
+|factory::Simulation::p+dbg-fra|
 
 This behavior can be overridden with the :ref:`src-src-fra` parameter and a task
 can be executed on many frames. In that case, you may want to reduce the number
@@ -487,7 +487,7 @@ of displayed frames on screen:
    :Default: 2
    :Examples: ``--sim-dbg-prec 1``
 
-|factory::Simulation::parameters::p+dbg-prec|
+|factory::Simulation::p+dbg-prec|
 
 .. code-block:: bash
 
@@ -513,7 +513,7 @@ of displayed frames on screen:
    :Default: 0
    :Examples: ``--sim-seed 42``
 
-|factory::Simulation::parameters::p+seed,S|
+|factory::Simulation::p+seed,S|
 
 .. note:: |AFF3CT| uses |PRNG| to simulate the random. As a consequence the
    simulator behavior is reproducible from a run to another. It can be helpful
@@ -526,7 +526,7 @@ of displayed frames on screen:
 ``--sim-stats``
 """""""""""""""
 
-|factory::Simulation::parameters::p+stats|
+|factory::Simulation::p+stats|
 
 .. code-block:: bash
 
@@ -603,7 +603,7 @@ parameter is enabled, it becomes the codeword size (:math:`N`).
    :Default: 0
    :Examples: ``--sim-threads 1``
 
-|factory::Simulation::parameters::p+threads,t|
+|factory::Simulation::p+threads,t|
 
 .. note:: **Monte Carlo methods are known to be embarrassingly parallel**, which
    is why, in most cases, the simulation throughput will increase linearly with
@@ -621,7 +621,7 @@ parameter is enabled, it becomes the codeword size (:math:`N`).
    :Default: 2
    :Examples: ``--sim-crc-start 1``
 
-|factory::BFER_ite::parameters::p+crc-start|
+|factory::BFER_ite::p+crc-start|
 
 .. note:: Available only for ``BFERI`` simulation type (c.f. the
    :ref:`sim-sim-type` parameter).
@@ -635,7 +635,7 @@ parameter is enabled, it becomes the codeword size (:math:`N`).
    :Default: 15
    :Examples: ``--sim-ite 10``
 
-|factory::BFER_ite::parameters::p+ite,I|
+|factory::BFER_ite::p+ite,I|
 
 .. note:: Available only for ``BFERI`` simulation type (c.f. the
    :ref:`sim-sim-type` parameter).
@@ -649,7 +649,7 @@ parameter is enabled, it becomes the codeword size (:math:`N`).
    :Default: 0
    :Examples: ``--sim-max-fra 1``
 
-|factory::Simulation::parameters::p+max-fra,n|
+|factory::Simulation::p+max-fra,n|
 
 .. note:: The default behavior is to stop the simulator when the limit is
    reached but it is possible to override it with the :ref:`sim-sim-crit-nostop`
@@ -665,7 +665,7 @@ parameter is enabled, it becomes the codeword size (:math:`N`).
    :Default: 0
    :Examples: ``--sim-stop-time 1``
 
-|factory::Simulation::parameters::p+stop-time|
+|factory::Simulation::p+stop-time|
 
 .. note:: The default behavior is to stop the simulator when the limit is
    reached but it is possible to override it with the :ref:`sim-sim-crit-nostop`
@@ -677,7 +677,7 @@ parameter is enabled, it becomes the codeword size (:math:`N`).
 ``--sim-crit-nostop`` |image_advanced_argument|
 """""""""""""""""""""""""""""""""""""""""""""""
 
-|factory::Simulation::parameters::p+crit-nostop|
+|factory::Simulation::p+crit-nostop|
 
 To combine with the :ref:`sim-sim-max-fra` and/or the :ref:`sim-sim-stop-time`
 parameters.
@@ -687,7 +687,7 @@ parameters.
 ``--sim-err-trk`` |image_advanced_argument|
 """""""""""""""""""""""""""""""""""""""""""
 
-|factory::BFER::parameters::p+err-trk|
+|factory::BFER::p+err-trk|
 
 .. tip:: When working on the design of a new decoder or when improving an
    existing one, it can be very interesting to have a database of erroneous
@@ -706,7 +706,7 @@ parameters.
 ``--sim-err-trk-rev`` |image_advanced_argument|
 """""""""""""""""""""""""""""""""""""""""""""""
 
-|factory::BFER::parameters::p+err-trk-rev|
+|factory::BFER::p+err-trk-rev|
 
 
 .. tip:: To play back the erroneous frames, just add ``-rev`` to the
@@ -722,7 +722,7 @@ parameters.
    :Default: :file:`error_tracker`
    :Examples: ``--sim-err-trk-path errors/err``
 
-|factory::BFER::parameters::p+err-trk-path|
+|factory::BFER::p+err-trk-path|
 
 For the above example, the dumped or read files will be:
 
@@ -746,7 +746,7 @@ For the above example, the dumped or read files will be:
    :Default: 0
    :Examples: ``--sim-err-trk-thold 1``
 
-|factory::BFER::parameters::p+err-trk-thold|
+|factory::BFER::p+err-trk-thold|
 
 References
 """"""""""

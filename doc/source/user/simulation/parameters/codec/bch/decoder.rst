@@ -13,7 +13,7 @@
    :Default: ``ALGEBRAIC``
    :Examples: ``--dec-type ALGEBRAIC``
 
-|factory::Decoder::parameters::p+type,D|
+|factory::Decoder::p+type,D|
 
 Description of the allowed values:
 
@@ -42,7 +42,7 @@ Description of the allowed values:
    :Default: ``STD``
    :Examples: ``--dec-implem FAST``
 
-|factory::Decoder::parameters::p+implem|
+|factory::Decoder::p+implem|
 
 Description of the allowed values:
 
@@ -88,7 +88,7 @@ Description of the allowed values:
    :Default: 5
    :Examples: ``--dec-corr-pow 18``
 
-|factory::Decoder_BCH::parameters::p+corr-pow,T|
+|factory::Decoder_BCH::p+corr-pow,T|
 
 References
 """"""""""

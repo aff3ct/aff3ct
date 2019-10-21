@@ -8,7 +8,7 @@ Other parameters
 ``--help, -h``
 """"""""""""""
 
-|factory::Launcher::parameters::help,h|
+|factory::Launcher::help,h|
 
 .. code-block:: bash
 
@@ -46,7 +46,7 @@ Other parameters
 ``--Help, -H``
 """"""""""""""
 
-|factory::Launcher::parameters::Help,H|
+|factory::Launcher::Help,H|
 
 .. code-block:: bash
 
@@ -98,7 +98,7 @@ Other parameters
 ``--version, -v``
 """""""""""""""""
 
-|factory::Launcher::parameters::version,v|
+|factory::Launcher::version,v|
 
 .. code-block:: bash
 
@@ -126,7 +126,7 @@ Other parameters
 ``--keys, -k`` |image_advanced_argument|
 """"""""""""""""""""""""""""""""""""""""
 
-|factory::Launcher::parameters::keys,k|
+|factory::Launcher::keys,k|
 
 .. code-block:: bash
 
@@ -139,31 +139,31 @@ Other parameters
 
    Simulation parameter(s):
    {R} --sim-cde-type, -C <text:including set={BCH|LDPC|POLAR|RA|REP|RS|RSC|RSC_DB|TPC|TURBO|TURBO_DB|UNCODED}>
-         [factory::Launcher::parameters::p+cde-type,C]
+         [factory::Launcher::p+cde-type,C]
          Select the channel code family to simulate.
        --sim-prec, -p     <integer:including set={8|16|32|64}>
-         [factory::Launcher::parameters::p+prec,p]
+         [factory::Launcher::p+prec,p]
          Specify the representation of the real numbers in the receiver part of the
          chain.
        --sim-type         <text:including set={BFER|BFERI|EXIT}>
-         [factory::Launcher::parameters::p+type]
+         [factory::Launcher::p+type]
          Select the type of simulation (or communication chain skeleton).
 
    Other parameter(s):
        --Help, -H
-         [factory::Launcher::parameters::Help,H]
+         [factory::Launcher::Help,H]
          Print the help like with the '--help, -h' parameter plus advanced
          arguments (denoted as '{A}').
        --help, -h
-         [factory::Launcher::parameters::help,h]
+         [factory::Launcher::help,h]
          Print the help with all the required (denoted as '{R}') and optional
          arguments. The latter change depending on the selected simulation type and
          code.
        --no-colors
-         [factory::Launcher::parameters::no-colors]
+         [factory::Launcher::no-colors]
          Disable the colors in the shell.
        --version, -v
-         [factory::Launcher::parameters::version,v]
+         [factory::Launcher::version,v]
          Print informations about the version of the source code and compilation
          options.
 
@@ -172,7 +172,7 @@ Other parameters
 ``--except-a2l`` |image_advanced_argument|
 """"""""""""""""""""""""""""""""""""""""""
 
-|factory::Launcher::parameters::except-a2l|
+|factory::Launcher::except-a2l|
 
 .. note:: This option works only on Unix based |OS| and if |AFF3CT| has been
    :ref:`compiled <compilation_compiler_options>` with debug symbols
@@ -183,14 +183,14 @@ Other parameters
 ``--except-no-bt`` |image_advanced_argument|
 """"""""""""""""""""""""""""""""""""""""""""
 
-|factory::Launcher::parameters::except-no-bt|
+|factory::Launcher::except-no-bt|
 
 .. _sim-no-legend:
 
 ``--no-legend`` |image_advanced_argument|
 """""""""""""""""""""""""""""""""""""""""
 
-|factory::Launcher::parameters::no-legend|
+|factory::Launcher::no-legend|
 
 .. tip:: Use this option when you want to complete an already existing
    simulation result file with new noise points. Pay attention to use ``>>``
@@ -202,7 +202,7 @@ Other parameters
 ``--full-legend`` |image_advanced_argument|
 """""""""""""""""""""""""""""""""""""""""""
 
-|factory::Launcher::parameters::full-legend|
+|factory::Launcher::full-legend|
 
 This additional information can help to understand a problem in the simulation.
 Data can of course be redundant from one module to another.
@@ -212,4 +212,4 @@ Data can of course be redundant from one module to another.
 ``--no-colors``
 """""""""""""""
 
-|factory::Launcher::parameters::no-colors|
+|factory::Launcher::no-colors|

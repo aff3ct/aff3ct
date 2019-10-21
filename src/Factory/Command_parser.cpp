@@ -11,10 +11,10 @@ const cli::Argument_tag aff3ct::factory::Command_parser::help_tag = {"help", "h"
 
 Command_parser
 ::Command_parser(int argc, char** argv,
-                 std::vector<Factory::parameters*> &_params,
+                 std::vector<Factory*> &_factories,
 	             bool add_help_tag,
                  std::ostream& _err_stream)
-: ahandler(argc, (const char**)argv), params(_params), err_stream(_err_stream), help_asked(false)
+: ahandler(argc, (const char**)argv), factories(_factories), err_stream(_err_stream), help_asked(false)
 {
 	parse(add_help_tag);
 }
@@ -23,7 +23,7 @@ void Command_parser
 ::parse(bool add_help_tag)
 {
 	// build the required and optional arguments for the cmd line
-	Factory::get_description(params, args);
+	Factory::get_description(factories, args);
 
 	if (add_help_tag && !args.exist(Command_parser::help_tag))
 	{
@@ -35,8 +35,8 @@ void Command_parser
 
 	try
 	{
-		// write the parameters values in "params" from "read_args"
-		Factory::store(params, read_args);
+		// write the parameters values in "factories" from "read_args"
+		Factory::store(factories, read_args);
 	}
 	catch(const std::exception& e)
 	{
@@ -56,7 +56,7 @@ void Command_parser
 	if (help_asked)
 	{
 		// create groups of arguments
-		auto grps = Factory::create_groups(params);
+		auto grps = Factory::create_groups(factories);
 
 		// display the command usage and the help (the parameters are ordered by group)
 		ahandler.print_help(args, grps);

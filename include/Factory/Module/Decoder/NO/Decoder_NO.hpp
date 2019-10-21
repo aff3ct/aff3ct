@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Decoder_NO::parameters.
+ * \brief Class factory::Decoder_NO.
  */
 #ifndef FACTORY_DECODER_NO_HPP
 #define FACTORY_DECODER_NO_HPP
@@ -21,37 +21,28 @@ namespace factory
 {
 extern const std::string Decoder_NO_name;
 extern const std::string Decoder_NO_prefix;
-struct Decoder_NO : public Decoder
+class Decoder_NO : public Decoder
 {
-	class parameters : public Decoder::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// empty
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// empty
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Decoder_NO_prefix);
-		virtual ~parameters() = default;
-		Decoder_NO::parameters* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Decoder_NO(const std::string &p = Decoder_NO_prefix);
+	virtual ~Decoder_NO() = default;
+	Decoder_NO* clone() const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int, typename Q = float>
-		module::Decoder_SISO_SIHO<B,Q>* build_siso(const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
-
-		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build(const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
-	};
+	// builder
+	template <typename B = int, typename Q = float>
+	module::Decoder_SISO_SIHO<B,Q>* build_siso(const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SISO_SIHO<B,Q>* build_siso(const parameters &params, const std::unique_ptr<module::Encoder<B>>& encoder = nullptr);
-
-	template <typename B = int, typename Q = float>
-	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const std::unique_ptr<module::Encoder<B>>& encoder = nullptr);
+	module::Decoder_SIHO<B,Q>* build(const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 };
 }
 }

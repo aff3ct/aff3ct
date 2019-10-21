@@ -11,25 +11,25 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Monitor_MI_name   = "Monitor MI";
 const std::string aff3ct::factory::Monitor_MI_prefix = "mnt";
 
-Monitor_MI::parameters
-::parameters(const std::string &prefix)
-: Monitor::parameters(Monitor_name, prefix)
+Monitor_MI
+::Monitor_MI(const std::string &prefix)
+: Monitor(Monitor_name, prefix)
 {
 }
 
-Monitor_MI::parameters* Monitor_MI::parameters
+Monitor_MI* Monitor_MI
 ::clone() const
 {
-	return new Monitor_MI::parameters(*this);
+	return new Monitor_MI(*this);
 }
 
-void Monitor_MI::parameters
+void Monitor_MI
 ::get_description(cli::Argument_map_info &args) const
 {
-	Monitor::parameters::get_description(args);
+	Monitor::get_description(args);
 
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Monitor_MI::parameters::";
+	const std::string class_name = "factory::Monitor_MI::";
 
 	tools::add_arg(args, p, class_name+"p+fra-size,N",
 		cli::Integer(cli::Positive(), cli::Non_zero()),
@@ -42,10 +42,10 @@ void Monitor_MI::parameters
 		cli::Integer(cli::Positive(), cli::Non_zero()));
 }
 
-void Monitor_MI::parameters
+void Monitor_MI
 ::store(const cli::Argument_map_value &vals)
 {
-	Monitor::parameters::store(vals);
+	Monitor::store(vals);
 
 	auto p = this->get_prefix();
 
@@ -54,10 +54,10 @@ void Monitor_MI::parameters
 	if(vals.exist({p+"-trials",   "n"})) this->n_trials = vals.to_int({p+"-trials",   "n"});
 }
 
-void Monitor_MI::parameters
+void Monitor_MI
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	Monitor::parameters::get_headers(headers, full);
+	Monitor::get_headers(headers, full);
 
 	auto p = this->get_prefix();
 
@@ -67,7 +67,7 @@ void Monitor_MI::parameters
 }
 
 template <typename B, typename R>
-module::Monitor_MI<B,R>* Monitor_MI::parameters
+module::Monitor_MI<B,R>* Monitor_MI
 ::build() const
 {
 	if (this->type == "STD") return new module::Monitor_MI<B,R>(this->N, this->n_trials, this->n_frames);
@@ -75,26 +75,14 @@ module::Monitor_MI<B,R>* Monitor_MI::parameters
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename R>
-module::Monitor_MI<B,R>* Monitor_MI
-::build(const parameters& params)
-{
-	return params.template build<B,R>();
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Monitor_MI<B_8 ,R_8 >* aff3ct::factory::Monitor_MI::parameters::build<B_8, R_8 >() const;
-template aff3ct::module::Monitor_MI<B_16,R_16>* aff3ct::factory::Monitor_MI::parameters::build<B_16,R_16>() const;
-template aff3ct::module::Monitor_MI<B_32,R_32>* aff3ct::factory::Monitor_MI::parameters::build<B_32,R_32>() const;
-template aff3ct::module::Monitor_MI<B_64,R_64>* aff3ct::factory::Monitor_MI::parameters::build<B_64,R_64>() const;
-template aff3ct::module::Monitor_MI<B_8 ,R_8 >* aff3ct::factory::Monitor_MI::build<B_8, R_8 >(const aff3ct::factory::Monitor_MI::parameters&);
-template aff3ct::module::Monitor_MI<B_16,R_16>* aff3ct::factory::Monitor_MI::build<B_16,R_16>(const aff3ct::factory::Monitor_MI::parameters&);
-template aff3ct::module::Monitor_MI<B_32,R_32>* aff3ct::factory::Monitor_MI::build<B_32,R_32>(const aff3ct::factory::Monitor_MI::parameters&);
-template aff3ct::module::Monitor_MI<B_64,R_64>* aff3ct::factory::Monitor_MI::build<B_64,R_64>(const aff3ct::factory::Monitor_MI::parameters&);
+template aff3ct::module::Monitor_MI<B_8 ,R_8 >* aff3ct::factory::Monitor_MI::build<B_8, R_8 >() const;
+template aff3ct::module::Monitor_MI<B_16,R_16>* aff3ct::factory::Monitor_MI::build<B_16,R_16>() const;
+template aff3ct::module::Monitor_MI<B_32,R_32>* aff3ct::factory::Monitor_MI::build<B_32,R_32>() const;
+template aff3ct::module::Monitor_MI<B_64,R_64>* aff3ct::factory::Monitor_MI::build<B_64,R_64>() const;
 #else
-template aff3ct::module::Monitor_MI<B,R>* aff3ct::factory::Monitor_MI::parameters::build<B,R>() const;
-template aff3ct::module::Monitor_MI<B,R>* aff3ct::factory::Monitor_MI::build<B,R>(const aff3ct::factory::Monitor_MI::parameters&);
+template aff3ct::module::Monitor_MI<B,R>* aff3ct::factory::Monitor_MI::build<B,R>() const;
 #endif
 // ==================================================================================== explicit template instantiation

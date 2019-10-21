@@ -23,7 +23,7 @@ errors to an acceptable rate).
    :Default: ``AWGN``
    :Examples: ``--chn-type AWGN``
 
-|factory::Channel::parameters::p+type|
+|factory::Channel::p+type|
 
 Description of the allowed values:
 
@@ -153,7 +153,7 @@ for a bit transmitted at 1.
    :Default: ``STD``
    :Examples: ``--chn-implem FAST``
 
-|factory::Channel::parameters::p+implem|
+|factory::Channel::p+implem|
 
 Description of the allowed values:
 
@@ -251,7 +251,7 @@ experiments is an *Intel(R) Xeon(R) CPU E3-1270 v5 @ 3.60GHz* 8 threads |CPU|.
    :Default: 1
    :Examples: ``--chn-gain-occur 10``
 
-|factory::Channel::parameters::p+blk-fad|
+|factory::Channel::p+blk-fad|
 
 .. note:: At this time the ``FRAME`` and ``ONETAP`` block fading are not
    implemented.
@@ -265,7 +265,7 @@ experiments is an *Intel(R) Xeon(R) CPU E3-1270 v5 @ 3.60GHz* 8 threads |CPU|.
    :Default: 1
    :Examples: ``--chn-gain-occur 10``
 
-|factory::Channel::parameters::p+gain-occur|
+|factory::Channel::p+gain-occur|
 
 .. _chn-chn-path:
 
@@ -276,7 +276,7 @@ experiments is an *Intel(R) Xeon(R) CPU E3-1270 v5 @ 3.60GHz* 8 threads |CPU|.
    :Rights: read
    :Examples: ``--chn-path example/path/to/the/right/file``
 
-|factory::Channel::parameters::p+path|
+|factory::Channel::p+path|
 
 The expected type of noise vary depending of the channel type (see the
 :ref:`chn-chn-type` parameter for more details):

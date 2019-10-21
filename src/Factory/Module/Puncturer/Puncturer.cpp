@@ -10,29 +10,29 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Puncturer_name   = "Puncturer";
 const std::string aff3ct::factory::Puncturer_prefix = "pct";
 
-Puncturer::parameters
-::parameters(const std::string &prefix)
-: Factory::parameters(Puncturer_name, Puncturer_name, prefix)
+Puncturer
+::Puncturer(const std::string &prefix)
+: Factory(Puncturer_name, Puncturer_name, prefix)
 {
 }
 
-Puncturer::parameters
-::parameters(const std::string &name, const std::string &prefix)
-: Factory::parameters(name, Puncturer_name, prefix)
+Puncturer
+::Puncturer(const std::string &name, const std::string &prefix)
+: Factory(name, Puncturer_name, prefix)
 {
 }
 
-Puncturer::parameters* Puncturer::parameters
+Puncturer* Puncturer
 ::clone() const
 {
-	return new Puncturer::parameters(*this);
+	return new Puncturer(*this);
 }
 
-void Puncturer::parameters
+void Puncturer
 ::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Puncturer::parameters::";
+	const std::string class_name = "factory::Puncturer::";
 
 	tools::add_arg(args, p, class_name+"p+info-bits,K",
 		cli::Integer(cli::Positive(), cli::Non_zero()),
@@ -49,7 +49,7 @@ void Puncturer::parameters
 		cli::Text(cli::Including_set("NO")));
 }
 
-void Puncturer::parameters
+void Puncturer
 ::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
@@ -62,7 +62,7 @@ void Puncturer::parameters
 	this->N_cw = this->N;
 }
 
-void Puncturer::parameters
+void Puncturer
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
 	auto p = this->get_prefix();
@@ -75,7 +75,7 @@ void Puncturer::parameters
 }
 
 template <typename B, typename Q>
-module::Puncturer<B,Q>* Puncturer::parameters
+module::Puncturer<B,Q>* Puncturer
 ::build() const
 {
 	if (this->type == "NO") return new module::Puncturer_NO<B,Q>(this->K, this->N, this->n_frames);
@@ -83,25 +83,14 @@ module::Puncturer<B,Q>* Puncturer::parameters
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename Q>
-module::Puncturer<B,Q>* Puncturer
-::build(const parameters &params)
-{
-	return params.template build<B,Q>();
-}
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Puncturer<B_8 ,Q_8 >* aff3ct::factory::Puncturer::parameters::build<B_8 ,Q_8 >() const;
-template aff3ct::module::Puncturer<B_16,Q_16>* aff3ct::factory::Puncturer::parameters::build<B_16,Q_16>() const;
-template aff3ct::module::Puncturer<B_32,Q_32>* aff3ct::factory::Puncturer::parameters::build<B_32,Q_32>() const;
-template aff3ct::module::Puncturer<B_64,Q_64>* aff3ct::factory::Puncturer::parameters::build<B_64,Q_64>() const;
-template aff3ct::module::Puncturer<B_8 ,Q_8 >* aff3ct::factory::Puncturer::build<B_8 ,Q_8 >(const aff3ct::factory::Puncturer::parameters&);
-template aff3ct::module::Puncturer<B_16,Q_16>* aff3ct::factory::Puncturer::build<B_16,Q_16>(const aff3ct::factory::Puncturer::parameters&);
-template aff3ct::module::Puncturer<B_32,Q_32>* aff3ct::factory::Puncturer::build<B_32,Q_32>(const aff3ct::factory::Puncturer::parameters&);
-template aff3ct::module::Puncturer<B_64,Q_64>* aff3ct::factory::Puncturer::build<B_64,Q_64>(const aff3ct::factory::Puncturer::parameters&);
+template aff3ct::module::Puncturer<B_8 ,Q_8 >* aff3ct::factory::Puncturer::build<B_8 ,Q_8 >() const;
+template aff3ct::module::Puncturer<B_16,Q_16>* aff3ct::factory::Puncturer::build<B_16,Q_16>() const;
+template aff3ct::module::Puncturer<B_32,Q_32>* aff3ct::factory::Puncturer::build<B_32,Q_32>() const;
+template aff3ct::module::Puncturer<B_64,Q_64>* aff3ct::factory::Puncturer::build<B_64,Q_64>() const;
 #else
-template aff3ct::module::Puncturer<B,Q>* aff3ct::factory::Puncturer::parameters::build<B,Q>() const;
-template aff3ct::module::Puncturer<B,Q>* aff3ct::factory::Puncturer::build<B,Q>(const aff3ct::factory::Puncturer::parameters&);
+template aff3ct::module::Puncturer<B,Q>* aff3ct::factory::Puncturer::build<B,Q>() const;
 #endif
 // ==================================================================================== explicit template instantiation

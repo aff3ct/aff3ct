@@ -42,7 +42,7 @@ Parameter :math:`alpha` is set with the argument :ref:`dec-turbo_prod-dec-alpha`
    :Type: integer
    :Examples: ``--dec-sub-cw-size 1``
 
-|factory::Decoder::parameters::p+cw-size,N|
+|factory::Decoder::p+cw-size,N|
 
 .. _dec-turbo_prod-dec-sub-info-bits:
 
@@ -52,7 +52,7 @@ Parameter :math:`alpha` is set with the argument :ref:`dec-turbo_prod-dec-alpha`
    :Type: integer
    :Examples: ``--dec-sub-info-bits 1``
 
-|factory::Decoder::parameters::p+info-bits,K|
+|factory::Decoder::p+info-bits,K|
 
 .. _dec-turbo_prod-dec-type:
 
@@ -64,7 +64,7 @@ Parameter :math:`alpha` is set with the argument :ref:`dec-turbo_prod-dec-alpha`
    :Default: ``CP``
    :Examples: ``--dec-type CP``
 
-|factory::Decoder::parameters::p+type,D|
+|factory::Decoder::p+type,D|
 
 This algorithm will decode each column and row of the |TPC|.
 
@@ -146,7 +146,7 @@ Description of the allowed values:
    :Default: ``STD``
    :Examples: ``--dec-implem STD``
 
-|factory::Decoder::parameters::p+implem|
+|factory::Decoder::p+implem|
 
 Description of the allowed values:
 
@@ -167,7 +167,7 @@ Description of the allowed values:
    :Default: 4
    :Examples: ``--dec-ite 8``
 
-|factory::Decoder_turbo_product::parameters::p+ite,i|
+|factory::Decoder_turbo_product::p+ite,i|
 
 .. _dec-turbo_prod-dec-alpha:
 
@@ -178,7 +178,7 @@ Description of the allowed values:
    :Default: all at 0.5
    :Examples: ``--dec-alpha "0.1,0.1,0.2,0.25,0.3,0.35,.5,.5,1.2"``
 
-|factory::Decoder_turbo_product::parameters::p+alpha|
+|factory::Decoder_turbo_product::p+alpha|
 
 The first one is for the first columns process, the second for the first rows
 process, the third for the second columns process, the fourth for the second
@@ -196,7 +196,7 @@ Conversely, if there are too many, the surplus is truncated.
    :Type: list of real numbers
    :Examples: ``--dec-beta "0.1,0.1,0.2,0.25,0.3,0.35,.5,.5,1.2"``
 
-|factory::Decoder_turbo_product::parameters::p+beta|
+|factory::Decoder_turbo_product::p+beta|
 
 The first one is for the first columns process, the second for the first rows
 process, the third for the second columns process, the fourth for the second
@@ -218,7 +218,7 @@ If not given, then beta is dynamically computed as described in
    :Default: 0
    :Examples: ``--dec-c 3``
 
-|factory::Decoder_turbo_product::parameters::p+c|
+|factory::Decoder_turbo_product::p+c|
 
 .. _dec-turbo_prod-dec-p:
 
@@ -229,7 +229,7 @@ If not given, then beta is dynamically computed as described in
    :Default: 2
    :Examples: ``--dec-p 1``
 
-|factory::Decoder_turbo_product::parameters::p+p|
+|factory::Decoder_turbo_product::p+p|
 
 .. _dec-turbo_prod-dec-t:
 
@@ -240,7 +240,7 @@ If not given, then beta is dynamically computed as described in
    :Default: 0
    :Examples: ``--dec-t 1``
 
-|factory::Decoder_turbo_product::parameters::p+t|
+|factory::Decoder_turbo_product::p+t|
 
 .. _dec-turbo_prod-dec-cp-coef:
 
@@ -251,7 +251,7 @@ If not given, then beta is dynamically computed as described in
    :Default: ``"1,1,1,1,0"``
    :Examples: ``--dec-cp-coef "0,0.25,0,0,3"``
 
-|factory::Decoder_turbo_product::parameters::p+cp-coef|
+|factory::Decoder_turbo_product::p+cp-coef|
 
 See the :ref:`dec-turbo_prod-dec-type` parameter.
 

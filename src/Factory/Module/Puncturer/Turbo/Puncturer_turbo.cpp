@@ -9,11 +9,6 @@
 #include "Module/Puncturer/Turbo/Puncturer_turbo.hpp"
 #include "Factory/Module/Puncturer/Turbo/Puncturer_turbo.hpp"
 #include "Tools/types.h"
-#ifdef AFF3CT_MULTI_PREC
-using PT = aff3ct::module::Puncturer_turbo<B_32,Q_32>;
-#else
-using PT = aff3ct::module::Puncturer_turbo<B,Q>;
-#endif
 
 using namespace aff3ct;
 using namespace aff3ct::factory;
@@ -21,17 +16,23 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Puncturer_turbo_name   = "Puncturer Turbo";
 const std::string aff3ct::factory::Puncturer_turbo_prefix = "pct";
 
-Puncturer_turbo::parameters
-::parameters(const std::string &prefix)
-: Puncturer::parameters(Puncturer_turbo_name, prefix)
+#ifdef AFF3CT_MULTI_PREC
+using PT = aff3ct::module::Puncturer_turbo<B_32,Q_32>;
+#else
+using PT = aff3ct::module::Puncturer_turbo<B,Q>;
+#endif
+
+Puncturer_turbo
+::Puncturer_turbo(const std::string &prefix)
+: Puncturer(Puncturer_turbo_name, prefix)
 {
 	this->type = "TURBO";
 }
 
-Puncturer_turbo::parameters* Puncturer_turbo::parameters
+Puncturer_turbo* Puncturer_turbo
 ::clone() const
 {
-	return new Puncturer_turbo::parameters(*this);
+	return new Puncturer_turbo(*this);
 }
 
 struct sub_same_length
@@ -45,13 +46,13 @@ struct sub_same_length
 	}
 };
 
-void Puncturer_turbo::parameters
+void Puncturer_turbo
 ::get_description(cli::Argument_map_info &args) const
 {
-	Puncturer::parameters::get_description(args);
+	Puncturer::get_description(args);
 
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Puncturer_turbo::parameters::";
+	const std::string class_name = "factory::Puncturer_turbo::";
 
 	args.erase({p+"-fra-size", "N"});
 
@@ -69,10 +70,10 @@ void Puncturer_turbo::parameters
 		cli::None());
 }
 
-void Puncturer_turbo::parameters
+void Puncturer_turbo
 ::store(const cli::Argument_map_value &vals)
 {
-	Puncturer::parameters::store(vals);
+	Puncturer::store(vals);
 
 	auto p = this->get_prefix();
 
@@ -87,10 +88,10 @@ void Puncturer_turbo::parameters
 		this->type = "NO";
 }
 
-void Puncturer_turbo::parameters
+void Puncturer_turbo
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	Puncturer::parameters::get_headers(headers, full);
+	Puncturer::get_headers(headers, full);
 
 	auto p = this->get_prefix();
 
@@ -103,7 +104,7 @@ void Puncturer_turbo::parameters
 }
 
 template <typename B, typename Q>
-module::Puncturer<B,Q>* Puncturer_turbo::parameters
+module::Puncturer<B,Q>* Puncturer_turbo
 ::build() const
 {
 	if (this->type == "TURBO") return new module::Puncturer_turbo<B,Q>(this->K, this->N, this->tail_length, this->pattern, this->buffered, this->n_frames);
@@ -111,26 +112,14 @@ module::Puncturer<B,Q>* Puncturer_turbo::parameters
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename Q>
-module::Puncturer<B,Q>* Puncturer_turbo
-::build(const parameters &params)
-{
-	return params.template build<B,Q>();
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Puncturer<B_8 ,Q_8 >* aff3ct::factory::Puncturer_turbo::parameters::build<B_8 ,Q_8 >() const;
-template aff3ct::module::Puncturer<B_16,Q_16>* aff3ct::factory::Puncturer_turbo::parameters::build<B_16,Q_16>() const;
-template aff3ct::module::Puncturer<B_32,Q_32>* aff3ct::factory::Puncturer_turbo::parameters::build<B_32,Q_32>() const;
-template aff3ct::module::Puncturer<B_64,Q_64>* aff3ct::factory::Puncturer_turbo::parameters::build<B_64,Q_64>() const;
-template aff3ct::module::Puncturer<B_8 ,Q_8 >* aff3ct::factory::Puncturer_turbo::build<B_8 ,Q_8 >(const aff3ct::factory::Puncturer_turbo::parameters&);
-template aff3ct::module::Puncturer<B_16,Q_16>* aff3ct::factory::Puncturer_turbo::build<B_16,Q_16>(const aff3ct::factory::Puncturer_turbo::parameters&);
-template aff3ct::module::Puncturer<B_32,Q_32>* aff3ct::factory::Puncturer_turbo::build<B_32,Q_32>(const aff3ct::factory::Puncturer_turbo::parameters&);
-template aff3ct::module::Puncturer<B_64,Q_64>* aff3ct::factory::Puncturer_turbo::build<B_64,Q_64>(const aff3ct::factory::Puncturer_turbo::parameters&);
+template aff3ct::module::Puncturer<B_8 ,Q_8 >* aff3ct::factory::Puncturer_turbo::build<B_8 ,Q_8 >() const;
+template aff3ct::module::Puncturer<B_16,Q_16>* aff3ct::factory::Puncturer_turbo::build<B_16,Q_16>() const;
+template aff3ct::module::Puncturer<B_32,Q_32>* aff3ct::factory::Puncturer_turbo::build<B_32,Q_32>() const;
+template aff3ct::module::Puncturer<B_64,Q_64>* aff3ct::factory::Puncturer_turbo::build<B_64,Q_64>() const;
 #else
-template aff3ct::module::Puncturer<B,Q>* aff3ct::factory::Puncturer_turbo::parameters::build<B,Q>() const;
-template aff3ct::module::Puncturer<B,Q>* aff3ct::factory::Puncturer_turbo::build<B,Q>(const aff3ct::factory::Puncturer_turbo::parameters&);
+template aff3ct::module::Puncturer<B,Q>* aff3ct::factory::Puncturer_turbo::build<B,Q>() const;
 #endif
 // ==================================================================================== explicit template instantiation

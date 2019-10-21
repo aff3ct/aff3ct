@@ -13,7 +13,7 @@ template <class L, typename B = int, typename R = float, typename Q = R>
 class Turbo_product : public L
 {
 protected:
-	factory::Codec_turbo_product::parameters *params_cdc;
+	factory::Codec_turbo_product *params_cdc;
 
 public:
 	Turbo_product(const int argc, const char **argv, std::ostream &stream = std::cout);

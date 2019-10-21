@@ -13,7 +13,7 @@
    :Examples: ``--dec-h-path conf/dec/LDPC/AR4JA_4096_8192.qc``
               ``--dec-h-path conf/dec/LDPC/MACKAY_504_1008.alist``
 
-|factory::Decoder_LDPC::parameters::p+h-path|
+|factory::Decoder_LDPC::p+h-path|
 
 This argument is not required if the encoder type :ref:`enc-ldpc-enc-type`
 is ``LDPC_DVBS2``.
@@ -98,7 +98,7 @@ For the |QC| format, an |ASCII| file composed by integers is expected:
    :Default: ``BP_FLOODING``
    :Examples: ``--dec-type BP_HORIZONTAL_LAYERED``
 
-|factory::Decoder::parameters::p+type,D|
+|factory::Decoder::p+type,D|
 
 Description of the allowed values:
 
@@ -139,7 +139,7 @@ Description of the allowed values:
    :Default: ``SPA``
    :Examples: ``--dec-implem AMS``
 
-|factory::Decoder::parameters::p+implem|
+|factory::Decoder::p+implem|
 
 Description of the allowed values:
 
@@ -220,7 +220,7 @@ version 8.1.0). When compiling with the GNU compiler in C++11 mode, the
    :Allowed values: ``INTER``
    :Examples: ``--dec-simd INTER``
 
-|factory::Decoder_LDPC::parameters::p+simd|
+|factory::Decoder_LDPC::p+simd|
 
 :numref:`tab_ldpc_dec_implem` shows the decoders and implementations that
 support |SIMD|.
@@ -262,7 +262,7 @@ Description of the allowed values:
    :Default: ``NONE``
    :Examples: ``--dec-h-reorder ASC``
 
-|factory::Decoder_LDPC::parameters::p+h-reorder|
+|factory::Decoder_LDPC::p+h-reorder|
 
 The degree of a |CN| is the number of |VNs| that are connected to it.
 
@@ -293,7 +293,7 @@ Description of the allowed values:
    :Default: 10
    :Examples: ``--dec-ite 30``
 
-|factory::Decoder_LDPC::parameters::p+ite,i|
+|factory::Decoder_LDPC::p+ite,i|
 
 .. note:: By default, in order to speedup the decoding time, the decoder can
    stop the decoding process if all the parity check equations are verified
@@ -311,7 +311,7 @@ Description of the allowed values:
    :Default: ``MINL``
    :Examples: ``--dec-min MIN``
 
-|factory::Decoder_LDPC::parameters::p+min|
+|factory::Decoder_LDPC::p+min|
 
 Description of the allowed values:
 
@@ -349,7 +349,7 @@ only a :math:`\min` function.
    :Default: 1.0
    :Examples: ``--dec-norm 0.75``
 
-|factory::Decoder_LDPC::parameters::p+norm|
+|factory::Decoder_LDPC::p+norm|
 
 .. _dec-ldpc-dec-off:
 
@@ -360,7 +360,7 @@ only a :math:`\min` function.
    :Default: 0.0
    :Examples: ``--dec-off 0.25``
 
-|factory::Decoder_LDPC::parameters::p+off|
+|factory::Decoder_LDPC::p+off|
 
 .. _dec-ldpc-dec-mwbf-factor:
 
@@ -371,7 +371,7 @@ only a :math:`\min` function.
    :Default: 0.0
    :Examples: ``--dec-mwbf-factor 1.0``
 
-|factory::Decoder_LDPC::parameters::p+mwbf-factor|
+|factory::Decoder_LDPC::p+mwbf-factor|
 
 .. _dec-ldpc-dec-synd-depth:
 
@@ -382,7 +382,7 @@ only a :math:`\min` function.
    :Default: 1
    :Examples: ``--dec-synd-depth 2``
 
-|factory::Decoder_LDPC::parameters::p+synd-depth|
+|factory::Decoder_LDPC::p+synd-depth|
 
 .. _dec-ldpc-dec-ppbf-proba:
 
@@ -392,7 +392,7 @@ only a :math:`\min` function.
    :Type: list of real numbers
    :Examples: ``--dec-ppbf-proba "0,0.001,0.1,0.3,1,1,1"``
 
-|factory::Decoder_LDPC::parameters::p+ppbf-proba|
+|factory::Decoder_LDPC::p+ppbf-proba|
 
 Thus, with a parity matrix that has its largest variable node at 5, you must
 give 7 values. Each value corresponds to an energy level as described in
@@ -403,7 +403,7 @@ give 7 values. Each value corresponds to an energy level as described in
 ``--dec-no-synd``
 """""""""""""""""
 
-|factory::Decoder_LDPC::parameters::p+no-synd|
+|factory::Decoder_LDPC::p+no-synd|
 
 References
 """"""""""

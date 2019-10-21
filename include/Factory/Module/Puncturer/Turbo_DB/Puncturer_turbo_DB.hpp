@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Puncturer_turbo_DB::parameters.
+ * \brief Class factory::Puncturer_turbo_DB.
  */
 #ifndef FACTORY_PUNCTURER_TURBO_DB_HPP
 #define FACTORY_PUNCTURER_TURBO_DB_HPP
@@ -18,27 +18,21 @@ namespace factory
 {
 extern const std::string Puncturer_turbo_DB_name;
 extern const std::string Puncturer_turbo_DB_prefix;
-struct Puncturer_turbo_DB : public Puncturer
+class Puncturer_turbo_DB : public Puncturer
 {
-	class parameters : public Puncturer::parameters
-	{
-	public:
-		explicit parameters(const std::string &p = Puncturer_turbo_DB_prefix);
-		virtual ~parameters() = default;
-		Puncturer_turbo_DB::parameters* clone() const;
+public:
+	explicit Puncturer_turbo_DB(const std::string &p = Puncturer_turbo_DB_prefix);
+	virtual ~Puncturer_turbo_DB() = default;
+	Puncturer_turbo_DB* clone() const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int, typename Q = float>
-		module::Puncturer<B,Q>* build() const;
-	};
-
+	// builder
 	template <typename B = int, typename Q = float>
-	static module::Puncturer<B,Q>* build(const parameters &params);
+	module::Puncturer<B,Q>* build() const;
 };
 }
 }

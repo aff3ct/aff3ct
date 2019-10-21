@@ -26,7 +26,7 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 BFER<B,R,Q>
-::BFER(const factory::BFER::parameters& params_BFER)
+::BFER(const factory::BFER& params_BFER)
 : Simulation(params_BFER),
   params_BFER(params_BFER),
 
@@ -118,7 +118,7 @@ void BFER<B,R,Q>
 				this->monitor_mi_red->clear_callbacks();
 
 			// dirty hack to override simulation params_BFER
-			auto &params_BFER_writable = const_cast<factory::BFER::parameters&>(params_BFER);
+			auto &params_BFER_writable = const_cast<factory::BFER&>(params_BFER);
 
 			std::stringstream s_noise;
 			s_noise << std::setprecision(2) << std::fixed << this->noise->get_noise();

@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Encoder_BCH::parameters.
+ * \brief Class factory::Encoder_BCH.
  */
 #ifndef FACTORY_ENCODER_BCH_HPP
 #define FACTORY_ENCODER_BCH_HPP
@@ -19,31 +19,25 @@ namespace factory
 {
 extern const std::string Encoder_BCH_name;
 extern const std::string Encoder_BCH_prefix;
-struct Encoder_BCH : public Encoder
+class Encoder_BCH : public Encoder
 {
-	class parameters : public Encoder::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// empty
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// empty
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Encoder_BCH_prefix);
-		virtual ~parameters() = default;
-		Encoder_BCH::parameters* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Encoder_BCH(const std::string &p = Encoder_BCH_prefix);
+	virtual ~Encoder_BCH() = default;
+	Encoder_BCH* clone() const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int>
-		module::Encoder_BCH<B>* build(const tools::BCH_polynomial_generator<B> &GF) const;
-	};
-
+	// builder
 	template <typename B = int>
-	static module::Encoder_BCH<B>* build(const parameters &params, const tools::BCH_polynomial_generator<B> &GF);
+	module::Encoder_BCH<B>* build(const tools::BCH_polynomial_generator<B> &GF) const;
 };
 }
 }

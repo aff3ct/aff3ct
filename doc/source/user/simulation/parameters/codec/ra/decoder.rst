@@ -13,7 +13,7 @@
    :Default: ``RA``
    :Examples: ``--dec-type CHASE``
 
-|factory::Decoder::parameters::p+type,D|
+|factory::Decoder::p+type,D|
 
 Description of the allowed values:
 
@@ -44,7 +44,7 @@ Description of the allowed values:
    :Default: ``STD``
    :Examples: ``--dec-implem STD``
 
-|factory::Decoder::parameters::p+implem|
+|factory::Decoder::p+implem|
 
 Description of the allowed values:
 
@@ -64,4 +64,4 @@ Description of the allowed values:
    :Type: integer
    :Examples: ``--dec-ite 1``
 
-|factory::Decoder_RA::parameters::p+ite,i|
+|factory::Decoder_RA::p+ite,i|

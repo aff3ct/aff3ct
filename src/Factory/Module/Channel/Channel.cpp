@@ -38,23 +38,23 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Channel_name   = "Channel";
 const std::string aff3ct::factory::Channel_prefix = "chn";
 
-Channel::parameters
-::parameters(const std::string &prefix)
-: Factory::parameters(Channel_name, Channel_name, prefix)
+Channel
+::Channel(const std::string &prefix)
+: Factory(Channel_name, Channel_name, prefix)
 {
 }
 
-Channel::parameters* Channel::parameters
+Channel* Channel
 ::clone() const
 {
-	return new Channel::parameters(*this);
+	return new Channel(*this);
 }
 
-void Channel::parameters
+void Channel
 ::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Channel::parameters::";
+	const std::string class_name = "factory::Channel::";
 
 	tools::add_arg(args, p, class_name+"p+fra-size,N",
 		cli::Integer(cli::Positive(), cli::Non_zero()),
@@ -99,7 +99,7 @@ void Channel::parameters
 		cli::Integer(cli::Positive(), cli::Non_zero()));
 }
 
-void Channel::parameters
+void Channel
 ::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
@@ -117,7 +117,7 @@ void Channel::parameters
 	if(vals.exist({p+"-noise"        })) this->noise        = vals.to_float({p+"-noise"      });
 }
 
-void Channel::parameters
+void Channel
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
 	auto p = this->get_prefix();
@@ -148,7 +148,7 @@ void Channel::parameters
 }
 
 template <typename R>
-module::Channel<R>* Channel::parameters
+module::Channel<R>* Channel
 ::build_event() const
 {
 	std::unique_ptr<tools::Event_generator<R>> n;
@@ -170,7 +170,7 @@ module::Channel<R>* Channel::parameters
 }
 
 template <typename R>
-module::Channel<R>* Channel::parameters
+module::Channel<R>* Channel
 ::build_gaussian() const
 {
 	std::unique_ptr<tools::Gaussian_noise_generator<R>> n = nullptr;
@@ -193,7 +193,7 @@ module::Channel<R>* Channel::parameters
 }
 
 template <typename R>
-module::Channel<R>* Channel::parameters
+module::Channel<R>* Channel
 ::build_userpdf(const tools::Distributions<R>& dist) const
 {
 	std::unique_ptr<tools::User_pdf_noise_generator<R>> n = nullptr;
@@ -214,7 +214,7 @@ module::Channel<R>* Channel::parameters
 }
 
 template <typename R>
-module::Channel<R>* Channel::parameters
+module::Channel<R>* Channel
 ::build() const
 {
 	try	{
@@ -235,7 +235,7 @@ module::Channel<R>* Channel::parameters
 }
 
 template <typename R>
-module::Channel<R>* Channel::parameters
+module::Channel<R>* Channel
 ::build(const tools::Distributions<R>& dist) const
 {
 	try	{
@@ -245,37 +245,15 @@ module::Channel<R>* Channel::parameters
 	return build<R>();
 }
 
-template <typename R>
-module::Channel<R>* Channel
-::build(const parameters &params)
-{
-	return params.template build<R>();
-}
-
-template <typename R>
-module::Channel<R>* Channel
-::build(const parameters &params, const tools::Distributions<R>& dist)
-{
-	return params.template build<R>(dist);
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::parameters::build<R_32>() const;
-template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::parameters::build<R_64>() const;
-template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::build<R_32>(const aff3ct::factory::Channel::parameters&);
-template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::build<R_64>(const aff3ct::factory::Channel::parameters&);
-
-template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::parameters::build<R_32>(const tools::Distributions<R_32>&) const;
-template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::parameters::build<R_64>(const tools::Distributions<R_64>&) const;
-template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::build<R_32>(const aff3ct::factory::Channel::parameters&, const tools::Distributions<R_32>&);
-template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::build<R_64>(const aff3ct::factory::Channel::parameters&, const tools::Distributions<R_64>&);
+template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::build<R_32>() const;
+template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::build<R_64>() const;
+template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::build<R_32>(const tools::Distributions<R_32>&) const;
+template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::build<R_64>(const tools::Distributions<R_64>&) const;
 #else
-template aff3ct::module::Channel<R>* aff3ct::factory::Channel::parameters::build<R>() const;
-template aff3ct::module::Channel<R>* aff3ct::factory::Channel::build<R>(const aff3ct::factory::Channel::parameters&);
-
-template aff3ct::module::Channel<R>* aff3ct::factory::Channel::parameters::build<R>(const tools::Distributions<R>&) const;
-template aff3ct::module::Channel<R>* aff3ct::factory::Channel::build<R>(const aff3ct::factory::Channel::parameters&, const tools::Distributions<R>&);
+template aff3ct::module::Channel<R>* aff3ct::factory::Channel::build<R>() const;
+template aff3ct::module::Channel<R>* aff3ct::factory::Channel::build<R>(const tools::Distributions<R>&) const;
 #endif
 // ==================================================================================== explicit template instantiation

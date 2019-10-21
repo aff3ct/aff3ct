@@ -14,7 +14,7 @@ This section describes the parameters common to all encoders.
    :Allowed values: ``NO`` ``AZCW`` ``COSET`` ``USER``
    :Examples: ``--enc-type AZCW``
 
-|factory::Encoder::parameters::p+type|
+|factory::Encoder::p+type|
 
 Description of the allowed values:
 
@@ -61,7 +61,7 @@ Description of the allowed values:
    :Rights: read only
    :Examples: ``--enc-path example/path/to/the/right/file``
 
-|factory::Encoder::parameters::p+path|
+|factory::Encoder::p+path|
 
 An |ASCII| file is expected:
 
@@ -84,4 +84,4 @@ An |ASCII| file is expected:
    :Type: integer
    :Examples: ``--enc-start-idx 1``
 
-|factory::Encoder::parameters::p+start-idx|
+|factory::Encoder::p+start-idx|

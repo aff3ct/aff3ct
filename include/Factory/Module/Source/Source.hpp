@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Source::parameters.
+ * \brief Class factory::Source.
  */
 #ifndef FACTORY_SOURCE_HPP
 #define FACTORY_SOURCE_HPP
@@ -18,40 +18,34 @@ namespace factory
 {
 extern const std::string Source_name;
 extern const std::string Source_prefix;
-struct Source : public Factory
+class Source : public Factory
 {
-	class parameters : public Factory::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// required parameters
-		int         K        = 0;
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// required parameters
+	int         K        = 0;
 
-		// optional parameters
-		std::string type     = "RAND";
-		std::string implem   = "STD";
-		std::string path     = "";
-		int         n_frames = 1;
-		int         seed     = 0;
-		int         start_idx= 0;
+	// optional parameters
+	std::string type     = "RAND";
+	std::string implem   = "STD";
+	std::string path     = "";
+	int         n_frames = 1;
+	int         seed     = 0;
+	int         start_idx= 0;
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Source_prefix);
-		virtual ~parameters() = default;
-		Source::parameters* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Source(const std::string &p = Source_prefix);
+	virtual ~Source() = default;
+	Source* clone() const;
 
-		// parameters construction
-		virtual void get_description(cli::Argument_map_info &args) const;
-		virtual void store          (const cli::Argument_map_value &vals);
-		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	virtual void get_description(cli::Argument_map_info &args) const;
+	virtual void store          (const cli::Argument_map_value &vals);
+	virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int>
-		module::Source<B>* build() const;
-	};
-
+	// builder
 	template <typename B = int>
-	static module::Source<B>* build(const parameters &params);
+	module::Source<B>* build() const;
 };
 }
 }

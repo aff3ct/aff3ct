@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Flip_and_check_DB::parameters.
+ * \brief Class factory::Flip_and_check_DB.
  */
 #ifndef FACTORY_FLIP_AND_CHECK_DB_HPP
 #define FACTORY_FLIP_AND_CHECK_DB_HPP
@@ -19,31 +19,25 @@ namespace factory
 {
 extern const std::string Flip_and_check_DB_name;
 extern const std::string Flip_and_check_DB_prefix;
-struct Flip_and_check_DB : public Flip_and_check
+class Flip_and_check_DB : public Flip_and_check
 {
-	class parameters : public Flip_and_check::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// empty
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// empty
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Flip_and_check_DB_prefix);
-		virtual ~parameters() = default;
-		Flip_and_check_DB::parameters* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Flip_and_check_DB(const std::string &p = Flip_and_check_DB_prefix);
+	virtual ~Flip_and_check_DB() = default;
+	Flip_and_check_DB* clone() const;
 
-		// parameters construction
-		virtual void get_description(cli::Argument_map_info &args) const;
-		virtual void store          (const cli::Argument_map_value &vals);
-		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	virtual void get_description(cli::Argument_map_info &args) const;
+	virtual void store          (const cli::Argument_map_value &vals);
+	virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int, typename Q = float>
-		tools::Flip_and_check_DB<B,Q>* build(module::CRC<B> &crc) const;
-	};
-
+	// builder
 	template <typename B = int, typename Q = float>
-	static tools::Flip_and_check_DB<B,Q>* build(const parameters& params, module::CRC<B> &crc);
+	tools::Flip_and_check_DB<B,Q>* build(module::CRC<B> &crc) const;
 };
 }
 }

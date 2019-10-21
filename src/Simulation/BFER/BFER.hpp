@@ -30,7 +30,7 @@ class BFER : public Simulation
 {
 private:
 	// parameters
-	const factory::BFER::parameters &params_BFER;
+	const factory::BFER &params_BFER;
 
 protected:
 	std::mutex               mutex_exception;
@@ -75,7 +75,7 @@ protected:
 	std::chrono::steady_clock::time_point t_start_noise_point;
 
 public:
-	explicit BFER(const factory::BFER::parameters& params_BFER);
+	explicit BFER(const factory::BFER& params_BFER);
 	virtual ~BFER() = default;
 	void launch();
 

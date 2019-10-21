@@ -16,23 +16,23 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Scaling_factor_name   = "Scaling factor";
 const std::string aff3ct::factory::Scaling_factor_prefix = "sf";
 
-Scaling_factor::parameters
-::parameters(const std::string &prefix)
-: Factory::parameters(Scaling_factor_name, Scaling_factor_name, prefix)
+Scaling_factor
+::Scaling_factor(const std::string &prefix)
+: Factory(Scaling_factor_name, Scaling_factor_name, prefix)
 {
 }
 
-Scaling_factor::parameters* Scaling_factor::parameters
+Scaling_factor* Scaling_factor
 ::clone() const
 {
-	return new Scaling_factor::parameters(*this);
+	return new Scaling_factor(*this);
 }
 
-void Scaling_factor::parameters
+void Scaling_factor
 ::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Scaling_factor::parameters::";
+	const std::string class_name = "factory::Scaling_factor::";
 
 	tools::add_arg(args, p, class_name+"p+type",
 		cli::Text(cli::Including_set("CST", "LTE", "LTE_VEC", "ARRAY", "ADAPTIVE")));
@@ -41,7 +41,7 @@ void Scaling_factor::parameters
 		cli::Integer(cli::Positive(), cli::Non_zero()));
 }
 
-void Scaling_factor::parameters
+void Scaling_factor
 ::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
@@ -61,7 +61,7 @@ void Scaling_factor::parameters
 	if(vals.exist({p+"-ite", "i"})) this->n_ite = vals.to_int({p+"-ite", "i"});
 }
 
-void Scaling_factor::parameters
+void Scaling_factor
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
 	auto p = this->get_prefix();
@@ -81,7 +81,7 @@ void Scaling_factor::parameters
 }
 
 template<typename B, typename Q>
-tools::Scaling_factor<B,Q>* Scaling_factor::parameters
+tools::Scaling_factor<B,Q>* Scaling_factor
 ::build() const
 {
 	if (this->type == "CST"     ) return new tools::Scaling_factor_constant<B,Q>(this->n_ite, this->cst        );
@@ -93,26 +93,14 @@ tools::Scaling_factor<B,Q>* Scaling_factor::parameters
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template<typename B, typename Q>
-tools::Scaling_factor<B,Q>* Scaling_factor
-::build(const parameters& params)
-{
-	return params.template build<B,Q>();
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::tools::Scaling_factor<B_8 ,Q_8 >* aff3ct::factory::Scaling_factor::parameters::build<B_8 ,Q_8 >() const;
-template aff3ct::tools::Scaling_factor<B_16,Q_16>* aff3ct::factory::Scaling_factor::parameters::build<B_16,Q_16>() const;
-template aff3ct::tools::Scaling_factor<B_32,Q_32>* aff3ct::factory::Scaling_factor::parameters::build<B_32,Q_32>() const;
-template aff3ct::tools::Scaling_factor<B_64,Q_64>* aff3ct::factory::Scaling_factor::parameters::build<B_64,Q_64>() const;
-template aff3ct::tools::Scaling_factor<B_8 ,Q_8 >* aff3ct::factory::Scaling_factor::build<B_8 ,Q_8 >(const aff3ct::factory::Scaling_factor::parameters&);
-template aff3ct::tools::Scaling_factor<B_16,Q_16>* aff3ct::factory::Scaling_factor::build<B_16,Q_16>(const aff3ct::factory::Scaling_factor::parameters&);
-template aff3ct::tools::Scaling_factor<B_32,Q_32>* aff3ct::factory::Scaling_factor::build<B_32,Q_32>(const aff3ct::factory::Scaling_factor::parameters&);
-template aff3ct::tools::Scaling_factor<B_64,Q_64>* aff3ct::factory::Scaling_factor::build<B_64,Q_64>(const aff3ct::factory::Scaling_factor::parameters&);
+template aff3ct::tools::Scaling_factor<B_8 ,Q_8 >* aff3ct::factory::Scaling_factor::build<B_8 ,Q_8 >() const;
+template aff3ct::tools::Scaling_factor<B_16,Q_16>* aff3ct::factory::Scaling_factor::build<B_16,Q_16>() const;
+template aff3ct::tools::Scaling_factor<B_32,Q_32>* aff3ct::factory::Scaling_factor::build<B_32,Q_32>() const;
+template aff3ct::tools::Scaling_factor<B_64,Q_64>* aff3ct::factory::Scaling_factor::build<B_64,Q_64>() const;
 #else
-template aff3ct::tools::Scaling_factor<B,Q>* aff3ct::factory::Scaling_factor::parameters::build<B,Q>() const;
-template aff3ct::tools::Scaling_factor<B,Q>* aff3ct::factory::Scaling_factor::build<B,Q>(const aff3ct::factory::Scaling_factor::parameters&);
+template aff3ct::tools::Scaling_factor<B,Q>* aff3ct::factory::Scaling_factor::build<B,Q>() const;
 #endif
 // ==================================================================================== explicit template instantiation

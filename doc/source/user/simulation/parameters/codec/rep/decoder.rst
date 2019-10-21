@@ -13,7 +13,7 @@ Repetition Decoder parameters
    :Default: ``REPETITION``
    :Examples: ``--dec-type CHASE``
 
-|factory::Decoder::parameters::p+type,D|
+|factory::Decoder::p+type,D|
 
 Description of the allowed values:
 
@@ -43,7 +43,7 @@ Description of the allowed values:
    :Default: ``STD``
    :Examples: ``--dec-implem FAST``
 
-|factory::Decoder::parameters::p+implem|
+|factory::Decoder::p+implem|
 
 Description of the allowed values:
 

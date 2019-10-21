@@ -10,29 +10,29 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Flip_and_check_name   = "Flip and check";
 const std::string aff3ct::factory::Flip_and_check_prefix = "fnc";
 
-Flip_and_check::parameters
-::parameters(const std::string &prefix)
-: Factory::parameters(Flip_and_check_name, Flip_and_check_name, prefix)
+Flip_and_check
+::Flip_and_check(const std::string &prefix)
+: Factory(Flip_and_check_name, Flip_and_check_name, prefix)
 {
 }
 
-Flip_and_check::parameters
-::parameters(const std::string &name, const std::string &prefix)
-: Factory::parameters(name, Flip_and_check_name, prefix)
+Flip_and_check
+::Flip_and_check(const std::string &name, const std::string &prefix)
+: Factory(name, Flip_and_check_name, prefix)
 {
 }
 
-Flip_and_check::parameters* Flip_and_check::parameters
+Flip_and_check* Flip_and_check
 ::clone() const
 {
-	return new Flip_and_check::parameters(*this);
+	return new Flip_and_check(*this);
 }
 
-void Flip_and_check::parameters
+void Flip_and_check
 ::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Flip_and_check::parameters::";
+	const std::string class_name = "factory::Flip_and_check::";
 
 	tools::add_arg(args, p, class_name+"p+size",
 		cli::Integer(cli::Positive(), cli::Non_zero()),
@@ -63,7 +63,7 @@ void Flip_and_check::parameters
 		cli::Integer(cli::Positive(), cli::Non_zero()));
 }
 
-void Flip_and_check::parameters
+void Flip_and_check
 ::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
@@ -80,7 +80,7 @@ void Flip_and_check::parameters
 	else                             this->ite_max       = this->n_ite;
 }
 
-void Flip_and_check::parameters
+void Flip_and_check
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
 	auto p = this->get_prefix();
@@ -96,7 +96,7 @@ void Flip_and_check::parameters
 }
 
 template<typename B, typename Q>
-tools::Flip_and_check<B,Q>* Flip_and_check::parameters
+tools::Flip_and_check<B,Q>* Flip_and_check
 ::build(module::CRC<B> &crc) const
 {
 	if (!this->enable)
@@ -105,26 +105,14 @@ tools::Flip_and_check<B,Q>* Flip_and_check::parameters
 	return new tools::Flip_and_check<B,Q>(this->size, this->n_ite, crc, this->crc_start_ite, this->q, this->ite_min, this->ite_max, this->ite_step, this->n_frames);
 }
 
-template<typename B, typename Q>
-tools::Flip_and_check<B,Q>* Flip_and_check
-::build(const parameters& params, module::CRC<B> &crc)
-{
-	return params.template build<B,Q>(crc);
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::tools::Flip_and_check<B_8 ,Q_8 >* aff3ct::factory::Flip_and_check::parameters::build<B_8 ,Q_8 >(module::CRC<B_8 >&) const;
-template aff3ct::tools::Flip_and_check<B_16,Q_16>* aff3ct::factory::Flip_and_check::parameters::build<B_16,Q_16>(module::CRC<B_16>&) const;
-template aff3ct::tools::Flip_and_check<B_32,Q_32>* aff3ct::factory::Flip_and_check::parameters::build<B_32,Q_32>(module::CRC<B_32>&) const;
-template aff3ct::tools::Flip_and_check<B_64,Q_64>* aff3ct::factory::Flip_and_check::parameters::build<B_64,Q_64>(module::CRC<B_64>&) const;
-template aff3ct::tools::Flip_and_check<B_8 ,Q_8 >* aff3ct::factory::Flip_and_check::build<B_8 ,Q_8 >(const aff3ct::factory::Flip_and_check::parameters&, module::CRC<B_8 >&);
-template aff3ct::tools::Flip_and_check<B_16,Q_16>* aff3ct::factory::Flip_and_check::build<B_16,Q_16>(const aff3ct::factory::Flip_and_check::parameters&, module::CRC<B_16>&);
-template aff3ct::tools::Flip_and_check<B_32,Q_32>* aff3ct::factory::Flip_and_check::build<B_32,Q_32>(const aff3ct::factory::Flip_and_check::parameters&, module::CRC<B_32>&);
-template aff3ct::tools::Flip_and_check<B_64,Q_64>* aff3ct::factory::Flip_and_check::build<B_64,Q_64>(const aff3ct::factory::Flip_and_check::parameters&, module::CRC<B_64>&);
+template aff3ct::tools::Flip_and_check<B_8 ,Q_8 >* aff3ct::factory::Flip_and_check::build<B_8 ,Q_8 >(module::CRC<B_8 >&) const;
+template aff3ct::tools::Flip_and_check<B_16,Q_16>* aff3ct::factory::Flip_and_check::build<B_16,Q_16>(module::CRC<B_16>&) const;
+template aff3ct::tools::Flip_and_check<B_32,Q_32>* aff3ct::factory::Flip_and_check::build<B_32,Q_32>(module::CRC<B_32>&) const;
+template aff3ct::tools::Flip_and_check<B_64,Q_64>* aff3ct::factory::Flip_and_check::build<B_64,Q_64>(module::CRC<B_64>&) const;
 #else
-template aff3ct::tools::Flip_and_check<B,Q>* aff3ct::factory::Flip_and_check::parameters::build<B,Q>(module::CRC<B>&) const;
-template aff3ct::tools::Flip_and_check<B,Q>* aff3ct::factory::Flip_and_check::build<B,Q>(const aff3ct::factory::Flip_and_check::parameters&, module::CRC<B>&);
+template aff3ct::tools::Flip_and_check<B,Q>* aff3ct::factory::Flip_and_check::build<B,Q>(module::CRC<B>&) const;
 #endif
 // ==================================================================================== explicit template instantiation

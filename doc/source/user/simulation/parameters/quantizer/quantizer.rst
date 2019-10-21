@@ -21,7 +21,7 @@ fixed-point representation (cf. the :ref:`sim-sim-prec` parameter).
    :Default: ``POW2``
    :Examples: ``--qnt-type CUSTOM``
 
-|factory::Quantizer::parameters::p+type|
+|factory::Quantizer::p+type|
 
 Description of the allowed values (:math:`Y_i` stands for a floating-point
 representation and :math:`Q_i` for the fixed-point representation of a real
@@ -64,7 +64,7 @@ the :ref:`qnt-qnt-range`, :ref:`qnt-qnt-bits` and :ref:`qnt-qnt-dec` parameters.
    :Default: ``STD``
    :Examples: ``--qnt-implem FAST``
 
-|factory::Quantizer::parameters::p+implem|
+|factory::Quantizer::p+implem|
 
 Description of the allowed values:
 
@@ -88,7 +88,7 @@ Description of the allowed values:
    :Type: real number
    :Examples: ``--qnt-range 1.0``
 
-|factory::Quantizer::parameters::p+range|
+|factory::Quantizer::p+range|
 
 .. _qnt-qnt-bits:
 
@@ -99,7 +99,7 @@ Description of the allowed values:
    :Default: 8 else see :numref:`bits_default_table`
    :Examples: ``--qnt-bits 1``
 
-|factory::Quantizer::parameters::p+bits|
+|factory::Quantizer::p+bits|
 
 .. note:: If the amplitude of the current number exceeds the maximum amplitude
    that can be represented with the current quantization, then a saturation is
@@ -140,7 +140,7 @@ Description of the allowed values:
    :Default: 3 else see :numref:`dec_default_table`
    :Examples: ``--qnt-dec 1``
 
-|factory::Quantizer::parameters::p+dec|
+|factory::Quantizer::p+dec|
 
 .. _dec_default_table:
 

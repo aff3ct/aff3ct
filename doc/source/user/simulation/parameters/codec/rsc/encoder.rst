@@ -11,7 +11,7 @@
    :Type: integer
    :Examples: ``--enc-info-bits 1``
 
-|factory::Encoder::parameters::p+info-bits,K|
+|factory::Encoder::p+info-bits,K|
 
 The codeword size :math:`N` is automatically deduced:
 :math:`N = 2 \times (K + \log_2(ts))` where :math:`ts` is the trellis size.
@@ -26,7 +26,7 @@ The codeword size :math:`N` is automatically deduced:
    :Default: ``RSC``
    :Examples: ``--enc-type AZCW``
 
-|factory::Encoder::parameters::p+type|
+|factory::Encoder::p+type|
 
 Description of the allowed values:
 
@@ -55,7 +55,7 @@ Description of the allowed values:
 ``--enc-no-buff``
 """""""""""""""""
 
-|factory::Encoder_RSC::parameters::p+no-buff|
+|factory::Encoder_RSC::p+no-buff|
 
 **Without the buffered encoding**, considering the following sequence of
 :math:`K` information bits: :math:`U_0, U_1, [...], U_{K-1}`, the encoded bits
@@ -80,7 +80,7 @@ where :math:`s` and :math:`p` are respectively *systematic* and *parity* bits,
    :Default: ``"{013,015}"``
    :Examples: ``--enc-poly "{023, 033}"``
 
-|factory::Encoder_RSC::parameters::p+poly|
+|factory::Encoder_RSC::p+poly|
 
 .. _enc-rsc-enc-std:
 
@@ -91,7 +91,7 @@ where :math:`s` and :math:`p` are respectively *systematic* and *parity* bits,
    :Allowed values: ``CCSDS`` ``LTE``
    :Examples: ``--enc-std CCSDS``
 
-|factory::Encoder_RSC::parameters::p+std|
+|factory::Encoder_RSC::p+std|
 
 Description of the allowed values:
 

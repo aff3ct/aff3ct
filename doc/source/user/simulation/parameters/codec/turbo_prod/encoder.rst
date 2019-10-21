@@ -11,7 +11,7 @@
    :Type: integer
    :Examples: ``--enc-sub-cw-size 127``
 
-|factory::Encoder::parameters::p+cw-size,N|
+|factory::Encoder::p+cw-size,N|
 
 Give the *sub-encoder code* codeword size. You can extend this codeword with a
 parity bit with the :ref:`enc-turbo_prod-enc-ext` option.
@@ -25,7 +25,7 @@ Then the codeword size of the |TPC| is the square of this value.
    :Type: integer
    :Examples: ``--enc-sub-info-bits 120``
 
-|factory::Encoder::parameters::p+info-bits,K|
+|factory::Encoder::p+info-bits,K|
 
 Give the *sub-encoder code* input size (number of information bits).
 Then the number of information bits of the |TPC| is the
@@ -41,7 +41,7 @@ square of this value.
    :Default: ``TPC``
    :Examples: ``--enc-type AZCW``
 
-|factory::Encoder::parameters::p+type|
+|factory::Encoder::p+type|
 
 Description of the allowed values:
 
@@ -77,4 +77,4 @@ Please refer to the |BCH| :ref:`enc-bch-enc-type` parameter.
 ``--enc-ext``
 """""""""""""
 
-|factory::Encoder_turbo_product::parameters::p+ext|
+|factory::Encoder_turbo_product::p+ext|

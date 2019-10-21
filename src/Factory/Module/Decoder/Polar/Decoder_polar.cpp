@@ -43,35 +43,35 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Decoder_polar_name   = "Decoder Polar";
 const std::string aff3ct::factory::Decoder_polar_prefix = "dec";
 
-Decoder_polar::parameters
-::parameters(const std::string &prefix)
-: Decoder::parameters(Decoder_polar_name, prefix)
+Decoder_polar
+::Decoder_polar(const std::string &prefix)
+: Decoder(Decoder_polar_name, prefix)
 {
 	this->type   = "SC";
 	this->implem = "FAST";
 }
 
-Decoder_polar::parameters
-::parameters(const std::string &name, const std::string &prefix)
-: Decoder::parameters(name, prefix)
+Decoder_polar
+::Decoder_polar(const std::string &name, const std::string &prefix)
+: Decoder(name, prefix)
 {
 	this->type   = "SC";
 	this->implem = "FAST";
 }
 
-Decoder_polar::parameters* Decoder_polar::parameters
+Decoder_polar* Decoder_polar
 ::clone() const
 {
-	return new Decoder_polar::parameters(*this);
+	return new Decoder_polar(*this);
 }
 
-void Decoder_polar::parameters
+void Decoder_polar
 ::get_description(cli::Argument_map_info &args) const
 {
-	Decoder::parameters::get_description(args);
+	Decoder::get_description(args);
 
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Decoder_polar::parameters::";
+	const std::string class_name = "factory::Decoder_polar::";
 
 	cli::add_options(args.at({p+"-type", "D"}), 0, "SC", "SCL", "SCL_MEM", "ASCL", "ASCL_MEM", "SCAN", "SCF");
 
@@ -96,10 +96,10 @@ void Decoder_polar::parameters
 		cli::None());
 }
 
-void Decoder_polar::parameters
+void Decoder_polar
 ::store(const cli::Argument_map_value &vals)
 {
-	Decoder::parameters::store(vals);
+	Decoder::store(vals);
 
 	auto p = this->get_prefix();
 
@@ -113,10 +113,10 @@ void Decoder_polar::parameters
 	if (this->type != "SCAN") this->n_ite = 1;
 }
 
-void Decoder_polar::parameters
+void Decoder_polar
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	Decoder::parameters::get_headers(headers, full);
+	Decoder::get_headers(headers, full);
 
 	if (this->type != "ML" && this->type != "CHASE")
 	{
@@ -151,7 +151,7 @@ void Decoder_polar::parameters
 }
 
 template <typename B, typename Q>
-module::Decoder_SISO_SIHO<B,Q>* Decoder_polar::parameters
+module::Decoder_SISO_SIHO<B,Q>* Decoder_polar
 ::build_siso(const std::vector<bool> &frozen_bits, const std::unique_ptr<module::Encoder<B>>& encoder) const
 {
 	if (this->type == "SCAN" && this->systematic)
@@ -167,7 +167,7 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_polar::parameters
 }
 
 template <typename B, typename Q, class API_polar>
-module::Decoder_SIHO<B,Q>* Decoder_polar::parameters
+module::Decoder_SIHO<B,Q>* Decoder_polar
 ::_build(const std::vector<bool> &frozen_bits, module::CRC<B> *crc, const std::unique_ptr<module::Encoder<B>>& encoder) const
 {
 	if (!this->systematic) // non-systematic encoding
@@ -218,7 +218,7 @@ module::Decoder_SIHO<B,Q>* Decoder_polar::parameters
 }
 
 template <typename B, typename Q, class API_polar>
-module::Decoder_SIHO<B,Q>* Decoder_polar::parameters
+module::Decoder_SIHO<B,Q>* Decoder_polar
 ::_build_scl_fast(const std::vector<bool> &frozen_bits, module::CRC<B> *crc, const std::unique_ptr<module::Encoder<B>>& encoder) const
 {
 	int idx_r0, idx_r1;
@@ -244,12 +244,12 @@ module::Decoder_SIHO<B,Q>* Decoder_polar::parameters
 }
 
 template <typename B, typename Q>
-module::Decoder_SIHO<B,Q>* Decoder_polar::parameters
+module::Decoder_SIHO<B,Q>* Decoder_polar
 ::build(const std::vector<bool> &frozen_bits, module::CRC<B> *crc, const std::unique_ptr<module::Encoder<B>>& encoder) const
 {
 	try
 	{
-		return Decoder::parameters::build<B,Q>(encoder);
+		return Decoder::build<B,Q>(encoder);
 	}
 	catch (tools::cannot_allocate const&)
 	{
@@ -349,49 +349,23 @@ module::Decoder_SIHO<B,Q>* Decoder_polar::parameters
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename Q>
-module::Decoder_SISO_SIHO<B,Q>* Decoder_polar
-::build_siso(const parameters& params, const std::vector<bool> &frozen_bits,
-             const std::unique_ptr<module::Encoder<B>>& encoder)
-{
-	return params.template build_siso<B,Q>(frozen_bits, encoder);
-}
-
-template <typename B, typename Q>
-module::Decoder_SIHO<B,Q>* Decoder_polar
-::build(const parameters& params, const std::vector<bool> &frozen_bits, module::CRC<B> *crc,
-        const std::unique_ptr<module::Encoder<B>>& encoder)
-{
-	return params.template build<B,Q>(frozen_bits, crc, encoder);
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Decoder_SISO_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_polar::parameters::build_siso<B_8 ,Q_8 >(const std::vector<bool>&, const std::unique_ptr<module::Encoder<B_8 >>&) const;
-template aff3ct::module::Decoder_SISO_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_polar::parameters::build_siso<B_16,Q_16>(const std::vector<bool>&, const std::unique_ptr<module::Encoder<B_16>>&) const;
-template aff3ct::module::Decoder_SISO_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_polar::parameters::build_siso<B_32,Q_32>(const std::vector<bool>&, const std::unique_ptr<module::Encoder<B_32>>&) const;
-template aff3ct::module::Decoder_SISO_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_polar::parameters::build_siso<B_64,Q_64>(const std::vector<bool>&, const std::unique_ptr<module::Encoder<B_64>>&) const;
-template aff3ct::module::Decoder_SISO_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_polar::build_siso<B_8 ,Q_8 >(const aff3ct::factory::Decoder_polar::parameters&, const std::vector<bool>&, const std::unique_ptr<module::Encoder<B_8 >>&);
-template aff3ct::module::Decoder_SISO_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_polar::build_siso<B_16,Q_16>(const aff3ct::factory::Decoder_polar::parameters&, const std::vector<bool>&, const std::unique_ptr<module::Encoder<B_16>>&);
-template aff3ct::module::Decoder_SISO_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_polar::build_siso<B_32,Q_32>(const aff3ct::factory::Decoder_polar::parameters&, const std::vector<bool>&, const std::unique_ptr<module::Encoder<B_32>>&);
-template aff3ct::module::Decoder_SISO_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_polar::build_siso<B_64,Q_64>(const aff3ct::factory::Decoder_polar::parameters&, const std::vector<bool>&, const std::unique_ptr<module::Encoder<B_64>>&);
+template aff3ct::module::Decoder_SISO_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_polar::build_siso<B_8 ,Q_8 >(const std::vector<bool>&, const std::unique_ptr<module::Encoder<B_8 >>&) const;
+template aff3ct::module::Decoder_SISO_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_polar::build_siso<B_16,Q_16>(const std::vector<bool>&, const std::unique_ptr<module::Encoder<B_16>>&) const;
+template aff3ct::module::Decoder_SISO_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_polar::build_siso<B_32,Q_32>(const std::vector<bool>&, const std::unique_ptr<module::Encoder<B_32>>&) const;
+template aff3ct::module::Decoder_SISO_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_polar::build_siso<B_64,Q_64>(const std::vector<bool>&, const std::unique_ptr<module::Encoder<B_64>>&) const;
 #else
-template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_polar::parameters::build_siso<B,Q>(const std::vector<bool>&, const std::unique_ptr<module::Encoder<B>>& ) const;
-template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_polar::build_siso<B,Q>(const aff3ct::factory::Decoder_polar::parameters&, const std::vector<bool>&, const std::unique_ptr<module::Encoder<B>>& );
+template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_polar::build_siso<B,Q>(const std::vector<bool>&, const std::unique_ptr<module::Encoder<B>>& ) const;
 #endif
 
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_polar::parameters::build<B_8 ,Q_8 >(const std::vector<bool>&, module::CRC<B_8 >*, const std::unique_ptr<module::Encoder<B_8 >>&) const;
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_polar::parameters::build<B_16,Q_16>(const std::vector<bool>&, module::CRC<B_16>*, const std::unique_ptr<module::Encoder<B_16>>&) const;
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_polar::parameters::build<B_32,Q_32>(const std::vector<bool>&, module::CRC<B_32>*, const std::unique_ptr<module::Encoder<B_32>>&) const;
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_polar::parameters::build<B_64,Q_64>(const std::vector<bool>&, module::CRC<B_64>*, const std::unique_ptr<module::Encoder<B_64>>&) const;
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_polar::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_polar::parameters&, const std::vector<bool>&, module::CRC<B_8 >*, const std::unique_ptr<module::Encoder<B_8 >>&);
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_polar::build<B_16,Q_16>(const aff3ct::factory::Decoder_polar::parameters&, const std::vector<bool>&, module::CRC<B_16>*, const std::unique_ptr<module::Encoder<B_16>>&);
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_polar::build<B_32,Q_32>(const aff3ct::factory::Decoder_polar::parameters&, const std::vector<bool>&, module::CRC<B_32>*, const std::unique_ptr<module::Encoder<B_32>>&);
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_polar::build<B_64,Q_64>(const aff3ct::factory::Decoder_polar::parameters&, const std::vector<bool>&, module::CRC<B_64>*, const std::unique_ptr<module::Encoder<B_64>>&);
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_polar::build<B_8 ,Q_8 >(const std::vector<bool>&, module::CRC<B_8 >*, const std::unique_ptr<module::Encoder<B_8 >>&) const;
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_polar::build<B_16,Q_16>(const std::vector<bool>&, module::CRC<B_16>*, const std::unique_ptr<module::Encoder<B_16>>&) const;
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_polar::build<B_32,Q_32>(const std::vector<bool>&, module::CRC<B_32>*, const std::unique_ptr<module::Encoder<B_32>>&) const;
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_polar::build<B_64,Q_64>(const std::vector<bool>&, module::CRC<B_64>*, const std::unique_ptr<module::Encoder<B_64>>&) const;
 #else
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_polar::parameters::build<B,Q>(const std::vector<bool>&, module::CRC<B>*, const std::unique_ptr<module::Encoder<B>>& ) const;
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_polar::build<B,Q>(const aff3ct::factory::Decoder_polar::parameters&, const std::vector<bool>&, module::CRC<B>*, const std::unique_ptr<module::Encoder<B>>& );
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_polar::build<B,Q>(const std::vector<bool>&, module::CRC<B>*, const std::unique_ptr<module::Encoder<B>>& ) const;
 #endif
 // ==================================================================================== explicit template instantiation

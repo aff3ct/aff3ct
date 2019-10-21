@@ -11,31 +11,31 @@ namespace aff3ct
 namespace factory
 {
 template <class D1, class D2>
-Decoder_turbo::parameters<D1,D2>
-::parameters(const std::string &prefix)
-: Decoder::parameters(Decoder_turbo_name, prefix),
-  sub1(new typename D1::parameters(std::is_same<D1,D2>() ? prefix+"-sub" : prefix+"-sub1")),
-  sub2(new typename D2::parameters(std::is_same<D1,D2>() ? prefix+"-sub" : prefix+"-sub2")),
-  itl (new Interleaver::parameters("itl")),
-  sf  (new Scaling_factor::parameters(prefix+"-sf")),
-  fnc (new Flip_and_check::parameters(prefix+"-fnc"))
+Decoder_turbo<D1,D2>
+::Decoder_turbo(const std::string &prefix)
+: Decoder(Decoder_turbo_name, prefix),
+  sub1(new D1(std::is_same<D1,D2>() ? prefix+"-sub" : prefix+"-sub1")),
+  sub2(new D2(std::is_same<D1,D2>() ? prefix+"-sub" : prefix+"-sub2")),
+  itl (new Interleaver("itl")),
+  sf  (new Scaling_factor(prefix+"-sf")),
+  fnc (new Flip_and_check(prefix+"-fnc"))
 {
 	this->type   = "TURBO";
 	this->implem = "FAST";
 }
 
 template <class D1, class D2>
-Decoder_turbo::parameters<D1,D2>* Decoder_turbo::parameters<D1,D2>
+Decoder_turbo<D1,D2>* Decoder_turbo<D1,D2>
 ::clone() const
 {
-	return new Decoder_turbo::parameters<D1,D2>(*this);
+	return new Decoder_turbo<D1,D2>(*this);
 }
 
 template <class D1, class D2>
-std::vector<std::string> Decoder_turbo::parameters<D1,D2>
+std::vector<std::string> Decoder_turbo<D1,D2>
 ::get_names() const
 {
-	auto n = Decoder::parameters::get_names();
+	auto n = Decoder::get_names();
 	if (sf   != nullptr) { auto nn = sf  ->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (fnc  != nullptr) { auto nn = fnc ->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (sub1 != nullptr) { auto nn = sub1->get_names(); for (auto &x : nn) n.push_back(x); }
@@ -45,10 +45,10 @@ std::vector<std::string> Decoder_turbo::parameters<D1,D2>
 }
 
 template <class D1, class D2>
-std::vector<std::string> Decoder_turbo::parameters<D1,D2>
+std::vector<std::string> Decoder_turbo<D1,D2>
 ::get_short_names() const
 {
-	auto sn = Decoder::parameters::get_short_names();
+	auto sn = Decoder::get_short_names();
 	if (sf   != nullptr) { auto nn = sf  ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (fnc  != nullptr) { auto nn = fnc ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (sub1 != nullptr) { auto nn = sub1->get_short_names(); for (auto &x : nn) sn.push_back(x); }
@@ -58,10 +58,10 @@ std::vector<std::string> Decoder_turbo::parameters<D1,D2>
 }
 
 template <class D1, class D2>
-std::vector<std::string> Decoder_turbo::parameters<D1,D2>
+std::vector<std::string> Decoder_turbo<D1,D2>
 ::get_prefixes() const
 {
-	auto p = Decoder::parameters::get_prefixes();
+	auto p = Decoder::get_prefixes();
 	if (sf   != nullptr) { auto nn = sf  ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (fnc  != nullptr) { auto nn = fnc ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (sub1 != nullptr) { auto nn = sub1->get_prefixes(); for (auto &x : nn) p.push_back(x); }
@@ -71,13 +71,13 @@ std::vector<std::string> Decoder_turbo::parameters<D1,D2>
 }
 
 template <class D1, class D2>
-void Decoder_turbo::parameters<D1,D2>
+void Decoder_turbo<D1,D2>
 ::get_description(cli::Argument_map_info &args) const
 {
-	Decoder::parameters::get_description(args);
+	Decoder::get_description(args);
 
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Decoder_turbo::parameters::";
+	const std::string class_name = "factory::Decoder_turbo::";
 
 	args.erase({p+"-cw-size", "N"});
 
@@ -91,7 +91,7 @@ void Decoder_turbo::parameters<D1,D2>
 		args.erase({pi+"-fra", "F"});
 	}
 
-	Decoder_turbo::add_args_and_options(args, p, class_name);
+	Decoder_turbo_common::add_args_and_options(args, p, class_name);
 
 	sf->get_description(args);
 
@@ -128,10 +128,10 @@ void Decoder_turbo::parameters<D1,D2>
 }
 
 template <class D1, class D2>
-void Decoder_turbo::parameters<D1,D2>
+void Decoder_turbo<D1,D2>
 ::store(const cli::Argument_map_value &vals)
 {
-	Decoder::parameters::store(vals);
+	Decoder::store(vals);
 
 	auto p = this->get_prefix();
 
@@ -187,10 +187,10 @@ void Decoder_turbo::parameters<D1,D2>
 }
 
 template <class D1, class D2>
-void Decoder_turbo::parameters<D1,D2>
+void Decoder_turbo<D1,D2>
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	Decoder::parameters::get_headers(headers, full);
+	Decoder::get_headers(headers, full);
 
 	if (itl != nullptr)
 		itl->get_headers(headers, full);
@@ -219,7 +219,7 @@ void Decoder_turbo::parameters<D1,D2>
 
 template <class D1, class D2>
 template <typename B, typename Q>
-module::Decoder_turbo<B,Q>* Decoder_turbo::parameters<D1,D2>
+module::Decoder_turbo<B,Q>* Decoder_turbo<D1,D2>
 ::build(const module::Interleaver<Q>  &itl,
               module::Decoder_SISO<Q> &siso_n,
               module::Decoder_SISO<Q> &siso_i,
@@ -236,28 +236,11 @@ module::Decoder_turbo<B,Q>* Decoder_turbo::parameters<D1,D2>
 
 template <class D1, class D2>
 template <typename B, typename Q>
-module::Decoder_SIHO<B,Q>* Decoder_turbo::parameters<D1,D2>
+module::Decoder_SIHO<B,Q>* Decoder_turbo<D1,D2>
 ::build(const std::unique_ptr<module::Encoder<B>>& encoder) const
 {
-	return Decoder::parameters::build<B,Q>(encoder);
+	return Decoder::build<B,Q>(encoder);
 }
 
-template <typename B, typename Q, class D1, class D2>
-module::Decoder_turbo<B,Q>* Decoder_turbo
-::build(const parameters<D1,D2>       &params,
-        const module::Interleaver<Q>  &itl,
-              module::Decoder_SISO<Q> &siso_n,
-              module::Decoder_SISO<Q> &siso_i,
-              const std::unique_ptr<module::Encoder<B>>& encoder)
-{
-	return params.template build<B,Q>(itl, siso_n, siso_i, encoder);
-}
-
-template <typename B, typename Q, class D1, class D2>
-module::Decoder_SIHO<B,Q>* Decoder_turbo
-::build(const parameters<D1,D2> &params, const std::unique_ptr<module::Encoder<B>>& encoder)
-{
-	return params.template build<B,Q>(encoder);
-}
 }
 }

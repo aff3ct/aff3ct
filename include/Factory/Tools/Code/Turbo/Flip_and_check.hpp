@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Flip_and_check::parameters.
+ * \brief Class factory::Flip_and_check.
  */
 #ifndef FACTORY_FLIP_AND_CHECK_HPP
 #define FACTORY_FLIP_AND_CHECK_HPP
@@ -19,45 +19,39 @@ namespace factory
 {
 extern const std::string Flip_and_check_name;
 extern const std::string Flip_and_check_prefix;
-struct Flip_and_check : public Factory
+class Flip_and_check : public Factory
 {
-	class parameters : public Factory::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// required parameters
-		int  size          = -1;
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// required parameters
+	int  size          = -1;
 
-		// optional parameters
-		bool enable        = false;
-		int  q             = 10;
-		int  n_ite         = 6;
-		int  ite_min       = 3;
-		int  ite_max       = 10;
-		int  ite_step      = 1;
-		int  crc_start_ite = 2;
-		int  n_frames      = 1;
+	// optional parameters
+	bool enable        = false;
+	int  q             = 10;
+	int  n_ite         = 6;
+	int  ite_min       = 3;
+	int  ite_max       = 10;
+	int  ite_step      = 1;
+	int  crc_start_ite = 2;
+	int  n_frames      = 1;
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Flip_and_check_prefix);
-		virtual ~parameters() = default;
-		virtual Flip_and_check::parameters* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Flip_and_check(const std::string &p = Flip_and_check_prefix);
+	virtual ~Flip_and_check() = default;
+	virtual Flip_and_check* clone() const;
 
-		// parameters construction
-		virtual void get_description(cli::Argument_map_info &args) const;
-		virtual void store          (const cli::Argument_map_value &vals);
-		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	virtual void get_description(cli::Argument_map_info &args) const;
+	virtual void store          (const cli::Argument_map_value &vals);
+	virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int, typename Q = float>
-		tools::Flip_and_check<B,Q>* build(module::CRC<B> &crc) const;
-
-	protected:
-		parameters(const std::string &n, const std::string &p);
-	};
-
+	// builder
 	template <typename B = int, typename Q = float>
-	static tools::Flip_and_check<B,Q>* build(const parameters& params, module::CRC<B> &crc);
+	tools::Flip_and_check<B,Q>* build(module::CRC<B> &crc) const;
+
+protected:
+	Flip_and_check(const std::string &n, const std::string &p);
 };
 }
 }

@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Decoder_RA::parameters.
+ * \brief Class factory::Decoder_RA.
  */
 #ifndef FACTORY_DECODER_RA_HPP
 #define FACTORY_DECODER_RA_HPP
@@ -23,41 +23,34 @@ namespace factory
 {
 extern const std::string Decoder_RA_name;
 extern const std::string Decoder_RA_prefix;
-struct Decoder_RA : public Decoder
+class Decoder_RA : public Decoder
 {
-	class parameters : public Decoder::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// optional parameters
-		int n_ite = 10;
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// optional parameters
+	int n_ite = 10;
 
-		// depending parameters
-		tools::auto_cloned_unique_ptr<Interleaver::parameters> itl;
+	// depending parameters
+	tools::auto_cloned_unique_ptr<Interleaver> itl;
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Decoder_RA_prefix);
-		virtual ~parameters() = default;
-		Decoder_RA::parameters* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Decoder_RA(const std::string &p = Decoder_RA_prefix);
+	virtual ~Decoder_RA() = default;
+	Decoder_RA* clone() const;
 
-		virtual std::vector<std::string> get_names      () const;
-		virtual std::vector<std::string> get_short_names() const;
-		virtual std::vector<std::string> get_prefixes   () const;
+	virtual std::vector<std::string> get_names      () const;
+	virtual std::vector<std::string> get_short_names() const;
+	virtual std::vector<std::string> get_prefixes   () const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build(const module::Interleaver<Q> &itl,
-		                                 const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
-	};
-
+	// builder
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const module::Interleaver<Q> &itl,
-	                                        const std::unique_ptr<module::Encoder<B>>& encoder = nullptr);
+	module::Decoder_SIHO<B,Q>* build(const module::Interleaver<Q> &itl,
+	                                 const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 };
 }
 }

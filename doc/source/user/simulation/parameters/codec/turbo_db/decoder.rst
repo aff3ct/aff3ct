@@ -13,7 +13,7 @@ Turbo |DB| Decoder parameters
    :Default: ``TURBO_DB``
    :Examples: ``--dec-type CHASE``
 
-|factory::Decoder::parameters::p+type,D|
+|factory::Decoder::p+type,D|
 
 Description of the allowed values:
 
@@ -43,7 +43,7 @@ Description of the allowed values:
    :Default: ``STD``
    :Examples: ``--dec-implem STD``
 
-|factory::Decoder::parameters::p+implem|
+|factory::Decoder::p+implem|
 
 Description of the allowed values:
 
@@ -78,7 +78,7 @@ Please refer to the |RSC| |DB| :ref:`dec-rsc_db-dec-implem` parameter.
    :Default: ``2``
    :Examples: ``--dec-fnc-crc-ite 1``
 
-|factory::Decoder_turbo_DB::parameters::p+crc-start|
+|factory::Decoder_turbo_DB::p+crc-start|
 
 .. note:: This parameter requires the Turbo code to be concatenated with a |CRC|
    to work, see the :ref:`crc-crc-parameters`.
@@ -88,7 +88,7 @@ Please refer to the |RSC| |DB| :ref:`dec-rsc_db-dec-implem` parameter.
 ``--dec-fnc``
 """""""""""""
 
-|factory::Flip_and_check::parameters::p+|
+|factory::Flip_and_check::p+|
 
 .. note:: The |FNC| post processing technique is detailed in
    :cite:`Tonnellier2016a`.
@@ -105,7 +105,7 @@ Please refer to the |RSC| |DB| :ref:`dec-rsc_db-dec-implem` parameter.
    :Default: ``3``
    :Examples: ``--dec-fnc-ite-m 2``
 
-|factory::Flip_and_check::parameters::p+ite-m|
+|factory::Flip_and_check::p+ite-m|
 
 See the :ref:`dec-turbo-dec-fnc` parameter.
 
@@ -118,7 +118,7 @@ See the :ref:`dec-turbo-dec-fnc` parameter.
    :Default: ``10``
    :Examples: ``--dec-fnc-ite-M 6``
 
-|factory::Flip_and_check::parameters::p+ite-M|
+|factory::Flip_and_check::p+ite-M|
 
 See the :ref:`dec-turbo-dec-fnc` parameter.
 
@@ -131,7 +131,7 @@ See the :ref:`dec-turbo-dec-fnc` parameter.
    :Default: ``1``
    :Examples: ``--dec-fnc-ite-s 2``
 
-|factory::Flip_and_check::parameters::p+ite-s|
+|factory::Flip_and_check::p+ite-s|
 
 See the :ref:`dec-turbo-dec-fnc` parameter.
 
@@ -144,7 +144,7 @@ See the :ref:`dec-turbo-dec-fnc` parameter.
    :Default: ``10``
    :Examples: ``--dec-fnc-q 6``
 
-|factory::Flip_and_check::parameters::p+q|
+|factory::Flip_and_check::p+q|
 
 See the :ref:`dec-turbo-dec-fnc` parameter.
 
@@ -157,7 +157,7 @@ See the :ref:`dec-turbo-dec-fnc` parameter.
    :Default: ``6``
    :Examples: ``--dec-ite 8``
 
-|factory::Decoder_turbo_DB::parameters::p+ite,i|
+|factory::Decoder_turbo_DB::p+ite,i|
 
 If the Turbo code is concatenated with a |CRC| and if the |CRC| is checked, the
 decoder can stop before making all the iterations.
@@ -172,7 +172,7 @@ decoder can stop before making all the iterations.
    :Examples: | ``--dec-sf-type ADAPTIVE``
               | ``--dec-sf-type CST 0.5``
 
-|factory::Scaling_factor::parameters::p+type|
+|factory::Scaling_factor::p+type|
 
 This is especially useful with the max-log-|MAP| sub-decoders (|BCJR| with the
 :math:`\max` approximation): the |SF| helps to recover a part of the decoding

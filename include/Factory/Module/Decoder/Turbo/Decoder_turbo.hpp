@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Decoder_turbo::parameters.
+ * \brief Class factory::Decoder_turbo.
  */
 #ifndef FACTORY_DECODER_TURBO_HPP
 #define FACTORY_DECODER_TURBO_HPP
@@ -29,62 +29,51 @@ namespace factory
 {
 extern const std::string Decoder_turbo_name;
 extern const std::string Decoder_turbo_prefix;
-struct Decoder_turbo : public Decoder
+template <class D1 = Decoder_RSC, class D2 = D1>
+class Decoder_turbo : public Decoder
 {
-	template <class D1 = Decoder_RSC, class D2 = D1>
-	class parameters : public Decoder::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// optional parameters
-		bool self_corrected = false;
-		bool enable_json    = false;
-		int  n_ite          = 6;
-		int  crc_start_ite  = 2;
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// optional parameters
+	bool self_corrected = false;
+	bool enable_json    = false;
+	int  n_ite          = 6;
+	int  crc_start_ite  = 2;
 
-		// depending parameters
-		tools::auto_cloned_unique_ptr<typename D1   ::parameters> sub1;
-		tools::auto_cloned_unique_ptr<typename D2   ::parameters> sub2;
-		tools::auto_cloned_unique_ptr<Interleaver   ::parameters> itl;
-		tools::auto_cloned_unique_ptr<Scaling_factor::parameters> sf;
-		tools::auto_cloned_unique_ptr<Flip_and_check::parameters> fnc;
+	// depending parameters
+	tools::auto_cloned_unique_ptr<D1            > sub1;
+	tools::auto_cloned_unique_ptr<D2            > sub2;
+	tools::auto_cloned_unique_ptr<Interleaver   > itl;
+	tools::auto_cloned_unique_ptr<Scaling_factor> sf;
+	tools::auto_cloned_unique_ptr<Flip_and_check> fnc;
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Decoder_turbo_prefix);
-		virtual ~parameters() = default;
-		Decoder_turbo::parameters<D1,D2>* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Decoder_turbo(const std::string &p = Decoder_turbo_prefix);
+	virtual ~Decoder_turbo() = default;
+	Decoder_turbo<D1,D2>* clone() const;
 
-		virtual std::vector<std::string> get_names      () const;
-		virtual std::vector<std::string> get_short_names() const;
-		virtual std::vector<std::string> get_prefixes   () const;
+	virtual std::vector<std::string> get_names      () const;
+	virtual std::vector<std::string> get_short_names() const;
+	virtual std::vector<std::string> get_prefixes   () const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int, typename Q = float>
-		module::Decoder_turbo<B,Q>* build(const module::Interleaver<Q>              &itl,
-		                                        module::Decoder_SISO<Q>             &siso_n,
-		                                        module::Decoder_SISO<Q>             &siso_i,
-		                                  const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
+	// builder
+	template <typename B = int, typename Q = float>
+	module::Decoder_turbo<B,Q>* build(const module::Interleaver<Q>              &itl,
+	                                        module::Decoder_SISO<Q>             &siso_n,
+	                                        module::Decoder_SISO<Q>             &siso_i,
+	                                  const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
 
-		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build(const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
-	};
+	template <typename B = int, typename Q = float>
+	module::Decoder_SIHO<B,Q>* build(const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
+};
 
-	template <typename B = int, typename Q = float, class D1 = Decoder_RSC, class D2 = D1>
-	static module::Decoder_turbo<B,Q>* build(const parameters<D1,D2>                   &params,
-	                                         const module::Interleaver<Q>              &itl,
-	                                               module::Decoder_SISO<Q>             &siso_n,
-	                                               module::Decoder_SISO<Q>             &siso_i,
-	                                         const std::unique_ptr<module::Encoder<B>> &encoder = nullptr);
-
-	template <typename B = int, typename Q = float, class D1 = Decoder_RSC, class D2 = D1>
-	static module::Decoder_SIHO<B,Q>* build(const parameters<D1,D2>                   &params,
-	                                        const std::unique_ptr<module::Encoder<B>> &encoder = nullptr);
-
+struct Decoder_turbo_common
+{
 	static void add_args_and_options(cli::Argument_map_info &args, const std::string &p, const std::string &class_name);
 };
 }

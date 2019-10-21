@@ -10,7 +10,7 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 BFER_ite<B,R,Q>
-::BFER_ite(const factory::BFER_ite::parameters &params_BFER_ite)
+::BFER_ite(const factory::BFER_ite &params_BFER_ite)
 : BFER<B,R,Q>(params_BFER_ite),
   params_BFER_ite(params_BFER_ite),
 
@@ -155,7 +155,7 @@ std::unique_ptr<module::Source<B>> BFER_ite<B,R,Q>
 {
 	const auto seed_src = rd_engine_seed[tid]();
 
-	std::unique_ptr<factory::Source::parameters> params_src(params_BFER_ite.src->clone());
+	std::unique_ptr<factory::Source> params_src(params_BFER_ite.src->clone());
 	params_src->seed = seed_src;
 
 	return std::unique_ptr<module::Source<B>>(params_src->template build<B>());
@@ -175,13 +175,13 @@ std::unique_ptr<module::Codec_SISO_SIHO<B,Q>> BFER_ite<B,R,Q>
 	const auto seed_enc = rd_engine_seed[tid]();
 	const auto seed_dec = rd_engine_seed[tid]();
 
-	std::unique_ptr<factory::Codec::parameters> params_cdc(params_BFER_ite.cdc->clone());
+	std::unique_ptr<factory::Codec> params_cdc(params_BFER_ite.cdc->clone());
 	params_cdc->enc->seed = seed_enc;
 	params_cdc->dec->seed = seed_dec;
 
 	auto crc = this->params_BFER_ite.crc->type == "NO" ? nullptr : this->crc[tid].get();
 
-	auto param_siso_siho = dynamic_cast<factory::Codec_SISO_SIHO::parameters*>(params_cdc.get());
+	auto param_siso_siho = dynamic_cast<factory::Codec_SISO_SIHO*>(params_cdc.get());
 	return std::unique_ptr<module::Codec_SISO_SIHO<B,Q>>(param_siso_siho->template build<B,Q>(crc));
 }
 
@@ -191,7 +191,7 @@ std::unique_ptr<tools ::Interleaver_core<>> BFER_ite<B,R,Q>
 {
 	const auto seed_itl = rd_engine_seed[tid]();
 
-	std::unique_ptr<factory::Interleaver::parameters> params_itl(params_BFER_ite.itl->clone());
+	std::unique_ptr<factory::Interleaver> params_itl(params_BFER_ite.itl->clone());
 	params_itl->core->seed = params_BFER_ite.itl->core->uniform ? params_BFER_ite.itl->core->seed + seed_itl :
 	                                                              params_BFER_ite.itl->core->seed;
 
@@ -224,7 +224,7 @@ std::unique_ptr<module::Channel<R>> BFER_ite<B,R,Q>
 {
 	const auto seed_chn = rd_engine_seed[tid]();
 
-	std::unique_ptr<factory::Channel::parameters> params_chn(params_BFER_ite.chn->clone());
+	std::unique_ptr<factory::Channel> params_chn(params_BFER_ite.chn->clone());
 	params_chn->seed = seed_chn;
 
 	if (this->distributions != nullptr)
@@ -244,7 +244,7 @@ template <typename B, typename R, typename Q>
 std::unique_ptr<module::Coset<B,Q>> BFER_ite<B,R,Q>
 ::build_coset_real(const int tid)
 {
-	factory::Coset::parameters cst_params;
+	factory::Coset cst_params;
 	cst_params.size = params_BFER_ite.cdc->N_cw;
 	cst_params.n_frames = params_BFER_ite.src->n_frames;
 	return std::unique_ptr<module::Coset<B,Q>>(cst_params.template build_real<B,Q>());
@@ -254,7 +254,7 @@ template <typename B, typename R, typename Q>
 std::unique_ptr<module::Coset<B,B>> BFER_ite<B,R,Q>
 ::build_coset_bit(const int tid)
 {
-	factory::Coset::parameters cst_params;
+	factory::Coset cst_params;
 	cst_params.size = params_BFER_ite.coded_monitoring ? params_BFER_ite.cdc->N_cw : params_BFER_ite.cdc->K;
 	cst_params.n_frames = params_BFER_ite.src->n_frames;
 	return std::unique_ptr<module::Coset<B,B>>(cst_params.template build_bit<B,B>());

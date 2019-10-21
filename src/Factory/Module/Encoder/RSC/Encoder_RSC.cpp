@@ -16,26 +16,26 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Encoder_RSC_name   = "Encoder RSC";
 const std::string aff3ct::factory::Encoder_RSC_prefix = "enc";
 
-Encoder_RSC::parameters
-::parameters(const std::string &prefix)
-: Encoder::parameters(Encoder_RSC_name, prefix)
+Encoder_RSC
+::Encoder_RSC(const std::string &prefix)
+: Encoder(Encoder_RSC_name, prefix)
 {
 	this->type = "RSC";
 }
 
-Encoder_RSC::parameters* Encoder_RSC::parameters
+Encoder_RSC* Encoder_RSC
 ::clone() const
 {
-	return new Encoder_RSC::parameters(*this);
+	return new Encoder_RSC(*this);
 }
 
-void Encoder_RSC::parameters
+void Encoder_RSC
 ::get_description(cli::Argument_map_info &args) const
 {
-	Encoder::parameters::get_description(args);
+	Encoder::get_description(args);
 
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Encoder_RSC::parameters::";
+	const std::string class_name = "factory::Encoder_RSC::";
 
 	args.erase({p+"-cw-size", "N"});
 
@@ -51,10 +51,10 @@ void Encoder_RSC::parameters
 		cli::Text(cli::Including_set("LTE", "CCSDS")));
 }
 
-void Encoder_RSC::parameters
+void Encoder_RSC
 ::store(const cli::Argument_map_value &vals)
 {
-	Encoder::parameters::store(vals);
+	Encoder::store(vals);
 
 	auto p = this->get_prefix();
 
@@ -90,10 +90,10 @@ void Encoder_RSC::parameters
 	this->R           = (float)this->K / (float)this->N_cw;
 }
 
-void Encoder_RSC::parameters
+void Encoder_RSC
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	Encoder::parameters::get_headers(headers, full);
+	Encoder::get_headers(headers, full);
 
 	auto p = this->get_prefix();
 
@@ -111,7 +111,7 @@ void Encoder_RSC::parameters
 }
 
 template <typename B>
-module::Encoder_RSC_sys<B>* Encoder_RSC::parameters
+module::Encoder_RSC_sys<B>* Encoder_RSC
 ::build(std::ostream &stream) const
 {
 	if (this->type == "RSC_JSON") return new module::Encoder_RSC_generic_json_sys<B>(this->K, this->N_cw, this->buffered, this->poly, stream, this->n_frames);
@@ -120,26 +120,14 @@ module::Encoder_RSC_sys<B>* Encoder_RSC::parameters
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B>
-module::Encoder_RSC_sys<B>* Encoder_RSC
-::build(const parameters &params, std::ostream &stream)
-{
-	return params.template build<B>(stream);
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Encoder_RSC_sys<B_8 >* aff3ct::factory::Encoder_RSC::parameters::build<B_8 >(std::ostream&) const;
-template aff3ct::module::Encoder_RSC_sys<B_16>* aff3ct::factory::Encoder_RSC::parameters::build<B_16>(std::ostream&) const;
-template aff3ct::module::Encoder_RSC_sys<B_32>* aff3ct::factory::Encoder_RSC::parameters::build<B_32>(std::ostream&) const;
-template aff3ct::module::Encoder_RSC_sys<B_64>* aff3ct::factory::Encoder_RSC::parameters::build<B_64>(std::ostream&) const;
-template aff3ct::module::Encoder_RSC_sys<B_8 >* aff3ct::factory::Encoder_RSC::build<B_8 >(const aff3ct::factory::Encoder_RSC::parameters&, std::ostream&);
-template aff3ct::module::Encoder_RSC_sys<B_16>* aff3ct::factory::Encoder_RSC::build<B_16>(const aff3ct::factory::Encoder_RSC::parameters&, std::ostream&);
-template aff3ct::module::Encoder_RSC_sys<B_32>* aff3ct::factory::Encoder_RSC::build<B_32>(const aff3ct::factory::Encoder_RSC::parameters&, std::ostream&);
-template aff3ct::module::Encoder_RSC_sys<B_64>* aff3ct::factory::Encoder_RSC::build<B_64>(const aff3ct::factory::Encoder_RSC::parameters&, std::ostream&);
+template aff3ct::module::Encoder_RSC_sys<B_8 >* aff3ct::factory::Encoder_RSC::build<B_8 >(std::ostream&) const;
+template aff3ct::module::Encoder_RSC_sys<B_16>* aff3ct::factory::Encoder_RSC::build<B_16>(std::ostream&) const;
+template aff3ct::module::Encoder_RSC_sys<B_32>* aff3ct::factory::Encoder_RSC::build<B_32>(std::ostream&) const;
+template aff3ct::module::Encoder_RSC_sys<B_64>* aff3ct::factory::Encoder_RSC::build<B_64>(std::ostream&) const;
 #else
-template aff3ct::module::Encoder_RSC_sys<B>* aff3ct::factory::Encoder_RSC::parameters::build<B>(std::ostream&) const;
-template aff3ct::module::Encoder_RSC_sys<B>* aff3ct::factory::Encoder_RSC::build<B>(const aff3ct::factory::Encoder_RSC::parameters&, std::ostream&);
+template aff3ct::module::Encoder_RSC_sys<B>* aff3ct::factory::Encoder_RSC::build<B>(std::ostream&) const;
 #endif
 // ==================================================================================== explicit template instantiation

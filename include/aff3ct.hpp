@@ -15,6 +15,9 @@
 #ifndef FACTORY_HPP
 #include <Factory/Factory.hpp>
 #endif
+#ifndef HEADER_HPP
+#include <Factory/Header.hpp>
+#endif
 #ifndef FACTORY_CHANNEL_HPP
 #include <Factory/Module/Channel/Channel.hpp>
 #endif

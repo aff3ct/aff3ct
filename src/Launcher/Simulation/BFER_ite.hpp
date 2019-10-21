@@ -15,7 +15,7 @@ template <typename B = int, typename R = float, typename Q = R>
 class BFER_ite : public Launcher
 {
 protected:
-	factory::BFER_ite::parameters params;
+	factory::BFER_ite params;
 
 public:
 	BFER_ite(const int argc, const char **argv, std::ostream &stream = std::cout);

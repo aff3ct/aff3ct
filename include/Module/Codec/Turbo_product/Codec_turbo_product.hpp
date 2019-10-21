@@ -32,9 +32,9 @@ protected:
 	std::unique_ptr<Decoder_chase_pyndiah<B,Q>> cp_cols;
 
 public:
-	Codec_turbo_product(const factory::Encoder_turbo_product::parameters &enc_params,
-	                    const factory::Decoder_turbo_product::parameters &dec_params,
-	                    const factory::Interleaver          ::parameters &itl_params);
+	Codec_turbo_product(const factory::Encoder_turbo_product &enc_params,
+	                    const factory::Decoder_turbo_product &dec_params,
+	                    const factory::Interleaver           &itl_params);
 	virtual ~Codec_turbo_product() = default;
 };
 }

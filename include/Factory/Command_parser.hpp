@@ -21,7 +21,7 @@ class Command_parser
 {
 private:
 	cli::Argument_handler ahandler;
-	std::vector<Factory::parameters*> &params;
+	std::vector<Factory*> &factories;
 	std::ostream& err_stream;
 	std::vector<std::string> warnings;
 	std::vector<std::string> errors;
@@ -30,7 +30,7 @@ private:
 	bool help_asked;
 
 public:
-	Command_parser(int argc, char** argv, std::vector<Factory::parameters*> &params, bool add_help_tag = false,
+	Command_parser(int argc, char** argv, std::vector<Factory*> &factories, bool add_help_tag = false,
 	               std::ostream& err_stream = std::cerr);
 
 	void print_help    ();

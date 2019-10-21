@@ -14,7 +14,7 @@ point.
    :Type: integer
    :Examples: ``--src-info-bits 64`` ``-K 128``
 
-|factory::Source::parameters::p+info-bits,K|
+|factory::Source::p+info-bits,K|
 
 .. warning:: This argument is required only with the ``UNCODED`` simulation code
    type (cf. the :ref:`sim-sim-cde-type` parameter).
@@ -29,7 +29,7 @@ point.
    :Default: ``RAND``
    :Examples: ``--src-type AZCW``
 
-|factory::Source::parameters::p+type|
+|factory::Source::p+type|
 
 Description of the allowed values:
 
@@ -59,7 +59,7 @@ Description of the allowed values:
    :Default: ``STD``
    :Examples: ``--src-implem FAST``
 
-|factory::Source::parameters::p+implem|
+|factory::Source::p+implem|
 
 Description of the allowed values:
 
@@ -85,7 +85,7 @@ Description of the allowed values:
    :Default: 1
    :Examples: ``--src-fra 8``
 
-|factory::Source::parameters::p+fra,F|
+|factory::Source::p+fra,F|
 
 The default behavior is to generate one frame at a time. This parameter enables
 to process more than one frame when the *generate* task (from the source module)
@@ -131,7 +131,7 @@ modulation (see the :ref:`mdm-mdm-type` ``SCMA`` parameter).
    :Rights: read only
    :Examples: ``--src-path conf/src/GSM-LDPC_2112.src``
 
-|factory::Source::parameters::p+path|
+|factory::Source::p+path|
 
 An |ASCII| file is expected:
 
@@ -155,7 +155,7 @@ An |ASCII| file is expected:
    :Default: 0
    :Examples: ``--src-start-idx 42``
 
-|factory::Source::parameters::p+start-idx|
+|factory::Source::p+start-idx|
 
 References
 """"""""""

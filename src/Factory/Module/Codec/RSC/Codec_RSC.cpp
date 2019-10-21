@@ -8,25 +8,25 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Codec_RSC_name   = "Codec RSC";
 const std::string aff3ct::factory::Codec_RSC_prefix = "cdc";
 
-Codec_RSC::parameters
-::parameters(const std::string &prefix)
-: Codec          ::parameters(Codec_RSC_name, prefix),
-  Codec_SISO_SIHO::parameters(Codec_RSC_name, prefix)
+Codec_RSC
+::Codec_RSC(const std::string &prefix)
+: Codec          (Codec_RSC_name, prefix),
+  Codec_SISO_SIHO(Codec_RSC_name, prefix)
 {
-	Codec::parameters::set_enc(new Encoder_RSC::parameters("enc"));
-	Codec::parameters::set_dec(new Decoder_RSC::parameters("dec"));
+	Codec::set_enc(new Encoder_RSC("enc"));
+	Codec::set_dec(new Decoder_RSC("dec"));
 }
 
-Codec_RSC::parameters* Codec_RSC::parameters
+Codec_RSC* Codec_RSC
 ::clone() const
 {
-	return new Codec_RSC::parameters(*this);
+	return new Codec_RSC(*this);
 }
 
-void Codec_RSC::parameters
+void Codec_RSC
 ::get_description(cli::Argument_map_info &args) const
 {
-	Codec_SISO_SIHO::parameters::get_description(args);
+	Codec_SISO_SIHO::get_description(args);
 
 	enc->get_description(args);
 	dec->get_description(args);
@@ -41,13 +41,13 @@ void Codec_RSC::parameters
 	args.erase({pdec+"-std"           });
 }
 
-void Codec_RSC::parameters
+void Codec_RSC
 ::store(const cli::Argument_map_value &vals)
 {
-	Codec_SISO_SIHO::parameters::store(vals);
+	Codec_SISO_SIHO::store(vals);
 
-	auto enc_rsc = dynamic_cast<Encoder_RSC::parameters*>(enc.get());
-	auto dec_rsc = dynamic_cast<Decoder_RSC::parameters*>(dec.get());
+	auto enc_rsc = dynamic_cast<Encoder_RSC*>(enc.get());
+	auto dec_rsc = dynamic_cast<Decoder_RSC*>(dec.get());
 
 	enc->store(vals);
 
@@ -66,43 +66,31 @@ void Codec_RSC::parameters
 	tail_length = enc->tail_length;
 }
 
-void Codec_RSC::parameters
+void Codec_RSC
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	Codec_SISO_SIHO::parameters::get_headers(headers, full);
+	Codec_SISO_SIHO::get_headers(headers, full);
 
 	enc->get_headers(headers, full);
 	dec->get_headers(headers, full);
 }
 
 template <typename B, typename Q>
-module::Codec_RSC<B,Q>* Codec_RSC::parameters
+module::Codec_RSC<B,Q>* Codec_RSC
 ::build(module::CRC<B>* crc) const
 {
-	return new module::Codec_RSC<B,Q>(dynamic_cast<const Encoder_RSC::parameters&>(*enc),
-	                                  dynamic_cast<const Decoder_RSC::parameters&>(*dec));
-}
-
-template <typename B, typename Q>
-module::Codec_RSC<B,Q>* Codec_RSC
-::build(const parameters &params, module::CRC<B>* crc)
-{
-	return params.template build<B,Q>(crc);
+	return new module::Codec_RSC<B,Q>(dynamic_cast<const Encoder_RSC&>(*enc),
+	                                  dynamic_cast<const Decoder_RSC&>(*dec));
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Codec_RSC<B_8 ,Q_8 >* aff3ct::factory::Codec_RSC::parameters::build<B_8 ,Q_8 >(aff3ct::module::CRC<B_8 >*) const;
-template aff3ct::module::Codec_RSC<B_16,Q_16>* aff3ct::factory::Codec_RSC::parameters::build<B_16,Q_16>(aff3ct::module::CRC<B_16>*) const;
-template aff3ct::module::Codec_RSC<B_32,Q_32>* aff3ct::factory::Codec_RSC::parameters::build<B_32,Q_32>(aff3ct::module::CRC<B_32>*) const;
-template aff3ct::module::Codec_RSC<B_64,Q_64>* aff3ct::factory::Codec_RSC::parameters::build<B_64,Q_64>(aff3ct::module::CRC<B_64>*) const;
-template aff3ct::module::Codec_RSC<B_8 ,Q_8 >* aff3ct::factory::Codec_RSC::build<B_8 ,Q_8 >(const aff3ct::factory::Codec_RSC::parameters&, aff3ct::module::CRC<B_8 >*);
-template aff3ct::module::Codec_RSC<B_16,Q_16>* aff3ct::factory::Codec_RSC::build<B_16,Q_16>(const aff3ct::factory::Codec_RSC::parameters&, aff3ct::module::CRC<B_16>*);
-template aff3ct::module::Codec_RSC<B_32,Q_32>* aff3ct::factory::Codec_RSC::build<B_32,Q_32>(const aff3ct::factory::Codec_RSC::parameters&, aff3ct::module::CRC<B_32>*);
-template aff3ct::module::Codec_RSC<B_64,Q_64>* aff3ct::factory::Codec_RSC::build<B_64,Q_64>(const aff3ct::factory::Codec_RSC::parameters&, aff3ct::module::CRC<B_64>*);
+template aff3ct::module::Codec_RSC<B_8 ,Q_8 >* aff3ct::factory::Codec_RSC::build<B_8 ,Q_8 >(aff3ct::module::CRC<B_8 >*) const;
+template aff3ct::module::Codec_RSC<B_16,Q_16>* aff3ct::factory::Codec_RSC::build<B_16,Q_16>(aff3ct::module::CRC<B_16>*) const;
+template aff3ct::module::Codec_RSC<B_32,Q_32>* aff3ct::factory::Codec_RSC::build<B_32,Q_32>(aff3ct::module::CRC<B_32>*) const;
+template aff3ct::module::Codec_RSC<B_64,Q_64>* aff3ct::factory::Codec_RSC::build<B_64,Q_64>(aff3ct::module::CRC<B_64>*) const;
 #else
-template aff3ct::module::Codec_RSC<B,Q>* aff3ct::factory::Codec_RSC::parameters::build<B,Q>(aff3ct::module::CRC<B>*) const;
-template aff3ct::module::Codec_RSC<B,Q>* aff3ct::factory::Codec_RSC::build<B,Q>(const aff3ct::factory::Codec_RSC::parameters&, aff3ct::module::CRC<B>*);
+template aff3ct::module::Codec_RSC<B,Q>* aff3ct::factory::Codec_RSC::build<B,Q>(aff3ct::module::CRC<B>*) const;
 #endif
 // ==================================================================================== explicit template instantiation

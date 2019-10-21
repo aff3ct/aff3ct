@@ -11,7 +11,7 @@ Turbo Encoder parameters
    :Type: integer
    :Examples: ``--enc-info-bits 1``
 
-|factory::Encoder::parameters::p+info-bits,K|
+|factory::Encoder::p+info-bits,K|
 
 The codeword size :math:`N` is automatically deduced:
 :math:`N = 3 \times K + 4 \times \log_2(ts)` where :math:`ts` is the trellis
@@ -27,7 +27,7 @@ size.
    :Default: ``TURBO``
    :Examples: ``--enc-type AZCW``
 
-|factory::Encoder::parameters::p+type|
+|factory::Encoder::p+type|
 
 Description of the allowed values:
 
@@ -67,7 +67,7 @@ Please refer to the |RSC| :ref:`enc-rsc-enc-type` parameter.
    :Rights: write only
    :Examples: ``--enc-json-path example/path/to/the/right/file``
 
-|factory::Encoder_turbo::parameters::p+json-path|
+|factory::Encoder_turbo::p+json-path|
 
 Those values can be observed with the dedicated `Turbo Code Reader` available on
 the |AFF3CT| website: http://aff3ct.github.io/turbo_reader.html.
@@ -80,7 +80,7 @@ the |AFF3CT| website: http://aff3ct.github.io/turbo_reader.html.
 ``--enc-sub-no-buff``
 """""""""""""""""""""
 
-|factory::Encoder_RSC::parameters::p+no-buff|
+|factory::Encoder_RSC::p+no-buff|
 
 **Without the buffered encoding**, considering the following sequence of
 :math:`K` information bits: :math:`U_0, U_1, [...], U_{K-1}`, the encoded bits
@@ -116,7 +116,7 @@ Please refer to the |RSC| :ref:`enc-rsc-enc-poly` parameter.
    :Allowed values: ``CCSDS`` ``LTE``
    :Examples: ``--enc-sub-std CCSDS``
 
-|factory::Encoder_RSC::parameters::p+std|
+|factory::Encoder_RSC::p+std|
 
 Description of the allowed values:
 

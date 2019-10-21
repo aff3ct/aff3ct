@@ -7,7 +7,7 @@ using namespace aff3ct;
 using namespace aff3ct::simulation;
 
 Simulation
-::Simulation(const factory::Simulation::parameters& simu_params)
+::Simulation(const factory::Simulation& simu_params)
 : params(simu_params), simu_error(false)
 {
 }

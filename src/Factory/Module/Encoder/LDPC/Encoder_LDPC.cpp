@@ -17,26 +17,26 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Encoder_LDPC_name   = "Encoder LDPC";
 const std::string aff3ct::factory::Encoder_LDPC_prefix = "enc";
 
-Encoder_LDPC::parameters
-::parameters(const std::string &prefix)
-: Encoder::parameters(Encoder_LDPC_name, prefix)
+Encoder_LDPC
+::Encoder_LDPC(const std::string &prefix)
+: Encoder(Encoder_LDPC_name, prefix)
 {
 	this->type = "AZCW";
 }
 
-Encoder_LDPC::parameters* Encoder_LDPC::parameters
+Encoder_LDPC* Encoder_LDPC
 ::clone() const
 {
-	return new Encoder_LDPC::parameters(*this);
+	return new Encoder_LDPC(*this);
 }
 
-void Encoder_LDPC::parameters
+void Encoder_LDPC
 ::get_description(cli::Argument_map_info &args) const
 {
-	Encoder::parameters::get_description(args);
+	Encoder::get_description(args);
 
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Encoder_LDPC::parameters::";
+	const std::string class_name = "factory::Encoder_LDPC::";
 
 	cli::add_options(args.at({p+"-type"}), 0, "LDPC", "LDPC_H", "LDPC_DVBS2", "LDPC_QC", "LDPC_IRA");
 
@@ -63,7 +63,7 @@ void Encoder_LDPC::parameters
 		cli::File(cli::openmode::write));
 }
 
-void Encoder_LDPC::parameters
+void Encoder_LDPC
 ::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
@@ -85,13 +85,13 @@ void Encoder_LDPC::parameters
 		this->K = this->N_cw - M; // considered as regular so M = N - K
 	}
 
-	Encoder::parameters::store(vals);
+	Encoder::store(vals);
 }
 
-void Encoder_LDPC::parameters
+void Encoder_LDPC
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	Encoder::parameters::get_headers(headers, full);
+	Encoder::get_headers(headers, full);
 
 	auto p = this->get_prefix();
 
@@ -113,7 +113,7 @@ void Encoder_LDPC::parameters
 }
 
 template <typename B>
-module::Encoder_LDPC<B>* Encoder_LDPC::parameters
+module::Encoder_LDPC<B>* Encoder_LDPC
 ::build(const tools::Sparse_matrix &G, const tools::Sparse_matrix &H) const
 {
 	if (this->type == "LDPC"    ) return new module::Encoder_LDPC         <B>(this->K, this->N_cw, G, this->n_frames);
@@ -125,7 +125,7 @@ module::Encoder_LDPC<B>* Encoder_LDPC::parameters
 }
 
 template <typename B>
-module::Encoder_LDPC<B>* Encoder_LDPC::parameters
+module::Encoder_LDPC<B>* Encoder_LDPC
 ::build(const tools::Sparse_matrix &G, const tools::Sparse_matrix &H, const tools::dvbs2_values& dvbs2) const
 {
 	if (this->type == "LDPC_DVBS2") return new module::Encoder_LDPC_DVBS2<B>(dvbs2, this->n_frames);
@@ -133,50 +133,21 @@ module::Encoder_LDPC<B>* Encoder_LDPC::parameters
 	return build<B>(G, H);
 }
 
-template <typename B>
-module::Encoder_LDPC<B>* Encoder_LDPC
-::build(const parameters           &params,
-        const tools::Sparse_matrix &G,
-        const tools::Sparse_matrix &H)
-{
-	return params.template build<B>(G, H);
-}
-
-template <typename B>
-module::Encoder_LDPC<B>* Encoder_LDPC
-::build(const parameters           &params,
-        const tools::Sparse_matrix &G,
-        const tools::Sparse_matrix &H,
-        const tools::dvbs2_values& dvbs2)
-{
-	return params.template build<B>(G, H, dvbs2);
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Encoder_LDPC<B_8 >* aff3ct::factory::Encoder_LDPC::parameters::build<B_8 >(const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&) const;
-template aff3ct::module::Encoder_LDPC<B_16>* aff3ct::factory::Encoder_LDPC::parameters::build<B_16>(const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&) const;
-template aff3ct::module::Encoder_LDPC<B_32>* aff3ct::factory::Encoder_LDPC::parameters::build<B_32>(const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&) const;
-template aff3ct::module::Encoder_LDPC<B_64>* aff3ct::factory::Encoder_LDPC::parameters::build<B_64>(const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&) const;
-template aff3ct::module::Encoder_LDPC<B_8 >* aff3ct::factory::Encoder_LDPC::build<B_8 >(const aff3ct::factory::Encoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&);
-template aff3ct::module::Encoder_LDPC<B_16>* aff3ct::factory::Encoder_LDPC::build<B_16>(const aff3ct::factory::Encoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&);
-template aff3ct::module::Encoder_LDPC<B_32>* aff3ct::factory::Encoder_LDPC::build<B_32>(const aff3ct::factory::Encoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&);
-template aff3ct::module::Encoder_LDPC<B_64>* aff3ct::factory::Encoder_LDPC::build<B_64>(const aff3ct::factory::Encoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&);
+template aff3ct::module::Encoder_LDPC<B_8 >* aff3ct::factory::Encoder_LDPC::build<B_8 >(const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&) const;
+template aff3ct::module::Encoder_LDPC<B_16>* aff3ct::factory::Encoder_LDPC::build<B_16>(const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&) const;
+template aff3ct::module::Encoder_LDPC<B_32>* aff3ct::factory::Encoder_LDPC::build<B_32>(const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&) const;
+template aff3ct::module::Encoder_LDPC<B_64>* aff3ct::factory::Encoder_LDPC::build<B_64>(const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&) const;
 
-template aff3ct::module::Encoder_LDPC<B_8 >* aff3ct::factory::Encoder_LDPC::parameters::build<B_8 >(const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&, const tools::dvbs2_values&) const;
-template aff3ct::module::Encoder_LDPC<B_16>* aff3ct::factory::Encoder_LDPC::parameters::build<B_16>(const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&, const tools::dvbs2_values&) const;
-template aff3ct::module::Encoder_LDPC<B_32>* aff3ct::factory::Encoder_LDPC::parameters::build<B_32>(const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&, const tools::dvbs2_values&) const;
-template aff3ct::module::Encoder_LDPC<B_64>* aff3ct::factory::Encoder_LDPC::parameters::build<B_64>(const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&, const tools::dvbs2_values&) const;
-template aff3ct::module::Encoder_LDPC<B_8 >* aff3ct::factory::Encoder_LDPC::build<B_8 >(const aff3ct::factory::Encoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&, const tools::dvbs2_values&);
-template aff3ct::module::Encoder_LDPC<B_16>* aff3ct::factory::Encoder_LDPC::build<B_16>(const aff3ct::factory::Encoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&, const tools::dvbs2_values&);
-template aff3ct::module::Encoder_LDPC<B_32>* aff3ct::factory::Encoder_LDPC::build<B_32>(const aff3ct::factory::Encoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&, const tools::dvbs2_values&);
-template aff3ct::module::Encoder_LDPC<B_64>* aff3ct::factory::Encoder_LDPC::build<B_64>(const aff3ct::factory::Encoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&, const tools::dvbs2_values&);
+template aff3ct::module::Encoder_LDPC<B_8 >* aff3ct::factory::Encoder_LDPC::build<B_8 >(const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&, const tools::dvbs2_values&) const;
+template aff3ct::module::Encoder_LDPC<B_16>* aff3ct::factory::Encoder_LDPC::build<B_16>(const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&, const tools::dvbs2_values&) const;
+template aff3ct::module::Encoder_LDPC<B_32>* aff3ct::factory::Encoder_LDPC::build<B_32>(const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&, const tools::dvbs2_values&) const;
+template aff3ct::module::Encoder_LDPC<B_64>* aff3ct::factory::Encoder_LDPC::build<B_64>(const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&, const tools::dvbs2_values&) const;
 #else
-template aff3ct::module::Encoder_LDPC<B>* aff3ct::factory::Encoder_LDPC::parameters::build<B>(const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&) const;
-template aff3ct::module::Encoder_LDPC<B>* aff3ct::factory::Encoder_LDPC::build<B>(const aff3ct::factory::Encoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&);
+template aff3ct::module::Encoder_LDPC<B>* aff3ct::factory::Encoder_LDPC::build<B>(const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&) const;
 
-template aff3ct::module::Encoder_LDPC<B>* aff3ct::factory::Encoder_LDPC::parameters::build<B>(const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&, const tools::dvbs2_values&) const;
-template aff3ct::module::Encoder_LDPC<B>* aff3ct::factory::Encoder_LDPC::build<B>(const aff3ct::factory::Encoder_LDPC::parameters&, const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&, const tools::dvbs2_values&);
+template aff3ct::module::Encoder_LDPC<B>* aff3ct::factory::Encoder_LDPC::build<B>(const aff3ct::tools::Sparse_matrix&, const aff3ct::tools::Sparse_matrix&, const tools::dvbs2_values&) const;
 #endif
 // ==================================================================================== explicit template instantiation

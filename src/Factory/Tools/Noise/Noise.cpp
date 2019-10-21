@@ -15,23 +15,23 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Noise_name   = "Noise";
 const std::string aff3ct::factory::Noise_prefix = "sim";
 
-Noise::parameters
-::parameters(const std::string &prefix)
-: Factory::parameters(Noise_name, Noise_name, prefix)
+Noise
+::Noise(const std::string &prefix)
+: Factory(Noise_name, Noise_name, prefix)
 {
 }
 
-Noise::parameters* Noise::parameters
+Noise* Noise
 ::clone() const
 {
-	return new Noise::parameters(*this);
+	return new Noise(*this);
 }
 
-void Noise::parameters
+void Noise
 ::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Noise::parameters::";
+	const std::string class_name = "factory::Noise::";
 
 	tools::add_arg(args, p, class_name+"p+noise-range,R",
 		cli::Matlab_vector<float>(cli::Real(), std::make_tuple(cli::Length(1)), std::make_tuple(cli::Length(1,3))),
@@ -61,7 +61,7 @@ void Noise::parameters
 		cli::Text(cli::Including_set("ESN0", "EBN0", "ROP", "EP")));
 }
 
-void Noise::parameters
+void Noise
 ::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
@@ -127,7 +127,7 @@ void Noise::parameters
 	if(vals.exist({p+"-noise-type", "E"})) this->type = vals.at({p+"-noise-type", "E"});
 }
 
-void Noise::parameters
+void Noise
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
 	auto p = this->get_prefix();
@@ -146,7 +146,7 @@ void Noise::parameters
 }
 
 template <typename R>
-tools::Noise<R>* Noise::parameters
+tools::Noise<R>* Noise
 ::build(R noise_val, R bit_rate, int bps, int upf) const
 {
 	if (this->type == "EBN0" || this->type == "ESN0")
@@ -176,17 +176,7 @@ tools::Noise<R>* Noise::parameters
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__, message.str());
 }
 
-template <typename R>
-tools::Noise<R>* Noise
-::build(const aff3ct::factory::Noise::parameters& params, R noise_val, R bit_rate, int bps, int upf)
-{
-	return params.template build<R>(noise_val, bit_rate, bps, upf);
-}
-
 // ==================================================================================== explicit template instantiation
-template aff3ct::tools::Noise<float>* aff3ct::factory::Noise::parameters::build<float>(float, float, int, int) const;
-template aff3ct::tools::Noise<float>* aff3ct::factory::Noise::build<float>(const aff3ct::factory::Noise::parameters&, float, float, int, int);
-
-template aff3ct::tools::Noise<double>* aff3ct::factory::Noise::parameters::build<double>(double, double, int, int) const;
-template aff3ct::tools::Noise<double>* aff3ct::factory::Noise::build<double>(const aff3ct::factory::Noise::parameters&, double, double, int, int);
+template aff3ct::tools::Noise<float >* aff3ct::factory::Noise::build<float >(float,  float,  int, int) const;
+template aff3ct::tools::Noise<double>* aff3ct::factory::Noise::build<double>(double, double, int, int) const;
 // ==================================================================================== explicit template instantiation

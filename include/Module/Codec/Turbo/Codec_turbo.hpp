@@ -34,10 +34,10 @@ protected:
 	std::ofstream                                                  json_stream;
 
 public:
-	Codec_turbo(const factory::Encoder_turbo  ::parameters<> &enc_params,
-	            const factory::Decoder_turbo  ::parameters<> &dec_params,
-	            const factory::Interleaver    ::parameters   &itl_params,
-	            const factory::Puncturer_turbo::parameters   *pct_params = nullptr,
+	Codec_turbo(const factory::Encoder_turbo  <> &enc_params,
+	            const factory::Decoder_turbo  <> &dec_params,
+	            const factory::Interleaver       &itl_params,
+	            const factory::Puncturer_turbo   *pct_params = nullptr,
 	            CRC<B>* crc = nullptr);
 	virtual ~Codec_turbo();
 

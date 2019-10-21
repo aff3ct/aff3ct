@@ -15,26 +15,26 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Puncturer_LDPC_name   = "Puncturer LDPC";
 const std::string aff3ct::factory::Puncturer_LDPC_prefix = "pct";
 
-Puncturer_LDPC::parameters
-::parameters(const std::string &prefix)
-: Puncturer::parameters(Puncturer_LDPC_name, prefix)
+Puncturer_LDPC
+::Puncturer_LDPC(const std::string &prefix)
+: Puncturer(Puncturer_LDPC_name, prefix)
 {
 	this->type = "LDPC";
 }
 
-Puncturer_LDPC::parameters* Puncturer_LDPC::parameters
+Puncturer_LDPC* Puncturer_LDPC
 ::clone() const
 {
-	return new Puncturer_LDPC::parameters(*this);
+	return new Puncturer_LDPC(*this);
 }
 
-void Puncturer_LDPC::parameters
+void Puncturer_LDPC
 ::get_description(cli::Argument_map_info &args) const
 {
-	Puncturer::parameters::get_description(args);
+	Puncturer::get_description(args);
 
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Puncturer_LDPC::parameters::";
+	const std::string class_name = "factory::Puncturer_LDPC::";
 
 	tools::add_arg(args, p, class_name+"p+cw-size,N_cw",
 		cli::Integer(cli::Positive(), cli::Non_zero()),
@@ -69,11 +69,11 @@ std::vector<bool> generate_punct_vector(const std::string &pattern)
 	return pattern_vector;
 }
 
-void Puncturer_LDPC::parameters
+void Puncturer_LDPC
 ::store(const cli::Argument_map_value &vals)
 {
 	auto save_N_cw = this->N_cw;
-	Puncturer::parameters::store(vals);
+	Puncturer::store(vals);
 	if (save_N_cw > 0)
 		this->N_cw = save_N_cw;
 
@@ -92,10 +92,10 @@ void Puncturer_LDPC::parameters
 		this->type = "NO";
 }
 
-void Puncturer_LDPC::parameters
+void Puncturer_LDPC
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	Puncturer::parameters::get_headers(headers, full);
+	Puncturer::get_headers(headers, full);
 
 	auto p = this->get_prefix();
 
@@ -110,7 +110,7 @@ void Puncturer_LDPC::parameters
 }
 
 template <typename B, typename Q>
-module::Puncturer<B,Q>* Puncturer_LDPC::parameters
+module::Puncturer<B,Q>* Puncturer_LDPC
 ::build() const
 {
 	if (this->type == "LDPC") return new module::Puncturer_LDPC<B,Q>(this->K, this->N, this->N_cw, this->pattern, this->n_frames);
@@ -118,26 +118,14 @@ module::Puncturer<B,Q>* Puncturer_LDPC::parameters
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename Q>
-module::Puncturer<B,Q>* Puncturer_LDPC
-::build(const parameters &params)
-{
-	return params.template build<B,Q>();
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Puncturer<B_8 ,Q_8 >* aff3ct::factory::Puncturer_LDPC::parameters::build<B_8 ,Q_8 >() const;
-template aff3ct::module::Puncturer<B_16,Q_16>* aff3ct::factory::Puncturer_LDPC::parameters::build<B_16,Q_16>() const;
-template aff3ct::module::Puncturer<B_32,Q_32>* aff3ct::factory::Puncturer_LDPC::parameters::build<B_32,Q_32>() const;
-template aff3ct::module::Puncturer<B_64,Q_64>* aff3ct::factory::Puncturer_LDPC::parameters::build<B_64,Q_64>() const;
-template aff3ct::module::Puncturer<B_8 ,Q_8 >* aff3ct::factory::Puncturer_LDPC::build<B_8 ,Q_8 >(const aff3ct::factory::Puncturer_LDPC::parameters&);
-template aff3ct::module::Puncturer<B_16,Q_16>* aff3ct::factory::Puncturer_LDPC::build<B_16,Q_16>(const aff3ct::factory::Puncturer_LDPC::parameters&);
-template aff3ct::module::Puncturer<B_32,Q_32>* aff3ct::factory::Puncturer_LDPC::build<B_32,Q_32>(const aff3ct::factory::Puncturer_LDPC::parameters&);
-template aff3ct::module::Puncturer<B_64,Q_64>* aff3ct::factory::Puncturer_LDPC::build<B_64,Q_64>(const aff3ct::factory::Puncturer_LDPC::parameters&);
+template aff3ct::module::Puncturer<B_8 ,Q_8 >* aff3ct::factory::Puncturer_LDPC::build<B_8 ,Q_8 >() const;
+template aff3ct::module::Puncturer<B_16,Q_16>* aff3ct::factory::Puncturer_LDPC::build<B_16,Q_16>() const;
+template aff3ct::module::Puncturer<B_32,Q_32>* aff3ct::factory::Puncturer_LDPC::build<B_32,Q_32>() const;
+template aff3ct::module::Puncturer<B_64,Q_64>* aff3ct::factory::Puncturer_LDPC::build<B_64,Q_64>() const;
 #else
-template aff3ct::module::Puncturer<B,Q>* aff3ct::factory::Puncturer_LDPC::parameters::build<B,Q>() const;
-template aff3ct::module::Puncturer<B,Q>* aff3ct::factory::Puncturer_LDPC::build<B,Q>(const aff3ct::factory::Puncturer_LDPC::parameters&);
+template aff3ct::module::Puncturer<B,Q>* aff3ct::factory::Puncturer_LDPC::build<B,Q>() const;
 #endif
 // ==================================================================================== explicit template instantiation

@@ -11,7 +11,7 @@ Polar Puncturer parameters
    :Type: integer
    :Examples: ``--pct-fra-size 1``
 
-|factory::Puncturer::parameters::p+fra-size,N|
+|factory::Puncturer::p+fra-size,N|
 
 .. _pct-polar-pct-info-bits:
 
@@ -21,7 +21,7 @@ Polar Puncturer parameters
    :Type: integer
    :Examples: ``--pct-info-bits 1``
 
-|factory::Puncturer::parameters::p+info-bits,K|
+|factory::Puncturer::p+info-bits,K|
 
 .. _pct-polar-pct-type:
 
@@ -33,7 +33,7 @@ Polar Puncturer parameters
    :Default: ``NO``
    :Examples: ``--pct-type NO``
 
-|factory::Puncturer::parameters::p+type|
+|factory::Puncturer::p+type|
 
 Description of the allowed values:
 

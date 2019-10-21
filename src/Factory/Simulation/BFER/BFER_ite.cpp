@@ -12,16 +12,16 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::BFER_ite_name   = "Simulation BFER iterative";
 const std::string aff3ct::factory::BFER_ite_prefix = "sim";
 
-BFER_ite::parameters
-::parameters(const std::string &prefix)
-: BFER::parameters(BFER_ite_name, prefix)
+BFER_ite
+::BFER_ite(const std::string &prefix)
+: BFER(BFER_ite_name, prefix)
 {
 }
 
-BFER_ite::parameters* BFER_ite::parameters
+BFER_ite* BFER_ite
 ::clone() const
 {
-	return new BFER_ite::parameters(*this);
+	return new BFER_ite(*this);
 
 	// if (src != nullptr) { clone->src = src->clone(); }
 	// if (crc != nullptr) { clone->crc = crc->clone(); }
@@ -39,10 +39,10 @@ BFER_ite::parameters* BFER_ite::parameters
 	// return clone;
 }
 
-std::vector<std::string> BFER_ite::parameters
+std::vector<std::string> BFER_ite
 ::get_names() const
 {
-	auto n = Simulation::parameters::get_names();
+	auto n = Simulation::get_names();
 	if (this->src    != nullptr) { auto nn = this->src   ->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (this->crc    != nullptr) { auto nn = this->crc   ->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (this->cdc    != nullptr) { auto nn = this->cdc   ->get_names(); for (auto &x : nn) n.push_back(x); }
@@ -56,10 +56,10 @@ std::vector<std::string> BFER_ite::parameters
 	return n;
 }
 
-std::vector<std::string> BFER_ite::parameters
+std::vector<std::string> BFER_ite
 ::get_short_names() const
 {
-	auto sn = Factory::parameters::get_short_names();
+	auto sn = Factory::get_short_names();
 	if (this->src    != nullptr) { auto nn = this->src   ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (this->crc    != nullptr) { auto nn = this->crc   ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (this->cdc    != nullptr) { auto nn = this->cdc   ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
@@ -73,10 +73,10 @@ std::vector<std::string> BFER_ite::parameters
 	return sn;
 }
 
-std::vector<std::string> BFER_ite::parameters
+std::vector<std::string> BFER_ite
 ::get_prefixes() const
 {
-	auto p = Factory::parameters::get_prefixes();
+	auto p = Factory::get_prefixes();
 	if (this->src    != nullptr) { auto nn = this->src   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (this->crc    != nullptr) { auto nn = this->crc   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (this->cdc    != nullptr) { auto nn = this->cdc   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
@@ -90,13 +90,13 @@ std::vector<std::string> BFER_ite::parameters
 	return p;
 }
 
-void BFER_ite::parameters
+void BFER_ite
 ::get_description(cli::Argument_map_info &args) const
 {
-	BFER::parameters::get_description(args);
+	BFER::get_description(args);
 
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::BFER_ite::parameters::";
+	const std::string class_name = "factory::BFER_ite::";
 
 	tools::add_arg(args, p, class_name+"p+ite,I",
 		cli::Integer(cli::Positive()));
@@ -105,10 +105,10 @@ void BFER_ite::parameters
 		cli::Integer(cli::Positive()));
 }
 
-void BFER_ite::parameters
+void BFER_ite
 ::store(const cli::Argument_map_value &vals)
 {
-	BFER::parameters::store(vals);
+	BFER::store(vals);
 
 	auto p = this->get_prefix();
 
@@ -118,10 +118,10 @@ void BFER_ite::parameters
 	this->mnt_mutinfo = false;
 }
 
-void BFER_ite::parameters
+void BFER_ite
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	BFER::parameters::get_headers(headers, full);
+	BFER::get_headers(headers, full);
 
 	auto p = this->get_prefix();
 
@@ -141,16 +141,14 @@ void BFER_ite::parameters
 	if (this->ter    != nullptr) { this->ter   ->get_headers(headers, full); }
 }
 
-const Codec_SISO_SIHO::parameters* BFER_ite::parameters
+const Codec_SISO_SIHO* BFER_ite
 ::get_cdc() const
 {
-	return dynamic_cast<Codec_SISO_SIHO::parameters*>(this->cdc.get());
+	return dynamic_cast<Codec_SISO_SIHO*>(this->cdc.get());
 }
 
-
-
 template <typename B, typename R, typename Q>
-simulation::BFER_ite<B,R,Q>* BFER_ite::parameters
+simulation::BFER_ite<B,R,Q>* BFER_ite
 ::build() const
 {
 #if defined(AFF3CT_SYSTEMC_SIMU)
@@ -160,22 +158,15 @@ simulation::BFER_ite<B,R,Q>* BFER_ite::parameters
 #endif
 }
 
-template <typename B, typename R, typename Q>
-simulation::BFER_ite<B,R,Q>* BFER_ite
-::build(const parameters &params)
-{
-	return params.template build<B,R,Q>();
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::simulation::BFER_ite<B_8 ,R_8 ,Q_8 >* aff3ct::factory::BFER_ite::build<B_8 ,R_8 ,Q_8 >(const aff3ct::factory::BFER_ite::parameters&);
-template aff3ct::simulation::BFER_ite<B_16,R_16,Q_16>* aff3ct::factory::BFER_ite::build<B_16,R_16,Q_16>(const aff3ct::factory::BFER_ite::parameters&);
-template aff3ct::simulation::BFER_ite<B_32,R_32,Q_32>* aff3ct::factory::BFER_ite::build<B_32,R_32,Q_32>(const aff3ct::factory::BFER_ite::parameters&);
-template aff3ct::simulation::BFER_ite<B_64,R_64,Q_64>* aff3ct::factory::BFER_ite::build<B_64,R_64,Q_64>(const aff3ct::factory::BFER_ite::parameters&);
+template aff3ct::simulation::BFER_ite<B_8 ,R_8 ,Q_8 >* aff3ct::factory::BFER_ite::build<B_8 ,R_8 ,Q_8 >() const;
+template aff3ct::simulation::BFER_ite<B_16,R_16,Q_16>* aff3ct::factory::BFER_ite::build<B_16,R_16,Q_16>() const;
+template aff3ct::simulation::BFER_ite<B_32,R_32,Q_32>* aff3ct::factory::BFER_ite::build<B_32,R_32,Q_32>() const;
+template aff3ct::simulation::BFER_ite<B_64,R_64,Q_64>* aff3ct::factory::BFER_ite::build<B_64,R_64,Q_64>() const;
 #else
-template aff3ct::simulation::BFER_ite<B,R,Q>* aff3ct::factory::BFER_ite::build<B,R,Q>(const aff3ct::factory::BFER_ite::parameters&);
+template aff3ct::simulation::BFER_ite<B,R,Q>* aff3ct::factory::BFER_ite::build<B,R,Q>() const;
 #endif
 // ==================================================================================== explicit template instantiation
 

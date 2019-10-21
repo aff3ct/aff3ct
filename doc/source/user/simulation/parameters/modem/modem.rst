@@ -21,7 +21,7 @@ modules and tasks).
    :Default: ``BPSK``
    :Examples: ``--mdm-type SCMA``
 
-|factory::Modem::parameters::p+type|
+|factory::Modem::p+type|
 
 Description of the allowed values:
 
@@ -68,7 +68,7 @@ Description of the allowed values:
    :Default: ``STD``
    :Examples: ``--mdm-implem FAST``
 
-|factory::Modem::parameters::p+implem|
+|factory::Modem::p+implem|
 
 Description of the allowed values:
 
@@ -94,7 +94,7 @@ Description of the allowed values:
    :Default: 1
    :Examples: ``--mdm-bps 1``
 
-|factory::Modem::parameters::p+bps|
+|factory::Modem::p+bps|
 
 This parameter has no effect on the |BPSK| and |OOK| |modems| where the |BPS| is
 forced to 1. This is the same for the |SCMA| |modem| where the |BPS| is forced
@@ -111,7 +111,7 @@ to 3.
    :Rights: read/write
    :Examples: ``--mdm-const-path conf/mod/16QAM_ANTI_GRAY.mod``
 
-|factory::Modem::parameters::p+const-path|
+|factory::Modem::p+const-path|
 
 An |ASCII| file is expected, for instance here is the definition of a 16-|QAM|
 with an anti-Gray mapping (the lines starting with a ``#`` are ignored):
@@ -163,7 +163,7 @@ with an anti-Gray mapping (the lines starting with a ``#`` are ignored):
    :Allowed values: ``MAXS`` ``MAXSS`` ``MAXL`` ``MAX``
    :Examples: ``--mdm-max MAX``
 
-|factory::Modem::parameters::p+max|
+|factory::Modem::p+max|
 
 Description of the allowed values:
 
@@ -203,7 +203,7 @@ only a :math:`\max` function.
 ``--mdm-no-sig2``
 """""""""""""""""
 
-|factory::Modem::parameters::p+no-sig2|
+|factory::Modem::p+no-sig2|
 
 .. _mdm-mdm-cpm-k:
 
@@ -214,7 +214,7 @@ only a :math:`\max` function.
    :Default: 1
    :Examples: ``--mdm-cpm-k 1``
 
-|factory::Modem::parameters::p+cpm-k|
+|factory::Modem::p+cpm-k|
 
 .. _mdm-mdm-cpm-p:
 
@@ -225,7 +225,7 @@ only a :math:`\max` function.
    :Default: 2
    :Examples: ``--mdm-cpm-p 1``
 
-|factory::Modem::parameters::p+cpm-p|
+|factory::Modem::p+cpm-p|
 
 .. _mdm-mdm-cpm-L:
 
@@ -236,7 +236,7 @@ only a :math:`\max` function.
    :Default: 2
    :Examples: ``--mdm-cpm-L 1``
 
-|factory::Modem::parameters::p+cpm-L|
+|factory::Modem::p+cpm-L|
 
 .. _mdm-mdm-cpm-upf:
 
@@ -247,7 +247,7 @@ only a :math:`\max` function.
    :Default: 1
    :Examples: ``--mdm-cpm-upf 1``
 
-|factory::Modem::parameters::p+cpm-upf|
+|factory::Modem::p+cpm-upf|
 
 .. _mdm-mdm-cpm-map:
 
@@ -259,7 +259,7 @@ only a :math:`\max` function.
    :Default: ``NATURAL``
    :Examples: ``--mdm-cpm-map GRAY``
 
-|factory::Modem::parameters::p+cpm-map|
+|factory::Modem::p+cpm-map|
 
 Description of the allowed values:
 
@@ -286,7 +286,7 @@ Description of the allowed values:
    :Default: ``GMSK``
    :Examples: ``--mdm-cpm-ws GMSK``
 
-|factory::Modem::parameters::p+cpm-ws|
+|factory::Modem::p+cpm-ws|
 
 Description of the allowed values:
 
@@ -315,7 +315,7 @@ Description of the allowed values:
    :Allowed values: ``GSM``
    :Examples: ``--mdm-cpm-std GSM``
 
-|factory::Modem::parameters::p+cpm-std|
+|factory::Modem::p+cpm-std|
 
 Description of the allowed values:
 
@@ -343,7 +343,7 @@ Description of the allowed values:
    :Default: 1
    :Examples: ``--mdm-ite 5``
 
-|factory::Modem::parameters::p+ite|
+|factory::Modem::p+ite|
 
 .. _mdm-mdm-psi:
 
@@ -354,7 +354,7 @@ Description of the allowed values:
    :Allowed values: ``PSI0`` ``PSI1`` ``PSI2`` ``PSI3``
    :Examples: ``--mdm-psi PSI0``
 
-|factory::Modem::parameters::p+psi|
+|factory::Modem::p+psi|
 
 Description of the allowed values:
 
@@ -395,7 +395,7 @@ See the :ref:`mdm-mdm-no-sig2` parameter to disable the division by
    :Rights: read/write
    :Examples: ``--mdm-codebook conf/mod/SCMA/CS1.cb``
 
-|factory::Modem::parameters::p+codebook|
+|factory::Modem::p+codebook|
 
 .. note:: Only 3 |BPS| codebook symbols are supported at this time.
 
@@ -460,7 +460,7 @@ The simulation results for **CS8** can be found in :cite:`Klimentyev2016`
    :Default: 0
    :Examples: ``--mdm-rop-est 256``
 
-|factory::Modem::parameters::p+rop-est|
+|factory::Modem::p+rop-est|
 
 The estimation is done from a known set of bits that is the output of the
 modulation. If left to 0, the demodulation is done with the exact applied |ROP|

@@ -11,6 +11,7 @@
 #include "Tools/system_functions.h"
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Exception/exception.hpp"
+#include "Factory/Header.hpp"
 #include "Factory/Module/Source/Source.hpp"
 #include "Factory/Module/CRC/CRC.hpp"
 #include "Factory/Module/Encoder/Encoder.hpp"
@@ -28,7 +29,7 @@
 using namespace aff3ct;
 using namespace aff3ct::launcher;
 
-Launcher::Launcher(const int argc, const char **argv, factory::Simulation::parameters &params_common,
+Launcher::Launcher(const int argc, const char **argv, factory::Simulation &params_common,
                    std::ostream &stream)
 : simu(nullptr), ah(argc, argv), params_common(params_common), stream(stream)
 {

@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Codec::parameters.
+ * \brief Class factory::Codec.
  */
 #ifndef FACTORY_CODEC_HPP_
 #define FACTORY_CODEC_HPP_
@@ -23,52 +23,49 @@ namespace factory
 {
 extern const std::string Codec_name;
 extern const std::string Codec_prefix;
-struct Codec : Factory
+class Codec : public Factory
 {
-	class parameters : public Factory::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// depending parameters
-		tools::auto_cloned_unique_ptr<Encoder    ::parameters> enc;
-		tools::auto_cloned_unique_ptr<Decoder    ::parameters> dec;
-		tools::auto_cloned_unique_ptr<Puncturer  ::parameters> pct;
-		tools::auto_cloned_unique_ptr<Interleaver::parameters> itl;
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// depending parameters
+	tools::auto_cloned_unique_ptr<Encoder    > enc;
+	tools::auto_cloned_unique_ptr<Decoder    > dec;
+	tools::auto_cloned_unique_ptr<Puncturer  > pct;
+	tools::auto_cloned_unique_ptr<Interleaver> itl;
 
-		// deduced parameters
-		int K           = 0;
-		int N           = 0;
-		int N_cw        = 0;
-		int tail_length = 0;
+	// deduced parameters
+	int K           = 0;
+	int N           = 0;
+	int N_cw        = 0;
+	int tail_length = 0;
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Codec_prefix);
-		virtual ~parameters() = default;
-		virtual Codec::parameters* clone() const;
-		virtual void enable_puncturer();
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Codec(const std::string &p = Codec_prefix);
+	virtual ~Codec() = default;
+	virtual Codec* clone() const;
+	virtual void enable_puncturer();
 
-		virtual std::vector<std::string> get_names      () const;
-		virtual std::vector<std::string> get_short_names() const;
-		virtual std::vector<std::string> get_prefixes   () const;
+	virtual std::vector<std::string> get_names      () const;
+	virtual std::vector<std::string> get_short_names() const;
+	virtual std::vector<std::string> get_prefixes   () const;
 
-		// parameters construction
-		virtual void get_description(cli::Argument_map_info &args) const;
-		virtual void store          (const cli::Argument_map_value &vals);
-		virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	virtual void get_description(cli::Argument_map_info &args) const;
+	virtual void store          (const cli::Argument_map_value &vals);
+	virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-	protected:
-		parameters(const std::string &n = Codec_name, const std::string &p = Codec_prefix);
+protected:
+	Codec(const std::string &n = Codec_name, const std::string &p = Codec_prefix);
 
-		void set_enc(Encoder    ::parameters *enc);
-		void set_dec(Decoder    ::parameters *dec);
-		void set_pct(Puncturer  ::parameters *pct);
-		void set_itl(Interleaver::parameters *itl);
+	void set_enc(Encoder     *enc);
+	void set_dec(Decoder     *dec);
+	void set_pct(Puncturer   *pct);
+	void set_itl(Interleaver *itl);
 
-		void set_enc(tools::auto_cloned_unique_ptr<Encoder    ::parameters>&& enc);
-		void set_dec(tools::auto_cloned_unique_ptr<Decoder    ::parameters>&& dec);
-		void set_pct(tools::auto_cloned_unique_ptr<Puncturer  ::parameters>&& pct);
-		void set_itl(tools::auto_cloned_unique_ptr<Interleaver::parameters>&& itl);
-	};
+	void set_enc(tools::auto_cloned_unique_ptr<Encoder    >&& enc);
+	void set_dec(tools::auto_cloned_unique_ptr<Decoder    >&& dec);
+	void set_pct(tools::auto_cloned_unique_ptr<Puncturer  >&& pct);
+	void set_itl(tools::auto_cloned_unique_ptr<Interleaver>&& itl);
 };
 }
 }

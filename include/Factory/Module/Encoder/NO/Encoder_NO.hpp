@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Encoder_NO::parameters.
+ * \brief Class factory::Encoder_NO.
  */
 #ifndef FACTORY_ENCODER_NO_HPP
 #define FACTORY_ENCODER_NO_HPP
@@ -18,31 +18,25 @@ namespace factory
 {
 extern const std::string Encoder_NO_name;
 extern const std::string Encoder_NO_prefix;
-struct Encoder_NO : public Encoder
+class Encoder_NO : public Encoder
 {
-	class parameters : public Encoder::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// empty
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// empty
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Encoder_NO_prefix);
-		virtual ~parameters() = default;
-		Encoder_NO::parameters* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Encoder_NO(const std::string &p = Encoder_NO_prefix);
+	virtual ~Encoder_NO() = default;
+	Encoder_NO* clone() const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int>
-		module::Encoder_NO<B>* build() const;
-	};
-
+	// builder
 	template <typename B = int>
-	static module::Encoder_NO<B>* build(const parameters &params);
+	module::Encoder_NO<B>* build() const;
 };
 }
 }

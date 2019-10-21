@@ -13,7 +13,7 @@
    :Default: ``BCJR``
    :Examples: ``--dec-type BCJR``
 
-|factory::Decoder::parameters::p+type,D|
+|factory::Decoder::p+type,D|
 
 Description of the allowed values:
 
@@ -37,7 +37,7 @@ Description of the allowed values:
    :Default: ``DVB-RCS1``
    :Examples: ``--dec-implem DVB-RCS1``
 
-|factory::Decoder::parameters::p+implem|
+|factory::Decoder::p+implem|
 
 Description of the allowed values:
 
@@ -62,7 +62,7 @@ Description of the allowed values:
    :Allowed values: ``MAXS`` ``MAXL`` ``MAX``
    :Examples: ``--dec-max MAX``
 
-|factory::Decoder_RSC_DB::parameters::p+max|
+|factory::Decoder_RSC_DB::p+max|
 
 Description of the allowed values:
 

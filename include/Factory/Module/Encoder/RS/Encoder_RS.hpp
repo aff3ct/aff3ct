@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Encoder_RS::parameters.
+ * \brief Class factory::Encoder_RS.
  */
 #ifndef FACTORY_ENCODER_RS_HPP
 #define FACTORY_ENCODER_RS_HPP
@@ -19,31 +19,25 @@ namespace factory
 {
 extern const std::string Encoder_RS_name;
 extern const std::string Encoder_RS_prefix;
-struct Encoder_RS : public Encoder
+class Encoder_RS : public Encoder
 {
-	class parameters : public Encoder::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// empty
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// empty
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Encoder_RS_prefix);
-		virtual ~parameters() = default;
-		Encoder_RS::parameters* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Encoder_RS(const std::string &p = Encoder_RS_prefix);
+	virtual ~Encoder_RS() = default;
+	Encoder_RS* clone() const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int>
-		module::Encoder_RS<B>* build(const tools::RS_polynomial_generator &GF) const;
-	};
-
+	// builder
 	template <typename B = int>
-	static module::Encoder_RS<B>* build(const parameters &params, const tools::RS_polynomial_generator &GF);
+	module::Encoder_RS<B>* build(const tools::RS_polynomial_generator &GF) const;
 };
 }
 }

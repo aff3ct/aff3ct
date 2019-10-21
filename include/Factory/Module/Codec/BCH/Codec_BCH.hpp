@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Codec_BCH::parameters.
+ * \brief Class factory::Codec_BCH.
  */
 #ifndef FACTORY_CODEC_BCH_HPP
 #define FACTORY_CODEC_BCH_HPP
@@ -19,27 +19,21 @@ namespace factory
 {
 extern const std::string Codec_BCH_name;
 extern const std::string Codec_BCH_prefix;
-struct Codec_BCH : public Codec_SIHO_HIHO
+class Codec_BCH : public Codec_SIHO_HIHO
 {
-	class parameters : public Codec_SIHO_HIHO::parameters
-	{
-	public:
-		explicit parameters(const std::string &p = Codec_BCH_prefix);
-		virtual ~parameters() = default;
-		Codec_BCH::parameters* clone() const;
+public:
+	explicit Codec_BCH(const std::string &p = Codec_BCH_prefix);
+	virtual ~Codec_BCH() = default;
+	Codec_BCH* clone() const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int, typename Q = float>
-		module::Codec_BCH<B,Q>* build(module::CRC<B> *crc = nullptr) const;
-	};
-
+	// builder
 	template <typename B = int, typename Q = float>
-	static module::Codec_BCH<B,Q>* build(const parameters &params, module::CRC<B> *crc = nullptr);
+	module::Codec_BCH<B,Q>* build(module::CRC<B> *crc = nullptr) const;
 };
 }
 }

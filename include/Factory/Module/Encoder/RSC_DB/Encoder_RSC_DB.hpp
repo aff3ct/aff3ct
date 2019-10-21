@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Encoder_RSC_DB::parameters.
+ * \brief Class factory::Encoder_RSC_DB.
  */
 #ifndef FACTORY_ENCODER_RSC_DB_HPP
 #define FACTORY_ENCODER_RSC_DB_HPP
@@ -18,33 +18,27 @@ namespace factory
 {
 extern const std::string Encoder_RSC_DB_name;
 extern const std::string Encoder_RSC_DB_prefix;
-struct Encoder_RSC_DB : public Encoder
+class Encoder_RSC_DB : public Encoder
 {
-	class parameters : public Encoder::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// optional
-		bool        buffered = true;
-		std::string standard = "DVB-RCS1";
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// optional
+	bool        buffered = true;
+	std::string standard = "DVB-RCS1";
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Encoder_RSC_DB_prefix);
-		virtual ~parameters() = default;
-		Encoder_RSC_DB::parameters* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Encoder_RSC_DB(const std::string &p = Encoder_RSC_DB_prefix);
+	virtual ~Encoder_RSC_DB() = default;
+	Encoder_RSC_DB* clone() const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int>
-		module::Encoder_RSC_DB<B>* build() const;
-	};
-
+	// builder
 	template <typename B = int>
-	static module::Encoder_RSC_DB<B>* build(const parameters &params);
+	module::Encoder_RSC_DB<B>* build() const;
 };
 }
 }

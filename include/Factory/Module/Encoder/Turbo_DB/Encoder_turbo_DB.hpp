@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Encoder_turbo_DB::parameters.
+ * \brief Class factory::Encoder_turbo_DB.
  */
 #ifndef FACTORY_ENCODER_TURBO_DB_HPP
 #define FACTORY_ENCODER_TURBO_DB_HPP
@@ -24,39 +24,31 @@ namespace factory
 {
 extern const std::string Encoder_turbo_DB_name;
 extern const std::string Encoder_turbo_DB_prefix;
-struct Encoder_turbo_DB : public Encoder
+class Encoder_turbo_DB : public Encoder
 {
-	class parameters : public Encoder::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// depending parameters
-		tools::auto_cloned_unique_ptr<Interleaver   ::parameters> itl;
-		tools::auto_cloned_unique_ptr<Encoder_RSC_DB::parameters> sub;
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// depending parameters
+	tools::auto_cloned_unique_ptr<Interleaver   > itl;
+	tools::auto_cloned_unique_ptr<Encoder_RSC_DB> sub;
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Encoder_turbo_DB_prefix);
-		virtual ~parameters() = default;
-		Encoder_turbo_DB::parameters* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Encoder_turbo_DB(const std::string &p = Encoder_turbo_DB_prefix);
+	virtual ~Encoder_turbo_DB() = default;
+	Encoder_turbo_DB* clone() const;
 
-		virtual std::vector<std::string> get_names      () const;
-		virtual std::vector<std::string> get_short_names() const;
-		virtual std::vector<std::string> get_prefixes   () const;
+	virtual std::vector<std::string> get_names      () const;
+	virtual std::vector<std::string> get_short_names() const;
+	virtual std::vector<std::string> get_prefixes   () const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int>
-		module::Encoder_turbo_DB<B>* build(const module::Interleaver<B> &itl, module::Encoder_RSC_DB<B> &sub_enc) const;
-	};
-
+	// builder
 	template <typename B = int>
-	static module::Encoder_turbo_DB<B>* build(const parameters                &params,
-	                                          const module::Interleaver<B>    &itl,
-	                                                module::Encoder_RSC_DB<B> &sub_enc);
+	module::Encoder_turbo_DB<B>* build(const module::Interleaver<B> &itl, module::Encoder_RSC_DB<B> &sub_enc) const;
 };
 }
 }

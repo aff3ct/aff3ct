@@ -12,7 +12,7 @@
    :Allowed values: ``BCJR`` ``CHASE`` ``ML``
    :Examples: ``--dec-type BCJR``
 
-|factory::Decoder::parameters::p+type,D|
+|factory::Decoder::p+type,D|
 
 Description of the allowed values:
 
@@ -36,7 +36,7 @@ Description of the allowed values:
    :Default: ``STD``
    :Examples: ``--dec-implem FAST``
 
-|factory::Decoder::parameters::p+implem|
+|factory::Decoder::p+implem|
 
 Description of the allowed values:
 
@@ -68,7 +68,7 @@ Description of the allowed values:
    :Allowed values: ``INTER`` ``INTRA``
    :Examples: ``--dec-simd INTER``
 
-|factory::Decoder_RSC::parameters::p+simd|
+|factory::Decoder_RSC::p+simd|
 
 Description of the allowed values:
 
@@ -106,7 +106,7 @@ Description of the allowed values:
    :Allowed values: ``MAXS`` ``MAXL`` ``MAX``
    :Examples: ``--dec-max MAX``
 
-|factory::Decoder_RSC::parameters::p+max|
+|factory::Decoder_RSC::p+max|
 
 Description of the allowed values:
 

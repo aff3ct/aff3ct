@@ -19,7 +19,7 @@ iterative |BFER| chain in :numref:`fig_bferi`).
    :Default: ``RANDOM``
    :Examples: ``--itl-type RANDOM``
 
-|factory::Interleaver_core::parameters::p+type|
+|factory::Interleaver_core::p+type|
 
 Description of the allowed values:
 
@@ -111,7 +111,7 @@ Description of the allowed values:
    :Default: 4
    :Examples: ``--itl-cols 1``
 
-|factory::Interleaver_core::parameters::p+cols|
+|factory::Interleaver_core::p+cols|
 
 .. _itl-itl-path:
 
@@ -122,7 +122,7 @@ Description of the allowed values:
    :Rights: read only
    :Examples: ``--itl-path conf/itl/GSM-LDPC_4224.itl``
 
-|factory::Interleaver_core::parameters::p+path|
+|factory::Interleaver_core::p+path|
 
 An |ASCII| file is expected:
 
@@ -166,7 +166,7 @@ two |LUTs|:
    :Allowed values: ``BOTTOM_LEFT`` ``BOTTOM_RIGHT`` ``TOP_LEFT`` ``TOP_RIGHT``
    :Examples: ``--itl-read-order BOTTOM_LEFT``
 
-|factory::Interleaver_core::parameters::p+read-order|
+|factory::Interleaver_core::p+read-order|
 
 The read starts from the given corner of the array to the diagonally opposite
 one. The read is made row by row for the ``COL_ROW`` interleaver and column by
@@ -226,7 +226,7 @@ Description of the allowed values (see also the figures just bellow):
    :Default: 0
    :Examples: ``--itl-seed 48``
 
-|factory::Interleaver_core::parameters::p+seed|
+|factory::Interleaver_core::p+seed|
 
 All the threads/nodes have the same seed (except if a uniform interleaver is
 used, see the :ref:`itl-itl-uni` parameter).
@@ -239,7 +239,7 @@ used, see the :ref:`itl-itl-uni` parameter).
 ``--itl-uni``
 """""""""""""
 
-|factory::Interleaver_core::parameters::p+uni|
+|factory::Interleaver_core::p+uni|
 
 By default, if this parameter is not used, the random interleavers generate the
 |LUT| only once for the whole simulation.

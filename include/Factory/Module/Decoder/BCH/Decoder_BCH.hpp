@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Decoder_BCH::parameters.
+ * \brief Class factory::Decoder_BCH.
  */
 #ifndef FACTORY_DECODER_BCH_HPP
 #define FACTORY_DECODER_BCH_HPP
@@ -22,46 +22,35 @@ namespace factory
 {
 extern const std::string Decoder_BCH_name;
 extern const std::string Decoder_BCH_prefix;
-struct Decoder_BCH : public Decoder
+class Decoder_BCH : public Decoder
 {
-	class parameters : public Decoder::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// optional parameters
-		int t = 5; // correction power of the BCH
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// optional parameters
+	int t = 5; // correction power of the BCH
 
-		// deduced parameters
-		int m = 0; // Gallois field order
+	// deduced parameters
+	int m = 0; // Gallois field order
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Decoder_BCH_prefix);
-		virtual ~parameters() = default;
-		Decoder_BCH::parameters* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Decoder_BCH(const std::string &p = Decoder_BCH_prefix);
+	virtual ~Decoder_BCH() = default;
+	Decoder_BCH* clone() const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build(const tools::BCH_polynomial_generator<B> &GF,
-		                                 const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
-
-		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO_HIHO<B,Q>* build_hiho(const tools::BCH_polynomial_generator<B> &GF,
-		                                           const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
-
-	};
+	// builder
+	template <typename B = int, typename Q = float>
+	module::Decoder_SIHO<B,Q>* build(const tools::BCH_polynomial_generator<B> &GF,
+	                                 const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const tools::BCH_polynomial_generator<B> &GF,
-	                                        const std::unique_ptr<module::Encoder<B>>& encoder = nullptr);
+	module::Decoder_SIHO_HIHO<B,Q>* build_hiho(const tools::BCH_polynomial_generator<B> &GF,
+	                                           const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 
-	template <typename B = int, typename Q = float>
-	static module::Decoder_SIHO_HIHO<B,Q>* build_hiho(const parameters &params, const tools::BCH_polynomial_generator<B> &GF,
-	                                                  const std::unique_ptr<module::Encoder<B>>& encoder = nullptr);
 };
 }
 }

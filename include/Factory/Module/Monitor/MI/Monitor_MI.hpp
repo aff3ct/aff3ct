@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Monitor_MI::parameters.
+ * \brief Class factory::Monitor_MI.
  */
 #ifndef FACTORY_MONITOR_MI_HPP
 #define FACTORY_MONITOR_MI_HPP
@@ -18,37 +18,31 @@ namespace factory
 {
 extern const std::string Monitor_MI_name;
 extern const std::string Monitor_MI_prefix;
-struct Monitor_MI : public Monitor
+class Monitor_MI : public Monitor
 {
-	class parameters : public Monitor::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// required parameters
-		int         N = 0;
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// required parameters
+	int         N = 0;
 
-		// optional parameters
-		std::string type     = "STD";
-		int         n_trials = 200;
-		int         n_frames = 1;
+	// optional parameters
+	std::string type     = "STD";
+	int         n_trials = 200;
+	int         n_frames = 1;
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Monitor_MI_prefix);
-		virtual ~parameters() = default;
-		Monitor_MI::parameters* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Monitor_MI(const std::string &p = Monitor_MI_prefix);
+	virtual ~Monitor_MI() = default;
+	Monitor_MI* clone() const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int, typename R = float>
-		module::Monitor_MI<B,R>* build() const;
-	};
-
+	// builder
 	template <typename B = int, typename R = float>
-	static module::Monitor_MI<B,R>* build(const parameters& params);
+	module::Monitor_MI<B,R>* build() const;
 };
 }
 }

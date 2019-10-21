@@ -14,7 +14,7 @@ using namespace aff3ct::launcher;
 template <class L, typename B, typename R, typename Q>
 RSC<L,B,R,Q>
 ::RSC(const int argc, const char **argv, std::ostream &stream)
-: L(argc, argv, stream), params_cdc(new factory::Codec_RSC::parameters("cdc"))
+: L(argc, argv, stream), params_cdc(new factory::Codec_RSC("cdc"))
 {
 	this->params.set_cdc(params_cdc);
 }
@@ -37,7 +37,7 @@ template <class L, typename B, typename R, typename Q>
 void RSC<L,B,R,Q>
 ::store_args()
 {
-	auto dec_rsc = dynamic_cast<factory::Decoder_RSC::parameters*>(params_cdc->dec.get());
+	auto dec_rsc = dynamic_cast<factory::Decoder_RSC*>(params_cdc->dec.get());
 
 	params_cdc->store(this->arg_vals);
 

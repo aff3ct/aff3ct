@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Codec_RSC_DB::parameters.
+ * \brief Class factory::Codec_RSC_DB.
  */
 #ifndef FACTORY_CODEC_RSC_DB_HPP
 #define FACTORY_CODEC_RSC_DB_HPP
@@ -21,27 +21,21 @@ namespace factory
 {
 extern const std::string Codec_RSC_DB_name;
 extern const std::string Codec_RSC_DB_prefix;
-struct Codec_RSC_DB : public Codec_SISO_SIHO
+class Codec_RSC_DB : public Codec_SISO_SIHO
 {
-	struct parameters : public Codec_SISO_SIHO::parameters
-	{
-	public:
-		explicit parameters(const std::string &p = Codec_RSC_DB_prefix);
-		virtual ~parameters() = default;
-		Codec_RSC_DB::parameters* clone() const;
+public:
+	explicit Codec_RSC_DB(const std::string &p = Codec_RSC_DB_prefix);
+	virtual ~Codec_RSC_DB() = default;
+	Codec_RSC_DB* clone() const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int, typename Q = float>
-		module::Codec_RSC_DB<B,Q>* build(module::CRC<B>* crc = nullptr) const;
-	};
-
+	// builder
 	template <typename B = int, typename Q = float>
-	static module::Codec_RSC_DB<B,Q>* build(const parameters &params, module::CRC<B>* crc = nullptr);
+	module::Codec_RSC_DB<B,Q>* build(module::CRC<B>* crc = nullptr) const;
 };
 }
 }

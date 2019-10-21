@@ -11,7 +11,7 @@
    :Type: integer
    :Examples: ``--enc-cw-size 1``
 
-|factory::Encoder::parameters::p+cw-size,N|
+|factory::Encoder::p+cw-size,N|
 
 .. _enc-ra-enc-info-bits:
 
@@ -21,7 +21,7 @@
    :Type: integer
    :Examples: ``--enc-info-bits 1``
 
-|factory::Encoder::parameters::p+info-bits,K|
+|factory::Encoder::p+info-bits,K|
 
 .. _enc-ra-enc-type:
 
@@ -33,7 +33,7 @@
    :Default: ``RA``
    :Examples: ``--enc-type AZCW``
 
-|factory::Encoder::parameters::p+type|
+|factory::Encoder::p+type|
 
 Description of the allowed values:
 

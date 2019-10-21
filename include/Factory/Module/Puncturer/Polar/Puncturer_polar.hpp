@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Puncturer_polar::parameters.
+ * \brief Class factory::Puncturer_polar.
  */
 #ifndef FACTORY_PUNCTURER_POLAR_HPP
 #define FACTORY_PUNCTURER_POLAR_HPP
@@ -19,32 +19,25 @@ namespace factory
 {
 extern const std::string Puncturer_polar_name;
 extern const std::string Puncturer_polar_prefix;
-struct Puncturer_polar : public Puncturer
+class Puncturer_polar : public Puncturer
 {
-	class parameters : public Puncturer::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// empty
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// empty
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Puncturer_polar_prefix);
-		virtual ~parameters() = default;
-		Puncturer_polar::parameters* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Puncturer_polar(const std::string &p = Puncturer_polar_prefix);
+	virtual ~Puncturer_polar() = default;
+	Puncturer_polar* clone() const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int, typename Q = float>
-		module::Puncturer_polar_shortlast<B,Q>* build(const tools::Frozenbits_generator &fb_generator) const;
-	};
-
+	// builder
 	template <typename B = int, typename Q = float>
-	static module::Puncturer_polar_shortlast<B,Q>* build(const parameters                  &params,
-	                                                     const tools::Frozenbits_generator &fb_generator);
+	module::Puncturer_polar_shortlast<B,Q>* build(const tools::Frozenbits_generator &fb_generator) const;
 };
 }
 }

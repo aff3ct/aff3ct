@@ -14,7 +14,7 @@ Polar Decoder parameters
    :Default: ``SC``
    :Examples: ``--dec-type ASCL``
 
-|factory::Decoder::parameters::p+type,D|
+|factory::Decoder::p+type,D|
 
 Description of the allowed values:
 
@@ -57,7 +57,7 @@ Description of the allowed values:
    :Default: ``FAST``
    :Examples: ``--dec-implem FAST``
 
-|factory::Decoder::parameters::p+implem|
+|factory::Decoder::p+implem|
 
 Description of the allowed values:
 
@@ -92,7 +92,7 @@ Description of the allowed values:
    :Allowed values: ``INTER`` ``INTRA``
    :Examples: ``--dec-simd INTER``
 
-|factory::Decoder_polar::parameters::p+simd|
+|factory::Decoder_polar::p+simd|
 
 Description of the allowed values:
 
@@ -133,7 +133,7 @@ Description of the allowed values:
    :Type: integer
    :Examples: ``--dec-ite 1``
 
-|factory::Decoder_polar::parameters::p+ite,i|
+|factory::Decoder_polar::p+ite,i|
 
 .. _dec-polar-dec-flips:
 
@@ -143,7 +143,7 @@ Description of the allowed values:
    :Type: integer
    :Examples: ``--dec-flips 1``
 
-|factory::Decoder::parameters::p+flips|
+|factory::Decoder::p+flips|
 
 Corresponds to the ``T`` parameter of the |SCF| decoding alogorithm
 :cite:`Afisiadis2014`.
@@ -156,14 +156,14 @@ Corresponds to the ``T`` parameter of the |SCF| decoding alogorithm
    :Type: integer
    :Examples: ``--dec-lists 1``
 
-|factory::Decoder_polar::parameters::p+lists,L|
+|factory::Decoder_polar::p+lists,L|
 
 .. _dec-polar-dec-partial-adaptive:
 
 ``--dec-partial-adaptive``
 """"""""""""""""""""""""""
 
-|factory::Decoder_polar::parameters::p+partial-adaptive|
+|factory::Decoder_polar::p+partial-adaptive|
 
 .. _dec-polar-dec-polar-nodes:
 
@@ -174,7 +174,7 @@ Corresponds to the ``T`` parameter of the |SCF| decoding alogorithm
    :Default: ``"{R0,R1,R0L,REP,REPL,SPC}"``
    :Examples: ``--dec-polar-nodes "{R0,R1}"``
 
-|factory::Decoder_polar::parameters::p+polar-nodes|
+|factory::Decoder_polar::p+polar-nodes|
 
 Here are the available node types (or rules):
 

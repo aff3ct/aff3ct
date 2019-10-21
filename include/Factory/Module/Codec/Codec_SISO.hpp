@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Codec_SISO::parameters.
+ * \brief Class factory::Codec_SISO.
  */
 #ifndef FACTORY_CODEC_SISO_HPP_
 #define FACTORY_CODEC_SISO_HPP_
@@ -17,35 +17,29 @@ namespace factory
 {
 extern const std::string Codec_SISO_name;
 extern const std::string Codec_SISO_prefix;
-struct Codec_SISO : Codec
+class Codec_SISO : virtual public Codec
 {
-	class parameters : virtual public Codec::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// empty
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// empty
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Codec_SISO_prefix);
-		virtual ~parameters() {}
-		// The following line is commented to prevent Visual C++ to incorrectly report ambiguity when covariance is
-		// used with virtual inheritance.
-		// See more about this MSVC bug:
-		// - https://stackoverflow.com/questions/6933061/c-ambiguous-inheritance-error-in-vs-2010
-		// - https://connect.microsoft.com/VisualStudio/feedback/details/590625/visual-c-incorrectly-reports-ambiguity-when-covariance-is-used-with-virtual-inheritance
-		// - https://docs.microsoft.com/fr-fr/cpp/error-messages/compiler-errors-1/compiler-error-c2250
-//		virtual Codec_SISO::parameters* clone() const = 0;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Codec_SISO(const std::string &p = Codec_SISO_prefix);
+	virtual ~Codec_SISO() {}
+	// The following line is commented to prevent Visual C++ to incorrectly report ambiguity when covariance is
+	// used with virtual inheritance.
+	// See more about this MSVC bug:
+	// - https://stackoverflow.com/questions/6933061/c-ambiguous-inheritance-error-in-vs-2010
+	// - https://connect.microsoft.com/VisualStudio/feedback/details/590625/visual-c-incorrectly-reports-ambiguity-when-covariance-is-used-with-virtual-inheritance
+	// - https://docs.microsoft.com/fr-fr/cpp/error-messages/compiler-errors-1/compiler-error-c2250
+//		virtual Codec_SISO* clone() const = 0;
 
-		// builder
-		template <typename B = int, typename Q = float>
-		module::Codec_SISO<B,Q>* build(module::CRC<B>* crc = nullptr) const;
-
-	protected:
-		parameters(const std::string &n, const std::string &p);
-	};
-
+	// builder
 	template <typename B = int, typename Q = float>
-	static module::Codec_SISO<B,Q>* build(const parameters &params, module::CRC<B> *crc = nullptr);
+	module::Codec_SISO<B,Q>* build(module::CRC<B>* crc = nullptr) const;
+
+protected:
+	Codec_SISO(const std::string &n, const std::string &p);
 };
 }
 }

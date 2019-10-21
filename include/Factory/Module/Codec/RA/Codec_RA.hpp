@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Codec_RA::parameters.
+ * \brief Class factory::Codec_RA.
  */
 #ifndef FACTORY_CODEC_RA_HPP
 #define FACTORY_CODEC_RA_HPP
@@ -19,27 +19,21 @@ namespace factory
 {
 extern const std::string Codec_RA_name;
 extern const std::string Codec_RA_prefix;
-struct Codec_RA : public Codec_SIHO
+class Codec_RA : public Codec_SIHO
 {
-	class parameters : public Codec_SIHO::parameters
-	{
-	public:
-		explicit parameters(const std::string &p = Codec_RA_prefix);
-		virtual ~parameters() = default;
-		Codec_RA::parameters* clone() const;
+public:
+	explicit Codec_RA(const std::string &p = Codec_RA_prefix);
+	virtual ~Codec_RA() = default;
+	Codec_RA* clone() const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int, typename Q = float>
-		module::Codec_RA<B,Q>* build(module::CRC<B> *crc = nullptr) const;
-	};
-
+	// builder
 	template <typename B = int, typename Q = float>
-	static module::Codec_RA<B,Q>* build(const parameters &params, module::CRC<B> *crc = nullptr);
+	module::Codec_RA<B,Q>* build(module::CRC<B> *crc = nullptr) const;
 };
 }
 }

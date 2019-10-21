@@ -26,47 +26,41 @@ namespace factory
 {
 extern const std::string BFER_ite_name;
 extern const std::string BFER_ite_prefix;
-struct BFER_ite : BFER
+class BFER_ite : public BFER
 {
-	class parameters : public BFER::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// optional parameters
-		int n_ite     = 15;
-		int crc_start = 2;
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// optional parameters
+	int n_ite     = 15;
+	int crc_start = 2;
 
-		// module parameters
-		tools::auto_cloned_unique_ptr<Interleaver::parameters> itl;
+	// module parameters
+	tools::auto_cloned_unique_ptr<Interleaver> itl;
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = BFER_ite_prefix);
-		virtual ~parameters() = default;
-		BFER_ite::parameters* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit BFER_ite(const std::string &p = BFER_ite_prefix);
+	virtual ~BFER_ite() = default;
+	BFER_ite* clone() const;
 
-		virtual std::vector<std::string> get_names      () const;
-		virtual std::vector<std::string> get_short_names() const;
-		virtual std::vector<std::string> get_prefixes   () const;
+	virtual std::vector<std::string> get_names      () const;
+	virtual std::vector<std::string> get_short_names() const;
+	virtual std::vector<std::string> get_prefixes   () const;
 
-		// setters
-		// void set_cdc(Codec_SISO_SIHO::parameters *cdc) { this->cdc = cdc; BFER::parameters::set_cdc(cdc); }
-		void set_itl(Interleaver::parameters *itl) { this->itl.reset(itl); }
+	// setters
+	// void set_cdc(Codec_SISO_SIHO *cdc) { this->cdc = cdc; BFER::set_cdc(cdc); }
+	void set_itl(Interleaver *itl) { this->itl.reset(itl); }
 
-		const Codec_SISO_SIHO::parameters* get_cdc() const;
+	const Codec_SISO_SIHO* get_cdc() const;
 
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int, typename R = float, typename Q = R>
-		simulation::BFER_ite<B,R,Q>* build() const;
-	};
-
+	// builder
 	template <typename B = int, typename R = float, typename Q = R>
-	static simulation::BFER_ite<B,R,Q>* build(const parameters &params);
+	simulation::BFER_ite<B,R,Q>* build() const;
 };
 }
 }

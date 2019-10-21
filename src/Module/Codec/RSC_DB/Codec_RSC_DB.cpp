@@ -12,8 +12,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename Q>
 Codec_RSC_DB<B,Q>
-::Codec_RSC_DB(const factory::Encoder_RSC_DB::parameters &enc_params,
-               const factory::Decoder_RSC_DB::parameters &dec_params)
+::Codec_RSC_DB(const factory::Encoder_RSC_DB &enc_params,
+               const factory::Decoder_RSC_DB &dec_params)
 : Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   buffered_encoding(enc_params.buffered)
@@ -50,35 +50,34 @@ Codec_RSC_DB<B,Q>
 	auto enc_cpy = enc_params;
 	enc_cpy.type = "RSC_DB";
 
-	std::unique_ptr<Encoder_RSC_DB<B>> encoder_RSC(factory::Encoder_RSC_DB::build<B>(enc_cpy));
+	std::unique_ptr<Encoder_RSC_DB<B>> encoder_RSC(enc_cpy.build<B>());
 	trellis = encoder_RSC->get_trellis();
 
 	// ---------------------------------------------------------------------------------------------------- allocations
-	factory::Puncturer::parameters pct_params;
+	factory::Puncturer pct_params;
 	pct_params.type     = "NO";
 	pct_params.K        = enc_params.K;
 	pct_params.N        = enc_params.N_cw;
 	pct_params.N_cw     = enc_params.N_cw;
 	pct_params.n_frames = enc_params.n_frames;
 
-	this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
-
+	this->set_puncturer(pct_params.build<B,Q>());
 	try
 	{
-		this->set_encoder(factory::Encoder_RSC_DB::build<B>(enc_params));
+		this->set_encoder(enc_params.build<B>());
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_encoder(factory::Encoder::build<B>(enc_params));
+		this->set_encoder(static_cast<const factory::Encoder*>(&enc_params)->build<B>());
 	}
 
 	try
 	{
-		this->set_decoder_siso_siho(factory::Decoder_RSC_DB::build_siso<B,Q>(dec_params, trellis, this->get_encoder()));
+		this->set_decoder_siso_siho(dec_params.build_siso<B,Q>(trellis, this->get_encoder()));
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_decoder_siho(factory::Decoder_RSC_DB::build<B,Q>(dec_params, trellis, this->get_encoder()));
+		this->set_decoder_siho(dec_params.build<B,Q>(trellis, this->get_encoder()));
 	}
 }
 

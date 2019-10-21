@@ -13,7 +13,7 @@ template <class L, typename B = int, typename R = float, typename Q = R>
 class Uncoded : public L
 {
 protected:
-	factory::Codec_uncoded::parameters *params_cdc;
+	factory::Codec_uncoded *params_cdc;
 
 public:
 	Uncoded(const int argc, const char **argv, std::ostream &stream = std::cout);

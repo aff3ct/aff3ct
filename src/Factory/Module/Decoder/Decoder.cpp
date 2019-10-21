@@ -12,23 +12,23 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Decoder_name   = "Decoder";
 const std::string aff3ct::factory::Decoder_prefix = "dec";
 
-Decoder::parameters
-::parameters(const std::string &name, const std::string &prefix)
-: Factory::parameters(name, Decoder_name, prefix)
+Decoder
+::Decoder(const std::string &name, const std::string &prefix)
+: Factory(name, Decoder_name, prefix)
 {
 }
 
-Decoder::parameters* Decoder::parameters
+Decoder* Decoder
 ::clone() const
 {
-	return new Decoder::parameters(*this);
+	return new Decoder(*this);
 }
 
-void Decoder::parameters
+void Decoder
 ::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Decoder::parameters::";
+	const std::string class_name = "factory::Decoder::";
 
 	tools::add_arg(args, p, class_name+"p+cw-size,N",
 		cli::Integer(cli::Positive(), cli::Non_zero()),
@@ -57,7 +57,7 @@ void Decoder::parameters
 		cli::Integer(cli::Positive()));
 }
 
-void Decoder::parameters
+void Decoder
 ::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
@@ -75,7 +75,7 @@ void Decoder::parameters
 	this->R = (float)this->K / (float)this->N_cw;
 }
 
-void Decoder::parameters
+void Decoder
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
 	auto p = this->get_prefix();
@@ -96,7 +96,7 @@ void Decoder::parameters
 }
 
 template <typename B, typename Q>
-module::Decoder_SIHO<B,Q>* Decoder::parameters
+module::Decoder_SIHO<B,Q>* Decoder
 ::build(const std::unique_ptr<module::Encoder<B>>& encoder) const
 {
 	if (encoder)
@@ -116,7 +116,7 @@ module::Decoder_SIHO<B,Q>* Decoder::parameters
 }
 
 template <typename B, typename Q>
-module::Decoder_SIHO_HIHO<B,Q>* Decoder::parameters
+module::Decoder_SIHO_HIHO<B,Q>* Decoder
 ::build_hiho(const std::unique_ptr<module::Encoder<B>>& encoder) const
 {
 	if (encoder)
@@ -134,16 +134,16 @@ module::Decoder_SIHO_HIHO<B,Q>* Decoder::parameters
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder::parameters::build<B_8 ,Q_8 >(const std::unique_ptr<module::Encoder<B_8 >>&) const;
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder::parameters::build<B_16,Q_16>(const std::unique_ptr<module::Encoder<B_16>>&) const;
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder::parameters::build<B_32,Q_32>(const std::unique_ptr<module::Encoder<B_32>>&) const;
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder::parameters::build<B_64,Q_64>(const std::unique_ptr<module::Encoder<B_64>>&) const;
-template aff3ct::module::Decoder_SIHO_HIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder::parameters::build_hiho<B_8 ,Q_8 >(const std::unique_ptr<module::Encoder<B_8 >>&) const;
-template aff3ct::module::Decoder_SIHO_HIHO<B_16,Q_16>* aff3ct::factory::Decoder::parameters::build_hiho<B_16,Q_16>(const std::unique_ptr<module::Encoder<B_16>>&) const;
-template aff3ct::module::Decoder_SIHO_HIHO<B_32,Q_32>* aff3ct::factory::Decoder::parameters::build_hiho<B_32,Q_32>(const std::unique_ptr<module::Encoder<B_32>>&) const;
-template aff3ct::module::Decoder_SIHO_HIHO<B_64,Q_64>* aff3ct::factory::Decoder::parameters::build_hiho<B_64,Q_64>(const std::unique_ptr<module::Encoder<B_64>>&) const;
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder::build<B_8 ,Q_8 >(const std::unique_ptr<module::Encoder<B_8 >>&) const;
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder::build<B_16,Q_16>(const std::unique_ptr<module::Encoder<B_16>>&) const;
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder::build<B_32,Q_32>(const std::unique_ptr<module::Encoder<B_32>>&) const;
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder::build<B_64,Q_64>(const std::unique_ptr<module::Encoder<B_64>>&) const;
+template aff3ct::module::Decoder_SIHO_HIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder::build_hiho<B_8 ,Q_8 >(const std::unique_ptr<module::Encoder<B_8 >>&) const;
+template aff3ct::module::Decoder_SIHO_HIHO<B_16,Q_16>* aff3ct::factory::Decoder::build_hiho<B_16,Q_16>(const std::unique_ptr<module::Encoder<B_16>>&) const;
+template aff3ct::module::Decoder_SIHO_HIHO<B_32,Q_32>* aff3ct::factory::Decoder::build_hiho<B_32,Q_32>(const std::unique_ptr<module::Encoder<B_32>>&) const;
+template aff3ct::module::Decoder_SIHO_HIHO<B_64,Q_64>* aff3ct::factory::Decoder::build_hiho<B_64,Q_64>(const std::unique_ptr<module::Encoder<B_64>>&) const;
 #else
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder::parameters::build<B,Q>(const std::unique_ptr<module::Encoder<B>>&) const;
-template aff3ct::module::Decoder_SIHO_HIHO<B,Q>* aff3ct::factory::Decoder::parameters::build_hiho<B,Q>(const std::unique_ptr<module::Encoder<B>>&) const;
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder::build<B,Q>(const std::unique_ptr<module::Encoder<B>>&) const;
+template aff3ct::module::Decoder_SIHO_HIHO<B,Q>* aff3ct::factory::Decoder::build_hiho<B,Q>(const std::unique_ptr<module::Encoder<B>>&) const;
 #endif
 // ==================================================================================== explicit template instantiation

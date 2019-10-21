@@ -11,7 +11,7 @@ Repetition Encoder parameters
    :Type: integer
    :Examples: ``--enc-cw-size 1``
 
-|factory::Encoder::parameters::p+cw-size,N|
+|factory::Encoder::p+cw-size,N|
 
 :math:`N` has to be divisible by `K`.
 
@@ -23,7 +23,7 @@ Repetition Encoder parameters
    :Type: integer
    :Examples: ``--enc-info-bits 1``
 
-|factory::Encoder::parameters::p+info-bits,K|
+|factory::Encoder::p+info-bits,K|
 
 .. _enc-rep-enc-type:
 
@@ -34,7 +34,7 @@ Repetition Encoder parameters
    :Allowed values: ``REP`` ``AZCW`` ``COSET`` ``USER``
    :Examples: ``--enc-type AZCW``
 
-|factory::Encoder::parameters::p+type|
+|factory::Encoder::p+type|
 
 Description of the allowed values:
 
@@ -63,7 +63,7 @@ Description of the allowed values:
 ``--enc-no-buff``
 """""""""""""""""
 
-|factory::Encoder_repetition::parameters::p+no-buff|
+|factory::Encoder_repetition::p+no-buff|
 
 **Without the buffered encoding**, considering :math:`K` information bits
 :math:`U_0, U_1, [...], U_{K-1}`, the corresponding sequence of bits in the

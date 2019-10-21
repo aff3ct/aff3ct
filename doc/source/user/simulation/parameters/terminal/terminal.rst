@@ -21,7 +21,7 @@ simulation of the noise point is over.
    :Default: ``STD``
    :Examples: ``--ter-type STD``
 
-|factory::Terminal::parameters::p+type|
+|factory::Terminal::p+type|
 
 Description of the allowed values:
 
@@ -45,7 +45,7 @@ Description of the allowed values:
    :Default: 500
    :Examples: ``--ter-freq 1``
 
-|factory::Terminal::parameters::p+freq|
+|factory::Terminal::p+freq|
 
 .. note:: When |MPI| is enabled, this value is by default set to the same value
    than the :ref:`mnt-mnt-mpi-comm-freq` parameter.
@@ -55,14 +55,14 @@ Description of the allowed values:
 ``--ter-no``
 """"""""""""
 
-|factory::Terminal::parameters::p+no|
+|factory::Terminal::p+no|
 
 .. _ter-ter-sigma:
 
 ``--ter-sigma``
 """""""""""""""
 
-|factory::BFER::parameters::p+sigma|
+|factory::BFER::p+sigma|
 
 .. note:: Work only if the :ref:`sim-sim-noise-type` parameter is set to
    ``EBN0`` or ``ESNO``.

@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Codec_SISO_SIHO::parameters.
+ * \brief Class factory::Codec_SISO_SIHO.
  */
 #ifndef FACTORY_CODEC_SISO_SIHO_HPP_
 #define FACTORY_CODEC_SISO_SIHO_HPP_
@@ -18,29 +18,23 @@ namespace factory
 {
 extern const std::string Codec_SISO_SIHO_name;
 extern const std::string Codec_SISO_SIHO_prefix;
-struct Codec_SISO_SIHO : Codec
+class Codec_SISO_SIHO : virtual public Codec_SISO, virtual public Codec_SIHO
 {
-	class parameters : virtual public Codec_SISO::parameters, virtual public Codec_SIHO::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// empty
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// empty
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Codec_SISO_SIHO_prefix);
-		virtual ~parameters() = default;
-		virtual Codec_SISO_SIHO::parameters* clone() const = 0;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Codec_SISO_SIHO(const std::string &p = Codec_SISO_SIHO_prefix);
+	virtual ~Codec_SISO_SIHO() = default;
+	virtual Codec_SISO_SIHO* clone() const = 0;
 
-		// builder
-		template <typename B = int, typename Q = float>
-		module::Codec_SISO_SIHO<B,Q>* build(module::CRC<B>* crc = nullptr) const;
-
-	protected:
-		parameters(const std::string &n, const std::string &p);
-	};
-
+	// builder
 	template <typename B = int, typename Q = float>
-	static module::Codec_SISO_SIHO<B,Q>* build(const parameters &params, module::CRC<B> *crc = nullptr);
+	module::Codec_SISO_SIHO<B,Q>* build(module::CRC<B>* crc = nullptr) const;
+
+protected:
+	Codec_SISO_SIHO(const std::string &n, const std::string &p);
 };
 }
 }

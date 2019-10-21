@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Puncturer_turbo::parameters.
+ * \brief Class factory::Puncturer_turbo.
  */
 #ifndef FACTORY_PUNCTURER_TURBO_HPP
 #define FACTORY_PUNCTURER_TURBO_HPP
@@ -19,34 +19,28 @@ namespace factory
 {
 extern const std::string Puncturer_turbo_name;
 extern const std::string Puncturer_turbo_prefix;
-struct Puncturer_turbo : public Puncturer
+class Puncturer_turbo : public Puncturer
 {
-	class parameters : public Puncturer::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// optional parameters
-		std::vector<std::vector<bool>> pattern     = {{1,1,1},{1,1,1},{1,1,1}};
-		bool                           buffered    = true;
-		int                            tail_length = 0;
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// optional parameters
+	std::vector<std::vector<bool>> pattern     = {{1,1,1},{1,1,1},{1,1,1}};
+	bool                           buffered    = true;
+	int                            tail_length = 0;
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Puncturer_turbo_prefix);
-		virtual ~parameters() = default;
-		Puncturer_turbo::parameters* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Puncturer_turbo(const std::string &p = Puncturer_turbo_prefix);
+	virtual ~Puncturer_turbo() = default;
+	Puncturer_turbo* clone() const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int, typename Q = float>
-		module::Puncturer<B,Q>* build() const;
-	};
-
+	// builder
 	template <typename B = int, typename Q = float>
-	static module::Puncturer<B,Q>* build(const parameters &params);
+	module::Puncturer<B,Q>* build() const;
 };
 }
 }

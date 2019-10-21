@@ -31,9 +31,9 @@ protected:
 	std::unique_ptr<tools::dvbs2_values> dvbs2;
 
 public:
-	Codec_LDPC(const factory::Encoder_LDPC::parameters   &enc_params,
-	           const factory::Decoder_LDPC::parameters   &dec_params,
-	                 factory::Puncturer_LDPC::parameters *pct_params);
+	Codec_LDPC(const factory::Encoder_LDPC   &enc_params,
+	           const factory::Decoder_LDPC   &dec_params,
+	                 factory::Puncturer_LDPC *pct_params);
 	virtual ~Codec_LDPC() = default;
 
 protected:

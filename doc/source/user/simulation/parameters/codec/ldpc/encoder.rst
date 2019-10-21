@@ -11,7 +11,7 @@
    :Type: integer
    :Examples: ``--enc-cw-size 1024``
 
-|factory::Encoder::parameters::p+cw-size,N|
+|factory::Encoder::p+cw-size,N|
 
 .. note:: This parameter value is automatically deduced if the :math:`H` parity
    matrix is given with the :ref:`dec-ldpc-dec-h-path` parameter or if the
@@ -26,7 +26,7 @@
    :Type: integer
    :Examples: ``--enc-info-bits 512``
 
-|factory::Encoder::parameters::p+info-bits,K|
+|factory::Encoder::p+info-bits,K|
 
 .. note:: This parameter value is automatically deduced if the :math:`G`
    generator matrix is given with the :ref:`enc-ldpc-enc-g-path` parameter.
@@ -48,7 +48,7 @@
    :Default: ``AZCW``
    :Examples: ``--enc-type AZCW``
 
-|factory::Encoder::parameters::p+type|
+|factory::Encoder::p+type|
 
 Description of the allowed values:
 
@@ -110,7 +110,7 @@ Description of the allowed values:
    :Rights: read only
    :Examples: ``--enc-g-path example/path/to/the/G_matrix.alist``
 
-|factory::Encoder_LDPC::parameters::p+g-path|
+|factory::Encoder_LDPC::p+g-path|
 
 .. _enc-ldpc-enc-g-method:
 
@@ -122,7 +122,7 @@ Description of the allowed values:
    :Default: ``IDENTITY``
    :Examples: ``--enc-g-method IDENTITY``
 
-|factory::Encoder_LDPC::parameters::p+g-method|
+|factory::Encoder_LDPC::p+g-method|
 
 Description of the allowed values:
 
@@ -153,7 +153,7 @@ Description of the allowed values:
    :Rights: write only
    :Examples: ``--enc-g-save-path example/path/to/the/generated/G_matrix.alist``
 
-|factory::Encoder_LDPC::parameters::p+g-save-path|
+|factory::Encoder_LDPC::p+g-save-path|
 
 .. hint:: When running the ``LDPC_H`` encoder, the generation of the :math:`G`
    matrix can take a non-negligible part of the simulation time. With this

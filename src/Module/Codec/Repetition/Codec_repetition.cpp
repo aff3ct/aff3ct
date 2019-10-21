@@ -11,8 +11,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename Q>
 Codec_repetition<B,Q>
-::Codec_repetition(const factory::Encoder_repetition::parameters &enc_params,
-                   const factory::Decoder_repetition::parameters &dec_params)
+::Codec_repetition(const factory::Encoder_repetition &enc_params,
+                   const factory::Decoder_repetition &dec_params)
 : Codec     <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames)
 {
@@ -45,25 +45,23 @@ Codec_repetition<B,Q>
 	}
 
 	// ---------------------------------------------------------------------------------------------------- allocations
-	factory::Puncturer::parameters pct_params;
+	factory::Puncturer pct_params;
 	pct_params.type     = "NO";
 	pct_params.K        = enc_params.K;
 	pct_params.N        = enc_params.N_cw;
 	pct_params.N_cw     = enc_params.N_cw;
 	pct_params.n_frames = enc_params.n_frames;
 
-	this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
-
+	this->set_puncturer(pct_params.build<B,Q>());
 	try
 	{
-		this->set_encoder(factory::Encoder_repetition::build<B>(enc_params));
+		this->set_encoder(enc_params.build<B>());
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_encoder(factory::Encoder::build<B>(enc_params));
+		this->set_encoder(static_cast<const factory::Encoder*>(&enc_params)->build<B>());
 	}
-
-	this->set_decoder_siho(factory::Decoder_repetition::build<B,Q>(dec_params, this->get_encoder()));
+	this->set_decoder_siho(dec_params.build<B,Q>(this->get_encoder()));
 }
 
 // ==================================================================================== explicit template instantiation

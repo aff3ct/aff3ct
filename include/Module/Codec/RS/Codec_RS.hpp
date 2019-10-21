@@ -21,8 +21,8 @@ protected:
 	const tools::RS_polynomial_generator GF_poly;
 
 public:
-	Codec_RS(const factory::Encoder_RS::parameters &enc_params,
-	         const factory::Decoder_RS::parameters &dec_params);
+	Codec_RS(const factory::Encoder_RS &enc_params,
+	         const factory::Decoder_RS &dec_params);
 	virtual ~Codec_RS() = default;
 };
 }

@@ -11,7 +11,7 @@
    :Type: integer
    :Examples: ``--pct-fra-size 912``
 
-|factory::Puncturer::parameters::p+fra-size,N|
+|factory::Puncturer::p+fra-size,N|
 
 .. _pct-ldpc-pct-type:
 
@@ -23,7 +23,7 @@
    :Default: ``LDPC``
    :Examples: ``--pct-type LDPC``
 
-|factory::Puncturer::parameters::p+type|
+|factory::Puncturer::p+type|
 
 Description of the allowed values:
 
@@ -46,7 +46,7 @@ Description of the allowed values:
    :Type: binary vector
    :Examples: ``--pct-pattern "1,1,1,0"``
 
-|factory::Puncturer_LDPC::parameters::p+pattern|
+|factory::Puncturer_LDPC::p+pattern|
 
 The number :math:`P` of values given in this pattern must be as
 :math:`N_{cw} = P \times Z` where :math:`Z` is the number of bits represented by

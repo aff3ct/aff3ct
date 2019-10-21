@@ -13,7 +13,7 @@ Turbo |DB| Puncturer parameters
    :Default: ``NO``
    :Examples: ``--pct-type NO``
 
-|factory::Puncturer::parameters::p+type|
+|factory::Puncturer::p+type|
 
 Description of the allowed values:
 
@@ -36,7 +36,7 @@ Description of the allowed values:
    :Type: integer
    :Examples: ``--pct-fra-size 1``
 
-|factory::Puncturer::parameters::p+fra-size,N|
+|factory::Puncturer::p+fra-size,N|
 
 The puncturer supports :math:`R = 2/5`, :math:`R = 1/2`, :math:`R = 2/3` and
 :math:`R = 4/5` with :math:`R = K/N`.

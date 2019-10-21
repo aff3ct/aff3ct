@@ -15,7 +15,7 @@ The RS decoder was described by Reed and Solomon in 1960 :cite:`ReedSolomon1960`
    :Default: ``ALGEBRAIC``
    :Examples: ``--dec-type ALGEBRAIC``
 
-|factory::Decoder::parameters::p+type,D|
+|factory::Decoder::p+type,D|
 
 Description of the allowed values:
 
@@ -44,7 +44,7 @@ Description of the allowed values:
    :Default: ``STD``
    :Examples: ``--dec-implem GENIUS``
 
-|factory::Decoder::parameters::p+implem|
+|factory::Decoder::p+implem|
 
 Description of the allowed values:
 
@@ -81,7 +81,7 @@ Description of the allowed values:
    :Default: 5
    :Examples: ``-T 18``
 
-|factory::Decoder_RS::parameters::p+corr-pow,T|
+|factory::Decoder_RS::p+corr-pow,T|
 
 It is automatically calculated from the input and codeword sizes. See also
 the argument :ref:`enc-rs-enc-info-bits`.

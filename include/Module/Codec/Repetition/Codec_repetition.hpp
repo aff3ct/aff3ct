@@ -17,8 +17,8 @@ template <typename B = int, typename Q = float>
 class Codec_repetition : public Codec_SIHO<B,Q>
 {
 public:
-	Codec_repetition(const factory::Encoder_repetition::parameters &enc_params,
-	                 const factory::Decoder_repetition::parameters &dec_params);
+	Codec_repetition(const factory::Encoder_repetition &enc_params,
+	                 const factory::Decoder_repetition &dec_params);
 	virtual ~Codec_repetition() = default;
 };
 }

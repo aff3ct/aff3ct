@@ -7,7 +7,7 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Decoder_turbo_name   = "Decoder Turbo";
 const std::string aff3ct::factory::Decoder_turbo_prefix = "dec";
 
-void Decoder_turbo
+void Decoder_turbo_common
 ::add_args_and_options(cli::Argument_map_info &args, const std::string &p, const std::string &class_name)
 {
 	cli::add_options(args.at({p+"-type", "D"}), 0, "TURBO"      );

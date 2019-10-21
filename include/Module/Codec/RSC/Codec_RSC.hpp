@@ -23,8 +23,8 @@ protected:
 	std::vector<std::vector<int>> trellis;
 
 public:
-	Codec_RSC(const factory::Encoder_RSC::parameters &enc_params,
-	          const factory::Decoder_RSC::parameters &dec_params);
+	Codec_RSC(const factory::Encoder_RSC &enc_params,
+	          const factory::Decoder_RSC &dec_params);
 	virtual ~Codec_RSC() = default;
 
 protected:

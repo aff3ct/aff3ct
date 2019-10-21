@@ -21,23 +21,23 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Interleaver_core_name   = "Interleaver";
 const std::string aff3ct::factory::Interleaver_core_prefix = "itl";
 
-Interleaver_core::parameters
-::parameters(const std::string &prefix)
-: Factory::parameters(Interleaver_core_name, Interleaver_core_name, prefix)
+Interleaver_core
+::Interleaver_core(const std::string &prefix)
+: Factory(Interleaver_core_name, Interleaver_core_name, prefix)
 {
 }
 
-Interleaver_core::parameters* Interleaver_core::parameters
+Interleaver_core* Interleaver_core
 ::clone() const
 {
-	return new Interleaver_core::parameters(*this);
+	return new Interleaver_core(*this);
 }
 
-void Interleaver_core::parameters
+void Interleaver_core
 ::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Interleaver_core::parameters::";
+	const std::string class_name = "factory::Interleaver_core::";
 
 	tools::add_arg(args, p, class_name+"p+size",
 		cli::Integer(cli::Positive(), cli::Non_zero()),
@@ -67,7 +67,7 @@ void Interleaver_core::parameters
 
 }
 
-void Interleaver_core::parameters
+void Interleaver_core
 ::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
@@ -82,7 +82,7 @@ void Interleaver_core::parameters
 	if(vals.exist({p+"-read-order"})) this->read_order = vals.at     ({p+"-read-order"});
 }
 
-void Interleaver_core::parameters
+void Interleaver_core
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
 	auto p = this->get_prefix();
@@ -102,7 +102,7 @@ void Interleaver_core::parameters
 }
 
 template <typename T>
-tools::Interleaver_core<T>* Interleaver_core::parameters
+tools::Interleaver_core<T>* Interleaver_core
 ::build() const
 {
 	if (this->type == "LTE"     ) return new tools::Interleaver_core_LTE          <T>(this->size,                                          this->n_frames);
@@ -120,14 +120,6 @@ tools::Interleaver_core<T>* Interleaver_core::parameters
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename T>
-tools::Interleaver_core<T>* Interleaver_core
-::build(const parameters &params)
-{
-	return params.template build<T>();
-}
-
 // ==================================================================================== explicit template instantiation
-template aff3ct::tools::Interleaver_core<uint32_t>* aff3ct::factory::Interleaver_core::parameters::build<uint32_t>() const;
-template aff3ct::tools::Interleaver_core<uint32_t>* aff3ct::factory::Interleaver_core::build<uint32_t>(const aff3ct::factory::Interleaver_core::parameters&);
+template aff3ct::tools::Interleaver_core<uint32_t>* aff3ct::factory::Interleaver_core::build<uint32_t>() const;
 // ==================================================================================== explicit template instantiation

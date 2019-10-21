@@ -7,7 +7,7 @@ using namespace aff3ct::launcher;
 template <class L, typename B, typename R, typename Q>
 RS<L,B,R,Q>
 ::RS(const int argc, const char **argv, std::ostream &stream)
-: L(argc, argv, stream), params_cdc(new factory::Codec_RS::parameters("cdc"))
+: L(argc, argv, stream), params_cdc(new factory::Codec_RS("cdc"))
 {
 	this->params.set_cdc(params_cdc);
 }

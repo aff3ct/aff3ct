@@ -11,7 +11,7 @@
    :Type: integer
    :Examples: ``--enc-cw-size 127``
 
-|factory::Encoder::parameters::p+cw-size,N|
+|factory::Encoder::p+cw-size,N|
 
 :math:`N = 2^m – 1`, where :math:`m` is an integer from 3.
 
@@ -23,7 +23,7 @@
    :Type: integer
    :Examples: ``--enc-info-bits 92``
 
-|factory::Encoder::parameters::p+info-bits,K|
+|factory::Encoder::p+info-bits,K|
 
 This argument is not required if :ref:`dec-bch-dec-corr-pow` is given, as it
 is calculated automatically.
@@ -38,7 +38,7 @@ is calculated automatically.
    :Default: ``BCH``
    :Examples: ``--enc-type AZCW``
 
-|factory::Encoder::parameters::p+type|
+|factory::Encoder::p+type|
 
 Description of the allowed values:
 

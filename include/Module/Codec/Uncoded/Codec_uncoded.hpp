@@ -17,8 +17,8 @@ template <typename B = int, typename Q = float>
 class Codec_uncoded : public Codec_SISO_SIHO<B,Q>
 {
 public:
-	Codec_uncoded(const factory::Encoder_NO::parameters &enc_params,
-	              const factory::Decoder_NO::parameters &dec_params);
+	Codec_uncoded(const factory::Encoder_NO &enc_params,
+	              const factory::Decoder_NO &dec_params);
 	virtual ~Codec_uncoded() = default;
 
 protected:

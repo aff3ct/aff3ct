@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Encoder_repetition::parameters.
+ * \brief Class factory::Encoder_repetition.
  */
 #ifndef FACTORY_ENCODER_REPETITION_HPP
 #define FACTORY_ENCODER_REPETITION_HPP
@@ -18,32 +18,26 @@ namespace factory
 {
 extern const std::string Encoder_repetition_name;
 extern const std::string Encoder_repetition_prefix;
-struct Encoder_repetition : public Encoder
+class Encoder_repetition : public Encoder
 {
-	class parameters : public Encoder::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// optional
-		bool buffered = true;
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// optional
+	bool buffered = true;
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Encoder_repetition_prefix);
-		virtual ~parameters() = default;
-		Encoder_repetition::parameters* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Encoder_repetition(const std::string &p = Encoder_repetition_prefix);
+	virtual ~Encoder_repetition() = default;
+	Encoder_repetition* clone() const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int>
-		module::Encoder_repetition_sys<B>* build() const;
-	};
-
+	// builder
 	template <typename B = int>
-	static module::Encoder_repetition_sys<B>* build(const parameters &params);
+	module::Encoder_repetition_sys<B>* build() const;
 };
 }
 }

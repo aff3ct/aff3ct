@@ -13,7 +13,7 @@ Polar Encoder parameters
    :Default: ``POLAR``
    :Examples: ``--enc-type AZCW``
 
-|factory::Encoder::parameters::p+type|
+|factory::Encoder::p+type|
 
 Description of the allowed values:
 
@@ -42,7 +42,7 @@ Description of the allowed values:
 ``--enc-no-sys``
 """"""""""""""""
 
-|factory::Encoder_polar::parameters::p+no-sys|
+|factory::Encoder_polar::p+no-sys|
 
 .. _enc-polar-enc-fb-gen-method:
 
@@ -53,7 +53,7 @@ Description of the allowed values:
    :Allowed values: ``FILE`` ``GA`` ``TV`` ``BEC`` ``5G``
    :Examples: ``--enc-fb-gen-method FILE``
 
-|factory::Frozenbits_generator::parameters::p+gen-method|
+|factory::Frozenbits_generator::p+gen-method|
 
 Description of the allowed values:
 
@@ -98,7 +98,7 @@ Description of the allowed values:
    :Rights: read only
    :Examples: ``--enc-fb-awgn-path example/path/to/the/right/place/``
 
-|factory::Frozenbits_generator::parameters::p+awgn-path|
+|factory::Frozenbits_generator::p+awgn-path|
 
 An |ASCII| file is expected, for instance, the following file describes the
 most reliable channels optimized for a codeword of size :math:`N = 8` and for an
@@ -132,7 +132,7 @@ positions in the codeword. The strategy is to freeze the less reliable channels.
    :Rights: write only
    :Examples: ``--enc-fb-dump-path example/path/to/the/right/place/``
 
-|factory::Frozenbits_generator::parameters::p+dump-path|
+|factory::Frozenbits_generator::p+dump-path|
 
 .. note:: Works only for the ``GA`` and ``BEC`` frozen bits generation methods.
 
@@ -144,7 +144,7 @@ positions in the codeword. The strategy is to freeze the less reliable channels.
    :Type: real number
    :Examples: ``--enc-fb-noise 1.0``
 
-|factory::Frozenbits_generator::parameters::p+noise|
+|factory::Frozenbits_generator::p+noise|
 
 Can be a gaussian noise variance :math:`\sigma` for |GA| and |TV| generation
 methods, or an event probability for the |BEC| generation method. All the noise

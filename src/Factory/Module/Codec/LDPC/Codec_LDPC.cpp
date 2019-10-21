@@ -10,31 +10,31 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Codec_LDPC_name   = "Codec LDPC";
 const std::string aff3ct::factory::Codec_LDPC_prefix = "cdc";
 
-Codec_LDPC::parameters
-::parameters(const std::string &prefix)
-: Codec          ::parameters(Codec_LDPC_name, prefix),
-  Codec_SISO_SIHO::parameters(Codec_LDPC_name, prefix)
+Codec_LDPC
+::Codec_LDPC(const std::string &prefix)
+: Codec          (Codec_LDPC_name, prefix),
+  Codec_SISO_SIHO(Codec_LDPC_name, prefix)
 {
-	Codec::parameters::set_enc(new Encoder_LDPC::parameters("enc"));
-	Codec::parameters::set_dec(new Decoder_LDPC::parameters("dec"));
+	Codec::set_enc(new Encoder_LDPC("enc"));
+	Codec::set_dec(new Decoder_LDPC("dec"));
 }
 
-Codec_LDPC::parameters* Codec_LDPC::parameters
+Codec_LDPC* Codec_LDPC
 ::clone() const
 {
-	return new Codec_LDPC::parameters(*this);
+	return new Codec_LDPC(*this);
 }
 
-void Codec_LDPC::parameters
+void Codec_LDPC
 ::enable_puncturer()
 {
-	set_pct(new Puncturer_LDPC::parameters("pct"));
+	set_pct(new Puncturer_LDPC("pct"));
 }
 
-void Codec_LDPC::parameters
+void Codec_LDPC
 ::get_description(cli::Argument_map_info &args) const
 {
-	Codec_SISO_SIHO::parameters::get_description(args);
+	Codec_SISO_SIHO::get_description(args);
 
 	enc->get_description(args);
 	dec->get_description(args);
@@ -65,13 +65,13 @@ void Codec_LDPC::parameters
 	}
 }
 
-void Codec_LDPC::parameters
+void Codec_LDPC
 ::store(const cli::Argument_map_value &vals)
 {
-	Codec_SISO_SIHO::parameters::store(vals);
+	Codec_SISO_SIHO::store(vals);
 
-	auto enc_ldpc = dynamic_cast<Encoder_LDPC::parameters*>(enc.get());
-	auto dec_ldpc = dynamic_cast<Decoder_LDPC::parameters*>(dec.get());
+	auto enc_ldpc = dynamic_cast<Encoder_LDPC*>(enc.get());
+	auto dec_ldpc = dynamic_cast<Decoder_LDPC*>(dec.get());
 
 	enc->store(vals);
 	dec->store(vals);
@@ -118,10 +118,10 @@ void Codec_LDPC::parameters
 	N    = pct != nullptr ? pct->N : N_cw;
 }
 
-void Codec_LDPC::parameters
+void Codec_LDPC
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	Codec_SISO_SIHO::parameters::get_headers(headers, full);
+	Codec_SISO_SIHO::get_headers(headers, full);
 
 	enc->get_headers(headers, full);
 	dec->get_headers(headers, full);
@@ -130,35 +130,23 @@ void Codec_LDPC::parameters
 }
 
 template <typename B, typename Q>
-module::Codec_LDPC<B,Q>* Codec_LDPC::parameters
+module::Codec_LDPC<B,Q>* Codec_LDPC
 ::build(module::CRC<B>* crc) const
 {
-	return new module::Codec_LDPC<B,Q>(dynamic_cast<const Encoder_LDPC  ::parameters&>(*enc),
-	                                   dynamic_cast<const Decoder_LDPC  ::parameters&>(*dec),
-	                                   dynamic_cast<Puncturer_LDPC::parameters*>(pct.get()));
-}
-
-template <typename B, typename Q>
-module::Codec_LDPC<B,Q>* Codec_LDPC
-::build(const parameters &params, module::CRC<B>* crc)
-{
-	return params.template build<B,Q>(crc);
+	return new module::Codec_LDPC<B,Q>(dynamic_cast<const Encoder_LDPC  &>(*enc),
+	                                   dynamic_cast<const Decoder_LDPC  &>(*dec),
+	                                   dynamic_cast<Puncturer_LDPC*>(pct.get()));
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Codec_LDPC<B_8 ,Q_8 >* aff3ct::factory::Codec_LDPC::parameters::build<B_8 ,Q_8 >(aff3ct::module::CRC<B_8 >*) const;
-template aff3ct::module::Codec_LDPC<B_16,Q_16>* aff3ct::factory::Codec_LDPC::parameters::build<B_16,Q_16>(aff3ct::module::CRC<B_16>*) const;
-template aff3ct::module::Codec_LDPC<B_32,Q_32>* aff3ct::factory::Codec_LDPC::parameters::build<B_32,Q_32>(aff3ct::module::CRC<B_32>*) const;
-template aff3ct::module::Codec_LDPC<B_64,Q_64>* aff3ct::factory::Codec_LDPC::parameters::build<B_64,Q_64>(aff3ct::module::CRC<B_64>*) const;
-template aff3ct::module::Codec_LDPC<B_8 ,Q_8 >* aff3ct::factory::Codec_LDPC::build<B_8 ,Q_8 >(const aff3ct::factory::Codec_LDPC::parameters&, aff3ct::module::CRC<B_8 >*);
-template aff3ct::module::Codec_LDPC<B_16,Q_16>* aff3ct::factory::Codec_LDPC::build<B_16,Q_16>(const aff3ct::factory::Codec_LDPC::parameters&, aff3ct::module::CRC<B_16>*);
-template aff3ct::module::Codec_LDPC<B_32,Q_32>* aff3ct::factory::Codec_LDPC::build<B_32,Q_32>(const aff3ct::factory::Codec_LDPC::parameters&, aff3ct::module::CRC<B_32>*);
-template aff3ct::module::Codec_LDPC<B_64,Q_64>* aff3ct::factory::Codec_LDPC::build<B_64,Q_64>(const aff3ct::factory::Codec_LDPC::parameters&, aff3ct::module::CRC<B_64>*);
+template aff3ct::module::Codec_LDPC<B_8 ,Q_8 >* aff3ct::factory::Codec_LDPC::build<B_8 ,Q_8 >(aff3ct::module::CRC<B_8 >*) const;
+template aff3ct::module::Codec_LDPC<B_16,Q_16>* aff3ct::factory::Codec_LDPC::build<B_16,Q_16>(aff3ct::module::CRC<B_16>*) const;
+template aff3ct::module::Codec_LDPC<B_32,Q_32>* aff3ct::factory::Codec_LDPC::build<B_32,Q_32>(aff3ct::module::CRC<B_32>*) const;
+template aff3ct::module::Codec_LDPC<B_64,Q_64>* aff3ct::factory::Codec_LDPC::build<B_64,Q_64>(aff3ct::module::CRC<B_64>*) const;
 #else
-template aff3ct::module::Codec_LDPC<B,Q>* aff3ct::factory::Codec_LDPC::parameters::build<B,Q>(aff3ct::module::CRC<B>*) const;
-template aff3ct::module::Codec_LDPC<B,Q>* aff3ct::factory::Codec_LDPC::build<B,Q>(const aff3ct::factory::Codec_LDPC::parameters&, aff3ct::module::CRC<B>*);
+template aff3ct::module::Codec_LDPC<B,Q>* aff3ct::factory::Codec_LDPC::build<B,Q>(aff3ct::module::CRC<B>*) const;
 #endif
 // ==================================================================================== explicit template instantiation
 

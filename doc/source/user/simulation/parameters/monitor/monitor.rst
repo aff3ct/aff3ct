@@ -17,7 +17,7 @@ demodulator output.
    :Default: 100
    :Examples: ``--mnt-max-fe 25``
 
-|factory::Monitor_BFER::parameters::p+max-fe,e|
+|factory::Monitor_BFER::p+max-fe,e|
 
 .. _mnt-mnt-err-hist:
 
@@ -27,7 +27,7 @@ demodulator output.
    :Type: integer
    :Examples: ``--mnt-err-hist 0``
 
-|factory::Monitor_BFER::parameters::p+err-hist|
+|factory::Monitor_BFER::p+err-hist|
 
 The histogram is saved in |CSV| format:
 
@@ -52,7 +52,7 @@ The histogram is saved in |CSV| format:
    :Default: :file:`./hist`
    :Examples: ``--mnt-err-hist-path my/histogram/root/path/name``
 
-|factory::Monitor_BFER::parameters::p+err-hist-path|
+|factory::Monitor_BFER::p+err-hist-path|
 
 An output filename example is :file:`hist_2.000000.txt` for a noise value of
 2 dB. For `Gnuplot <http://www.gnuplot.info/>`_ users you can then simply
@@ -67,7 +67,7 @@ display the histogram with the following command:
 ``--mnt-mutinfo``
 """""""""""""""""
 
-|factory::BFER::parameters::p+mutinfo|
+|factory::BFER::p+mutinfo|
 
 .. note:: Only available on ``BFER`` simulation types (see the
    :ref:`sim-sim-type` parameter for more details).
@@ -77,7 +77,7 @@ display the histogram with the following command:
 ``--mnt-red-lazy``
 """""""""""""""""""""""
 
-|factory::BFER::parameters::p+red-lazy|
+|factory::BFER::p+red-lazy|
 
 Using this parameter can significantly reduce the simulation time, especially
 for short frame sizes when the monitor synchronizations happen very often.
@@ -101,7 +101,7 @@ for short frame sizes when the monitor synchronizations happen very often.
    :Default: 1000
    :Examples: ``--mnt-red-lazy-freq 200``
 
-|factory::BFER::parameters::p+red-lazy-freq|
+|factory::BFER::p+red-lazy-freq|
 
 .. note:: This parameter automatically enables the :ref:`mnt-mnt-red-lazy`
    parameter.
@@ -118,7 +118,7 @@ for short frame sizes when the monitor synchronizations happen very often.
    :Default: 1000
    :Examples: ``--mnt-mpi-comm-freq 1``
 
-|factory::BFER::parameters::p+mpi-comm-freq|
+|factory::BFER::p+mpi-comm-freq|
 
 .. note:: Available only when compiling with the |MPI| support
    :ref:`compilation_cmake_options`.

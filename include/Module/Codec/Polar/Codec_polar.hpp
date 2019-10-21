@@ -38,10 +38,10 @@ protected:
 	tools::Frozenbits_notifier*     fb_encoder;
 
 public:
-	Codec_polar(const factory::Frozenbits_generator::parameters &fb_par,
-	            const factory::Encoder_polar       ::parameters &enc_par,
-	            const factory::Decoder_polar       ::parameters &dec_par,
-	            const factory::Puncturer_polar     ::parameters *pct_par = nullptr,
+	Codec_polar(const factory::Frozenbits_generator &fb_par,
+	            const factory::Encoder_polar        &enc_par,
+	            const factory::Decoder_polar        &dec_par,
+	            const factory::Puncturer_polar      *pct_par = nullptr,
 	            CRC<B>* crc = nullptr);
 	virtual ~Codec_polar() = default;
 

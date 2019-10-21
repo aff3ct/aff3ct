@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Encoder_LDPC::parameters.
+ * \brief Class factory::Encoder_LDPC.
  */
 #ifndef FACTORY_ENCODER_LDPC_HPP
 #define FACTORY_ENCODER_LDPC_HPP
@@ -20,52 +20,39 @@ namespace factory
 {
 extern const std::string Encoder_LDPC_name;
 extern const std::string Encoder_LDPC_prefix;
-struct Encoder_LDPC : public Encoder
+class Encoder_LDPC : public Encoder
 {
-	class parameters : public Encoder::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// matrices
-		std::string H_path = "";
-		std::string G_path = "";
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// matrices
+	std::string H_path = "";
+	std::string G_path = "";
 
-		// optional parameters
-		std::string H_reorder = "NONE";
+	// optional parameters
+	std::string H_reorder = "NONE";
 
-		// G generator method
-		std::string G_method    = "IDENTITY";
-		std::string G_save_path = "";
+	// G generator method
+	std::string G_method    = "IDENTITY";
+	std::string G_save_path = "";
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Encoder_LDPC_prefix);
-		virtual ~parameters() = default;
-		Encoder_LDPC::parameters* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Encoder_LDPC(const std::string &p = Encoder_LDPC_prefix);
+	virtual ~Encoder_LDPC() = default;
+	Encoder_LDPC* clone() const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int>
-		module::Encoder_LDPC<B>* build(const tools::Sparse_matrix &G,
-		                               const tools::Sparse_matrix &H) const;
-		template <typename B = int>
-		module::Encoder_LDPC<B>* build(const tools::Sparse_matrix &G,
-		                               const tools::Sparse_matrix &H,
-		                               const tools::dvbs2_values  &dvbs2) const;
-	};
-
+	// builder
 	template <typename B = int>
-	static module::Encoder_LDPC<B>* build(const parameters           &params,
-	                                      const tools::Sparse_matrix &G,
-	                                      const tools::Sparse_matrix &H);
+	module::Encoder_LDPC<B>* build(const tools::Sparse_matrix &G,
+	                               const tools::Sparse_matrix &H) const;
 	template <typename B = int>
-	static module::Encoder_LDPC<B>* build(const parameters           &params,
-	                                      const tools::Sparse_matrix &G,
-	                                      const tools::Sparse_matrix &H,
-	                                      const tools::dvbs2_values  &dvbs2);
+	module::Encoder_LDPC<B>* build(const tools::Sparse_matrix &G,
+	                               const tools::Sparse_matrix &H,
+	                               const tools::dvbs2_values  &dvbs2) const;
 };
 }
 }

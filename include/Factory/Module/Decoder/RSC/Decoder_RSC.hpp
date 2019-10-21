@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Decoder_RSC::parameters.
+ * \brief Class factory::Decoder_RSC.
  */
 #ifndef FACTORY_DECODER_RSC_HPP
 #define FACTORY_DECODER_RSC_HPP
@@ -24,67 +24,50 @@ namespace factory
 {
 extern const std::string Decoder_RSC_name;
 extern const std::string Decoder_RSC_prefix;
-struct Decoder_RSC : public Decoder
+class Decoder_RSC : public Decoder
 {
-	class parameters : public Decoder::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// optional parameters
-		std::string      max           = "MAX";
-		std::string      simd_strategy = "";
-		std::string      standard      = "LTE";
-		bool             buffered      = true;
-		std::vector<int> poly          = {013, 015};
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// optional parameters
+	std::string      max           = "MAX";
+	std::string      simd_strategy = "";
+	std::string      standard      = "LTE";
+	bool             buffered      = true;
+	std::vector<int> poly          = {013, 015};
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Decoder_RSC_prefix);
-		virtual ~parameters() = default;
-		Decoder_RSC::parameters* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Decoder_RSC(const std::string &p = Decoder_RSC_prefix);
+	virtual ~Decoder_RSC() = default;
+	Decoder_RSC* clone() const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build(const std::vector<std::vector<int>>       &trellis,
-		                                       std::ostream                        &stream  = std::cout,
-		                                 const int                                  n_ite   = 1,
-		                                 const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
-
-		template <typename B = int, typename Q = float>
-		module::Decoder_SISO_SIHO<B,Q>* build_siso(const std::vector<std::vector<int>>       &trellis,
-		                                                 std::ostream                        &stream  = std::cout,
-		                                           const int                                  n_ite   = 1,
-		                                           const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
-
-	private:
-		template <typename B = int, typename Q = float, typename QD = Q, tools::proto_max<Q> MAX1, tools::proto_max<QD> MAX2>
-		module::Decoder_SISO_SIHO<B,Q>* _build_siso_seq(const std::vector<std::vector<int>>       &trellis,
-		                                                      std::ostream                        &stream  = std::cout,
-		                                                const int                                  n_ite   = 1,
-		                                                const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
-
-		template <typename B = int, typename Q = float, typename QD = Q, tools::proto_max_i<Q> MAX>
-		module::Decoder_SISO_SIHO<B,Q>* _build_siso_simd(const std::vector<std::vector<int>> &trellis,
-		                                                 const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
-	};
+	// builder
+	template <typename B = int, typename Q = float>
+	module::Decoder_SIHO<B,Q>* build(const std::vector<std::vector<int>>       &trellis,
+	                                       std::ostream                        &stream  = std::cout,
+	                                 const int                                  n_ite   = 1,
+	                                 const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
 
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SIHO<B,Q>* build(const parameters                          &params,
-	                                        const std::vector<std::vector<int>>       &trellis,
-	                                              std::ostream                        &stream  = std::cout,
-	                                        const int                                  n_ite   = 1,
-	                                        const std::unique_ptr<module::Encoder<B>> &encoder = nullptr);
+	module::Decoder_SISO_SIHO<B,Q>* build_siso(const std::vector<std::vector<int>>       &trellis,
+	                                                 std::ostream                        &stream  = std::cout,
+	                                           const int                                  n_ite   = 1,
+	                                           const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
 
-	template <typename B = int, typename Q = float>
-	static module::Decoder_SISO_SIHO<B,Q>* build_siso(const parameters                          &params,
-	                                                  const std::vector<std::vector<int>>       &trellis,
-	                                                        std::ostream                        &stream  = std::cout,
-	                                                  const int                                  n_ite   = 1,
-	                                                  const std::unique_ptr<module::Encoder<B>> &encoder = nullptr);
+private:
+	template <typename B = int, typename Q = float, typename QD = Q, tools::proto_max<Q> MAX1, tools::proto_max<QD> MAX2>
+	module::Decoder_SISO_SIHO<B,Q>* _build_siso_seq(const std::vector<std::vector<int>>       &trellis,
+	                                                      std::ostream                        &stream  = std::cout,
+	                                                const int                                  n_ite   = 1,
+	                                                const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
+
+	template <typename B = int, typename Q = float, typename QD = Q, tools::proto_max_i<Q> MAX>
+	module::Decoder_SISO_SIHO<B,Q>* _build_siso_simd(const std::vector<std::vector<int>> &trellis,
+	                                                 const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
 };
 }
 }

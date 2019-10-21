@@ -31,7 +31,7 @@ class Simulation
 {
 protected:
 	// parameters
-	const factory::Simulation::parameters &params;
+	const factory::Simulation &params;
 
 	// map of Modules
 	std::map<std::string, std::vector<const module::Module*>> modules;
@@ -42,7 +42,7 @@ public:
 	/*!
 	 *  \brief Constructor.
 	 */
-	explicit Simulation(const factory::Simulation::parameters& simu_params);
+	explicit Simulation(const factory::Simulation& simu_params);
 
 	/*!
 	 *  \brief Destructor.

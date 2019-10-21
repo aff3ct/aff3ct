@@ -26,7 +26,7 @@ decoding process to know if the decoded bit sequence is valid or not.
    :Examples: | ``--crc-type "32-GZIP"``
               | ``--crc-poly "0x04C11DB7" --crc-size 32``
 
-|factory::CRC::parameters::p+type,p+poly|
+|factory::CRC::p+type,p+poly|
 
 :numref:`tab_crc_polynomials` shows a list of the predefined polynomials. If
 you want a specific polynomial that it is not available in the table you can
@@ -49,7 +49,7 @@ The type ``NO`` deactivates the |CRC|.
    :Range: :math:`]0 \to \infty[`
    :Examples: ``--crc-size 8``
 
-|factory::CRC::parameters::p+size|
+|factory::CRC::p+size|
 
 .. _crc-crc-implem:
 
@@ -61,7 +61,7 @@ The type ``NO`` deactivates the |CRC|.
    :Default: ``FAST``
    :Examples: ``--crc-implem FAST``
 
-|factory::CRC::parameters::p+implem|
+|factory::CRC::p+implem|
 
 Description of the allowed values:
 

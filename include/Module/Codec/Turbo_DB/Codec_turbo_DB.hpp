@@ -33,10 +33,10 @@ protected:
 	std::vector<std::shared_ptr<tools::Post_processing_SISO<B,Q>>> post_pros;
 
 public:
-	Codec_turbo_DB(const factory::Encoder_turbo_DB  ::parameters &enc_params,
-	               const factory::Decoder_turbo_DB  ::parameters &dec_params,
-	               const factory::Interleaver       ::parameters &itl_params,
-	               const factory::Puncturer_turbo_DB::parameters *pct_params = nullptr,
+	Codec_turbo_DB(const factory::Encoder_turbo_DB   &enc_params,
+	               const factory::Decoder_turbo_DB   &dec_params,
+	               const factory::Interleaver        &itl_params,
+	               const factory::Puncturer_turbo_DB *pct_params = nullptr,
 	               CRC<B>* crc = nullptr);
 	virtual ~Codec_turbo_DB() = default;
 

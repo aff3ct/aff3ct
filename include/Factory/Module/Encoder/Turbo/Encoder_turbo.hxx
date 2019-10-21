@@ -12,28 +12,28 @@ namespace factory
 {
 
 template <class E1, class E2>
-Encoder_turbo::parameters<E1,E2>
-::parameters(const std::string &prefix)
-: Encoder::parameters(Encoder_turbo_name, prefix),
-  itl(new Interleaver::parameters("itl")),
-  sub1(new typename E1::parameters(std::is_same<E1,E2>() ? prefix+"-sub" : prefix+"-sub1")),
-  sub2(new typename E2::parameters(std::is_same<E1,E2>() ? prefix+"-sub" : prefix+"-sub2"))
+Encoder_turbo<E1,E2>
+::Encoder_turbo(const std::string &prefix)
+: Encoder(Encoder_turbo_name, prefix),
+  itl(new Interleaver("itl")),
+  sub1(new E1(std::is_same<E1,E2>() ? prefix+"-sub" : prefix+"-sub1")),
+  sub2(new E2(std::is_same<E1,E2>() ? prefix+"-sub" : prefix+"-sub2"))
 {
 	this->type = "TURBO";
 }
 
 template <class E1, class E2>
-Encoder_turbo::parameters<E1,E2>* Encoder_turbo::parameters<E1,E2>
+Encoder_turbo<E1,E2>* Encoder_turbo<E1,E2>
 ::clone() const
 {
-	return new Encoder_turbo::parameters<E1,E2>(*this);
+	return new Encoder_turbo<E1,E2>(*this);
 }
 
 template <class E1, class E2>
-std::vector<std::string> Encoder_turbo::parameters<E1,E2>
+std::vector<std::string> Encoder_turbo<E1,E2>
 ::get_names() const
 {
-	auto n = Encoder::parameters::get_names();
+	auto n = Encoder::get_names();
 	if (sub1 != nullptr) { auto nn = sub1->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (sub2 != nullptr) { auto nn = sub2->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (itl  != nullptr) { auto nn = itl ->get_names(); for (auto &x : nn) n.push_back(x); }
@@ -41,10 +41,10 @@ std::vector<std::string> Encoder_turbo::parameters<E1,E2>
 }
 
 template <class E1, class E2>
-std::vector<std::string> Encoder_turbo::parameters<E1,E2>
+std::vector<std::string> Encoder_turbo<E1,E2>
 ::get_short_names() const
 {
-	auto sn = Encoder::parameters::get_short_names();
+	auto sn = Encoder::get_short_names();
 	if (sub1 != nullptr) { auto nn = sub1->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (sub2 != nullptr) { auto nn = sub2->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (itl  != nullptr) { auto nn = itl ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
@@ -52,10 +52,10 @@ std::vector<std::string> Encoder_turbo::parameters<E1,E2>
 }
 
 template <class E1, class E2>
-std::vector<std::string> Encoder_turbo::parameters<E1,E2>
+std::vector<std::string> Encoder_turbo<E1,E2>
 ::get_prefixes() const
 {
-	auto p = Encoder::parameters::get_prefixes();
+	auto p = Encoder::get_prefixes();
 	if (sub1 != nullptr) { auto nn = sub1->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (sub2 != nullptr) { auto nn = sub2->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (itl  != nullptr) { auto nn = itl ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
@@ -63,13 +63,13 @@ std::vector<std::string> Encoder_turbo::parameters<E1,E2>
 }
 
 template <class E1, class E2>
-void Encoder_turbo::parameters<E1,E2>
+void Encoder_turbo<E1,E2>
 ::get_description(cli::Argument_map_info &args) const
 {
-	Encoder::parameters::get_description(args);
+	Encoder::get_description(args);
 
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Encoder_turbo::parameters::";
+	const std::string class_name = "factory::Encoder_turbo::";
 
 	args.erase({p+"-cw-size", "N"});
 
@@ -83,7 +83,7 @@ void Encoder_turbo::parameters<E1,E2>
 		args.erase({pi+"-fra", "F"});
 	}
 
-	Encoder_turbo::add_args_and_options(args, p, class_name);
+	Encoder_turbo_common::add_args_and_options(args, p, class_name);
 
 	sub1->get_description(args);
 
@@ -110,10 +110,10 @@ void Encoder_turbo::parameters<E1,E2>
 }
 
 template <class E1, class E2>
-void Encoder_turbo::parameters<E1,E2>
+void Encoder_turbo<E1,E2>
 ::store(const cli::Argument_map_value &vals)
 {
-	Encoder::parameters::store(vals);
+	Encoder::store(vals);
 
 	auto p = this->get_prefix();
 
@@ -155,10 +155,10 @@ void Encoder_turbo::parameters<E1,E2>
 }
 
 template <class E1, class E2>
-void Encoder_turbo::parameters<E1,E2>
+void Encoder_turbo<E1,E2>
 ::get_headers(std::map<std::string,header_list>& headers, const bool full) const
 {
-	Encoder::parameters::get_headers(headers, full);
+	Encoder::get_headers(headers, full);
 
 	if (itl != nullptr)
 		itl->get_headers(headers);
@@ -178,7 +178,7 @@ void Encoder_turbo::parameters<E1,E2>
 
 template <class E1, class E2>
 template <typename B>
-module::Encoder_turbo<B>* Encoder_turbo::parameters<E1,E2>
+module::Encoder_turbo<B>* Encoder_turbo<E1,E2>
 ::build(const module::Interleaver<B> &itl,
               std::shared_ptr<module::Encoder<B>> enc_n,
               std::shared_ptr<module::Encoder<B>> enc_i) const
@@ -197,14 +197,5 @@ module::Encoder_turbo<B>* Encoder_turbo::parameters<E1,E2>
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, class E1, class E2>
-module::Encoder_turbo<B>* Encoder_turbo
-::build(const parameters<E1,E2>      &params,
-        const module::Interleaver<B> &itl,
-              std::shared_ptr<module::Encoder<B>> enc_n,
-              std::shared_ptr<module::Encoder<B>> enc_i)
-{
-	return params.template build<B>(itl, enc_n, enc_i);
-}
 }
 }

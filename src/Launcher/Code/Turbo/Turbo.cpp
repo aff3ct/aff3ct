@@ -14,7 +14,7 @@ using namespace aff3ct::launcher;
 template <class L, typename B, typename R, typename Q>
 Turbo<L,B,R,Q>
 ::Turbo(const int argc, const char **argv, std::ostream &stream)
-: L(argc, argv, stream), params_cdc(new factory::Codec_turbo::parameters("cdc"))
+: L(argc, argv, stream), params_cdc(new factory::Codec_turbo("cdc"))
 {
 	this->params.set_cdc(params_cdc);
 
@@ -41,8 +41,8 @@ template <class L, typename B, typename R, typename Q>
 void Turbo<L,B,R,Q>
 ::store_args()
 {
-	auto enc_tur = dynamic_cast<factory::Encoder_turbo::parameters<>*>(params_cdc->enc.get());
-	auto dec_tur = dynamic_cast<factory::Decoder_turbo::parameters<>*>(params_cdc->dec.get());
+	auto enc_tur = dynamic_cast<factory::Encoder_turbo<>*>(params_cdc->enc.get());
+	auto dec_tur = dynamic_cast<factory::Decoder_turbo<>*>(params_cdc->dec.get());
 
 	params_cdc->store(this->arg_vals);
 

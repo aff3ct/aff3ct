@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Decoder_repetition::parameters.
+ * \brief Class factory::Decoder_repetition.
  */
 #ifndef FACTORY_DECODER_REPETITION_HPP
 #define FACTORY_DECODER_REPETITION_HPP
@@ -20,32 +20,26 @@ namespace factory
 {
 extern const std::string Decoder_repetition_name;
 extern const std::string Decoder_repetition_prefix;
-struct Decoder_repetition : public Decoder
+class Decoder_repetition : public Decoder
 {
-	class parameters : public Decoder::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// optional parameters
-		bool buffered = true;
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// optional parameters
+	bool buffered = true;
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = Decoder_repetition_prefix);
-		virtual ~parameters() = default;
-		Decoder_repetition::parameters* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit Decoder_repetition(const std::string &p = Decoder_repetition_prefix);
+	virtual ~Decoder_repetition() = default;
+	Decoder_repetition* clone() const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int, typename Q = float>
-		module::Decoder_SIHO<B,Q>* build(const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
-	};
-
+	// builder
 	template <typename B = int, typename Q = float>
-	static module::Decoder_SIHO<B,Q>* build(const parameters &params, const std::unique_ptr<module::Encoder<B>>& encoder = nullptr);
+	module::Decoder_SIHO<B,Q>* build(const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
 };
 }
 }

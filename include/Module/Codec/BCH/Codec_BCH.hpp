@@ -21,8 +21,8 @@ protected:
 	const tools::BCH_polynomial_generator<B> GF_poly;
 
 public:
-	Codec_BCH(const factory::Encoder_BCH::parameters &enc_params,
-	          const factory::Decoder_BCH::parameters &dec_params);
+	Codec_BCH(const factory::Encoder_BCH &enc_params,
+	          const factory::Decoder_BCH &dec_params);
 	virtual ~Codec_BCH() = default;
 };
 }

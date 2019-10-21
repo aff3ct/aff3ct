@@ -12,7 +12,7 @@ template <typename B = int, typename R = float, typename Q = R>
 class BFER_std_threads : public BFER_std<B,R,Q>
 {
 public:
-	explicit BFER_std_threads(const factory::BFER_std::parameters &params_BFER_std);
+	explicit BFER_std_threads(const factory::BFER_std &params_BFER_std);
 	virtual ~BFER_std_threads() = default;
 
 protected:

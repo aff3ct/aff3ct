@@ -18,9 +18,9 @@ template <typename B = int, typename Q = float>
 class Codec_RA : public Codec_SIHO<B,Q>
 {
 public:
-	Codec_RA(const factory::Encoder_RA ::parameters &enc_params,
-	         const factory::Decoder_RA ::parameters &dec_params,
-	         const factory::Interleaver::parameters &itl_params);
+	Codec_RA(const factory::Encoder_RA  &enc_params,
+	         const factory::Decoder_RA  &dec_params,
+	         const factory::Interleaver &itl_params);
 	virtual ~Codec_RA() = default;
 };
 }
