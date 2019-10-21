@@ -6,7 +6,7 @@ Install Sphinx, Doxygen and Sphinx extensions:
 
 ```bash
 sudo apt install python3 python3-pip librsvg2-bin doxygen
-sudo pip3 install -r requirements.txt
+pip3 install --user -r requirements.txt
 ```
 
 Generate the HTML documentation:

@@ -18,6 +18,12 @@ import textwrap
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+# This is an homemade environment variable set by the user to reduce the
+# compilation time if 'SPHINX_BUILDERNAME' == 'latex'. It that case, the
+# 'breathe' and 'exhale' extensions are disabled since the final LaTeX PDF do
+# not include the API documentation.
+buildername = str(os.getenv('SPHINX_BUILDERNAME'))
+
 # -- Project information -----------------------------------------------------
 
 project = 'AFF3CT'
@@ -47,10 +53,12 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinxcontrib.bibtex',
     'sphinxcontrib.rsvgconverter',
-    'breathe',
-    'exhale',
     # 'm2r',
 ]
+
+if buildername != "latex":
+    extensions.append('breathe')
+    extensions.append('exhale')
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -84,45 +92,49 @@ pygments_style = None
 
 # -- Configure Breathe (Developer doc from Doxygen XML files) ----------------
 
-# # Uncomment the following lines to enable the Doxygen compilation
-# # Are we on a Readthedocs server ?
-# read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
-# # If we are on a Readthedocs server
-# if read_the_docs_build:
-#     # Generate the Doxygen XML files
-#     subprocess.call('cd ../../doxygen; doxygen config.txt', shell=True)
+if buildername != "latex":
 
-breathe_projects = { "AFF3CT": "../build/doxygen/xml/" }
-breathe_default_project = "AFF3CT"
+    # # Uncomment the following lines to enable the Doxygen compilation
+    # # Are we on a Readthedocs server ?
+    # read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
+    # # If we are on a Readthedocs server
+    # if read_the_docs_build:
+    #     # Generate the Doxygen XML files
+    #     subprocess.call('cd ../../doxygen; doxygen config.txt', shell=True)
+
+    breathe_projects = { "AFF3CT": "../build/doxygen/xml/" }
+    breathe_default_project = "AFF3CT"
 
 # -- Configure Exhale (Required the previous Breathe config) -----------------
 
-# Setup the exhale extension
-exhale_args = {
-    # These arguments are required
-    "containmentFolder":     "./api",
-    "rootFileName":          "library_root.rst",
-    "rootFileTitle":         "Library API",
-    "doxygenStripFromPath":  "../../include",
-    # Suggested optional arguments
-    "createTreeView":        True,
-    # TIP: if using the sphinx-bootstrap-theme, you need
-    # "treeViewIsBootstrap": True,
-    "exhaleExecutesDoxygen": True,
-    # "verboseBuild":          True,
-    "exhaleUseDoxyfile":     True,
-    # "exhaleDoxygenStdin": textwrap.dedent('''
-    #     INPUT      = ../../include
-    #     # Using `=` instead of `+=` overrides
-    #     PREDEFINED = DOXYGEN_SHOULD_SKIP_THIS="1"
-    # ''')
-}
+if buildername != "latex":
 
-# Tell sphinx what the primary language being documented is.
-primary_domain = 'cpp'
+    # Setup the exhale extension
+    exhale_args = {
+        # These arguments are required
+        "containmentFolder":     "./api",
+        "rootFileName":          "library_root.rst",
+        "rootFileTitle":         "Library API",
+        "doxygenStripFromPath":  "../../include",
+        # Suggested optional arguments
+        "createTreeView":        True,
+        # TIP: if using the sphinx-bootstrap-theme, you need
+        # "treeViewIsBootstrap": True,
+        "exhaleExecutesDoxygen": True,
+        # "verboseBuild":          True,
+        "exhaleUseDoxyfile":     True,
+        # "exhaleDoxygenStdin": textwrap.dedent('''
+        #     INPUT      = ../../include
+        #     # Using `=` instead of `+=` overrides
+        #     PREDEFINED = DOXYGEN_SHOULD_SKIP_THIS="1"
+        # ''')
+    }
 
-# Tell sphinx what the pygments highlight language should be.
-highlight_language = 'cpp'
+    # Tell sphinx what the primary language being documented is.
+    primary_domain = 'cpp'
+
+    # Tell sphinx what the pygments highlight language should be.
+    highlight_language = 'cpp'
 
 # -- Options for HTML output -------------------------------------------------
 
