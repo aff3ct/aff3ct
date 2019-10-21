@@ -1,0 +1,9 @@
+Sphinx==2.0
+sphinx-rtd-theme==0.4.3
+sphinxcontrib-bibtex==1.0.0
+sphinxcontrib-websupport==1.1.0
+sphinxcontrib-svg2pdfconverter==0.1.0
+breathe==4.13.0
+m2r==0.2.1
+docutils==0.14
+exhale==0.2.3

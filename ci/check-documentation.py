@@ -163,7 +163,7 @@ def check_keys(keys_file, aff3ct_path, doc_path):
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
-	parser.add_argument('--keys',   action='store', dest='keys_file',   type=str, default='doc/sphinx/strings.rst')
+	parser.add_argument('--keys',   action='store', dest='keys_file',   type=str, default='doc/strings.rst')
 	parser.add_argument('--aff3ct', action='store', dest='aff3ct_path', type=str, default='build/bin/aff3ct')
 	parser.add_argument('--doc',    action='store', dest='doc_path',    type=str, default='doc/sphinx/source/user/simulation/parameters/')
 

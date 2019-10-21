@@ -142,7 +142,7 @@ endif()
 
 # ------------------------------------------------------------------------------------------------------------- STRINGS
 if(NOT AFF3CT_EXT_STRINGS)
-    file(READ doc/sphinx/strings.rst AFF3CT_STRINGS)
+    file(READ doc/strings.rst AFF3CT_STRINGS)
 
     string(REPLACE "\\" "\\\\" AFF3CT_STRINGS "${AFF3CT_STRINGS}")
     string(REPLACE "\"" "\\\"" AFF3CT_STRINGS "${AFF3CT_STRINGS}")
@@ -627,7 +627,7 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/build/html/")
             COMPONENT documentation)
 endif()
 if(AFF3CT_EXT_STRINGS)
-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/strings.rst"
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/doc/strings.rst"
             DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/aff3ct-${AFF3CT_VERSION_FULL}/doc/strings
             COMPONENT documentation)
 endif()
