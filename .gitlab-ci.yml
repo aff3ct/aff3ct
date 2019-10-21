@@ -137,7 +137,8 @@ build-linux-gcc-x64-sse4.2:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies: []
+  dependencies:
+    - documentation-sphinx
   tags:
     - linux
     - gcc
@@ -162,7 +163,8 @@ build-linux-gcc-x64-avx2:
   stage: build
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
-  dependencies: []
+  dependencies:
+    - documentation-sphinx
   tags:
     - linux
     - gcc
@@ -346,7 +348,8 @@ build-windows-gcc-x86-sse4.2:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies: []
+  dependencies:
+    - documentation-sphinx
   tags:
     - windows
     - gcc
@@ -371,7 +374,8 @@ build-windows-gcc-x64-avx2:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies: []
+  dependencies:
+    - documentation-sphinx
   tags:
     - windows
     - 64-bit
@@ -419,7 +423,8 @@ build-macos-clang-x64-sse4.2:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies: []
+  dependencies:
+    - documentation-sphinx
   tags:
     - macos
     - apple-clang
