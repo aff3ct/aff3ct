@@ -1,5 +1,7 @@
 #include <algorithm>
+#include <sstream>
 
+#include "Tools/Exception/exception.hpp"
 #include "Module/Task.hpp"
 
 namespace aff3ct
@@ -69,6 +71,20 @@ uint32_t Task
 Socket& Task
 ::operator[](const int id)
 {
+	if (id < 0 || (size_t)id >= this->sockets.size())
+	{
+		std::stringstream message;
+		message << "'id' has to be positive and smaller than 'sockets.size()' ('id' = " << id
+		        << ", 'sockets.size()' = " << sockets.size() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+	if (this->sockets[id] == nullptr)
+	{
+		std::stringstream message;
+		message << "'sockets[id]' can't be nullptr ('id' = " << id << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	return *this->sockets[id];
 }
 
