@@ -45,7 +45,7 @@ void Puncturer_turbo_DB
 }
 
 void Puncturer_turbo_DB
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
 	Puncturer::get_headers(headers, full);
 }

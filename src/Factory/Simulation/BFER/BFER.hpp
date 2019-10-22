@@ -81,7 +81,7 @@ public:
 	// parameters construction
 	void get_description(cli::Argument_map_info &args) const;
 	void store          (const cli::Argument_map_value &vals);
-	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	void get_headers    (std::map<std::string,tools::header_list>& headers, const bool full = true) const;
 
 protected:
 	BFER(const std::string &n = BFER_name, const std::string &p = BFER_prefix);

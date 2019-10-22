@@ -11,6 +11,7 @@
 #include <map>
 #include <cli.hpp>
 
+#include "Tools/Factory/Header.hpp"
 #include "Tools/auto_cloned_unique_ptr.hpp"
 #include "Module/Encoder/Encoder.hpp"
 #include "Module/Decoder/Decoder_SISO.hpp"
@@ -59,7 +60,7 @@ public:
 	// parameters construction
 	void get_description(cli::Argument_map_info &args) const;
 	void store          (const cli::Argument_map_value &vals);
-	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	void get_headers    (std::map<std::string,tools::header_list>& headers, const bool full = true) const;
 
 	// builder
 	template <typename B = int, typename Q = float>
@@ -72,10 +73,12 @@ public:
 	module::Decoder_SIHO<B,Q>* build(const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
 };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 struct Decoder_turbo_common
 {
 	static void add_args_and_options(cli::Argument_map_info &args, const std::string &p, const std::string &class_name);
 };
+#endif
 }
 }
 

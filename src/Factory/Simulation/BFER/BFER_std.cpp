@@ -47,7 +47,7 @@ void BFER_std
 }
 
 void BFER_std
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
 	BFER::get_headers(headers, full);
 }

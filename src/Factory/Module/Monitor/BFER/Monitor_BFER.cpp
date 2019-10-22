@@ -68,7 +68,7 @@ void Monitor_BFER
 }
 
 void Monitor_BFER
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
 	Monitor::get_headers(headers, full);
 

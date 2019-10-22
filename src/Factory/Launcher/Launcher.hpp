@@ -46,7 +46,7 @@ public:
 	// parameters construction
 	virtual void get_description(cli::Argument_map_info &args) const;
 	virtual void store          (const cli::Argument_map_value &vals);
-	virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	virtual void get_headers    (std::map<std::string,tools::header_list>& headers, const bool full = true) const;
 
 	// builder
 	template <typename B = int, typename R = float, typename Q = R>

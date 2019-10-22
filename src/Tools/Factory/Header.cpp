@@ -3,17 +3,17 @@
 #include <sstream>
 #include <cmath>
 
+#include "Factory/Factory.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
-
-#include "Factory/Header.hpp"
+#include "Tools/Factory/Header.hpp"
 
 using namespace aff3ct;
-using namespace aff3ct::factory;
+using namespace aff3ct::tools;
 
-void aff3ct::factory::Header::print_parameters(std::string grp_key, std::string grp_name, header_list header,
-                                               int max_n_chars, std::ostream& stream)
+void aff3ct::tools::Header::print_parameters(std::string grp_key, std::string grp_name, header_list header,
+                                             int max_n_chars, std::ostream& stream)
 {
 	auto key = tools::split(grp_key, '-');
 
@@ -44,25 +44,25 @@ void aff3ct::factory::Header::print_parameters(std::string grp_key, std::string 
 	}
 }
 
-void aff3ct::factory::Header::print_parameters(const std::vector<Factory*> &factories, const bool full,
-                                               std::ostream& stream)
+void aff3ct::tools::Header::print_parameters(const std::vector<factory::Factory*> &factories, const bool full,
+                                             std::ostream& stream)
 {
 	int max_n_chars = 0;
 	for (auto *f : factories)
 	{
-		std::map<std::string,aff3ct::factory::header_list> headers;
+		std::map<std::string,header_list> headers;
 		f->get_headers(headers, full);
 
 		for (auto &h : headers)
 			if (full || (!full && h.second.size() && (h.second[0].first != "Type" || h.second[0].second != "NO")))
-				aff3ct::factory::Header::compute_max_n_chars(h.second, max_n_chars);
+				aff3ct::tools::Header::compute_max_n_chars(h.second, max_n_chars);
 	}
 
-	std::vector<aff3ct::factory::header_list> dup_h;
-	std::vector<std::string                 > dup_n;
+	std::vector<header_list> dup_h;
+	std::vector<std::string> dup_n;
 	for (auto *f : factories)
 	{
-		std::map<std::string,aff3ct::factory::header_list> headers;
+		std::map<std::string,header_list> headers;
 		f->get_headers(headers, full);
 
 		auto prefixes = f->get_prefixes();
@@ -100,7 +100,7 @@ void aff3ct::factory::Header::print_parameters(const std::vector<Factory*> &fact
 				if (print_head && (std::find(dup_h.begin(), dup_h.end(), h) == dup_h.end() ||
 				                   std::find(dup_n.begin(), dup_n.end(), n) == dup_n.end()))
 				{
-					aff3ct::factory::Header::print_parameters(prefixes[i], n, h, max_n_chars);
+					aff3ct::tools::Header::print_parameters(prefixes[i], n, h, max_n_chars);
 
 					dup_h.push_back(h);
 					dup_n.push_back(n);
@@ -110,7 +110,7 @@ void aff3ct::factory::Header::print_parameters(const std::vector<Factory*> &fact
 	}
 }
 
-void aff3ct::factory::Header::compute_max_n_chars(const header_list& header, int& max_n_chars)
+void aff3ct::tools::Header::compute_max_n_chars(const header_list& header, int& max_n_chars)
 {
 	for (unsigned i = 0; i < header.size(); i++)
 		max_n_chars = std::max(max_n_chars, (int)header[i].first.length());

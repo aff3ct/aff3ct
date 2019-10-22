@@ -11,6 +11,7 @@
 #include <map>
 #include <cli.hpp>
 
+#include "Tools/Factory/Header.hpp"
 #include "Tools/auto_cloned_unique_ptr.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
 #include "Module/Encoder/Turbo/Encoder_turbo.hpp"
@@ -49,7 +50,7 @@ public:
 	// parameters construction
 	void get_description(cli::Argument_map_info &args) const;
 	void store          (const cli::Argument_map_value &vals);
-	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	void get_headers    (std::map<std::string,tools::header_list>& headers, const bool full = true) const;
 
 	// builder
 	template <typename B = int>
@@ -58,11 +59,12 @@ public:
 	                                      std::shared_ptr<module::Encoder<B>>  enc_i = nullptr) const;
 };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 struct Encoder_turbo_common
 {
 	static void add_args_and_options(cli::Argument_map_info &args, const std::string &p, const std::string &class_name);
 };
-
+#endif
 }
 }
 

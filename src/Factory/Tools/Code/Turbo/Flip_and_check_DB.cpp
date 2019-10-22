@@ -32,7 +32,7 @@ void Flip_and_check_DB
 }
 
 void Flip_and_check_DB
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
 	Flip_and_check::get_headers(headers, full);
 }

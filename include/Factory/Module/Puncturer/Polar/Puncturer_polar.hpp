@@ -9,6 +9,7 @@
 #include <map>
 #include <cli.hpp>
 
+#include "Tools/Factory/Header.hpp"
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
 #include "Module/Puncturer/Polar/Puncturer_polar_shortlast.hpp"
 #include "Factory/Module/Puncturer/Puncturer.hpp"
@@ -33,7 +34,7 @@ public:
 	// parameters construction
 	void get_description(cli::Argument_map_info &args) const;
 	void store          (const cli::Argument_map_value &vals);
-	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	void get_headers    (std::map<std::string,tools::header_list>& headers, const bool full = true) const;
 
 	// builder
 	template <typename B = int, typename Q = float>

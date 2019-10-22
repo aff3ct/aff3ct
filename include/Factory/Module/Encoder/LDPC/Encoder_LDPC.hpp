@@ -9,6 +9,7 @@
 #include <map>
 #include <cli.hpp>
 
+#include "Tools/Factory/Header.hpp"
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Code/LDPC/Standard/DVBS2/DVBS2_constants.hpp"
 #include "Module/Encoder/LDPC/Encoder_LDPC.hpp"
@@ -43,7 +44,7 @@ public:
 	// parameters construction
 	void get_description(cli::Argument_map_info &args) const;
 	void store          (const cli::Argument_map_value &vals);
-	void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	void get_headers    (std::map<std::string,tools::header_list>& headers, const bool full = true) const;
 
 	// builder
 	template <typename B = int>

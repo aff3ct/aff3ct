@@ -10,6 +10,7 @@
 #include <map>
 #include <cli.hpp>
 
+#include "Tools/Factory/Header.hpp"
 #include "Tools/auto_cloned_unique_ptr.hpp"
 #include "Factory/Module/Encoder/Encoder.hpp"
 #include "Factory/Module/Decoder/Decoder.hpp"
@@ -52,7 +53,7 @@ public:
 	// parameters construction
 	virtual void get_description(cli::Argument_map_info &args) const;
 	virtual void store          (const cli::Argument_map_value &vals);
-	virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	virtual void get_headers    (std::map<std::string,tools::header_list>& headers, const bool full = true) const;
 
 protected:
 	Codec(const std::string &n = Codec_name, const std::string &p = Codec_prefix);

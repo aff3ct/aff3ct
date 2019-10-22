@@ -116,7 +116,7 @@ void Decoder_RSC
 }
 
 void Decoder_RSC
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
 	Decoder::get_headers(headers, full);
 

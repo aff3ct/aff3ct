@@ -156,7 +156,7 @@ void Encoder_turbo<E1,E2>
 
 template <class E1, class E2>
 void Encoder_turbo<E1,E2>
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
 	Encoder::get_headers(headers, full);
 

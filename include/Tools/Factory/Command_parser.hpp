@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class factory::Command_parser.
+ * \brief Class tools::Command_parser.
  */
 #ifndef COMMAND_PARSER_HPP
 #define COMMAND_PARSER_HPP
@@ -14,14 +14,14 @@
 
 namespace aff3ct
 {
-namespace factory
+namespace tools
 {
 
 class Command_parser
 {
 private:
 	cli::Argument_handler ahandler;
-	std::vector<Factory*> &factories;
+	std::vector<factory::Factory*> &factories;
 	std::ostream& err_stream;
 	std::vector<std::string> warnings;
 	std::vector<std::string> errors;
@@ -30,7 +30,7 @@ private:
 	bool help_asked;
 
 public:
-	Command_parser(int argc, char** argv, std::vector<Factory*> &factories, bool add_help_tag = false,
+	Command_parser(int argc, char** argv, std::vector<factory::Factory*> &factories, bool add_help_tag = false,
 	               std::ostream& err_stream = std::cerr);
 
 	void print_help    ();

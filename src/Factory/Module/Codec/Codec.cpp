@@ -80,7 +80,7 @@ void Codec
 }
 
 void Codec
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
 	auto p = this->get_prefix();
 	auto v = tools::split(this->get_name(), ' ');

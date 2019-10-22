@@ -188,7 +188,7 @@ void Decoder_turbo<D1,D2>
 
 template <class D1, class D2>
 void Decoder_turbo<D1,D2>
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
 	Decoder::get_headers(headers, full);
 

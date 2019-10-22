@@ -65,7 +65,7 @@ void Codec_uncoded
 }
 
 void Codec_uncoded
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
 	Codec_SISO_SIHO::get_headers(headers, full);
 

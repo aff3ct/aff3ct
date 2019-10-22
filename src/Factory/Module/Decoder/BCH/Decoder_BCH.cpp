@@ -75,7 +75,7 @@ void Decoder_BCH
 }
 
 void Decoder_BCH
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
 	Decoder::get_headers(headers, full);
 

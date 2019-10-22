@@ -10,11 +10,12 @@
 #include <map>
 #include <cli.hpp>
 
+#include "Tools/Factory/Header.hpp"
+
 namespace aff3ct
 {
 namespace factory
 {
-using header_list = std::vector<std::pair<std::string,std::string>>;
 
 extern const std::string Factory_name;
 extern const std::string Factory_short_name;
@@ -37,8 +38,8 @@ public:
 	virtual std::vector<std::string> get_prefixes   () const;
 
 	virtual void get_description(cli::Argument_map_info &args) const = 0;
-	virtual void store          (const cli::Argument_map_value &vals                               ) = 0;
-	virtual void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const = 0;
+	virtual void store          (const cli::Argument_map_value &vals                                      ) = 0;
+	virtual void get_headers    (std::map<std::string,tools::header_list>& headers, const bool full = true) const = 0;
 
 	static cli::Argument_map_info get_description(const std::vector<Factory*> &factories);
 	static void get_description(const std::vector<Factory*> &factories, cli::Argument_map_info &args);

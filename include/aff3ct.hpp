@@ -9,14 +9,8 @@
 #ifndef AFF3CT_HPP
 #define AFF3CT_HPP
 
-#ifndef COMMAND_PARSER_HPP
-#include <Factory/Command_parser.hpp>
-#endif
 #ifndef FACTORY_HPP
 #include <Factory/Factory.hpp>
-#endif
-#ifndef HEADER_HPP
-#include <Factory/Header.hpp>
 #endif
 #ifndef FACTORY_CHANNEL_HPP
 #include <Factory/Module/Channel/Channel.hpp>
@@ -1175,6 +1169,12 @@
 #endif
 #ifndef UNIMPLEMENTED_ERROR_HPP_
 #include <Tools/Exception/unimplemented_error/unimplemented_error.hpp>
+#endif
+#ifndef COMMAND_PARSER_HPP
+#include <Tools/Factory/Command_parser.hpp>
+#endif
+#ifndef HEADER_HPP
+#include <Tools/Factory/Header.hpp>
 #endif
 #ifndef GENERAL_UTILS_H_
 #include <Tools/general_utils.h>
