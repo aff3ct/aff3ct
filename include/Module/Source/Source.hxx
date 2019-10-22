@@ -10,6 +10,20 @@ namespace module
 {
 
 template <typename B>
+Task& Source<B>
+::operator[](const src::tsk t)
+{
+	return Module::operator[]((int)t);
+}
+
+template <typename B>
+Socket& Source<B>
+::operator[](const src::sck::generate s)
+{
+	return Module::operator[]((int)src::tsk::generate)[(int)s];
+}
+
+template <typename B>
 Source<B>
 ::Source(const int K, const int n_frames)
 : Module(n_frames), K(K)

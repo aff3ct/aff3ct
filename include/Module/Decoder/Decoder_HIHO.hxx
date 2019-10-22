@@ -3,12 +3,34 @@
 #include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
+#include "Module/Module.hpp"
 #include "Module/Decoder/Decoder_HIHO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
+
+template <typename B>
+Task& Decoder_HIHO<B>
+::operator[](const dec::tsk t)
+{
+	return Module::operator[]((int)t);
+}
+
+template <typename B>
+Socket& Decoder_HIHO<B>
+::operator[](const dec::sck::decode_hiho s)
+{
+	return Module::operator[]((int)dec::tsk::decode_hiho)[(int)s];
+}
+
+template <typename B>
+Socket& Decoder_HIHO<B>
+::operator[](const dec::sck::decode_hiho_cw s)
+{
+	return Module::operator[]((int)dec::tsk::decode_hiho_cw)[(int)s];
+}
 
 template <typename B>
 Decoder_HIHO<B>

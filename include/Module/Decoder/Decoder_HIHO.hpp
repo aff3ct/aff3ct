@@ -8,6 +8,8 @@
 #include <memory>
 #include <vector>
 
+#include "Module/Task.hpp"
+#include "Module/Socket.hpp"
 #include "Module/Decoder/Decoder.hpp"
 
 namespace aff3ct
@@ -28,9 +30,9 @@ template <typename B = int>
 class Decoder_HIHO : virtual public Decoder
 {
 public:
-	inline Task&   operator[](const dec::tsk                 t) { return Module::operator[]((int)t);                                }
-	inline Socket& operator[](const dec::sck::decode_hiho    s) { return Module::operator[]((int)dec::tsk::decode_hiho   )[(int)s]; }
-	inline Socket& operator[](const dec::sck::decode_hiho_cw s) { return Module::operator[]((int)dec::tsk::decode_hiho_cw)[(int)s]; }
+	inline Task&   operator[](const dec::tsk                 t);
+	inline Socket& operator[](const dec::sck::decode_hiho    s);
+	inline Socket& operator[](const dec::sck::decode_hiho_cw s);
 
 private:
 	std::vector<B> Y_N;

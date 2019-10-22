@@ -9,6 +9,8 @@
 #include <memory>
 #include <vector>
 
+#include "Module/Task.hpp"
+#include "Module/Socket.hpp"
 #include "Module/Module.hpp"
 
 namespace aff3ct
@@ -40,8 +42,8 @@ template <typename R = float, typename Q = int>
 class Quantizer : public Module
 {
 public:
-	inline Task&   operator[](const qnt::tsk          t) { return Module::operator[]((int)t);                         }
-	inline Socket& operator[](const qnt::sck::process s) { return Module::operator[]((int)qnt::tsk::process)[(int)s]; }
+	inline Task&   operator[](const qnt::tsk          t);
+	inline Socket& operator[](const qnt::sck::process s);
 
 protected:
 	const int N; /*!< Size of one frame (= number of bits in one frame) */

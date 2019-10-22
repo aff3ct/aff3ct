@@ -1,11 +1,40 @@
 #include <string>
 
+#include "Module/Module.hpp"
 #include "Module/Decoder/Decoder_SISO_SIHO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
+
+template <typename B, typename R>
+Task& Decoder_SISO_SIHO<B,R>
+::operator[](const dec::tsk t)
+{
+	return Module::operator[]((int)t);
+}
+
+template <typename B, typename R>
+Socket& Decoder_SISO_SIHO<B,R>
+::operator[](const dec::sck::decode_siso s)
+{
+	return Module::operator[]((int)dec::tsk::decode_siso )[(int)s];
+}
+
+template <typename B, typename R>
+Socket& Decoder_SISO_SIHO<B,R>
+::operator[](const dec::sck::decode_siho s)
+{
+	return Module::operator[]((int)dec::tsk::decode_siho)[(int)s];
+}
+
+template <typename B, typename R>
+Socket& Decoder_SISO_SIHO<B,R>
+::operator[](const dec::sck::decode_siho_cw s)
+{
+	return Module::operator[]((int)dec::tsk::decode_siho_cw)[(int)s];
+}
 
 template <typename B, typename R>
 Decoder_SISO_SIHO<B,R>

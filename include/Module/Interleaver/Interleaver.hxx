@@ -11,8 +11,29 @@ namespace module
 {
 
 template <typename D, typename T>
-Interleaver<D,T>::
-Interleaver(const tools::Interleaver_core<T> &core)
+Task& Interleaver<D,T>
+::operator[](const itl::tsk t)
+{
+	return Module::operator[]((int)t);
+}
+
+template <typename D, typename T>
+Socket& Interleaver<D,T>
+::operator[](const itl::sck::interleave s)
+{
+	return Module::operator[]((int)itl::tsk::interleave)[(int)s];
+}
+
+template <typename D, typename T>
+Socket& Interleaver<D,T>
+::operator[](const itl::sck::deinterleave s)
+{
+	return Module::operator[]((int)itl::tsk::deinterleave)[(int)s];
+}
+
+template <typename D, typename T>
+Interleaver<D,T>
+::Interleaver(const tools::Interleaver_core<T> &core)
 : Module(core.get_n_frames()),
   core(core)
 {
@@ -46,16 +67,16 @@ Interleaver(const tools::Interleaver_core<T> &core)
 }
 
 template <typename D, typename T>
-const tools::Interleaver_core<T>& Interleaver<D,T>::
-get_core() const
+const tools::Interleaver_core<T>& Interleaver<D,T>
+::get_core() const
 {
 	return this->core;
 }
 
 template <typename D, typename T>
 template <class A>
-void Interleaver<D,T>::
-interleave(const std::vector<D,A> &nat, std::vector<D,A> &itl, const int frame_id) const
+void Interleaver<D,T>
+::interleave(const std::vector<D,A> &nat, std::vector<D,A> &itl, const int frame_id) const
 {
 	if (nat.size() != itl.size())
 	{
@@ -86,8 +107,8 @@ interleave(const std::vector<D,A> &nat, std::vector<D,A> &itl, const int frame_i
 }
 
 template <typename D, typename T>
-void Interleaver<D,T>::
-interleave(const D *nat, D *itl, const int frame_id) const
+void Interleaver<D,T>
+::interleave(const D *nat, D *itl, const int frame_id) const
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -99,8 +120,8 @@ interleave(const D *nat, D *itl, const int frame_id) const
 }
 
 template <typename D, typename T>
-void Interleaver<D,T>::
-interleave(const D *nat, D *itl, const int frame_id, const int n_frames,
+void Interleaver<D,T>
+::interleave(const D *nat, D *itl, const int frame_id, const int n_frames,
            const bool frame_reordering) const
 {
 	this->_interleave(nat, itl, core.get_lut(), frame_reordering, n_frames, frame_id);
@@ -108,8 +129,8 @@ interleave(const D *nat, D *itl, const int frame_id, const int n_frames,
 
 template <typename D, typename T>
 template <class A>
-void Interleaver<D,T>::
-deinterleave(const std::vector<D,A> &itl, std::vector<D,A> &nat, const int frame_id) const
+void Interleaver<D,T>
+::deinterleave(const std::vector<D,A> &itl, std::vector<D,A> &nat, const int frame_id) const
 {
 	if (nat.size() != itl.size())
 	{
@@ -153,20 +174,19 @@ deinterleave(const D *itl, D *nat, const int frame_id) const
 }
 
 template <typename D, typename T>
-void Interleaver<D,T>::
-deinterleave(const D *itl, D *nat, const int frame_id, const int n_frames,
-                         const bool frame_reordering) const
+void Interleaver<D,T>
+::deinterleave(const D *itl, D *nat, const int frame_id, const int n_frames, const bool frame_reordering) const
 {
 	this->_interleave(itl, nat, core.get_lut_inv(), frame_reordering, n_frames, frame_id);
 }
 
 template <typename D, typename T>
-void Interleaver<D,T>::
-_interleave(const D *in_vec, D *out_vec,
-            const std::vector<T> &lookup_table,
-            const bool frame_reordering,
-            const int  n_frames,
-            const int  frame_id) const
+void Interleaver<D,T>
+::_interleave(const D *in_vec, D *out_vec,
+              const std::vector<T> &lookup_table,
+              const bool frame_reordering,
+              const int  n_frames,
+              const int  frame_id) const
 {
 	if (frame_reordering)
 	{

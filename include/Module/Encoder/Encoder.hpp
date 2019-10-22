@@ -9,6 +9,8 @@
 #include <memory>
 #include <vector>
 
+#include "Module/Task.hpp"
+#include "Module/Socket.hpp"
 #include "Module/Module.hpp"
 
 namespace aff3ct
@@ -38,8 +40,8 @@ template <typename B = int>
 class Encoder : public Module
 {
 public:
-	inline Task&   operator[](const enc::tsk         t) { return Module::operator[]((int)t);                        }
-	inline Socket& operator[](const enc::sck::encode s) { return Module::operator[]((int)enc::tsk::encode)[(int)s]; }
+	inline Task&   operator[](const enc::tsk         t);
+	inline Socket& operator[](const enc::sck::encode s);
 
 protected:
 	const int             K;             /*!< Number of information bits in one frame */

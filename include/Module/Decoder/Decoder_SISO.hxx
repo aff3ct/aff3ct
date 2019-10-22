@@ -3,12 +3,27 @@
 #include <algorithm>
 
 #include "Tools/Exception/exception.hpp"
+#include "Module/Module.hpp"
 #include "Module/Decoder/Decoder_SISO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
+
+template <typename R>
+Task& Decoder_SISO<R>
+::operator[](const dec::tsk t)
+{
+	return Module::operator[]((int)t);
+}
+
+template <typename R>
+Socket& Decoder_SISO<R>
+::operator[](const dec::sck::decode_siso s)
+{
+	return Module::operator[]((int)dec::tsk::decode_siso)[(int)s];
+}
 
 template <typename R>
 Decoder_SISO<R>

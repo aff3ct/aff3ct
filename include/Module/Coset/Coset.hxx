@@ -10,6 +10,20 @@ namespace module
 {
 
 template <typename B, typename D>
+Task& Coset<B,D>
+::operator[](const cst::tsk t)
+{
+	return Module::operator[]((int)t);
+}
+
+template <typename B, typename D>
+Socket& Coset<B,D>
+::operator[](const cst::sck::apply s)
+{
+	return Module::operator[]((int)cst::tsk::apply)[(int)s];
+}
+
+template <typename B, typename D>
 Coset<B,D>
 ::Coset(const int size, const int n_frames)
 : Module(n_frames), size(size)

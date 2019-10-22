@@ -9,6 +9,8 @@
 #include <memory>
 #include <vector>
 
+#include "Module/Task.hpp"
+#include "Module/Socket.hpp"
 #include "Module/Module.hpp"
 
 namespace aff3ct
@@ -38,8 +40,8 @@ template <typename B = int>
 class Source : public Module
 {
 public:
-	inline Task&   operator[](const src::tsk           t) { return Module::operator[]((int)t);                          }
-	inline Socket& operator[](const src::sck::generate s) { return Module::operator[]((int)src::tsk::generate)[(int)s]; }
+	inline Task&   operator[](const src::tsk           t);
+	inline Socket& operator[](const src::sck::generate s);
 
 protected:
 	const int K; /*!< Number of information bits in one frame */

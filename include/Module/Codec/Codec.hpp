@@ -14,7 +14,8 @@
 #include "Module/Interleaver/Interleaver.hpp"
 #include "Module/Encoder/Encoder.hpp"
 #include "Module/Puncturer/Puncturer.hpp"
-
+#include "Module/Task.hpp"
+#include "Module/Socket.hpp"
 #include "Module/Module.hpp"
 
 namespace aff3ct
@@ -38,11 +39,11 @@ template <typename B = int, typename Q = float>
 class Codec : public Module
 {
 public:
-	inline Task&   operator[](const cdc::tsk                  t) { return Module::operator[]((int)t);                                 }
-	inline Socket& operator[](const cdc::sck::extract_sys_llr s) { return Module::operator[]((int)cdc::tsk::extract_sys_llr)[(int)s]; }
-	inline Socket& operator[](const cdc::sck::extract_sys_bit s) { return Module::operator[]((int)cdc::tsk::extract_sys_bit)[(int)s]; }
-	inline Socket& operator[](const cdc::sck::extract_sys_par s) { return Module::operator[]((int)cdc::tsk::extract_sys_par)[(int)s]; }
-	inline Socket& operator[](const cdc::sck::add_sys_ext     s) { return Module::operator[]((int)cdc::tsk::add_sys_ext    )[(int)s]; }
+	inline Task&   operator[](const cdc::tsk                  t);
+	inline Socket& operator[](const cdc::sck::extract_sys_llr s);
+	inline Socket& operator[](const cdc::sck::extract_sys_bit s);
+	inline Socket& operator[](const cdc::sck::extract_sys_par s);
+	inline Socket& operator[](const cdc::sck::add_sys_ext     s);
 
 private:
 	std::unique_ptr<tools::Interleaver_core< >> interleaver_core;

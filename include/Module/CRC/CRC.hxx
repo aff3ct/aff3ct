@@ -10,6 +10,34 @@ namespace module
 {
 
 template <typename B>
+Task& CRC<B>
+::operator[](const crc::tsk t)
+{
+	return Module::operator[]((int)t);
+}
+
+template <typename B>
+Socket& CRC<B>
+::operator[](const crc::sck::build s)
+{
+	return Module::operator[]((int)crc::tsk::build)[(int)s];
+}
+
+template <typename B>
+Socket& CRC<B>
+::operator[](const crc::sck::extract s)
+{
+	return Module::operator[]((int)crc::tsk::extract)[(int)s];
+}
+
+template <typename B>
+Socket& CRC<B>
+::operator[](const crc::sck::check s)
+{
+	return Module::operator[]((int)crc::tsk::check)[(int)s];
+}
+
+template <typename B>
 CRC<B>
 ::CRC(const int K, const int size, const int n_frames)
 : Module(n_frames), K(K), size(size)

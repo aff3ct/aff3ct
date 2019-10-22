@@ -9,6 +9,8 @@
 #include <memory>
 #include <vector>
 
+#include "Module/Task.hpp"
+#include "Module/Socket.hpp"
 #include "Module/Module.hpp"
 
 namespace aff3ct
@@ -40,10 +42,10 @@ template <typename B = int>
 class CRC : public Module
 {
 public:
-	inline Task&   operator[](const crc::tsk          t) { return Module::operator[]((int)t);                         }
-	inline Socket& operator[](const crc::sck::build   s) { return Module::operator[]((int)crc::tsk::build  )[(int)s]; }
-	inline Socket& operator[](const crc::sck::extract s) { return Module::operator[]((int)crc::tsk::extract)[(int)s]; }
-	inline Socket& operator[](const crc::sck::check   s) { return Module::operator[]((int)crc::tsk::check  )[(int)s]; }
+	inline Task&   operator[](const crc::tsk          t);
+	inline Socket& operator[](const crc::sck::build   s);
+	inline Socket& operator[](const crc::sck::extract s);
+	inline Socket& operator[](const crc::sck::check   s);
 
 protected:
 	const int K; /*!< Number of information bits (the CRC bits are not included in K) */

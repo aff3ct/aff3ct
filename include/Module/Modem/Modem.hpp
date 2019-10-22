@@ -11,6 +11,8 @@
 
 #include "Tools/Noise/Noise.hpp"
 #include "Tools/Noise/Sigma.hpp"
+#include "Module/Task.hpp"
+#include "Module/Socket.hpp"
 #include "Module/Module.hpp"
 
 namespace aff3ct
@@ -48,14 +50,14 @@ template <typename B = int, typename R = float, typename Q = R>
 class Modem : public Module
 {
 public:
-	inline Task&   operator[](const mdm::tsk                 t) { return Module::operator[]((int)t);                                }
-	inline Socket& operator[](const mdm::sck::modulate       s) { return Module::operator[]((int)mdm::tsk::modulate      )[(int)s]; }
-	inline Socket& operator[](const mdm::sck::tmodulate      s) { return Module::operator[]((int)mdm::tsk::tmodulate     )[(int)s]; }
-	inline Socket& operator[](const mdm::sck::filter         s) { return Module::operator[]((int)mdm::tsk::filter        )[(int)s]; }
-	inline Socket& operator[](const mdm::sck::demodulate     s) { return Module::operator[]((int)mdm::tsk::demodulate    )[(int)s]; }
-	inline Socket& operator[](const mdm::sck::tdemodulate    s) { return Module::operator[]((int)mdm::tsk::tdemodulate   )[(int)s]; }
-	inline Socket& operator[](const mdm::sck::demodulate_wg  s) { return Module::operator[]((int)mdm::tsk::demodulate_wg )[(int)s]; }
-	inline Socket& operator[](const mdm::sck::tdemodulate_wg s) { return Module::operator[]((int)mdm::tsk::tdemodulate_wg)[(int)s]; }
+	inline Task&   operator[](const mdm::tsk                 t);
+	inline Socket& operator[](const mdm::sck::modulate       s);
+	inline Socket& operator[](const mdm::sck::tmodulate      s);
+	inline Socket& operator[](const mdm::sck::filter         s);
+	inline Socket& operator[](const mdm::sck::demodulate     s);
+	inline Socket& operator[](const mdm::sck::tdemodulate    s);
+	inline Socket& operator[](const mdm::sck::demodulate_wg  s);
+	inline Socket& operator[](const mdm::sck::tdemodulate_wg s);
 
 protected:
 	const int N;       /*!< Size of one frame (= number of bits in one frame) */

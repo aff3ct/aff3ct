@@ -9,6 +9,8 @@
 #include <vector>
 #include <memory>
 
+#include "Module/Task.hpp"
+#include "Module/Socket.hpp"
 #include "Module/Module.hpp"
 
 namespace aff3ct
@@ -39,8 +41,8 @@ template <typename B, typename D>
 class Coset : public Module
 {
 public:
-	inline Task&   operator[](const cst::tsk        t) { return Module::operator[]((int)t);                       }
-	inline Socket& operator[](const cst::sck::apply s) { return Module::operator[]((int)cst::tsk::apply)[(int)s]; }
+	inline Task&   operator[](const cst::tsk        t);
+	inline Socket& operator[](const cst::sck::apply s);
 
 protected:
 	const int size; /*!< Size of the input data */

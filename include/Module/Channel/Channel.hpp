@@ -10,6 +10,8 @@
 #include <memory>
 
 #include "Tools/Noise/Noise.hpp"
+#include "Module/Task.hpp"
+#include "Module/Socket.hpp"
 #include "Module/Module.hpp"
 
 namespace aff3ct
@@ -40,9 +42,9 @@ template <typename R = float>
 class Channel : public Module
 {
 public:
-	inline Task&   operator[](const chn::tsk               t) { return Module::operator[]((int)t);                              }
-	inline Socket& operator[](const chn::sck::add_noise    s) { return Module::operator[]((int)chn::tsk::add_noise   )[(int)s]; }
-	inline Socket& operator[](const chn::sck::add_noise_wg s) { return Module::operator[]((int)chn::tsk::add_noise_wg)[(int)s]; }
+	inline Task&   operator[](const chn::tsk               t);
+	inline Socket& operator[](const chn::sck::add_noise    s);
+	inline Socket& operator[](const chn::sck::add_noise_wg s);
 
 protected:
 	const int N;          // Size of one frame (= number of bits in one frame)

@@ -11,6 +11,27 @@ namespace module
 {
 
 template <typename R>
+Task& Channel<R>
+::operator[](const chn::tsk t)
+{
+	return Module::operator[]((int)t);
+}
+
+template <typename R>
+Socket& Channel<R>
+::operator[](const chn::sck::add_noise s)
+{
+	return Module::operator[]((int)chn::tsk::add_noise)[(int)s];
+}
+
+template <typename R>
+Socket& Channel<R>
+::operator[](const chn::sck::add_noise_wg s)
+{
+	return Module::operator[]((int)chn::tsk::add_noise_wg)[(int)s];
+}
+
+template <typename R>
 Channel<R>
 ::Channel(const int N, const tools::Noise<R>& _n, const int n_frames)
 : Module(n_frames), N(N), n(_n.clone()), noise(this->N * this->n_frames, 0)

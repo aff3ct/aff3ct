@@ -10,8 +10,22 @@ namespace module
 {
 
 template <typename R, typename Q>
-Quantizer<R,Q>::
-Quantizer(const int N, const int n_frames)
+Task& Quantizer<R,Q>
+::operator[](const qnt::tsk t)
+{
+	return Module::operator[]((int)t);
+}
+
+template <typename R, typename Q>
+Socket& Quantizer<R,Q>
+::operator[](const qnt::sck::process s)
+{
+	return Module::operator[]((int)qnt::tsk::process)[(int)s];
+}
+
+template <typename R, typename Q>
+Quantizer<R,Q>
+::Quantizer(const int N, const int n_frames)
 : Module(n_frames), N(N)
 {
 	const std::string name = "Quantizer";
@@ -39,16 +53,16 @@ Quantizer(const int N, const int n_frames)
 }
 
 template <typename R, typename Q>
-int Quantizer<R,Q>::
-get_N() const
+int Quantizer<R,Q>
+::get_N() const
 {
 	return N;
 }
 
 template <typename R, typename Q>
 template <class AR, class AQ>
-void Quantizer<R,Q>::
-process(const std::vector<R,AR>& Y_N1, std::vector<Q,AQ>& Y_N2, const int frame_id)
+void Quantizer<R,Q>
+::process(const std::vector<R,AR>& Y_N1, std::vector<Q,AQ>& Y_N2, const int frame_id)
 {
 	if (this->N * this->n_frames != (int)Y_N1.size())
 	{
@@ -78,8 +92,8 @@ process(const std::vector<R,AR>& Y_N1, std::vector<Q,AQ>& Y_N2, const int frame_
 }
 
 template <typename R, typename Q>
-void Quantizer<R,Q>::
-process(const R *Y_N1, Q *Y_N2, const int frame_id)
+void Quantizer<R,Q>
+::process(const R *Y_N1, Q *Y_N2, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -91,8 +105,8 @@ process(const R *Y_N1, Q *Y_N2, const int frame_id)
 }
 
 template <typename R, typename Q>
-void Quantizer<R,Q>::
-_process(const R *Y_N1, Q *Y_N2, const int frame_id)
+void Quantizer<R,Q>
+::_process(const R *Y_N1, Q *Y_N2, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }

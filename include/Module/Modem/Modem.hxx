@@ -10,8 +10,64 @@ namespace module
 {
 
 template <typename B, typename R, typename Q>
-Modem<B,R,Q>::
-Modem(const int N, const int N_mod, const int N_fil, const tools::Noise<R>& noise, const int n_frames)
+Task& Modem<B,R,Q>
+::operator[](const mdm::tsk t)
+{
+	return Module::operator[]((int)t);
+}
+
+template <typename B, typename R, typename Q>
+Socket& Modem<B,R,Q>
+::operator[](const mdm::sck::modulate s)
+{
+	return Module::operator[]((int)mdm::tsk::modulate)[(int)s];
+}
+
+template <typename B, typename R, typename Q>
+Socket& Modem<B,R,Q>
+::operator[](const mdm::sck::tmodulate s)
+{
+	return Module::operator[]((int)mdm::tsk::tmodulate)[(int)s];
+}
+
+template <typename B, typename R, typename Q>
+Socket& Modem<B,R,Q>
+::operator[](const mdm::sck::filter s)
+{
+	return Module::operator[]((int)mdm::tsk::filter)[(int)s];
+}
+
+template <typename B, typename R, typename Q>
+Socket& Modem<B,R,Q>
+::operator[](const mdm::sck::demodulate s)
+{
+	return Module::operator[]((int)mdm::tsk::demodulate)[(int)s];
+}
+
+template <typename B, typename R, typename Q>
+Socket& Modem<B,R,Q>
+::operator[](const mdm::sck::tdemodulate s)
+{
+	return Module::operator[]((int)mdm::tsk::tdemodulate)[(int)s];
+}
+
+template <typename B, typename R, typename Q>
+Socket& Modem<B,R,Q>
+::operator[](const mdm::sck::demodulate_wg s)
+{
+	return Module::operator[]((int)mdm::tsk::demodulate_wg)[(int)s];
+}
+
+template <typename B, typename R, typename Q>
+Socket& Modem<B,R,Q>
+::operator[](const mdm::sck::tdemodulate_wg s)
+{
+	return Module::operator[]((int)mdm::tsk::tdemodulate_wg)[(int)s];
+}
+
+template <typename B, typename R, typename Q>
+Modem<B,R,Q>
+::Modem(const int N, const int N_mod, const int N_fil, const tools::Noise<R>& noise, const int n_frames)
 : Module(n_frames), N(N), N_mod(N_mod), N_fil(N_fil), n(nullptr), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
@@ -45,8 +101,8 @@ Modem(const int N, const int N_mod, const int N_fil, const tools::Noise<R>& nois
 }
 
 template <typename B, typename R, typename Q>
-Modem<B,R,Q>::
-Modem(const int N, const int N_mod, const tools::Noise<R>& noise, const int n_frames)
+Modem<B,R,Q>
+::Modem(const int N, const int N_mod, const tools::Noise<R>& noise, const int n_frames)
 : Module(n_frames), N(N), N_mod(N_mod), N_fil(N_mod), n(nullptr), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
@@ -73,8 +129,8 @@ Modem(const int N, const int N_mod, const tools::Noise<R>& noise, const int n_fr
 }
 
 template <typename B, typename R, typename Q>
-Modem<B,R,Q>::
-Modem(const int N, const tools::Noise<R>& noise, const int n_frames)
+Modem<B,R,Q>
+::Modem(const int N, const tools::Noise<R>& noise, const int n_frames)
 : Module(n_frames), N(N), N_mod(N), N_fil(N), n(nullptr), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
@@ -94,8 +150,8 @@ Modem(const int N, const tools::Noise<R>& noise, const int n_frames)
 }
 
 template <typename B, typename R, typename Q>
-void Modem<B,R,Q>::
-init_processes()
+void Modem<B,R,Q>
+::init_processes()
 {
 	auto &p1 = this->create_task("modulate");
 	auto &p1s_X_N1 = this->template create_socket_in <B>(p1, "X_N1", this->N     * this->n_frames);
@@ -184,50 +240,50 @@ init_processes()
 }
 
 template <typename B, typename R, typename Q>
-int Modem<B,R,Q>::
-get_N() const
+int Modem<B,R,Q>
+::get_N() const
 {
 	return this->N;
 }
 
 template <typename B, typename R, typename Q>
-int Modem<B,R,Q>::
-get_N_mod() const
+int Modem<B,R,Q>
+::get_N_mod() const
 {
 	return this->N_mod;
 }
 
 template <typename B, typename R, typename Q>
-int Modem<B,R,Q>::
-get_N_fil() const
+int Modem<B,R,Q>
+::get_N_fil() const
 {
 	return this->N_fil;
 }
 
 template <typename B, typename R, typename Q>
-const tools::Noise<R>* Modem<B,R,Q>::
-current_noise() const
+const tools::Noise<R>* Modem<B,R,Q>
+::current_noise() const
 {
 	return this->n;
 }
 
 template <typename B, typename R, typename Q>
-bool Modem<B,R,Q>::
-is_filter() const
+bool Modem<B,R,Q>
+::is_filter() const
 {
 	return this->enable_filter;
 }
 
 template <typename B, typename R, typename Q>
-bool Modem<B,R,Q>::
-is_demodulator() const
+bool Modem<B,R,Q>
+::is_demodulator() const
 {
 	return this->enable_demodulator;
 }
 
 template <typename B, typename R, typename Q>
-void Modem<B,R,Q>::
-set_noise(const tools::Noise<R>& noise)
+void Modem<B,R,Q>
+::set_noise(const tools::Noise<R>& noise)
 {
 	this->n.reset(noise.clone());
 	this->check_noise();
@@ -235,8 +291,8 @@ set_noise(const tools::Noise<R>& noise)
 
 template <typename B, typename R, typename Q>
 template <class AB, class AR>
-void Modem<B,R,Q>::
-modulate(const std::vector<B,AB>& X_N1, std::vector<R,AR>& X_N2, const int frame_id)
+void Modem<B,R,Q>
+::modulate(const std::vector<B,AB>& X_N1, std::vector<R,AR>& X_N2, const int frame_id)
 {
 	if (this->N * this->n_frames != (int)X_N1.size())
 	{
@@ -258,8 +314,8 @@ modulate(const std::vector<B,AB>& X_N1, std::vector<R,AR>& X_N2, const int frame
 }
 
 template <typename B, typename R, typename Q>
-void Modem<B,R,Q>::
-modulate(const B *X_N1, R *X_N2, const int frame_id)
+void Modem<B,R,Q>
+::modulate(const B *X_N1, R *X_N2, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -272,8 +328,8 @@ modulate(const B *X_N1, R *X_N2, const int frame_id)
 
 template <typename B, typename R, typename Q>
 template <class AQ, class AR>
-void Modem<B,R,Q>::
-tmodulate(const std::vector<Q,AQ>& X_N1, std::vector<R,AR>& X_N2, const int frame_id)
+void Modem<B,R,Q>
+::tmodulate(const std::vector<Q,AQ>& X_N1, std::vector<R,AR>& X_N2, const int frame_id)
 {
 	if (this->N * this->n_frames != (int)X_N1.size())
 	{
@@ -295,8 +351,8 @@ tmodulate(const std::vector<Q,AQ>& X_N1, std::vector<R,AR>& X_N2, const int fram
 }
 
 template <typename B, typename R, typename Q>
-void Modem<B,R,Q>::
-tmodulate(const Q *X_N1, R *X_N2, const int frame_id)
+void Modem<B,R,Q>
+::tmodulate(const Q *X_N1, R *X_N2, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -309,8 +365,8 @@ tmodulate(const Q *X_N1, R *X_N2, const int frame_id)
 
 template <typename B, typename R, typename Q>
 template <class A>
-void Modem<B,R,Q>::
-filter(const std::vector<R,A>& Y_N1, std::vector<R,A>& Y_N2, const int frame_id)
+void Modem<B,R,Q>
+::filter(const std::vector<R,A>& Y_N1, std::vector<R,A>& Y_N2, const int frame_id)
 {
 	if (this->N_mod * this->n_frames != (int)Y_N1.size())
 	{
@@ -332,8 +388,8 @@ filter(const std::vector<R,A>& Y_N1, std::vector<R,A>& Y_N2, const int frame_id)
 }
 
 template <typename B, typename R, typename Q>
-void Modem<B,R,Q>::
-filter(const R *Y_N1, R *Y_N2, const int frame_id)
+void Modem<B,R,Q>
+::filter(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -346,8 +402,8 @@ filter(const R *Y_N1, R *Y_N2, const int frame_id)
 
 template <typename B, typename R, typename Q>
 template <class A>
-void Modem<B,R,Q>::
-demodulate(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame_id)
+void Modem<B,R,Q>
+::demodulate(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame_id)
 {
 	if (this->N_fil * this->n_frames != (int)Y_N1.size())
 	{
@@ -369,8 +425,8 @@ demodulate(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame
 }
 
 template <typename B, typename R, typename Q>
-void Modem<B,R,Q>::
-demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
+void Modem<B,R,Q>
+::demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -383,8 +439,8 @@ demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 
 template <typename B, typename R, typename Q>
 template <class AQ, class AR>
-void Modem<B,R,Q>::
-demodulate_wg(const std::vector<R,AR>& H_N, const std::vector<Q,AQ>& Y_N1, std::vector<Q,AQ>& Y_N2, const int frame_id)
+void Modem<B,R,Q>
+::demodulate_wg(const std::vector<R,AR>& H_N, const std::vector<Q,AQ>& Y_N1, std::vector<Q,AQ>& Y_N2, const int frame_id)
 {
 	if (this->N_fil * this->n_frames != (int)Y_N1.size())
 	{
@@ -414,8 +470,8 @@ demodulate_wg(const std::vector<R,AR>& H_N, const std::vector<Q,AQ>& Y_N1, std::
 }
 
 template <typename B, typename R, typename Q>
-void Modem<B,R,Q>::
-demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
+void Modem<B,R,Q>
+::demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -429,8 +485,8 @@ demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
 
 template <typename B, typename R, typename Q>
 template <class A>
-void Modem<B,R,Q>::
-tdemodulate(const std::vector<Q,A>& Y_N1, const std::vector<Q,A>& Y_N2, std::vector<Q,A>& Y_N3, const int frame_id)
+void Modem<B,R,Q>
+::tdemodulate(const std::vector<Q,A>& Y_N1, const std::vector<Q,A>& Y_N2, std::vector<Q,A>& Y_N3, const int frame_id)
 {
 	if (this->N_fil * this->n_frames != (int)Y_N1.size())
 	{
@@ -460,8 +516,8 @@ tdemodulate(const std::vector<Q,A>& Y_N1, const std::vector<Q,A>& Y_N2, std::vec
 }
 
 template <typename B, typename R, typename Q>
-void Modem<B,R,Q>::
-tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
+void Modem<B,R,Q>
+::tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -475,10 +531,10 @@ tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 
 template <typename B, typename R, typename Q>
 template <class AQ, class AR>
-void Modem<B,R,Q>::
-tdemodulate_wg(const std::vector<R,AR>& H_N,  const std::vector<Q,AQ>& Y_N1,
-               const std::vector<Q,AQ>& Y_N2,       std::vector<Q,AQ>& Y_N3,
-               const int frame_id)
+void Modem<B,R,Q>
+::tdemodulate_wg(const std::vector<R,AR>& H_N,  const std::vector<Q,AQ>& Y_N1,
+                 const std::vector<Q,AQ>& Y_N2,       std::vector<Q,AQ>& Y_N3,
+                 const int frame_id)
 {
 	if (this->N_fil * this->n_frames != (int)Y_N1.size())
 	{
@@ -516,8 +572,8 @@ tdemodulate_wg(const std::vector<R,AR>& H_N,  const std::vector<Q,AQ>& Y_N1,
 }
 
 template <typename B, typename R, typename Q>
-void Modem<B,R,Q>::
-tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
+void Modem<B,R,Q>
+::tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -531,85 +587,85 @@ tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int fr
 }
 
 template <typename B, typename R, typename Q>
-int Modem<B,R,Q>::
-get_buffer_size_after_modulation(const int N, const int n_b_per_s, const int tl, const int s_factor, const bool complex)
+int Modem<B,R,Q>
+::get_buffer_size_after_modulation(const int N, const int n_b_per_s, const int tl, const int s_factor, const bool complex)
 {
 	return ((int)(std::ceil((float)N / (float)n_b_per_s)) + tl) * s_factor * (complex ? 2 : 1);
 }
 
 template <typename B, typename R, typename Q>
-int Modem<B,R,Q>::
-get_buffer_size_after_filtering(const int N, const int n_b_per_s, const int tl, const int max_wa_id, const bool complex)
+int Modem<B,R,Q>
+::get_buffer_size_after_filtering(const int N, const int n_b_per_s, const int tl, const int max_wa_id, const bool complex)
 {
 	return ((int)(std::ceil((float)N / (float)n_b_per_s)) + tl) * max_wa_id * (complex ? 2 : 1);
 }
 
 template <typename B, typename R, typename Q>
-void Modem<B,R,Q>::
-_modulate(const B *X_N1, R *X_N2, const int frame_id)
+void Modem<B,R,Q>
+::_modulate(const B *X_N1, R *X_N2, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
-void Modem<B,R,Q>::
-_tmodulate(const Q *X_N1, R *X_N2, const int frame_id)
+void Modem<B,R,Q>
+::_tmodulate(const Q *X_N1, R *X_N2, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
-void Modem<B,R,Q>::
-_filter(const R *Y_N1, R *Y_N2, const int frame_id)
+void Modem<B,R,Q>
+::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
-void Modem<B,R,Q>::
-_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
+void Modem<B,R,Q>
+::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
-void Modem<B,R,Q>::
-_demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
+void Modem<B,R,Q>
+::_demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
-void Modem<B,R,Q>::
-_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
+void Modem<B,R,Q>
+::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
-void Modem<B,R,Q>::
-_tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
+void Modem<B,R,Q>
+::_tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
-void Modem<B,R,Q>::
-set_filter(const bool filter)
+void Modem<B,R,Q>
+::set_filter(const bool filter)
 {
 	this->enable_filter = filter;
 }
 
 template <typename B, typename R, typename Q>
-void Modem<B,R,Q>::
-set_demodulator(const bool demodulator)
+void Modem<B,R,Q>
+::set_demodulator(const bool demodulator)
 {
 	this->enable_demodulator = demodulator;
 }
 
 template <typename B, typename R, typename Q>
-void Modem<B,R,Q>::
-check_noise()
+void Modem<B,R,Q>
+::check_noise()
 {
 	if (this->n == nullptr)
 	{

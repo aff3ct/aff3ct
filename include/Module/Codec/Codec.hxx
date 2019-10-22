@@ -12,6 +12,41 @@ namespace module
 {
 
 template <typename B, typename Q>
+Task& Codec<B,Q>
+::operator[](const cdc::tsk t)
+{
+	return Module::operator[]((int)t);
+}
+
+template <typename B, typename Q>
+Socket& Codec<B,Q>
+::operator[](const cdc::sck::extract_sys_llr s)
+{
+	return Module::operator[]((int)cdc::tsk::extract_sys_llr)[(int)s];
+}
+
+template <typename B, typename Q>
+Socket& Codec<B,Q>
+::operator[](const cdc::sck::extract_sys_bit s)
+{
+	return Module::operator[]((int)cdc::tsk::extract_sys_bit)[(int)s];
+}
+
+template <typename B, typename Q>
+Socket& Codec<B,Q>
+::operator[](const cdc::sck::extract_sys_par s)
+{
+	return Module::operator[]((int)cdc::tsk::extract_sys_par)[(int)s];
+}
+
+template <typename B, typename Q>
+Socket& Codec<B,Q>
+::operator[](const cdc::sck::add_sys_ext s)
+{
+	return Module::operator[]((int)cdc::tsk::add_sys_ext)[(int)s];
+}
+
+template <typename B, typename Q>
 Codec<B,Q>
 ::Codec(const int K, const int N_cw, const int N, const int tail_length, const int n_frames)
 : Module(n_frames),

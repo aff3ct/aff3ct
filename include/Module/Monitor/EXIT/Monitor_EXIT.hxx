@@ -1,12 +1,28 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
+#include "Module/Module.hpp"
 #include "Module/Monitor/EXIT/Monitor_EXIT.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
+
+template <typename B, typename R>
+Task& Monitor_EXIT<B,R>
+::operator[](const mnt::tsk t)
+{
+	return Module::operator[]((int)t);
+}
+
+template <typename B, typename R>
+Socket& Monitor_EXIT<B,R>
+::operator[](const mnt::sck::check_mutual_info s)
+{
+	return Module::operator[]((int)mnt::tsk::check_mutual_info)[(int)s];
+}
+
 template <typename B, typename R>
 template <class AB, class AR>
 void Monitor_EXIT<B,R>

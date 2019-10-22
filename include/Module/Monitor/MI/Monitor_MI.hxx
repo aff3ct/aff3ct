@@ -1,12 +1,28 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
+#include "Module/Module.hpp"
 #include "Module/Monitor/MI/Monitor_MI.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
+
+template <typename B, typename R>
+Task& Monitor_MI<B,R>
+::operator[](const mnt::tsk t)
+{
+	return Module::operator[]((int)t);
+}
+
+template <typename B, typename R>
+Socket& Monitor_MI<B,R>
+::operator[](const mnt::sck::get_mutual_info s)
+{
+	return Module::operator[]((int)mnt::tsk::get_mutual_info)[(int)s];
+}
+
 template <typename B, typename R>
 template <class AB, class AR>
 R Monitor_MI<B,R>

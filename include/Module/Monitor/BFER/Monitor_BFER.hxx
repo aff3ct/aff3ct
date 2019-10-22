@@ -1,12 +1,28 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
+#include "Module/Module.hpp"
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
+
+template <typename B>
+Task& Monitor_BFER<B>
+::operator[](const mnt::tsk t)
+{
+	return Module::operator[]((int)t);
+}
+
+template <typename B>
+Socket& Monitor_BFER<B>
+::operator[](const mnt::sck::check_errors s)
+{
+	return Module::operator[]((int)mnt::tsk::check_errors)[(int)s];
+}
+
 template <typename B>
 template <class A>
 int Monitor_BFER<B>

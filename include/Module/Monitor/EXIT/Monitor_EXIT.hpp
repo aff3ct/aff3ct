@@ -9,6 +9,8 @@
 #include <memory>
 #include <functional>
 
+#include "Module/Task.hpp"
+#include "Module/Socket.hpp"
 #include "Module/Monitor/Monitor.hpp"
 
 namespace aff3ct
@@ -19,8 +21,8 @@ template <typename B = int, typename R = float>
 class Monitor_EXIT : public Monitor
 {
 public:
-	inline Task&   operator[](const mnt::tsk                    t) { return Module::operator[]((int)t);                                   }
-	inline Socket& operator[](const mnt::sck::check_mutual_info s) { return Module::operator[]((int)mnt::tsk::check_mutual_info)[(int)s]; }
+	inline Task&   operator[](const mnt::tsk                    t);
+	inline Socket& operator[](const mnt::sck::check_mutual_info s);
 
 protected:
 	struct Attributes

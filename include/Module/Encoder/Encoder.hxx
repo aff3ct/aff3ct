@@ -12,8 +12,22 @@ namespace module
 {
 
 template <typename B>
-Encoder<B>::
-Encoder(const int K, const int N, const int n_frames)
+Task& Encoder<B>
+::operator[](const enc::tsk t)
+{
+	return Module::operator[]((int)t);
+}
+
+template <typename B>
+Socket& Encoder<B>
+::operator[](const enc::sck::encode s)
+{
+	return Module::operator[]((int)enc::tsk::encode)[(int)s];
+}
+
+template <typename B>
+Encoder<B>
+::Encoder(const int K, const int N, const int n_frames)
 : Module(n_frames),
   K(K),
   N(N),
@@ -63,36 +77,36 @@ Encoder(const int K, const int N, const int n_frames)
 }
 
 template <typename B>
-int Encoder<B>::
-get_K() const
+int Encoder<B>
+::get_K() const
 {
 	return this->K;
 }
 
 template <typename B>
-int Encoder<B>::
-get_N() const
+int Encoder<B>
+::get_N() const
 {
 	return this->N;
 }
 
 template <typename B>
-bool Encoder<B>::
-is_sys() const
+bool Encoder<B>
+::is_sys() const
 {
 	return this->sys;
 }
 
 template <typename B>
-bool Encoder<B>::
-is_memorizing() const
+bool Encoder<B>
+::is_memorizing() const
 {
 	return this->memorizing;
 }
 
 template <typename B>
-void Encoder<B>::
-set_memorizing(const bool memorizing)
+void Encoder<B>
+::set_memorizing(const bool memorizing)
 {
 	this->memorizing = memorizing;
 
@@ -118,23 +132,23 @@ set_memorizing(const bool memorizing)
 }
 
 template <typename B>
-const std::vector<B>& Encoder<B>::
-get_U_K(const int frame_id) const
+const std::vector<B>& Encoder<B>
+::get_U_K(const int frame_id) const
 {
 	return this->U_K_mem[frame_id % this->n_frames];
 }
 
 template <typename B>
-const std::vector<B>& Encoder<B>::
-get_X_N(const int frame_id) const
+const std::vector<B>& Encoder<B>
+::get_X_N(const int frame_id) const
 {
 	return this->X_N_mem[frame_id % this->n_frames];
 }
 
 template <typename B>
 template <class A>
-void Encoder<B>::
-encode(const std::vector<B,A>& U_K, std::vector<B,A>& X_N, const int frame_id)
+void Encoder<B>
+::encode(const std::vector<B,A>& U_K, std::vector<B,A>& X_N, const int frame_id)
 {
 	if (this->K * this->n_frames != (int)U_K.size())
 	{
@@ -165,8 +179,8 @@ encode(const std::vector<B,A>& U_K, std::vector<B,A>& X_N, const int frame_id)
 }
 
 template <typename B>
-void Encoder<B>::
-encode(const B *U_K, B *X_N, const int frame_id)
+void Encoder<B>
+::encode(const B *U_K, B *X_N, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -191,8 +205,8 @@ encode(const B *U_K, B *X_N, const int frame_id)
 
 template <typename B>
 template <class A>
-bool Encoder<B>::
-is_codeword(const std::vector<B,A>& X_N)
+bool Encoder<B>
+::is_codeword(const std::vector<B,A>& X_N)
 {
 	if (this->N != (int)X_N.size())
 	{
@@ -206,36 +220,36 @@ is_codeword(const std::vector<B,A>& X_N)
 }
 
 template <typename B>
-bool Encoder<B>::
-is_codeword(const B *X_N)
+bool Encoder<B>
+::is_codeword(const B *X_N)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B>
-const std::vector<uint32_t>& Encoder<B>::
-get_info_bits_pos() const
+const std::vector<uint32_t>& Encoder<B>
+::get_info_bits_pos() const
 {
 	return info_bits_pos;
 }
 
 template <typename B>
-int Encoder<B>::
-tail_length() const
+int Encoder<B>
+::tail_length() const
 {
 	return 0;
 }
 
 template <typename B>
-void Encoder<B>::
-_encode(const B *U_K, B *X_N, const int frame_id)
+void Encoder<B>
+::_encode(const B *U_K, B *X_N, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B>
-void Encoder<B>::
-set_sys(const bool sys)
+void Encoder<B>
+::set_sys(const bool sys)
 {
 	this->sys = sys;
 }
