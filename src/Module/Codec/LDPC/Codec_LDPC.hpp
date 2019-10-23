@@ -23,7 +23,6 @@ protected:
 	tools::Sparse_matrix H;
 	tools::Sparse_matrix G;
 	tools::LDPC_matrix_handler::Positions_vector info_bits_pos;
-	std::vector<bool> pctPattern;
 	std::unique_ptr<tools::dvbs2_values> dvbs2;
 
 public:
@@ -31,6 +30,11 @@ public:
 	           const factory::Decoder_LDPC::parameters   &dec_params,
 	                 factory::Puncturer_LDPC::parameters *pct_params);
 	virtual ~Codec_LDPC() = default;
+
+	const tools::Sparse_matrix& get_H() const;
+	const tools::Sparse_matrix& get_G() const;
+	const tools::LDPC_matrix_handler::Positions_vector& get_info_bits_pos() const;
+	const tools::dvbs2_values& get_DVBS2() const;
 
 protected:
 	void _extract_sys_par(const Q *Y_N, Q *sys, Q *par, const int frame_id);

@@ -154,6 +154,55 @@ Codec_LDPC<B,Q>
 }
 
 template <typename B, typename Q>
+const tools::Sparse_matrix& Codec_LDPC<B,Q>
+::get_H() const
+{
+	if (this->H.size() == 0)
+	{
+		std::stringstream message;
+		message << "'H.size()' has to be strictly greater than 0 ('H.size()' = " << H.size() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return this->H;
+}
+
+template <typename B, typename Q>
+const tools::Sparse_matrix& Codec_LDPC<B,Q>
+::get_G() const
+{
+	if (this->G.size() == 0)
+	{
+		std::stringstream message;
+		message << "'G.size()' has to be strictly greater than 0 ('G.size()' = " << G.size() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return this->G;
+}
+
+template <typename B, typename Q>
+const tools::LDPC_matrix_handler::Positions_vector& Codec_LDPC<B,Q>
+::get_info_bits_pos() const
+{
+	return info_bits_pos;
+}
+
+template <typename B, typename Q>
+const tools::dvbs2_values& Codec_LDPC<B,Q>
+::get_DVBS2() const
+{
+	if (this->dvbs2 == nullptr)
+	{
+		std::stringstream message;
+		message << "'dvbs2' can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->dvbs2.get();
+}
+
+template <typename B, typename Q>
 void Codec_LDPC<B,Q>
 ::_extract_sys_par(const Q *Y_N, Q *sys, Q *par, const int frame_id)
 {
