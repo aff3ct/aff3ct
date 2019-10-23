@@ -44,6 +44,8 @@ public:
 
 	inline size_t get_n_cols() const;
 
+	inline size_t size() const;
+
 	inline size_t get_rows_max_degree() const;
 
 	inline size_t get_cols_max_degree() const;
