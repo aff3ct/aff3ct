@@ -17,6 +17,12 @@ size_t Matrix
 }
 
 size_t Matrix
+::size() const
+{
+	return this->n_rows * this->n_cols;
+}
+
+size_t Matrix
 ::get_rows_max_degree() const
 {
 	return this->rows_max_degree;
