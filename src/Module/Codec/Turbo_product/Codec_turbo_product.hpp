@@ -24,14 +24,22 @@ protected:
 	std::unique_ptr<Encoder_BCH<B  >>           enc_bch_cols;
 	std::unique_ptr<Decoder_BCH<B,Q>>           dec_bch_rows;
 	std::unique_ptr<Decoder_BCH<B,Q>>           dec_bch_cols;
-	std::unique_ptr<Decoder_chase_pyndiah<B,Q>> cp_rows;
-	std::unique_ptr<Decoder_chase_pyndiah<B,Q>> cp_cols;
+	std::unique_ptr<Decoder_chase_pyndiah<B,Q>> dec_cp_rows;
+	std::unique_ptr<Decoder_chase_pyndiah<B,Q>> dec_cp_cols;
 
 public:
 	Codec_turbo_product(const factory::Encoder_turbo_product::parameters &enc_params,
 	                    const factory::Decoder_turbo_product::parameters &dec_params,
 	                    const factory::Interleaver          ::parameters &itl_params);
 	virtual ~Codec_turbo_product() = default;
+
+	const tools::BCH_polynomial_generator<B>& get_GF_poly() const;
+	const Encoder_BCH<B>& get_encoder_BCH_rows() const;
+	const Encoder_BCH<B>& get_encoder_BCH_cols() const;
+	const Decoder_BCH<B,Q>& get_decoder_BCH_rows() const;
+	const Decoder_BCH<B,Q>& get_decoder_BCH_cols() const;
+	const Decoder_chase_pyndiah<B,Q>& get_decoder_chase_pyndiah_rows() const;
+	const Decoder_chase_pyndiah<B,Q>& get_decoder_chase_pyndiah_cols() const;
 };
 }
 }

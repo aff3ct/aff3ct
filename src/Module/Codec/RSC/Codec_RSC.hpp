@@ -23,6 +23,9 @@ public:
 	          const factory::Decoder_RSC::parameters &dec_params);
 	virtual ~Codec_RSC() = default;
 
+	bool is_buffered_encoding() const;
+	const std::vector<std::vector<int>>& get_trellis() const;
+
 protected:
 	void _extract_sys_par(const Q *Y_N, Q *sys, Q *par, const int frame_id);
 	void _extract_sys_llr(const Q *Y_N, Q *sys,         const int frame_id);

@@ -37,8 +37,13 @@ public:
 	            CRC<B>* crc = nullptr);
 	virtual ~Codec_turbo();
 
+	const std::vector<std::vector<int>>& get_trellis() const;
+	const module::Encoder_RSC_sys<B>& get_sub_encoder() const;
+	const module::Decoder_SISO<Q>& get_sub_decoder() const;
+	const std::vector<std::shared_ptr<tools::Post_processing_SISO<B,Q>>>& get_post_processings() const;
+
 protected:
-	void add_post_pro(tools::Post_processing_SISO<B,Q>* p);
+	void add_post_processings(tools::Post_processing_SISO<B,Q>* p);
 };
 }
 }

@@ -71,6 +71,13 @@ Codec_RS<B,Q>
 	this->set_decoder_siho_hiho(factory::Decoder_RS::build_hiho<B,Q>(dec_params, GF_poly, this->get_encoder()));
 }
 
+template <typename B, typename Q>
+const tools::RS_polynomial_generator& Codec_RS<B,Q>
+::get_GF_poly() const
+{
+	return this->GF_poly;
+}
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC

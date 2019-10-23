@@ -85,6 +85,20 @@ Codec_RSC<B,Q>
 }
 
 template <typename B, typename Q>
+bool Codec_RSC<B,Q>
+::is_buffered_encoding() const
+{
+	return this->buffered_encoding;
+}
+
+template <typename B, typename Q>
+const std::vector<std::vector<int>>& Codec_RSC<B,Q>
+::get_trellis() const
+{
+	return this->trellis;
+}
+
+template <typename B, typename Q>
 void Codec_RSC<B,Q>
 ::_extract_sys_par(const Q* Y_N, Q* sys, Q* par, const int frame_id)
 {

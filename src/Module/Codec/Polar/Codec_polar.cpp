@@ -203,10 +203,38 @@ void Codec_polar<B,Q>
 }
 
 template <typename B, typename Q>
-std::vector<bool>& Codec_polar<B,Q>
-::get_frozen_bits()
+const std::vector<bool>& Codec_polar<B,Q>
+::get_frozen_bits() const
 {
 	return this->frozen_bits;
+}
+
+template <typename B, typename Q>
+bool Codec_polar<B,Q>
+::is_adaptive_frozen_bits() const
+{
+	return this->adaptive_fb;
+}
+
+template <typename B, typename Q>
+bool Codec_polar<B,Q>
+::is_generated_decoder() const
+{
+	return this->generated_decoder;
+}
+
+template <typename B, typename Q>
+const tools::Frozenbits_generator& Codec_polar<B,Q>
+::get_frozen_bits_generator() const
+{
+	if (this->fb_generator == nullptr)
+	{
+		std::stringstream message;
+		message << "'fb_generator' can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->fb_generator.get();
 }
 
 template <typename B, typename Q>
