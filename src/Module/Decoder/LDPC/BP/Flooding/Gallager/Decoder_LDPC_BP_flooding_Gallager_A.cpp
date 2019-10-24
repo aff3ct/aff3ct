@@ -170,21 +170,22 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 	for (auto v = 0; v < n_var_nodes; v++)
 	{
 		const auto var_degree = (int)this->H.get_row_to_cols()[v].size();
+		const auto cur_state = (int8_t)Y_N[v];
 
-		for (auto c = 0; c < var_degree; c++)
+		if (first_ite)
 		{
-			auto cur_state = Y_N[v];
-			if (!first_ite)
+			std::fill(var_to_chk_ptr, var_to_chk_ptr + var_degree, cur_state);
+		}
+		else
+		{
+			for (auto c = 0; c < var_degree; c++)
 			{
 				auto count = 0;
 				for (auto cc = 0; cc < var_degree; cc++)
-					if (cc != c && chk_to_var_ptr[cc] != cur_state)
-						count++;
-
-				cur_state = count == (var_degree -1) ? !cur_state : cur_state;
+					count += (cc != c && chk_to_var_ptr[cc] != cur_state) ? 1 : 0;
+				const auto new_state = (count == (var_degree -1)) && var_degree != 1 ? !cur_state : cur_state;
+				var_to_chk_ptr[c] = new_state;
 			}
-
-			var_to_chk_ptr[c] = (int8_t)cur_state;
 		}
 
 		chk_to_var_ptr += var_degree;
