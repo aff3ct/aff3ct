@@ -48,7 +48,10 @@ public:
 	virtual void set_noise(const tools::Noise<float>& noise);
 	virtual void set_noise(const tools::Noise<double>& noise);
 
-	std::vector<bool>& get_frozen_bits();
+	const std::vector<bool>& get_frozen_bits() const;
+	bool is_adaptive_frozen_bits() const;
+	bool is_generated_decoder() const;
+	const tools::Frozenbits_generator& get_frozen_bits_generator() const;
 
 	virtual void notify_frozenbits_update();
 

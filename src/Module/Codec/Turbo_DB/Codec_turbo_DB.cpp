@@ -110,19 +110,19 @@ Codec_turbo_DB<B,Q>
 	{
 		// then add post processing modules
 		if (dec_params.sf->enable)
-			add_post_pro(dec_params.sf->build<B,Q>());
+			add_post_processings(dec_params.sf->build<B,Q>());
 
 		if (dec_params.fnc->enable)
 		{
 			if (crc == nullptr || crc->get_size() == 0)
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, "The Flip aNd Check requires a CRC.");
 
-			add_post_pro(dec_params.fnc->build<B,Q>(*crc));
+			add_post_processings(dec_params.fnc->build<B,Q>(*crc));
 		}
 		else if (crc != nullptr && crc->get_size() > 0)
-			add_post_pro(new tools::CRC_checker_DB<B,Q>(*crc,
-			                                            dec_params.crc_start_ite,
-			                                            decoder_turbo->get_simd_inter_frame_level()));
+			add_post_processings(new tools::CRC_checker_DB<B,Q>(*crc,
+			                                                    dec_params.crc_start_ite,
+			                                                    decoder_turbo->get_simd_inter_frame_level()));
 
 		for (auto i = 0; i < (int)post_pros.size(); i++)
 		{
@@ -140,8 +140,64 @@ Codec_turbo_DB<B,Q>
 }
 
 template <typename B, typename Q>
+const std::vector<std::vector<int>>& Codec_turbo_DB<B,Q>
+::get_trellis() const
+{
+	return this->trellis;
+}
+
+template <typename B, typename Q>
+const module::Encoder_RSC_DB<B>& Codec_turbo_DB<B,Q>
+::get_sub_encoder() const
+{
+	if (this->sub_enc == nullptr)
+	{
+		std::stringstream message;
+		message << "'sub_enc' can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->sub_enc.get();
+}
+
+template <typename B, typename Q>
+const module::Decoder_RSC_DB_BCJR<B,Q>& Codec_turbo_DB<B,Q>
+::get_sub_decoder_n() const
+{
+	if (this->sub_dec_n == nullptr)
+	{
+		std::stringstream message;
+		message << "'sub_dec_n' can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->sub_dec_n.get();
+}
+
+template <typename B, typename Q>
+const module::Decoder_RSC_DB_BCJR<B,Q>& Codec_turbo_DB<B,Q>
+::get_sub_decoder_i() const
+{
+	if (this->sub_dec_i == nullptr)
+	{
+		std::stringstream message;
+		message << "'sub_dec_i' can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->sub_dec_i.get();
+}
+
+template <typename B, typename Q>
+const std::vector<std::shared_ptr<tools::Post_processing_SISO<B,Q>>>& Codec_turbo_DB<B,Q>
+::get_post_processings() const
+{
+	return this->post_pros;
+}
+
+template <typename B, typename Q>
 void Codec_turbo_DB<B,Q>
-::add_post_pro(tools::Post_processing_SISO<B,Q>* p)
+::add_post_processings(tools::Post_processing_SISO<B,Q>* p)
 {
 	post_pros.push_back(std::shared_ptr<tools::Post_processing_SISO<B,Q>>(p));
 }

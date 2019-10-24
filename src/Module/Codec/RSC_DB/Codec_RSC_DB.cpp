@@ -81,6 +81,20 @@ Codec_RSC_DB<B,Q>
 	}
 }
 
+template <typename B, typename Q>
+bool Codec_RSC_DB<B,Q>
+::is_buffered_encoding() const
+{
+	return this->buffered_encoding;
+}
+
+template <typename B, typename Q>
+const std::vector<std::vector<int>>& Codec_RSC_DB<B,Q>
+::get_trellis() const
+{
+	return this->trellis;
+}
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC

@@ -24,6 +24,8 @@ public:
 	Codec_RS(const factory::Encoder_RS &enc_params,
 	         const factory::Decoder_RS &dec_params);
 	virtual ~Codec_RS() = default;
+
+	const tools::RS_polynomial_generator& get_GF_poly() const;
 };
 }
 }

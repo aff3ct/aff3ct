@@ -68,6 +68,13 @@ Codec_BCH<B,Q>
 	this->set_decoder_siho_hiho(dec_params.build_hiho<B,Q>(GF_poly, this->get_encoder()));
 }
 
+template <typename B, typename Q>
+const tools::BCH_polynomial_generator<B>& Codec_BCH<B,Q>
+::get_GF_poly() const
+{
+	return this->GF_poly;
+}
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC

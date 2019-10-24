@@ -117,26 +117,26 @@ Codec_turbo<B,Q>
 	if (decoder_turbo)
 	{
 		if (dec_params.sf->enable)
-			add_post_pro(dec_params.sf->build<B,Q>());
+			add_post_processings(dec_params.sf->build<B,Q>());
 
 		if (dec_params.fnc->enable)
 		{
 			if (crc == nullptr || crc->get_size() == 0)
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, "The Flip aNd Check requires a CRC.");
 
-			add_post_pro(dec_params.fnc->build<B,Q>(*crc));
+			add_post_processings(dec_params.fnc->build<B,Q>(*crc));
 		}
 		else if (crc != nullptr && crc->get_size() > 0)
-			add_post_pro(new tools::CRC_checker<B,Q>(*crc,
-			                                         dec_params.crc_start_ite,
-			                                         decoder_turbo->get_simd_inter_frame_level()));
+			add_post_processings(new tools::CRC_checker<B,Q>(*crc,
+			                                                 dec_params.crc_start_ite,
+			                                                 decoder_turbo->get_simd_inter_frame_level()));
 
 		if (dec_params.self_corrected)
-			add_post_pro(new tools::Self_corrected<B,Q>(dec_params.K,
-			                                            dec_params.n_ite,
-			                                            4,
-			                                            dec_params.n_ite,
-			                                            decoder_turbo->get_simd_inter_frame_level()));
+			add_post_processings(new tools::Self_corrected<B,Q>(dec_params.K,
+			                                                    dec_params.n_ite,
+			                                                    4,
+			                                                    dec_params.n_ite,
+			                                                    decoder_turbo->get_simd_inter_frame_level()));
 
 		for (auto i = 0; i < (int)post_pros.size(); i++)
 			if (post_pros[i] != nullptr)
@@ -163,8 +163,50 @@ Codec_turbo<B,Q>
 }
 
 template <typename B, typename Q>
+const std::vector<std::vector<int>>& Codec_turbo<B,Q>
+::get_trellis() const
+{
+	return this->trellis;
+}
+
+template <typename B, typename Q>
+const module::Encoder_RSC_sys<B>& Codec_turbo<B,Q>
+::get_sub_encoder() const
+{
+	if (this->sub_enc == nullptr)
+	{
+		std::stringstream message;
+		message << "'sub_enc' can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->sub_enc.get();
+}
+
+template <typename B, typename Q>
+const module::Decoder_SISO<Q>& Codec_turbo<B,Q>
+::get_sub_decoder() const
+{
+	if (this->sub_dec == nullptr)
+	{
+		std::stringstream message;
+		message << "'sub_dec' can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->sub_dec.get();
+}
+
+template <typename B, typename Q>
+const std::vector<std::shared_ptr<tools::Post_processing_SISO<B,Q>>>& Codec_turbo<B,Q>
+::get_post_processings() const
+{
+	return this->post_pros;
+}
+
+template <typename B, typename Q>
 void Codec_turbo<B,Q>
-::add_post_pro(tools::Post_processing_SISO<B,Q>* p)
+::add_post_processings(tools::Post_processing_SISO<B,Q>* p)
 {
 	post_pros.push_back(std::shared_ptr<tools::Post_processing_SISO<B,Q>>(p));
 }

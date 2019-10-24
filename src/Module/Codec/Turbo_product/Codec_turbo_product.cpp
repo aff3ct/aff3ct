@@ -91,35 +91,35 @@ Codec_turbo_product<B,Q>
 
 	if (dec_params.implem == "FAST")
 	{
-		cp_rows.reset(new Decoder_chase_pyndiah_fast<B,Q>(dec_bch_rows->get_K(), N_cw_p, N_cw_p,
-		                                                  *dec_bch_rows, *enc_bch_rows,
-		                                                  dec_params.n_least_reliable_positions,
-		                                                  dec_params.n_test_vectors,
-		                                                  dec_params.n_competitors,
-		                                                  dec_params.cp_coef));
+		dec_cp_rows.reset(new Decoder_chase_pyndiah_fast<B,Q>(dec_bch_rows->get_K(), N_cw_p, N_cw_p,
+		                                                      *dec_bch_rows, *enc_bch_rows,
+		                                                      dec_params.n_least_reliable_positions,
+		                                                      dec_params.n_test_vectors,
+		                                                      dec_params.n_competitors,
+		                                                      dec_params.cp_coef));
 
-		cp_cols.reset(new Decoder_chase_pyndiah_fast<B,Q>(dec_bch_cols->get_K(), N_cw_p, N_cw_p,
-		                                                  *dec_bch_cols, *enc_bch_cols,
-		                                                  dec_params.n_least_reliable_positions,
-		                                                  dec_params.n_test_vectors,
-		                                                  dec_params.n_competitors,
-		                                                  dec_params.cp_coef));
+		dec_cp_cols.reset(new Decoder_chase_pyndiah_fast<B,Q>(dec_bch_cols->get_K(), N_cw_p, N_cw_p,
+		                                                      *dec_bch_cols, *enc_bch_cols,
+		                                                      dec_params.n_least_reliable_positions,
+		                                                      dec_params.n_test_vectors,
+		                                                      dec_params.n_competitors,
+		                                                      dec_params.cp_coef));
 	}
 	else
 	{
-		cp_rows.reset(new Decoder_chase_pyndiah<B,Q>(dec_bch_rows->get_K(), N_cw_p, N_cw_p,
-		                                                  *dec_bch_rows, *enc_bch_rows,
-		                                                  dec_params.n_least_reliable_positions,
-		                                                  dec_params.n_test_vectors,
-		                                                  dec_params.n_competitors,
-		                                                  dec_params.cp_coef));
+		dec_cp_rows.reset(new Decoder_chase_pyndiah<B,Q>(dec_bch_rows->get_K(), N_cw_p, N_cw_p,
+		                                                 *dec_bch_rows, *enc_bch_rows,
+		                                                 dec_params.n_least_reliable_positions,
+		                                                 dec_params.n_test_vectors,
+		                                                 dec_params.n_competitors,
+		                                                 dec_params.cp_coef));
 
-		cp_cols.reset(new Decoder_chase_pyndiah<B,Q>(dec_bch_cols->get_K(), N_cw_p, N_cw_p,
-		                                                  *dec_bch_cols, *enc_bch_cols,
-		                                                  dec_params.n_least_reliable_positions,
-		                                                  dec_params.n_test_vectors,
-		                                                  dec_params.n_competitors,
-		                                                  dec_params.cp_coef));
+		dec_cp_cols.reset(new Decoder_chase_pyndiah<B,Q>(dec_bch_cols->get_K(), N_cw_p, N_cw_p,
+		                                                 *dec_bch_cols, *enc_bch_cols,
+		                                                 dec_params.n_least_reliable_positions,
+		                                                 dec_params.n_test_vectors,
+		                                                 dec_params.n_competitors,
+		                                                 dec_params.cp_coef));
 	}
 
 	(*const_cast<std::string*>(&dec_params.implem)) = "STD";
@@ -135,12 +135,103 @@ Codec_turbo_product<B,Q>
 
 	try
 	{
-		this->set_decoder_siso_siho(dec_params.build_siso<B,Q>(this->get_interleaver_llr(), *cp_rows, *cp_cols));
+		this->set_decoder_siso_siho(dec_params.build_siso<B,Q>(this->get_interleaver_llr(), *dec_cp_rows, *dec_cp_cols));
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_decoder_siho(dec_params.build<B,Q>(this->get_interleaver_llr(), *cp_rows, *cp_cols));
+		this->set_decoder_siho(dec_params.build<B,Q>(this->get_interleaver_llr(), *dec_cp_rows, *dec_cp_cols));
 	}
+}
+
+template <typename B, typename Q>
+const tools::BCH_polynomial_generator<B>& Codec_turbo_product<B,Q>
+::get_GF_poly() const
+{
+	return this->GF_poly;
+}
+
+template <typename B, typename Q>
+const Encoder_BCH<B>& Codec_turbo_product<B,Q>
+::get_encoder_BCH_rows() const
+{
+	if (this->enc_bch_rows == nullptr)
+	{
+		std::stringstream message;
+		message << "'enc_bch_rows' can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->enc_bch_rows.get();
+}
+
+template <typename B, typename Q>
+const Encoder_BCH<B>& Codec_turbo_product<B,Q>
+::get_encoder_BCH_cols() const
+{
+	if (this->enc_bch_cols == nullptr)
+	{
+		std::stringstream message;
+		message << "'enc_bch_cols' can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->enc_bch_cols.get();
+}
+
+template <typename B, typename Q>
+const Decoder_BCH<B,Q>& Codec_turbo_product<B,Q>
+::get_decoder_BCH_rows() const
+{
+	if (this->dec_bch_rows == nullptr)
+	{
+		std::stringstream message;
+		message << "'dec_bch_rows' can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->dec_bch_rows.get();
+}
+
+template <typename B, typename Q>
+const Decoder_BCH<B,Q>& Codec_turbo_product<B,Q>
+::get_decoder_BCH_cols() const
+{
+	if (this->dec_bch_cols == nullptr)
+	{
+		std::stringstream message;
+		message << "'dec_bch_cols' can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->dec_bch_cols.get();
+}
+
+template <typename B, typename Q>
+const Decoder_chase_pyndiah<B,Q>& Codec_turbo_product<B,Q>
+::get_decoder_chase_pyndiah_rows() const
+{
+	if (this->dec_cp_rows == nullptr)
+	{
+		std::stringstream message;
+		message << "'dec_cp_rows' can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->dec_cp_rows.get();
+}
+
+template <typename B, typename Q>
+const Decoder_chase_pyndiah<B,Q>& Codec_turbo_product<B,Q>
+::get_decoder_chase_pyndiah_cols() const
+{
+	if (this->dec_cp_cols == nullptr)
+	{
+		std::stringstream message;
+		message << "'dec_cp_cols' can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->dec_cp_cols.get();
 }
 
 // ==================================================================================== explicit template instantiation

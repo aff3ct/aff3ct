@@ -40,8 +40,14 @@ public:
 	               CRC<B>* crc = nullptr);
 	virtual ~Codec_turbo_DB() = default;
 
+	const std::vector<std::vector<int>>& get_trellis() const;
+	const module::Encoder_RSC_DB<B>& get_sub_encoder() const;
+	const module::Decoder_RSC_DB_BCJR<B,Q>& get_sub_decoder_n() const;
+	const module::Decoder_RSC_DB_BCJR<B,Q>& get_sub_decoder_i() const;
+	const std::vector<std::shared_ptr<tools::Post_processing_SISO<B,Q>>>& get_post_processings() const;
+
 protected:
-	void add_post_pro(tools::Post_processing_SISO<B,Q>* p);
+	void add_post_processings(tools::Post_processing_SISO<B,Q>* p);
 };
 }
 }

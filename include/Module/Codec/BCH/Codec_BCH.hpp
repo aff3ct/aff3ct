@@ -24,6 +24,8 @@ public:
 	Codec_BCH(const factory::Encoder_BCH &enc_params,
 	          const factory::Decoder_BCH &dec_params);
 	virtual ~Codec_BCH() = default;
+
+	const tools::BCH_polynomial_generator<B>& get_GF_poly() const;
 };
 }
 }
