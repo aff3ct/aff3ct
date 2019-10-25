@@ -1,8 +1,10 @@
 #include <string>
 #include <sstream>
+#include <numeric>
 
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Math/utils.h"
 #include "Module/Decoder/LDPC/BP/Flooding/Gallager/Decoder_LDPC_BP_flooding_Gallager_A.hpp"
 
 using namespace aff3ct;
@@ -178,12 +180,14 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 		}
 		else
 		{
+			// algorithm from the Ryan & Lin book, "Channel codes: Classical and modern", sec. 5.7.3
+			const auto n_ones = std::accumulate(chk_to_var_ptr, chk_to_var_ptr + var_degree, 0);
+			const auto n_zeros = var_degree - n_ones;
 			for (auto c = 0; c < var_degree; c++)
 			{
-				auto count = 0;
-				for (auto cc = 0; cc < var_degree; cc++)
-					count += (cc != c && chk_to_var_ptr[cc] != cur_state) ? 1 : 0;
-				const auto new_state = (count == (var_degree -1)) && var_degree != 1 ? !cur_state : cur_state;
+				auto diff = cur_state ? n_zeros : n_ones;
+				diff = cur_state != chk_to_var_ptr[c] ? diff -1 : diff;
+				const auto new_state = diff == var_degree -1 && var_degree != 1 ? !cur_state : cur_state;
 				var_to_chk_ptr[c] = new_state;
 			}
 		}
@@ -227,18 +231,22 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 	for (auto v = 0; v < n_var_nodes; v++)
 	{
 		const auto var_degree = (int)this->H.get_row_to_cols()[v].size();
-		auto count = 0;
-
-		for (auto c = 0; c < var_degree; c++)
-			count += chk_to_var_ptr[c] ? 1 : -1;
-
-		if (var_degree % 2 == 0)
-			count += Y_N[v] ? 1 : -1;
-
-		// take the hard decision
-		V_N[v] = count > 0 ? 1 : 0;
-
+		const auto cur_state = Y_N[v];
+		const auto n_ones = std::accumulate(chk_to_var_ptr, chk_to_var_ptr + var_degree, (int)0);
+		const auto n_zero = var_degree - n_ones;
+		const auto n_z_m_o = n_zero - n_ones;
+		V_N[v] = n_z_m_o == 0 ? (int8_t)cur_state : (int8_t)tools::signbit(n_z_m_o);
 		chk_to_var_ptr += var_degree;
+
+		// // naive version of the majority vote
+		// const auto var_degree = (int)this->H.get_row_to_cols()[v].size();
+		// auto count = 0;
+		// for (auto c = 0; c < var_degree; c++)
+		// 	count += chk_to_var_ptr[c] ? 1 : -1;
+		// if (var_degree % 2 == 0)
+		// 	count += Y_N[v] ? 1 : -1;
+		// V_N[v] = count > 0 ? 1 : 0;
+		// chk_to_var_ptr += var_degree;
 	}
 }
 

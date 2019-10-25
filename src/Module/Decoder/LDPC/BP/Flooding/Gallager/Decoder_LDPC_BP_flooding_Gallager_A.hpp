@@ -38,11 +38,11 @@ protected:
 	void _decode_siho   (const R *Y_N, B *V_K, const int frame_id);
 	void _decode_siho_cw(const R *Y_N, B *V_K, const int frame_id);
 
-	void _decode               (const B *Y_N);
-	void _initialize_var_to_chk(const B *Y_N, const std::vector<int8_t> &chk_to_var, std::vector<int8_t> &var_to_chk,
-	                            const bool first_ite);
-	void _decode_single_ite    (const std::vector<int8_t> &var_to_chk, std::vector<int8_t> &chk_to_var);
-	void _make_majority_vote   (const B *Y_N, std::vector<int8_t> &V_N);
+	void _decode                       (const B *Y_N);
+	virtual void _initialize_var_to_chk(const B *Y_N, const std::vector<int8_t> &chk_to_var,
+	                                    std::vector<int8_t> &var_to_chk, const bool first_ite);
+	void _decode_single_ite            (const std::vector<int8_t> &var_to_chk, std::vector<int8_t> &chk_to_var);
+	void _make_majority_vote           (const B *Y_N, std::vector<int8_t> &V_N);
 };
 
 template <typename B = int, typename R = float>
