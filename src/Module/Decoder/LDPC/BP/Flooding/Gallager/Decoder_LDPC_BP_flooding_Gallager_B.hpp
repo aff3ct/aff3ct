@@ -24,7 +24,7 @@ public:
 
 protected:
 	void _initialize_var_to_chk(const B *Y_N, const std::vector<int8_t> &chk_to_var,
-	                            std::vector<int8_t> &var_to_chk, const bool first_ite);
+	                            std::vector<int8_t> &var_to_chk, const int ite);
 };
 
 template <typename B = int, typename R = float>

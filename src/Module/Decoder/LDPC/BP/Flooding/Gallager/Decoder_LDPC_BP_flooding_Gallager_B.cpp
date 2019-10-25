@@ -23,10 +23,12 @@ Decoder_LDPC_BP_flooding_Gallager_B<B,R>
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding_Gallager_B<B,R>
 ::_initialize_var_to_chk(const B *Y_N, const std::vector<int8_t> &chk_to_var, std::vector<int8_t> &var_to_chk,
-                         const bool first_ite)
+                         const int ite)
 {
 	auto chk_to_var_ptr = chk_to_var.data();
 	auto var_to_chk_ptr = var_to_chk.data();
+
+	const bool first_ite = ite == 0;
 
 	// for each variable nodes
 	const auto n_var_nodes = (int)this->H.get_n_rows();
