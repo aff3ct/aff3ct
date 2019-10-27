@@ -392,7 +392,7 @@ if buildername != "latex":
     # If we are on a Readthedocs server
     if read_the_docs_build:
         # Generate the Doxygen XML files
-        subprocess.call('mkdir build; mkdir build/doxygen; cd source; doxygen Doxyfile', shell=True)
+        subprocess.call('cd source; doxygen Doxyfile', shell=True)
 
     breathe_projects = { "AFF3CT": "../build/doxygen/xml/" }
     breathe_default_project = "AFF3CT"
