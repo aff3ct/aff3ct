@@ -90,58 +90,19 @@ numfig = True
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
 
-# -- Configure Breathe (Developer doc from Doxygen XML files) ----------------
-
-if buildername != "latex":
-
-    # # Uncomment the following lines to enable the Doxygen compilation
-    # # Are we on a Readthedocs server ?
-    # read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
-    # # If we are on a Readthedocs server
-    # if read_the_docs_build:
-    #     # Generate the Doxygen XML files
-    #     subprocess.call('cd ../../doxygen; doxygen config.txt', shell=True)
-
-    breathe_projects = { "AFF3CT": "../build/doxygen/xml/" }
-    breathe_default_project = "AFF3CT"
-
-# -- Configure Exhale (Required the previous Breathe config) -----------------
-
-if buildername != "latex":
-
-    # Setup the exhale extension
-    exhale_args = {
-        # These arguments are required
-        "containmentFolder":     "./api",
-        "rootFileName":          "library_root.rst",
-        "rootFileTitle":         "Library API",
-        "doxygenStripFromPath":  "../../include",
-        # Suggested optional arguments
-        "createTreeView":        True,
-        # TIP: if using the sphinx-bootstrap-theme, you need
-        # "treeViewIsBootstrap": True,
-        "exhaleExecutesDoxygen": True,
-        # "verboseBuild":          True,
-        "exhaleUseDoxyfile":     True,
-        # "exhaleDoxygenStdin": textwrap.dedent('''
-        #     INPUT      = ../../include
-        #     # Using `=` instead of `+=` overrides
-        #     PREDEFINED = DOXYGEN_SHOULD_SKIP_THIS="1"
-        # ''')
-    }
-
-    # Tell sphinx what the primary language being documented is.
-    primary_domain = 'cpp'
-
-    # Tell sphinx what the pygments highlight language should be.
-    highlight_language = 'cpp'
-
 # -- Options for HTML output -------------------------------------------------
 
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-#
-html_theme = 'sphinx_rtd_theme'
+# 'read_the_docs_build' is whether we are on readthedocs.org, this line of code
+# grabbed from docs.readthedocs.org
+read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
+
+if not read_the_docs_build:  # only import and set the theme if we're building docs locally
+    import sphinx_rtd_theme
+    # The theme to use for HTML and HTML Help pages.  See the documentation for
+    # a list of builtin themes.
+    html_theme = 'sphinx_rtd_theme'
+    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -422,3 +383,47 @@ with open("../strings.rst", "r") as ins:
         rst_epilog = rst_epilog + line;
 
 # -- Extension configuration -------------------------------------------------
+
+# -- Configure Breathe (Developer doc from Doxygen XML files)
+
+if buildername != "latex":
+
+    # Uncomment the following lines to enable the Doxygen compilation
+    # If we are on a Readthedocs server
+    if read_the_docs_build:
+        # Generate the Doxygen XML files
+        subprocess.call('cd source; doxygen Doxyfile', shell=True)
+
+    breathe_projects = { "AFF3CT": "../build/doxygen/xml/" }
+    breathe_default_project = "AFF3CT"
+
+# -- Configure Exhale (Require the previous Breathe config)
+
+if buildername != "latex":
+
+    # Setup the exhale extension
+    exhale_args = {
+        # These arguments are required
+        "containmentFolder":     "./api",
+        "rootFileName":          "library_root.rst",
+        "rootFileTitle":         "Library API",
+        "doxygenStripFromPath":  "../../include",
+        # Suggested optional arguments
+        "createTreeView":        True,
+        # TIP: if using the sphinx-bootstrap-theme, you need
+        # "treeViewIsBootstrap": True,
+        "exhaleExecutesDoxygen": True,
+        # "verboseBuild":          True,
+        "exhaleUseDoxyfile":     True,
+        # "exhaleDoxygenStdin": textwrap.dedent('''
+        #     INPUT      = ../../include
+        #     # Using `=` instead of `+=` overrides
+        #     PREDEFINED = DOXYGEN_SHOULD_SKIP_THIS="1"
+        # ''')
+    }
+
+    # Tell sphinx what the primary language being documented is.
+    primary_domain = 'cpp'
+
+    # Tell sphinx what the pygments highlight language should be.
+    highlight_language = 'cpp'
