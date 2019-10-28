@@ -388,6 +388,9 @@ with open("../strings.rst", "r") as ins:
 
 if buildername != "latex":
 
+    # display Doxygen version
+    subprocess.call('doxygen --version', shell=True)
+
     # Uncomment the following lines to enable the Doxygen compilation
     # # If we are on a Readthedocs server
     # if read_the_docs_build:
@@ -414,12 +417,12 @@ if buildername != "latex":
         # "treeViewIsBootstrap": True,
         "exhaleExecutesDoxygen": True,
         # "verboseBuild":          True,
-        # "exhaleUseDoxyfile":     True,
-        "exhaleDoxygenStdin": textwrap.dedent('''
-            INPUT      = ../../include
-            # Using `=` instead of `+=` overrides
-            PREDEFINED = DOXYGEN_SHOULD_SKIP_THIS="1"
-        ''')
+        "exhaleUseDoxyfile":     True,
+        # "exhaleDoxygenStdin": textwrap.dedent('''
+        #     INPUT      = ../../include
+        #     # Using `=` instead of `+=` overrides
+        #     PREDEFINED = DOXYGEN_SHOULD_SKIP_THIS="1"
+        # ''')
     }
 
     # Tell sphinx what the primary language being documented is.
