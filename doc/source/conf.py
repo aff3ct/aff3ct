@@ -396,7 +396,8 @@ if buildername != "latex":
         subprocess.call('doxygen --version', shell=True)
 
         # Generate the Doxygen XML files
-        print("$ doxygen Doxyfile")
+        subprocess.call('mkdir ../build', shell=True)
+        subprocess.call('mkdir ../build/doxygen', shell=True)
         subprocess.call('doxygen Doxyfile', shell=True)
 
     breathe_projects = { "AFF3CT": "../build/doxygen/xml/" }
