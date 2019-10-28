@@ -416,7 +416,7 @@ if buildername != "latex":
         # TIP: if using the sphinx-bootstrap-theme, you need
         # "treeViewIsBootstrap": True,
         "exhaleExecutesDoxygen": True,
-        # "verboseBuild":          True,
+        "verboseBuild":          True,
         "exhaleUseDoxyfile":     True,
         # "exhaleDoxygenStdin": textwrap.dedent('''
         #     INPUT      = ../../include
