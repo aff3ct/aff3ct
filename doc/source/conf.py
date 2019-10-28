@@ -389,13 +389,14 @@ with open("../strings.rst", "r") as ins:
 if buildername != "latex":
 
     # display Doxygen version
+    print("Doxygen version: ", end='')
     subprocess.call('doxygen --version', shell=True)
 
     # Uncomment the following lines to enable the Doxygen compilation
-    # # If we are on a Readthedocs server
-    # if read_the_docs_build:
-    #     # Generate the Doxygen XML files
-    #     subprocess.call('cd source; doxygen Doxyfile', shell=True)
+    # If we are on a Readthedocs server
+    if read_the_docs_build:
+        # Generate the Doxygen XML files
+        subprocess.call('doxygen Doxyfile', shell=True)
 
     breathe_projects = { "AFF3CT": "../build/doxygen/xml/" }
     breathe_default_project = "AFF3CT"
@@ -415,7 +416,7 @@ if buildername != "latex":
         "createTreeView":        True,
         # TIP: if using the sphinx-bootstrap-theme, you need
         # "treeViewIsBootstrap": True,
-        "exhaleExecutesDoxygen": True,
+        # "exhaleExecutesDoxygen": True,
         "verboseBuild":          True,
         "exhaleUseDoxyfile":     True,
         # "exhaleDoxygenStdin": textwrap.dedent('''
