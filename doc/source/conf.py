@@ -388,23 +388,16 @@ with open("../strings.rst", "r") as ins:
 
 if buildername != "latex":
 
-    # display Doxygen version
-    print("Doxygen version:")
-    subprocess.call('doxygen --version', shell=True)
-
     # Uncomment the following lines to enable the Doxygen compilation
     # If we are on a Readthedocs server
-    # if read_the_docs_build:
+    if read_the_docs_build:
+         # display Doxygen version
+        print("Doxygen version:")
+        subprocess.call('doxygen --version', shell=True)
 
-    print("$ mkdir ../build")
-    subprocess.call('mkdir ../build', shell=True)
-
-    print("$ mkdir ../build/doxygen")
-    subprocess.call('mkdir ../build/doxygen', shell=True)
-
-    # Generate the Doxygen XML files
-    print("$ doxygen Doxyfile")
-    subprocess.call('doxygen Doxyfile', shell=True)
+        # Generate the Doxygen XML files
+        print("$ doxygen Doxyfile")
+        subprocess.call('doxygen Doxyfile', shell=True)
 
     breathe_projects = { "AFF3CT": "../build/doxygen/xml/" }
     breathe_default_project = "AFF3CT"
@@ -413,26 +406,38 @@ if buildername != "latex":
 
 if buildername != "latex":
 
-    # Setup the exhale extension
-    exhale_args = {
-        # These arguments are required
-        "containmentFolder":     "./api",
-        "rootFileName":          "library_root.rst",
-        "rootFileTitle":         "Library API",
-        "doxygenStripFromPath":  "../../include",
-        # Suggested optional arguments
-        "createTreeView":        True,
-        # TIP: if using the sphinx-bootstrap-theme, you need
-        # "treeViewIsBootstrap": True,
-        # "exhaleExecutesDoxygen": True,
-        # "verboseBuild":          True,
-        # "exhaleUseDoxyfile":     True,
-        # "exhaleDoxygenStdin": textwrap.dedent('''
-        #     INPUT      = ../../include
-        #     # Using `=` instead of `+=` overrides
-        #     PREDEFINED = DOXYGEN_SHOULD_SKIP_THIS="1"
-        # ''')
-    }
+    if read_the_docs_build:
+        # Setup the exhale extension
+        exhale_args = {
+            # These arguments are required
+            "containmentFolder":     "./api",
+            "rootFileName":          "library_root.rst",
+            "rootFileTitle":         "Library API",
+            "doxygenStripFromPath":  "../../include",
+            # Suggested optional arguments
+            "createTreeView":        True,
+        }
+    else:
+        # Setup the exhale extension
+        exhale_args = {
+            # These arguments are required
+            "containmentFolder":     "./api",
+            "rootFileName":          "library_root.rst",
+            "rootFileTitle":         "Library API",
+            "doxygenStripFromPath":  "../../include",
+            # Suggested optional arguments
+            "createTreeView":        True,
+            # TIP: if using the sphinx-bootstrap-theme, you need
+            # "treeViewIsBootstrap": True,
+            "exhaleExecutesDoxygen": True,
+            # "verboseBuild":          True,
+            "exhaleUseDoxyfile":     True,
+            # "exhaleDoxygenStdin": textwrap.dedent('''
+            #     INPUT      = ../../include
+            #     # Using `=` instead of `+=` overrides
+            #     PREDEFINED = DOXYGEN_SHOULD_SKIP_THIS="1"
+            # ''')
+        }
 
     # Tell sphinx what the primary language being documented is.
     primary_domain = 'cpp'
