@@ -389,11 +389,10 @@ with open("../strings.rst", "r") as ins:
 if buildername != "latex":
 
     # Uncomment the following lines to enable the Doxygen compilation
-    # If we are on a Readthedocs server
-    if read_the_docs_build:
-        # Generate the Doxygen XML files
-        subprocess.call('doxygen source/Doxyfile', shell=True)
-        # subprocess.call('cd source; doxygen Doxyfile', shell=True)
+    # # If we are on a Readthedocs server
+    # if read_the_docs_build:
+    #     # Generate the Doxygen XML files
+    #     subprocess.call('cd source; doxygen Doxyfile', shell=True)
 
     breathe_projects = { "AFF3CT": "../build/doxygen/xml/" }
     breathe_default_project = "AFF3CT"
@@ -415,12 +414,12 @@ if buildername != "latex":
         # "treeViewIsBootstrap": True,
         "exhaleExecutesDoxygen": True,
         # "verboseBuild":          True,
-        "exhaleUseDoxyfile":     True,
-        # "exhaleDoxygenStdin": textwrap.dedent('''
-        #     INPUT      = ../../include
-        #     # Using `=` instead of `+=` overrides
-        #     PREDEFINED = DOXYGEN_SHOULD_SKIP_THIS="1"
-        # ''')
+        # "exhaleUseDoxyfile":     True,
+        "exhaleDoxygenStdin": textwrap.dedent('''
+            INPUT      = ../../include
+            # Using `=` instead of `+=` overrides
+            PREDEFINED = DOXYGEN_SHOULD_SKIP_THIS="1"
+        ''')
     }
 
     # Tell sphinx what the primary language being documented is.
