@@ -24,6 +24,15 @@ import textwrap
 # not include the API documentation.
 buildername = str(os.getenv('SPHINX_BUILDERNAME'))
 
+# 'read_the_docs_build' is whether we are on readthedocs.org, this line of code
+# grabbed from docs.readthedocs.org
+read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
+
+# this is a hack to disable the library API doc on Read the docs until time
+# limit can be extended
+if (read_the_docs_build):
+    buildername = "latex"
+
 # -- Project information -----------------------------------------------------
 
 project = 'AFF3CT'
@@ -91,10 +100,6 @@ numfig = True
 pygments_style = None
 
 # -- Options for HTML output -------------------------------------------------
-
-# 'read_the_docs_build' is whether we are on readthedocs.org, this line of code
-# grabbed from docs.readthedocs.org
-read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
 
 if not read_the_docs_build:  # only import and set the theme if we're building docs locally
     import sphinx_rtd_theme
