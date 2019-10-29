@@ -24,27 +24,24 @@ Source_user_binary<B>
 	if (file.is_open())
 	{
 		auto size    = file.tellg();
-		auto n_src   = size / K;
-		std::vector<char> packed_vec(K);
-		file.seekg (0, std::ios::beg);
+		auto n_src   = (size * CHAR_BIT + K - 1) / K;
 
 		this->source.resize(n_src);
 		for (auto i = 0; i < n_src; i++)
 			this->source[i].resize(K);
 
-		for (auto i = 0; i < n_src; i++)
-		{
-			this->source[i].resize(K);
-			file.read (packed_vec.data(), K);
-			tools::Bit_packer::unpack(packed_vec, this->source[i]);
-		}
-		std::fill(this->source[n_src - 1].begin() + (size % K), this->source[n_src - 1].end(), 0);
-
-		for (auto i = 0; i < 32; i++)
-			std::cout << this->source[0][i] << " | ";
-		std::cout << std::endl;
-
+		std::vector<char> full_source_char(size           );
+		std::vector<B>    full_source_B   (size * CHAR_BIT);
+		file.seekg (0, std::ios::beg);
+		file.read (full_source_char.data(), size);
 		file.close();
+
+		tools::Bit_packer::unpack(full_source_char, full_source_B);
+
+		for (auto i = 0; i < n_src -1; i++)
+			std::copy(full_source_B.begin() + i * K, full_source_B.begin() + (i +1) * K, this->source[i].begin());
+
+		std::copy(full_source_B.begin() + (n_src - 1) * K, full_source_B.end(), this->source[n_src -1].begin());
 	}
 	else
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Can't open '" + filename + "' file.");
