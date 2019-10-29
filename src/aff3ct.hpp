@@ -835,6 +835,9 @@
 #ifndef SOURCE_HPP_
 #include <Module/Source/Source.hpp>
 #endif
+#ifndef SOURCE_USER_BINARY_HPP_
+#include <Module/Source/User/Source_user_binary.hpp>
+#endif
 #ifndef SOURCE_USER_HPP_
 #include <Module/Source/User/Source_user.hpp>
 #endif
