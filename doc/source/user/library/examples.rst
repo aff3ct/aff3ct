@@ -567,28 +567,28 @@ The ``main`` function in :numref:`lst_factory_main` is almost unchanged from the
 		float ebn0_step =  1.00f; // SNR step
 		float R;                  // code rate (R=K/N)
 
-		std::unique_ptr<factory::Source          ::parameters> source;
-		std::unique_ptr<factory::Codec_repetition::parameters> codec;
-		std::unique_ptr<factory::Modem           ::parameters> modem;
-		std::unique_ptr<factory::Channel         ::parameters> channel;
-		std::unique_ptr<factory::Monitor_BFER    ::parameters> monitor;
-		std::unique_ptr<factory::Terminal        ::parameters> terminal;
+		std::unique_ptr<factory::Source          > source;
+		std::unique_ptr<factory::Codec_repetition> codec;
+		std::unique_ptr<factory::Modem           > modem;
+		std::unique_ptr<factory::Channel         > channel;
+		std::unique_ptr<factory::Monitor_BFER    > monitor;
+		std::unique_ptr<factory::Terminal        > terminal;
 	};
 
 	void init_params3(int argc, char** argv, params3 &p)
 	{
-		p.source   = std::unique_ptr<factory::Source          ::parameters>(new factory::Source          ::parameters());
-		p.codec    = std::unique_ptr<factory::Codec_repetition::parameters>(new factory::Codec_repetition::parameters());
-		p.modem    = std::unique_ptr<factory::Modem           ::parameters>(new factory::Modem           ::parameters());
-		p.channel  = std::unique_ptr<factory::Channel         ::parameters>(new factory::Channel         ::parameters());
-		p.monitor  = std::unique_ptr<factory::Monitor_BFER    ::parameters>(new factory::Monitor_BFER    ::parameters());
-		p.terminal = std::unique_ptr<factory::Terminal        ::parameters>(new factory::Terminal        ::parameters());
+		p.source   = std::unique_ptr<factory::Source          >(new factory::Source          ());
+		p.codec    = std::unique_ptr<factory::Codec_repetition>(new factory::Codec_repetition());
+		p.modem    = std::unique_ptr<factory::Modem           >(new factory::Modem           ());
+		p.channel  = std::unique_ptr<factory::Channel         >(new factory::Channel         ());
+		p.monitor  = std::unique_ptr<factory::Monitor_BFER    >(new factory::Monitor_BFER    ());
+		p.terminal = std::unique_ptr<factory::Terminal        >(new factory::Terminal        ());
 
-		std::vector<factory::Factory::parameters*> params_list = { p.source .get(), p.codec  .get(), p.modem   .get(),
-		                                                           p.channel.get(), p.monitor.get(), p.terminal.get() };
+		std::vector<factory::Factory*> params_list = { p.source .get(), p.codec  .get(), p.modem   .get(),
+		                                               p.channel.get(), p.monitor.get(), p.terminal.get() };
 
 		// parse command line arguments for the given parameters and fill them
-		factory::Command_parser cp(argc, argv, params_list, true);
+		tools::Command_parser cp(argc, argv, params_list, true);
 		if (cp.parsing_failed())
 		{
 			cp.print_help    ();
@@ -598,7 +598,7 @@ The ``main`` function in :numref:`lst_factory_main` is almost unchanged from the
 		}
 
 		std::cout << "# Simulation parameters: " << std::endl;
-		factory::Header::print_parameters(params_list); // display the headers (= print the AFF3CT parameters on the screen)
+		tools::Header::print_parameters(params_list); // display the headers (= print the AFF3CT parameters on the screen)
 		std::cout << "#" << std::endl;
 		cp.print_warnings();
 
@@ -612,7 +612,7 @@ this examples.
 The ``init_params3`` function takes two new input arguments from the command
 line: ``argc`` and ``argv``. The function first allocates the factories (lines
 ``18-23``) and then those factories are supplied with parameters from the
-command line (line ``29``) thanks to the ``factory::Command_parser`` class.
+command line (line ``29``) thanks to the ``tools::Command_parser`` class.
 Lines ``38-41``, the parameters from the factories are printed to the terminal.
 
 Note that in this example a repetition code is used, however it is very easy to
