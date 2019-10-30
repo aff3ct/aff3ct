@@ -3,8 +3,8 @@
  * \brief Class module::Decoder_LDPC_BP_flooding_inter.
  */
 #ifndef DECODER_LDPC_BP_FLOODING_INTER_HPP_
-#ifdef __cpp_aligned_new
 #define DECODER_LDPC_BP_FLOODING_INTER_HPP_
+#ifdef __cpp_aligned_new
 
 #include <cstdint>
 #include <vector>

@@ -3,8 +3,8 @@
  * \brief Class tools::Update_rule_OMS_simd.
  */
 #ifndef UPDATE_RULE_OMS_SIMD_HPP
-#ifdef __cpp_aligned_new
 #define UPDATE_RULE_OMS_SIMD_HPP
+#ifdef __cpp_aligned_new
 
 #include <string>
 #include <mipp.h>

@@ -3,8 +3,8 @@
  * \brief Class tools::Update_rule_LSPA_simd.
  */
 #ifndef UPDATE_RULE_LSPA_SIMD_HPP
-#ifdef __cpp_aligned_new
 #define UPDATE_RULE_LSPA_SIMD_HPP
+#ifdef __cpp_aligned_new
 
 #include <vector>
 #include <string>
