@@ -41,7 +41,7 @@ void Source::parameters
 		cli::Integer(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+type",
-		cli::Text(cli::Including_set("RAND", "AZCW", "USER")));
+		cli::Text(cli::Including_set("RAND", "AZCW", "USER", "USER_BIN")));
 
 	tools::add_arg(args, p, class_name+"p+implem",
 		cli::Text(cli::Including_set("STD", "FAST")));
@@ -79,7 +79,7 @@ void Source::parameters
 	headers[p].push_back(std::make_pair("Implementation", this->implem));
 	headers[p].push_back(std::make_pair("Info. bits (K_info)", std::to_string(this->K)));
 	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
-	if (this->type == "USER")
+	if (this->type == "USER" || this->type == "USER_BIN")
 		headers[p].push_back(std::make_pair("Path", this->path));
 	if (this->type == "RAND" && full)
 		headers[p].push_back(std::make_pair("Seed", std::to_string(this->seed)));
@@ -97,8 +97,11 @@ module::Source<B>* Source::parameters
 			return new module::Source_random_fast<B>(this->K, this->seed, this->n_frames);
 	}
 
-	if (this->type == "AZCW") return new module::Source_AZCW<B>(this->K,             this->n_frames);
-	if (this->type == "USER") return new module::Source_user<B>(this->K, this->path, this->n_frames, this->start_idx);
+	if (this->type == "AZCW")  return new module::Source_AZCW<B>(this->K,             this->n_frames);
+	if (this->type == "USER")  return new module::Source_user<B>(this->K, this->path, this->n_frames, this->start_idx);
+
+	if (this->type == "USER_BIN")
+		return new module::Source_user_binary<B>(this->K, this->path, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

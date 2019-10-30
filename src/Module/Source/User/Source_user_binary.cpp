@@ -6,12 +6,22 @@ using namespace aff3ct;
 using namespace aff3ct::module;
 
 template <typename B>
+std::thread::id aff3ct::module::Source_user_binary<B>::master_thread_id = std::this_thread::get_id();
+
+template <typename B>
 Source_user_binary<B>
 ::Source_user_binary(const int K, const std::string filename, const int n_frames)
 : Source<B>(K, n_frames), source_file(filename.c_str(), std::ios::in | std::ios::binary)
 {
 	const std::string name = "Source_user_binary";
 	this->set_name(name);
+
+	if(this->master_thread_id != std::this_thread::get_id())
+	{
+		std::stringstream message;
+		message << name << " is not thread safe.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (source_file.fail())
 	{

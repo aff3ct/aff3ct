@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <thread>
 
 #include "Module/Source/Source.hpp"
 
@@ -16,6 +17,7 @@ class Source_user_binary : public Source<B>
 {
 private:
 	std::ifstream source_file;
+	static std::thread::id master_thread_id;
 
 public:
 	Source_user_binary(const int K, std::string filename, const int n_frames = 1);

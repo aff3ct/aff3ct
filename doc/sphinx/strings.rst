@@ -759,7 +759,7 @@
 
 .. |factory::Source::parameters::p+path| replace::
    Set the path to a file containing one or more frames (informations bits), to
-   use with the ``USER`` source type.
+   use with the ``USER`` or ``USER_BIN`` source type.
 
 .. |factory::Source::parameters::p+start-idx| replace::
    Give the start index to use in the ``USER`` source type. It is the index of
