@@ -1,6 +1,3 @@
-#include <fstream>
-#include <sstream>
-
 #include "Tools/Algo/Bit_packer.hpp"
 #include "Tools/Exception/exception.hpp"
 #include "Module/Source/User/Source_user_binary.hpp"
@@ -11,51 +8,65 @@ using namespace aff3ct::module;
 template <typename B>
 Source_user_binary<B>
 ::Source_user_binary(const int K, const std::string filename, const int n_frames)
-: Source<B>(K, n_frames), source(), src_counter(0)
+: Source<B>(K, n_frames), source_file(filename.c_str(), std::ios::in | std::ios::binary)
 {
 	const std::string name = "Source_user_binary";
 	this->set_name(name);
 
-	if (filename.empty())
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'filename' should not be empty.");
-
-	std::ifstream file(filename.c_str(), std::ios::in | std::ios::binary | std::ios::ate);
-
-	if (file.is_open())
+	if (source_file.fail())
 	{
-		auto size    = file.tellg();
-		auto n_src   = (size * CHAR_BIT + K - 1) / K;
-
-		this->source.resize(n_src);
-		for (auto i = 0; i < n_src; i++)
-			this->source[i].resize(K);
-
-		std::vector<char> full_source_char(size           );
-		std::vector<B>    full_source_B   (size * CHAR_BIT);
-		file.seekg (0, std::ios::beg);
-		file.read (full_source_char.data(), size);
-		file.close();
-
-		tools::Bit_packer::unpack(full_source_char, full_source_B);
-
-		for (auto i = 0; i < n_src -1; i++)
-			std::copy(full_source_B.begin() + i * K, full_source_B.begin() + (i +1) * K, this->source[i].begin());
-
-		std::copy(full_source_B.begin() + (n_src - 1) * K, full_source_B.end(), this->source[n_src -1].begin());
+		std::stringstream message;
+		message << "'filename' file name is not valid: sink file failbit is set.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
-	else
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Can't open '" + filename + "' file.");
 }
 
 template <typename B>
 void Source_user_binary<B>
 ::_generate(B *U_K, const int frame_id)
 {
-	std::copy(this->source[this->src_counter].begin(),
-	          this->source[this->src_counter].end  (),
-	          U_K);
+	static int n_left = 0; // number of bits that have been left by last call
 
-	this->src_counter = (this->src_counter +1) % (int)this->source.size();
+	int n_bytes_read = 0;
+	const int n_bytes_needed = (this->K - n_left + CHAR_BIT - 1) / CHAR_BIT; // number of bytes needed
+	std::vector<char> memblk   (n_bytes_needed);
+	std::vector<B>    left_bits(CHAR_BIT      ); // to store bits that are left by last call (n_left & n_completing)
+
+
+	for (auto i = 0; i < n_left; i++)
+		U_K[i] = left_bits[i];
+
+	while (n_bytes_read < n_bytes_needed)
+	{
+		source_file.read(memblk.data() + n_bytes_read, n_bytes_needed - n_bytes_read);
+		n_bytes_read += source_file.gcount();
+
+		if (source_file.fail())
+		{
+			if (source_file.eof())
+			{
+				source_file.clear();
+				source_file.seekg (0, std::ios::beg);
+				if (source_file.fail())
+					throw tools::runtime_error(__FILE__, __LINE__, __func__, "Could not go back to the beginning of the file.");
+			}
+
+			if (source_file.fail())
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, "Unknown error during file reading.");
+		}
+	}
+
+	tools::Bit_packer::unpack(memblk.data(), U_K + n_left, this->K - n_left);
+
+	// (total number of bits read from file) - (bits written into U_K)
+	n_left = (n_bytes_needed * CHAR_BIT) - (this->K - n_left);
+
+	// re-unpack last byte && store into left_bits
+	tools::Bit_packer::unpack(memblk.data() + n_bytes_needed - 1, left_bits.data(), 1);
+
+	// shift the left bits to the beginning of the array
+	for(auto i = 0; i < n_left; i++)
+		left_bits[i] = left_bits[i + CHAR_BIT - n_left];
 }
 
 // ==================================================================================== explicit template instantiation

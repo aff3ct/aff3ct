@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <fstream>
 
 #include "Module/Source/Source.hpp"
 
@@ -14,8 +15,7 @@ template <typename B>
 class Source_user_binary : public Source<B>
 {
 private:
-	std::vector<std::vector<B>> source;
-	int src_counter;
+	std::ifstream source_file;
 
 public:
 	Source_user_binary(const int K, std::string filename, const int n_frames = 1);
