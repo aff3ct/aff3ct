@@ -42,9 +42,11 @@ using Q_64 = double;
 	using B  = B_32;
 	using R  = R_32;
 	using Q  = Q_32;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 	#ifndef AFF3CT_32BIT_PREC
 	#define AFF3CT_32BIT_PREC
 	#endif
+#endif
 #endif
 
 namespace aff3ct
