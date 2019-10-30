@@ -19,15 +19,14 @@ Monitor_EXIT<B,R>
 	this->set_name(name);
 
 	auto &p = this->create_task("check_mutual_info", (int)mnt::tsk::check_mutual_info);
-	auto &ps_bits   = this->template create_socket_in<B>(p, "bits",   get_N() * get_n_frames());
-	auto &ps_llrs_a = this->template create_socket_in<R>(p, "llrs_a", get_N() * get_n_frames());
-	auto &ps_llrs_e = this->template create_socket_in<R>(p, "llrs_e", get_N() * get_n_frames());
-
-	this->create_codelet(p, [this, &ps_bits, &ps_llrs_a, &ps_llrs_e]() -> int
+	auto ps_bits   = this->template create_socket_in<B>(p, "bits",   get_N());
+	auto ps_llrs_a = this->template create_socket_in<R>(p, "llrs_a", get_N());
+	auto ps_llrs_e = this->template create_socket_in<R>(p, "llrs_e", get_N());
+	this->create_codelet(p, [this, ps_bits, ps_llrs_a, ps_llrs_e](Task &t) -> int
 	{
-		this->check_mutual_info(static_cast<B*>(ps_bits  .get_dataptr()),
-		                        static_cast<R*>(ps_llrs_a.get_dataptr()),
-		                        static_cast<R*>(ps_llrs_e.get_dataptr()));
+		this->check_mutual_info(static_cast<B*>(t[ps_bits  ].get_dataptr()),
+		                        static_cast<R*>(t[ps_llrs_a].get_dataptr()),
+		                        static_cast<R*>(t[ps_llrs_e].get_dataptr()));
 
 		return 0;
 	});

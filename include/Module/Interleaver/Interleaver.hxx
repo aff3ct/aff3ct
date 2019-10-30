@@ -14,21 +14,21 @@ template <typename D, typename T>
 Task& Interleaver<D,T>
 ::operator[](const itl::tsk t)
 {
-	return Module::operator[]((int)t);
+	return Module::operator[]((size_t)t);
 }
 
 template <typename D, typename T>
 Socket& Interleaver<D,T>
 ::operator[](const itl::sck::interleave s)
 {
-	return Module::operator[]((int)itl::tsk::interleave)[(int)s];
+	return Module::operator[]((size_t)itl::tsk::interleave)[(size_t)s];
 }
 
 template <typename D, typename T>
 Socket& Interleaver<D,T>
 ::operator[](const itl::sck::deinterleave s)
 {
-	return Module::operator[]((int)itl::tsk::deinterleave)[(int)s];
+	return Module::operator[]((size_t)itl::tsk::deinterleave)[(size_t)s];
 }
 
 template <typename D, typename T>
@@ -44,23 +44,23 @@ Interleaver<D,T>
 
 
 	auto &p1 = this->create_task("interleave");
-	auto &p1s_nat = this->template create_socket_in <D>(p1, "nat", this->core.get_size() * this->n_frames);
-	auto &p1s_itl = this->template create_socket_out<D>(p1, "itl", this->core.get_size() * this->n_frames);
-	this->create_codelet(p1, [this, &p1s_nat, &p1s_itl]() -> int
+	auto p1s_nat = this->template create_socket_in <D>(p1, "nat", this->core.get_size());
+	auto p1s_itl = this->template create_socket_out<D>(p1, "itl", this->core.get_size());
+	this->create_codelet(p1, [this, p1s_nat, p1s_itl](Task &t) -> int
 	{
-		this->interleave(static_cast<D*>(p1s_nat.get_dataptr()),
-		                 static_cast<D*>(p1s_itl.get_dataptr()));
+		this->interleave(static_cast<D*>(t[p1s_nat].get_dataptr()),
+		                 static_cast<D*>(t[p1s_itl].get_dataptr()));
 
 		return 0;
 	});
 
 	auto &p2 = this->create_task("deinterleave");
-	auto &p2s_itl = this->template create_socket_in <D>(p2, "itl", this->core.get_size() * this->n_frames);
-	auto &p2s_nat = this->template create_socket_out<D>(p2, "nat", this->core.get_size() * this->n_frames);
-	this->create_codelet(p2, [this, &p2s_itl, &p2s_nat]() -> int
+	auto p2s_itl = this->template create_socket_in <D>(p2, "itl", this->core.get_size());
+	auto p2s_nat = this->template create_socket_out<D>(p2, "nat", this->core.get_size());
+	this->create_codelet(p2, [this, p2s_itl, p2s_nat](Task &t) -> int
 	{
-		this->deinterleave(static_cast<D*>(p2s_itl.get_dataptr()),
-		                   static_cast<D*>(p2s_nat.get_dataptr()));
+		this->deinterleave(static_cast<D*>(t[p2s_itl].get_dataptr()),
+		                   static_cast<D*>(t[p2s_nat].get_dataptr()));
 
 		return 0;
 	});

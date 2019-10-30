@@ -41,7 +41,8 @@ protected:
 	int32_t debug_limit;
 	uint8_t debug_precision;
 	int32_t debug_frame_max;
-	std::function<int(void)> codelet;
+	std::function<int(Task& t)> codelet;
+
 	std::vector<mipp::vector<uint8_t>> out_buffers;
 
 	// stats
@@ -111,23 +112,23 @@ public:
 
 	int exec();
 
-	inline Socket& operator[](const int id);
+	inline Socket& operator[](const size_t id);
 
-	inline void update_timer(const int id, const std::chrono::nanoseconds &duration);
+	inline void update_timer(const size_t id, const std::chrono::nanoseconds &duration);
 
 protected:
 	void register_timer(const std::string &key);
 
 	template <typename T>
-	Socket& create_socket_in(const std::string &name, const size_t n_elmts);
+	size_t create_socket_in(const std::string &name, const size_t n_elmts);
 
 	template <typename T>
-	Socket& create_socket_in_out(const std::string &name, const size_t n_elmts);
+	size_t create_socket_in_out(const std::string &name, const size_t n_elmts);
 
 	template <typename T>
-	Socket& create_socket_out(const std::string &name, const size_t n_elmts);
+	size_t create_socket_out(const std::string &name, const size_t n_elmts);
 
-	void create_codelet(std::function<int(void)> &codelet);
+	void create_codelet(std::function<int(Task& t)> &codelet);
 
 private:
 	template <typename T>

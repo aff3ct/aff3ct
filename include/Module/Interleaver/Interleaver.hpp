@@ -6,6 +6,7 @@
 #define INTERLEAVER_HPP_
 
 #include <cstdint>
+#include <cstddef>
 #include <memory>
 #include <vector>
 
@@ -20,12 +21,12 @@ namespace module
 {
 	namespace itl
 	{
-		enum class tsk : uint8_t { interleave, deinterleave, SIZE };
+		enum class tsk : size_t { interleave, deinterleave, SIZE };
 
 		namespace sck
 		{
-			enum class interleave   : uint8_t { nat, itl, SIZE };
-			enum class deinterleave : uint8_t { itl, nat, SIZE };
+			enum class interleave   : size_t { nat, itl, SIZE };
+			enum class deinterleave : size_t { itl, nat, SIZE };
 		}
 	}
 

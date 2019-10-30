@@ -6,6 +6,7 @@
 #define CODEC_HPP_
 
 #include <cstdint>
+#include <cstddef>
 #include <vector>
 #include <memory>
 
@@ -24,14 +25,14 @@ namespace module
 {
 	namespace cdc
 	{
-		enum class tsk : uint8_t { extract_sys_llr, extract_sys_bit, extract_sys_par, add_sys_ext, SIZE };
+		enum class tsk : size_t { extract_sys_llr, extract_sys_bit, extract_sys_par, add_sys_ext, SIZE };
 
 		namespace sck
 		{
-			enum class extract_sys_llr : uint8_t { Y_N, Y_K     , SIZE };
-			enum class extract_sys_bit : uint8_t { Y_N, V_K     , SIZE };
-			enum class extract_sys_par : uint8_t { Y_N, sys, par, SIZE };
-			enum class add_sys_ext     : uint8_t { ext, Y_N     , SIZE };
+			enum class extract_sys_llr : size_t { Y_N, Y_K     , SIZE };
+			enum class extract_sys_bit : size_t { Y_N, V_K     , SIZE };
+			enum class extract_sys_par : size_t { Y_N, sys, par, SIZE };
+			enum class add_sys_ext     : size_t { ext, Y_N     , SIZE };
 		}
 	}
 

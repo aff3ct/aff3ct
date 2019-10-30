@@ -12,28 +12,28 @@ template <typename B, typename R>
 Task& Decoder_SISO_SIHO<B,R>
 ::operator[](const dec::tsk t)
 {
-	return Module::operator[]((int)t);
+	return Module::operator[]((size_t)t);
 }
 
 template <typename B, typename R>
 Socket& Decoder_SISO_SIHO<B,R>
 ::operator[](const dec::sck::decode_siso s)
 {
-	return Module::operator[]((int)dec::tsk::decode_siso )[(int)s];
+	return Module::operator[]((size_t)dec::tsk::decode_siso)[(size_t)s];
 }
 
 template <typename B, typename R>
 Socket& Decoder_SISO_SIHO<B,R>
 ::operator[](const dec::sck::decode_siho s)
 {
-	return Module::operator[]((int)dec::tsk::decode_siho)[(int)s];
+	return Module::operator[]((size_t)dec::tsk::decode_siho)[(size_t)s];
 }
 
 template <typename B, typename R>
 Socket& Decoder_SISO_SIHO<B,R>
 ::operator[](const dec::sck::decode_siho_cw s)
 {
-	return Module::operator[]((int)dec::tsk::decode_siho_cw)[(int)s];
+	return Module::operator[]((size_t)dec::tsk::decode_siho_cw)[(size_t)s];
 }
 
 template <typename B, typename R>

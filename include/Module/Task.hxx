@@ -69,12 +69,12 @@ uint32_t Task
 }
 
 Socket& Task
-::operator[](const int id)
+::operator[](const size_t id)
 {
-	if (id < 0 || (size_t)id >= this->sockets.size())
+	if ((size_t)id >= this->sockets.size())
 	{
 		std::stringstream message;
-		message << "'id' has to be positive and smaller than 'sockets.size()' ('id' = " << id
+		message << "'id' has to be smaller than 'sockets.size()' ('id' = " << id
 		        << ", 'sockets.size()' = " << sockets.size() << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
@@ -89,7 +89,7 @@ Socket& Task
 }
 
 void Task
-::update_timer(const int id, const std::chrono::nanoseconds &duration)
+::update_timer(const size_t id, const std::chrono::nanoseconds &duration)
 {
 	if (this->is_stats())
 	{

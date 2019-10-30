@@ -118,7 +118,7 @@ Task& Module
 }
 
 void Module
-::create_codelet(Task& task, std::function<int(void)> codelet)
+::create_codelet(Task& task, std::function<int(Task &t)> codelet)
 {
 	task.create_codelet(codelet);
 }

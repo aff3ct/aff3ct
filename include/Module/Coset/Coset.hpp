@@ -6,6 +6,7 @@
 #define COSET_HPP_
 
 #include <cstdint>
+#include <cstddef>
 #include <vector>
 #include <memory>
 
@@ -19,11 +20,11 @@ namespace module
 {
 	namespace cst
 	{
-		enum class tsk : uint8_t { apply, SIZE };
+		enum class tsk : size_t { apply, SIZE };
 
 		namespace sck
 		{
-			enum class apply : uint8_t { ref, in, out, SIZE };
+			enum class apply : size_t { ref, in, out, SIZE };
 		}
 	}
 

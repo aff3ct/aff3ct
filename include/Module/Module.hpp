@@ -84,15 +84,15 @@ protected:
 	Task& create_task(const std::string &name, const int id = -1);
 
 	template <typename T>
-	Socket& create_socket_in(Task& task, const std::string &name, const size_t n_elmts);
+	size_t create_socket_in(Task& task, const std::string &name, const size_t n_elmts);
 
 	template <typename T>
-	Socket& create_socket_in_out(Task& task, const std::string &name, const size_t n_elmts);
+	size_t create_socket_in_out(Task& task, const std::string &name, const size_t n_elmts);
 
 	template <typename T>
-	Socket& create_socket_out(Task& task, const std::string &name, const size_t n_elmts);
+	size_t create_socket_out(Task& task, const std::string &name, const size_t n_elmts);
 
-	void create_codelet(Task& task, std::function<int(void)> codelet);
+	void create_codelet(Task& task, std::function<int(Task &t)> codelet);
 
 	void register_timer(Task& task, const std::string &key);
 };

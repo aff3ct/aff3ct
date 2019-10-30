@@ -13,14 +13,14 @@ template <typename B, typename D>
 Task& Coset<B,D>
 ::operator[](const cst::tsk t)
 {
-	return Module::operator[]((int)t);
+	return Module::operator[]((size_t)t);
 }
 
 template <typename B, typename D>
 Socket& Coset<B,D>
 ::operator[](const cst::sck::apply s)
 {
-	return Module::operator[]((int)cst::tsk::apply)[(int)s];
+	return Module::operator[]((size_t)cst::tsk::apply)[(size_t)s];
 }
 
 template <typename B, typename D>
@@ -40,14 +40,14 @@ Coset<B,D>
 	}
 
 	auto &p = this->create_task("apply");
-	auto &ps_ref = this->template create_socket_in <B>(p, "ref", this->size * this->n_frames);
-	auto &ps_in  = this->template create_socket_in <D>(p, "in",  this->size * this->n_frames);
-	auto &ps_out = this->template create_socket_out<D>(p, "out", this->size * this->n_frames);
-	this->create_codelet(p, [this, &ps_ref, &ps_in, &ps_out]() -> int
+	auto ps_ref = this->template create_socket_in <B>(p, "ref", this->size);
+	auto ps_in  = this->template create_socket_in <D>(p, "in",  this->size);
+	auto ps_out = this->template create_socket_out<D>(p, "out", this->size);
+	this->create_codelet(p, [this, ps_ref, ps_in, ps_out](Task &t) -> int
 	{
-		this->apply(static_cast<B*>(ps_ref.get_dataptr()),
-		            static_cast<D*>(ps_in .get_dataptr()),
-		            static_cast<D*>(ps_out.get_dataptr()));
+		this->apply(static_cast<B*>(t[ps_ref].get_dataptr()),
+		            static_cast<D*>(t[ps_in ].get_dataptr()),
+		            static_cast<D*>(t[ps_out].get_dataptr()));
 
 		return 0;
 	});

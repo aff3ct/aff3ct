@@ -13,14 +13,14 @@ template <typename B>
 Task& Source<B>
 ::operator[](const src::tsk t)
 {
-	return Module::operator[]((int)t);
+	return Module::operator[]((size_t)t);
 }
 
 template <typename B>
 Socket& Source<B>
 ::operator[](const src::sck::generate s)
 {
-	return Module::operator[]((int)src::tsk::generate)[(int)s];
+	return Module::operator[]((size_t)src::tsk::generate)[(size_t)s];
 }
 
 template <typename B>
@@ -40,10 +40,10 @@ Source<B>
 	}
 
 	auto &p = this->create_task("generate");
-	auto &ps_U_K = this->template create_socket_out<B>(p, "U_K", this->K * this->n_frames);
-	this->create_codelet(p, [this, &ps_U_K]() -> int
+	auto ps_U_K = this->template create_socket_out<B>(p, "U_K", this->K);
+	this->create_codelet(p, [this, ps_U_K](Task &t) -> int
 	{
-		this->generate(static_cast<B*>(ps_U_K.get_dataptr()));
+		this->generate(static_cast<B*>(t[ps_U_K].get_dataptr()));
 
 		return 0;
 	});

@@ -6,6 +6,7 @@
 #define DECODER_HPP_
 
 #include <cstdint>
+#include <cstddef>
 
 #include "Module/Module.hpp"
 
@@ -15,23 +16,23 @@ namespace module
 {
 	namespace dec
 	{
-		enum class tsk : uint8_t { decode_hiho, decode_hiho_cw, decode_siho, decode_siho_cw, decode_siso, SIZE };
+		enum class tsk : size_t { decode_hiho, decode_hiho_cw, decode_siho, decode_siho_cw, decode_siso, SIZE };
 
 		namespace sck
 		{
-			enum class decode_hiho    : uint8_t { Y_N,  V_K , SIZE };
-			enum class decode_hiho_cw : uint8_t { Y_N,  V_N , SIZE };
-			enum class decode_siho    : uint8_t { Y_N,  V_K , SIZE };
-			enum class decode_siho_cw : uint8_t { Y_N,  V_N , SIZE };
-			enum class decode_siso    : uint8_t { Y_N1, Y_N2, SIZE };
+			enum class decode_hiho    : size_t { Y_N,  V_K , SIZE };
+			enum class decode_hiho_cw : size_t { Y_N,  V_N , SIZE };
+			enum class decode_siho    : size_t { Y_N,  V_K , SIZE };
+			enum class decode_siho_cw : size_t { Y_N,  V_N , SIZE };
+			enum class decode_siso    : size_t { Y_N1, Y_N2, SIZE };
 		}
 
 		namespace tm
 		{
-			enum class decode_hiho    : uint8_t { load, decode, store       , SIZE };
-			enum class decode_hiho_cw : uint8_t { load, decode, store       , SIZE };
-			enum class decode_siho    : uint8_t { load, decode, store, total, SIZE };
-			enum class decode_siho_cw : uint8_t { load, decode, store, total, SIZE };
+			enum class decode_hiho    : size_t { load, decode, store       , SIZE };
+			enum class decode_hiho_cw : size_t { load, decode, store       , SIZE };
+			enum class decode_siho    : size_t { load, decode, store, total, SIZE };
+			enum class decode_siho_cw : size_t { load, decode, store, total, SIZE };
 		}
 	}
 

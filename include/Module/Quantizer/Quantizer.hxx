@@ -13,14 +13,14 @@ template <typename R, typename Q>
 Task& Quantizer<R,Q>
 ::operator[](const qnt::tsk t)
 {
-	return Module::operator[]((int)t);
+	return Module::operator[]((size_t)t);
 }
 
 template <typename R, typename Q>
 Socket& Quantizer<R,Q>
 ::operator[](const qnt::sck::process s)
 {
-	return Module::operator[]((int)qnt::tsk::process)[(int)s];
+	return Module::operator[]((size_t)qnt::tsk::process)[(size_t)s];
 }
 
 template <typename R, typename Q>
@@ -40,12 +40,12 @@ Quantizer<R,Q>
 	}
 
 	auto &p = this->create_task("process");
-	auto &ps_Y_N1 = this->template create_socket_in <R>(p, "Y_N1", this->N * this->n_frames);
-	auto &ps_Y_N2 = this->template create_socket_out<Q>(p, "Y_N2", this->N * this->n_frames);
-	this->create_codelet(p, [this, &ps_Y_N1, &ps_Y_N2]() -> int
+	auto ps_Y_N1 = this->template create_socket_in <R>(p, "Y_N1", this->N);
+	auto ps_Y_N2 = this->template create_socket_out<Q>(p, "Y_N2", this->N);
+	this->create_codelet(p, [this, ps_Y_N1, ps_Y_N2](Task &t) -> int
 	{
-		this->process(static_cast<R*>(ps_Y_N1.get_dataptr()),
-		              static_cast<Q*>(ps_Y_N2.get_dataptr()));
+		this->process(static_cast<R*>(t[ps_Y_N1].get_dataptr()),
+		              static_cast<Q*>(t[ps_Y_N2].get_dataptr()));
 
 		return 0;
 	});

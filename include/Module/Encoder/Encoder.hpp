@@ -6,6 +6,7 @@
 #define ENCODER_HPP_
 
 #include <cstdint>
+#include <cstddef>
 #include <memory>
 #include <vector>
 
@@ -19,11 +20,11 @@ namespace module
 {
 	namespace enc
 	{
-		enum class tsk : uint8_t { encode, SIZE };
+		enum class tsk : size_t { encode, SIZE };
 
 		namespace sck
 		{
-			enum class encode : uint8_t { U_K, X_N, SIZE };
+			enum class encode : size_t { U_K, X_N, SIZE };
 		}
 	}
 

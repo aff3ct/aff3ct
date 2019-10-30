@@ -13,56 +13,56 @@ template <typename B, typename R, typename Q>
 Task& Modem<B,R,Q>
 ::operator[](const mdm::tsk t)
 {
-	return Module::operator[]((int)t);
+	return Module::operator[]((size_t)t);
 }
 
 template <typename B, typename R, typename Q>
 Socket& Modem<B,R,Q>
 ::operator[](const mdm::sck::modulate s)
 {
-	return Module::operator[]((int)mdm::tsk::modulate)[(int)s];
+	return Module::operator[]((size_t)mdm::tsk::modulate)[(size_t)s];
 }
 
 template <typename B, typename R, typename Q>
 Socket& Modem<B,R,Q>
 ::operator[](const mdm::sck::tmodulate s)
 {
-	return Module::operator[]((int)mdm::tsk::tmodulate)[(int)s];
+	return Module::operator[]((size_t)mdm::tsk::tmodulate)[(size_t)s];
 }
 
 template <typename B, typename R, typename Q>
 Socket& Modem<B,R,Q>
 ::operator[](const mdm::sck::filter s)
 {
-	return Module::operator[]((int)mdm::tsk::filter)[(int)s];
+	return Module::operator[]((size_t)mdm::tsk::filter)[(size_t)s];
 }
 
 template <typename B, typename R, typename Q>
 Socket& Modem<B,R,Q>
 ::operator[](const mdm::sck::demodulate s)
 {
-	return Module::operator[]((int)mdm::tsk::demodulate)[(int)s];
+	return Module::operator[]((size_t)mdm::tsk::demodulate)[(size_t)s];
 }
 
 template <typename B, typename R, typename Q>
 Socket& Modem<B,R,Q>
 ::operator[](const mdm::sck::tdemodulate s)
 {
-	return Module::operator[]((int)mdm::tsk::tdemodulate)[(int)s];
+	return Module::operator[]((size_t)mdm::tsk::tdemodulate)[(size_t)s];
 }
 
 template <typename B, typename R, typename Q>
 Socket& Modem<B,R,Q>
 ::operator[](const mdm::sck::demodulate_wg s)
 {
-	return Module::operator[]((int)mdm::tsk::demodulate_wg)[(int)s];
+	return Module::operator[]((size_t)mdm::tsk::demodulate_wg)[(size_t)s];
 }
 
 template <typename B, typename R, typename Q>
 Socket& Modem<B,R,Q>
 ::operator[](const mdm::sck::tdemodulate_wg s)
 {
-	return Module::operator[]((int)mdm::tsk::tdemodulate_wg)[(int)s];
+	return Module::operator[]((size_t)mdm::tsk::tdemodulate_wg)[(size_t)s];
 }
 
 template <typename B, typename R, typename Q>
@@ -154,86 +154,86 @@ void Modem<B,R,Q>
 ::init_processes()
 {
 	auto &p1 = this->create_task("modulate");
-	auto &p1s_X_N1 = this->template create_socket_in <B>(p1, "X_N1", this->N     * this->n_frames);
-	auto &p1s_X_N2 = this->template create_socket_out<R>(p1, "X_N2", this->N_mod * this->n_frames);
-	this->create_codelet(p1, [this, &p1s_X_N1, &p1s_X_N2]() -> int
+	auto p1s_X_N1 = this->template create_socket_in <B>(p1, "X_N1", this->N    );
+	auto p1s_X_N2 = this->template create_socket_out<R>(p1, "X_N2", this->N_mod);
+	this->create_codelet(p1, [this, p1s_X_N1, p1s_X_N2](Task &t) -> int
 	{
-		this->modulate(static_cast<B*>(p1s_X_N1.get_dataptr()),
-		               static_cast<R*>(p1s_X_N2.get_dataptr()));
+		this->modulate(static_cast<B*>(t[p1s_X_N1].get_dataptr()),
+		               static_cast<R*>(t[p1s_X_N2].get_dataptr()));
 
 		return 0;
 	});
 
 	auto &p7 = this->create_task("tmodulate");
-	auto &p7s_X_N1 = this->template create_socket_in <Q>(p7, "X_N1", this->N     * this->n_frames);
-	auto &p7s_X_N2 = this->template create_socket_out<R>(p7, "X_N2", this->N_mod * this->n_frames);
-	this->create_codelet(p7, [this, &p7s_X_N1, &p7s_X_N2]() -> int
+	auto p7s_X_N1 = this->template create_socket_in <Q>(p7, "X_N1", this->N    );
+	auto p7s_X_N2 = this->template create_socket_out<R>(p7, "X_N2", this->N_mod);
+	this->create_codelet(p7, [this, p7s_X_N1, p7s_X_N2](Task &t) -> int
 	{
-		this->tmodulate(static_cast<Q*>(p7s_X_N1.get_dataptr()),
-		                static_cast<R*>(p7s_X_N2.get_dataptr()));
+		this->tmodulate(static_cast<Q*>(t[p7s_X_N1].get_dataptr()),
+		                static_cast<R*>(t[p7s_X_N2].get_dataptr()));
 
 		return 0;
 	});
 
 	auto &p2 = this->create_task("filter");
-	auto &p2s_Y_N1 = this->template create_socket_in <R>(p2, "Y_N1", this->N_mod * this->n_frames);
-	auto &p2s_Y_N2 = this->template create_socket_out<R>(p2, "Y_N2", this->N_fil * this->n_frames);
-	this->create_codelet(p2, [this, &p2s_Y_N1, &p2s_Y_N2]() -> int
+	auto p2s_Y_N1 = this->template create_socket_in <R>(p2, "Y_N1", this->N_mod);
+	auto p2s_Y_N2 = this->template create_socket_out<R>(p2, "Y_N2", this->N_fil);
+	this->create_codelet(p2, [this, p2s_Y_N1, p2s_Y_N2](Task &t) -> int
 	{
-		this->filter(static_cast<R*>(p2s_Y_N1.get_dataptr()),
-		             static_cast<R*>(p2s_Y_N2.get_dataptr()));
+		this->filter(static_cast<R*>(t[p2s_Y_N1].get_dataptr()),
+		             static_cast<R*>(t[p2s_Y_N2].get_dataptr()));
 
 		return 0;
 	});
 
 	auto &p3 = this->create_task("demodulate");
-	auto &p3s_Y_N1 = this->template create_socket_in <Q>(p3, "Y_N1", this->N_fil * this->n_frames);
-	auto &p3s_Y_N2 = this->template create_socket_out<Q>(p3, "Y_N2", this->N     * this->n_frames);
-	this->create_codelet(p3, [this, &p3s_Y_N1, &p3s_Y_N2]() -> int
+	auto p3s_Y_N1 = this->template create_socket_in <Q>(p3, "Y_N1", this->N_fil);
+	auto p3s_Y_N2 = this->template create_socket_out<Q>(p3, "Y_N2", this->N    );
+	this->create_codelet(p3, [this, p3s_Y_N1, p3s_Y_N2](Task &t) -> int
 	{
-		this->demodulate(static_cast<Q*>(p3s_Y_N1.get_dataptr()),
-		                 static_cast<Q*>(p3s_Y_N2.get_dataptr()));
+		this->demodulate(static_cast<Q*>(t[p3s_Y_N1].get_dataptr()),
+		                 static_cast<Q*>(t[p3s_Y_N2].get_dataptr()));
 
 		return 0;
 	});
 
 	auto &p4 = this->create_task("tdemodulate");
-	auto &p4s_Y_N1 = this->template create_socket_in <Q>(p4, "Y_N1", this->N_fil * this->n_frames);
-	auto &p4s_Y_N2 = this->template create_socket_in <Q>(p4, "Y_N2", this->N     * this->n_frames);
-	auto &p4s_Y_N3 = this->template create_socket_out<Q>(p4, "Y_N3", this->N     * this->n_frames);
-	this->create_codelet(p4, [this, &p4s_Y_N1, &p4s_Y_N2, &p4s_Y_N3]() -> int
+	auto p4s_Y_N1 = this->template create_socket_in <Q>(p4, "Y_N1", this->N_fil);
+	auto p4s_Y_N2 = this->template create_socket_in <Q>(p4, "Y_N2", this->N    );
+	auto p4s_Y_N3 = this->template create_socket_out<Q>(p4, "Y_N3", this->N    );
+	this->create_codelet(p4, [this, p4s_Y_N1, p4s_Y_N2, p4s_Y_N3](Task &t) -> int
 	{
-		this->tdemodulate(static_cast<Q*>(p4s_Y_N1.get_dataptr()),
-		                  static_cast<Q*>(p4s_Y_N2.get_dataptr()),
-		                  static_cast<Q*>(p4s_Y_N3.get_dataptr()));
+		this->tdemodulate(static_cast<Q*>(t[p4s_Y_N1].get_dataptr()),
+		                  static_cast<Q*>(t[p4s_Y_N2].get_dataptr()),
+		                  static_cast<Q*>(t[p4s_Y_N3].get_dataptr()));
 
 		return 0;
 	});
 
 	auto &p5 = this->create_task("demodulate_wg");
-	auto &p5s_H_N  = this->template create_socket_in <R>(p5, "H_N",  this->N_fil * this->n_frames);
-	auto &p5s_Y_N1 = this->template create_socket_in <Q>(p5, "Y_N1", this->N_fil * this->n_frames);
-	auto &p5s_Y_N2 = this->template create_socket_out<Q>(p5, "Y_N2", this->N     * this->n_frames);
-	this->create_codelet(p5, [this, &p5s_H_N, &p5s_Y_N1, &p5s_Y_N2]() -> int
+	auto p5s_H_N  = this->template create_socket_in <R>(p5, "H_N",  this->N_fil);
+	auto p5s_Y_N1 = this->template create_socket_in <Q>(p5, "Y_N1", this->N_fil);
+	auto p5s_Y_N2 = this->template create_socket_out<Q>(p5, "Y_N2", this->N    );
+	this->create_codelet(p5, [this, p5s_H_N, p5s_Y_N1, p5s_Y_N2](Task &t) -> int
 	{
-		this->demodulate_wg(static_cast<R*>(p5s_H_N .get_dataptr()),
-		                    static_cast<Q*>(p5s_Y_N1.get_dataptr()),
-		                    static_cast<Q*>(p5s_Y_N2.get_dataptr()));
+		this->demodulate_wg(static_cast<R*>(t[p5s_H_N ].get_dataptr()),
+		                    static_cast<Q*>(t[p5s_Y_N1].get_dataptr()),
+		                    static_cast<Q*>(t[p5s_Y_N2].get_dataptr()));
 
 		return 0;
 	});
 
 	auto &p6 = this->create_task("tdemodulate_wg");
-	auto &p6s_H_N  = this->template create_socket_in <R>(p6, "H_N",  this->N_fil * this->n_frames);
-	auto &p6s_Y_N1 = this->template create_socket_in <Q>(p6, "Y_N1", this->N_fil * this->n_frames);
-	auto &p6s_Y_N2 = this->template create_socket_in <Q>(p6, "Y_N2", this->N     * this->n_frames);
-	auto &p6s_Y_N3 = this->template create_socket_out<Q>(p6, "Y_N3", this->N     * this->n_frames);
-	this->create_codelet(p6, [this, &p6s_H_N, &p6s_Y_N1, &p6s_Y_N2, &p6s_Y_N3]() -> int
+	auto p6s_H_N  = this->template create_socket_in <R>(p6, "H_N",  this->N_fil);
+	auto p6s_Y_N1 = this->template create_socket_in <Q>(p6, "Y_N1", this->N_fil);
+	auto p6s_Y_N2 = this->template create_socket_in <Q>(p6, "Y_N2", this->N    );
+	auto p6s_Y_N3 = this->template create_socket_out<Q>(p6, "Y_N3", this->N    );
+	this->create_codelet(p6, [this, p6s_H_N, p6s_Y_N1, p6s_Y_N2, p6s_Y_N3](Task &t) -> int
 	{
-		this->tdemodulate_wg(static_cast<R*>(p6s_H_N .get_dataptr()),
-		                     static_cast<Q*>(p6s_Y_N1.get_dataptr()),
-		                     static_cast<Q*>(p6s_Y_N2.get_dataptr()),
-		                     static_cast<Q*>(p6s_Y_N3.get_dataptr()));
+		this->tdemodulate_wg(static_cast<R*>(t[p6s_H_N ].get_dataptr()),
+		                     static_cast<Q*>(t[p6s_Y_N1].get_dataptr()),
+		                     static_cast<Q*>(t[p6s_Y_N2].get_dataptr()),
+		                     static_cast<Q*>(t[p6s_Y_N3].get_dataptr()));
 
 		return 0;
 	});
