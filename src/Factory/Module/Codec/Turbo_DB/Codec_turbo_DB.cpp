@@ -6,37 +6,37 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Codec_turbo_DB_name   = "Codec Turbo DB";
 const std::string aff3ct::factory::Codec_turbo_DB_prefix = "cdc";
 
-Codec_turbo_DB::parameters
-::parameters(const std::string &prefix)
-: Codec     ::parameters(Codec_turbo_DB_name, prefix),
-  Codec_SIHO::parameters(Codec_turbo_DB_name, prefix)
+Codec_turbo_DB
+::Codec_turbo_DB(const std::string &prefix)
+: Codec     (Codec_turbo_DB_name, prefix),
+  Codec_SIHO(Codec_turbo_DB_name, prefix)
 {
-	auto enc_t = new Encoder_turbo_DB::parameters("enc");
-	auto dec_t = new Decoder_turbo_DB::parameters("dec");
-	Codec::parameters::set_enc(enc_t);
-	Codec::parameters::set_dec(dec_t);
-	Codec::parameters::set_itl(std::move(enc_t->itl));
+	auto enc_t = new Encoder_turbo_DB("enc");
+	auto dec_t = new Decoder_turbo_DB("dec");
+	Codec::set_enc(enc_t);
+	Codec::set_dec(dec_t);
+	Codec::set_itl(std::move(enc_t->itl));
 	dec_t->itl = nullptr;
 }
 
-Codec_turbo_DB::parameters* Codec_turbo_DB::parameters
+Codec_turbo_DB* Codec_turbo_DB
 ::clone() const
 {
-	return new Codec_turbo_DB::parameters(*this);
+	return new Codec_turbo_DB(*this);
 }
 
-void Codec_turbo_DB::parameters
+void Codec_turbo_DB
 ::enable_puncturer()
 {
-	set_pct(new Puncturer_turbo_DB::parameters("pct"));
+	set_pct(new Puncturer_turbo_DB("pct"));
 }
 
-void Codec_turbo_DB::parameters
+void Codec_turbo_DB
 ::get_description(cli::Argument_map_info &args) const
 {
-	Codec_SIHO::parameters::get_description(args);
+	Codec_SIHO::get_description(args);
 
-	auto dec_tur = dynamic_cast<Decoder_turbo_DB::parameters*>(dec.get());
+	auto dec_tur = dynamic_cast<Decoder_turbo_DB*>(dec.get());
 
 	if (pct != nullptr)
 	{
@@ -77,13 +77,13 @@ void Codec_turbo_DB::parameters
 	}
 }
 
-void Codec_turbo_DB::parameters
+void Codec_turbo_DB
 ::store(const cli::Argument_map_value &vals)
 {
-	Codec_SIHO::parameters::store(vals);
+	Codec_SIHO::store(vals);
 
-	auto enc_tur = dynamic_cast<Encoder_turbo_DB::parameters*>(enc.get());
-	auto dec_tur = dynamic_cast<Decoder_turbo_DB::parameters*>(dec.get());
+	auto enc_tur = dynamic_cast<Encoder_turbo_DB*>(enc.get());
+	auto dec_tur = dynamic_cast<Decoder_turbo_DB*>(dec.get());
 
 	enc->store(vals);
 
@@ -131,10 +131,10 @@ void Codec_turbo_DB::parameters
 	}
 }
 
-void Codec_turbo_DB::parameters
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+void Codec_turbo_DB
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
-	Codec_SIHO::parameters::get_headers(headers, full);
+	Codec_SIHO::get_headers(headers, full);
 
 	enc->get_headers(headers, full);
 	dec->get_headers(headers, full);
@@ -145,36 +145,24 @@ void Codec_turbo_DB::parameters
 }
 
 template <typename B, typename Q>
-module::Codec_turbo_DB<B,Q>* Codec_turbo_DB::parameters
+module::Codec_turbo_DB<B,Q>* Codec_turbo_DB
 ::build(module::CRC<B> *crc) const
 {
-	return new module::Codec_turbo_DB<B,Q>(dynamic_cast<const Encoder_turbo_DB  ::parameters&>(*enc),
-	                                       dynamic_cast<const Decoder_turbo_DB  ::parameters&>(*dec),
+	return new module::Codec_turbo_DB<B,Q>(dynamic_cast<const Encoder_turbo_DB  &>(*enc),
+	                                       dynamic_cast<const Decoder_turbo_DB  &>(*dec),
 	                                       *itl,
-	                                       dynamic_cast<const Puncturer_turbo_DB::parameters*>(pct.get()),
+	                                       dynamic_cast<const Puncturer_turbo_DB*>(pct.get()),
 	                                       crc);
-}
-
-template <typename B, typename Q>
-module::Codec_turbo_DB<B,Q>* Codec_turbo_DB
-::build(const parameters &params, module::CRC<B> *crc)
-{
-	return params.template build<B,Q>(crc);
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Codec_turbo_DB<B_8 ,Q_8 >* aff3ct::factory::Codec_turbo_DB::parameters::build<B_8 ,Q_8 >(aff3ct::module::CRC<B_8 >*) const;
-template aff3ct::module::Codec_turbo_DB<B_16,Q_16>* aff3ct::factory::Codec_turbo_DB::parameters::build<B_16,Q_16>(aff3ct::module::CRC<B_16>*) const;
-template aff3ct::module::Codec_turbo_DB<B_32,Q_32>* aff3ct::factory::Codec_turbo_DB::parameters::build<B_32,Q_32>(aff3ct::module::CRC<B_32>*) const;
-template aff3ct::module::Codec_turbo_DB<B_64,Q_64>* aff3ct::factory::Codec_turbo_DB::parameters::build<B_64,Q_64>(aff3ct::module::CRC<B_64>*) const;
-template aff3ct::module::Codec_turbo_DB<B_8 ,Q_8 >* aff3ct::factory::Codec_turbo_DB::build<B_8 ,Q_8 >(const aff3ct::factory::Codec_turbo_DB::parameters&, aff3ct::module::CRC<B_8 >*);
-template aff3ct::module::Codec_turbo_DB<B_16,Q_16>* aff3ct::factory::Codec_turbo_DB::build<B_16,Q_16>(const aff3ct::factory::Codec_turbo_DB::parameters&, aff3ct::module::CRC<B_16>*);
-template aff3ct::module::Codec_turbo_DB<B_32,Q_32>* aff3ct::factory::Codec_turbo_DB::build<B_32,Q_32>(const aff3ct::factory::Codec_turbo_DB::parameters&, aff3ct::module::CRC<B_32>*);
-template aff3ct::module::Codec_turbo_DB<B_64,Q_64>* aff3ct::factory::Codec_turbo_DB::build<B_64,Q_64>(const aff3ct::factory::Codec_turbo_DB::parameters&, aff3ct::module::CRC<B_64>*);
+template aff3ct::module::Codec_turbo_DB<B_8 ,Q_8 >* aff3ct::factory::Codec_turbo_DB::build<B_8 ,Q_8 >(aff3ct::module::CRC<B_8 >*) const;
+template aff3ct::module::Codec_turbo_DB<B_16,Q_16>* aff3ct::factory::Codec_turbo_DB::build<B_16,Q_16>(aff3ct::module::CRC<B_16>*) const;
+template aff3ct::module::Codec_turbo_DB<B_32,Q_32>* aff3ct::factory::Codec_turbo_DB::build<B_32,Q_32>(aff3ct::module::CRC<B_32>*) const;
+template aff3ct::module::Codec_turbo_DB<B_64,Q_64>* aff3ct::factory::Codec_turbo_DB::build<B_64,Q_64>(aff3ct::module::CRC<B_64>*) const;
 #else
-template aff3ct::module::Codec_turbo_DB<B,Q>* aff3ct::factory::Codec_turbo_DB::parameters::build<B,Q>(aff3ct::module::CRC<B>*) const;
-template aff3ct::module::Codec_turbo_DB<B,Q>* aff3ct::factory::Codec_turbo_DB::build<B,Q>(const aff3ct::factory::Codec_turbo_DB::parameters&, aff3ct::module::CRC<B>*);
+template aff3ct::module::Codec_turbo_DB<B,Q>* aff3ct::factory::Codec_turbo_DB::build<B,Q>(aff3ct::module::CRC<B>*) const;
 #endif
 // ==================================================================================== explicit template instantiation

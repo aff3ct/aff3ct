@@ -8,7 +8,7 @@ import aff3ct_help_reader as ahr
 
 parser = argparse.ArgumentParser(prog='aff3ct-command-conversion', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('--build', action='store', dest='buildPath', type=str, default="build/", help='Build path to aff3ct.')
-parser.add_argument('--dest', action='store', dest='destPath', default="doc/sphinx/source/simulation/parameters", type=str, help='Destination path.')
+parser.add_argument('--dest', action='store', dest='destPath', default="doc/source/simulation/parameters", type=str, help='Destination path.')
 
 args = parser.parse_args()
 

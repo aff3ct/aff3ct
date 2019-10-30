@@ -38,7 +38,7 @@ protected:
 	cli::Argument_handler            ah;             /*!< An argument reader to manage the parsing and the documentation of the command line parameters. */
 	cli::Argument_map_info           args;           /*!< List of the arguments to find in the command line */
 	cli::Argument_map_value          arg_vals;       /*!< List of the arguments with their values */
-	factory::Simulation::parameters &params_common;  /*!< A structure of parameters to store and pass to the simulation. */
+	factory::Simulation             &params_common;  /*!< A structure of parameters to store and pass to the simulation. */
 	std::ostream                    &stream;         /*!< The dedicated stream in which the Launcher writes the parameters. */
 
 public:
@@ -51,7 +51,7 @@ public:
 	 * \param argv:   array of arguments
 	 * \param stream: the stream in which the Launcher writes the parameters.
 	 */
-	Launcher(const int argc, const char **argv, factory::Simulation::parameters &params_common,
+	Launcher(const int argc, const char **argv, factory::Simulation &params_common,
 	         std::ostream &stream = std::cout);
 
 	/*!

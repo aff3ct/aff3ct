@@ -15,9 +15,9 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Frozenbits_generator_name   = "Frozen bits generator";
 const std::string aff3ct::factory::Frozenbits_generator_prefix = "fbg";
 
-Frozenbits_generator::parameters
-::parameters(const std::string &prefix)
-: Factory::parameters(Frozenbits_generator_name, Frozenbits_generator_name, prefix)
+Frozenbits_generator
+::Frozenbits_generator(const std::string &prefix)
+: Factory(Frozenbits_generator_name, Frozenbits_generator_name, prefix)
 {
 	if (!cli::Is_path::check(this->path_fb))
 	{
@@ -27,17 +27,17 @@ Frozenbits_generator::parameters
 	}
 }
 
-Frozenbits_generator::parameters* Frozenbits_generator::parameters
+Frozenbits_generator* Frozenbits_generator
 ::clone() const
 {
-	return new Frozenbits_generator::parameters(*this);
+	return new Frozenbits_generator(*this);
 }
 
-void Frozenbits_generator::parameters
+void Frozenbits_generator
 ::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Frozenbits_generator::parameters::";
+	const std::string class_name = "factory::Frozenbits_generator::";
 
 	tools::add_arg(args, p, class_name+"p+info-bits,K",
 		cli::Integer(cli::Positive(), cli::Non_zero()),
@@ -65,7 +65,7 @@ void Frozenbits_generator::parameters
 #endif
 }
 
-void Frozenbits_generator::parameters
+void Frozenbits_generator
 ::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
@@ -82,8 +82,8 @@ void Frozenbits_generator::parameters
 #endif
 }
 
-void Frozenbits_generator::parameters
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+void Frozenbits_generator
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
 	auto p = this->get_prefix();
 
@@ -101,7 +101,7 @@ void Frozenbits_generator::parameters
 		headers[p].push_back(std::make_pair("Dump channels path", this->dump_channels_path));
 }
 
-tools::Frozenbits_generator* Frozenbits_generator::parameters
+tools::Frozenbits_generator* Frozenbits_generator
 ::build() const
 {
 	if (this->type == "GA"  ) return new tools::Frozenbits_generator_GA  (this->K, this->N_cw, this->dump_channels_path    );
@@ -111,10 +111,4 @@ tools::Frozenbits_generator* Frozenbits_generator::parameters
 	if (this->type == "BEC")  return new tools::Frozenbits_generator_BEC (this->K, this->N_cw, this->dump_channels_path    );
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
-}
-
-tools::Frozenbits_generator* Frozenbits_generator
-::build(const parameters &params)
-{
-	return params.build();
 }

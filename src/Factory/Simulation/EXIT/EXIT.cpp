@@ -14,19 +14,19 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::EXIT_name   = "Simulation EXIT";
 const std::string aff3ct::factory::EXIT_prefix = "sim";
 
-EXIT::parameters
-::parameters(const std::string &prefix)
-: Simulation::parameters(EXIT_name, prefix)
+EXIT
+::EXIT(const std::string &prefix)
+: Simulation(EXIT_name, prefix)
 {
 }
 
-EXIT::parameters* EXIT::parameters
+EXIT* EXIT
 ::clone() const
 {
-	return new EXIT::parameters(*this);
+	return new EXIT(*this);
 
 	// if (src != nullptr) { clone->src = src->clone(); }
-	// if (cdc != nullptr) { clone->cdc = dynamic_cast<Codec_SISO::parameters*>(cdc->clone()); }
+	// if (cdc != nullptr) { clone->cdc = dynamic_cast<Codec_SISO*>(cdc->clone()); }
 	// if (mdm != nullptr) { clone->mdm = mdm->clone(); }
 	// if (chn != nullptr) { clone->chn = chn->clone(); }
 	// if (qnt != nullptr) { clone->qnt = qnt->clone(); }
@@ -36,10 +36,10 @@ EXIT::parameters* EXIT::parameters
 	// return clone;
 }
 
-std::vector<std::string> EXIT::parameters
+std::vector<std::string> EXIT
 ::get_names() const
 {
-	auto n = Simulation::parameters::get_names();
+	auto n = Simulation::get_names();
 	if (src != nullptr) { auto nn = src->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (cdc != nullptr) { auto nn = cdc->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (mdm != nullptr) { auto nn = mdm->get_names(); for (auto &x : nn) n.push_back(x); }
@@ -50,10 +50,10 @@ std::vector<std::string> EXIT::parameters
 	return n;
 }
 
-std::vector<std::string> EXIT::parameters
+std::vector<std::string> EXIT
 ::get_short_names() const
 {
-	auto sn = Factory::parameters::get_short_names();
+	auto sn = Factory::get_short_names();
 	if (src != nullptr) { auto nn = src->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (cdc != nullptr) { auto nn = cdc->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (mdm != nullptr) { auto nn = mdm->get_short_names(); for (auto &x : nn) sn.push_back(x); }
@@ -64,10 +64,10 @@ std::vector<std::string> EXIT::parameters
 	return sn;
 }
 
-std::vector<std::string> EXIT::parameters
+std::vector<std::string> EXIT
 ::get_prefixes() const
 {
-	auto p = Factory::parameters::get_prefixes();
+	auto p = Factory::get_prefixes();
 	if (src != nullptr) { auto nn = src->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (cdc != nullptr) { auto nn = cdc->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (mdm != nullptr) { auto nn = mdm->get_prefixes(); for (auto &x : nn) p.push_back(x); }
@@ -78,13 +78,13 @@ std::vector<std::string> EXIT::parameters
 	return p;
 }
 
-void EXIT::parameters
+void EXIT
 ::get_description(cli::Argument_map_info &args) const
 {
-	Simulation::parameters::get_description(args);
+	Simulation::get_description(args);
 
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::EXIT::parameters::";
+	const std::string class_name = "factory::EXIT::";
 
 	tools::add_arg(args, p, class_name+"p+siga-range",
 		cli::Matlab_vector<float>(cli::Real(cli::Positive()), std::make_tuple(cli::Length(1)), std::make_tuple(cli::Length(1,3))),
@@ -105,10 +105,10 @@ void EXIT::parameters
 	args.add_link({p+"-siga-range"}, {p+"-siga-max", "A"});
 }
 
-void EXIT::parameters
+void EXIT
 ::store(const cli::Argument_map_value &vals)
 {
-	Simulation::parameters::store(vals);
+	Simulation::store(vals);
 
 	auto p = this->get_prefix();
 
@@ -125,10 +125,10 @@ void EXIT::parameters
 	}
 }
 
-void EXIT::parameters
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+void EXIT
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
-	Simulation::parameters::get_headers(headers, full);
+	Simulation::get_headers(headers, full);
 
 	auto p = this->get_prefix();
 
@@ -154,51 +154,51 @@ void EXIT::parameters
 	if (this->ter != nullptr) { this->ter->get_headers(headers, full); }
 }
 
-void EXIT::parameters
-::set_src(Source::parameters *src)
+void EXIT
+::set_src(Source *src)
 {
 	this->src.reset(src);
 }
 
-void EXIT::parameters
-::set_cdc(Codec_SISO::parameters *cdc)
+void EXIT
+::set_cdc(Codec_SISO *cdc)
 {
 	this->cdc.reset(cdc);
 }
 
-void EXIT::parameters
-::set_mdm(Modem::parameters *mdm)
+void EXIT
+::set_mdm(Modem *mdm)
 {
 	this->mdm.reset(mdm);
 }
 
-void EXIT::parameters
-::set_chn(Channel::parameters *chn)
+void EXIT
+::set_chn(Channel *chn)
 {
 	this->chn.reset(chn);
 }
 
-void EXIT::parameters
-::set_qnt(Quantizer::parameters *qnt)
+void EXIT
+::set_qnt(Quantizer *qnt)
 {
 	this->qnt.reset(qnt);
 }
 
-void EXIT::parameters
-::set_mnt(Monitor_EXIT::parameters *mnt)
+void EXIT
+::set_mnt(Monitor_EXIT *mnt)
 {
 	this->mnt.reset(mnt);
 }
 
-void EXIT::parameters
-::set_ter(Terminal::parameters *ter)
+void EXIT
+::set_ter(Terminal *ter)
 {
 	this->ter.reset(ter);
 }
 
 
 template <typename B, typename R>
-simulation::EXIT<B,R>* EXIT::parameters
+simulation::EXIT<B,R>* EXIT
 ::build() const
 {
 #if defined(AFF3CT_SYSTEMC_SIMU)
@@ -210,22 +210,13 @@ simulation::EXIT<B,R>* EXIT::parameters
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename R>
-simulation::EXIT<B,R>* EXIT
-::build(const parameters &params)
-{
-	return params.template build<B,R>();
-}
-
-
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::simulation::EXIT<B_32,R_32>* aff3ct::factory::EXIT::build<B_32,R_32>(const aff3ct::factory::EXIT::parameters&);
-template aff3ct::simulation::EXIT<B_64,R_64>* aff3ct::factory::EXIT::build<B_64,R_64>(const aff3ct::factory::EXIT::parameters&);
+template aff3ct::simulation::EXIT<B_32,R_32>* aff3ct::factory::EXIT::build<B_32,R_32>() const;
+template aff3ct::simulation::EXIT<B_64,R_64>* aff3ct::factory::EXIT::build<B_64,R_64>() const;
 #else
-template aff3ct::simulation::EXIT<B,R>* aff3ct::factory::EXIT::build<B,R>(const aff3ct::factory::EXIT::parameters&);
+template aff3ct::simulation::EXIT<B,R>* aff3ct::factory::EXIT::build<B,R>() const;
 #endif
 // ==================================================================================== explicit template instantiation
 

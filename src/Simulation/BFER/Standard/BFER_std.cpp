@@ -11,7 +11,7 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 BFER_std<B,R,Q>
-::BFER_std(const factory::BFER_std::parameters &params_BFER_std)
+::BFER_std(const factory::BFER_std &params_BFER_std)
 : BFER<B,R,Q>(params_BFER_std),
   params_BFER_std(params_BFER_std),
 
@@ -144,7 +144,7 @@ std::unique_ptr<module::Source<B>> BFER_std<B,R,Q>
 {
 	const auto seed_src = rd_engine_seed[tid]();
 
-	std::unique_ptr<factory::Source::parameters> params_src(params_BFER_std.src->clone());
+	std::unique_ptr<factory::Source> params_src(params_BFER_std.src->clone());
 	params_src->seed = seed_src;
 
 	return std::unique_ptr<module::Source<B>>(params_src->template build<B>());
@@ -164,7 +164,7 @@ std::unique_ptr<module::Codec_SIHO<B,Q>> BFER_std<B,R,Q>
 	const auto seed_enc = rd_engine_seed[tid]();
 	const auto seed_dec = rd_engine_seed[tid]();
 
-	std::unique_ptr<factory::Codec::parameters> params_cdc(params_BFER_std.cdc->clone());
+	std::unique_ptr<factory::Codec> params_cdc(params_BFER_std.cdc->clone());
 	params_cdc->enc->seed = seed_enc;
 	params_cdc->dec->seed = seed_dec;
 
@@ -187,7 +187,7 @@ std::unique_ptr<module::Codec_SIHO<B,Q>> BFER_std<B,R,Q>
 
 	auto crc = this->params_BFER_std.crc->type == "NO" ? nullptr : this->crc[tid].get();
 
-	auto param_siho = dynamic_cast<factory::Codec_SIHO::parameters*>(params_cdc.get());
+	auto param_siho = dynamic_cast<factory::Codec_SIHO*>(params_cdc.get());
 	return std::unique_ptr<module::Codec_SIHO<B,Q>>(param_siho->template build<B, Q>(crc));
 }
 
@@ -209,7 +209,7 @@ std::unique_ptr<module::Channel<R>> BFER_std<B,R,Q>
 {
 	const auto seed_chn = rd_engine_seed[tid]();
 
-	std::unique_ptr<factory::Channel::parameters> params_chn(this->params_BFER_std.chn->clone());
+	std::unique_ptr<factory::Channel> params_chn(this->params_BFER_std.chn->clone());
 	params_chn->seed = seed_chn;
 
 	if (this->distributions != nullptr)
@@ -229,7 +229,7 @@ template <typename B, typename R, typename Q>
 std::unique_ptr<module::Coset<B,Q>> BFER_std<B,R,Q>
 ::build_coset_real(const int tid)
 {
-	factory::Coset::parameters cst_params;
+	factory::Coset cst_params;
 	cst_params.size = params_BFER_std.cdc->N_cw;
 	cst_params.n_frames = params_BFER_std.src->n_frames;
 	return std::unique_ptr<module::Coset<B,Q>>(cst_params.template build_real<B,Q>());
@@ -239,7 +239,7 @@ template <typename B, typename R, typename Q>
 std::unique_ptr<module::Coset<B,B>> BFER_std<B,R,Q>
 ::build_coset_bit(const int tid)
 {
-	factory::Coset::parameters cst_params;
+	factory::Coset cst_params;
 	cst_params.size = this->params_BFER_std.coded_monitoring ? params_BFER_std.cdc->N_cw : params_BFER_std.cdc->K;
 	cst_params.n_frames = params_BFER_std.src->n_frames;
 	return std::unique_ptr<module::Coset<B,B>>(cst_params.template build_bit<B,B>());

@@ -46,29 +46,29 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Launcher_name   = "Launcher";
 const std::string aff3ct::factory::Launcher_prefix = "lch";
 
-factory::Launcher::parameters
-::parameters(const std::string &prefix)
-: Factory::parameters(Launcher_name, Launcher_name, prefix)
+Launcher
+::Launcher(const std::string &prefix)
+: Factory(Launcher_name, Launcher_name, prefix)
 {
 }
 
-factory::Launcher::parameters
-::parameters(const std::string &name, const std::string &short_name, const std::string &prefix)
-: Factory::parameters(name, short_name, prefix)
+Launcher
+::Launcher(const std::string &name, const std::string &short_name, const std::string &prefix)
+: Factory(name, short_name, prefix)
 {
 }
 
-factory::Launcher::parameters* factory::Launcher::parameters
+Launcher* Launcher
 ::clone() const
 {
-	return new Launcher::parameters(*this);
+	return new Launcher(*this);
 }
 
-void factory::Launcher::parameters
+void Launcher
 ::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Launcher::parameters::";
+	const std::string class_name = "factory::Launcher::";
 
 	tools::add_arg(args, p, class_name+"p+cde-type,C",
 		cli::Text(cli::Including_set("POLAR", "TURBO", "TURBO_DB", "TPC", "LDPC", "REP", "RA", "RSC", "RSC_DB", "BCH",
@@ -128,7 +128,7 @@ void factory::Launcher::parameters
 		cli::arg_rank::ADV);
 }
 
-void factory::Launcher::parameters
+void Launcher
 ::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
@@ -171,8 +171,8 @@ void factory::Launcher::parameters
 #endif
 }
 
-void factory::Launcher::parameters
-::get_headers(std::map<std::string,header_list>& params_headers, const bool full) const
+void Launcher
+::get_headers(std::map<std::string,tools::header_list>& params_headers, const bool full) const
 {
 	auto p = this->get_prefix();
 
@@ -243,7 +243,7 @@ void factory::Launcher::parameters
 }
 
 template <typename B, typename R, typename Q>
-launcher::Launcher* factory::Launcher::parameters
+launcher::Launcher* Launcher
 ::build_exit(const int argc, const char **argv) const
 {
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__, "Unsupported code/simulation pair.");
@@ -255,7 +255,7 @@ namespace factory
 {
 #if defined(AFF3CT_MULTI_PREC) || defined(AFF3CT_32BIT_PREC)
 template <>
-launcher::Launcher* Launcher::parameters
+launcher::Launcher* Launcher
 ::build_exit<int32_t, float, float>(const int argc, const char **argv) const
 {
 	if (this->cde_type == "POLAR")
@@ -272,7 +272,7 @@ launcher::Launcher* Launcher::parameters
 
 #if defined(AFF3CT_MULTI_PREC) || defined(AFF3CT_64BIT_PREC)
 template <>
-launcher::Launcher* Launcher::parameters
+launcher::Launcher* Launcher
 ::build_exit<int64_t, double, double>(const int argc, const char **argv) const
 {
 	if (this->cde_type == "POLAR")
@@ -290,7 +290,7 @@ launcher::Launcher* Launcher::parameters
 }
 
 template <typename B, typename R, typename Q>
-launcher::Launcher* factory::Launcher::parameters
+launcher::Launcher* Launcher
 ::build(const int argc, const char **argv) const
 {
 	if (this->cde_type == "POLAR")
@@ -361,26 +361,14 @@ launcher::Launcher* factory::Launcher::parameters
 	return build_exit<B,R,Q>(argc, argv);
 }
 
-template <typename B, typename R, typename Q>
-launcher::Launcher* factory::Launcher
-::build(const parameters &params, const int argc, const char **argv)
-{
-	return params.template build<B,R,Q>(argc, argv);
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::parameters::build<B_8 ,R_8 ,Q_8 >(const int, const char**) const;
-template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::parameters::build<B_16,R_16,Q_16>(const int, const char**) const;
-template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::parameters::build<B_32,R_32,Q_32>(const int, const char**) const;
-template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::parameters::build<B_64,R_64,Q_64>(const int, const char**) const;
-template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::build<B_8 ,R_8 ,Q_8 >(const aff3ct::factory::Launcher::parameters&, const int, const char**);
-template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::build<B_16,R_16,Q_16>(const aff3ct::factory::Launcher::parameters&, const int, const char**);
-template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::build<B_32,R_32,Q_32>(const aff3ct::factory::Launcher::parameters&, const int, const char**);
-template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::build<B_64,R_64,Q_64>(const aff3ct::factory::Launcher::parameters&, const int, const char**);
+template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::build<B_8 ,R_8 ,Q_8 >(const int, const char**) const;
+template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::build<B_16,R_16,Q_16>(const int, const char**) const;
+template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::build<B_32,R_32,Q_32>(const int, const char**) const;
+template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::build<B_64,R_64,Q_64>(const int, const char**) const;
 #else
-template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::parameters::build<B,R,Q>(const int, const char**) const;
-template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::build<B,R,Q>(const aff3ct::factory::Launcher::parameters&, const int, const char**);
+template aff3ct::launcher::Launcher* aff3ct::factory::Launcher::build<B,R,Q>(const int, const char**) const;
 #endif
 // ==================================================================================== explicit template instantiation

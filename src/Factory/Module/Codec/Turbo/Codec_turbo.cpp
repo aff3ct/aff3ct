@@ -11,37 +11,37 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Codec_turbo_name   = "Codec Turbo";
 const std::string aff3ct::factory::Codec_turbo_prefix = "cdc";
 
-Codec_turbo::parameters
-::parameters(const std::string &prefix)
-: Codec     ::parameters(Codec_turbo_name, prefix),
-  Codec_SIHO::parameters(Codec_turbo_name, prefix)
+Codec_turbo
+::Codec_turbo(const std::string &prefix)
+: Codec     (Codec_turbo_name, prefix),
+  Codec_SIHO(Codec_turbo_name, prefix)
 {
-	auto enc_t = new Encoder_turbo::parameters<>("enc");
-	auto dec_t = new Decoder_turbo::parameters<>("dec");
-	Codec::parameters::set_enc(enc_t);
-	Codec::parameters::set_dec(dec_t);
-	Codec::parameters::set_itl(std::move(enc_t->itl));
+	auto enc_t = new Encoder_turbo<>("enc");
+	auto dec_t = new Decoder_turbo<>("dec");
+	Codec::set_enc(enc_t);
+	Codec::set_dec(dec_t);
+	Codec::set_itl(std::move(enc_t->itl));
 	dec_t->itl = nullptr;
 }
 
-Codec_turbo::parameters* Codec_turbo::parameters
+Codec_turbo* Codec_turbo
 ::clone() const
 {
-	return new Codec_turbo::parameters(*this);
+	return new Codec_turbo(*this);
 }
 
-void Codec_turbo::parameters
+void Codec_turbo
 ::enable_puncturer()
 {
-	set_pct(new Puncturer_turbo::parameters("pct"));
+	set_pct(new Puncturer_turbo("pct"));
 }
 
-void Codec_turbo::parameters
+void Codec_turbo
 ::get_description(cli::Argument_map_info &args) const
 {
-	Codec_SIHO::parameters::get_description(args);
+	Codec_SIHO::get_description(args);
 
-	auto dec_tur = dynamic_cast<Decoder_turbo::parameters<>*>(dec.get());
+	auto dec_tur = dynamic_cast<Decoder_turbo<>*>(dec.get());
 
 	if (pct != nullptr)
 	{
@@ -81,19 +81,19 @@ void Codec_turbo::parameters
 	}
 }
 
-void Codec_turbo::parameters
+void Codec_turbo
 ::store(const cli::Argument_map_value &vals)
 {
-	Codec_SIHO::parameters::store(vals);
+	Codec_SIHO::store(vals);
 
-	auto enc_tur = dynamic_cast<Encoder_turbo::parameters<>*>(enc.get());
-	auto dec_tur = dynamic_cast<Decoder_turbo::parameters<>*>(dec.get());
+	auto enc_tur = dynamic_cast<Encoder_turbo<>*>(enc.get());
+	auto dec_tur = dynamic_cast<Decoder_turbo<>*>(dec.get());
 
 	enc->store(vals);
 
 	if (pct != nullptr)
 	{
-		auto pct_tur = dynamic_cast<Puncturer_turbo::parameters*>(pct.get());
+		auto pct_tur = dynamic_cast<Puncturer_turbo*>(pct.get());
 
 		pct_tur->K           = enc_tur->K;
 		pct_tur->N_cw        = enc_tur->N_cw;
@@ -142,10 +142,10 @@ void Codec_turbo::parameters
 	}
 }
 
-void Codec_turbo::parameters
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+void Codec_turbo
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
-	Codec_SIHO::parameters::get_headers(headers, full);
+	Codec_SIHO::get_headers(headers, full);
 	enc->get_headers(headers, full);
 	dec->get_headers(headers, full);
 	if (pct != nullptr)
@@ -155,38 +155,25 @@ void Codec_turbo::parameters
 }
 
 template <typename B, typename Q>
-module::Codec_turbo<B,Q>* Codec_turbo::parameters
+module::Codec_turbo<B,Q>* Codec_turbo
 ::build(module::CRC<B> *crc) const
 {
-	return new module::Codec_turbo<B,Q>(dynamic_cast<const Encoder_turbo  ::parameters<>&>(*enc),
-	                                    dynamic_cast<const Decoder_turbo  ::parameters<>&>(*dec),
+	return new module::Codec_turbo<B,Q>(dynamic_cast<const Encoder_turbo  <>&>(*enc),
+	                                    dynamic_cast<const Decoder_turbo  <>&>(*dec),
 	                                    *itl,
-	                                    dynamic_cast<const Puncturer_turbo::parameters*  >(pct.get()),
+	                                    dynamic_cast<const Puncturer_turbo*  >(pct.get()),
 	                                    crc);
-}
-
-
-template <typename B, typename Q>
-module::Codec_turbo<B,Q>* Codec_turbo
-::build(const parameters &params, module::CRC<B> *crc)
-{
-	return params.template build<B,Q>(crc);
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Codec_turbo<B_8 ,Q_8 >* aff3ct::factory::Codec_turbo::parameters::build<B_8 ,Q_8 >(aff3ct::module::CRC<B_8 >*) const;
-template aff3ct::module::Codec_turbo<B_16,Q_16>* aff3ct::factory::Codec_turbo::parameters::build<B_16,Q_16>(aff3ct::module::CRC<B_16>*) const;
-template aff3ct::module::Codec_turbo<B_32,Q_32>* aff3ct::factory::Codec_turbo::parameters::build<B_32,Q_32>(aff3ct::module::CRC<B_32>*) const;
-template aff3ct::module::Codec_turbo<B_64,Q_64>* aff3ct::factory::Codec_turbo::parameters::build<B_64,Q_64>(aff3ct::module::CRC<B_64>*) const;
-template aff3ct::module::Codec_turbo<B_8 ,Q_8 >* aff3ct::factory::Codec_turbo::build<B_8 ,Q_8 >(const aff3ct::factory::Codec_turbo::parameters&, aff3ct::module::CRC<B_8 >*);
-template aff3ct::module::Codec_turbo<B_16,Q_16>* aff3ct::factory::Codec_turbo::build<B_16,Q_16>(const aff3ct::factory::Codec_turbo::parameters&, aff3ct::module::CRC<B_16>*);
-template aff3ct::module::Codec_turbo<B_32,Q_32>* aff3ct::factory::Codec_turbo::build<B_32,Q_32>(const aff3ct::factory::Codec_turbo::parameters&, aff3ct::module::CRC<B_32>*);
-template aff3ct::module::Codec_turbo<B_64,Q_64>* aff3ct::factory::Codec_turbo::build<B_64,Q_64>(const aff3ct::factory::Codec_turbo::parameters&, aff3ct::module::CRC<B_64>*);
+template aff3ct::module::Codec_turbo<B_8 ,Q_8 >* aff3ct::factory::Codec_turbo::build<B_8 ,Q_8 >(aff3ct::module::CRC<B_8 >*) const;
+template aff3ct::module::Codec_turbo<B_16,Q_16>* aff3ct::factory::Codec_turbo::build<B_16,Q_16>(aff3ct::module::CRC<B_16>*) const;
+template aff3ct::module::Codec_turbo<B_32,Q_32>* aff3ct::factory::Codec_turbo::build<B_32,Q_32>(aff3ct::module::CRC<B_32>*) const;
+template aff3ct::module::Codec_turbo<B_64,Q_64>* aff3ct::factory::Codec_turbo::build<B_64,Q_64>(aff3ct::module::CRC<B_64>*) const;
 #else
-template aff3ct::module::Codec_turbo<B,Q>* aff3ct::factory::Codec_turbo::parameters::build<B,Q>(aff3ct::module::CRC<B>*) const;
-template aff3ct::module::Codec_turbo<B,Q>* aff3ct::factory::Codec_turbo::build<B,Q>(const aff3ct::factory::Codec_turbo::parameters&, aff3ct::module::CRC<B>*);
+template aff3ct::module::Codec_turbo<B,Q>* aff3ct::factory::Codec_turbo::build<B,Q>(aff3ct::module::CRC<B>*) const;
 #endif
 // ==================================================================================== explicit template instantiation
 

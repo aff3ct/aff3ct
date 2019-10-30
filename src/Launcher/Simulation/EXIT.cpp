@@ -15,12 +15,12 @@ EXIT<B,R>
 ::EXIT(const int argc, const char **argv, std::ostream &stream)
 : Launcher(argc, argv, params, stream)
 {
-	params.set_src(new factory::Source      ::parameters("src"));
-	params.set_mdm(new factory::Modem       ::parameters("mdm"));
-	params.set_chn(new factory::Channel     ::parameters("chn"));
-	params.set_qnt(new factory::Quantizer   ::parameters("qnt"));
-	params.set_mnt(new factory::Monitor_EXIT::parameters("mnt"));
-	params.set_ter(new factory::Terminal    ::parameters("ter"));
+	params.set_src(new factory::Source      ("src"));
+	params.set_mdm(new factory::Modem       ("mdm"));
+	params.set_chn(new factory::Channel     ("chn"));
+	params.set_qnt(new factory::Quantizer   ("qnt"));
+	params.set_mnt(new factory::Monitor_EXIT("mnt"));
+	params.set_ter(new factory::Terminal    ("ter"));
 }
 
 template <typename B, typename R>
@@ -119,7 +119,7 @@ simulation::Simulation* EXIT<B,R>
 ::build_simu()
 {
 #if !defined(AFF3CT_SYSTEMC_SIMU)
-	return factory::EXIT::build<B,R>(params);
+	return params.build<B,R>();
 #else
 	throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC/TLM  simulation is not available.");
 #endif

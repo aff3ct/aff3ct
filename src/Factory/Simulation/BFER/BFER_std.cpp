@@ -8,20 +8,20 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::BFER_std_name   = "Simulation BFER standard";
 const std::string aff3ct::factory::BFER_std_prefix = "sim";
 
-BFER_std::parameters
-::parameters(const std::string &prefix)
-: BFER::parameters(BFER_std_name, prefix)
+BFER_std
+::BFER_std(const std::string &prefix)
+: BFER(BFER_std_name, prefix)
 {
 }
 
-BFER_std::parameters* BFER_std::parameters
+BFER_std* BFER_std
 ::clone() const
 {
-	return new BFER_std::parameters(*this);
+	return new BFER_std(*this);
 
 	// if (src != nullptr) { clone->src = src->clone(); }
 	// if (crc != nullptr) { clone->crc = crc->clone(); }
-	// if (cdc != nullptr) { clone->cdc = dynamic_cast<Codec_SIHO::parameters*>(cdc->clone()); }
+	// if (cdc != nullptr) { clone->cdc = dynamic_cast<Codec_SIHO*>(cdc->clone()); }
 	// if (mdm != nullptr) { clone->mdm = mdm->clone(); }
 	// if (chn != nullptr) { clone->chn = chn->clone(); }
 	// if (qnt != nullptr) { clone->qnt = qnt->clone(); }
@@ -34,32 +34,32 @@ BFER_std::parameters* BFER_std::parameters
 	// return clone;
 }
 
-void BFER_std::parameters
+void BFER_std
 ::get_description(cli::Argument_map_info &args) const
 {
-	BFER::parameters::get_description(args);
+	BFER::get_description(args);
 }
 
-void BFER_std::parameters
+void BFER_std
 ::store(const cli::Argument_map_value &vals)
 {
-	BFER::parameters::store(vals);
+	BFER::store(vals);
 }
 
-void BFER_std::parameters
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+void BFER_std
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
-	BFER::parameters::get_headers(headers, full);
+	BFER::get_headers(headers, full);
 }
 
-const Codec_SIHO::parameters* BFER_std::parameters
+const Codec_SIHO* BFER_std
 ::get_cdc() const
 {
-	return dynamic_cast<Codec_SIHO::parameters*>(this->cdc.get());
+	return dynamic_cast<Codec_SIHO*>(this->cdc.get());
 }
 
 template <typename B, typename R, typename Q>
-simulation::BFER_std<B,R,Q>* BFER_std::parameters
+simulation::BFER_std<B,R,Q>* BFER_std
 ::build() const
 {
 #if defined(AFF3CT_SYSTEMC_SIMU)
@@ -69,21 +69,14 @@ simulation::BFER_std<B,R,Q>* BFER_std::parameters
 #endif
 }
 
-template <typename B, typename R, typename Q>
-simulation::BFER_std<B,R,Q>* BFER_std
-::build(const parameters &params)
-{
-	return params.template build<B,R,Q>();
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::simulation::BFER_std<B_8 ,R_8 ,Q_8 >* aff3ct::factory::BFER_std::build<B_8 ,R_8 ,Q_8 >(const aff3ct::factory::BFER_std::parameters&);
-template aff3ct::simulation::BFER_std<B_16,R_16,Q_16>* aff3ct::factory::BFER_std::build<B_16,R_16,Q_16>(const aff3ct::factory::BFER_std::parameters&);
-template aff3ct::simulation::BFER_std<B_32,R_32,Q_32>* aff3ct::factory::BFER_std::build<B_32,R_32,Q_32>(const aff3ct::factory::BFER_std::parameters&);
-template aff3ct::simulation::BFER_std<B_64,R_64,Q_64>* aff3ct::factory::BFER_std::build<B_64,R_64,Q_64>(const aff3ct::factory::BFER_std::parameters&);
+template aff3ct::simulation::BFER_std<B_8 ,R_8 ,Q_8 >* aff3ct::factory::BFER_std::build<B_8 ,R_8 ,Q_8 >() const;
+template aff3ct::simulation::BFER_std<B_16,R_16,Q_16>* aff3ct::factory::BFER_std::build<B_16,R_16,Q_16>() const;
+template aff3ct::simulation::BFER_std<B_32,R_32,Q_32>* aff3ct::factory::BFER_std::build<B_32,R_32,Q_32>() const;
+template aff3ct::simulation::BFER_std<B_64,R_64,Q_64>* aff3ct::factory::BFER_std::build<B_64,R_64,Q_64>() const;
 #else
-template aff3ct::simulation::BFER_std<B,R,Q>* aff3ct::factory::BFER_std::build<B,R,Q>(const aff3ct::factory::BFER_std::parameters&);
+template aff3ct::simulation::BFER_std<B,R,Q>* aff3ct::factory::BFER_std::build<B,R,Q>() const;
 #endif
 // ==================================================================================== explicit template instantiation

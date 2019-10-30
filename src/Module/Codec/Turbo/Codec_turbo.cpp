@@ -17,10 +17,10 @@ using namespace aff3ct::module;
 
 template <typename B, typename Q>
 Codec_turbo<B,Q>
-::Codec_turbo(const factory::Encoder_turbo  ::parameters<> &enc_params,
-              const factory::Decoder_turbo  ::parameters<> &dec_params,
-              const factory::Interleaver    ::parameters   &itl_params,
-              const factory::Puncturer_turbo::parameters   *pct_params,
+::Codec_turbo(const factory::Encoder_turbo  <> &enc_params,
+              const factory::Decoder_turbo  <> &dec_params,
+              const factory::Interleaver       &itl_params,
+              const factory::Puncturer_turbo   *pct_params,
               CRC<B>* crc)
 : Codec     <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames)
@@ -60,57 +60,56 @@ Codec_turbo<B,Q>
 		json_stream << "[" << std::endl;
 	}
 
-	std::unique_ptr<Encoder_RSC_sys<B>> encoder_RSC(factory::Encoder_RSC::build<B>(*enc_params.sub1));
+	std::unique_ptr<Encoder_RSC_sys<B>> encoder_RSC(enc_params.sub1->build<B>());
 	trellis = encoder_RSC->get_trellis();
 
 	// ---------------------------------------------------------------------------------------------------- allocations
-	this->set_interleaver(factory::Interleaver_core::build<>(*itl_params.core));
+	this->set_interleaver(itl_params.core->build<>());
 
 	if (pct_params)
 	{
 		try
 		{
-			this->set_puncturer(factory::Puncturer_turbo::build<B,Q>(*pct_params));
+			this->set_puncturer(pct_params->build<B,Q>());
 		}
 		catch (tools::cannot_allocate const&)
 		{
-			this->set_puncturer(factory::Puncturer::build<B,Q>(*pct_params));
+			this->set_puncturer(static_cast<const factory::Puncturer*>(pct_params)->build<B,Q>());
 		}
 	}
 	else
 	{
-		factory::Puncturer::parameters pctno_params;
+		factory::Puncturer pctno_params;
 		pctno_params.type     = "NO";
 		pctno_params.K        = enc_params.K;
 		pctno_params.N        = enc_params.N_cw;
 		pctno_params.N_cw     = enc_params.N_cw;
 		pctno_params.n_frames = enc_params.n_frames;
 
-		this->set_puncturer(factory::Puncturer::build<B,Q>(pctno_params));
+		this->set_puncturer(pctno_params.build<B,Q>());
 	}
-
 
 	try
 	{
-		sub_enc.reset(factory::Encoder_RSC::build<B>(*enc_params.sub1, json_stream));
-		this->set_encoder(factory::Encoder_turbo::build<B>(enc_params, this->get_interleaver_bit(), sub_enc, sub_enc));
+		sub_enc.reset(enc_params.sub1->build<B>(json_stream));
+		this->set_encoder(enc_params.build<B>(this->get_interleaver_bit(), sub_enc, sub_enc));
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_encoder(factory::Encoder::build<B>(enc_params));
+		this->set_encoder(static_cast<const factory::Encoder*>(&enc_params)->build<B>());
 	}
 
 
 	std::shared_ptr<Decoder_turbo<B,Q>> decoder_turbo;
 	try
 	{
-		this->set_decoder_siho(factory::Decoder_turbo::build<B,Q>(dec_params, this->get_encoder()));
+		this->set_decoder_siho(dec_params.build<B,Q>(this->get_encoder()));
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		sub_dec      .reset(factory::Decoder_RSC::build_siso<B,Q>(*dec_params.sub1, trellis, json_stream, dec_params.n_ite));
-		decoder_turbo.reset(factory::Decoder_turbo::build<B,Q>(dec_params, this->get_interleaver_llr(),
-		                                                       *sub_dec, *sub_dec, this->get_encoder()));
+		sub_dec.reset(dec_params.sub1->build_siso<B,Q>(trellis, json_stream, dec_params.n_ite));
+		decoder_turbo.reset(dec_params.build<B,Q>(this->get_interleaver_llr(), *sub_dec, *sub_dec,
+		                                          this->get_encoder()));
 		this->set_decoder_siho(std::static_pointer_cast<Decoder_SIHO<B,Q>>(decoder_turbo));
 	}
 
@@ -118,14 +117,14 @@ Codec_turbo<B,Q>
 	if (decoder_turbo)
 	{
 		if (dec_params.sf->enable)
-			add_post_processings(factory::Scaling_factor::build<B,Q>(*dec_params.sf));
+			add_post_processings(dec_params.sf->build<B,Q>());
 
 		if (dec_params.fnc->enable)
 		{
 			if (crc == nullptr || crc->get_size() == 0)
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, "The Flip aNd Check requires a CRC.");
 
-			add_post_processings(factory::Flip_and_check::build<B,Q>(*dec_params.fnc, *crc));
+			add_post_processings(dec_params.fnc->build<B,Q>(*crc));
 		}
 		else if (crc != nullptr && crc->get_size() > 0)
 			add_post_processings(new tools::CRC_checker<B,Q>(*crc,

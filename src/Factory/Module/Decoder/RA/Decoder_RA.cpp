@@ -11,51 +11,51 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Decoder_RA_name   = "Decoder RA";
 const std::string aff3ct::factory::Decoder_RA_prefix = "dec";
 
-Decoder_RA::parameters
-::parameters(const std::string &prefix)
-: Decoder::parameters(Decoder_RA_name, prefix),
-  itl(new Interleaver::parameters("itl"))
+Decoder_RA
+::Decoder_RA(const std::string &prefix)
+: Decoder(Decoder_RA_name, prefix),
+  itl(new Interleaver("itl"))
 {
 	this->type   = "RA";
 	this->implem = "STD";
 }
 
-Decoder_RA::parameters* Decoder_RA::parameters
+Decoder_RA* Decoder_RA
 ::clone() const
 {
-	return new Decoder_RA::parameters(*this);
+	return new Decoder_RA(*this);
 }
 
-std::vector<std::string> Decoder_RA::parameters
+std::vector<std::string> Decoder_RA
 ::get_names() const
 {
-	auto n = Decoder::parameters::get_names();
+	auto n = Decoder::get_names();
 	if (itl != nullptr) { auto nn = itl->get_names(); for (auto &x : nn) n.push_back(x); }
 	return n;
 }
-std::vector<std::string> Decoder_RA::parameters
+std::vector<std::string> Decoder_RA
 ::get_short_names() const
 {
-	auto sn = Decoder::parameters::get_short_names();
+	auto sn = Decoder::get_short_names();
 	if (itl != nullptr) { auto nn = itl->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	return sn;
 }
 
-std::vector<std::string> Decoder_RA::parameters
+std::vector<std::string> Decoder_RA
 ::get_prefixes() const
 {
-	auto p = Decoder::parameters::get_prefixes();
+	auto p = Decoder::get_prefixes();
 	if (itl != nullptr) { auto nn = itl->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	return p;
 }
 
-void Decoder_RA::parameters
+void Decoder_RA
 ::get_description(cli::Argument_map_info &args) const
 {
-	Decoder::parameters::get_description(args);
+	Decoder::get_description(args);
 
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Decoder_RA::parameters::";
+	const std::string class_name = "factory::Decoder_RA::";
 
 	if (itl != nullptr)
 	{
@@ -74,10 +74,10 @@ void Decoder_RA::parameters
 		cli::Integer(cli::Positive(), cli::Non_zero()));
 }
 
-void Decoder_RA::parameters
+void Decoder_RA
 ::store(const cli::Argument_map_value &vals)
 {
-	Decoder::parameters::store(vals);
+	Decoder::store(vals);
 
 	auto p = this->get_prefix();
 
@@ -92,10 +92,10 @@ void Decoder_RA::parameters
 	if(vals.exist({p+"-ite", "i"})) this->n_ite = vals.to_int({p+"-ite", "i"});
 }
 
-void Decoder_RA::parameters
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+void Decoder_RA
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
-	Decoder::parameters::get_headers(headers, full);
+	Decoder::get_headers(headers, full);
 
 	if (itl != nullptr)
 		itl->get_headers(headers, full);
@@ -109,12 +109,12 @@ void Decoder_RA::parameters
 }
 
 template <typename B, typename Q>
-module::Decoder_SIHO<B,Q>* Decoder_RA::parameters
+module::Decoder_SIHO<B,Q>* Decoder_RA
 ::build(const module::Interleaver<Q> &itl, const std::unique_ptr<module::Encoder<B>>& encoder) const
 {
 	try
 	{
-		return Decoder::parameters::build<B,Q>(encoder);
+		return Decoder::build<B,Q>(encoder);
 	}
 	catch (tools::cannot_allocate const&)
 	{
@@ -127,26 +127,14 @@ module::Decoder_SIHO<B,Q>* Decoder_RA::parameters
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename Q>
-module::Decoder_SIHO<B,Q>* Decoder_RA
-::build(const parameters &params, const module::Interleaver<Q> &itl, const std::unique_ptr<module::Encoder<B>>& encoder)
-{
-	return params.template build<B,Q>(itl, encoder);
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RA::parameters::build<B_8 ,Q_8 >(const aff3ct::module::Interleaver<Q_8 >&, const std::unique_ptr<module::Encoder<B_8 >>&) const;
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RA::parameters::build<B_16,Q_16>(const aff3ct::module::Interleaver<Q_16>&, const std::unique_ptr<module::Encoder<B_16>>&) const;
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RA::parameters::build<B_32,Q_32>(const aff3ct::module::Interleaver<Q_32>&, const std::unique_ptr<module::Encoder<B_32>>&) const;
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RA::parameters::build<B_64,Q_64>(const aff3ct::module::Interleaver<Q_64>&, const std::unique_ptr<module::Encoder<B_64>>&) const;
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RA::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_RA::parameters&, const aff3ct::module::Interleaver<Q_8 >&, const std::unique_ptr<module::Encoder<B_8 >>&);
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RA::build<B_16,Q_16>(const aff3ct::factory::Decoder_RA::parameters&, const aff3ct::module::Interleaver<Q_16>&, const std::unique_ptr<module::Encoder<B_16>>&);
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RA::build<B_32,Q_32>(const aff3ct::factory::Decoder_RA::parameters&, const aff3ct::module::Interleaver<Q_32>&, const std::unique_ptr<module::Encoder<B_32>>&);
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RA::build<B_64,Q_64>(const aff3ct::factory::Decoder_RA::parameters&, const aff3ct::module::Interleaver<Q_64>&, const std::unique_ptr<module::Encoder<B_64>>&);
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RA::build<B_8 ,Q_8 >(const aff3ct::module::Interleaver<Q_8 >&, const std::unique_ptr<module::Encoder<B_8 >>&) const;
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RA::build<B_16,Q_16>(const aff3ct::module::Interleaver<Q_16>&, const std::unique_ptr<module::Encoder<B_16>>&) const;
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RA::build<B_32,Q_32>(const aff3ct::module::Interleaver<Q_32>&, const std::unique_ptr<module::Encoder<B_32>>&) const;
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RA::build<B_64,Q_64>(const aff3ct::module::Interleaver<Q_64>&, const std::unique_ptr<module::Encoder<B_64>>&) const;
 #else
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_RA::parameters::build<B,Q>(const aff3ct::module::Interleaver<Q>&, const std::unique_ptr<module::Encoder<B>>& ) const;
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_RA::build<B,Q>(const aff3ct::factory::Decoder_RA::parameters&, const aff3ct::module::Interleaver<Q>&, const std::unique_ptr<module::Encoder<B>>& );
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_RA::build<B,Q>(const aff3ct::module::Interleaver<Q>&, const std::unique_ptr<module::Encoder<B>>& ) const;
 #endif
 // ==================================================================================== explicit template instantiation

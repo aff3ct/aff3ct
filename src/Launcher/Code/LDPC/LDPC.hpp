@@ -13,7 +13,7 @@ template <class L, typename B = int, typename R = float, typename Q = R>
 class LDPC : public L
 {
 protected:
-	factory::Codec_LDPC::parameters *params_cdc;
+	factory::Codec_LDPC *params_cdc;
 
 public:
 	LDPC(const int argc, const char **argv, std::ostream &stream = std::cout);

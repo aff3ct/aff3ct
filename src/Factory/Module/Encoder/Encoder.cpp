@@ -13,29 +13,29 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Encoder_name   = "Encoder";
 const std::string aff3ct::factory::Encoder_prefix = "enc";
 
-Encoder::parameters
-::parameters(const std::string &prefix)
-: Factory::parameters(Encoder_name, Encoder_name, prefix)
+Encoder
+::Encoder(const std::string &prefix)
+: Factory(Encoder_name, Encoder_name, prefix)
 {
 }
 
-Encoder::parameters
-::parameters(const std::string &name, const std::string &prefix)
-: Factory::parameters(name, Encoder_name, prefix)
+Encoder
+::Encoder(const std::string &name, const std::string &prefix)
+: Factory(name, Encoder_name, prefix)
 {
 }
 
-Encoder::parameters* Encoder::parameters
+Encoder* Encoder
 ::clone() const
 {
-	return new Encoder::parameters(*this);
+	return new Encoder(*this);
 }
 
-void Encoder::parameters
+void Encoder
 ::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Encoder::parameters::";
+	const std::string class_name = "factory::Encoder::";
 
 	tools::add_arg(args, p, class_name+"p+info-bits,K",
 		cli::Integer(cli::Positive(), cli::Non_zero()),
@@ -61,7 +61,7 @@ void Encoder::parameters
 		cli::Integer(cli::Positive()));
 }
 
-void Encoder::parameters
+void Encoder
 ::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
@@ -78,8 +78,8 @@ void Encoder::parameters
 	this->R = (float)this->K / (float)this->N_cw;
 }
 
-void Encoder::parameters
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+void Encoder
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
 	auto p = this->get_prefix();
 
@@ -96,7 +96,7 @@ void Encoder::parameters
 }
 
 template <typename B>
-module::Encoder<B>* Encoder::parameters
+module::Encoder<B>* Encoder
 ::build() const
 {
 	if (this->type == "AZCW" ) return new module::Encoder_AZCW <B>(this->K, this->N_cw,             this->n_frames);
@@ -106,26 +106,14 @@ module::Encoder<B>* Encoder::parameters
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B>
-module::Encoder<B>* Encoder
-::build(const parameters &params)
-{
-	return params.template build<B>();
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Encoder<B_8 >* aff3ct::factory::Encoder::parameters::build<B_8 >() const;
-template aff3ct::module::Encoder<B_16>* aff3ct::factory::Encoder::parameters::build<B_16>() const;
-template aff3ct::module::Encoder<B_32>* aff3ct::factory::Encoder::parameters::build<B_32>() const;
-template aff3ct::module::Encoder<B_64>* aff3ct::factory::Encoder::parameters::build<B_64>() const;
-template aff3ct::module::Encoder<B_8 >* aff3ct::factory::Encoder::build<B_8 >(const aff3ct::factory::Encoder::parameters&);
-template aff3ct::module::Encoder<B_16>* aff3ct::factory::Encoder::build<B_16>(const aff3ct::factory::Encoder::parameters&);
-template aff3ct::module::Encoder<B_32>* aff3ct::factory::Encoder::build<B_32>(const aff3ct::factory::Encoder::parameters&);
-template aff3ct::module::Encoder<B_64>* aff3ct::factory::Encoder::build<B_64>(const aff3ct::factory::Encoder::parameters&);
+template aff3ct::module::Encoder<B_8 >* aff3ct::factory::Encoder::build<B_8 >() const;
+template aff3ct::module::Encoder<B_16>* aff3ct::factory::Encoder::build<B_16>() const;
+template aff3ct::module::Encoder<B_32>* aff3ct::factory::Encoder::build<B_32>() const;
+template aff3ct::module::Encoder<B_64>* aff3ct::factory::Encoder::build<B_64>() const;
 #else
-template aff3ct::module::Encoder<B>* aff3ct::factory::Encoder::parameters::build<B>() const;
-template aff3ct::module::Encoder<B>* aff3ct::factory::Encoder::build<B>(const aff3ct::factory::Encoder::parameters&);
+template aff3ct::module::Encoder<B>* aff3ct::factory::Encoder::build<B>() const;
 #endif
 // ==================================================================================== explicit template instantiation

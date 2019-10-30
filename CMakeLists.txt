@@ -142,7 +142,7 @@ endif()
 
 # ------------------------------------------------------------------------------------------------------------- STRINGS
 if(NOT AFF3CT_EXT_STRINGS)
-    file(READ doc/sphinx/strings.rst AFF3CT_STRINGS)
+    file(READ doc/strings.rst AFF3CT_STRINGS)
 
     string(REPLACE "\\" "\\\\" AFF3CT_STRINGS "${AFF3CT_STRINGS}")
     string(REPLACE "\"" "\\\"" AFF3CT_STRINGS "${AFF3CT_STRINGS}")
@@ -367,7 +367,8 @@ macro(aff3ct_target_include_directories2 privacy dir)
 endmacro()
 
 # AFF3CT headers
-aff3ct_target_include_directories(PUBLIC "src" "aff3ct")
+aff3ct_target_include_directories(PRIVATE "src"     "aff3ct")
+aff3ct_target_include_directories(PUBLIC  "include" "aff3ct")
 
 # cli headers
 aff3ct_target_include_directories(PUBLIC "lib/cli/src" "cli")
@@ -576,15 +577,15 @@ if (AFF3CT_COMPILE_SHARED_LIB OR AFF3CT_COMPILE_STATIC_LIB)
             DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/aff3ct-${AFF3CT_VERSION_FULL}/"
             COMPONENT library)
 
-    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/"
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct
             COMPONENT headers
             FILES_MATCHING PATTERN "*.h")
-    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/"
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct
             COMPONENT headers
             FILES_MATCHING PATTERN "*.hpp")
-    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/"
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct
             COMPONENT headers
             FILES_MATCHING PATTERN "*.hxx")
@@ -615,18 +616,18 @@ if (AFF3CT_COMPILE_SHARED_LIB OR AFF3CT_COMPILE_STATIC_LIB)
             FILES_MATCHING PATTERN "*.hxx")
 endif()
 
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/build/latex/AFF3CT.pdf")
-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/build/latex/AFF3CT.pdf"
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc/build/latex/AFF3CT.pdf")
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/doc/build/latex/AFF3CT.pdf"
             DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/aff3ct-${AFF3CT_VERSION_FULL}/doc/pdf
             COMPONENT documentation)
 endif()
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/build/html/")
-    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/build/html/"
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc/build/html/")
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/doc/build/html/"
             DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/aff3ct-${AFF3CT_VERSION_FULL}/doc/html
             COMPONENT documentation)
 endif()
 if(AFF3CT_EXT_STRINGS)
-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/doc/sphinx/strings.rst"
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/doc/strings.rst"
             DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/aff3ct-${AFF3CT_VERSION_FULL}/doc/strings
             COMPONENT documentation)
 endif()

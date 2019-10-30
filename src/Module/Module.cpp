@@ -72,6 +72,20 @@ void Module
 Task& Module
 ::operator[](const int id)
 {
+	if (id < 0 || (size_t)id >= tasks_with_nullptr.size())
+	{
+		std::stringstream message;
+		message << "'id' has to be positive and smaller than 'tasks_with_nullptr.size()' ('id' = " << id
+		        << ", 'tasks_with_nullptr.size()' = " << tasks_with_nullptr.size() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+	if (tasks_with_nullptr[id] == nullptr)
+	{
+		std::stringstream message;
+		message << "'tasks_with_nullptr[id]' can't be nullptr ('id' = " << id << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	return *tasks_with_nullptr[id];
 }
 

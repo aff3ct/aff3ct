@@ -16,23 +16,23 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::CRC_name   = "CRC";
 const std::string aff3ct::factory::CRC_prefix = "crc";
 
-CRC::parameters
-::parameters(const std::string &prefix)
-: Factory::parameters(CRC_name, CRC_name, prefix)
+CRC
+::CRC(const std::string &prefix)
+: Factory(CRC_name, CRC_name, prefix)
 {
 }
 
-CRC::parameters* CRC::parameters
+CRC* CRC
 ::clone() const
 {
-	return new CRC::parameters(*this);
+	return new CRC(*this);
 }
 
-void CRC::parameters
+void CRC
 ::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::CRC::parameters::";
+	const std::string class_name = "factory::CRC::";
 
 	tools::add_arg(args, p, class_name+"p+info-bits,K",
 		cli::Integer(cli::Positive(), cli::Non_zero()),
@@ -51,7 +51,7 @@ void CRC::parameters
 		cli::Integer(cli::Positive()));
 }
 
-void CRC::parameters
+void CRC
 ::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
@@ -66,8 +66,8 @@ void CRC::parameters
 		this->size = module::CRC_polynomial<B>::get_size(this->type);
 }
 
-void CRC::parameters
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+void CRC
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
 	auto p = this->get_prefix();
 
@@ -99,7 +99,7 @@ void CRC::parameters
 }
 
 template <typename B>
-module::CRC<B>* CRC::parameters
+module::CRC<B>* CRC
 ::build() const
 {
 	if (this->type != "NO" && !this->type.empty())
@@ -115,26 +115,14 @@ module::CRC<B>* CRC::parameters
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B>
-module::CRC<B>* CRC
-::build(const parameters &params)
-{
-	return params.template build<B>();
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::CRC<B_8 >* aff3ct::factory::CRC::parameters::build<B_8 >() const;
-template aff3ct::module::CRC<B_16>* aff3ct::factory::CRC::parameters::build<B_16>() const;
-template aff3ct::module::CRC<B_32>* aff3ct::factory::CRC::parameters::build<B_32>() const;
-template aff3ct::module::CRC<B_64>* aff3ct::factory::CRC::parameters::build<B_64>() const;
-template aff3ct::module::CRC<B_8 >* aff3ct::factory::CRC::build<B_8 >(const aff3ct::factory::CRC::parameters&);
-template aff3ct::module::CRC<B_16>* aff3ct::factory::CRC::build<B_16>(const aff3ct::factory::CRC::parameters&);
-template aff3ct::module::CRC<B_32>* aff3ct::factory::CRC::build<B_32>(const aff3ct::factory::CRC::parameters&);
-template aff3ct::module::CRC<B_64>* aff3ct::factory::CRC::build<B_64>(const aff3ct::factory::CRC::parameters&);
+template aff3ct::module::CRC<B_8 >* aff3ct::factory::CRC::build<B_8 >() const;
+template aff3ct::module::CRC<B_16>* aff3ct::factory::CRC::build<B_16>() const;
+template aff3ct::module::CRC<B_32>* aff3ct::factory::CRC::build<B_32>() const;
+template aff3ct::module::CRC<B_64>* aff3ct::factory::CRC::build<B_64>() const;
 #else
-template aff3ct::module::CRC<B>* aff3ct::factory::CRC::parameters::build<B>() const;
-template aff3ct::module::CRC<B>* aff3ct::factory::CRC::build<B>(const aff3ct::factory::CRC::parameters&);
+template aff3ct::module::CRC<B>* aff3ct::factory::CRC::build<B>() const;
 #endif
 // ==================================================================================== explicit template instantiation

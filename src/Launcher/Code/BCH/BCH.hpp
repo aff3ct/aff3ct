@@ -13,7 +13,7 @@ template <class L, typename B = int, typename R = float, typename Q = R>
 class BCH : public L
 {
 protected:
-	factory::Codec_BCH::parameters *params_cdc;
+	factory::Codec_BCH *params_cdc;
 
 public:
 	BCH(const int argc, const char **argv, std::ostream &stream = std::cout);

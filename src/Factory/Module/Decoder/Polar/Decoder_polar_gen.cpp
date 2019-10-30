@@ -571,7 +571,7 @@ using namespace aff3ct;
 using namespace aff3ct::factory;
 
 template <typename B, typename Q, class API_polar>
-module::Decoder_SIHO<B,Q>* Decoder_polar::parameters
+module::Decoder_SIHO<B,Q>* Decoder_polar
 ::_build_gen(module::CRC<B> *crc, const std::unique_ptr<module::Encoder<B>>& encoder) const
 {
 	if (this->type == "SC")
@@ -786,7 +786,7 @@ module::Decoder_SIHO<B,Q>* Decoder_polar::parameters
 }
 
 template <typename B, typename Q>
-module::Decoder_SIHO<B,Q>* Decoder_polar::parameters
+module::Decoder_SIHO<B,Q>* Decoder_polar
 ::build_gen(module::CRC<B> *crc, const std::unique_ptr<module::Encoder<B>>& encoder) const
 {
 	if (this->systematic)
@@ -862,13 +862,6 @@ module::Decoder_SIHO<B,Q>* Decoder_polar::parameters
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
-}
-
-template <typename B, typename Q>
-module::Decoder_SIHO<B,Q>* Decoder_polar
-::build_gen(const parameters& params, module::CRC<B> *crc, const std::unique_ptr<module::Encoder<B>>& encoder)
-{
-	return params.template build_gen<B,Q>(crc, encoder);
 }
 
 const std::vector<bool>& Decoder_polar
@@ -1093,11 +1086,11 @@ const std::vector<bool>& Decoder_polar
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_polar::build_gen<B_8 ,Q_8 >(const aff3ct::factory::Decoder_polar::parameters&, module::CRC<B_8 >*, const std::unique_ptr<module::Encoder<B_8 >>&);
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_polar::build_gen<B_16,Q_16>(const aff3ct::factory::Decoder_polar::parameters&, module::CRC<B_16>*, const std::unique_ptr<module::Encoder<B_16>>&);
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_polar::build_gen<B_32,Q_32>(const aff3ct::factory::Decoder_polar::parameters&, module::CRC<B_32>*, const std::unique_ptr<module::Encoder<B_32>>&);
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_polar::build_gen<B_64,Q_64>(const aff3ct::factory::Decoder_polar::parameters&, module::CRC<B_64>*, const std::unique_ptr<module::Encoder<B_64>>&);
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_polar::build_gen<B_8 ,Q_8 >(module::CRC<B_8 >*, const std::unique_ptr<module::Encoder<B_8 >>&) const;
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_polar::build_gen<B_16,Q_16>(module::CRC<B_16>*, const std::unique_ptr<module::Encoder<B_16>>&) const;
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_polar::build_gen<B_32,Q_32>(module::CRC<B_32>*, const std::unique_ptr<module::Encoder<B_32>>&) const;
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_polar::build_gen<B_64,Q_64>(module::CRC<B_64>*, const std::unique_ptr<module::Encoder<B_64>>&) const;
 #else
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_polar::build_gen<B,Q>(const aff3ct::factory::Decoder_polar::parameters&, module::CRC<B>*, const std::unique_ptr<module::Encoder<B>>& );
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_polar::build_gen<B,Q>(module::CRC<B>*, const std::unique_ptr<module::Encoder<B>>& ) const;
 #endif
 // ==================================================================================== explicit template instantiation

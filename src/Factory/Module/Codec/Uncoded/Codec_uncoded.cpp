@@ -8,25 +8,25 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Codec_uncoded_name   = "Codec Uncoded";
 const std::string aff3ct::factory::Codec_uncoded_prefix = "cdc";
 
-Codec_uncoded::parameters
-::parameters(const std::string &prefix)
-: Codec          ::parameters(Codec_uncoded_name, prefix),
-  Codec_SISO_SIHO::parameters(Codec_uncoded_name, prefix)
+Codec_uncoded
+::Codec_uncoded(const std::string &prefix)
+: Codec          (Codec_uncoded_name, prefix),
+  Codec_SISO_SIHO(Codec_uncoded_name, prefix)
 {
-	Codec::parameters::set_enc(new Encoder_NO::parameters("enc"));
-	Codec::parameters::set_dec(new Decoder_NO::parameters("dec"));
+	Codec::set_enc(new Encoder_NO("enc"));
+	Codec::set_dec(new Decoder_NO("dec"));
 }
 
-Codec_uncoded::parameters* Codec_uncoded::parameters
+Codec_uncoded* Codec_uncoded
 ::clone() const
 {
-	return new Codec_uncoded::parameters(*this);
+	return new Codec_uncoded(*this);
 }
 
-void Codec_uncoded::parameters
+void Codec_uncoded
 ::get_description(cli::Argument_map_info &args) const
 {
-	Codec_SISO_SIHO::parameters::get_description(args);
+	Codec_SISO_SIHO::get_description(args);
 
 	enc->get_description(args);
 	dec->get_description(args);
@@ -40,10 +40,10 @@ void Codec_uncoded::parameters
 	args.erase({pdec+"-fra",       "F"});
 }
 
-void Codec_uncoded::parameters
+void Codec_uncoded
 ::store(const cli::Argument_map_value &vals)
 {
-	Codec_SISO_SIHO::parameters::store(vals);
+	Codec_SISO_SIHO::store(vals);
 
 	enc->type = "NO";
 
@@ -64,43 +64,31 @@ void Codec_uncoded::parameters
 	N    = enc->N_cw;
 }
 
-void Codec_uncoded::parameters
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+void Codec_uncoded
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
-	Codec_SISO_SIHO::parameters::get_headers(headers, full);
+	Codec_SISO_SIHO::get_headers(headers, full);
 
 	enc->get_headers(headers, full);
 	dec->get_headers(headers, full);
 }
 
 template <typename B, typename Q>
-module::Codec_uncoded<B,Q>* Codec_uncoded::parameters
+module::Codec_uncoded<B,Q>* Codec_uncoded
 ::build(module::CRC<B>* crc) const
 {
-	return new module::Codec_uncoded<B,Q>(dynamic_cast<const Encoder_NO::parameters&>(*enc),
-	                                      dynamic_cast<const Decoder_NO::parameters&>(*dec));
-}
-
-template <typename B, typename Q>
-module::Codec_uncoded<B,Q>* Codec_uncoded
-::build(const parameters &params, module::CRC<B>* crc)
-{
-	return params.template build<B,Q>(crc);
+	return new module::Codec_uncoded<B,Q>(dynamic_cast<const Encoder_NO&>(*enc),
+	                                      dynamic_cast<const Decoder_NO&>(*dec));
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Codec_uncoded<B_8 ,Q_8 >* aff3ct::factory::Codec_uncoded::parameters::build<B_8 ,Q_8 >(aff3ct::module::CRC<B_8 >*) const;
-template aff3ct::module::Codec_uncoded<B_16,Q_16>* aff3ct::factory::Codec_uncoded::parameters::build<B_16,Q_16>(aff3ct::module::CRC<B_16>*) const;
-template aff3ct::module::Codec_uncoded<B_32,Q_32>* aff3ct::factory::Codec_uncoded::parameters::build<B_32,Q_32>(aff3ct::module::CRC<B_32>*) const;
-template aff3ct::module::Codec_uncoded<B_64,Q_64>* aff3ct::factory::Codec_uncoded::parameters::build<B_64,Q_64>(aff3ct::module::CRC<B_64>*) const;
-template aff3ct::module::Codec_uncoded<B_8 ,Q_8 >* aff3ct::factory::Codec_uncoded::build<B_8 ,Q_8 >(const aff3ct::factory::Codec_uncoded::parameters&, aff3ct::module::CRC<B_8 >*);
-template aff3ct::module::Codec_uncoded<B_16,Q_16>* aff3ct::factory::Codec_uncoded::build<B_16,Q_16>(const aff3ct::factory::Codec_uncoded::parameters&, aff3ct::module::CRC<B_16>*);
-template aff3ct::module::Codec_uncoded<B_32,Q_32>* aff3ct::factory::Codec_uncoded::build<B_32,Q_32>(const aff3ct::factory::Codec_uncoded::parameters&, aff3ct::module::CRC<B_32>*);
-template aff3ct::module::Codec_uncoded<B_64,Q_64>* aff3ct::factory::Codec_uncoded::build<B_64,Q_64>(const aff3ct::factory::Codec_uncoded::parameters&, aff3ct::module::CRC<B_64>*);
+template aff3ct::module::Codec_uncoded<B_8 ,Q_8 >* aff3ct::factory::Codec_uncoded::build<B_8 ,Q_8 >(aff3ct::module::CRC<B_8 >*) const;
+template aff3ct::module::Codec_uncoded<B_16,Q_16>* aff3ct::factory::Codec_uncoded::build<B_16,Q_16>(aff3ct::module::CRC<B_16>*) const;
+template aff3ct::module::Codec_uncoded<B_32,Q_32>* aff3ct::factory::Codec_uncoded::build<B_32,Q_32>(aff3ct::module::CRC<B_32>*) const;
+template aff3ct::module::Codec_uncoded<B_64,Q_64>* aff3ct::factory::Codec_uncoded::build<B_64,Q_64>(aff3ct::module::CRC<B_64>*) const;
 #else
-template aff3ct::module::Codec_uncoded<B,Q>* aff3ct::factory::Codec_uncoded::parameters::build<B,Q>(aff3ct::module::CRC<B>*) const;
-template aff3ct::module::Codec_uncoded<B,Q>* aff3ct::factory::Codec_uncoded::build<B,Q>(const aff3ct::factory::Codec_uncoded::parameters&, aff3ct::module::CRC<B>*);
+template aff3ct::module::Codec_uncoded<B,Q>* aff3ct::factory::Codec_uncoded::build<B,Q>(aff3ct::module::CRC<B>*) const;
 #endif
 // ==================================================================================== explicit template instantiation

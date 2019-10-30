@@ -13,7 +13,7 @@ template <class L, typename B = int, typename R = float, typename Q = R>
 class Turbo_DB : public L
 {
 protected:
-	factory::Codec_turbo_DB::parameters *params_cdc;
+	factory::Codec_turbo_DB *params_cdc;
 
 public:
 	Turbo_DB(const int argc, const char **argv, std::ostream &stream = std::cout);

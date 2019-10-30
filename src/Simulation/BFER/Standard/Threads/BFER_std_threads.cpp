@@ -13,7 +13,7 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 BFER_std_threads<B,R,Q>
-::BFER_std_threads(const factory::BFER_std::parameters &params_BFER_std)
+::BFER_std_threads(const factory::BFER_std &params_BFER_std)
 : BFER_std<B,R,Q>(params_BFER_std)
 {
 	if (this->params_BFER_std.err_track_revert)
