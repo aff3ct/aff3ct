@@ -110,6 +110,8 @@ public:
 	const std::vector<std::chrono::nanoseconds>& get_timers_min    () const;
 	const std::vector<std::chrono::nanoseconds>& get_timers_max    () const;
 
+	inline int exec_fast();
+
 	int exec();
 
 	inline Socket& operator[](const size_t id);

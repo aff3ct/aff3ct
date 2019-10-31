@@ -68,6 +68,14 @@ uint32_t Task
 	return this->n_calls;
 }
 
+int Task
+::exec_fast()
+{
+	auto exec_status = this->codelet(*this);
+	this->n_calls++;
+	return exec_status;
+}
+
 Socket& Task
 ::operator[](const size_t id)
 {

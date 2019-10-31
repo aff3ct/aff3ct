@@ -219,9 +219,7 @@ int Task
 {
 	if (fast)
 	{
-		auto exec_status = this->codelet(*this);
-		this->n_calls++;
-		return exec_status;
+		return this->exec_fast();
 	}
 
 	if (can_exec())
