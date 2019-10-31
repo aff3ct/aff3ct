@@ -522,36 +522,38 @@ void Task
 Task* Task
 ::clone() const
 {
-    Task* t = new Task(*this);
-    t->sockets.clear();
-    t->last_input_socket = nullptr;
+	Task* t = new Task(*this);
+	t->sockets.clear();
+	t->last_input_socket = nullptr;
 
-    size_t out_buffers_counter = 0;
-	int sckt_nbr = this->sockets.size();
-    for (int i=0; i<sckt_nbr ; i++)
-    {
-		auto s = this->sockets[i];
-        void *dataptr = nullptr;
-        if ((this->get_socket_type(*s) == aff3ct::module::socket_t::SOUT || this->get_socket_type(*s) == aff3ct::module::socket_t::SIN_SOUT) && this->is_autoalloc())
-        {
-            dataptr = (void*)t->out_buffers[out_buffers_counter].data();
-            out_buffers_counter++;
-        }
+	size_t out_buffers_counter = 0;
+	for (auto s : this->sockets)
+	{
+		void *dataptr = nullptr;
+		if (this->get_socket_type(*s) == socket_t::SOUT && this->is_autoalloc())
+		{
+			dataptr = (void*)t->out_buffers[out_buffers_counter].data();
+			out_buffers_counter++;
+		}
+		else if (this->get_socket_type(*s) == socket_t::SIN)
+		{
+			dataptr = s->get_dataptr();
+		}
 
-        Socket * s_new = new Socket(*t,
-                                    s->get_name(),
-                                    s->get_datatype(),
-                                    s->get_databytes(),
-                                    s->is_fast(),
-                                    dataptr);
+		auto s_new = std::shared_ptr<Socket>(new Socket(*t,
+		                                                s->get_name(),
+		                                                s->get_datatype(),
+		                                                s->get_databytes(),
+		                                                s->is_fast(),
+		                                                dataptr));
+		t->sockets.push_back(s_new);
 
-        if (t->get_socket_type(*s_new) == aff3ct::module::socket_t::SIN)
-            t->last_input_socket = s_new;
-    }
+		if (t->get_socket_type(*s_new) == socket_t::SIN || t->get_socket_type(*s_new) == socket_t::SIN_SOUT)
+			t->last_input_socket = s_new.get();
+	}
 
-    return t;
+	return t;
 }
-
 
 // ==================================================================================== explicit template instantiation
 template size_t Task::create_socket_in<int8_t >(const std::string&, const size_t);
