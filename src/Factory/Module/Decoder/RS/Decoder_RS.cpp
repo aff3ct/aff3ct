@@ -14,27 +14,27 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Decoder_RS_name   = "Decoder RS";
 const std::string aff3ct::factory::Decoder_RS_prefix = "dec";
 
-Decoder_RS::parameters
-::parameters(const std::string &prefix)
-: Decoder::parameters(Decoder_RS_name, prefix)
+Decoder_RS
+::Decoder_RS(const std::string &prefix)
+: Decoder(Decoder_RS_name, prefix)
 {
 	this->type   = "ALGEBRAIC";
 	this->implem = "STD";
 }
 
-Decoder_RS::parameters* Decoder_RS::parameters
+Decoder_RS* Decoder_RS
 ::clone() const
 {
-	return new Decoder_RS::parameters(*this);
+	return new Decoder_RS(*this);
 }
 
-void Decoder_RS::parameters
+void Decoder_RS
 ::get_description(cli::Argument_map_info &args) const
 {
-	Decoder::parameters::get_description(args);
+	Decoder::get_description(args);
 
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Decoder_RS::parameters::";
+	const std::string class_name = "factory::Decoder_RS::";
 
 	tools::add_arg(args, p, class_name+"p+corr-pow,T",
 		cli::Integer(cli::Positive(), cli::Non_zero()));
@@ -45,10 +45,10 @@ void Decoder_RS::parameters
 	cli::add_options(args.at({p+"-implem"   }), 0, "GENIUS");
 }
 
-void Decoder_RS::parameters
+void Decoder_RS
 ::store(const cli::Argument_map_value &vals)
 {
-	Decoder::parameters::store(vals);
+	Decoder::store(vals);
 
 	auto p = this->get_prefix();
 
@@ -73,10 +73,10 @@ void Decoder_RS::parameters
 		this->t = (this->N_cw - this->K) / 2;
 }
 
-void Decoder_RS::parameters
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+void Decoder_RS
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
-	Decoder::parameters::get_headers(headers, full);
+	Decoder::get_headers(headers, full);
 
 	if (this->type != "ML" && this->type != "CHASE")
 	{
@@ -88,12 +88,12 @@ void Decoder_RS::parameters
 }
 
 template <typename B, typename Q>
-module::Decoder_SIHO<B,Q>* Decoder_RS::parameters
+module::Decoder_SIHO<B,Q>* Decoder_RS
 ::build(const tools::RS_polynomial_generator &GF, const std::unique_ptr<module::Encoder<B>>& encoder) const
 {
 	try
 	{
-		return Decoder::parameters::build<B,Q>(encoder);
+		return Decoder::build<B,Q>(encoder);
 	}
 	catch (tools::cannot_allocate const&)
 	{
@@ -102,14 +102,7 @@ module::Decoder_SIHO<B,Q>* Decoder_RS::parameters
 }
 
 template <typename B, typename Q>
-module::Decoder_SIHO<B,Q>* Decoder_RS
-::build(const parameters &params, const tools::RS_polynomial_generator &GF, const std::unique_ptr<module::Encoder<B>>& encoder)
-{
-	return params.template build<B,Q>(GF, encoder);
-}
-
-template <typename B, typename Q>
-module::Decoder_SIHO_HIHO<B,Q>* Decoder_RS::parameters
+module::Decoder_SIHO_HIHO<B,Q>* Decoder_RS
 ::build_hiho(const tools::RS_polynomial_generator &GF, const std::unique_ptr<module::Encoder<B>>& encoder) const
 {
 	if (this->type == "ALGEBRAIC")
@@ -126,27 +119,15 @@ module::Decoder_SIHO_HIHO<B,Q>* Decoder_RS::parameters
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename Q>
-module::Decoder_SIHO_HIHO<B,Q>* Decoder_RS
-::build_hiho(const parameters &params, const tools::RS_polynomial_generator &GF, const std::unique_ptr<module::Encoder<B>>& encoder)
-{
-	return params.template build_hiho<B,Q>(GF, encoder);
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RS::parameters::build<B_8 ,Q_8 >(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_8 >>&) const;
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RS::parameters::build<B_16,Q_16>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_16>>&) const;
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RS::parameters::build<B_32,Q_32>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_32>>&) const;
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RS::parameters::build<B_64,Q_64>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_64>>&) const;
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RS::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_RS::parameters&, const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_8 >>&);
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RS::build<B_16,Q_16>(const aff3ct::factory::Decoder_RS::parameters&, const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_16>>&);
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RS::build<B_32,Q_32>(const aff3ct::factory::Decoder_RS::parameters&, const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_32>>&);
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RS::build<B_64,Q_64>(const aff3ct::factory::Decoder_RS::parameters&, const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_64>>&);
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RS::build<B_8 ,Q_8 >(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_8 >>&) const;
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RS::build<B_16,Q_16>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_16>>&) const;
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RS::build<B_32,Q_32>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_32>>&) const;
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RS::build<B_64,Q_64>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_64>>&) const;
 #else
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_RS::parameters::build<B,Q>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B>>& ) const;
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_RS::build<B,Q>(const aff3ct::factory::Decoder_RS::parameters&, const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B>>& );
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_RS::build<B,Q>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B>>& ) const;
 #endif
 // ==================================================================================== explicit template instantiation
 
@@ -154,17 +135,12 @@ template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_RS::build<B
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Decoder_SIHO_HIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RS::parameters::build_hiho<B_8 ,Q_8 >(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_8 >>&) const;
-template aff3ct::module::Decoder_SIHO_HIHO<B_16,Q_16>* aff3ct::factory::Decoder_RS::parameters::build_hiho<B_16,Q_16>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_16>>&) const;
-template aff3ct::module::Decoder_SIHO_HIHO<B_32,Q_32>* aff3ct::factory::Decoder_RS::parameters::build_hiho<B_32,Q_32>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_32>>&) const;
-template aff3ct::module::Decoder_SIHO_HIHO<B_64,Q_64>* aff3ct::factory::Decoder_RS::parameters::build_hiho<B_64,Q_64>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_64>>&) const;
-template aff3ct::module::Decoder_SIHO_HIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RS::build_hiho<B_8 ,Q_8 >(const aff3ct::factory::Decoder_RS::parameters&, const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_8 >>&);
-template aff3ct::module::Decoder_SIHO_HIHO<B_16,Q_16>* aff3ct::factory::Decoder_RS::build_hiho<B_16,Q_16>(const aff3ct::factory::Decoder_RS::parameters&, const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_16>>&);
-template aff3ct::module::Decoder_SIHO_HIHO<B_32,Q_32>* aff3ct::factory::Decoder_RS::build_hiho<B_32,Q_32>(const aff3ct::factory::Decoder_RS::parameters&, const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_32>>&);
-template aff3ct::module::Decoder_SIHO_HIHO<B_64,Q_64>* aff3ct::factory::Decoder_RS::build_hiho<B_64,Q_64>(const aff3ct::factory::Decoder_RS::parameters&, const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_64>>&);
+template aff3ct::module::Decoder_SIHO_HIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RS::build_hiho<B_8 ,Q_8 >(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_8 >>&) const;
+template aff3ct::module::Decoder_SIHO_HIHO<B_16,Q_16>* aff3ct::factory::Decoder_RS::build_hiho<B_16,Q_16>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_16>>&) const;
+template aff3ct::module::Decoder_SIHO_HIHO<B_32,Q_32>* aff3ct::factory::Decoder_RS::build_hiho<B_32,Q_32>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_32>>&) const;
+template aff3ct::module::Decoder_SIHO_HIHO<B_64,Q_64>* aff3ct::factory::Decoder_RS::build_hiho<B_64,Q_64>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_64>>&) const;
 #else
-template aff3ct::module::Decoder_SIHO_HIHO<B,Q>* aff3ct::factory::Decoder_RS::parameters::build_hiho<B>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B>>& ) const;
-template aff3ct::module::Decoder_SIHO_HIHO<B,Q>* aff3ct::factory::Decoder_RS::build_hiho<B>(const aff3ct::factory::Decoder_RS::parameters&, const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B>>& );
+template aff3ct::module::Decoder_SIHO_HIHO<B,Q>* aff3ct::factory::Decoder_RS::build_hiho<B>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B>>& ) const;
 #endif
 // ==================================================================================== explicit template instantiation
 

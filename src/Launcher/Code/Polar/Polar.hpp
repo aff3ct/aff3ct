@@ -13,7 +13,7 @@ template <class L, typename B = int, typename R = float, typename Q = R>
 class Polar : public L
 {
 protected:
-	factory::Codec_polar::parameters *params_cdc;
+	factory::Codec_polar *params_cdc;
 
 public:
 	Polar(const int argc, const char **argv, std::ostream &stream = std::cout);

@@ -37,7 +37,7 @@ sed -i "s:{{ROOT_DIR}}:$PWD:g" $REPORTS_DIR/scan-build-*/*.plist
 
 # list of standard C++ includes in the system
 STD_CXX_INC=$(echo | gcc -xc++ -E -Wp,-v - 2>&1 | grep "^ " | sed -e :a -e '$!N; s/\n/,/; ta')
-PROJECT_CXX_INC="./src/, ./lib/date/include/date, ./lib/MIPP/src/, ./lib/MSVC/include/, ./lib/rang/include/, ./lib/cli/src/"
+PROJECT_CXX_INC="./src/, ./include/, ./lib/date/include/date, ./lib/MIPP/src/, ./lib/MSVC/include/, ./lib/rang/include/, ./lib/cli/src/"
 GCC_REGEX='(?<file>.*):(?<line>[0-9]+):[0-9]+:\\x20warning:\\x20(?<message>.*)\\x20\\[(?<id>.*)\\]'
 
 # Create the sonar config file on the fly

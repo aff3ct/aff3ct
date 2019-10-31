@@ -9,7 +9,7 @@ fi
 
 cmake --version
 mkdir build
-mv doc/sphinx/build doc/sphinx/built
+mv doc/build doc/built
 cd build
 
 if [ -z "DISTRIBS" ]

@@ -28,7 +28,7 @@ Task
   debug_limit(-1),
   debug_precision(2),
   debug_frame_max(-1),
-  codelet([]() -> int { throw tools::unimplemented_error(__FILE__, __LINE__, __func__); return 0; }),
+  codelet([](Task &t) -> int { throw tools::unimplemented_error(__FILE__, __LINE__, __func__); return 0; }),
   n_calls(0),
   duration_total(std::chrono::nanoseconds(0)),
   duration_min(std::chrono::nanoseconds(0)),
@@ -219,7 +219,7 @@ int Task
 {
 	if (fast)
 	{
-		auto exec_status = this->codelet();
+		auto exec_status = this->codelet(*this);
 		this->n_calls++;
 		return exec_status;
 	}
@@ -282,7 +282,7 @@ int Task
 		if (stats)
 		{
 			auto t_start = std::chrono::steady_clock::now();
-			exec_status = this->codelet();
+			exec_status = this->codelet(*this);
 			auto duration = std::chrono::steady_clock::now() - t_start;
 
 			this->duration_total += duration;
@@ -298,7 +298,7 @@ int Task
 			}
 		}
 		else
-			exec_status = this->codelet();
+			exec_status = this->codelet(*this);
 		this->n_calls++;
 
 		if (debug)
@@ -372,7 +372,7 @@ Socket& Task
 }
 
 template <typename T>
-Socket& Task
+size_t Task
 ::create_socket_in(const std::string &name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
@@ -380,11 +380,11 @@ Socket& Task
 	socket_type.push_back(socket_t::SIN);
 	last_input_socket = &s;
 
-	return s;
+	return socket_type.size() -1;
 }
 
 template <typename T>
-Socket& Task
+size_t Task
 ::create_socket_in_out(const std::string &name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
@@ -392,11 +392,11 @@ Socket& Task
 	socket_type.push_back(socket_t::SIN_SOUT);
 	last_input_socket = &s;
 
-	return s;
+	return socket_type.size() -1;
 }
 
 template <typename T>
-Socket& Task
+size_t Task
 ::create_socket_out(const std::string &name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
@@ -410,11 +410,11 @@ Socket& Task
 		s.dataptr = out_buffers.back().data();
 	}
 
-	return s;
+	return socket_type.size() -1;
 }
 
 void Task
-::create_codelet(std::function<int(void)> &codelet)
+::create_codelet(std::function<int(Task& t)> &codelet)
 {
 	this->codelet = codelet;
 }
@@ -520,24 +520,24 @@ void Task
 }
 
 // ==================================================================================== explicit template instantiation
-template Socket& Task::create_socket_in<int8_t >(const std::string&, const size_t);
-template Socket& Task::create_socket_in<int16_t>(const std::string&, const size_t);
-template Socket& Task::create_socket_in<int32_t>(const std::string&, const size_t);
-template Socket& Task::create_socket_in<int64_t>(const std::string&, const size_t);
-template Socket& Task::create_socket_in<float  >(const std::string&, const size_t);
-template Socket& Task::create_socket_in<double >(const std::string&, const size_t);
+template size_t Task::create_socket_in<int8_t >(const std::string&, const size_t);
+template size_t Task::create_socket_in<int16_t>(const std::string&, const size_t);
+template size_t Task::create_socket_in<int32_t>(const std::string&, const size_t);
+template size_t Task::create_socket_in<int64_t>(const std::string&, const size_t);
+template size_t Task::create_socket_in<float  >(const std::string&, const size_t);
+template size_t Task::create_socket_in<double >(const std::string&, const size_t);
 
-template Socket& Task::create_socket_in_out<int8_t >(const std::string&, const size_t);
-template Socket& Task::create_socket_in_out<int16_t>(const std::string&, const size_t);
-template Socket& Task::create_socket_in_out<int32_t>(const std::string&, const size_t);
-template Socket& Task::create_socket_in_out<int64_t>(const std::string&, const size_t);
-template Socket& Task::create_socket_in_out<float  >(const std::string&, const size_t);
-template Socket& Task::create_socket_in_out<double >(const std::string&, const size_t);
+template size_t Task::create_socket_in_out<int8_t >(const std::string&, const size_t);
+template size_t Task::create_socket_in_out<int16_t>(const std::string&, const size_t);
+template size_t Task::create_socket_in_out<int32_t>(const std::string&, const size_t);
+template size_t Task::create_socket_in_out<int64_t>(const std::string&, const size_t);
+template size_t Task::create_socket_in_out<float  >(const std::string&, const size_t);
+template size_t Task::create_socket_in_out<double >(const std::string&, const size_t);
 
-template Socket& Task::create_socket_out<int8_t >(const std::string&, const size_t);
-template Socket& Task::create_socket_out<int16_t>(const std::string&, const size_t);
-template Socket& Task::create_socket_out<int32_t>(const std::string&, const size_t);
-template Socket& Task::create_socket_out<int64_t>(const std::string&, const size_t);
-template Socket& Task::create_socket_out<float  >(const std::string&, const size_t);
-template Socket& Task::create_socket_out<double >(const std::string&, const size_t);
+template size_t Task::create_socket_out<int8_t >(const std::string&, const size_t);
+template size_t Task::create_socket_out<int16_t>(const std::string&, const size_t);
+template size_t Task::create_socket_out<int32_t>(const std::string&, const size_t);
+template size_t Task::create_socket_out<int64_t>(const std::string&, const size_t);
+template size_t Task::create_socket_out<float  >(const std::string&, const size_t);
+template size_t Task::create_socket_out<double >(const std::string&, const size_t);
 // ==================================================================================== explicit template instantiation

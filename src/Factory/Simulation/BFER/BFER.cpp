@@ -12,16 +12,16 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::BFER_name   = "Simulation BFER";
 const std::string aff3ct::factory::BFER_prefix = "sim";
 
-BFER::parameters
-::parameters(const std::string &name, const std::string &prefix)
-: Simulation::parameters(name, prefix)
+BFER
+::BFER(const std::string &name, const std::string &prefix)
+: Simulation(name, prefix)
 {
 }
 
-BFER::parameters* BFER::parameters
+BFER* BFER
 ::clone() const
 {
-	return new BFER::parameters(*this);
+	return new BFER(*this);
 
 	// if (src    != nullptr) { clone->src    = src   ->clone(); }
 	// if (crc    != nullptr) { clone->crc    = crc   ->clone(); }
@@ -36,10 +36,10 @@ BFER::parameters* BFER::parameters
 	// return clone;
 }
 
-std::vector<std::string> BFER::parameters
+std::vector<std::string> BFER
 ::get_names() const
 {
-	auto n = Simulation::parameters::get_names();
+	auto n = Simulation::get_names();
 	if (src    != nullptr) { auto nn = src   ->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (crc    != nullptr) { auto nn = crc   ->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (cdc    != nullptr) { auto nn = cdc   ->get_names(); for (auto &x : nn) n.push_back(x); }
@@ -52,10 +52,10 @@ std::vector<std::string> BFER::parameters
 	return n;
 }
 
-std::vector<std::string> BFER::parameters
+std::vector<std::string> BFER
 ::get_short_names() const
 {
-	auto sn = Factory::parameters::get_short_names();
+	auto sn = Factory::get_short_names();
 	if (src    != nullptr) { auto nn = src   ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (crc    != nullptr) { auto nn = crc   ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (cdc    != nullptr) { auto nn = cdc   ->get_short_names(); for (auto &x : nn) sn.push_back(x); }
@@ -68,10 +68,10 @@ std::vector<std::string> BFER::parameters
 	return sn;
 }
 
-std::vector<std::string> BFER::parameters
+std::vector<std::string> BFER
 ::get_prefixes() const
 {
-	auto p = Factory::parameters::get_prefixes();
+	auto p = Factory::get_prefixes();
 	if (src    != nullptr) { auto nn = src   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (crc    != nullptr) { auto nn = crc   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (cdc    != nullptr) { auto nn = cdc   ->get_prefixes(); for (auto &x : nn) p.push_back(x); }
@@ -84,13 +84,13 @@ std::vector<std::string> BFER::parameters
 	return p;
 }
 
-void BFER::parameters
+void BFER
 ::get_description(cli::Argument_map_info &args) const
 {
-	Simulation::parameters::get_description(args);
+	Simulation::get_description(args);
 
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::BFER::parameters::";
+	const std::string class_name = "factory::BFER::";
 
 	tools::add_arg(args, p, class_name+"p+coset,c",
 		cli::None());
@@ -136,7 +136,7 @@ void BFER::parameters
 #endif
 }
 
-void BFER::parameters
+void BFER
 ::store(const cli::Argument_map_value &vals)
 {
 	using namespace std::chrono;
@@ -145,7 +145,7 @@ void BFER::parameters
 	this->n_threads = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
 #endif
 
-	Simulation::parameters::store(vals);
+	Simulation::store(vals);
 
 	auto p = this->get_prefix();
 
@@ -182,10 +182,10 @@ void BFER::parameters
 #endif
 }
 
-void BFER::parameters
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+void BFER
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
-	Simulation::parameters::get_headers(headers, full);
+	Simulation::get_headers(headers, full);
 
 	auto p = this->get_prefix();
 
@@ -255,61 +255,61 @@ void BFER::parameters
 }
 
 
-void BFER::parameters
-::set_src(Source::parameters *src)
+void BFER
+::set_src(Source *src)
 {
 	this->src.reset(src);
 }
 
-void BFER::parameters
-::set_crc(CRC::parameters *crc)
+void BFER
+::set_crc(CRC *crc)
 {
 	this->crc.reset(crc);
 }
 
-void BFER::parameters
-::set_cdc(Codec::parameters *cdc)
+void BFER
+::set_cdc(Codec *cdc)
 {
 	this->cdc.reset(cdc);
 }
 
-void BFER::parameters
-::set_mdm(Modem::parameters *mdm)
+void BFER
+::set_mdm(Modem *mdm)
 {
 	this->mdm.reset(mdm);
 }
 
-void BFER::parameters
-::set_chn(Channel::parameters *chn)
+void BFER
+::set_chn(Channel *chn)
 {
 	this->chn.reset(chn);
 }
 
-void BFER::parameters
-::set_qnt(Quantizer::parameters *qnt)
+void BFER
+::set_qnt(Quantizer *qnt)
 {
 	this->qnt.reset(qnt);
 }
 
-void BFER::parameters
-::set_mnt_mi(Monitor_MI::parameters *mnt)
+void BFER
+::set_mnt_mi(Monitor_MI *mnt)
 {
 	this->mnt_mi.reset(mnt);
 }
 
-void BFER::parameters
-::set_mnt_er(Monitor_BFER::parameters *mnt)
+void BFER
+::set_mnt_er(Monitor_BFER *mnt)
 {
 	this->mnt_er.reset(mnt);
 }
 
-void BFER::parameters
-::set_ter(Terminal::parameters *ter)
+void BFER
+::set_ter(Terminal *ter)
 {
 	this->ter.reset(ter);
 }
 
-const Codec::parameters* BFER::parameters
+const Codec* BFER
 ::get_cdc() const
 {
 	return this->cdc.get();

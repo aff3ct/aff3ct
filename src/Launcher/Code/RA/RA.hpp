@@ -13,7 +13,7 @@ template <class L, typename B = int, typename R = float, typename Q = R>
 class RA : public L
 {
 protected:
-	factory::Codec_RA::parameters *params_cdc;
+	factory::Codec_RA *params_cdc;
 
 public:
 	RA(const int argc, const char **argv, std::ostream &stream = std::cout);

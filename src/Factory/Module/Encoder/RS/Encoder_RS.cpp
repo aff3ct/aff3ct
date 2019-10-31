@@ -9,43 +9,43 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Encoder_RS_name   = "Encoder RS";
 const std::string aff3ct::factory::Encoder_RS_prefix = "enc";
 
-Encoder_RS::parameters
-::parameters(const std::string &prefix)
-: Encoder::parameters(Encoder_RS_name, prefix)
+Encoder_RS
+::Encoder_RS(const std::string &prefix)
+: Encoder(Encoder_RS_name, prefix)
 {
 	this->type = "RS";
 }
 
-Encoder_RS::parameters* Encoder_RS::parameters
+Encoder_RS* Encoder_RS
 ::clone() const
 {
-	return new Encoder_RS::parameters(*this);
+	return new Encoder_RS(*this);
 }
 
-void Encoder_RS::parameters
+void Encoder_RS
 ::get_description(cli::Argument_map_info &args) const
 {
-	Encoder::parameters::get_description(args);
+	Encoder::get_description(args);
 
 	auto p = this->get_prefix();
 
 	cli::add_options(args.at({p+"-type"}), 0, "RS");
 }
 
-void Encoder_RS::parameters
+void Encoder_RS
 ::store(const cli::Argument_map_value &vals)
 {
-	Encoder::parameters::store(vals);
+	Encoder::store(vals);
 }
 
-void Encoder_RS::parameters
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+void Encoder_RS
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
-	Encoder::parameters::get_headers(headers, full);
+	Encoder::get_headers(headers, full);
 }
 
 template <typename B>
-module::Encoder_RS<B>* Encoder_RS::parameters
+module::Encoder_RS<B>* Encoder_RS
 ::build(const tools::RS_polynomial_generator &GF) const
 {
 	if (this->type == "RS") return new module::Encoder_RS<B>(this->K, this->N_cw, GF, this->n_frames);
@@ -53,26 +53,14 @@ module::Encoder_RS<B>* Encoder_RS::parameters
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B>
-module::Encoder_RS<B>* Encoder_RS
-::build(const parameters &params, const tools::RS_polynomial_generator &GF)
-{
-	return params.template build<B>(GF);
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Encoder_RS<B_8 >* aff3ct::factory::Encoder_RS::parameters::build<B_8 >(const aff3ct::tools::RS_polynomial_generator&) const;
-template aff3ct::module::Encoder_RS<B_16>* aff3ct::factory::Encoder_RS::parameters::build<B_16>(const aff3ct::tools::RS_polynomial_generator&) const;
-template aff3ct::module::Encoder_RS<B_32>* aff3ct::factory::Encoder_RS::parameters::build<B_32>(const aff3ct::tools::RS_polynomial_generator&) const;
-template aff3ct::module::Encoder_RS<B_64>* aff3ct::factory::Encoder_RS::parameters::build<B_64>(const aff3ct::tools::RS_polynomial_generator&) const;
-template aff3ct::module::Encoder_RS<B_8 >* aff3ct::factory::Encoder_RS::build<B_8 >(const aff3ct::factory::Encoder_RS::parameters&, const aff3ct::tools::RS_polynomial_generator&);
-template aff3ct::module::Encoder_RS<B_16>* aff3ct::factory::Encoder_RS::build<B_16>(const aff3ct::factory::Encoder_RS::parameters&, const aff3ct::tools::RS_polynomial_generator&);
-template aff3ct::module::Encoder_RS<B_32>* aff3ct::factory::Encoder_RS::build<B_32>(const aff3ct::factory::Encoder_RS::parameters&, const aff3ct::tools::RS_polynomial_generator&);
-template aff3ct::module::Encoder_RS<B_64>* aff3ct::factory::Encoder_RS::build<B_64>(const aff3ct::factory::Encoder_RS::parameters&, const aff3ct::tools::RS_polynomial_generator&);
+template aff3ct::module::Encoder_RS<B_8 >* aff3ct::factory::Encoder_RS::build<B_8 >(const aff3ct::tools::RS_polynomial_generator&) const;
+template aff3ct::module::Encoder_RS<B_16>* aff3ct::factory::Encoder_RS::build<B_16>(const aff3ct::tools::RS_polynomial_generator&) const;
+template aff3ct::module::Encoder_RS<B_32>* aff3ct::factory::Encoder_RS::build<B_32>(const aff3ct::tools::RS_polynomial_generator&) const;
+template aff3ct::module::Encoder_RS<B_64>* aff3ct::factory::Encoder_RS::build<B_64>(const aff3ct::tools::RS_polynomial_generator&) const;
 #else
-template aff3ct::module::Encoder_RS<B>* aff3ct::factory::Encoder_RS::parameters::build<B>(const aff3ct::tools::RS_polynomial_generator&) const;
-template aff3ct::module::Encoder_RS<B>* aff3ct::factory::Encoder_RS::build<B>(const aff3ct::factory::Encoder_RS::parameters&, const aff3ct::tools::RS_polynomial_generator&);
+template aff3ct::module::Encoder_RS<B>* aff3ct::factory::Encoder_RS::build<B>(const aff3ct::tools::RS_polynomial_generator&) const;
 #endif
 // ==================================================================================== explicit template instantiation

@@ -26,12 +26,12 @@ Monitor_MI<B,R>
 	}
 
 	auto &p = this->create_task("get_mutual_info", (int)mnt::tsk::get_mutual_info);
-	auto &ps_X = this->template create_socket_in<B>(p, "X", get_N() * get_n_frames());
-	auto &ps_Y = this->template create_socket_in<R>(p, "Y", get_N() * get_n_frames());
-	this->create_codelet(p, [this, &ps_X, &ps_Y]() -> int
+	auto ps_X = this->template create_socket_in<B>(p, "X", get_N());
+	auto ps_Y = this->template create_socket_in<R>(p, "Y", get_N());
+	this->create_codelet(p, [this, ps_X, ps_Y](Task &t) -> int
 	{
-		return (int)this->get_mutual_info(static_cast<B*>(ps_X.get_dataptr()),
-		                                  static_cast<R*>(ps_Y.get_dataptr()));
+		return (int)this->get_mutual_info(static_cast<B*>(t[ps_X].get_dataptr()),
+		                                  static_cast<R*>(t[ps_Y].get_dataptr()));
 	});
 
 	reset();

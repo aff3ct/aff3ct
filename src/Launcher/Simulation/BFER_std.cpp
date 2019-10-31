@@ -18,14 +18,14 @@ BFER_std<B,R,Q>
 ::BFER_std(const int argc, const char **argv, std::ostream &stream)
 : Launcher(argc, argv, params, stream)
 {
-	params.set_src   (new factory::Source      ::parameters("src"));
-	params.set_crc   (new factory::CRC         ::parameters("crc"));
-	params.set_mdm   (new factory::Modem       ::parameters("mdm"));
-	params.set_chn   (new factory::Channel     ::parameters("chn"));
-	params.set_qnt   (new factory::Quantizer   ::parameters("qnt"));
-	params.set_mnt_mi(new factory::Monitor_MI  ::parameters("mnt"));
-	params.set_mnt_er(new factory::Monitor_BFER::parameters("mnt"));
-	params.set_ter   (new factory::Terminal    ::parameters("ter"));
+	params.set_src   (new factory::Source      ("src"));
+	params.set_crc   (new factory::CRC         ("crc"));
+	params.set_mdm   (new factory::Modem       ("mdm"));
+	params.set_chn   (new factory::Channel     ("chn"));
+	params.set_qnt   (new factory::Quantizer   ("qnt"));
+	params.set_mnt_mi(new factory::Monitor_MI  ("mnt"));
+	params.set_mnt_er(new factory::Monitor_BFER("mnt"));
+	params.set_ter   (new factory::Terminal    ("ter"));
 }
 
 template <typename B, typename R, typename Q>
@@ -219,7 +219,7 @@ template <typename B, typename R, typename Q>
 simulation::Simulation* BFER_std<B,R,Q>
 ::build_simu()
 {
-	return factory::BFER_std::build<B,R,Q>(params);
+	return params.build<B,R,Q>();
 }
 
 // ==================================================================================== explicit template instantiation

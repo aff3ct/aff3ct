@@ -14,32 +14,32 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Simulation_name   = "Simulation";
 const std::string aff3ct::factory::Simulation_prefix = "sim";
 
-Simulation::parameters
-::parameters(const std::string &name, const std::string &prefix)
-: Launcher::parameters(name, Simulation_name, prefix),
-  noise(new factory::Noise::parameters(prefix))
+Simulation
+::Simulation(const std::string &name, const std::string &prefix)
+: Launcher(name, Simulation_name, prefix),
+  noise(new factory::Noise(prefix))
 {
 }
 
-Simulation::parameters* Simulation::parameters
+Simulation* Simulation
 ::clone() const
 {
-	return new Simulation::parameters(*this);
+	return new Simulation(*this);
 
 	// if (noise != nullptr) {clone->noise = noise->clone(); }
 
 	// return clone;
 }
 
-void Simulation::parameters
+void Simulation
 ::get_description(cli::Argument_map_info &args) const
 {
-	Launcher::parameters::get_description(args);
+	Launcher::get_description(args);
 
 	noise->get_description(args);
 
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Simulation::parameters::";
+	const std::string class_name = "factory::Simulation::";
 
 	tools::add_arg(args, p, class_name+"p+meta",
 		cli::Text());
@@ -81,12 +81,12 @@ void Simulation::parameters
 		cli::Integer(cli::Positive()));
 }
 
-void Simulation::parameters
+void Simulation
 ::store(const cli::Argument_map_value &vals)
 {
 	using namespace std::chrono;
 
-	Launcher::parameters::store(vals);
+	Launcher::store(vals);
 
 	noise->store(vals);
 
@@ -155,10 +155,10 @@ void Simulation::parameters
 		this->n_threads = 1;
 }
 
-void Simulation::parameters
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+void Simulation
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
-	Launcher::parameters::get_headers(headers);
+	Launcher::get_headers(headers);
 
 	noise->get_headers(headers, full);
 

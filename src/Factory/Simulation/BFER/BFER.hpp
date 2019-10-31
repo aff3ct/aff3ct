@@ -25,69 +25,66 @@ namespace factory
 {
 extern const std::string BFER_name;
 extern const std::string BFER_prefix;
-struct BFER : Simulation
+class BFER : public Simulation
 {
-	class parameters : public Simulation::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// optional parameters
-		std::string err_track_path      = "error_tracker";
-		int         err_track_threshold = 0;
-		bool        err_track_revert    = false;
-		bool        err_track_enable    = false;
-		bool        coset               = false;
-		bool        coded_monitoring    = false;
-		bool        ter_sigma           = false;
-		bool        mnt_mutinfo         = false;
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// optional parameters
+	std::string err_track_path      = "error_tracker";
+	int         err_track_threshold = 0;
+	bool        err_track_revert    = false;
+	bool        err_track_enable    = false;
+	bool        coset               = false;
+	bool        coded_monitoring    = false;
+	bool        ter_sigma           = false;
+	bool        mnt_mutinfo         = false;
 
 #ifdef AFF3CT_MPI
-		std::chrono::milliseconds mnt_mpi_comm_freq = std::chrono::milliseconds(1000);
+	std::chrono::milliseconds mnt_mpi_comm_freq = std::chrono::milliseconds(1000);
 #else
-		std::chrono::milliseconds mnt_red_lazy_freq = std::chrono::milliseconds(0);
-		bool                      mnt_red_lazy      = false;
+	std::chrono::milliseconds mnt_red_lazy_freq = std::chrono::milliseconds(0);
+	bool                      mnt_red_lazy      = false;
 #endif
 
-		// module parameters
-		tools::auto_cloned_unique_ptr<Source       ::parameters> src;
-		tools::auto_cloned_unique_ptr<CRC          ::parameters> crc;
-		tools::auto_cloned_unique_ptr<Codec        ::parameters> cdc;
-		tools::auto_cloned_unique_ptr<Modem        ::parameters> mdm;
-		tools::auto_cloned_unique_ptr<Channel      ::parameters> chn;
-		tools::auto_cloned_unique_ptr<Quantizer    ::parameters> qnt;
-		tools::auto_cloned_unique_ptr<Monitor_BFER ::parameters> mnt_er;
-		tools::auto_cloned_unique_ptr<Monitor_MI   ::parameters> mnt_mi;
-		tools::auto_cloned_unique_ptr<Terminal     ::parameters> ter;
+	// module parameters
+	tools::auto_cloned_unique_ptr<Source      > src;
+	tools::auto_cloned_unique_ptr<CRC         > crc;
+	tools::auto_cloned_unique_ptr<Codec       > cdc;
+	tools::auto_cloned_unique_ptr<Modem       > mdm;
+	tools::auto_cloned_unique_ptr<Channel     > chn;
+	tools::auto_cloned_unique_ptr<Quantizer   > qnt;
+	tools::auto_cloned_unique_ptr<Monitor_BFER> mnt_er;
+	tools::auto_cloned_unique_ptr<Monitor_MI  > mnt_mi;
+	tools::auto_cloned_unique_ptr<Terminal    > ter;
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		virtual ~parameters() = default;
-		virtual BFER::parameters* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	virtual ~BFER() = default;
+	virtual BFER* clone() const;
 
-		virtual std::vector<std::string> get_names      () const;
-		virtual std::vector<std::string> get_short_names() const;
-		virtual std::vector<std::string> get_prefixes   () const;
+	virtual std::vector<std::string> get_names      () const;
+	virtual std::vector<std::string> get_short_names() const;
+	virtual std::vector<std::string> get_prefixes   () const;
 
-		// setters
-		void set_src   (Source      ::parameters *src);
-		void set_crc   (CRC         ::parameters *crc);
-		void set_cdc   (Codec       ::parameters *cdc);
-		void set_mdm   (Modem       ::parameters *mdm);
-		void set_chn   (Channel     ::parameters *chn);
-		void set_qnt   (Quantizer   ::parameters *qnt);
-		void set_mnt_mi(Monitor_MI  ::parameters *mnt);
-		void set_mnt_er(Monitor_BFER::parameters *mnt);
-		void set_ter   (Terminal    ::parameters *ter);
+	// setters
+	void set_src   (Source       *src);
+	void set_crc   (CRC          *crc);
+	void set_cdc   (Codec        *cdc);
+	void set_mdm   (Modem        *mdm);
+	void set_chn   (Channel      *chn);
+	void set_qnt   (Quantizer    *qnt);
+	void set_mnt_mi(Monitor_MI   *mnt);
+	void set_mnt_er(Monitor_BFER *mnt);
+	void set_ter   (Terminal     *ter);
 
-		const Codec::parameters* get_cdc() const;
+	const Codec* get_cdc() const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,tools::header_list>& headers, const bool full = true) const;
 
-	protected:
-		parameters(const std::string &n = BFER_name, const std::string &p = BFER_prefix);
-	};
+protected:
+	BFER(const std::string &n = BFER_name, const std::string &p = BFER_prefix);
 };
 }
 }

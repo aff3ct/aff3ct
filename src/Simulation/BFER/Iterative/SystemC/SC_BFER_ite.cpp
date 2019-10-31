@@ -12,7 +12,7 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 SC_BFER_ite<B,R,Q>
-::SC_BFER_ite(const factory::BFER_ite::parameters &params_BFER_ite)
+::SC_BFER_ite(const factory::BFER_ite &params_BFER_ite)
 : BFER_ite<B,R,Q>(params_BFER_ite),
   duplicator(7)
 {
@@ -267,7 +267,7 @@ template <typename B, typename R, typename Q>
 std::unique_ptr<module::Coset<B,Q>> SC_BFER_ite<B,R,Q>
 ::build_coset_real(const int tid)
 {
-	factory::Coset::parameters cst_params;
+	factory::Coset cst_params;
 	cst_params.size     = this->params_BFER_ite.cdc->N_cw;
 	cst_params.n_frames = this->params_BFER_ite.src->n_frames;
 

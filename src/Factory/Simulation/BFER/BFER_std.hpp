@@ -23,36 +23,30 @@ namespace factory
 {
 extern const std::string BFER_std_name;
 extern const std::string BFER_std_prefix;
-struct BFER_std : BFER
+class BFER_std : public BFER
 {
-	class parameters : public BFER::parameters
-	{
-	public:
-		// ------------------------------------------------------------------------------------------------- PARAMETERS
-		// module parameters
-		// Codec_SIHO::parameters *cdc = nullptr;
+public:
+	// ----------------------------------------------------------------------------------------------------- PARAMETERS
+	// module parameters
+	// Codec_SIHO *cdc = nullptr;
 
-		// ---------------------------------------------------------------------------------------------------- METHODS
-		explicit parameters(const std::string &p = BFER_std_prefix);
-		virtual ~parameters() = default;
-		BFER_std::parameters* clone() const;
+	// -------------------------------------------------------------------------------------------------------- METHODS
+	explicit BFER_std(const std::string &p = BFER_std_prefix);
+	virtual ~BFER_std() = default;
+	BFER_std* clone() const;
 
-		// setters
-		// void set_cdc(Codec_SIHO::parameters *cdc) { this->cdc = cdc; BFER::parameters::set_cdc(cdc); }
-		const Codec_SIHO::parameters* get_cdc() const;
+	// setters
+	// void set_cdc(Codec_SIHO *cdc) { this->cdc = cdc; BFER::set_cdc(cdc); }
+	const Codec_SIHO* get_cdc() const;
 
-		// parameters construction
-		void get_description(cli::Argument_map_info &args) const;
-		void store          (const cli::Argument_map_value &vals);
-		void get_headers    (std::map<std::string,header_list>& headers, const bool full = true) const;
+	// parameters construction
+	void get_description(cli::Argument_map_info &args) const;
+	void store          (const cli::Argument_map_value &vals);
+	void get_headers    (std::map<std::string,tools::header_list>& headers, const bool full = true) const;
 
-		// builder
-		template <typename B = int, typename R = float, typename Q = R>
-		simulation::BFER_std<B,R,Q>* build() const;
-	};
-
+	// builder
 	template <typename B = int, typename R = float, typename Q = R>
-	static simulation::BFER_std<B,R,Q>* build(const parameters &params);
+	simulation::BFER_std<B,R,Q>* build() const;
 };
 }
 }

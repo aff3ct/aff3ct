@@ -17,7 +17,7 @@ template <typename B = int, typename R = float>
 class EXIT : public Launcher
 {
 protected:
-	factory::EXIT::parameters params;
+	factory::EXIT params;
 
 public:
 	EXIT(const int argc, const char **argv, std::ostream &stream = std::cout);

@@ -14,23 +14,23 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Quantizer_name   = "Quantizer";
 const std::string aff3ct::factory::Quantizer_prefix = "qnt";
 
-Quantizer::parameters
-::parameters(const std::string &prefix)
-: Factory::parameters(Quantizer_name, Quantizer_name, prefix)
+Quantizer
+::Quantizer(const std::string &prefix)
+: Factory(Quantizer_name, Quantizer_name, prefix)
 {
 }
 
-Quantizer::parameters* Quantizer::parameters
+Quantizer* Quantizer
 ::clone() const
 {
-	return new Quantizer::parameters(*this);
+	return new Quantizer(*this);
 }
 
-void Quantizer::parameters
+void Quantizer
 ::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Quantizer::parameters::";
+	const std::string class_name = "factory::Quantizer::";
 
 	tools::add_arg(args, p, class_name+"p+size,N",
 		cli::Integer(cli::Positive(), cli::Non_zero()),
@@ -55,7 +55,7 @@ void Quantizer::parameters
 		cli::Real(cli::Positive(), cli::Non_zero()));
 }
 
-void Quantizer::parameters
+void Quantizer
 ::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
@@ -69,8 +69,8 @@ void Quantizer::parameters
 	if(vals.exist({p+"-implem"   })) this->implem     = vals.at      ({p+"-implem"   });
 }
 
-void Quantizer::parameters
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+void Quantizer
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
 	auto p = this->get_prefix();
 
@@ -88,7 +88,7 @@ void Quantizer::parameters
 }
 
 template <typename R, typename Q>
-module::Quantizer<R,Q>* Quantizer::parameters
+module::Quantizer<R,Q>* Quantizer
 ::build() const
 {
 	if (this->type == "POW2"   && this->implem == "STD" ) return new module::Quantizer_pow2     <R,Q>(this->size, this->n_decimals, this->n_bits, this->n_frames);
@@ -99,26 +99,14 @@ module::Quantizer<R,Q>* Quantizer::parameters
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename R, typename Q>
-module::Quantizer<R,Q>* Quantizer
-::build(const parameters& params)
-{
-	return params.template build<R,Q>();
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Quantizer<R_8 ,Q_8 >* aff3ct::factory::Quantizer::parameters::build<R_8 ,Q_8 >() const;
-template aff3ct::module::Quantizer<R_16,Q_16>* aff3ct::factory::Quantizer::parameters::build<R_16,Q_16>() const;
-template aff3ct::module::Quantizer<R_32,Q_32>* aff3ct::factory::Quantizer::parameters::build<R_32,Q_32>() const;
-template aff3ct::module::Quantizer<R_64,Q_64>* aff3ct::factory::Quantizer::parameters::build<R_64,Q_64>() const;
-template aff3ct::module::Quantizer<R_8 ,Q_8 >* aff3ct::factory::Quantizer::build<R_8 ,Q_8 >(const aff3ct::factory::Quantizer::parameters&);
-template aff3ct::module::Quantizer<R_16,Q_16>* aff3ct::factory::Quantizer::build<R_16,Q_16>(const aff3ct::factory::Quantizer::parameters&);
-template aff3ct::module::Quantizer<R_32,Q_32>* aff3ct::factory::Quantizer::build<R_32,Q_32>(const aff3ct::factory::Quantizer::parameters&);
-template aff3ct::module::Quantizer<R_64,Q_64>* aff3ct::factory::Quantizer::build<R_64,Q_64>(const aff3ct::factory::Quantizer::parameters&);
+template aff3ct::module::Quantizer<R_8 ,Q_8 >* aff3ct::factory::Quantizer::build<R_8 ,Q_8 >() const;
+template aff3ct::module::Quantizer<R_16,Q_16>* aff3ct::factory::Quantizer::build<R_16,Q_16>() const;
+template aff3ct::module::Quantizer<R_32,Q_32>* aff3ct::factory::Quantizer::build<R_32,Q_32>() const;
+template aff3ct::module::Quantizer<R_64,Q_64>* aff3ct::factory::Quantizer::build<R_64,Q_64>() const;
 #else
-template aff3ct::module::Quantizer<R,Q>* aff3ct::factory::Quantizer::parameters::build<R,Q>() const;
-template aff3ct::module::Quantizer<R,Q>* aff3ct::factory::Quantizer::build<R,Q>(const aff3ct::factory::Quantizer::parameters&);
+template aff3ct::module::Quantizer<R,Q>* aff3ct::factory::Quantizer::build<R,Q>() const;
 #endif
 // ==================================================================================== explicit template instantiation

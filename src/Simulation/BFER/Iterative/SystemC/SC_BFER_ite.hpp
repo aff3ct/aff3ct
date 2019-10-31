@@ -30,7 +30,7 @@ protected:
 	            std::unique_ptr<tools::SC_Predicate>   predicate;
 
 public:
-	explicit SC_BFER_ite(const factory::BFER_ite::parameters &params_BFER_ite);
+	explicit SC_BFER_ite(const factory::BFER_ite &params_BFER_ite);
 	virtual ~SC_BFER_ite() = default;
 
 protected:

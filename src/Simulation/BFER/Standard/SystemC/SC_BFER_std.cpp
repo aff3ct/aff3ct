@@ -10,7 +10,7 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 SC_BFER_std<B,R,Q>
-::SC_BFER_std(const factory::BFER_std::parameters &params_BFER_std)
+::SC_BFER_std(const factory::BFER_std &params_BFER_std)
 : BFER_std<B,R,Q>(params_BFER_std),
   duplicator(3)
 {

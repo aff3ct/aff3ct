@@ -21,7 +21,7 @@ protected:
 	std::vector<std::unique_ptr<tools::SC_Duplicator>> duplicator;
 
 public:
-	explicit SC_BFER_std(const factory::BFER_std::parameters &params_BFER_std);
+	explicit SC_BFER_std(const factory::BFER_std &params_BFER_std);
 	virtual ~SC_BFER_std() = default;
 
 protected:
