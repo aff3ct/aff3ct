@@ -468,9 +468,10 @@ def add_method(class_entry, method, method_is_inline, method_suffix, method_temp
 # add a new class to the db
 # - name_path_str is the full qualified name including namespace(s)
 # - class_inheritence is the right hand side of the class declaration, stating base class(es)
-def add_class(db, name_path_str, class_short_name, class_inheritence, class_template_part):
+def add_class(db, name_path_str, class_short_name, class_inheritence, class_template_part, class_kind):
     # initialize a class entry
     class_entry = dict()
+    class_entry['class_kind'] = class_kind
     class_entry['class_name'] = name_path_str
     class_entry['class_short_name'] = class_short_name
     if class_inheritence:
@@ -649,7 +650,7 @@ def process_ast(ast_filename):
                         # ignore 'enum classes' for now
                         if not filter_out and (scope == 'namespace' or scope == '<toplevel>') and not line.startswith('enum class '):
                             # try to match a class
-                            m = re.match(r'^(.*)class ([_a-zA-Z][_a-zA-Z0-9]*)(?: : ((?:(?:virtual )?public )?(?:[_a-zA-Z][_a-zA-Z0-9]*::)*[_a-zA-Z][_a-zA-Z0-9]*(?:<[^{]+>)?))? {', line)
+                            m = re.match(r'^(.*)(class|struct) ([_a-zA-Z][_a-zA-Z0-9]*)(?: : ((?:(?:virtual )?public )?(?:[_a-zA-Z][_a-zA-Z0-9]*::)*[_a-zA-Z][_a-zA-Z0-9]*(?:<[^{]+>)?))? {', line)
                             if m is not None:
                                 # push previous class on the class stack
                                 class_stack.append((class_name, class_access, class_entry))
@@ -657,8 +658,9 @@ def process_ast(ast_filename):
 
                                 # entering class
                                 class_template_part = m.group(1).strip()
-                                class_short_name = m.group(2)
-                                class_inheritence = m.group(3)
+                                class_kind = m.group(2)
+                                class_short_name = m.group(3)
+                                class_inheritence = m.group(4)
                                 class_access = default_class_access
                                 name_path.append(class_short_name)
                                 name_path_str = '::'.join(name_path)
@@ -666,7 +668,7 @@ def process_ast(ast_filename):
 
                                 # if class not already known, add it to 'db'
                                 if name_path_str not in db:
-                                    add_class(db, name_path_str, class_short_name, class_inheritence, class_template_part)
+                                    add_class(db, name_path_str, class_short_name, class_inheritence, class_template_part, class_kind)
 
                                 class_entry = db[name_path_str]
                                 scope = 'class'
@@ -1043,9 +1045,9 @@ def dump_db(db, output_filename, summary_output_filename):
             if class_entry['class_is_abstract']:
                 class_name = '['+class_name+']'
             if 'inheritence' in class_entry:
-                fsummary_output.write('class %s - inheritence: %s\n' % (class_name, class_entry['class_inheritence']))
+                fsummary_output.write('%s %s - inheritence: %s\n' % (class_entry['class_kind'], class_name, class_entry['class_inheritence']))
             else:
-                fsummary_output.write('class %s\n' % (class_name))
+                fsummary_output.write('%s %s\n' % (class_entry['class_kind'], class_name))
 
             # remove name accounting dict to avoid dumping it in the json db
             del class_entry['class_name_accounting']
