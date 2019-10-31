@@ -519,6 +519,40 @@ void Task
 	for (auto &x : this->timers_max    ) x = std::chrono::nanoseconds(0);
 }
 
+Task* Task
+::clone() const
+{
+    Task* t = new Task(*this);
+    t->sockets.clear();
+    t->last_input_socket = nullptr;
+
+    size_t out_buffers_counter = 0;
+	int sckt_nbr = this->sockets.size();
+    for (int i=0; i<sckt_nbr ; i++)
+    {
+		auto s = this->sockets[i];
+        void *dataptr = nullptr;
+        if ((this->get_socket_type(*s) == aff3ct::module::socket_t::SOUT || this->get_socket_type(*s) == aff3ct::module::socket_t::SIN_SOUT) && this->is_autoalloc())
+        {
+            dataptr = (void*)t->out_buffers[out_buffers_counter].data();
+            out_buffers_counter++;
+        }
+
+        Socket * s_new = new Socket(*t,
+                                    s->get_name(),
+                                    s->get_datatype(),
+                                    s->get_databytes(),
+                                    s->is_fast(),
+                                    dataptr);
+
+        if (t->get_socket_type(*s_new) == aff3ct::module::socket_t::SIN)
+            t->last_input_socket = s_new;
+    }
+
+    return t;
+}
+
+
 // ==================================================================================== explicit template instantiation
 template size_t Task::create_socket_in<int8_t >(const std::string&, const size_t);
 template size_t Task::create_socket_in<int16_t>(const std::string&, const size_t);

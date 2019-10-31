@@ -118,6 +118,7 @@ public:
 
 	inline void update_timer(const size_t id, const std::chrono::nanoseconds &duration);
 
+	Task* clone() const;
 protected:
 	void register_timer(const std::string &key);
 
