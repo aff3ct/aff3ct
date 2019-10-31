@@ -1,9 +1,20 @@
+#include <cassert>
+
 #include "Module/Module.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
+Task& Module
+::operator[](const size_t id)
+{
+	assert(id < tasks_with_nullptr.size());
+	assert(tasks_with_nullptr[id] != nullptr);
+
+	return *tasks_with_nullptr[id];
+}
+
 template <typename T>
 inline size_t Module
 ::create_socket_in(Task& task, const std::string &name, const size_t n_elmts)

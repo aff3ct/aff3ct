@@ -74,7 +74,7 @@ public:
 
 	void remove_custom_name();
 
-	Task& operator[](const int id);
+	inline Task& operator[](const size_t id);
 
 protected:
 	void set_name(const std::string &name);
