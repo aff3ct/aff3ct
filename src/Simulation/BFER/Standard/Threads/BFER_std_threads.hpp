@@ -21,8 +21,7 @@ protected:
 private:
 	void sockets_binding(const int tid = 0);
 	void simulation_loop(const int tid = 0);
-
-	static void start_thread(BFER_std_threads<B,R,Q> *simu, const int tid = 0);
+	void start_thread   (const int tid = 0);
 };
 }
 }

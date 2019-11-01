@@ -35,10 +35,10 @@ void BFER_ite_threads<B,R,Q>
 	std::vector<std::thread> threads(this->params_BFER_ite.n_threads -1);
 	// launch a group of slave threads (there is "n_threads -1" slave threads)
 	for (auto tid = 1; tid < this->params_BFER_ite.n_threads; tid++)
-		threads[tid -1] = std::thread(BFER_ite_threads<B,R,Q>::start_thread, this, tid);
+		threads[tid -1] = std::thread(&BFER_ite_threads<B,R,Q>::start_thread, this, tid);
 
 	// launch the master thread
-	BFER_ite_threads<B,R,Q>::start_thread(this, 0);
+	BFER_ite_threads<B,R,Q>::start_thread(0);
 
 	// join the slave threads with the master thread
 	for (auto tid = 1; tid < this->params_BFER_ite.n_threads; tid++)
@@ -50,32 +50,32 @@ void BFER_ite_threads<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void BFER_ite_threads<B,R,Q>
-::start_thread(BFER_ite_threads<B,R,Q> *simu, const int tid)
+::start_thread(const int tid)
 {
 	try
 	{
-		simu->sockets_binding(tid);
-		simu->simulation_loop(tid);
+		this->sockets_binding(tid);
+		this->simulation_loop(tid);
 	}
 	catch (std::exception const& e)
 	{
 		tools::Terminal::stop();
 
-		simu->mutex_exception.lock();
+		this->mutex_exception.lock();
 
 		auto save = tools::exception::no_backtrace;
 		tools::exception::no_backtrace = true;
 		std::string msg = e.what(); // get only the function signature
 		tools::exception::no_backtrace = save;
 
-		if (std::find(simu->prev_err_messages.begin(), simu->prev_err_messages.end(), msg) ==
-		    simu->prev_err_messages.end())
+		if (std::find(this->prev_err_messages.begin(), this->prev_err_messages.end(), msg) ==
+		    this->prev_err_messages.end())
 		{
-			simu->prev_err_messages.push_back(msg); // save only the function signature
-			simu->prev_err_messages_to_display.push_back(e.what()); // with backtrace if debug mode
+			this->prev_err_messages.push_back(msg); // save only the function signature
+			this->prev_err_messages_to_display.push_back(e.what()); // with backtrace if debug mode
 		}
 
-		simu->mutex_exception.unlock();
+		this->mutex_exception.unlock();
 	}
 }
 
