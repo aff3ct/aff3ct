@@ -35,14 +35,14 @@ public:
 	inline Socket(Task &task, const std::string &name, const std::type_index datatype, const size_t databytes,
 	              const bool fast = false, void *dataptr = nullptr);
 
-	inline std::string     get_name           () const;
-	inline std::type_index get_datatype       () const;
-	inline std::string     get_datatype_string() const;
-	inline uint8_t         get_datatype_size  () const;
-	inline size_t          get_databytes      () const;
-	inline size_t          get_n_elmts        () const;
-	inline void*           get_dataptr        () const;
-	inline bool            is_fast            () const;
+	inline const std::string&     get_name           () const;
+	inline const std::type_index& get_datatype       () const;
+	inline const std::string&     get_datatype_string() const;
+	inline uint8_t                get_datatype_size  () const;
+	inline size_t                 get_databytes      () const;
+	inline size_t                 get_n_elmts        () const;
+	inline void*                  get_dataptr        () const;
+	inline bool                   is_fast            () const;
 
 	inline void set_fast(const bool fast);
 

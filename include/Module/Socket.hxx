@@ -28,19 +28,19 @@ Socket
 {
 }
 
-std::string Socket
+const std::string& Socket
 ::get_name() const
 {
 	return name;
 }
 
-std::type_index Socket
+const std::type_index& Socket
 ::get_datatype() const
 {
 	return datatype;
 }
 
-std::string Socket
+const std::string& Socket
 ::get_datatype_string() const
 {
 	return type_to_string[datatype];
