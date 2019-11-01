@@ -28,11 +28,6 @@ buildername = str(os.getenv('SPHINX_BUILDERNAME'))
 # grabbed from docs.readthedocs.org
 read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
 
-# this is a hack to disable the library API doc on Read the docs until time
-# limit can be extended
-if (read_the_docs_build):
-    buildername = "latex"
-
 # -- Project information -----------------------------------------------------
 
 project = 'AFF3CT'
