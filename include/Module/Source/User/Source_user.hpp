@@ -14,7 +14,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B>
+template <typename B = int>
 class Source_user : public Source<B>
 {
 private:

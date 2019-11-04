@@ -110,16 +110,27 @@ public:
 	const std::vector<std::chrono::nanoseconds>& get_timers_min    () const;
 	const std::vector<std::chrono::nanoseconds>& get_timers_max    () const;
 
-	inline int exec_fast();
-
 	int exec();
+
+	void exec_chain(std::function<bool(const std::vector<int>&)> &stop_condition);
+
+	void exec_chain(std::function<bool(const std::vector<int>&)> &stop_condition, const size_t n_threads);
 
 	inline Socket& operator[](const size_t id);
 
 	inline void update_timer(const size_t id, const std::chrono::nanoseconds &duration);
 
 	Task* clone() const;
+
 protected:
+	void _exec_chain(std::function<bool(const std::vector<int>&)> &stop_condition, std::vector<Task*> &tasks_chain);
+
+	void build_tasks_chain(std::vector<Task*> &tasks_chain);
+
+	void duplicate_tasks_chain(const std::vector<Task*> &tasks_chain,
+	                           const size_t n_threads,
+	                                 std::vector<std::vector<Task*>> &tasks_chains);
+
 	void register_timer(const std::string &key);
 
 	template <typename T>

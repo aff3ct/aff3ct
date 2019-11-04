@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <thread>
 #include <ios>
 #include <rang.hpp>
 
@@ -16,7 +17,7 @@ using namespace aff3ct::module;
 
 Task
 ::Task(const Module &module, const std::string &name, const bool autoalloc, const bool autoexec,
-           const bool stats, const bool fast, const bool debug)
+       const bool stats, const bool fast, const bool debug)
 : module(module),
   name(name),
   autoalloc(autoalloc),
@@ -342,6 +343,136 @@ int Task
 	}
 }
 
+void Task
+::exec_chain(std::function<bool(const std::vector<int>&)> &stop_condition)
+{
+	std::vector<Task*> tasks_chain;
+	this->build_tasks_chain(tasks_chain);
+	this->_exec_chain(stop_condition, tasks_chain);
+}
+
+void Task
+::_exec_chain(std::function<bool(const std::vector<int>&)> &stop_condition, std::vector<Task*> &tasks_chain)
+{
+	std::vector<int> statuses(tasks_chain.size(), 0);
+	while (!stop_condition(statuses))
+		for (size_t ta = 0; ta < tasks_chain.size(); ta++)
+			statuses[ta] = tasks_chain[ta]->exec();
+}
+
+void Task
+::exec_chain(std::function<bool(const std::vector<int>&)> &stop_condition, const size_t n_threads)
+{
+	if (n_threads == 0)
+	{
+		std::stringstream message;
+		message << "'n_threads' has to be strictly greater than 0.";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	std::vector<Task*> tasks_chain;
+	this->build_tasks_chain(tasks_chain);
+	std::vector<int> statuses(tasks_chain.size(), 0);
+
+	std::vector<std::vector<Task*>> tasks_chains;
+	this->duplicate_tasks_chain(tasks_chain, n_threads, tasks_chains);
+
+	std::vector<std::thread> threads(n_threads);
+	for (size_t tid = 0; tid < n_threads; tid++)
+		threads[tid] = std::thread(&Task::_exec_chain, this, std::ref(stop_condition), std::ref(tasks_chains[tid]));
+
+	for (size_t tid = 0; tid < n_threads; tid++)
+		threads[tid].join();
+
+	for (auto &c : tasks_chains)
+		for (auto &ta : c)
+			delete[] ta;
+}
+
+void Task
+::build_tasks_chain(std::vector<Task*> &tasks)
+{
+	if (this->can_exec())
+	{
+		tasks.push_back(this);
+	}
+	else
+	{
+		std::stringstream message;
+		message << "'this->can_exec()' has to be true.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	for (auto &s : this->sockets)
+	{
+		if (this->get_socket_type(*s) == socket_t::SIN_SOUT ||
+			this->get_socket_type(*s) == socket_t::SOUT)
+		{
+			auto bss = s->get_bound_sockets();
+			for (auto &bs : bss)
+			{
+				if (bs != nullptr)
+				{
+					auto &t = bs->get_task();
+					if (t.is_last_input_socket(*bs))
+						t.build_tasks_chain(tasks);
+				}
+			}
+		}
+		else if (this->get_socket_type(*s) == socket_t::SIN)
+		{
+			if (s->get_bound_sockets().size() > 1)
+			{
+				std::stringstream message;
+				message << "'s->get_bound_sockets().size()' has to be smaller or equal to 1 ("
+				        << "'s->get_bound_sockets().size()'"         << " = " << s->get_bound_sockets().size() << ", "
+				        << "'get_socket_type(*s)'"                   << " = " << "socket_t::SIN"               << ", "
+				        << "'s->get_name()'"                         << " = " << s->get_name()                 << ", "
+				        << "'s->get_task().get_name()'"              << " = " << s->get_task().get_name()      << ", "
+				        << "'s->get_task().get_module().get_name()'" << " = " << s->get_task().get_module().get_name()
+				        << ").";
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+			}
+		}
+	}
+}
+
+void Task
+::duplicate_tasks_chain(const std::vector<Task*> &tasks_chain,
+                        const size_t n_threads,
+                              std::vector<std::vector<Task*>> &tasks_chains)
+{
+	// clone the tasks
+	for (size_t t = 0; t < n_threads; t++)
+	{
+		auto &tasks_chain_cpy = tasks_chains[t];
+		for (auto &t : tasks_chain)
+		{
+			auto t_clone = t->clone();
+			t_clone->set_autoalloc(true);
+			tasks_chain_cpy.push_back(t_clone);
+		}
+	}
+
+	// bind the tasks
+	for (size_t tid = 0; tid < n_threads; tid++)
+	{
+		auto &tasks_chain_cpy = tasks_chains[tid];
+		for (size_t tc = 0; tc < tasks_chain.size(); tc++)
+		{
+			auto &ta = tasks_chain[tc];
+			for (auto &s : this->sockets)
+			{
+				if (this->get_socket_type(*s) == socket_t::SIN_SOUT ||
+					this->get_socket_type(*s) == socket_t::SOUT)
+				{
+
+				}
+			}
+		}
+	}
+}
+
 template <typename T>
 Socket& Task
 ::create_socket(const std::string &name, const size_t n_elmts)
@@ -376,7 +507,6 @@ size_t Task
 ::create_socket_in(const std::string &name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
-
 	socket_type.push_back(socket_t::SIN);
 	last_input_socket = &s;
 
@@ -388,7 +518,6 @@ size_t Task
 ::create_socket_in_out(const std::string &name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
-
 	socket_type.push_back(socket_t::SIN_SOUT);
 	last_input_socket = &s;
 
@@ -400,7 +529,6 @@ size_t Task
 ::create_socket_out(const std::string &name, const size_t n_elmts)
 {
 	auto &s = create_socket<T>(name, n_elmts);
-
 	socket_type.push_back(socket_t::SOUT);
 
 	// memory allocation

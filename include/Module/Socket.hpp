@@ -25,24 +25,27 @@ class Socket
 protected:
 	Task &task;
 
-	const std::string     name;
-	const std::type_index datatype;
-	const size_t          databytes;
-	      bool            fast;
-	      void*           dataptr;
+	const std::string           name;
+	const std::type_index       datatype;
+	const size_t                databytes;
+	      bool                  fast;
+	      void*                 dataptr;
+	      std::vector<Socket*>  bound_sockets;
 
 public:
 	inline Socket(Task &task, const std::string &name, const std::type_index datatype, const size_t databytes,
 	              const bool fast = false, void *dataptr = nullptr);
 
-	inline const std::string&     get_name           () const;
-	inline const std::type_index& get_datatype       () const;
-	inline const std::string&     get_datatype_string() const;
-	inline uint8_t                get_datatype_size  () const;
-	inline size_t                 get_databytes      () const;
-	inline size_t                 get_n_elmts        () const;
-	inline void*                  get_dataptr        () const;
-	inline bool                   is_fast            () const;
+	inline const std::string&         get_name           () const;
+	inline const std::type_index&     get_datatype       () const;
+	inline const std::string&         get_datatype_string() const;
+	inline uint8_t                    get_datatype_size  () const;
+	inline size_t                     get_databytes      () const;
+	inline size_t                     get_n_elmts        () const;
+	inline void*                      get_dataptr        () const;
+	inline bool                       is_fast            () const;
+	inline Task&                      get_task           () const;
+	inline const std::vector<Socket*> get_bound_sockets  () const;
 
 	inline void set_fast(const bool fast);
 
@@ -65,6 +68,8 @@ public:
 	inline int bind(void* dataptr);
 
 	inline int operator()(void* dataptr);
+
+	inline void reset();
 };
 }
 }

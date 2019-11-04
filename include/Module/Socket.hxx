@@ -76,6 +76,18 @@ bool Socket
 	return fast;
 }
 
+Task& Socket
+::get_task() const
+{
+	return this->task;
+}
+
+const std::vector<Socket*> Socket
+::get_bound_sockets() const
+{
+	return this->bound_sockets;
+}
+
 void Socket
 ::set_fast(const bool fast)
 {
@@ -125,6 +137,8 @@ int Socket
 		}
 	}
 
+	this->bound_sockets.push_back(&s);
+	s.bound_sockets.push_back(this);
 	this->dataptr = s.dataptr;
 
 	if (this->task.is_autoexec() && this->task.is_last_input_socket(*this))
@@ -226,5 +240,13 @@ int Socket
 {
 	return bind(dataptr);
 }
+
+inline void Socket
+::reset()
+{
+	this->dataptr = nullptr;
+	this->bound_sockets.clear();
+}
+
 }
 }
