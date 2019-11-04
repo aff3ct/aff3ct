@@ -386,7 +386,7 @@ void Task
 
 	for (auto &c : tasks_chains)
 		for (auto &ta : c)
-			delete[] ta;
+			delete ta;
 }
 
 void Task
@@ -455,19 +455,9 @@ void Task
 	}
 
 	std::function<int(const Task&)> get_task_id = [&tasks_chain](const Task &ta) -> int {
-		std::cout << "ta = " << +(&ta) << std::endl;
-		std::cout << "  ta.get_name() = " << ta.get_name() << std::endl;
 		for (size_t t = 0; t < tasks_chain.size(); t++)
-		{
-			std::cout << "tasks_chain[t] = " << +tasks_chain[t] << " - t = " << t << std::endl;
-			std::cout << "  tasks_chain[t]->get_name() = " << tasks_chain[t]->get_name() << std::endl;
 			if (&ta == tasks_chain[t])
-			{
-				std::cout << "Match -> salut !" << std::endl << std::endl;
 				return t;
-			}
-		}
-		std::cout << "Pas match :-(" << std::endl << std::endl;
 		return -1;
 	};
 
@@ -492,8 +482,6 @@ void Task
 				{
 					if (sin != nullptr)
 					{
-						std::cout << "sin->get_name() = " << sin->get_name() << std::endl;
-
 						auto &tin = sin->get_task();
 						auto tin_id = get_task_id(tin);
 						assert(tin_id != -1);
