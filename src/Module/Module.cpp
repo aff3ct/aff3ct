@@ -70,26 +70,6 @@ void Module
 }
 
 Task& Module
-::operator[](const int id)
-{
-	if (id < 0 || (size_t)id >= tasks_with_nullptr.size())
-	{
-		std::stringstream message;
-		message << "'id' has to be positive and smaller than 'tasks_with_nullptr.size()' ('id' = " << id
-		        << ", 'tasks_with_nullptr.size()' = " << tasks_with_nullptr.size() << ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-	if (tasks_with_nullptr[id] == nullptr)
-	{
-		std::stringstream message;
-		message << "'tasks_with_nullptr[id]' can't be nullptr ('id' = " << id << ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	return *tasks_with_nullptr[id];
-}
-
-Task& Module
 ::create_task(const std::string &name, const int id)
 {
 	bool autoalloc = false, autoexec = false, stats = false, fast = false, debug = false;
@@ -118,7 +98,7 @@ Task& Module
 }
 
 void Module
-::create_codelet(Task& task, std::function<int(void)> codelet)
+::create_codelet(Task& task, std::function<int(Task &t)> codelet)
 {
 	task.create_codelet(codelet);
 }

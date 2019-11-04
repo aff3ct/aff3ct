@@ -12,35 +12,35 @@ template <typename B, typename R>
 Task& Decoder_SIHO_HIHO<B,R>
 ::operator[](const dec::tsk t)
 {
-	return Module::operator[]((int)t);
+	return Module::operator[]((size_t)t);
 }
 
 template <typename B, typename R>
 Socket& Decoder_SIHO_HIHO<B,R>
 ::operator[](const dec::sck::decode_siho s)
 {
-	return Module::operator[]((int)dec::tsk::decode_siho)[(int)s];
+	return Module::operator[]((size_t)dec::tsk::decode_siho)[(size_t)s];
 }
 
 template <typename B, typename R>
 Socket& Decoder_SIHO_HIHO<B,R>
 ::operator[](const dec::sck::decode_siho_cw s)
 {
-	return Module::operator[]((int)dec::tsk::decode_siho_cw)[(int)s];
+	return Module::operator[]((size_t)dec::tsk::decode_siho_cw)[(size_t)s];
 }
 
 template <typename B, typename R>
 Socket& Decoder_SIHO_HIHO<B,R>
 ::operator[](const dec::sck::decode_hiho s)
 {
-	return Module::operator[]((int)dec::tsk::decode_hiho)[(int)s];
+	return Module::operator[]((size_t)dec::tsk::decode_hiho)[(size_t)s];
 }
 
 template <typename B, typename R>
 Socket& Decoder_SIHO_HIHO<B,R>
 ::operator[](const dec::sck::decode_hiho_cw s)
 {
-	return Module::operator[]((int)dec::tsk::decode_hiho_cw)[(int)s];
+	return Module::operator[]((size_t)dec::tsk::decode_hiho_cw)[(size_t)s];
 }
 
 template <typename B, typename R>

@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Functions for overloading rang.
+ */
 #ifndef RANG_FORMAT_H_
 #define RANG_FORMAT_H_
 

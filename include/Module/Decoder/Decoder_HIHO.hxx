@@ -15,21 +15,21 @@ template <typename B>
 Task& Decoder_HIHO<B>
 ::operator[](const dec::tsk t)
 {
-	return Module::operator[]((int)t);
+	return Module::operator[]((size_t)t);
 }
 
 template <typename B>
 Socket& Decoder_HIHO<B>
 ::operator[](const dec::sck::decode_hiho s)
 {
-	return Module::operator[]((int)dec::tsk::decode_hiho)[(int)s];
+	return Module::operator[]((size_t)dec::tsk::decode_hiho)[(size_t)s];
 }
 
 template <typename B>
 Socket& Decoder_HIHO<B>
 ::operator[](const dec::sck::decode_hiho_cw s)
 {
-	return Module::operator[]((int)dec::tsk::decode_hiho_cw)[(int)s];
+	return Module::operator[]((size_t)dec::tsk::decode_hiho_cw)[(size_t)s];
 }
 
 template <typename B>
@@ -43,12 +43,12 @@ Decoder_HIHO<B>
 	this->set_name(name);
 
 	auto &p1 = this->create_task("decode_hiho", (int)dec::tsk::decode_hiho);
-	auto &p1s_Y_N = this->template create_socket_in <B>(p1, "Y_N", this->N * this->n_frames);
-	auto &p1s_V_K = this->template create_socket_out<B>(p1, "V_K", this->K * this->n_frames);
-	this->create_codelet(p1, [this, &p1s_Y_N, &p1s_V_K]() -> int
+	auto p1s_Y_N = this->template create_socket_in <B>(p1, "Y_N", this->N);
+	auto p1s_V_K = this->template create_socket_out<B>(p1, "V_K", this->K);
+	this->create_codelet(p1, [this, p1s_Y_N, p1s_V_K](Task &t) -> int
 	{
-		this->decode_hiho(static_cast<B*>(p1s_Y_N.get_dataptr()),
-		                  static_cast<B*>(p1s_V_K.get_dataptr()));
+		this->decode_hiho(static_cast<B*>(t[p1s_Y_N].get_dataptr()),
+		                  static_cast<B*>(t[p1s_V_K].get_dataptr()));
 
 		return 0;
 	});
@@ -57,12 +57,12 @@ Decoder_HIHO<B>
 	this->register_timer(p1, "store");
 
 	auto &p2 = this->create_task("decode_hiho_cw", (int)dec::tsk::decode_hiho_cw);
-	auto &p2s_Y_N = this->template create_socket_in <B>(p2, "Y_N", this->N * this->n_frames);
-	auto &p2s_V_N = this->template create_socket_out<B>(p2, "V_N", this->N * this->n_frames);
-	this->create_codelet(p2, [this, &p2s_Y_N, &p2s_V_N]() -> int
+	auto p2s_Y_N = this->template create_socket_in <B>(p2, "Y_N", this->N);
+	auto p2s_V_N = this->template create_socket_out<B>(p2, "V_N", this->N);
+	this->create_codelet(p2, [this, p2s_Y_N, p2s_V_N](Task &t) -> int
 	{
-		this->decode_hiho_cw(static_cast<B*>(p2s_Y_N.get_dataptr()),
-		                     static_cast<B*>(p2s_V_N.get_dataptr()));
+		this->decode_hiho_cw(static_cast<B*>(t[p2s_Y_N].get_dataptr()),
+		                     static_cast<B*>(t[p2s_V_N].get_dataptr()));
 
 		return 0;
 	});

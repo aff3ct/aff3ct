@@ -19,11 +19,11 @@ namespace module
 {
 	namespace qnt
 	{
-		enum class tsk : uint8_t { process, SIZE };
+		enum class tsk : size_t { process, SIZE };
 
 		namespace sck
 		{
-			enum class process : uint8_t { Y_N1, Y_N2, SIZE };
+			enum class process : size_t { Y_N1, Y_N2, SIZE };
 		}
 	}
 

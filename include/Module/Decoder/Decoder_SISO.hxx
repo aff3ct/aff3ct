@@ -15,14 +15,14 @@ template <typename R>
 Task& Decoder_SISO<R>
 ::operator[](const dec::tsk t)
 {
-	return Module::operator[]((int)t);
+	return Module::operator[]((size_t)t);
 }
 
 template <typename R>
 Socket& Decoder_SISO<R>
 ::operator[](const dec::sck::decode_siso s)
 {
-	return Module::operator[]((int)dec::tsk::decode_siso)[(int)s];
+	return Module::operator[]((size_t)dec::tsk::decode_siso)[(size_t)s];
 }
 
 template <typename R>
@@ -36,12 +36,12 @@ Decoder_SISO<R>
 	this->set_name(name);
 
 	auto &p = this->create_task("decode_siso", (int)dec::tsk::decode_siso);
-	auto &ps_Y_N1 = this->template create_socket_in <R>(p, "Y_N1", this->N * this->n_frames);
-	auto &ps_Y_N2 = this->template create_socket_out<R>(p, "Y_N2", this->N * this->n_frames);
-	this->create_codelet(p, [this, &ps_Y_N1, &ps_Y_N2]() -> int
+	auto ps_Y_N1 = this->template create_socket_in <R>(p, "Y_N1", this->N);
+	auto ps_Y_N2 = this->template create_socket_out<R>(p, "Y_N2", this->N);
+	this->create_codelet(p, [this, ps_Y_N1, ps_Y_N2](Task &t) -> int
 	{
-		this->decode_siso(static_cast<R*>(ps_Y_N1.get_dataptr()),
-		                  static_cast<R*>(ps_Y_N2.get_dataptr()));
+		this->decode_siso(static_cast<R*>(t[ps_Y_N1].get_dataptr()),
+		                  static_cast<R*>(t[ps_Y_N2].get_dataptr()));
 
 		return 0;
 	});

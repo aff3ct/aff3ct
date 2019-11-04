@@ -6,6 +6,7 @@
 #define MODEM_HPP_
 
 #include <cstdint>
+#include <cstddef>
 #include <memory>
 #include <vector>
 
@@ -21,17 +22,17 @@ namespace module
 {
 	namespace mdm
 	{
-		enum class tsk : uint8_t { modulate, tmodulate, filter, demodulate, tdemodulate, demodulate_wg, tdemodulate_wg, SIZE };
+		enum class tsk : size_t { modulate, tmodulate, filter, demodulate, tdemodulate, demodulate_wg, tdemodulate_wg, SIZE };
 
 		namespace sck
 		{
-			enum class modulate       : uint8_t {      X_N1, X_N2      , SIZE };
-			enum class tmodulate      : uint8_t {      X_N1, X_N2      , SIZE };
-			enum class filter         : uint8_t {      Y_N1, Y_N2      , SIZE };
-			enum class demodulate     : uint8_t {      Y_N1, Y_N2      , SIZE };
-			enum class tdemodulate    : uint8_t {      Y_N1, Y_N2, Y_N3, SIZE };
-			enum class demodulate_wg  : uint8_t { H_N, Y_N1, Y_N2      , SIZE };
-			enum class tdemodulate_wg : uint8_t { H_N, Y_N1, Y_N2, Y_N3, SIZE };
+			enum class modulate       : size_t {      X_N1, X_N2      , SIZE };
+			enum class tmodulate      : size_t {      X_N1, X_N2      , SIZE };
+			enum class filter         : size_t {      Y_N1, Y_N2      , SIZE };
+			enum class demodulate     : size_t {      Y_N1, Y_N2      , SIZE };
+			enum class tdemodulate    : size_t {      Y_N1, Y_N2, Y_N3, SIZE };
+			enum class demodulate_wg  : size_t { H_N, Y_N1, Y_N2      , SIZE };
+			enum class tdemodulate_wg : size_t { H_N, Y_N1, Y_N2, Y_N3, SIZE };
 		}
 	}
 

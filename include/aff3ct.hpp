@@ -1107,6 +1107,9 @@
 #ifndef FRAME_TRACE_HPP
 #include <Tools/Display/Frame_trace/Frame_trace.hpp>
 #endif
+#ifndef RANG_FORMAT_H_
+#include <Tools/Display/rang_format/rang_format.h>
+#endif
 #ifndef Reporter_BFER_HPP_
 #include <Tools/Display/Reporter/BFER/Reporter_BFER.hpp>
 #endif

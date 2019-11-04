@@ -6,6 +6,7 @@
 #define CHANNEL_HPP_
 
 #include <cstdint>
+#include <cstddef>
 #include <vector>
 #include <memory>
 
@@ -20,12 +21,12 @@ namespace module
 {
 	namespace chn
 	{
-		enum class tsk : uint8_t { add_noise, add_noise_wg, SIZE };
+		enum class tsk : size_t { add_noise, add_noise_wg, SIZE };
 
 		namespace sck
 		{
-			enum class add_noise    : uint8_t { X_N, Y_N     , SIZE };
-			enum class add_noise_wg : uint8_t { X_N, H_N, Y_N, SIZE };
+			enum class add_noise    : size_t { X_N, Y_N     , SIZE };
+			enum class add_noise_wg : size_t { X_N, H_N, Y_N, SIZE };
 		}
 	}
 

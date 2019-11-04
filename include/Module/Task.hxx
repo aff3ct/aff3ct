@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <sstream>
+#include <cassert>
 
-#include "Tools/Exception/exception.hpp"
 #include "Module/Task.hpp"
 
 namespace aff3ct
@@ -68,28 +68,25 @@ uint32_t Task
 	return this->n_calls;
 }
 
-Socket& Task
-::operator[](const int id)
+int Task
+::exec_fast()
 {
-	if (id < 0 || (size_t)id >= this->sockets.size())
-	{
-		std::stringstream message;
-		message << "'id' has to be positive and smaller than 'sockets.size()' ('id' = " << id
-		        << ", 'sockets.size()' = " << sockets.size() << ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-	if (this->sockets[id] == nullptr)
-	{
-		std::stringstream message;
-		message << "'sockets[id]' can't be nullptr ('id' = " << id << ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
+	auto exec_status = this->codelet(*this);
+	this->n_calls++;
+	return exec_status;
+}
+
+Socket& Task
+::operator[](const size_t id)
+{
+	assert((size_t)id < this->sockets.size());
+	assert(this->sockets[id] != nullptr);
 
 	return *this->sockets[id];
 }
 
 void Task
-::update_timer(const int id, const std::chrono::nanoseconds &duration)
+::update_timer(const size_t id, const std::chrono::nanoseconds &duration)
 {
 	if (this->is_stats())
 	{

@@ -13,28 +13,28 @@ template <typename B>
 Task& CRC<B>
 ::operator[](const crc::tsk t)
 {
-	return Module::operator[]((int)t);
+	return Module::operator[]((size_t)t);
 }
 
 template <typename B>
 Socket& CRC<B>
 ::operator[](const crc::sck::build s)
 {
-	return Module::operator[]((int)crc::tsk::build)[(int)s];
+	return Module::operator[]((size_t)crc::tsk::build)[(size_t)s];
 }
 
 template <typename B>
 Socket& CRC<B>
 ::operator[](const crc::sck::extract s)
 {
-	return Module::operator[]((int)crc::tsk::extract)[(int)s];
+	return Module::operator[]((size_t)crc::tsk::extract)[(size_t)s];
 }
 
 template <typename B>
 Socket& CRC<B>
 ::operator[](const crc::sck::check s)
 {
-	return Module::operator[]((int)crc::tsk::check)[(int)s];
+	return Module::operator[]((size_t)crc::tsk::check)[(size_t)s];
 }
 
 template <typename B>
@@ -54,32 +54,32 @@ CRC<B>
 	}
 
 	auto &p1 = this->create_task("build");
-	auto &p1s_U_K1 = this->template create_socket_in <B>(p1, "U_K1",  this->K               * this->n_frames);
-	auto &p1s_U_K2 = this->template create_socket_out<B>(p1, "U_K2", (this->K + this->size) * this->n_frames);
-	this->create_codelet(p1, [this, &p1s_U_K1, &p1s_U_K2]() -> int
+	auto p1s_U_K1 = this->template create_socket_in <B>(p1, "U_K1", this->K             );
+	auto p1s_U_K2 = this->template create_socket_out<B>(p1, "U_K2", this->K + this->size);
+	this->create_codelet(p1, [this, p1s_U_K1, p1s_U_K2](Task &t) -> int
 	{
-		this->build(static_cast<B*>(p1s_U_K1.get_dataptr()),
-		            static_cast<B*>(p1s_U_K2.get_dataptr()));
+		this->build(static_cast<B*>(t[p1s_U_K1].get_dataptr()),
+		            static_cast<B*>(t[p1s_U_K2].get_dataptr()));
 
 		return 0;
 	});
 
 	auto &p2 = this->create_task("extract");
-	auto &p2s_V_K1 = this->template create_socket_in <B>(p2, "V_K1", (this->K + this->size) * this->n_frames);
-	auto &p2s_V_K2 = this->template create_socket_out<B>(p2, "V_K2",  this->K               * this->n_frames);
-	this->create_codelet(p2, [this, &p2s_V_K1, &p2s_V_K2]() -> int
+	auto p2s_V_K1 = this->template create_socket_in <B>(p2, "V_K1", this->K + this->size);
+	auto p2s_V_K2 = this->template create_socket_out<B>(p2, "V_K2", this->K             );
+	this->create_codelet(p2, [this, p2s_V_K1, p2s_V_K2](Task &t) -> int
 	{
-		this->extract(static_cast<B*>(p2s_V_K1.get_dataptr()),
-		              static_cast<B*>(p2s_V_K2.get_dataptr()));
+		this->extract(static_cast<B*>(t[p2s_V_K1].get_dataptr()),
+		              static_cast<B*>(t[p2s_V_K2].get_dataptr()));
 
 		return 0;
 	});
 
 	auto &p3 = this->create_task("check");
-	auto &p3s_V_K = this->template create_socket_in<B>(p3, "V_K", (this->K + this->size) * this->n_frames);
-	this->create_codelet(p3, [this, &p3s_V_K]() -> int
+	auto p3s_V_K = this->template create_socket_in<B>(p3, "V_K", this->K + this->size);
+	this->create_codelet(p3, [this, p3s_V_K](Task &t) -> int
 	{
-		return this->check(static_cast<B*>(p3s_V_K.get_dataptr())) ? 1 : 0;
+		return this->check(static_cast<B*>(t[p3s_V_K].get_dataptr())) ? 1 : 0;
 	});
 }
 

@@ -19,11 +19,11 @@ namespace module
 {
 	namespace src
 	{
-		enum class tsk : uint8_t { generate, SIZE };
+		enum class tsk : size_t { generate, SIZE };
 
 		namespace sck
 		{
-			enum class generate : uint8_t { U_K, SIZE };
+			enum class generate : size_t { U_K, SIZE };
 		}
 	}
 

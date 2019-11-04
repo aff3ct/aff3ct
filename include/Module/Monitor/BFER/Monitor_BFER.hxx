@@ -13,14 +13,14 @@ template <typename B>
 Task& Monitor_BFER<B>
 ::operator[](const mnt::tsk t)
 {
-	return Module::operator[]((int)t);
+	return Module::operator[]((size_t)t);
 }
 
 template <typename B>
 Socket& Monitor_BFER<B>
 ::operator[](const mnt::sck::check_errors s)
 {
-	return Module::operator[]((int)mnt::tsk::check_errors)[(int)s];
+	return Module::operator[]((size_t)mnt::tsk::check_errors)[(size_t)s];
 }
 
 template <typename B>
