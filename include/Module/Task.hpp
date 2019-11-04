@@ -13,6 +13,8 @@
 #include <vector>
 #include <mipp.h>
 
+#include "Module/Chain.hpp"
+
 namespace aff3ct
 {
 namespace module
@@ -92,7 +94,7 @@ public:
 	inline bool is_debug            (                  ) const;
 	inline bool is_debug_hex        (                  ) const;
 	inline bool is_last_input_socket(const Socket &s_in) const;
-	inline bool can_exec            (                  ) const;
+	       bool can_exec            (                  ) const;
 
 	inline const Module& get_module     (               ) const;
 	inline std::string   get_name       (               ) const;
@@ -112,10 +114,6 @@ public:
 
 	int exec();
 
-	void exec_chain(std::function<bool(const std::vector<int>&)> &stop_condition);
-
-	void exec_chain(std::function<bool(const std::vector<int>&)> &stop_condition, const size_t n_threads);
-
 	inline Socket& operator[](const size_t id);
 
 	inline void update_timer(const size_t id, const std::chrono::nanoseconds &duration);
@@ -123,14 +121,6 @@ public:
 	Task* clone() const;
 
 protected:
-	void _exec_chain(std::function<bool(const std::vector<int>&)> &stop_condition, std::vector<Task*> &tasks_chain);
-
-	void build_tasks_chain(std::vector<Task*> &tasks_chain);
-
-	void duplicate_tasks_chain(const std::vector<Task*> &tasks_chain,
-	                           const size_t n_threads,
-	                                 std::vector<std::vector<Task*>> &tasks_chains);
-
 	void register_timer(const std::string &key);
 
 	template <typename T>

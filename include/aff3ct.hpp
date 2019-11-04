@@ -213,6 +213,9 @@
 #ifndef FACTORY_NOISE_HPP
 #include <Factory/Tools/Noise/Noise.hpp>
 #endif
+#ifndef CHAIN_HPP_
+#include <Module/Chain.hpp>
+#endif
 #ifndef CHANNEL_AWGN_LLR_HPP_
 #include <Module/Channel/AWGN/Channel_AWGN_LLR.hpp>
 #endif
