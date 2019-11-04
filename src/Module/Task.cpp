@@ -374,7 +374,7 @@ void Task
 	this->build_tasks_chain(tasks_chain);
 	std::vector<int> statuses(tasks_chain.size(), 0);
 
-	std::vector<std::vector<Task*>> tasks_chains;
+	std::vector<std::vector<Task*>> tasks_chains(n_threads);
 	this->duplicate_tasks_chain(tasks_chain, n_threads, tasks_chains);
 
 	std::vector<std::thread> threads(n_threads);
@@ -443,30 +443,70 @@ void Task
                               std::vector<std::vector<Task*>> &tasks_chains)
 {
 	// clone the tasks
-	for (size_t t = 0; t < n_threads; t++)
-	{
-		auto &tasks_chain_cpy = tasks_chains[t];
-		for (auto &t : tasks_chain)
-		{
-			auto t_clone = t->clone();
-			t_clone->set_autoalloc(true);
-			tasks_chain_cpy.push_back(t_clone);
-		}
-	}
-
-	// bind the tasks
 	for (size_t tid = 0; tid < n_threads; tid++)
 	{
 		auto &tasks_chain_cpy = tasks_chains[tid];
-		for (size_t tc = 0; tc < tasks_chain.size(); tc++)
+		for (auto &ta : tasks_chain)
 		{
-			auto &ta = tasks_chain[tc];
-			for (auto &s : this->sockets)
-			{
-				if (this->get_socket_type(*s) == socket_t::SIN_SOUT ||
-					this->get_socket_type(*s) == socket_t::SOUT)
-				{
+			auto ta_clone = ta->clone();
+			ta_clone->set_autoalloc(true);
+			tasks_chain_cpy.push_back(ta_clone);
+		}
+	}
 
+	std::function<int(const Task&)> get_task_id = [&tasks_chain](const Task &ta) -> int {
+		std::cout << "ta = " << +(&ta) << std::endl;
+		std::cout << "  ta.get_name() = " << ta.get_name() << std::endl;
+		for (size_t t = 0; t < tasks_chain.size(); t++)
+		{
+			std::cout << "tasks_chain[t] = " << +tasks_chain[t] << " - t = " << t << std::endl;
+			std::cout << "  tasks_chain[t]->get_name() = " << tasks_chain[t]->get_name() << std::endl;
+			if (&ta == tasks_chain[t])
+			{
+				std::cout << "Match -> salut !" << std::endl << std::endl;
+				return t;
+			}
+		}
+		std::cout << "Pas match :-(" << std::endl << std::endl;
+		return -1;
+	};
+
+	std::function<int(const Task&, const Socket&)> get_socket_id = [](const Task &ta, const Socket& so) {
+		for (size_t s = 0; s < ta.sockets.size(); s++)
+			if (&so == ta.sockets[s].get())
+				return (int)s;
+		return -1;
+	};
+
+	// bind the tasks
+	for (size_t tout_id = 0; tout_id < tasks_chain.size(); tout_id++)
+	{
+		auto &tout = tasks_chain[tout_id];
+		for (size_t sout_id = 0; sout_id < tout->sockets.size(); sout_id++)
+		{
+			auto &sout = tout->sockets[sout_id];
+			if (tout->get_socket_type(*sout) == socket_t::SIN_SOUT ||
+				tout->get_socket_type(*sout) == socket_t::SOUT)
+			{
+				for (auto &sin : sout->get_bound_sockets())
+				{
+					if (sin != nullptr)
+					{
+						std::cout << "sin->get_name() = " << sin->get_name() << std::endl;
+
+						auto &tin = sin->get_task();
+						auto tin_id = get_task_id(tin);
+						assert(tin_id != -1);
+
+						auto sin_id = get_socket_id(tin, *sin);
+						assert(sin_id != -1);
+
+						for (size_t tid = 0; tid < n_threads; tid++)
+						{
+							auto &tasks_chain_cpy = tasks_chains[tid];
+							(*tasks_chain_cpy[tout_id])[sout_id].bind((*tasks_chain_cpy[tin_id])[sin_id]);
+						}
+					}
 				}
 			}
 		}
