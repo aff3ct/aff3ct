@@ -17,22 +17,6 @@
 #include "Tools/Noise/Sigma.hpp"
 #include "Tools/Noise/Event_probability.hpp"
 #include "Tools/Noise/Received_optical_power.hpp"
-#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
-#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Fast/Gaussian_noise_generator_fast.hpp"
-#include "Tools/Algo/Draw_generator/Event_generator/Standard/Event_generator_std.hpp"
-#include "Tools/Algo/Draw_generator/Event_generator/Fast/Event_generator_fast.hpp"
-#include "Tools/Algo/Draw_generator/User_pdf_noise_generator/Standard/User_pdf_noise_generator_std.hpp"
-#include "Tools/Algo/Draw_generator/User_pdf_noise_generator/Fast/User_pdf_noise_generator_fast.hpp"
-#ifdef AFF3CT_CHANNEL_MKL
-#include "Tools/Algo/Draw_generator/Event_generator/MKL/Event_generator_MKL.hpp"
-#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/MKL/Gaussian_noise_generator_MKL.hpp"
-#include "Tools/Algo/Draw_generator/User_pdf_noise_generator/MKL/User_pdf_noise_generator_MKL.hpp"
-#endif
-#ifdef AFF3CT_CHANNEL_GSL
-#include "Tools/Algo/Draw_generator/Event_generator/GSL/Event_generator_GSL.hpp"
-#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/GSL/Gaussian_noise_generator_GSL.hpp"
-#include "Tools/Algo/Draw_generator/User_pdf_noise_generator/GSL/User_pdf_noise_generator_GSL.hpp"
-#endif
 #include "Factory/Module/Channel/Channel.hpp"
 
 using namespace aff3ct;
