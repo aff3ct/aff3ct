@@ -8,7 +8,6 @@
 #include <memory>
 
 #include "Tools/Noise/Noise.hpp"
-#include "Tools/Noise/Sigma.hpp"
 #include "Tools/Code/SCMA/Codebook.hpp"
 #include "Tools/Code/SCMA/modem_SCMA_functions.hpp"
 #include "Tools/Algo/Multidimensional_vector/Vector_2D.hpp"
@@ -37,7 +36,7 @@ private:
 	const int           n_ite;
 
 public:
-	Modem_SCMA(const int N, std::unique_ptr<const tools::Codebook<R>>&& CB, const tools::Noise<R>& noise = tools::Sigma<R>(),
+	Modem_SCMA(const int N, std::unique_ptr<const tools::Codebook<R>>&& CB, const tools::Noise<R> *noise = nullptr,
 	           const bool disable_sig2 = false, const int n_ite = 1, const int n_frames = 6);
 	virtual ~Modem_SCMA() = default;
 

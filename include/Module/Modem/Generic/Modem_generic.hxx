@@ -18,7 +18,7 @@ namespace module
 {
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modem_generic<B,R,Q,MAX>
-::Modem_generic(const int N, std::unique_ptr<const tools::Constellation<R>>&& _cstl, const tools::Noise<R>& noise,
+::Modem_generic(const int N, std::unique_ptr<const tools::Constellation<R>>&& _cstl, const tools::Noise<R> *noise,
                 const bool disable_sig2, const int n_frames)
 : Modem<B,R,Q>(N,
               (int)(std::ceil((float)N / (float)_cstl->get_n_bits_per_symbol()) * (is_complex_mod(*_cstl) ? 2 : 1)), // N_mod

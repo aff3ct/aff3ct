@@ -12,7 +12,7 @@ using namespace aff3ct::module;
 
 template <typename B, typename R, typename Q>
 Modem_OOK_optical<B,R,Q>
-::Modem_OOK_optical(const int N, const tools::Distributions<R>& dist, const tools::Noise<R>& noise, const int n_frames)
+::Modem_OOK_optical(const int N, const tools::Distributions<R>& dist, const tools::ROP<R> *noise, const int n_frames)
 : Modem_OOK<B,R,Q>(N, noise, n_frames), dist(dist), current_dist(nullptr)
 {
 	const std::string name = "Modem_OOK_optical";

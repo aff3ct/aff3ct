@@ -6,7 +6,6 @@
 #define MODEM_BPSK_FAST_HPP_
 
 #include "Tools/Noise/Noise.hpp"
-#include "Tools/Noise/Sigma.hpp"
 #include "Module/Modem/Modem.hpp"
 
 namespace aff3ct
@@ -21,7 +20,7 @@ private:
 	R two_on_square_sigma;
 
 public:
-	Modem_BPSK_fast(const int N, const tools::Noise<R>& noise = tools::Sigma<R>(), const bool disable_sig2 = false,
+	Modem_BPSK_fast(const int N, const tools::Noise<R> *noise = nullptr, const bool disable_sig2 = false,
 	                const int n_frames = 1);
 	virtual ~Modem_BPSK_fast() = default;
 

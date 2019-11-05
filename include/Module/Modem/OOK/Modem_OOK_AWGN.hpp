@@ -5,7 +5,6 @@
 #ifndef MODEM_OOK_AWGN_HPP_
 #define MODEM_OOK_AWGN_HPP_
 
-#include "Tools/Noise/Noise.hpp"
 #include "Tools/Noise/Sigma.hpp"
 #include "Module/Modem/OOK/Modem_OOK.hpp"
 
@@ -22,7 +21,7 @@ protected:
 
 public:
 	Modem_OOK_AWGN(const int N,
-	               const tools::Noise<R>& noise = tools::Sigma<R>(),
+	               const tools::Sigma<R> *noise = nullptr,
 	               const bool disable_sig2 = false,
 	               const int n_frames = 1);
 	virtual ~Modem_OOK_AWGN() = default;

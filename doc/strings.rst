@@ -615,9 +615,6 @@
    Select the approximation of the :math:`\max^*` operator used in the |PAM|,
    |QAM|, |PSK|, |CPM| and user demodulators.
 
-.. |factory::Modem::p+noise| replace::
-   Set the noise variance value for the demodulator.
-
 .. |factory::Modem::p+no-sig2| replace::
    Turn off the division by :math:`\sigma^2` in the demodulator where
    :math:`\sigma` is the Gaussian noise variance.

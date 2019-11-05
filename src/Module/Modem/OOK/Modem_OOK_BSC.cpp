@@ -8,7 +8,7 @@ using namespace aff3ct::module;
 
 template <typename B, typename R, typename Q>
 Modem_OOK_BSC<B,R,Q>
-::Modem_OOK_BSC(const int N, const tools::Noise<R>& noise, const int n_frames)
+::Modem_OOK_BSC(const int N, const tools::EP<R> *noise, const int n_frames)
 : Modem_OOK<B,R,Q>(N, noise, n_frames), log_pe_1_pe((Q)0)
 {
 	const std::string name = "Modem_OOK_BSC";

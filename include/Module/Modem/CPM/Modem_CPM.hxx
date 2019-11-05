@@ -27,7 +27,7 @@ const std::string Modem_CPM<B,R,Q,MAX>::wave_shape_default = "GMSK";
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modem_CPM<B,R,Q,MAX>
 ::Modem_CPM(const int  N,
-            const tools::Noise<R>& noise,
+            const tools::Noise<R> *noise,
             const int  bits_per_symbol,
             const int  sampling_factor,
             const int  cpm_L,

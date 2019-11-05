@@ -11,7 +11,6 @@
 #include <vector>
 
 #include "Tools/Noise/Noise.hpp"
-#include "Tools/Noise/Sigma.hpp"
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
 #include "Module/Module.hpp"
@@ -61,10 +60,10 @@ public:
 	inline Socket& operator[](const mdm::sck::tdemodulate_wg s);
 
 protected:
-	const int N;       /*!< Size of one frame (= number of bits in one frame) */
-	const int N_mod;   /*!< Number of transmitted elements after the modulation (could be smaller, bigger or equal to N) */
-	const int N_fil;   /*!< Number of transmitted elements after the filtering process */
-	std::unique_ptr<tools::Noise<R>> n; /*!< the current noise applied to the input signal */
+	const int N;              /*!< Size of one frame (= number of bits in one frame) */
+	const int N_mod;          /*!< Number of transmitted elements after the modulation (could be smaller, bigger or equal to N) */
+	const int N_fil;          /*!< Number of transmitted elements after the filtering process */
+	const tools::Noise<R> *n; /*!< the current noise applied to the input signal */
 
 	bool enable_filter;
 	bool enable_demodulator;
@@ -78,7 +77,7 @@ public:
 	 * \param N_fil:    number of transmitted elements after the filtering process.
 	 * \param n_frames: number of frames to process in the Modem.
 	 */
-	Modem(const int N, const int N_mod, const int N_fil, const tools::Noise<R>& noise = tools::Sigma<R>(), const int n_frames = 1);
+	Modem(const int N, const int N_mod, const int N_fil, const tools::Noise<R> *noise = nullptr, const int n_frames = 1);
 
 	/*!
 	 * \brief Constructor (assumes that nothing is done in the filtering process).
@@ -87,7 +86,7 @@ public:
 	 * \param N_mod:    number of transmitted elements after the modulation (could be smaller, bigger or equal to N).
 	 * \param n_frames: number of frames to process in the Modem.
 	 */
-	Modem(const int N, const int N_mod, const tools::Noise<R>& noise = tools::Sigma<R>(), const int n_frames = 1);
+	Modem(const int N, const int N_mod, const tools::Noise<R> *noise = nullptr, const int n_frames = 1);
 
 	/*!
 	 * \brief Constructor (assumes that nothing is done in the filtering process).
@@ -95,7 +94,7 @@ public:
 	 * \param N:        size of one frame (= number of bits in one frame).
 	 * \param n_frames: number of frames to process in the Modem.
 	 */
-	Modem(const int N, const tools::Noise<R>& noise = tools::Sigma<R>(), const int n_frames = 1);
+	Modem(const int N, const tools::Noise<R> *noise = nullptr, const int n_frames = 1);
 
 	void init_processes();
 

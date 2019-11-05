@@ -67,7 +67,7 @@ Socket& Modem<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>
-::Modem(const int N, const int N_mod, const int N_fil, const tools::Noise<R>& noise, const int n_frames)
+::Modem(const int N, const int N_mod, const int N_fil, const tools::Noise<R> *noise, const int n_frames)
 : Module(n_frames), N(N), N_mod(N_mod), N_fil(N_fil), n(nullptr), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
@@ -95,14 +95,15 @@ Modem<B,R,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (noise.has_noise()) this->set_noise(noise);
+	if (noise != nullptr && noise->has_noise())
+		this->set_noise(*noise);
 
 	this->init_processes();
 }
 
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>
-::Modem(const int N, const int N_mod, const tools::Noise<R>& noise, const int n_frames)
+::Modem(const int N, const int N_mod, const tools::Noise<R> *noise, const int n_frames)
 : Module(n_frames), N(N), N_mod(N_mod), N_fil(N_mod), n(nullptr), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
@@ -123,14 +124,15 @@ Modem<B,R,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (noise.has_noise()) this->set_noise(noise);
+	if (noise != nullptr && noise->has_noise())
+		this->set_noise(*noise);
 
 	this->init_processes();
 }
 
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>
-::Modem(const int N, const tools::Noise<R>& noise, const int n_frames)
+::Modem(const int N, const tools::Noise<R> *noise, const int n_frames)
 : Module(n_frames), N(N), N_mod(N), N_fil(N), n(nullptr), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
@@ -144,7 +146,8 @@ Modem<B,R,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (noise.has_noise()) this->set_noise(noise);
+	if (noise != nullptr && noise->has_noise())
+		this->set_noise(*noise);
 
 	this->init_processes();
 }
@@ -285,7 +288,7 @@ template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
 ::set_noise(const tools::Noise<R>& noise)
 {
-	this->n.reset(noise.clone());
+	this->n = &noise;
 	this->check_noise();
 }
 

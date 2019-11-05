@@ -16,7 +16,7 @@ template <typename B = int, typename R = float, typename Q = R>
 class Modem_OOK : public Modem<B,R,Q>
 {
 public:
-	Modem_OOK(const int N, const tools::Noise<R>& noise, const int n_frames = 1);
+	Modem_OOK(const int N, const tools::Noise<R> *noise = nullptr, const int n_frames = 1);
 	virtual ~Modem_OOK() = default;
 
 	static bool is_complex_mod();

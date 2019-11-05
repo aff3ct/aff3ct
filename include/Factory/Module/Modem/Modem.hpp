@@ -9,6 +9,7 @@
 #include <map>
 #include <cli.hpp>
 
+#include "Tools/Noise/Noise.hpp"
 #include "Tools/Factory/Header.hpp"
 #include "Tools/Math/max.h"
 #include "Tools/Math/Distribution/Distributions.hpp"
@@ -54,7 +55,6 @@ public:
 	bool        no_sig2      = false;  // do not divide by (sig^2) / 2 in the demodulation
 	int         n_ite        = 1;      // number of demodulations/decoding sessions to perform in the BFERI simulations
 	int         N_fil        = 0;      // frame size at the output of the filter
-	float       noise        = -1.f;   // noise value
 	int         rop_est_bits = 0;      // The number of bits known by the Modem_OOK_optical_rop_estimate demodulator
 	                                   // to estimate the ROP
 
@@ -74,9 +74,9 @@ public:
 
 	// builder
 	template <typename B = int, typename R = float, typename Q = R>
-	module::Modem<B,R,Q>* build() const;
+	module::Modem<B,R,Q>* build(const tools::Noise<R> *noise = nullptr) const;
 	template <typename B = int, typename R = float, typename Q = R>
-	module::Modem<B,R,Q>* build(const tools::Distributions<R>& dist) const;
+	module::Modem<B,R,Q>* build(const tools::Distributions<R>& dist, const tools::Noise<R> *noise = nullptr) const;
 
 	static bool has_constellation(const std::string &type);
 
@@ -100,10 +100,10 @@ public:
 
 private:
 	template <typename B = int, typename R = float, typename Q = R, tools::proto_max<Q> MAX>
-	inline module::Modem<B,R,Q>* _build() const;
+	inline module::Modem<B,R,Q>* _build(const tools::Noise<R> *noise = nullptr) const;
 
 	template <typename B = int, typename R = float, typename Q = R>
-	inline module::Modem<B,R,Q>* _build_scma() const;
+	inline module::Modem<B,R,Q>* _build_scma(const tools::Noise<R> *noise = nullptr) const;
 
 	template <typename R = float>
 	tools::Constellation<R>* build_constellation() const;

@@ -5,7 +5,6 @@
 #ifndef MODEM_OOK_BSC_HPP_
 #define MODEM_OOK_BSC_HPP_
 
-#include "Tools/Noise/Noise.hpp"
 #include "Tools/Noise/Event_probability.hpp"
 #include "Module/Modem/OOK/Modem_OOK.hpp"
 
@@ -20,7 +19,7 @@ protected:
 	Q log_pe_1_pe; // = log(pe / (1- pe))
 
 public:
-	Modem_OOK_BSC(const int N, const tools::Noise<R>& noise = tools::EP<R>(), const int n_frames = 1);
+	Modem_OOK_BSC(const int N, const tools::Event_probability<R>* noise = nullptr, const int n_frames = 1);
 	virtual ~Modem_OOK_BSC() = default;
 
 	void set_noise(const tools::Noise<R>& noise);

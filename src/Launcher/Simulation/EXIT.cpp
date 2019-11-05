@@ -48,7 +48,6 @@ void EXIT<B,R>
 	this->args.erase({psrc+"-seed",     "S"});
 	this->args.erase({pmdm+"-fra-size", "N"});
 	this->args.erase({pmdm+"-fra",      "F"});
-	this->args.erase({pmdm+"-noise"       });
 	this->args.erase({pchn+"-fra-size", "N"});
 	this->args.erase({pchn+"-fra",      "F"});
 	this->args.erase({pchn+"-seed",     "S"});

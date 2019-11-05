@@ -18,12 +18,15 @@ template <typename B, typename R, typename Q>
 Modem_OOK_optical_rop_estimate<B,R,Q>
 ::Modem_OOK_optical_rop_estimate(const int N, std::vector<size_t> ROP_known_bits,
                                  const tools::Distributions<R>& dist, const int n_frames)
-: module::Modem_OOK<B,R,Q>(N, tools::ROP<R>(0), n_frames),
+: module::Modem_OOK<B,R,Q>(N, nullptr, n_frames),
   ROP_known_bits(std::move(ROP_known_bits)),
-  dist(dist)
+  dist(dist),
+  rop_noise(new tools::ROP<R>(0))
 {
 	const std::string name = "Modem_OOK_optical_rop_estimate";
 	this->set_name(name);
+
+	this->set_noise(*this->rop_noise);
 
 	init();
 }
@@ -32,12 +35,15 @@ template <typename B, typename R, typename Q>
 Modem_OOK_optical_rop_estimate<B,R,Q>
 ::Modem_OOK_optical_rop_estimate(const int N, int n_known_bits,
                                  const tools::Distributions<R>& dist, const int n_frames)
-: module::Modem_OOK<B,R,Q>(N, tools::ROP<R>(0), n_frames),
+: module::Modem_OOK<B,R,Q>(N, nullptr, n_frames),
   ROP_known_bits(n_known_bits),
-  dist(dist)
+  dist(dist),
+  rop_noise(new tools::ROP<R>(0))
 {
 	const std::string name = "Modem_OOK_optical_rop_estimate";
 	this->set_name(name);
+
+	this->set_noise(*this->rop_noise);
 
 	std::iota(ROP_known_bits.begin(), ROP_known_bits.end(), 0);
 
@@ -48,6 +54,20 @@ template <typename B, typename R, typename Q>
 void Modem_OOK_optical_rop_estimate<B,R,Q>
 ::init()
 {
+	if (this->n == nullptr)
+	{
+		std::stringstream message;
+		message << "'this->n' can't be nullptr.";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+	else if (this->n->get_noise() != (R)0)
+	{
+		std::stringstream message;
+		message << "'this->n->get_noise()' has to be equal to 0 ('this->n->get_noise()' = "
+		        << this->n->get_noise() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (ROP_known_bits.size() > (size_t)this->N)
 	{
 		std::stringstream message;

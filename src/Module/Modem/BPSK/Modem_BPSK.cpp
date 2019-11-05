@@ -10,7 +10,7 @@ using namespace aff3ct::module;
 
 template <typename B, typename R, typename Q>
 Modem_BPSK<B,R,Q>
-::Modem_BPSK(const int N, const tools::Noise<R>& noise, const bool disable_sig2, const int n_frames)
+::Modem_BPSK(const int N, const tools::Noise<R> *noise, const bool disable_sig2, const int n_frames)
 : Modem<B,R,Q>(N, noise, n_frames),
   disable_sig2(disable_sig2),
   two_on_square_sigma((R)0)

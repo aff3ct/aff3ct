@@ -17,7 +17,7 @@ namespace module
 {
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 Modem_SCMA<B,R,Q,PSI>
-::Modem_SCMA(const int N, std::unique_ptr<const tools::Codebook<R>>&& _CB, const tools::Noise<R>& noise,
+::Modem_SCMA(const int N, std::unique_ptr<const tools::Codebook<R>>&& _CB, const tools::Noise<R> *noise,
              const bool disable_sig2, const int n_ite, const int n_frames)
 : Modem<B,R,Q>(N,
                Modem_SCMA<B,R,Q,PSI>::size_mod(N, (int)_CB->get_system_bps()),
