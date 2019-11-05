@@ -21,15 +21,10 @@ Module
 	}
 }
 
+#ifndef AFF3CT_SYSTEMC_MODULE
 Module* Module
 ::clone() const
 {
-#ifdef AFF3CT_SYSTEMC_MODULE
-	std::stringstream message;
-	message << "SystemC is not supported.";
-	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-#endif
-
 	auto m = new Module(*this);
 	m->tasks_with_nullptr.clear();
 	m->tasks.clear();
@@ -48,6 +43,7 @@ Module* Module
 
 	return m;
 }
+#endif
 
 int Module
 ::get_n_frames() const
