@@ -48,9 +48,9 @@ public:
 	inline Socket& operator[](const chn::sck::add_noise_wg s);
 
 protected:
-	const int N;          // Size of one frame (= number of bits in one frame)
-	std::unique_ptr<tools::Noise<R>> n;   // the current noise to apply to the input signal
-	std::vector<R> noise; // vector of the noise applied to the signal
+	const int N;              // Size of one frame (= number of bits in one frame)
+	const tools::Noise<R> *n; // the current noise to apply to the input signal
+	std::vector<R> noise;     // vector of the noise applied to the signal
 
 public:
 	/*!
@@ -60,7 +60,7 @@ public:
 	 * \param noise:    The noise to apply to the signal
 	 * \param n_frames: number of frames to process in the Channel.
 	 */
-	Channel(const int N, const tools::Noise<R>& noise, const int n_frames = 1);
+	Channel(const int N, const tools::Noise<R> *noise, const int n_frames = 1);
 
 	/*!
 	 * \brief Constructor.
@@ -79,9 +79,11 @@ public:
 
 	const std::vector<R>& get_noise() const;
 
-	const tools::Noise<R>* current_noise() const;
+	const tools::Noise<R>& current_noise() const;
 
 	virtual void set_noise(const tools::Noise<R>& noise);
+
+	virtual void set_seed(const int seed);
 
 	/*!
 	 * \brief Adds the noise to a perfectly clear signal.

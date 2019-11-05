@@ -65,7 +65,6 @@ void BFER_std<B,R,Q>
 	this->args.erase({pmdm+"-noise"         });
 	this->args.erase({pchn+"-fra-size",  "N"});
 	this->args.erase({pchn+"-fra",       "F"});
-	this->args.erase({pchn+"-noise"         });
 	this->args.erase({pchn+"-seed",      "S"});
 	this->args.erase({pchn+"-add-users"     });
 	this->args.erase({pchn+"-complex"       });

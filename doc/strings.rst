@@ -187,9 +187,6 @@
 .. |factory::Channel::p+blk-fad| replace::
    Set the block fading policy for the Rayleigh channel.
 
-.. |factory::Channel::p+noise| replace::
-   Set the noise value (for ``SIGMA``, ``ROP`` or ``EP`` noise type).
-
 .. |factory::Channel::p+seed,S| replace::
    Set the seed used to initialize the |PRNG|.
 

@@ -16,6 +16,16 @@ namespace aff3ct
 namespace tools
 {
 
+#if defined(AFF3CT_CHANNEL_GSL) && defined(AFF3CT_CHANNEL_MKL)
+enum class User_pdf_noise_generator_implem { STD, FAST, GSL, MKL };
+#elif defined(AFF3CT_CHANNEL_GSL)
+enum class User_pdf_noise_generator_implem { STD, FAST, GSL };
+#elif defined(AFF3CT_CHANNEL_MKL)
+enum class User_pdf_noise_generator_implem { STD, FAST, MKL };
+#else
+enum class User_pdf_noise_generator_implem { STD, FAST };
+#endif
+
 enum class User_pdf_noise_generator_interpolation {LINEAR, NEAREST};
 
 template <typename R = float>

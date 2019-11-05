@@ -3,6 +3,13 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
+#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Fast/Gaussian_noise_generator_fast.hpp"
+#ifdef AFF3CT_CHANNEL_GSL
+#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/GSL/Gaussian_noise_generator_GSL.hpp"
+#endif
+#ifdef AFF3CT_CHANNEL_MKL
+#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/MKL/Gaussian_noise_generator_MKL.hpp"
+#endif
 #include "Module/Channel/AWGN/Channel_AWGN_LLR.hpp"
 
 using namespace aff3ct;
@@ -10,25 +17,74 @@ using namespace aff3ct::module;
 
 template <typename R>
 Channel_AWGN_LLR<R>
-::Channel_AWGN_LLR(const int N, std::unique_ptr<tools::Gaussian_gen<R>>&& _ng, const bool add_users,
-                   const tools::Sigma<R>& noise, const int n_frames)
+::Channel_AWGN_LLR(const int N,
+                   tools::Gaussian_gen<R> &gaussian_generator,
+                   const tools::Sigma<R> *noise,
+                   const bool add_users,
+                   const int n_frames)
 : Channel<R>(N, noise, n_frames),
   add_users(add_users),
-  noise_generator(std::move(_ng))
+  gaussian_generator(&gaussian_generator),
+  is_autoalloc_gaussian_gen(false)
 {
 	const std::string name = "Channel_AWGN_LLR";
 	this->set_name(name);
-
-	if (this->noise_generator == nullptr)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'noise_generator' can't be NULL.");
 }
 
 template <typename R>
 Channel_AWGN_LLR<R>
-::Channel_AWGN_LLR(const int N, const int seed, const bool add_users, const tools::Sigma<R>& noise, const int n_frames)
-: Channel_AWGN_LLR<R>(N, std::unique_ptr<tools::Gaussian_noise_generator_std<R>>(new tools::Gaussian_noise_generator_std<R>(seed)),
-  add_users, noise, n_frames)
+::Channel_AWGN_LLR(const int N,
+                   const tools::Sigma<R> *noise,
+                   const tools::Gaussian_noise_generator_implem implem,
+                   const int seed,
+                   const bool add_users,
+                   const int n_frames)
+: Channel<R>(N, noise, n_frames),
+  add_users(add_users),
+  gaussian_generator(nullptr),
+  is_autoalloc_gaussian_gen(true)
 {
+	const std::string name = "Channel_AWGN_LLR";
+	this->set_name(name);
+
+	switch (implem)
+	{
+		case tools::Gaussian_noise_generator_implem::STD:
+			this->gaussian_generator = new tools::Gaussian_noise_generator_std<R>(seed);
+			break;
+		case tools::Gaussian_noise_generator_implem::FAST:
+			this->gaussian_generator = new tools::Gaussian_noise_generator_fast<R>(seed);
+			break;
+#ifdef AFF3CT_CHANNEL_GSL
+		case tools::Gaussian_noise_generator_implem::GSL:
+			this->gaussian_generator = new tools::Gaussian_noise_generator_GSL<R>(seed);
+			break;
+#endif
+#ifdef AFF3CT_CHANNEL_MKL
+		case tools::Gaussian_noise_generator_implem::MKL:
+			this->gaussian_generator = new tools::Gaussian_noise_generator_MKL<R>(seed);
+			break;
+#endif
+		default:
+			std::stringstream message;
+			message << "Unsupported 'implem' ('implem' = " << (int)implem << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	};
+}
+
+template <typename R>
+Channel_AWGN_LLR<R>
+::~Channel_AWGN_LLR()
+{
+	if (this->is_autoalloc_gaussian_gen)
+		delete gaussian_generator;
+}
+
+template <typename R>
+void Channel_AWGN_LLR<R>
+::set_seed(const int seed)
+{
+	this->gaussian_generator->set_seed(seed);
 }
 
 template <typename R>
@@ -46,7 +102,7 @@ void Channel_AWGN_LLR<R>
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		noise_generator->generate(this->noise.data(), this->N, this->n->get_noise());
+		gaussian_generator->generate(this->noise.data(), this->N, this->n->get_noise());
 
 		std::fill(Y_N, Y_N + this->N, (R)0);
 		for (auto f = 0; f < this->n_frames; f++)
@@ -62,9 +118,9 @@ void Channel_AWGN_LLR<R>
 		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 		if (frame_id < 0)
-			noise_generator->generate(this->noise, this->n->get_noise());
+			gaussian_generator->generate(this->noise, this->n->get_noise());
 		else
-			noise_generator->generate(this->noise.data() + f_start * this->N, this->N, this->n->get_noise());
+			gaussian_generator->generate(this->noise.data() + f_start * this->N, this->N, this->n->get_noise());
 
 		for (auto f = f_start; f < f_stop; f++)
 			for (auto n = 0; n < this->N; n++)
@@ -76,7 +132,6 @@ template<typename R>
 void Channel_AWGN_LLR<R>::check_noise()
 {
 	Channel<R>::check_noise();
-
 	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
 }
 // ==================================================================================== explicit template instantiation

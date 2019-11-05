@@ -15,6 +15,16 @@ namespace aff3ct
 {
 namespace tools
 {
+#if defined(AFF3CT_CHANNEL_GSL) && defined(AFF3CT_CHANNEL_MKL)
+enum class Event_generator_implem { STD, FAST, GSL, MKL };
+#elif defined(AFF3CT_CHANNEL_GSL)
+enum class Event_generator_implem { STD, FAST, GSL };
+#elif defined(AFF3CT_CHANNEL_MKL)
+enum class Event_generator_implem { STD, FAST, MKL };
+#else
+enum class Event_generator_implem { STD, FAST };
+#endif
+
 template <typename R = float, typename E = typename tools::matching_types<R>::B>
 class Event_generator : public Draw_generator<R>
 {

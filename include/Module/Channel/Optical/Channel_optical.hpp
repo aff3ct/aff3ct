@@ -7,8 +7,8 @@
 
 #include <memory>
 
+#include "Tools/Math/Distribution/Distributions.hpp"
 #include "Tools/Algo/Draw_generator/User_pdf_noise_generator/User_pdf_noise_generator.hpp"
-#include "Tools/Noise/Noise.hpp"
 #include "Tools/Noise/Received_optical_power.hpp"
 #include "Module/Channel/Channel.hpp"
 
@@ -26,13 +26,25 @@ template <typename R = float>
 class Channel_optical : public Channel<R>
 {
 protected:
-	std::unique_ptr<tools::User_pdf_noise_generator<R>> noise_generator;
+	tools::User_pdf_noise_generator<R> *pdf_noise_generator;
+	const bool is_autoalloc_pdf_gen;
 
 public:
-	Channel_optical(const int N, std::unique_ptr<tools::User_pdf_noise_generator<R>>&& noise_generator,
-	                const tools::Noise<R>& noise = tools::ROP<R>(), const int n_frames = 1);
+	Channel_optical(const int N,
+	                tools::User_pdf_noise_generator<R>& pdf_noise_generator,
+	                const tools::Received_optical_power<R> *noise = nullptr,
+	                const int n_frames = 1);
 
-	virtual ~Channel_optical() = default;
+	Channel_optical(const int N,
+	                const tools::Distributions<R>& dist,
+	                const tools::Received_optical_power<R> *noise = nullptr,
+	                const tools::User_pdf_noise_generator_implem implem = tools::User_pdf_noise_generator_implem::STD,
+	                const int seed = 0,
+	                const int n_frames = 1);
+
+	virtual ~Channel_optical();
+
+	void set_seed(const int seed);
 
 	void _add_noise(const R *X_N, R *Y_N, const int frame_id = -1);
 
