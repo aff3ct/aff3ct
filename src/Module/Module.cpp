@@ -40,7 +40,7 @@ Module* Module
 			m->tasks_with_nullptr.push_back(nullptr);
 		else
 		{
-			auto t_new = std::make_shared<Task>(t->clone());
+			auto t_new = std::shared_ptr<Task>(t->clone());
 			m->tasks_with_nullptr.push_back(t_new);
 			m->tasks.push_back(std::move(t_new));
 		}
