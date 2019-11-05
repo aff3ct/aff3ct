@@ -4,27 +4,84 @@
 #include <mipp.h>
 
 #include "Tools/Algo/Draw_generator/Event_generator/Standard/Event_generator_std.hpp"
+#include "Tools/Algo/Draw_generator/Event_generator/Fast/Event_generator_fast.hpp"
+#ifdef AFF3CT_CHANNEL_GSL
+#include "Tools/Algo/Draw_generator/Event_generator/GSL/Event_generator_GSL.hpp"
+#endif
+#ifdef AFF3CT_CHANNEL_MKL
+#include "Tools/Algo/Draw_generator/Event_generator/MKL/Event_generator_MKL.hpp"
+#endif
 #include "Module/Channel/Binary_symmetric/Channel_binary_symmetric.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
 
-template <typename R>
-Channel_binary_symmetric<R>
-::Channel_binary_symmetric(const int N, const int seed, const tools::Event_probability<R>& noise, const int n_frames)
-: Channel_binary_symmetric<R>(N, std::unique_ptr<tools::Event_generator_std<R>>(new tools::Event_generator_std<R>(seed)),
-  noise, n_frames)
-{
-}
-
 template<typename R>
 Channel_binary_symmetric<R>
-::Channel_binary_symmetric(const int N, std::unique_ptr<tools::Event_generator<R>>&& event_generator,
-                           const tools::Event_probability<R> &noise, const int n_frames)
-: Channel<R>(N, noise, n_frames), event_generator(std::move(event_generator))
+::Channel_binary_symmetric(const int N,
+                           tools::Event_generator<R> &event_generator,
+                           const tools::Event_probability<R> *noise,
+                           const int n_frames)
+: Channel<R>(N, noise, n_frames),
+  event_generator(&event_generator),
+  is_autoalloc_event_gen(false)
 {
 	const std::string name = "Channel_binary_symmetric";
 	this->set_name(name);
+}
+
+template <typename R>
+Channel_binary_symmetric<R>
+::Channel_binary_symmetric(const int N,
+                           const tools::Event_probability<R> *noise,
+                           const tools::Event_generator_implem implem,
+                           const int seed,
+                           const int n_frames)
+: Channel<R>(N, noise, n_frames),
+  event_generator(nullptr),
+  is_autoalloc_event_gen(true)
+{
+	const std::string name = "Channel_binary_symmetric";
+	this->set_name(name);
+
+	switch (implem)
+	{
+		case tools::Event_generator_implem::STD:
+			this->event_generator = new tools::Event_generator_std<R>(seed);
+			break;
+		case tools::Event_generator_implem::FAST:
+			this->event_generator = new tools::Event_generator_fast<R>(seed);
+			break;
+#ifdef AFF3CT_CHANNEL_GSL
+		case tools::Event_generator_implem::GSL:
+			this->event_generator = new tools::Event_generator_GSL<R>(seed);
+			break;
+#endif
+#ifdef AFF3CT_CHANNEL_MKL
+		case tools::Event_generator_implem::MKL:
+			this->event_generator = new tools::Event_generator_MKL<R>(seed);
+			break;
+#endif
+		default:
+			std::stringstream message;
+			message << "Unsupported 'implem' ('implem' = " << (int)implem << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	};
+}
+
+template <typename R>
+Channel_binary_symmetric<R>
+::~Channel_binary_symmetric()
+{
+	if (this->is_autoalloc_event_gen)
+		delete event_generator;
+}
+
+template <typename R>
+void Channel_binary_symmetric<R>
+::set_seed(const int seed)
+{
+	this->event_generator->set_seed(seed);
 }
 
 template <typename R>

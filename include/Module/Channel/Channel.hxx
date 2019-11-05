@@ -33,8 +33,8 @@ Socket& Channel<R>
 
 template <typename R>
 Channel<R>
-::Channel(const int N, const tools::Noise<R>& _n, const int n_frames)
-: Module(n_frames), N(N), n(_n.clone()), noise(this->N * this->n_frames, 0)
+::Channel(const int N, const tools::Noise<R>* n, const int n_frames)
+: Module(n_frames), N(N), n(n), noise(this->N * this->n_frames, 0)
 {
 	const std::string name = "Channel";
 	this->set_name(name);
@@ -75,7 +75,7 @@ Channel<R>
 template <typename R>
 Channel<R>
 ::Channel(const int N, const int n_frames)
-: Channel(N, tools::Sigma<R>(), n_frames)
+: Channel(N, nullptr, n_frames)
 {
 }
 
@@ -95,17 +95,24 @@ const std::vector<R>& Channel<R>
 
 template <typename R>
 void Channel<R>
-::set_noise(const tools::Noise<R>& _n)
+::set_noise(const tools::Noise<R>& n)
 {
-	this->n.reset(_n.clone());
+	this->n = &n;
 	this->check_noise();
 }
 
+template <typename R>
+void Channel<R>
+::set_seed(const int seed)
+{
+	// do nothing in the general case, this method has to be overrided
+}
+
 template<typename R>
-const tools::Noise <R> *Channel<R>
+const tools::Noise<R>& Channel<R>
 ::current_noise() const
 {
-	return this->n;
+	return *this->n;
 }
 
 template <typename R>

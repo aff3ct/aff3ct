@@ -11,6 +11,7 @@
 
 #include "Tools/Math/Distribution/Distributions.hpp"
 #include "Tools/Factory/Header.hpp"
+#include "Tools/Noise/Noise.hpp"
 #include "Module/Channel/Channel.hpp"
 #include "Factory/Factory.hpp"
 
@@ -37,7 +38,6 @@ public:
 	int         n_frames     = 1;
 	int         seed         = 0;
 	int         gain_occur   = 1;
-	float       noise        = -1.f;
 
 	// -------------------------------------------------------------------------------------------------------- METHODS
 	explicit Channel(const std::string &p = Channel_prefix);
@@ -51,15 +51,15 @@ public:
 
 	// builder
 	template <typename R = float>
-	module::Channel<R>* build_gaussian() const;
+	module::Channel<R>* build_gaussian(const tools::Noise<R> *n = nullptr) const;
 	template <typename R = float>
-	module::Channel<R>* build_event() const;
+	module::Channel<R>* build_event(const tools::Noise<R> *n = nullptr) const;
 	template <typename R = float>
-	module::Channel<R>* build_userpdf(const tools::Distributions<R>& dist) const;
+	module::Channel<R>* build_userpdf(const tools::Distributions<R>& dist, const tools::Noise<R> *n = nullptr) const;
 	template <typename R = float>
-	module::Channel<R>* build() const;
+	module::Channel<R>* build(const tools::Noise<R> *n = nullptr) const;
 	template <typename R = float>
-	module::Channel<R>* build(const tools::Distributions<R>& dist) const;
+	module::Channel<R>* build(const tools::Distributions<R>& dist, const tools::Noise<R> *n = nullptr) const;
 };
 
 }
