@@ -30,8 +30,6 @@ template <typename B, typename R, typename Q>
 void BFER_ite_threads<B,R,Q>
 ::_launch()
 {
-	BFER_ite<B,R,Q>::_launch();
-
 	std::vector<std::thread> threads(this->params_BFER_ite.n_threads -1);
 	// launch a group of slave threads (there is "n_threads -1" slave threads)
 	for (auto tid = 1; tid < this->params_BFER_ite.n_threads; tid++)

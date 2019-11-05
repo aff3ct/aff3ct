@@ -8,7 +8,6 @@
 #include <vector>
 
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Gaussian_noise_generator.hpp"
-#include "Tools/Noise/Sigma.hpp"
 #include "Module/Channel/Channel.hpp"
 
 namespace aff3ct
@@ -29,13 +28,11 @@ public:
 	Channel_Rayleigh_LLR(const int N,
 	                     const bool complex,
 	                     tools::Gaussian_gen<R> &gaussian_generator,
-	                     const tools::Sigma<R> *noise = nullptr,
 	                     const bool add_users = false,
 	                     const int n_frames = 1);
 
 	Channel_Rayleigh_LLR(const int N,
 	                     const bool complex,
-	                     const tools::Sigma<R> *noise = nullptr,
 	                     const tools::Gaussian_noise_generator_implem implem = tools::Gaussian_noise_generator_implem::STD,
 	                     const int seed = 0,
 	                     const bool add_users = false,

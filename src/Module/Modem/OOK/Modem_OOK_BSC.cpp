@@ -1,5 +1,6 @@
 #include <string>
 
+#include "Tools/Noise/Noise.hpp"
 #include "Tools/Exception/exception.hpp"
 #include "Module/Modem/OOK/Modem_OOK_BSC.hpp"
 
@@ -8,8 +9,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename R, typename Q>
 Modem_OOK_BSC<B,R,Q>
-::Modem_OOK_BSC(const int N, const tools::EP<R> *noise, const int n_frames)
-: Modem_OOK<B,R,Q>(N, noise, n_frames), log_pe_1_pe((Q)0)
+::Modem_OOK_BSC(const int N, const int n_frames)
+: Modem_OOK<B,R,Q>(N, n_frames), log_pe_1_pe((Q)0)
 {
 	const std::string name = "Modem_OOK_BSC";
 	this->set_name(name);
@@ -17,11 +18,9 @@ Modem_OOK_BSC<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_OOK_BSC<B,R,Q>
-::set_noise(const tools::Noise<R>& noise)
+::noise_changed()
 {
-	Modem_OOK<B,R,Q>::set_noise(noise);
-
-	auto proba = this->n->get_noise(); // trow if noise is not set
+	auto proba = this->noise->get_value(); // trow if noise is not set
 
 	if (proba == (R)0.)
 		proba = (R)1e-10;
@@ -34,8 +33,7 @@ void Modem_OOK_BSC<B,R,Q>
 ::check_noise()
 {
 	Modem_OOK<B,R,Q>::check_noise();
-
-	this->n->is_of_type_throw(tools::Noise_type::EP);
+	this->noise->is_of_type_throw(tools::Noise_type::EP);
 }
 
 template <typename B, typename R, typename Q>

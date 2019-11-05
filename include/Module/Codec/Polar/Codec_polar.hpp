@@ -45,9 +45,6 @@ public:
 	            CRC<B>* crc = nullptr);
 	virtual ~Codec_polar() = default;
 
-	virtual void set_noise(const tools::Noise<float>& noise);
-	virtual void set_noise(const tools::Noise<double>& noise);
-
 	const std::vector<bool>& get_frozen_bits() const;
 	bool is_adaptive_frozen_bits() const;
 	bool is_generated_decoder() const;
@@ -56,6 +53,9 @@ public:
 	virtual void notify_frozenbits_update();
 
 protected:
+	void noise_changed();
+	void check_noise();
+
 	void _extract_sys_par(const Q *Y_N, Q *sys, Q *par, const int frame_id);
 	void _extract_sys_llr(const Q *Y_N, Q *sys,         const int frame_id);
 	void _add_sys_ext    (const Q *ext, Q *Y_N,         const int frame_id);

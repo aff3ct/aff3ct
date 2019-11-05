@@ -1,6 +1,7 @@
 #include <string>
 #include <type_traits>
 
+#include "Tools/Noise/Noise.hpp"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Noise/noise_utils.h"
 // #include "Tools/Math/utils.h"
@@ -11,8 +12,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename R, typename Q>
 Modem_OOK_BEC<B,R,Q>
-::Modem_OOK_BEC(const int N, const tools::EP<R> *noise, const int n_frames)
-: Modem_OOK<B,R,Q>(N, noise, n_frames)
+::Modem_OOK_BEC(const int N, const int n_frames)
+: Modem_OOK<B,R,Q>(N, n_frames)
 {
 	const std::string name = "Modem_OOK_BEC";
 	this->set_name(name);
@@ -23,8 +24,7 @@ void Modem_OOK_BEC<B,R,Q>
 ::check_noise()
 {
 	Modem_OOK<B,R,Q>::check_noise();
-
-	this->n->is_of_type_throw(tools::Noise_type::EP);
+	this->noise->is_of_type_throw(tools::Noise_type::EP);
 }
 
 template <typename B, typename R, typename Q>

@@ -7,7 +7,6 @@
 
 #include "Tools/types.h"
 #include "Tools/Algo/Draw_generator/Event_generator/Event_generator.hpp"
-#include "Tools/Noise/Event_probability.hpp"
 #include "Module/Channel/Channel.hpp"
 
 namespace aff3ct
@@ -26,11 +25,9 @@ protected:
 public:
 	Channel_binary_symmetric(const int N,
 	                         tools::Event_generator<R> &event_generator,
-	                         const tools::Event_probability<R> *noise = nullptr,
 	                         const int n_frames = 1);
 
 	explicit Channel_binary_symmetric(const int N,
-	                                  const tools::Event_probability<R> *noise = nullptr,
 	                                  const tools::Event_generator_implem implem = tools::Event_generator_implem::STD,
 	                                  const int seed = 0,
 	                                  const int n_frames = 1);

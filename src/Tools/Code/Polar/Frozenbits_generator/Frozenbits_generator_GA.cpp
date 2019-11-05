@@ -26,7 +26,7 @@ void Frozenbits_generator_GA
 		this->best_channels[i] = i;
 
 	for (auto i = 0; i < std::exp2(m); i++)
-		z[i] = 2.0 / std::pow((double)this->n->get_noise(), 2.0);
+		z[i] = 2.0 / std::pow((double)this->noise->get_value(), 2.0);
 
 	for (auto l = 1; l <= m; l++)
 	{
@@ -71,5 +71,5 @@ void Frozenbits_generator_GA
 {
 	Frozenbits_generator::check_noise();
 
-	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
+	this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
 }

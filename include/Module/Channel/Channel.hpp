@@ -48,20 +48,11 @@ public:
 	inline Socket& operator[](const chn::sck::add_noise_wg s);
 
 protected:
-	const int N;              // Size of one frame (= number of bits in one frame)
-	const tools::Noise<R> *n; // the current noise to apply to the input signal
-	std::vector<R> noise;     // vector of the noise applied to the signal
+	const int N;                // Size of one frame (= number of bits in one frame)
+	tools::Noise<> *noise;      // the current noise to apply to the input signal
+	std::vector<R> noised_data; // vector of the noise applied to the signal
 
 public:
-	/*!
-	 * \brief Constructor.
-	 *
-	 * \param N:        size of one frame.
-	 * \param noise:    The noise to apply to the signal
-	 * \param n_frames: number of frames to process in the Channel.
-	 */
-	Channel(const int N, const tools::Noise<R> *noise, const int n_frames = 1);
-
 	/*!
 	 * \brief Constructor.
 	 *
@@ -73,15 +64,15 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Channel() = default;
+	virtual ~Channel();
 
 	int get_N() const;
 
-	const std::vector<R>& get_noise() const;
+	const std::vector<R>& get_noised_data() const;
 
-	const tools::Noise<R>& current_noise() const;
+	const tools::Noise<>& get_noise() const;
 
-	virtual void set_noise(const tools::Noise<R>& noise);
+	virtual void set_noise(tools::Noise<>& noise);
 
 	virtual void set_seed(const int seed);
 
@@ -109,6 +100,8 @@ public:
 	virtual void add_noise_wg(const R *X_N, R *Y_N, R *H_N, const int frame_id = -1);
 
 protected:
+	virtual void noise_changed();
+
 	virtual void _add_noise(const R *X_N, R *Y_N, const int frame_id);
 
 	virtual void _add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id);

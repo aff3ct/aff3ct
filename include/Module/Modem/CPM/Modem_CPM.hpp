@@ -9,7 +9,6 @@
 #include <vector>
 
 #include "Tools/Math/max.h"
-#include "Tools/Noise/Noise.hpp"
 #include "Tools/Code/CPM/CPM_parameters.hpp"
 #include "Tools/Code/CPM/CPE/Encoder_CPE_Rimoldi.hpp"
 #include "Tools/Code/CPM/BCJR/CPM_BCJR.hpp"
@@ -48,7 +47,6 @@ protected:
 
 public:
 	Modem_CPM(const int  N,
-	          const tools::Noise<R> *noise  = nullptr,
 	          const int  bits_per_symbol    = 1,
 	          const int  sampling_factor    = 5,
 	          const int  cpm_L              = 3,
@@ -60,14 +58,15 @@ public:
 	          const int  n_frames           = 1);
 	virtual ~Modem_CPM() = default;
 
-	virtual void set_noise(const tools::Noise<R>& noise);
-
 	static bool is_complex_mod();
 	static bool is_complex_fil();
 	static int size_mod(const int N, const int bps, const int L, const int p, const int ups);
 	static int size_fil(const int N, const int bps, const int L, const int p);
 
 protected:
+	void check_noise();
+	void noise_changed();
+
 	void   _modulate (const B *X_N1,                R *X_N2, const int frame_id);
 	void     _filter (const R *Y_N1,                R *Y_N2, const int frame_id);
 	void _demodulate (const Q *Y_N1,                Q *Y_N2, const int frame_id);

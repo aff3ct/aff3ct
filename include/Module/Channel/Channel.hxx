@@ -33,8 +33,8 @@ Socket& Channel<R>
 
 template <typename R>
 Channel<R>
-::Channel(const int N, const tools::Noise<R>* n, const int n_frames)
-: Module(n_frames), N(N), n(n), noise(this->N * this->n_frames, 0)
+::Channel(const int N, const int n_frames)
+: Module(n_frames), N(N), noise(nullptr), noised_data(this->N * this->n_frames, 0)
 {
 	const std::string name = "Channel";
 	this->set_name(name);
@@ -74,9 +74,10 @@ Channel<R>
 
 template <typename R>
 Channel<R>
-::Channel(const int N, const int n_frames)
-: Channel(N, nullptr, n_frames)
+::~Channel()
 {
+	if (this->noise != nullptr)
+		this->noise->unregister_callbacks_changed((void*)this);
 }
 
 template <typename R>
@@ -88,17 +89,44 @@ int Channel<R>
 
 template <typename R>
 const std::vector<R>& Channel<R>
-::get_noise() const
+::get_noised_data() const
 {
-	return noise;
+	return this->noised_data;
 }
 
 template <typename R>
 void Channel<R>
-::set_noise(const tools::Noise<R>& n)
+::set_noise(tools::Noise<>& noise)
 {
-	this->n = &n;
-	this->check_noise();
+	if (&noise != this->noise)
+	{
+		if (this->noise != nullptr)
+			this->noise->unregister_callbacks_changed((void*)this);
+		this->noise = &noise;
+		this->noise->register_callback_changed([this]() { this->noise_changed(); }, (void*)this);
+		this->check_noise();
+		this->noise_changed();
+	}
+}
+
+template <typename R>
+void Channel<R>
+::noise_changed()
+{
+}
+
+template<typename R>
+const tools::Noise<>& Channel<R>
+::get_noise() const
+{
+	if (this->noise == nullptr)
+	{
+		std::stringstream message;
+		message << "No 'noise' has been set.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->noise;
 }
 
 template <typename R>
@@ -106,13 +134,6 @@ void Channel<R>
 ::set_seed(const int seed)
 {
 	// do nothing in the general case, this method has to be overrided
-}
-
-template<typename R>
-const tools::Noise<R>& Channel<R>
-::current_noise() const
-{
-	return *this->n;
 }
 
 template <typename R>
@@ -248,7 +269,7 @@ template<typename R>
 void Channel<R>
 ::check_noise()
 {
-	if (this->n == nullptr)
+	if (this->noise == nullptr)
 	{
 		std::stringstream message;
 		message << "No noise has been set.";

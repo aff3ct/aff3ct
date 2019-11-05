@@ -32,8 +32,7 @@ void Channel_user_be<R>
 
 	this->set_noise(frame_id);
 
-
-	auto event_draw = (E*)(this->noise.data() + this->N * frame_id);
+	auto event_draw = (E*)(this->noised_data.data() + this->N * frame_id);
 
 	const auto vec_loop_size = (this->N / mipp::nElReg<R>()) * mipp::nElReg<R>();
 

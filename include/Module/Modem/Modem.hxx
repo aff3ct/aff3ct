@@ -67,8 +67,8 @@ Socket& Modem<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>
-::Modem(const int N, const int N_mod, const int N_fil, const tools::Noise<R> *noise, const int n_frames)
-: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_fil), n(nullptr), enable_filter(false), enable_demodulator(true)
+::Modem(const int N, const int N_mod, const int N_fil, const int n_frames)
+: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_fil), noise(nullptr), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
 	this->set_name(name);
@@ -95,16 +95,13 @@ Modem<B,R,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (noise != nullptr && noise->has_noise())
-		this->set_noise(*noise);
-
 	this->init_processes();
 }
 
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>
-::Modem(const int N, const int N_mod, const tools::Noise<R> *noise, const int n_frames)
-: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_mod), n(nullptr), enable_filter(false), enable_demodulator(true)
+::Modem(const int N, const int N_mod, const int n_frames)
+: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_mod), noise(nullptr), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
 	this->set_name(name);
@@ -124,16 +121,13 @@ Modem<B,R,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (noise != nullptr && noise->has_noise())
-		this->set_noise(*noise);
-
 	this->init_processes();
 }
 
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>
-::Modem(const int N, const tools::Noise<R> *noise, const int n_frames)
-: Module(n_frames), N(N), N_mod(N), N_fil(N), n(nullptr), enable_filter(false), enable_demodulator(true)
+::Modem(const int N, const int n_frames)
+: Module(n_frames), N(N), N_mod(N), N_fil(N), noise(nullptr), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
 	this->set_name(name);
@@ -146,10 +140,15 @@ Modem<B,R,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (noise != nullptr && noise->has_noise())
-		this->set_noise(*noise);
-
 	this->init_processes();
+}
+
+template <typename B, typename R, typename Q>
+Modem<B,R,Q>
+::~Modem()
+{
+	if (this->noise != nullptr)
+		this->noise->unregister_callbacks_changed((void*)this);
 }
 
 template <typename B, typename R, typename Q>
@@ -264,13 +263,6 @@ int Modem<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-const tools::Noise<R>* Modem<B,R,Q>
-::current_noise() const
-{
-	return this->n;
-}
-
-template <typename B, typename R, typename Q>
 bool Modem<B,R,Q>
 ::is_filter() const
 {
@@ -286,10 +278,37 @@ bool Modem<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::set_noise(const tools::Noise<R>& noise)
+::set_noise(tools::Noise<>& noise)
 {
-	this->n = &noise;
-	this->check_noise();
+	if (&noise != this->noise)
+	{
+		if (this->noise != nullptr)
+			this->noise->unregister_callbacks_changed((void*)this);
+		this->noise = &noise;
+		this->noise->register_callback_changed([this]() { this->noise_changed(); }, (void*)this);
+		this->check_noise();
+		this->noise_changed();
+	}
+}
+
+template <typename B, typename R, typename Q>
+void Modem<B,R,Q>
+::noise_changed()
+{
+}
+
+template <typename B, typename R, typename Q>
+const tools::Noise<>* Modem<B,R,Q>
+::get_noise() const
+{
+	if (this->noise == nullptr)
+	{
+		std::stringstream message;
+		message << "No 'noise' has been set.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return this->noise;
 }
 
 template <typename B, typename R, typename Q>
@@ -670,7 +689,7 @@ template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
 ::check_noise()
 {
-	if (this->n == nullptr)
+	if (this->noise == nullptr)
 	{
 		std::stringstream message;
 		message << "No noise has been set.";

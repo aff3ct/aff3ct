@@ -5,9 +5,6 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
 #include "Tools/Code/SCMA/modem_SCMA_functions.hpp"
-#include "Tools/Noise/Sigma.hpp"
-#include "Tools/Noise/Event_probability.hpp"
-#include "Tools/Noise/Received_optical_power.hpp"
 #include "Module/Modem/OOK/Modem_OOK_BSC.hpp"
 #include "Module/Modem/OOK/Modem_OOK_BEC.hpp"
 #include "Module/Modem/OOK/Modem_OOK_AWGN.hpp"
@@ -167,8 +164,6 @@ void Modem
 	if (this->type == "BPSK" || this->type == "OOK")
 		this->bps = 1;
 
-
-
 	std::unique_ptr<tools::Constellation<float>> cstl(this->build_constellation<float>());
 
 	if (cstl != nullptr && this->type == "USER")
@@ -267,34 +262,34 @@ tools::Constellation<R>* Modem
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 module::Modem<B,R,Q>* Modem
-::_build(const tools::Noise<R> *noise) const
+::_build() const
 {
-	if (this->type == "BPSK" && this->implem == "STD" ) return new module::Modem_BPSK     <B,R,Q    >(this->N, noise,                                                                                                           this->no_sig2, this->n_frames);
-	if (this->type == "BPSK" && this->implem == "FAST") return new module::Modem_BPSK_fast<B,R,Q    >(this->N, noise,                                                                                                           this->no_sig2, this->n_frames);
-	if (this->type == "CPM"  && this->implem == "STD" ) return new module::Modem_CPM      <B,R,Q,MAX>(this->N, noise, this->bps, this->cpm_upf, this->cpm_L, this->cpm_k, this->cpm_p, this->cpm_mapping, this->cpm_wave_shape, this->no_sig2, this->n_frames);
+	if (this->type == "BPSK" && this->implem == "STD" ) return new module::Modem_BPSK     <B,R,Q    >(this->N,                                                                                                           this->no_sig2, this->n_frames);
+	if (this->type == "BPSK" && this->implem == "FAST") return new module::Modem_BPSK_fast<B,R,Q    >(this->N,                                                                                                           this->no_sig2, this->n_frames);
+	if (this->type == "CPM"  && this->implem == "STD" ) return new module::Modem_CPM      <B,R,Q,MAX>(this->N, this->bps, this->cpm_upf, this->cpm_L, this->cpm_k, this->cpm_p, this->cpm_mapping, this->cpm_wave_shape, this->no_sig2, this->n_frames);
 
 	std::unique_ptr<tools::Constellation<R>> cstl(this->build_constellation<R>());
-	if (cstl != nullptr) return new module::Modem_generic<B,R,Q,MAX>(N, std::move(cstl), noise, this->no_sig2, this->n_frames);
+	if (cstl != nullptr) return new module::Modem_generic<B,R,Q,MAX>(N, std::move(cstl), this->no_sig2, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem
-::_build_scma(const tools::Noise<R> *noise) const
+::_build_scma() const
 {
 	std::unique_ptr<tools::Codebook<R>> CB(new tools::Codebook<R>(this->codebook));
-	if (this->psi == "PSI0") return new module::Modem_SCMA <B,R,Q,tools::psi_0<Q>>(this->N, std::move(CB), noise, this->no_sig2, this->n_ite, this->n_frames);
-	if (this->psi == "PSI1") return new module::Modem_SCMA <B,R,Q,tools::psi_1<Q>>(this->N, std::move(CB), noise, this->no_sig2, this->n_ite, this->n_frames);
-	if (this->psi == "PSI2") return new module::Modem_SCMA <B,R,Q,tools::psi_2<Q>>(this->N, std::move(CB), noise, this->no_sig2, this->n_ite, this->n_frames);
-	if (this->psi == "PSI3") return new module::Modem_SCMA <B,R,Q,tools::psi_3<Q>>(this->N, std::move(CB), noise, this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI0") return new module::Modem_SCMA<B,R,Q,tools::psi_0<Q>>(this->N, std::move(CB), this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI1") return new module::Modem_SCMA<B,R,Q,tools::psi_1<Q>>(this->N, std::move(CB), this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI2") return new module::Modem_SCMA<B,R,Q,tools::psi_2<Q>>(this->N, std::move(CB), this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI3") return new module::Modem_SCMA<B,R,Q,tools::psi_3<Q>>(this->N, std::move(CB), this->no_sig2, this->n_ite, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem
-::build(const tools::Noise<R> *noise) const
+::build() const
 {
 	if (this->type == "SCMA" && this->implem == "STD")
 	{
@@ -302,9 +297,9 @@ module::Modem<B,R,Q>* Modem
 	}
 	else if (this->type == "OOK" && this->implem == "STD")
 	{
-		if (channel_type == "AWGN") return new module::Modem_OOK_AWGN<B,R,Q>(this->N, dynamic_cast<const tools::Sigma<R>*>(noise), this->no_sig2, this->n_frames);
-		if (channel_type == "BEC" ) return new module::Modem_OOK_BEC <B,R,Q>(this->N, dynamic_cast<const tools::EP   <R>*>(noise),                this->n_frames);
-		if (channel_type == "BSC" ) return new module::Modem_OOK_BSC <B,R,Q>(this->N, dynamic_cast<const tools::EP   <R>*>(noise),                this->n_frames);
+		if (channel_type == "AWGN") return new module::Modem_OOK_AWGN<B,R,Q>(this->N, this->no_sig2, this->n_frames);
+		if (channel_type == "BEC" ) return new module::Modem_OOK_BEC <B,R,Q>(this->N,                this->n_frames);
+		if (channel_type == "BSC" ) return new module::Modem_OOK_BSC <B,R,Q>(this->N,                this->n_frames);
 	}
 	else
 	{
@@ -319,12 +314,12 @@ module::Modem<B,R,Q>* Modem
 
 template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem
-::build(const tools::Distributions<R>& dist, const tools::Noise<R> *noise) const
+::build(const tools::Distributions<R>& dist) const
 {
 	if (this->type == "OOK" && this->implem == "STD" && channel_type == "OPTICAL")
 	{
 		if (this->rop_est_bits == 0)
-			return new module::Modem_OOK_optical<B,R,Q>(this->N, dist, dynamic_cast<const tools::ROP<R>*>(noise), this->n_frames);
+			return new module::Modem_OOK_optical<B,R,Q>(this->N, dist, this->n_frames);
 		else
 			return new module::Modem_OOK_optical_rop_estimate<B,R,Q>(this->N, rop_est_bits, dist, this->n_frames);
 	}
@@ -407,27 +402,27 @@ bool Modem
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,Q_8 >(const tools::Noise<R_8 >*) const;
-template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,R_8 >(const tools::Noise<R_8 >*) const;
-template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::build<B_16,R_16,Q_16>(const tools::Noise<R_16>*) const;
-template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::build<B_16,R_16,R_16>(const tools::Noise<R_16>*) const;
-template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::build<B_32,R_32,Q_32>(const tools::Noise<R_32>*) const;
-template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::build<B_64,R_64,Q_64>(const tools::Noise<R_64>*) const;
+template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,Q_8 >() const;
+template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,R_8 >() const;
+template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::build<B_16,R_16,Q_16>() const;
+template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::build<B_16,R_16,R_16>() const;
+template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::build<B_32,R_32,Q_32>() const;
+template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::build<B_64,R_64,Q_64>() const;
 
-template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,Q_8 >(const tools::Distributions<R_8 >&, const tools::Noise<R_8 >*) const;
-template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,R_8 >(const tools::Distributions<R_8 >&, const tools::Noise<R_8 >*) const;
-template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::build<B_16,R_16,Q_16>(const tools::Distributions<R_16>&, const tools::Noise<R_16>*) const;
-template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::build<B_16,R_16,R_16>(const tools::Distributions<R_16>&, const tools::Noise<R_16>*) const;
-template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::build<B_32,R_32,Q_32>(const tools::Distributions<R_32>&, const tools::Noise<R_32>*) const;
-template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::build<B_64,R_64,Q_64>(const tools::Distributions<R_64>&, const tools::Noise<R_64>*) const;
+template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,Q_8 >(const tools::Distributions<R_8 >&) const;
+template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,R_8 >(const tools::Distributions<R_8 >&) const;
+template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::build<B_16,R_16,Q_16>(const tools::Distributions<R_16>&) const;
+template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::build<B_16,R_16,R_16>(const tools::Distributions<R_16>&) const;
+template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::build<B_32,R_32,Q_32>(const tools::Distributions<R_32>&) const;
+template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::build<B_64,R_64,Q_64>(const tools::Distributions<R_64>&) const;
 #else
-template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::build<B,R,Q>(const tools::Noise<R>*) const;
+template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::build<B,R,Q>() const;
 
-template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::build<B,R,Q>(const tools::Distributions<R>&, const tools::Noise<R>*) const;
+template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::build<B,R,Q>(const tools::Distributions<R>&) const;
 #if !defined(AFF3CT_32BIT_PREC) && !defined(AFF3CT_64BIT_PREC)
-template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::build<B,R,R>(const tools::Noise<R>*) const;
+template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::build<B,R,R>() const;
 
-template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::build<B,R,R>(const tools::Distributions<R>&, const tools::Noise<R>*) const;
+template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::build<B,R,R>(const tools::Distributions<R>&) const;
 #endif
 #endif
 

@@ -3,6 +3,7 @@
 #include <string>
 #include <cmath>
 
+#include "Tools/Noise/Noise.hpp"
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Fast/Gaussian_noise_generator_fast.hpp"
 #ifdef AFF3CT_CHANNEL_GSL
@@ -22,10 +23,9 @@ Channel_Rayleigh_LLR<R>
 ::Channel_Rayleigh_LLR(const int N,
                        const bool complex,
                        tools::Gaussian_gen<R> &gaussian_generator,
-                       const tools::Sigma<R> *noise,
                        const bool add_users,
                        const int n_frames)
-: Channel<R>(N, noise, n_frames),
+: Channel<R>(N, n_frames),
   complex(complex),
   add_users(add_users),
   gains(complex ? N * n_frames : 2 * N * n_frames),
@@ -47,12 +47,11 @@ template <typename R>
 Channel_Rayleigh_LLR<R>
 ::Channel_Rayleigh_LLR(const int N,
                        const bool complex,
-                       const tools::Sigma<R> *noise,
                        const tools::Gaussian_noise_generator_implem implem,
                        const int seed,
                        const bool add_users,
                        const int n_frames)
-: Channel<R>(N, noise, n_frames),
+: Channel<R>(N, n_frames),
   complex(complex),
   add_users(add_users),
   gains(complex ? N * n_frames : 2 * N * n_frames),
@@ -125,7 +124,7 @@ void Channel_Rayleigh_LLR<R>
 		}
 
 		gaussian_generator->generate(this->gains, (R)1 / (R)std::sqrt((R)2));
-		gaussian_generator->generate(this->noise.data(), this->N, this->n->get_noise());
+		gaussian_generator->generate(this->noised_data.data(), this->N, (R)this->noise->get_value());
 
 		std::fill(Y_N, Y_N + this->N, (R)0);
 
@@ -158,7 +157,7 @@ void Channel_Rayleigh_LLR<R>
 			}
 		}
 		for (auto i = 0; i < this->N; i++)
-			Y_N[i] += this->noise[i];
+			Y_N[i] += this->noised_data[i];
 	}
 	else
 	{
@@ -168,12 +167,12 @@ void Channel_Rayleigh_LLR<R>
 		if (frame_id < 0)
 		{
 			gaussian_generator->generate(this->gains, (R)1 / (R)std::sqrt((R)2));
-			gaussian_generator->generate(this->noise, this->n->get_noise());
+			gaussian_generator->generate(this->noised_data, (R)this->noise->get_value());
 		}
 		else
 		{
-			gaussian_generator->generate(this->gains.data() + f_start * this->N, this->N, (R)1 / (R)std::sqrt((R)2));
-			gaussian_generator->generate(this->noise.data() + f_start * this->N, this->N, this->n->get_noise());
+			gaussian_generator->generate(this->gains      .data() + f_start * this->N, this->N, (R)1 / (R)std::sqrt((R)2));
+			gaussian_generator->generate(this->noised_data.data() + f_start * this->N, this->N, (R)this->noise->get_value());
 		}
 
 		if (this->complex)
@@ -185,8 +184,8 @@ void Channel_Rayleigh_LLR<R>
 					const auto h_re = H_N[f * this->N + n   ] = this->gains[f * this->N + n   ];
 					const auto h_im = H_N[f * this->N + n +1] = this->gains[f * this->N + n +1];
 
-					const auto n_re = this->noise[f * this->N + n   ];
-					const auto n_im = this->noise[f * this->N + n +1];
+					const auto n_re = this->noised_data[f * this->N + n   ];
+					const auto n_im = this->noised_data[f * this->N + n +1];
 
 					Y_N[f * this->N + n   ] = (X_N[f * this->N + n   ] * h_re - X_N[f * this->N + n +1] * h_im) + n_re;
 					Y_N[f * this->N + n +1] = (X_N[f * this->N + n +1] * h_re + X_N[f * this->N + n   ] * h_im) + n_im;
@@ -203,7 +202,7 @@ void Channel_Rayleigh_LLR<R>
 					const auto h_im = this->gains[f * this->N + 2*n +1];
 
 					H_N[f * this->N + n] = std::sqrt(h_re * h_re + h_im * h_im);
-					Y_N[f * this->N + n] = X_N[f * this->N + n] * H_N[f * this->N + n] + this->noise[f * this->N + n];
+					Y_N[f * this->N + n] = X_N[f * this->N + n] * H_N[f * this->N + n] + this->noised_data[f * this->N + n];
 				}
 			}
 		}
@@ -215,7 +214,7 @@ void Channel_Rayleigh_LLR<R>::check_noise()
 {
 	Channel<R>::check_noise();
 
-	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
+	this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
 }
 
 // ==================================================================================== explicit template instantiation

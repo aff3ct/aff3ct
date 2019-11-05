@@ -60,10 +60,10 @@ public:
 	inline Socket& operator[](const mdm::sck::tdemodulate_wg s);
 
 protected:
-	const int N;              /*!< Size of one frame (= number of bits in one frame) */
-	const int N_mod;          /*!< Number of transmitted elements after the modulation (could be smaller, bigger or equal to N) */
-	const int N_fil;          /*!< Number of transmitted elements after the filtering process */
-	const tools::Noise<R> *n; /*!< the current noise applied to the input signal */
+	const int N;           /*!< Size of one frame (= number of bits in one frame) */
+	const int N_mod;       /*!< Number of transmitted elements after the modulation (could be smaller, bigger or equal to N) */
+	const int N_fil;       /*!< Number of transmitted elements after the filtering process */
+	tools::Noise<> *noise; /*!< the current noise applied to the input signal */
 
 	bool enable_filter;
 	bool enable_demodulator;
@@ -77,7 +77,7 @@ public:
 	 * \param N_fil:    number of transmitted elements after the filtering process.
 	 * \param n_frames: number of frames to process in the Modem.
 	 */
-	Modem(const int N, const int N_mod, const int N_fil, const tools::Noise<R> *noise = nullptr, const int n_frames = 1);
+	Modem(const int N, const int N_mod, const int N_fil, const int n_frames);
 
 	/*!
 	 * \brief Constructor (assumes that nothing is done in the filtering process).
@@ -86,7 +86,7 @@ public:
 	 * \param N_mod:    number of transmitted elements after the modulation (could be smaller, bigger or equal to N).
 	 * \param n_frames: number of frames to process in the Modem.
 	 */
-	Modem(const int N, const int N_mod, const tools::Noise<R> *noise = nullptr, const int n_frames = 1);
+	Modem(const int N, const int N_mod, const int n_frames);
 
 	/*!
 	 * \brief Constructor (assumes that nothing is done in the filtering process).
@@ -94,14 +94,14 @@ public:
 	 * \param N:        size of one frame (= number of bits in one frame).
 	 * \param n_frames: number of frames to process in the Modem.
 	 */
-	Modem(const int N, const tools::Noise<R> *noise = nullptr, const int n_frames = 1);
+	Modem(const int N, const int n_frames);
 
 	void init_processes();
 
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Modem() = default;
+	virtual ~Modem();
 
 	int get_N() const;
 
@@ -109,13 +109,13 @@ public:
 
 	int get_N_fil() const;
 
-	const tools::Noise<R>* current_noise() const;
-
 	bool is_filter() const;
 
 	bool is_demodulator() const;
 
-	virtual void set_noise(const tools::Noise<R>& noise);
+	const tools::Noise<>* get_noise() const;
+
+	void set_noise(tools::Noise<>& noise);
 
 	/*!
 	 * \brief Modulates a vector of bits or symbols.
@@ -237,10 +237,12 @@ public:
 	 *
 	 * \return the vector size after the modulation.
 	 */
-	static int get_buffer_size_after_filtering(const int N, const int n_b_per_s, const int tl,
-	                                            const int max_wa_id, const bool complex);
+	static int get_buffer_size_after_filtering(const int N, const int n_b_per_s, const int tl, const int max_wa_id,
+	                                           const bool complex);
 
 protected:
+	virtual void noise_changed();
+
 	virtual void _modulate(const B *X_N1, R *X_N2, const int frame_id);
 
 	virtual void _tmodulate(const Q *X_N1, R *X_N2, const int frame_id);

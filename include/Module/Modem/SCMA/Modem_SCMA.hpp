@@ -7,7 +7,6 @@
 
 #include <memory>
 
-#include "Tools/Noise/Noise.hpp"
 #include "Tools/Code/SCMA/Codebook.hpp"
 #include "Tools/Code/SCMA/modem_SCMA_functions.hpp"
 #include "Tools/Algo/Multidimensional_vector/Vector_2D.hpp"
@@ -36,11 +35,9 @@ private:
 	const int           n_ite;
 
 public:
-	Modem_SCMA(const int N, std::unique_ptr<const tools::Codebook<R>>&& CB, const tools::Noise<R> *noise = nullptr,
-	           const bool disable_sig2 = false, const int n_ite = 1, const int n_frames = 6);
+	Modem_SCMA(const int N, std::unique_ptr<const tools::Codebook<R>>&& CB, const bool disable_sig2 = false,
+	           const int n_ite = 1, const int n_frames = 6);
 	virtual ~Modem_SCMA() = default;
-
-	virtual void set_noise(const tools::Noise<R>& noise);
 
 	virtual void modulate     (              const B* X_N1, R *X_N2, const int frame_id = -1); using Modem<B,R,Q>::modulate;
 	virtual void demodulate   (              const Q *Y_N1, Q *Y_N2, const int frame_id = -1); using Modem<B,R,Q>::demodulate;
@@ -51,6 +48,10 @@ public:
 	static bool is_complex_fil();
 	static int size_mod(const int N, const int bps);
 	static int size_fil(const int N, const int bps);
+
+protected:
+	void check_noise();
+	void noise_changed();
 
 private:
 	Q phi(const Q* Y_N1, int i, int j, int k, int re, int batch);

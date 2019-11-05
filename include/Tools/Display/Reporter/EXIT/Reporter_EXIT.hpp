@@ -22,10 +22,10 @@ public:
 	using typename Rm::report_t;
 
 protected:
-	const Noise<R>& noise_a;
+	const Noise<>& noise_a;
 
 public:
-	Reporter_EXIT(const M &monitor, const Noise<R>& noise_a);
+	Reporter_EXIT(const M &monitor, const Noise<>& noise_a);
 
 	virtual ~Reporter_EXIT() = default;
 

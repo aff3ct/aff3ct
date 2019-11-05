@@ -11,7 +11,6 @@
 
 #include "Tools/Math/Distribution/Distributions.hpp"
 #include "Tools/Factory/Header.hpp"
-#include "Tools/Noise/Noise.hpp"
 #include "Module/Channel/Channel.hpp"
 #include "Factory/Factory.hpp"
 
@@ -51,15 +50,15 @@ public:
 
 	// builder
 	template <typename R = float>
-	module::Channel<R>* build_gaussian(const tools::Noise<R> *n = nullptr) const;
+	module::Channel<R>* build_gaussian() const;
 	template <typename R = float>
-	module::Channel<R>* build_event(const tools::Noise<R> *n = nullptr) const;
+	module::Channel<R>* build_event() const;
 	template <typename R = float>
-	module::Channel<R>* build_userpdf(const tools::Distributions<R>& dist, const tools::Noise<R> *n = nullptr) const;
+	module::Channel<R>* build_userpdf(const tools::Distributions<R>& dist) const;
 	template <typename R = float>
-	module::Channel<R>* build(const tools::Noise<R> *n = nullptr) const;
+	module::Channel<R>* build() const;
 	template <typename R = float>
-	module::Channel<R>* build(const tools::Distributions<R>& dist, const tools::Noise<R> *n = nullptr) const;
+	module::Channel<R>* build(const tools::Distributions<R>& dist) const;
 };
 
 }

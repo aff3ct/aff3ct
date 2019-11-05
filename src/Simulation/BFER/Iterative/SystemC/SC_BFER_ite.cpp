@@ -91,8 +91,6 @@ template <typename B, typename R, typename Q>
 void SC_BFER_ite<B,R,Q>
 ::_launch()
 {
-	BFER_ite<B,R,Q>::_launch();
-
 	this->create_sc_modules();
 
 	tools::Predicate_ite p(this->params_BFER_ite.n_ite);

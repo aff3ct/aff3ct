@@ -9,6 +9,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/matrix.h"
 #include "Tools/Math/numerical_integration.h"
+#include "Tools/Noise/Noise.hpp"
 #include "Module/Modem/CPM/Modem_CPM.hpp"
 
 #ifndef M_PI
@@ -27,7 +28,6 @@ const std::string Modem_CPM<B,R,Q,MAX>::wave_shape_default = "GMSK";
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modem_CPM<B,R,Q,MAX>
 ::Modem_CPM(const int  N,
-            const tools::Noise<R> *noise,
             const int  bits_per_symbol,
             const int  sampling_factor,
             const int  cpm_L,
@@ -40,7 +40,6 @@ Modem_CPM<B,R,Q,MAX>
 : Modem<B,R,Q>(N,
                Modem_CPM<B,R,Q,MAX>::size_mod(N, bits_per_symbol, cpm_L, cpm_p, sampling_factor),
                Modem_CPM<B,R,Q,MAX>::size_fil(N, bits_per_symbol, cpm_L, cpm_p),
-               noise,
                n_frames),
   no_sig2   (no_sig2                            ),
   cpm       (cpm_L,
@@ -88,18 +87,22 @@ Modem_CPM<B,R,Q,MAX>
 	cpe.generate_tail_symb_transition();
 
 	generate_baseband();
-
-	if (no_sig2 || (this->n != nullptr && this->n->is_set()))
-		generate_projection();
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
-::set_noise(const tools::Noise<R>& noise)
+::noise_changed()
 {
-	Modem<B,R,Q>::set_noise(noise);
+	if (!no_sig2)
+		this->generate_projection();
+}
 
-	if (!no_sig2) this->generate_projection();
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+void Modem_CPM<B,R,Q,MAX>
+::check_noise()
+{
+	Modem<B,R,Q>::check_noise();
+	// this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
@@ -111,7 +114,7 @@ bool Modem_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 bool Modem_CPM<B,R,Q,MAX>
-:: is_complex_fil()
+::is_complex_fil()
 {
 	return false;
 }
@@ -171,8 +174,8 @@ template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
 ::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
 {
-	if (!this->n->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+	if (this->noise == nullptr)
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set.");
 
 	const auto Y_real = Y_N1;
 	const auto Y_imag = Y_N1 + this->N_mod / 2;
@@ -324,9 +327,9 @@ void Modem_CPM<B,R,Q,MAX>
 
 	if (!no_sig2)
 	{
-		this->n->is_of_type_throw(tools::Noise_type::SIGMA);
+		this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
 
-		factor = (R)1 / (this->n->get_noise() * this->n->get_noise()); // 2 / sigma_complex^2
+		factor = (R)1 / (this->noise->get_value() * this->noise->get_value()); // 2 / sigma_complex^2
 	}
 
 	if (cpm.filters_type == "TOTAL")

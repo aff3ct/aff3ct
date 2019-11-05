@@ -9,7 +9,6 @@
 
 #include "Tools/Math/Distribution/Distributions.hpp"
 #include "Tools/Algo/Draw_generator/User_pdf_noise_generator/User_pdf_noise_generator.hpp"
-#include "Tools/Noise/Received_optical_power.hpp"
 #include "Module/Channel/Channel.hpp"
 
 namespace aff3ct
@@ -32,12 +31,10 @@ protected:
 public:
 	Channel_optical(const int N,
 	                tools::User_pdf_noise_generator<R>& pdf_noise_generator,
-	                const tools::Received_optical_power<R> *noise = nullptr,
 	                const int n_frames = 1);
 
 	Channel_optical(const int N,
 	                const tools::Distributions<R>& dist,
-	                const tools::Received_optical_power<R> *noise = nullptr,
 	                const tools::User_pdf_noise_generator_implem implem = tools::User_pdf_noise_generator_implem::STD,
 	                const int seed = 0,
 	                const int n_frames = 1);

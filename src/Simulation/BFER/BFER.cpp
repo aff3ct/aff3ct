@@ -32,6 +32,8 @@ BFER<B,R,Q>
 
   bit_rate((float)params_BFER.src->K / (float)params_BFER.cdc->N),
 
+  noise(params_BFER.noise->template build<>(0.f, bit_rate, params_BFER.mdm->bps, params_BFER.mdm->cpm_upf)),
+
   monitor_mi(params_BFER.n_threads),
   monitor_er(params_BFER.n_threads),
   dumper    (params_BFER.n_threads)
@@ -103,12 +105,12 @@ void BFER<B,R,Q>
 	// for each NOISE to be simulated
 	for (auto noise_idx = noise_begin; noise_idx != noise_end; noise_idx += noise_step)
 	{
-		this->noise.reset(params_BFER.noise->template build<R>(params_BFER.noise->range[noise_idx], bit_rate,
-		                                                       params_BFER.mdm->bps, params_BFER.mdm->cpm_upf));
+		params_BFER.noise->template update<>(*this->noise, params_BFER.noise->range[noise_idx], bit_rate,
+		                                     params_BFER.mdm->bps, params_BFER.mdm->cpm_upf);
 
 		// manage noise distributions to be sure it exists
 		if (this->distributions != nullptr)
-			this->distributions->read_distribution(this->noise->get_noise());
+			this->distributions->read_distribution(this->noise->get_value());
 
 		if (params_BFER.err_track_revert)
 		{
@@ -121,7 +123,7 @@ void BFER<B,R,Q>
 			auto &params_BFER_writable = const_cast<factory::BFER&>(params_BFER);
 
 			std::stringstream s_noise;
-			s_noise << std::setprecision(2) << std::fixed << this->noise->get_noise();
+			s_noise << std::setprecision(2) << std::fixed << this->noise->get_value();
 
 			params_BFER_writable.src     ->path = params_BFER.err_track_path + "_" + s_noise.str() + ".src";
 			params_BFER_writable.cdc->enc->path = params_BFER.err_track_path + "_" + s_noise.str() + ".enc";
@@ -234,7 +236,7 @@ void BFER<B,R,Q>
 						break;
 					case tools::Noise_type::ROP:
 					case tools::Noise_type::EP:
-						noise_value = std::to_string(this->noise->get_noise());
+						noise_value = std::to_string(this->noise->get_value());
 						break;
 				}
 
@@ -255,7 +257,7 @@ void BFER<B,R,Q>
 		if (this->dumper_red != nullptr && !this->simu_error)
 		{
 			std::stringstream s_noise;
-			s_noise << std::setprecision(2) << std::fixed << this->noise->get_noise();
+			s_noise << std::setprecision(2) << std::fixed << this->noise->get_value();
 
 			this->dumper_red->dump(params_BFER.err_track_path + "_" + s_noise.str());
 			this->dumper_red->clear();
@@ -306,10 +308,8 @@ template <typename B, typename R, typename Q>
 void BFER<B,R,Q>
 ::build_reporters()
 {
-	this->noise.reset(params_BFER.noise->template build<R>(0));
-
-	auto reporter_noise = new tools::Reporter_noise<R>(this->noise, this->params_BFER.ter_sigma);
-	this->reporters.push_back(std::unique_ptr<tools::Reporter_noise<R>>(reporter_noise));
+	auto reporter_noise = new tools::Reporter_noise<>(*this->noise, this->params_BFER.ter_sigma);
+	this->reporters.push_back(std::unique_ptr<tools::Reporter_noise<>>(reporter_noise));
 
 	if (params_BFER.mnt_mutinfo)
 	{

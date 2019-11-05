@@ -4,6 +4,7 @@
 #include <string>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Noise/Noise.hpp"
 #include "Tools/Noise/Sigma.hpp"
 #include "Tools/Noise/Event_probability.hpp"
 #include "Factory/Module/Encoder/Encoder.hpp"
@@ -121,14 +122,15 @@ Codec_polar<B,Q>
 	try
 	{
 		this->fb_decoder = dynamic_cast<tools::Frozenbits_notifier*>(this->get_decoder_siho().get());
-	} catch(std::exception&) { }
+	}
+	catch(std::exception&) {}
 
 	// ------------------------------------------------------------------------------------------------- frozen bit gen
 	if (!generated_decoder)
 	{
 		if (!adaptive_fb)
 		{
-			if(fb_params.type == "BEC")
+			if (fb_params.type == "BEC")
 			{
 				auto ep = tools::Event_probability<float>(fb_params.noise);
 				fb_generator->set_noise(ep);
@@ -138,8 +140,9 @@ Codec_polar<B,Q>
 				auto sigma = tools::Sigma<float>(fb_params.noise);
 				fb_generator->set_noise(sigma);
 			}
-
 			fb_generator->generate(frozen_bits);
+			if (this->N_cw != this->N && puncturer_shortlast)
+				puncturer_shortlast->gen_frozen_bits(frozen_bits);
 			this->notify_frozenbits_update();
 		}
 	}
@@ -154,6 +157,8 @@ Codec_polar<B,Q>
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 		std::copy(fb.begin(), fb.end(), frozen_bits.begin());
+		if (this->N_cw != this->N && puncturer_shortlast)
+			puncturer_shortlast->gen_frozen_bits(frozen_bits);
 		this->notify_frozenbits_update();
 	}
 }
@@ -162,8 +167,6 @@ template <typename B, typename Q>
 void Codec_polar<B,Q>
 ::notify_frozenbits_update()
 {
-	if (this->N_cw != this->N && puncturer_shortlast)
-		puncturer_shortlast->gen_frozen_bits(frozen_bits);
 	if (this->fb_decoder)
 		this->fb_decoder->notify_frozenbits_update();
 	if (this->fb_encoder)
@@ -172,33 +175,31 @@ void Codec_polar<B,Q>
 
 template <typename B, typename Q>
 void Codec_polar<B,Q>
-::set_noise(const tools::Noise<float>& noise)
+::noise_changed()
 {
-	Codec_SISO_SIHO<B,Q>::set_noise(noise);
-
-	// adaptive frozen bits generation
-	if (adaptive_fb && !generated_decoder)
+	if (this->adaptive_fb && !this->generated_decoder)
 	{
-		fb_generator->set_noise(noise);
-		fb_generator->generate(frozen_bits);
-
+		this->fb_generator->set_noise(*this->noise);
+		this->fb_generator->generate(this->frozen_bits);
+		if (this->N_cw != this->N && puncturer_shortlast)
+		{
+			puncturer_shortlast->gen_frozen_bits(frozen_bits);
+		}
 		this->notify_frozenbits_update();
 	}
 }
 
 template <typename B, typename Q>
 void Codec_polar<B,Q>
-::set_noise(const tools::Noise<double>& noise)
+::check_noise()
 {
-	Codec_SISO_SIHO<B,Q>::set_noise(noise);
-
-	// adaptive frozen bits generation
-	if (adaptive_fb && !generated_decoder)
+	Codec<B,Q>::check_noise();
+	if (!this->noise->is_of_type(tools::Noise_type::SIGMA) && !this->noise->is_of_type(tools::Noise_type::EP))
 	{
-		fb_generator->set_noise(noise);
-		fb_generator->generate(frozen_bits);
-
-		this->notify_frozenbits_update();
+		std::stringstream message;
+		message << "Incompatible noise type, expected noise types are SIGMA or EP ('noise->get_type()' = "
+		        << tools::Noise<>::type_to_str(this->noise->get_type()) << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 

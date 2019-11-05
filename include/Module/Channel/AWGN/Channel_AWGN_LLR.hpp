@@ -6,7 +6,6 @@
 #define CHANNEL_AWGN_LLR_HPP_
 
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Gaussian_noise_generator.hpp"
-#include "Tools/Noise/Sigma.hpp"
 #include "Module/Channel/Channel.hpp"
 
 namespace aff3ct
@@ -24,12 +23,10 @@ private:
 public:
 	Channel_AWGN_LLR(const int N,
 	                 tools::Gaussian_gen<R> &noise_generator,
-	                 const tools::Sigma<R> *noise = nullptr,
 	                 const bool add_users = false,
 	                 const int n_frames = 1);
 
 	explicit Channel_AWGN_LLR(const int N,
-	                          const tools::Sigma<R> *noise = nullptr,
 	                          const tools::Gaussian_noise_generator_implem implem = tools::Gaussian_noise_generator_implem::STD,
 	                          const int seed = 0,
 	                          const bool add_users = false,

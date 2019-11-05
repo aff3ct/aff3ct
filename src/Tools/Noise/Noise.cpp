@@ -1,3 +1,4 @@
+#include <limits>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
@@ -7,91 +8,62 @@ using namespace aff3ct;
 using namespace aff3ct::tools;
 
 template <typename R>
-Noise<R>::
-Noise()
-: _n((R)0,false)
+Noise<R>
+::Noise()
+: value(std::numeric_limits<R>::infinity())
 {
 }
 
 template <typename R>
-Noise<R>::
-Noise(R noise)
-: _n((R)0,false)
+Noise<R>
+::Noise(R value)
+: value(value)
 {
-	set_noise(noise);
-}
-
-template <typename R>
-template <typename T>
-Noise<R>::
-Noise(const Noise<T>& other)
-{
-	if (other.has_noise())
-	{
-		set_noise((R)other.get_noise());
-	}
-	else
-	{
-		_n.first  = (R)0;
-		_n.second = false;
-	}
-}
-
-template <typename R>
-Noise<R>& Noise<R>::
-operator=(const Noise<R>& other)
-{
-	this->copy(other);
-	return *this;
-}
-
-template <typename R>
-void Noise<R>::
-copy(const Noise<R>& other)
-{
-	this->_n = other._n;
-}
-
-template <typename R>
-bool Noise<R>::
-is_set() const noexcept
-{
-	return has_noise();
-}
-
-template <typename R>
-bool Noise<R>::
-has_noise() const noexcept
-{
-	return _n.second;
-}
-
-template <typename R>
-void Noise<R>::
-set_noise(R noise)
-{
-	_n.first  = noise;
-	_n.second = true;
 	this->check();
 }
 
 template <typename R>
-R Noise<R>::
-get_noise() const
+void Noise<R>
+::copy(const Noise<R>& other)
 {
-	if (!has_noise())
-	{
-		std::stringstream message;
-		message << "Ask for the noise value but it has not been set.";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	return _n.first;
+	this->value = other.value;
+	this->notify_noise_changed();
 }
 
 template <typename R>
-void Noise<R>::
-check()
+void Noise<R>
+::set_value(const R value)
+{
+	this->value = value;
+	this->check();
+	this->notify_noise_changed();
+}
+
+template <typename R>
+void Noise<R>
+::notify_noise_changed()
+{
+	for (auto c : this->callbacks_changed)
+		c.first();
+}
+
+template <typename R>
+R Noise<R>
+::get_value() const
+{
+	if (this->value == std::numeric_limits<R>::infinity())
+	{
+		std::stringstream message;
+		message << "'value' is not set.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return this->value;
+}
+
+template <typename R>
+void Noise<R>
+::check() const
 {
 	// nothing to check
 }
@@ -116,11 +88,35 @@ void Noise<R>
 	}
 }
 
+template<typename R>
+void Noise<R>
+::register_callback_changed(std::function<void()> callback, const void *obj_ptr)
+{
+	this->callbacks_changed.push_back(std::make_pair(callback, obj_ptr));
+}
+
+template<typename R>
+void Noise<R>
+::unregister_callbacks_changed(const void *obj_ptr)
+{
+	auto it = this->callbacks_changed.begin();
+	while (it != this->callbacks_changed.end())
+	{
+		if ((*it).second == obj_ptr)
+			it = this->callbacks_changed.erase(it);
+		else
+			++it;
+	}
+}
+
+template<typename R>
+void Noise<R>
+::clear_callbacks_changed()
+{
+	this->callbacks_changed.clear();
+}
 
 // ==================================================================================== explicit template instantiation
 template class aff3ct::tools::Noise<float>;
 template class aff3ct::tools::Noise<double>;
-
-template aff3ct::tools::Noise<double>::Noise(const Noise<float >&);
-template aff3ct::tools::Noise<float >::Noise(const Noise<double>&);
 // ==================================================================================== explicit template instantiation

@@ -9,6 +9,7 @@
 #include <type_traits>
 #include <complex>
 
+#include "Tools/Noise/Noise.hpp"
 #include "Tools/Exception/exception.hpp"
 #include "Module/Modem/Generic/Modem_generic.hpp"
 
@@ -18,16 +19,16 @@ namespace module
 {
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modem_generic<B,R,Q,MAX>
-::Modem_generic(const int N, std::unique_ptr<const tools::Constellation<R>>&& _cstl, const tools::Noise<R> *noise,
-                const bool disable_sig2, const int n_frames)
+::Modem_generic(const int N, std::unique_ptr<const tools::Constellation<R>>&& _cstl, const bool disable_sig2,
+                const int n_frames)
 : Modem<B,R,Q>(N,
               (int)(std::ceil((float)N / (float)_cstl->get_n_bits_per_symbol()) * (is_complex_mod(*_cstl) ? 2 : 1)), // N_mod
-              noise,
               n_frames),
   cstl           (std::move(_cstl)),
   bits_per_symbol(cstl->get_n_bits_per_symbol()),
   nbr_symbols    (cstl->get_n_symbols()),
-  disable_sig2   (disable_sig2)
+  disable_sig2   (disable_sig2),
+  inv_sigma2     ((R)1.)
 {
 	const std::string name = "Modem_generic<" + cstl->get_name() + ">";
 	this->set_name(name);
@@ -38,15 +39,18 @@ Modem_generic<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_generic<B,R,Q,MAX>
-::set_noise(const tools::Noise<R>& noise)
+::check_noise()
 {
-	Modem<B,R,Q>::set_noise(noise);
+	Modem<B,R,Q>::check_noise();
+	this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
+}
 
-	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
-
-	this->inv_sigma2 = this->disable_sig2 ?
-	                    (R)1.0 :
-	                    (R)((R)1.0 / (2 * this->n->get_noise() * this->n->get_noise()));
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+void Modem_generic<B,R,Q,MAX>
+::noise_changed()
+{
+	if (!this->disable_sig2)
+		this->inv_sigma2 = (R)((R)1.0 / (2 * this->noise->get_value() * this->noise->get_value()));
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
@@ -144,8 +148,6 @@ void Modem_generic<B,R,Q,MAX>
 		_tdemodulate_wg_real(H_N, Y_N1, Y_N2, Y_N3, frame_id);
 }
 
-
-
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_generic<B,R,Q,MAX>
 ::_modulate_complex(const B *X_N1, R *X_N2, const int frame_id)
@@ -188,8 +190,8 @@ void Modem_generic<B,R,Q,MAX>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (!this->n->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+	if (this->noise == nullptr)
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set.");
 
 	auto size = this->N;
 
@@ -224,8 +226,8 @@ void Modem_generic<B,R,Q,MAX>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (!this->n->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+	if (this->noise == nullptr)
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set.");
 
 	auto size = this->N;
 
@@ -263,8 +265,8 @@ void Modem_generic<B,R,Q,MAX>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (!this->n->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+	if (this->noise == nullptr)
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set.");
 
 	auto size = this->N;
 
@@ -318,8 +320,8 @@ void Modem_generic<B,R,Q,MAX>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (!this->n->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+	if (this->noise == nullptr)
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set.");
 
 	auto size = this->N;
 
@@ -456,8 +458,8 @@ void Modem_generic<B,R,Q,MAX>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (!this->n->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+	if (this->noise == nullptr)
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set.");
 
 	auto size = this->N;
 
@@ -490,8 +492,8 @@ void Modem_generic<B,R,Q,MAX>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (!this->n->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+	if (this->noise == nullptr)
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set.");
 
 	auto size = this->N;
 
@@ -524,8 +526,8 @@ void Modem_generic<B,R,Q,MAX>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (!this->n->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+	if (this->noise == nullptr)
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set.");
 
 	auto size = this->N;
 
@@ -577,8 +579,8 @@ void Modem_generic<B,R,Q,MAX>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (!this->n->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+	if (this->noise == nullptr)
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set.");
 
 	auto size = this->N;
 

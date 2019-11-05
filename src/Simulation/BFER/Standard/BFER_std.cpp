@@ -116,25 +116,12 @@ void BFER_std<B,R,Q>
 		                                 this->params_BFER_std.src->n_frames,
 		                                 {(unsigned)this->params_BFER_std.cdc->enc->K});
 
-		this->dumper[tid]->register_data(channel.get_noise(),
+		this->dumper[tid]->register_data(channel.get_noised_data(),
 		                                 this->params_BFER_std.err_track_threshold,
 		                                 "chn",
 		                                 true,
 		                                 this->params_BFER_std.src->n_frames,
 		                                 {});
-	}
-}
-
-template <typename B, typename R, typename Q>
-void BFER_std<B,R,Q>
-::_launch()
-{
-	// set current sigma
-	for (auto tid = 0; tid < this->params_BFER_std.n_threads; tid++)
-	{
-		this->channel[tid]->set_noise(*this->noise);
-		this->modem  [tid]->set_noise(*this->noise);
-		this->codec  [tid]->set_noise(*this->noise);
 	}
 }
 
@@ -173,7 +160,7 @@ std::unique_ptr<module::Codec_SIHO<B,Q>> BFER_std<B,R,Q>
 		if (params_BFER_std.err_track_revert && params_cdc->itl->core->uniform)
 		{
 			std::stringstream s_noise;
-			s_noise << std::setprecision(2) << std::fixed << this->noise->get_noise();
+			s_noise << std::setprecision(2) << std::fixed << this->noise->get_value();
 
 			params_cdc->itl->core->type = "USER";
 			params_cdc->itl->core->path = params_BFER_std.err_track_path + "_" + s_noise.str() + ".itl";
@@ -188,7 +175,9 @@ std::unique_ptr<module::Codec_SIHO<B,Q>> BFER_std<B,R,Q>
 	auto crc = this->params_BFER_std.crc->type == "NO" ? nullptr : this->crc[tid].get();
 
 	auto param_siho = dynamic_cast<factory::Codec_SIHO*>(params_cdc.get());
-	return std::unique_ptr<module::Codec_SIHO<B,Q>>(param_siho->template build<B, Q>(crc));
+	auto codec = std::unique_ptr<module::Codec_SIHO<B,Q>>(param_siho->template build<B, Q>(crc));
+	codec->set_noise(*this->noise);
+	return codec;
 }
 
 template <typename B, typename R, typename Q>
@@ -196,11 +185,17 @@ std::unique_ptr<module::Modem<B,R,R>> BFER_std<B,R,Q>
 ::build_modem(const int tid)
 {
 	if (this->distributions != nullptr)
-		return std::unique_ptr<module::Modem<B,R,R>>(
-			params_BFER_std.mdm->template build<B,R,R>(*this->distributions));
+	{
+		auto modem = std::unique_ptr<module::Modem<B,R,R>>(params_BFER_std.mdm->template build<B,R,R>(*this->distributions));
+		modem->set_noise(*this->noise);
+		return modem;
+	}
 	else
-		return std::unique_ptr<module::Modem<B,R,R>>(
-			params_BFER_std.mdm->template build<B,R,R>());
+	{
+		auto modem = std::unique_ptr<module::Modem<B,R,R>>(params_BFER_std.mdm->template build<B,R,R>());
+		modem->set_noise(*this->noise);
+		return modem;
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -213,9 +208,17 @@ std::unique_ptr<module::Channel<R>> BFER_std<B,R,Q>
 	params_chn->seed = seed_chn;
 
 	if (this->distributions != nullptr)
-		return std::unique_ptr<module::Channel<R>>(params_chn->template build<R>(*this->distributions));
+	{
+		auto channel = std::unique_ptr<module::Channel<R>>(params_chn->template build<R>(*this->distributions));
+		channel->set_noise(*this->noise);
+		return channel;
+	}
 	else
-		return std::unique_ptr<module::Channel<R>>(params_chn->template build<R>());
+	{
+		auto channel = std::unique_ptr<module::Channel<R>>(params_chn->template build<R>());
+		channel->set_noise(*this->noise);
+		return channel;
+	}
 }
 
 template <typename B, typename R, typename Q>

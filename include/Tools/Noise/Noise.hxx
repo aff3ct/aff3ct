@@ -7,7 +7,10 @@ namespace aff3ct
 {
 namespace tools
 {
-Noise_type str_to_type(const std::string& str)
+
+template <typename R>
+Noise_type Noise<R>
+::str_to_type(const std::string& str)
 {
 	Noise_type t;
 
@@ -27,7 +30,9 @@ Noise_type str_to_type(const std::string& str)
 	return t;
 }
 
-std::string type_to_str(Noise_type t)
+template <typename R>
+std::string Noise<R>
+::type_to_str(Noise_type t)
 {
 	std::string str;
 

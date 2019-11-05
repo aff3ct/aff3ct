@@ -60,8 +60,8 @@ EXIT<B,R>
 
 	this->set_module("monitor", 0, this->monitor);
 
-	auto reporter_noise = new tools::Reporter_noise<R>(this->noise);
-	reporters.push_back(std::unique_ptr<tools::Reporter_noise<R>>(reporter_noise));
+	auto reporter_noise = new tools::Reporter_noise<>(this->noise);
+	reporters.push_back(std::unique_ptr<tools::Reporter_noise<>>(reporter_noise));
 	auto reporter_EXIT = new tools::Reporter_EXIT<B,R>(*this->monitor, this->noise_a);
 	reporters.push_back(std::unique_ptr<tools::Reporter_EXIT<B,R>>(reporter_EXIT));
 	auto reporter_thr = new tools::Reporter_throughput<uint64_t>(*this->monitor);
@@ -124,11 +124,7 @@ void EXIT<B,R>
 		R esn0  = tools::ebn0_to_esn0 (ebn0, bit_rate, params_EXIT.mdm->bps);
 		R sigma = tools::esn0_to_sigma(esn0, params_EXIT.mdm->cpm_upf);
 
-		this->noise.set_noise(sigma, ebn0, esn0);
-
-		channel ->set_noise(this->noise);
-		modem   ->set_noise(this->noise);
-		codec   ->set_noise(this->noise);
+		this->noise.set_values(sigma, ebn0, esn0);
 
 		// for each "a" standard deviation (sig_a) to be simulated
 		using namespace module;
@@ -151,7 +147,7 @@ void EXIT<B,R>
 					auto mdm_bytes =            mdm[mdm::sck::demodulate::Y_N2].get_databytes();
 					std::fill(mdm_data, mdm_data + mdm_bytes, 0);
 				}
-				this->noise_a.set_noise(std::numeric_limits<R>::infinity());
+				this->noise_a.set_value(std::numeric_limits<R>::infinity());
 			}
 			else
 			{
@@ -160,9 +156,7 @@ void EXIT<B,R>
 				R sig_a_esn0 = tools::sigma_to_esn0(sig_a_2, params_EXIT.mdm->cpm_upf);
 				R sig_a_ebn0 = tools::esn0_to_ebn0 (sig_a_esn0, bit_rate, params_EXIT.mdm->bps);
 
-				this->noise_a.set_noise(sig_a_2, sig_a_ebn0, sig_a_esn0);
-				channel_a->set_noise(this->noise_a);
-				modem_a  ->set_noise(this->noise_a);
+				this->noise_a.set_values(sig_a_2, sig_a_ebn0, sig_a_esn0);
 			}
 
 
@@ -175,9 +169,7 @@ void EXIT<B,R>
 				!params_EXIT.debug)
 				this->terminal->start_temp_report(params_EXIT.ter->frequency);
 
-
 			this->simulation_loop();
-
 
 			if (!params_EXIT.ter->disabled)
 			{
@@ -359,14 +351,18 @@ template <typename B, typename R>
 std::unique_ptr<module::Codec_SISO<B,R>> EXIT<B,R>
 ::build_codec()
 {
-	return std::unique_ptr<module::Codec_SISO<B,R>>(params_EXIT.cdc->template build<B,R>());
+	auto codec = std::unique_ptr<module::Codec_SISO<B,R>>(params_EXIT.cdc->template build<B,R>());
+	codec->set_noise(this->noise);
+	return codec;
 }
 
 template <typename B, typename R>
 std::unique_ptr<module::Modem<B,R,R>> EXIT<B,R>
 ::build_modem()
 {
-	return std::unique_ptr<module::Modem<B,R,R>>(params_EXIT.mdm->template build<B,R>());
+	auto modem = std::unique_ptr<module::Modem<B,R,R>>(params_EXIT.mdm->template build<B,R>());
+	modem->set_noise(this->noise);
+	return modem;
 }
 
 template <typename B, typename R>
@@ -375,14 +371,18 @@ std::unique_ptr<module::Modem<B,R>> EXIT<B,R>
 {
 	std::unique_ptr<factory::Modem> mdm_params(params_EXIT.mdm->clone());
 	mdm_params->N = params_EXIT.cdc->K;
-	return std::unique_ptr<module::Modem<B,R>>(mdm_params->template build<B,R>());
+	auto modem = std::unique_ptr<module::Modem<B,R>>(mdm_params->template build<B,R>());
+	modem->set_noise(this->noise_a);
+	return modem;
 }
 
 template <typename B, typename R>
 std::unique_ptr<module::Channel<R>> EXIT<B,R>
 ::build_channel(const int size)
 {
-	return std::unique_ptr<module::Channel<R>>(params_EXIT.chn->template build<R>());
+	auto channel = std::unique_ptr<module::Channel<R>>(params_EXIT.chn->template build<R>());
+	channel->set_noise(this->noise);
+	return channel;
 }
 
 template <typename B, typename R>
@@ -396,7 +396,9 @@ std::unique_ptr<module::Channel<R>> EXIT<B,R>
 	                                                                   params_EXIT.mdm->cpm_upf,
 	                                                                   params_EXIT.mdm->cpm_L);
 
-	return std::unique_ptr<module::Channel<R>>(chn_params->template build<R>());
+	auto channel = std::unique_ptr<module::Channel<R>>(chn_params->template build<R>());
+	channel->set_noise(this->noise_a);
+	return channel;
 }
 
 template <typename B, typename R>

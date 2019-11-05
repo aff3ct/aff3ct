@@ -47,7 +47,6 @@ public:
 
 protected:
 	virtual void __build_communication_chain(const int tid = 0);
-	virtual void _launch();
 
 	std::unique_ptr<module::Source    <B    >> build_source    (const int tid = 0);
 	std::unique_ptr<module::CRC       <B    >> build_crc       (const int tid = 0);

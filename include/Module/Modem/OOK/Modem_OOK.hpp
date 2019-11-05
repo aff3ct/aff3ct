@@ -5,7 +5,6 @@
 #ifndef MODEM_OOK_HPP_
 #define MODEM_OOK_HPP_
 
-#include "Tools/Noise/Noise.hpp"
 #include "Module/Modem/Modem.hpp"
 
 namespace aff3ct
@@ -16,7 +15,7 @@ template <typename B = int, typename R = float, typename Q = R>
 class Modem_OOK : public Modem<B,R,Q>
 {
 public:
-	Modem_OOK(const int N, const tools::Noise<R> *noise = nullptr, const int n_frames = 1);
+	Modem_OOK(const int N, const int n_frames = 1);
 	virtual ~Modem_OOK() = default;
 
 	static bool is_complex_mod();

@@ -95,8 +95,6 @@ template <typename B, typename R, typename Q>
 void SC_BFER_std<B,R,Q>
 ::_launch()
 {
-	BFER_std<B,R,Q>::_launch();
-
 	this->create_sc_modules();
 
 	this->bind_sockets();

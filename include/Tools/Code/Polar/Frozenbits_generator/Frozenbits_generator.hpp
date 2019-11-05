@@ -31,7 +31,7 @@ private:
 protected:
 	const int K; /*!< Number of information bits in the frame. */
 	const int N; /*!< Codeword size (or frame size). */
-	std::unique_ptr<tools::Noise<float>> n;
+	const tools::Noise<> *noise;
 
 	std::vector<uint32_t> best_channels; /*!< The best channels in a codeword sorted by descending order. */
 
@@ -59,14 +59,9 @@ public:
 	 *
 	 * \param noise: the current noise to apply to the input signal
 	 */
-	void set_noise(const tools::Noise<float>& noise);
+	void set_noise(const tools::Noise<>& noise);
 
-	/*!
-	 * \brief Sets the current noise to apply to the input signal
-	 *
-	 * \param noise: the current noise to apply to the input signal
-	 */
-	void set_noise(const tools::Noise<double>& noise);
+	const tools::Noise<>& get_noise() const;
 
 	/*!
 	 * \brief Generates the frozen bits vector.

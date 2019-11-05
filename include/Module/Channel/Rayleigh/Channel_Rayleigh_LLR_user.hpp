@@ -9,7 +9,6 @@
 #include <string>
 
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Gaussian_noise_generator.hpp"
-#include "Tools/Noise/Sigma.hpp"
 #include "Module/Channel/Channel.hpp"
 
 namespace aff3ct
@@ -36,7 +35,6 @@ public:
 	                          const bool complex,
 	                          tools::Gaussian_gen<R> &gaussian_generator,
 	                          const std::string& gains_filename,
-	                          const tools::Sigma<R> *noise = nullptr,
 	                          const int gain_occurrences = 1,
 	                          const bool add_users = false,
 	                          const int n_frames = 1);
@@ -44,7 +42,6 @@ public:
 	Channel_Rayleigh_LLR_user(const int N,
 	                          const bool complex,
 	                          const std::string& gains_filename,
-	                          const tools::Sigma<R> *noise = nullptr,
 	                          const tools::Gaussian_noise_generator_implem implem = tools::Gaussian_noise_generator_implem::STD,
 	                          const int seed = 0,
 	                          const int gain_occurrences = 1,

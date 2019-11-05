@@ -59,12 +59,12 @@ protected :
 	const int N_cw;
 	const int N;
 	const int tail_length;
-	std::unique_ptr<tools::Noise<float>> n;
+	tools::Noise<> *noise;
 
 public:
 	Codec(const int K, const int N_cw, const int N, const int tail_length = 0, const int n_frames = 1);
 
-	virtual ~Codec() = default;
+	virtual ~Codec();
 
 	std::unique_ptr<tools::Interleaver_core<>>& get_interleaver();
 
@@ -72,10 +72,9 @@ public:
 
 	std::unique_ptr<Puncturer<B,Q>>& get_puncturer();
 
-	const tools::Noise<float>& current_noise() const;
+	const tools::Noise<>& get_noise() const;
 
-	virtual void set_noise(const tools::Noise<float>& noise);
-	virtual void set_noise(const tools::Noise<double>& noise);
+	virtual void set_noise(tools::Noise<>& noise);
 
 	template <class A = std::allocator<Q>>
 	void extract_sys_llr(const std::vector<Q,A> &Y_N, std::vector<Q,A> &Y_K, const int frame_id = -1);
@@ -101,6 +100,9 @@ public:
 	virtual void reset();
 
 protected:
+	virtual void noise_changed();
+	virtual void check_noise();
+
 	virtual void _extract_sys_llr(const Q *Y_N, Q *Y_K,         const int frame_id);
 	virtual void _extract_sys_bit(const Q *Y_N, B *V_K,         const int frame_id);
 	virtual void _extract_sys_par(const Q *Y_N, Q *sys, Q *par, const int frame_id);

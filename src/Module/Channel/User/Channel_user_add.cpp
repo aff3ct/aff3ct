@@ -32,7 +32,7 @@ void Channel_user_add<R>
 
 		this->set_noise(0);
 
-		std::copy(this->noise.data(), this->noise.data() + this->N, Y_N);
+		std::copy(this->noised_data.data(), this->noised_data.data() + this->N, Y_N);
 
 		std::fill(Y_N, Y_N + this->N, (R) 0);
 		for (auto f = 0; f < this->n_frames; f++)
@@ -49,7 +49,7 @@ void Channel_user_add<R>
 			this->set_noise(f);
 
 			for (auto i = 0; i < this->N; i++)
-				Y_N[f * this->N + i] = X_N[f * this->N + i] + this->noise[f * this->N + i];
+				Y_N[f * this->N + i] = X_N[f * this->N + i] + this->noised_data[f * this->N + i];
 		}
 	}
 }

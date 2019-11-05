@@ -50,8 +50,7 @@ template <typename B, typename Q>
 Codec<B,Q>
 ::Codec(const int K, const int N_cw, const int N, const int tail_length, const int n_frames)
 : Module(n_frames),
-  K(K), N_cw(N_cw), N(N), tail_length(tail_length),
-  n(nullptr)
+  K(K), N_cw(N_cw), N(N), tail_length(tail_length), noise(nullptr)
 {
 	const std::string name = "Codec";
 	this->set_name(name);
@@ -141,6 +140,14 @@ Codec<B,Q>
 }
 
 template <typename B, typename Q>
+Codec<B,Q>
+::~Codec()
+{
+	if (this->noise != nullptr)
+		this->noise->unregister_callbacks_changed((void*)this);
+}
+
+template <typename B, typename Q>
 std::unique_ptr<tools::Interleaver_core<>>& Codec<B,Q>
 ::get_interleaver()
 {
@@ -183,24 +190,50 @@ std::unique_ptr<Puncturer<B,Q>>& Codec<B,Q>
 }
 
 template <typename B, typename Q>
-const tools::Noise<float>& Codec<B,Q>
-::current_noise() const
+const tools::Noise<>& Codec<B,Q>
+::get_noise() const
 {
-	return *this->n;
+	if (this->noise == nullptr)
+	{
+		std::stringstream message;
+		message << "No 'noise' has been set.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->noise;
 }
 
 template <typename B, typename Q>
 void Codec<B,Q>
-::set_noise(const tools::Noise<float>& noise)
+::set_noise(tools::Noise<>& noise)
 {
-	this->n.reset(tools::cast<float>(noise));
+	if (&noise != this->noise)
+	{
+		if (this->noise != nullptr)
+			this->noise->unregister_callbacks_changed((void*)this);
+		this->noise = &noise;
+		this->noise->register_callback_changed([this]() { this->noise_changed(); }, (void*)this);
+		this->check_noise();
+		this->noise_changed();
+	}
 }
 
 template <typename B, typename Q>
 void Codec<B,Q>
-::set_noise(const tools::Noise<double>& noise)
+::noise_changed()
 {
-	this->n.reset(tools::cast<float>(noise));
+}
+
+template <typename B, typename Q>
+void Codec<B,Q>
+::check_noise()
+{
+	if (this->noise == nullptr)
+	{
+		std::stringstream message;
+		message << "No noise has been set.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename B, typename Q>

@@ -3,6 +3,7 @@
 #include <string>
 #include <cmath>
 
+#include "Tools/Noise/Noise.hpp"
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Fast/Gaussian_noise_generator_fast.hpp"
 #ifdef AFF3CT_CHANNEL_GSL
@@ -24,11 +25,10 @@ Channel_Rayleigh_LLR_user<R>
                             const bool complex,
                             tools::Gaussian_gen<R> &gaussian_generator,
                             const std::string& gains_filename,
-                            const tools::Sigma<R> *noise,
                             const int gain_occurrences,
                             const bool add_users,
                             const int n_frames)
-: Channel<R>(N, noise, n_frames),
+: Channel<R>(N, n_frames),
   complex(complex),
   add_users(add_users),
   gains(N * n_frames),
@@ -55,13 +55,12 @@ Channel_Rayleigh_LLR_user<R>
 ::Channel_Rayleigh_LLR_user(const int N,
                             const bool complex,
                             const std::string& gains_filename,
-                            const tools::Sigma<R> *noise,
                             const tools::Gaussian_noise_generator_implem implem,
                             const int seed,
                             const int gain_occurrences,
                             const bool add_users,
                             const int n_frames)
-: Channel<R>(N, noise, n_frames),
+: Channel<R>(N, n_frames),
   complex(complex),
   add_users(add_users),
   gains(N * n_frames),
@@ -181,14 +180,14 @@ void Channel_Rayleigh_LLR_user<R>
 	}
 
 	// generate the noise
-	gaussian_generator->generate(this->noise, this->n->get_noise()); // trow if noise is not SIGMA type
+	gaussian_generator->generate(this->noised_data, (R)this->noise->get_value()); // trow if noise is not SIGMA type
 
 	// use the noise and the gain to modify the signal
 	for (auto i = 0; i < this->N * this->n_frames; i++)
 	{
 		H_N[i] = this->gains[i];
 
-		Y_N[i] = X_N[i] * H_N[i] + this->noise[i];
+		Y_N[i] = X_N[i] * H_N[i] + this->noised_data[i];
 	}
 }
 
@@ -198,7 +197,7 @@ void Channel_Rayleigh_LLR_user<R>
 {
 	Channel<R>::check_noise();
 
-	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
+	this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
 }
 
 // ==================================================================================== explicit template instantiation

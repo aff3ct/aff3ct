@@ -5,7 +5,6 @@
 #ifndef MODEM_OOK_AWGN_HPP_
 #define MODEM_OOK_AWGN_HPP_
 
-#include "Tools/Noise/Sigma.hpp"
 #include "Module/Modem/OOK/Modem_OOK.hpp"
 
 namespace aff3ct
@@ -21,20 +20,18 @@ protected:
 
 public:
 	Modem_OOK_AWGN(const int N,
-	               const tools::Sigma<R> *noise = nullptr,
 	               const bool disable_sig2 = false,
 	               const int n_frames = 1);
 	virtual ~Modem_OOK_AWGN() = default;
 
-	virtual void set_noise(const tools::Noise<R>& noise);
-
 protected:
+	void check_noise();
+	void noise_changed();
+
 	void _demodulate    (              const Q *Y_N1,                Q *Y_N2, const int frame_id);
 	void _demodulate_wg (const R *H_N, const Q *Y_N1,                Q *Y_N2, const int frame_id);
 	void _tdemodulate   (              const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id);
 	void _tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id);
-
-	void check_noise();
 };
 }
 }

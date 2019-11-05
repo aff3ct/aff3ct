@@ -3,6 +3,7 @@
 #include <string>
 #include <mipp.h>
 
+#include "Tools/Noise/Noise.hpp"
 #include "Tools/Algo/Draw_generator/Event_generator/Standard/Event_generator_std.hpp"
 #include "Tools/Algo/Draw_generator/Event_generator/Fast/Event_generator_fast.hpp"
 #ifdef AFF3CT_CHANNEL_GSL
@@ -20,9 +21,8 @@ template<typename R>
 Channel_binary_symmetric<R>
 ::Channel_binary_symmetric(const int N,
                            tools::Event_generator<R> &event_generator,
-                           const tools::Event_probability<R> *noise,
                            const int n_frames)
-: Channel<R>(N, noise, n_frames),
+: Channel<R>(N, n_frames),
   event_generator(&event_generator),
   is_autoalloc_event_gen(false)
 {
@@ -33,11 +33,10 @@ Channel_binary_symmetric<R>
 template <typename R>
 Channel_binary_symmetric<R>
 ::Channel_binary_symmetric(const int N,
-                           const tools::Event_probability<R> *noise,
                            const tools::Event_generator_implem implem,
                            const int seed,
                            const int n_frames)
-: Channel<R>(N, noise, n_frames),
+: Channel<R>(N, n_frames),
   event_generator(nullptr),
   is_autoalloc_event_gen(true)
 {
@@ -90,9 +89,9 @@ void Channel_binary_symmetric<R>
 {
 	this->check_noise();
 
-	auto event_draw = (E*)(this->noise.data() + this->N * frame_id);
+	auto event_draw = (E*)(this->noised_data.data() + this->N * frame_id);
 
-	const auto event_probability = this->n->get_noise();
+	const auto event_probability = (R)this->noise->get_value();
 	event_generator->generate(event_draw, (unsigned)this->N, event_probability);
 
 	const mipp::Reg<E> r_false = (E)false;
@@ -122,7 +121,7 @@ void Channel_binary_symmetric<R>::check_noise()
 {
 	Channel<R>::check_noise();
 
-	this->n->is_of_type_throw(tools::Noise_type::EP);
+	this->noise->is_of_type_throw(tools::Noise_type::EP);
 }
 
 // ==================================================================================== explicit template instantiation

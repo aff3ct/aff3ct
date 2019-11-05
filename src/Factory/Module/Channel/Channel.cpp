@@ -14,9 +14,6 @@
 #include "Module/Channel/Optical/Channel_optical.hpp"
 #include "Module/Channel/Binary_erasure/Channel_binary_erasure.hpp"
 #include "Module/Channel/Binary_symmetric/Channel_binary_symmetric.hpp"
-#include "Tools/Noise/Sigma.hpp"
-#include "Tools/Noise/Event_probability.hpp"
-#include "Tools/Noise/Received_optical_power.hpp"
 #include "Factory/Module/Channel/Channel.hpp"
 
 using namespace aff3ct;
@@ -129,7 +126,7 @@ void Channel
 
 template <typename R>
 module::Channel<R>* Channel
-::build_event(const tools::Noise<R> *n) const
+::build_event() const
 {
 	tools::Event_generator_implem impl;
 	     if (this->implem == "STD" ) impl = tools::Event_generator_implem::STD;
@@ -143,17 +140,15 @@ module::Channel<R>* Channel
 	else
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 
-	auto noise = dynamic_cast<const tools::Event_probability<R>*>(n);
-
-	if (type == "BEC") return new module::Channel_binary_erasure  <R>(this->N, noise, impl, this->seed, this->n_frames);
-	if (type == "BSC") return new module::Channel_binary_symmetric<R>(this->N, noise, impl, this->seed, this->n_frames);
+	if (type == "BEC") return new module::Channel_binary_erasure  <R>(this->N, impl, this->seed, this->n_frames);
+	if (type == "BSC") return new module::Channel_binary_symmetric<R>(this->N, impl, this->seed, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename R>
 module::Channel<R>* Channel
-::build_gaussian(const tools::Noise<R> *n) const
+::build_gaussian() const
 {
 	tools::Gaussian_noise_generator_implem impl;
 	     if (this->implem == "STD" ) impl = tools::Gaussian_noise_generator_implem::STD;
@@ -167,18 +162,16 @@ module::Channel<R>* Channel
 	else
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 
-	auto noise = dynamic_cast<const tools::Sigma<R>*>(n);
-
-	if (type == "AWGN"         ) return new module::Channel_AWGN_LLR         <R>(this->N,                            noise, impl, this->seed,                   this->add_users, this->n_frames);
-	if (type == "RAYLEIGH"     ) return new module::Channel_Rayleigh_LLR     <R>(this->N, this->complex,             noise, impl, this->seed,                   this->add_users, this->n_frames);
-	if (type == "RAYLEIGH_USER") return new module::Channel_Rayleigh_LLR_user<R>(this->N, this->complex, this->path, noise, impl, this->seed, this->gain_occur, this->add_users, this->n_frames);
+	if (type == "AWGN"         ) return new module::Channel_AWGN_LLR         <R>(this->N,                            impl, this->seed,                   this->add_users, this->n_frames);
+	if (type == "RAYLEIGH"     ) return new module::Channel_Rayleigh_LLR     <R>(this->N, this->complex,             impl, this->seed,                   this->add_users, this->n_frames);
+	if (type == "RAYLEIGH_USER") return new module::Channel_Rayleigh_LLR_user<R>(this->N, this->complex, this->path, impl, this->seed, this->gain_occur, this->add_users, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename R>
 module::Channel<R>* Channel
-::build_userpdf(const tools::Distributions<R>& dist, const tools::Noise<R> *n) const
+::build_userpdf(const tools::Distributions<R>& dist) const
 {
 	tools::User_pdf_noise_generator_implem impl;
 	     if (implem == "STD" ) impl = tools::User_pdf_noise_generator_implem::STD;
@@ -192,23 +185,21 @@ module::Channel<R>* Channel
 	else
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 
-	auto noise = dynamic_cast<const tools::Received_optical_power<R>*>(n);
-
-	if (type == "OPTICAL") return new module::Channel_optical<R>(this->N, dist, noise, impl, this->seed, this->n_frames);
+	if (type == "OPTICAL") return new module::Channel_optical<R>(this->N, dist, impl, this->seed, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename R>
 module::Channel<R>* Channel
-::build(const tools::Noise<R> *n) const
+::build() const
 {
 	try	{
-		return build_gaussian<R>(n);
+		return build_gaussian<R>();
 	} catch (tools::cannot_allocate&) {}
 
 	try	{
-		return build_event<R>(n);
+		return build_event<R>();
 	} catch (tools::cannot_allocate&) {}
 
 	if (type == "USER"    ) return new module::Channel_user    <R>(this->N, this->path, this->add_users, this->n_frames);
@@ -222,24 +213,24 @@ module::Channel<R>* Channel
 
 template <typename R>
 module::Channel<R>* Channel
-::build(const tools::Distributions<R>& dist, const tools::Noise<R> *n) const
+::build(const tools::Distributions<R>& dist) const
 {
 	try	{
-		return build_userpdf<R>(dist, n);
+		return build_userpdf<R>(dist);
 	} catch (tools::cannot_allocate&) {}
 
-	return build<R>(n);
+	return build<R>();
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::build<R_32>(const tools::Noise<R_32>*) const;
-template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::build<R_64>(const tools::Noise<R_64>*) const;
-template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::build<R_32>(const tools::Distributions<R_32>&, const tools::Noise<R_32>*) const;
-template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::build<R_64>(const tools::Distributions<R_64>&, const tools::Noise<R_64>*) const;
+template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::build<R_32>() const;
+template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::build<R_64>() const;
+template aff3ct::module::Channel<R_32>* aff3ct::factory::Channel::build<R_32>(const tools::Distributions<R_32>&) const;
+template aff3ct::module::Channel<R_64>* aff3ct::factory::Channel::build<R_64>(const tools::Distributions<R_64>&) const;
 #else
-template aff3ct::module::Channel<R>* aff3ct::factory::Channel::build<R>(const tools::Noise<R>*) const;
-template aff3ct::module::Channel<R>* aff3ct::factory::Channel::build<R>(const tools::Distributions<R>&, const tools::Noise<R>*) const;
+template aff3ct::module::Channel<R>* aff3ct::factory::Channel::build<R>() const;
+template aff3ct::module::Channel<R>* aff3ct::factory::Channel::build<R>(const tools::Distributions<R>&) const;
 #endif
 // ==================================================================================== explicit template instantiation

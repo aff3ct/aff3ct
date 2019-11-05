@@ -9,7 +9,6 @@
 #include <map>
 #include <cli.hpp>
 
-#include "Tools/Noise/Noise.hpp"
 #include "Tools/Factory/Header.hpp"
 #include "Tools/Math/max.h"
 #include "Tools/Math/Distribution/Distributions.hpp"
@@ -74,9 +73,9 @@ public:
 
 	// builder
 	template <typename B = int, typename R = float, typename Q = R>
-	module::Modem<B,R,Q>* build(const tools::Noise<R> *noise = nullptr) const;
+	module::Modem<B,R,Q>* build() const;
 	template <typename B = int, typename R = float, typename Q = R>
-	module::Modem<B,R,Q>* build(const tools::Distributions<R>& dist, const tools::Noise<R> *noise = nullptr) const;
+	module::Modem<B,R,Q>* build(const tools::Distributions<R>& dist) const;
 
 	static bool has_constellation(const std::string &type);
 
@@ -100,10 +99,10 @@ public:
 
 private:
 	template <typename B = int, typename R = float, typename Q = R, tools::proto_max<Q> MAX>
-	inline module::Modem<B,R,Q>* _build(const tools::Noise<R> *noise = nullptr) const;
+	inline module::Modem<B,R,Q>* _build() const;
 
 	template <typename B = int, typename R = float, typename Q = R>
-	inline module::Modem<B,R,Q>* _build_scma(const tools::Noise<R> *noise = nullptr) const;
+	inline module::Modem<B,R,Q>* _build_scma() const;
 
 	template <typename R = float>
 	tools::Constellation<R>* build_constellation() const;

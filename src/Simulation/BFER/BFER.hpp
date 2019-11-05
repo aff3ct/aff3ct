@@ -40,7 +40,7 @@ protected:
 	// code specifications
 	const float bit_rate;
 
-	std::unique_ptr<tools::Noise<R>> noise; // current simulated noise
+	std::unique_ptr<tools::Noise<>> noise; // current simulated noise
 
 	// the monitors of the the BFER simulation
 	using Monitor_BFER_type = module::Monitor_BFER<B>;
@@ -54,15 +54,15 @@ protected:
 	using Monitor_MI_reduction_type   = tools::Monitor_reduction_M<Monitor_MI_type  >;
 #endif
 
-	std::vector<std::unique_ptr<Monitor_MI_type          >> monitor_mi;
-	            std::unique_ptr<Monitor_MI_reduction_type>  monitor_mi_red;
+	std::vector<std::unique_ptr<Monitor_MI_type         >> monitor_mi;
+	            std::unique_ptr<Monitor_MI_reduction_type> monitor_mi_red;
 
-	std::vector<std::unique_ptr<Monitor_BFER_type          >> monitor_er;
-	            std::unique_ptr<Monitor_BFER_reduction_type>  monitor_er_red;
+	std::vector<std::unique_ptr<Monitor_BFER_type         >> monitor_er;
+	            std::unique_ptr<Monitor_BFER_reduction_type> monitor_er_red;
 
 	// dump frames into files
-	std::vector<std::unique_ptr<tools::Dumper          >> dumper;
-	            std::unique_ptr<tools::Dumper_reduction>  dumper_red;
+	std::vector<std::unique_ptr<tools::Dumper         >> dumper;
+	            std::unique_ptr<tools::Dumper_reduction> dumper_red;
 
 
 	// terminal and reporters (for the output of the simu)

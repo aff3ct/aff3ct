@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <string>
 
+#include "Tools/Noise/Noise.hpp"
 #include "Tools/Algo/Draw_generator/User_pdf_noise_generator/Standard/User_pdf_noise_generator_std.hpp"
 #include "Tools/Algo/Draw_generator/User_pdf_noise_generator/Fast/User_pdf_noise_generator_fast.hpp"
 #ifdef AFF3CT_CHANNEL_GSL
@@ -19,9 +20,8 @@ template <typename R>
 Channel_optical<R>
 ::Channel_optical(const int N,
                   tools::User_pdf_noise_generator<R>& pdf_noise_generator,
-                  const tools::Received_optical_power<R> *noise,
                   const int n_frames)
-: Channel<R>(N, noise, n_frames),
+: Channel<R>(N, n_frames),
   pdf_noise_generator(&pdf_noise_generator),
   is_autoalloc_pdf_gen(false)
 {
@@ -33,11 +33,10 @@ template <typename R>
 Channel_optical<R>
 ::Channel_optical(const int N,
                   const tools::Distributions<R>& dist,
-                  const tools::Received_optical_power<R> *noise,
                   const tools::User_pdf_noise_generator_implem implem,
                   const int seed,
                   const int n_frames)
-: Channel<R>(N, noise, n_frames),
+: Channel<R>(N, n_frames),
   pdf_noise_generator(nullptr),
   is_autoalloc_pdf_gen(true)
 {
@@ -88,7 +87,7 @@ template <typename R>
 void Channel_optical<R>
 ::_add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
-	pdf_noise_generator->generate(X_N, Y_N, this->N, this->n->get_noise());
+	pdf_noise_generator->generate(X_N, Y_N, this->N, (R)this->noise->get_value());
 }
 
 template<typename R>
@@ -97,7 +96,7 @@ void Channel_optical<R>
 {
 	Channel<R>::check_noise();
 
-	this->n->is_of_type_throw(tools::Noise_type::ROP);
+	this->noise->is_of_type_throw(tools::Noise_type::ROP);
 }
 
 // ==================================================================================== explicit template instantiation

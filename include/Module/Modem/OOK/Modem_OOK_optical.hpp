@@ -5,7 +5,6 @@
 #ifndef MODEM_OOK_OPTICAL_HPP_
 #define MODEM_OOK_OPTICAL_HPP_
 
-#include "Tools/Noise/Received_optical_power.hpp"
 #include "Tools/Math/Distribution/Distributions.hpp"
 #include "Module/Modem/OOK/Modem_OOK.hpp"
 
@@ -22,15 +21,14 @@ protected:
 
 public:
 	Modem_OOK_optical(const int N, const tools::Distributions<R>& dist,
-	                  const tools::Received_optical_power<R> *noise = nullptr,
 	                  const int n_frames = 1);
 	virtual ~Modem_OOK_optical() = default;
 
-	void set_noise(const tools::Noise<R>& noise);
-
 protected:
-	void _demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id);
 	void check_noise();
+	void noise_changed();
+
+	void _demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id);
 };
 }
 }

@@ -31,7 +31,7 @@ void Frozenbits_generator_BEC
 		this->best_channels[i] = i;
 
 	for (auto i = 0; i < std::exp2(m); i++)
-		z[i] = static_cast<double>(this->n->get_noise());
+		z[i] = static_cast<double>(this->noise->get_value());
 
 	for (auto l = 1; l <= m; l++)
 	{
@@ -56,5 +56,5 @@ void Frozenbits_generator_BEC
 {
 	Frozenbits_generator::check_noise();
 
-	this->n->is_of_type_throw(tools::Noise_type::EP);
+	this->noise->is_of_type_throw(tools::Noise_type::EP);
 }
