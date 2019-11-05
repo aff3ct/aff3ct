@@ -52,6 +52,8 @@ public:
 	 */
 	explicit Module(const int n_frames = 1);
 
+	virtual Module* clone() const;
+
 	/*!
 	 * \brief Destructor.
 	 */
