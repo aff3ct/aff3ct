@@ -26,12 +26,12 @@ protected:
 	std::vector<B> buff_crc;
 
 public:
-	CRC_polynomial(const int K, std::string poly_key, const int size = 0, const int n_frames = 1);
+	CRC_polynomial(const int K, const std::string &poly_key, const int size = 0, const int n_frames = 1);
 	virtual ~CRC_polynomial() = default;
 
-	static int         get_size (std::string poly_key);
-	static std::string get_name (std::string poly_key);
-	static unsigned    get_value(std::string poly_key);
+	static int         get_size (const std::string &poly_key);
+	static std::string get_name (const std::string &poly_key);
+	static unsigned    get_value(const std::string &poly_key);
 
 protected:
 	virtual void _build       (const B *U_K1, B *U_K2, const int frame_id);

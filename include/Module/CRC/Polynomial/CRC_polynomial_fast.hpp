@@ -22,7 +22,7 @@ protected:
 	unsigned polynomial_packed_rev;
 
 public:
-	CRC_polynomial_fast(const int K, std::string poly_key, const int size = 0, const int n_frames = 1);
+	CRC_polynomial_fast(const int K, const std::string &poly_key, const int size = 0, const int n_frames = 1);
 	virtual ~CRC_polynomial_fast() = default;
 
 protected:
