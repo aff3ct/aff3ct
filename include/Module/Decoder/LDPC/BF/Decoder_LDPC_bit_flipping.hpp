@@ -17,9 +17,6 @@ namespace module
 template <typename B = int, typename R = float>
 class Decoder_LDPC_bit_flipping : public Decoder_SISO_SIHO<B,R>
 {
-public:
-	void reset();
-
 protected:
 	const int  n_ite;      // number of iterations to perform
 	const int  n_V_nodes;  // number of variable nodes (= N)
@@ -30,9 +27,6 @@ protected:
 	const int  syndrome_depth;
 
 	const tools::Sparse_matrix &H;
-
-	// reset so C_to_V and V_to_C structures can be cleared only at the begining of the loop in iterative decoding
-	bool init_flag;
 
 	const std::vector<unsigned> &info_bits_pos;
 
@@ -54,6 +48,8 @@ protected:
 	                         const int syndrome_depth = 1,
 	                         const int n_frames = 1);
 	virtual ~Decoder_LDPC_bit_flipping() = default;
+
+	void _reset(int frame_id);
 
 	void _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);
 	void _decode_siho   (const R *Y_N,  B *V_K,  const int frame_id);

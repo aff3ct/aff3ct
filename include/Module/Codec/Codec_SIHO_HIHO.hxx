@@ -20,13 +20,6 @@ Codec_SIHO_HIHO<B,Q>
 
 template <typename B, typename Q>
 void Codec_SIHO_HIHO<B,Q>
-::reset()
-{
-	this->get_decoder_siho()->reset();
-}
-
-template <typename B, typename Q>
-void Codec_SIHO_HIHO<B,Q>
 ::set_decoder_siho_hiho(std::shared_ptr<Decoder_SIHO_HIHO<B,Q>> dec)
 {
 	this->set_decoder_siho(dec);

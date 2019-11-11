@@ -27,8 +27,6 @@ public:
 
 	const std::shared_ptr<Decoder_SIHO<B,Q>>& get_decoder_siho();
 
-	virtual void reset();
-
 protected:
 	virtual void set_decoder_siho(std::shared_ptr<Decoder_SIHO<B,Q>> dec);
 	virtual void set_decoder_siho(Decoder_SIHO<B,Q>* dec);

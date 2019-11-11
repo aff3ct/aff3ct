@@ -28,8 +28,7 @@ Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
   layers_count          (this->m +1       ),
   frozen_bits           (frozen_bits      ),
   feedback_graph        (layers_count     ),
-  soft_graph            (layers_count     ),
-  is_init               (false            )
+  soft_graph            (layers_count     )
 {
 	const std::string name = "Decoder_polar_SCAN_naive";
 	this->set_name(name);
@@ -65,28 +64,26 @@ Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	if (n_frames != 1)
+	{
+		std::stringstream message;
+		message << "'n_frames' has to be equal to 1 ('n_frames' = " << n_frames << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	for (auto t = 0; t < layers_count; t++)
 	{
 		feedback_graph[t].resize(this->N);
 		soft_graph[t].resize(this->N);
 	}
+
+	this->reset();
 }
 
 template <typename B, typename R,
           tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
 void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
-::reset()
-{
-	this->is_init = false;
-}
-
-/********************************************************************/
-/** load **/
-/********************************************************************/
-template <typename B, typename R,
-          tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
-void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
-::_load_init()
+::_reset(const int frame_id)
 {
 	// init feedback graph (special case for the left most stage)
 	for (auto i = 0; i < this->N; i++)
@@ -105,18 +102,16 @@ void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 	for (auto t = 0; t < layers_count -1; t++)
 		for (auto i = 0; i < this->N; i++)
 			soft_graph[t][i] = I();
-
-	this->is_init = true;
 }
 
+/********************************************************************/
+/** load **/
+/********************************************************************/
 template <typename B, typename R,
           tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
 void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 ::_load(const R *Y_N)
 {
-	if (!this->is_init)
-		_load_init();
-
 	// init the softGraph (special case for the right most stage)
 	for (auto i = 0; i < this->N; i++)
 		soft_graph[layers_count - 1][i] = Y_N[i];

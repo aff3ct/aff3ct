@@ -27,8 +27,7 @@ Decoder_LDPC_BP_flooding<B,R,Update_rule>
   transpose             (this->H.get_n_connections()                          ),
   post                  (N, -1                                                ),
   msg_chk_to_var        (n_frames, std::vector<R>(this->H.get_n_connections())),
-  msg_var_to_chk        (n_frames, std::vector<R>(this->H.get_n_connections())),
-  init_flag             (true                                                 )
+  msg_var_to_chk        (n_frames, std::vector<R>(this->H.get_n_connections()))
 {
 	const std::string name = "Decoder_LDPC_BP_flooding<" + this->up_rule.get_name() + ">";
 	this->set_name(name);
@@ -64,28 +63,21 @@ Decoder_LDPC_BP_flooding<B,R,Update_rule>
 			k++;
 		}
 	}
+
+	this->reset();
 }
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_flooding<B,R,Update_rule>
-::reset()
+::_reset(const int frame_id)
 {
-	this->init_flag = true;
+	std::fill(this->msg_chk_to_var[frame_id].begin(), this->msg_chk_to_var[frame_id].end(), (R)0);
 }
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
-	// memory zones initialization
-	if (this->init_flag)
-	{
-		std::fill(this->msg_chk_to_var[frame_id].begin(), this->msg_chk_to_var[frame_id].end(), (R)0);
-
-		if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
-			this->init_flag = false;
-	}
-
 	this->_decode(Y_N1, frame_id);
 
 	// prepare for next round by processing extrinsic information
@@ -98,14 +90,6 @@ void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
-	// memory zones initialization
-	if (this->init_flag)
-	{
-		std::fill(this->msg_chk_to_var[frame_id].begin(), this->msg_chk_to_var[frame_id].end(), (R)0);
-
-		if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
-			this->init_flag = false;
-	}
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
@@ -133,13 +117,6 @@ void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	// memory zones initialization
-	if (this->init_flag)
-	{
-		std::fill(this->msg_chk_to_var[frame_id].begin(), this->msg_chk_to_var[frame_id].end(), (R)0);
-
-		if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
-			this->init_flag = false;
-	}
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE

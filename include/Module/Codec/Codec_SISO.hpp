@@ -27,8 +27,6 @@ public:
 
 	const std::shared_ptr<Decoder_SISO<Q>>& get_decoder_siso();
 
-	virtual void reset();
-
 protected:
 	void set_decoder_siso(std::shared_ptr<Decoder_SISO<Q>> dec);
 	void set_decoder_siso(Decoder_SISO<Q>* dec);

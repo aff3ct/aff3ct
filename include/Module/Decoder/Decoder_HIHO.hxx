@@ -114,14 +114,23 @@ void Decoder_HIHO<B>
 
 		auto w = 0;
 		for (w = w_start; w < w_stop -1; w++)
+		{
 			this->_decode_hiho(Y_N + w * this->N * this->simd_inter_frame_level,
 			                   V_K + w * this->K * this->simd_inter_frame_level,
 			                   w * this->simd_inter_frame_level);
 
+			if (this->is_auto_reset())
+				this->_reset(w * this->simd_inter_frame_level);
+		}
+
 		if (this->n_inter_frame_rest == 0)
+		{
 			this->_decode_hiho(Y_N + w * this->N * this->simd_inter_frame_level,
 			                   V_K + w * this->K * this->simd_inter_frame_level,
 			                   w * this->simd_inter_frame_level);
+			if (this->is_auto_reset())
+				this->_reset(w * this->simd_inter_frame_level);
+		}
 		else
 		{
 			const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
@@ -130,6 +139,9 @@ void Decoder_HIHO<B>
 			          this->Y_N.begin());
 
 			this->_decode_hiho(this->Y_N.data(), this->V_KN.data(), w * this->simd_inter_frame_level);
+
+			if (this->is_auto_reset())
+				this->_reset(w * this->simd_inter_frame_level);
 
 			const auto waves_off2 = w * this->simd_inter_frame_level * this->K;
 			std::copy(this->V_KN.begin(),
@@ -148,6 +160,9 @@ void Decoder_HIHO<B>
 		          this->Y_N.begin() + w_pos * this->N);
 
 		this->_decode_hiho(this->Y_N.data(), this->V_KN.data(), w * this->simd_inter_frame_level);
+
+		if (this->is_auto_reset())
+				this->_reset(w * this->simd_inter_frame_level);
 
 		std::copy(this->V_KN.begin() + (w_pos +0) * this->K,
 		          this->V_KN.begin() + (w_pos +1) * this->K,
@@ -185,6 +200,9 @@ void Decoder_HIHO<B>
 	}
 
 	this->decode_hiho_cw(Y_N.data(), V_N.data(), frame_id);
+
+	if (this->is_auto_reset())
+		this->reset(frame_id);
 }
 
 template <typename B>
@@ -198,14 +216,24 @@ void Decoder_HIHO<B>
 
 		auto w = 0;
 		for (w = w_start; w < w_stop -1; w++)
+		{
 			this->_decode_hiho_cw(Y_N + w * this->N * this->simd_inter_frame_level,
 			                      V_N + w * this->N * this->simd_inter_frame_level,
 			                      w * this->simd_inter_frame_level);
 
+			if (this->is_auto_reset())
+				this->_reset(w * this->simd_inter_frame_level);
+		}
+
 		if (this->n_inter_frame_rest == 0)
+		{
 			this->_decode_hiho_cw(Y_N + w * this->N * this->simd_inter_frame_level,
 			                      V_N + w * this->N * this->simd_inter_frame_level,
 			                      w * this->simd_inter_frame_level);
+
+			if (this->is_auto_reset())
+				this->_reset(w * this->simd_inter_frame_level);
+		}
 		else
 		{
 			const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
@@ -214,6 +242,9 @@ void Decoder_HIHO<B>
 			          this->Y_N.begin());
 
 			this->_decode_hiho_cw(this->Y_N.data(), this->V_KN.data(), w * this->simd_inter_frame_level);
+
+			if (this->is_auto_reset())
+				this->_reset(w * this->simd_inter_frame_level);
 
 			const auto waves_off2 = w * this->simd_inter_frame_level * this->N;
 			std::copy(this->V_KN.begin(),
@@ -232,6 +263,9 @@ void Decoder_HIHO<B>
 		          this->Y_N.begin() + w_pos * this->N);
 
 		this->_decode_hiho_cw(this->Y_N.data(), this->V_KN.data(), w * this->simd_inter_frame_level);
+
+		if (this->is_auto_reset())
+			this->_reset(w * this->simd_inter_frame_level);
 
 		std::copy(this->V_KN.begin() + (w_pos +0) * this->N,
 		          this->V_KN.begin() + (w_pos +1) * this->N,

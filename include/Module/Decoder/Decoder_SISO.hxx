@@ -116,10 +116,15 @@ void Decoder_SISO<R>
 	const auto w_stop  = (frame_id < 0) ? n_dec_waves_siso : w_start +1;
 
 	for (auto w = w_start; w < w_stop; w++)
+	{
 		this->_decode_siso(sys + w * (          this->K) * this->simd_inter_frame_level,
 		                   par + w * (this->N - this->K) * this->simd_inter_frame_level,
 		                   ext + w * (          this->K) * this->simd_inter_frame_level,
 		                   w * this->simd_inter_frame_level);
+
+		if (this->is_auto_reset())
+			this->_reset(w * this->simd_inter_frame_level);
+	}
 }
 
 template <typename R>
@@ -165,14 +170,24 @@ void Decoder_SISO<R>
 
 		auto w = 0;
 		for (w = w_start; w < w_stop -1; w++)
+		{
 			this->_decode_siso(Y_N1 + w * this->N * this->simd_inter_frame_level,
 			                   Y_N2 + w * this->N * this->simd_inter_frame_level,
 			                   w * this->simd_inter_frame_level);
 
+			if (this->is_auto_reset())
+				this->_reset(w * this->simd_inter_frame_level);
+		}
+
 		if (this->n_inter_frame_rest == 0)
+		{
 			this->_decode_siso(Y_N1 + w * this->N * this->simd_inter_frame_level,
 			                   Y_N2 + w * this->N * this->simd_inter_frame_level,
 			                   w * this->simd_inter_frame_level);
+
+			if (this->is_auto_reset())
+				this->_reset(w * this->simd_inter_frame_level);
+		}
 		else
 		{
 			const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
@@ -181,6 +196,9 @@ void Decoder_SISO<R>
 			          this->Y_N1.begin());
 
 			this->_decode_siso(this->Y_N1.data(), this->Y_N2.data(), w * simd_inter_frame_level);
+
+			if (this->is_auto_reset())
+				this->_reset(w * this->simd_inter_frame_level);
 
 			const auto waves_off2 = w * this->simd_inter_frame_level * this->N;
 			std::copy(this->Y_N2.begin(),
@@ -199,6 +217,9 @@ void Decoder_SISO<R>
 		          this->Y_N1.begin() + w_pos * this->N);
 
 		this->_decode_siso(this->Y_N1.data(), this->Y_N2.data(), w * this->simd_inter_frame_level);
+
+		if (this->is_auto_reset())
+			this->_reset(w * this->simd_inter_frame_level);
 
 		std::copy(this->Y_N2.begin() + (w_pos +0) * this->N,
 		          this->Y_N2.begin() + (w_pos +1) * this->N,

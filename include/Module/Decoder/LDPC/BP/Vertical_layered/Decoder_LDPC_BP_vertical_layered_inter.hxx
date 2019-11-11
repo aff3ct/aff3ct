@@ -36,8 +36,7 @@ Decoder_LDPC_BP_vertical_layered_inter<B,R,Update_rule>
   contributions         (this->H.get_cols_max_degree()                                                      ),
   messages_offsets      (this->H.get_n_cols()                                                               ),
   Y_N_reorderered       (N                                                                                  ),
-  V_reorderered         (N                                                                                  ),
-  init_flag             (true                                                                               )
+  V_reorderered         (N                                                                                  )
 {
 	const std::string name = "Decoder_LDPC_BP_vertical_layered_inter<" + this->up_rule.get_name() + ">";
 	this->set_name(name);
@@ -56,13 +55,18 @@ Decoder_LDPC_BP_vertical_layered_inter<B,R,Update_rule>
 		messages_offsets[c] = (uint32_t)cur_off_msg;
 		cur_off_msg += this->H[c].size();
 	}
+
+	this->reset();
 }
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_vertical_layered_inter<B,R,Update_rule>
-::reset()
+::_reset(const int frame_id)
 {
-	this->init_flag = true;
+	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+	const auto zero = mipp::Reg<R>((R)0);
+	std::fill(this->messages [cur_wave].begin(), this->messages [cur_wave].end(), zero);
+	std::fill(this->var_nodes[cur_wave].begin(), this->var_nodes[cur_wave].end(), zero);
 }
 
 template <typename B, typename R, class Update_rule>
@@ -70,16 +74,6 @@ void Decoder_LDPC_BP_vertical_layered_inter<B,R,Update_rule>
 ::_load(const R *Y_N, const int frame_id)
 {
 	const auto cur_wave = frame_id / this->simd_inter_frame_level;
-
-	// memory zones initialization
-	if (this->init_flag)
-	{
-		const auto zero = mipp::Reg<R>((R)0);
-		std::fill(this->messages [cur_wave].begin(), this->messages [cur_wave].end(), zero);
-		std::fill(this->var_nodes[cur_wave].begin(), this->var_nodes[cur_wave].end(), zero);
-
-		if (cur_wave == this->n_dec_waves -1) this->init_flag = false;
-	}
 
 	std::vector<const R*> frames(mipp::N<R>());
 	for (auto f = 0; f < mipp::N<R>(); f++) frames[f] = Y_N + f * this->N;

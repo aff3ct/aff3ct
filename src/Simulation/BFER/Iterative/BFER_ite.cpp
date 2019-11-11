@@ -78,9 +78,14 @@ void BFER_ite<B,R,Q>
 
 	if (std::static_pointer_cast<module::Decoder>(codec[tid]->get_decoder_siso()) !=
 	    std::static_pointer_cast<module::Decoder>(codec[tid]->get_decoder_siho()))
+	{
 		this->set_module("decoder_siho", tid, codec[tid]->get_decoder_siho());
+		codec[tid]->get_decoder_siho()->set_auto_reset(false);
+		this->monitor_er[tid]->add_handler_check([this, tid](){ this->codec[tid]->get_decoder_siho()->reset(); });
+	}
 
-	this->monitor_er[tid]->add_handler_check(std::bind(&module::Codec_SISO_SIHO<B,Q>::reset, codec[tid].get()));
+	codec[tid]->get_decoder_siso()->set_auto_reset(false);
+	this->monitor_er[tid]->add_handler_check([this, tid](){ this->codec[tid]->get_decoder_siso()->reset(); });
 
 	if (interleaver_core[tid]->is_uniform())
 		this->monitor_er[tid]->add_handler_check(std::bind(&tools::Interleaver_core<>::refresh,

@@ -31,8 +31,6 @@ protected:
 	std::vector<R             > contributions;
 	std::vector<uint32_t      > messages_offsets;
 
-	bool init_flag; // reset the chk_to_var vector at the begining of the iterative decoding
-
 public:
 	Decoder_LDPC_BP_vertical_layered(const int K, const int N, const int n_ite,
 	                                 const tools::Sparse_matrix &H,
@@ -42,9 +40,10 @@ public:
 	                                 const int syndrome_depth = 1,
 	                                 const int n_frames = 1);
 	virtual ~Decoder_LDPC_BP_vertical_layered() = default;
-	void reset();
 
 protected:
+	void _reset(const int frame_id);
+
 	void _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);
 	void _decode_siho   (const R *Y_N,  B *V_K,  const int frame_id);
 	void _decode_siho_cw(const R *Y_N,  B *V_N,  const int frame_id);

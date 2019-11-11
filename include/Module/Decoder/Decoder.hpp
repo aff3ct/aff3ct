@@ -41,10 +41,11 @@ class Decoder : public Module
 protected:
 	const int n_inter_frame_rest;
 
-	const int K; /*!< Number of information bits in one frame */
-	const int N; /*!< Size of one frame (= number of bits in one frame) */
-	const int simd_inter_frame_level; /*!< Number of frames absorbed by the SIMD instructions. */
-	const int n_dec_waves;
+	const int  K;                      /*!< Number of information bits in one frame */
+	const int  N;                      /*!< Size of one frame (= number of bits in one frame) */
+	const int  simd_inter_frame_level; /*!< Number of frames absorbed by the SIMD instructions. */
+	const int  n_dec_waves;
+	      bool auto_reset;
 
 public:
 	Decoder(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1);
@@ -67,7 +68,13 @@ public:
 
 	int get_n_dec_waves() const;
 
-	virtual void reset();
+	bool is_auto_reset() const;
+	void set_auto_reset(const bool enable_auto_reset);
+
+	void reset(const int frame_id = -1);
+
+protected:
+	virtual void _reset(const int frame_id);
 };
 }
 }

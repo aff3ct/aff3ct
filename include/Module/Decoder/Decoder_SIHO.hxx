@@ -116,14 +116,24 @@ void Decoder_SIHO<B,R>
 
 		auto w = 0;
 		for (w = w_start; w < w_stop -1; w++)
+		{
 			this->_decode_siho(Y_N + w * this->N * this->simd_inter_frame_level,
 			                   V_K + w * this->K * this->simd_inter_frame_level,
 			                   w * this->simd_inter_frame_level);
 
+			if (this->is_auto_reset())
+				this->_reset(w * this->simd_inter_frame_level);
+		}
+
 		if (this->n_inter_frame_rest == 0)
+		{
 			this->_decode_siho(Y_N + w * this->N * this->simd_inter_frame_level,
 			                   V_K + w * this->K * this->simd_inter_frame_level,
 			                   w * this->simd_inter_frame_level);
+
+			if (this->is_auto_reset())
+				this->_reset(w * this->simd_inter_frame_level);
+		}
 		else
 		{
 			const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
@@ -132,6 +142,9 @@ void Decoder_SIHO<B,R>
 			          this->Y_N.begin());
 
 			this->_decode_siho(this->Y_N.data(), this->V_KN.data(), w * simd_inter_frame_level);
+
+			if (this->is_auto_reset())
+				this->_reset(w * this->simd_inter_frame_level);
 
 			const auto waves_off2 = w * this->simd_inter_frame_level * this->K;
 			std::copy(this->V_KN.begin(),
@@ -150,6 +163,9 @@ void Decoder_SIHO<B,R>
 		          this->Y_N.begin() + w_pos * this->N);
 
 		this->_decode_siho(this->Y_N.data(), this->V_KN.data(), w * this->simd_inter_frame_level);
+
+		if (this->is_auto_reset())
+			this->_reset(w * this->simd_inter_frame_level);
 
 		std::copy(this->V_KN.begin() + (w_pos +0) * this->K,
 		          this->V_KN.begin() + (w_pos +1) * this->K,
@@ -200,14 +216,24 @@ void Decoder_SIHO<B,R>
 
 		auto w = 0;
 		for (w = w_start; w < w_stop -1; w++)
+		{
 			this->_decode_siho_cw(Y_N + w * this->N * this->simd_inter_frame_level,
 			                      V_N + w * this->N * this->simd_inter_frame_level,
 			                      w * this->simd_inter_frame_level);
 
+			if (this->is_auto_reset())
+				this->_reset(w * this->simd_inter_frame_level);
+		}
+
 		if (this->n_inter_frame_rest == 0)
+		{
 			this->_decode_siho_cw(Y_N + w * this->N * this->simd_inter_frame_level,
 			                      V_N + w * this->N * this->simd_inter_frame_level,
 			                      w * this->simd_inter_frame_level);
+
+			if (this->is_auto_reset())
+				this->_reset(w * this->simd_inter_frame_level);
+		}
 		else
 		{
 			const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
@@ -216,6 +242,9 @@ void Decoder_SIHO<B,R>
 			          this->Y_N.begin());
 
 			this->_decode_siho_cw(this->Y_N.data(), this->V_KN.data(), w * simd_inter_frame_level);
+
+			if (this->is_auto_reset())
+				this->_reset(w * this->simd_inter_frame_level);
 
 			const auto waves_off2 = w * this->simd_inter_frame_level * this->N;
 			std::copy(this->V_KN.begin(),
@@ -234,6 +263,9 @@ void Decoder_SIHO<B,R>
 		          this->Y_N.begin() + w_pos * this->N);
 
 		this->_decode_siho_cw(this->Y_N.data(), this->V_KN.data(), w * this->simd_inter_frame_level);
+
+		if (this->is_auto_reset())
+			this->_reset(w * this->simd_inter_frame_level);
 
 		std::copy(this->V_KN.begin() + (w_pos +0) * this->N,
 		          this->V_KN.begin() + (w_pos +1) * this->N,

@@ -97,8 +97,6 @@ public:
 
 	virtual void add_sys_ext(const Q *ext, Q *Y_N, const int frame_id = -1);
 
-	virtual void reset();
-
 protected:
 	virtual void noise_changed();
 	virtual void check_noise();

@@ -24,34 +24,26 @@ Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
   up_rule               (up_rule                                              ),
   var_nodes             (n_frames, std::vector<R>(N                          )),
   messages              (n_frames, std::vector<R>(this->H.get_n_connections())),
-  contributions         (this->H.get_cols_max_degree()                        ),
-  init_flag             (true                                                 )
+  contributions         (this->H.get_cols_max_degree()                        )
 {
 	const std::string name = "Decoder_LDPC_BP_horizontal_layered<" + this->up_rule.get_name() + ">";
 	this->set_name(name);
+
+	this->reset();
 }
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
-::reset()
+::_reset(const int frame_id)
 {
-	this->init_flag = true;
+	std::fill(this->messages [frame_id].begin(), this->messages [frame_id].end(), (R)0);
+	std::fill(this->var_nodes[frame_id].begin(), this->var_nodes[frame_id].end(), (R)0);
 }
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 ::_load(const R *Y_N, const int frame_id)
 {
-	// memory zones initialization
-	if (this->init_flag)
-	{
-		std::fill(this->messages [frame_id].begin(), this->messages [frame_id].end(), (R)0);
-		std::fill(this->var_nodes[frame_id].begin(), this->var_nodes[frame_id].end(), (R)0);
-
-		if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
-			this->init_flag = false;
-	}
-
 	for (auto v = 0; v < (int)var_nodes[frame_id].size(); v++)
 		this->var_nodes[frame_id][v] += Y_N[v]; // var_nodes contain previous extrinsic information
 }

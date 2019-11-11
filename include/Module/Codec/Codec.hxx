@@ -432,12 +432,6 @@ void Codec<B,Q>
 
 template <typename B, typename Q>
 void Codec<B,Q>
-::reset()
-{
-}
-
-template <typename B, typename Q>
-void Codec<B,Q>
 ::_extract_sys_llr(const Q *Y_N, Q *Y_K, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);

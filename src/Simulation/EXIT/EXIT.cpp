@@ -97,8 +97,6 @@ void EXIT<B,R>
 	this->set_module("channel"  , 0, channel);
 	this->set_module("channel_a", 0, channel_a);
 
-	this->monitor->add_handler_measure(std::bind(&module::Codec_SISO<B,R>::reset, codec.get()));
-
 	if (codec->get_decoder_siso()->get_n_frames() > 1)
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "The inter frame is not supported.");
 }
@@ -112,7 +110,6 @@ void EXIT<B,R>
 	// allocate and build all the communication chain to generate EXIT chart
 	this->build_communication_chain();
 	this->sockets_binding();
-
 
 	// for each channel NOISE to be simulated
 	for (unsigned noise_idx = 0; noise_idx < params_EXIT.noise->range.size(); noise_idx ++)

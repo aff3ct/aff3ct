@@ -25,7 +25,6 @@ void Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	// ----------------------------------------------------------------------------------------------------------- LOAD
-	this->_load_init();
 
 	// init the softGraph (special case for the right most stage)
 	auto sys_idx = 0, par_idx = 0;

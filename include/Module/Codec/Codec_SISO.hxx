@@ -33,20 +33,6 @@ const std::shared_ptr<Decoder_SISO<Q>>& Codec_SISO<B,Q>
 
 template <typename B, typename Q>
 void Codec_SISO<B,Q>
-::reset()
-{
-	if (this->decoder_siso == nullptr)
-	{
-		std::stringstream message;
-		message << "'decoder_siso' is NULL.";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	this->decoder_siso->reset();
-}
-
-template <typename B, typename Q>
-void Codec_SISO<B,Q>
 ::set_decoder_siso(std::shared_ptr<Decoder_SISO<Q>> dec)
 {
 	this->decoder_siso = dec;

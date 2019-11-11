@@ -27,8 +27,6 @@ public:
 
 	const std::shared_ptr<Decoder_HIHO<B>>& get_decoder_hiho();
 
-	virtual void reset();
-
 protected:
 	void set_decoder_hiho(std::shared_ptr<Decoder_HIHO<B>> dec);
 	void set_decoder_hiho(Decoder_HIHO<B>* dec);

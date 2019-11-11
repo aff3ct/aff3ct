@@ -23,8 +23,6 @@ public:
 
 	virtual ~Codec_SIHO_HIHO() = default;
 
-	virtual void reset();
-
 	virtual void set_decoder_siho_hiho(std::shared_ptr<Decoder_SIHO_HIHO<B,Q>> dec);
 	virtual void set_decoder_siho_hiho(Decoder_SIHO_HIHO<B,Q>* dec);
 };

@@ -34,20 +34,6 @@ const std::shared_ptr<Decoder_SIHO<B,Q>>& Codec_SIHO<B,Q>
 
 template <typename B, typename Q>
 void Codec_SIHO<B,Q>
-::reset()
-{
-	if (this->decoder_siho == nullptr)
-	{
-		std::stringstream message;
-		message << "'decoder_siho' is NULL.";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	this->decoder_siho->reset();
-}
-
-template <typename B, typename Q>
-void Codec_SIHO<B,Q>
 ::set_decoder_siho(std::shared_ptr<Decoder_SIHO<B,Q>> dec)
 {
 	this->decoder_siho = dec;
