@@ -31,12 +31,12 @@ public:
 
 	// optional parameters
 	// ------- modulator parameters
-	std::string type       = "BPSK";    // modulation type (PAM, QAM, ...)
+	std::string type       = "BPSK"; // modulation type (PAM, QAM, ...)
 	std::string implem     = "STD";
-	std::string const_path = "";        // PATH to constellation file (CSV file)
-	std::string codebook   = "";        // PATH to codebook file
-	bool        complex    = true;      // true if the modulated signal is complex
-	int         bps        = 1;         // bits per symbol
+	std::string const_path = "";     // PATH to constellation file (CSV file)
+	std::string codebook   = "";     // PATH to codebook file
+	bool        complex    = true;   // true if the modulated signal is complex
+	int         bps        = 1;      // bits per symbol
 
 	// -------- CPM parameters
 	std::string cpm_std        = "";        // the selection of a default cpm standard hardly implemented (GSM)
@@ -73,9 +73,12 @@ public:
 
 	// builder
 	template <typename B = int, typename R = float, typename Q = R>
-	module::Modem<B,R,Q>* build() const;
+	module::Modem<B,R,Q>* build(const tools::Constellation<R>* cstl = nullptr) const;
 	template <typename B = int, typename R = float, typename Q = R>
 	module::Modem<B,R,Q>* build(const tools::Distributions<R>& dist) const;
+
+	template <typename R = float>
+	tools::Constellation<R>* build_constellation() const;
 
 	static bool has_constellation(const std::string &type);
 
@@ -99,13 +102,10 @@ public:
 
 private:
 	template <typename B = int, typename R = float, typename Q = R, tools::proto_max<Q> MAX>
-	inline module::Modem<B,R,Q>* _build() const;
+	inline module::Modem<B,R,Q>* _build(const tools::Constellation<R>* cstl) const;
 
 	template <typename B = int, typename R = float, typename Q = R>
 	inline module::Modem<B,R,Q>* _build_scma() const;
-
-	template <typename R = float>
-	tools::Constellation<R>* build_constellation() const;
 };
 }
 }

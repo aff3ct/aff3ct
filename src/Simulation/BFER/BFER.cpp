@@ -58,6 +58,14 @@ BFER<B,R,Q>
 		                                                tools::Distribution_mode::SUMMATION,
 		                                                params_BFER.mdm->rop_est_bits > 0));
 
+	try
+	{
+		auto cstl = params_BFER.mdm->build_constellation<R>();
+		constellation.reset(cstl);
+	}
+	catch(tools::cannot_allocate&) {}
+
+
 	this->build_monitors ();
 	this->build_reporters();
 

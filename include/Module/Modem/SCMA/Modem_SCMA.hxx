@@ -18,14 +18,13 @@ namespace module
 {
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 Modem_SCMA<B,R,Q,PSI>
-::Modem_SCMA(const int N, std::unique_ptr<const tools::Codebook<R>>&& _CB, const bool disable_sig2, const int n_ite,
+::Modem_SCMA(const int N, const std::string &codebook_path, const bool disable_sig2, const int n_ite,
              const int n_frames)
 : Modem<B,R,Q>(N,
-               Modem_SCMA<B,R,Q,PSI>::size_mod(N, (int)_CB->get_system_bps()),
-               Modem_SCMA<B,R,Q,PSI>::size_fil(N, (int)_CB->get_system_bps()),
+               Modem_SCMA<B,R,Q,PSI>::size_mod(N, codebook_path),
+               Modem_SCMA<B,R,Q,PSI>::size_fil(N, codebook_path),
                n_frames),
-  CB_ptr               (std::move(_CB)),
-  CB                   (*CB_ptr),
+  CB                   (codebook_path),
   arr_phi              (CB.get_number_of_resources(), CB.get_codebook_size(),       CB.get_codebook_size(), CB.get_codebook_size(), (Q)0),
   msg_user_to_resources(CB.get_number_of_users(),     CB.get_number_of_resources(), CB.get_codebook_size(),                         (Q)0),
   msg_resource_to_users(CB.get_number_of_resources(), CB.get_number_of_users(),     CB.get_codebook_size(),                         (Q)0),
@@ -386,6 +385,24 @@ template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 int Modem_SCMA<B,R,Q,PSI>
 ::size_fil(const int N, const int bps)
 {
+	return size_mod(N, bps);
+}
+
+template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
+int Modem_SCMA<B,R,Q,PSI>
+::size_mod(const int N, const std::string &codebook_path)
+{
+	const tools::Codebook<R> CB(codebook_path);
+	int bps = (int)CB.get_system_bps();
+	return ((int)std::pow(2, bps) * ((N + 1) / 2));
+}
+
+template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
+int Modem_SCMA<B,R,Q,PSI>
+::size_fil(const int N, const std::string &codebook_path)
+{
+	const tools::Codebook<R> CB(codebook_path);
+	int bps = (int)CB.get_system_bps();
 	return size_mod(N, bps);
 }
 

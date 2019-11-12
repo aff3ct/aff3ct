@@ -5,6 +5,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
 #include "Tools/Code/SCMA/modem_SCMA_functions.hpp"
+#include "Tools/Code/SCMA/Codebook.hpp"
 #include "Module/Modem/OOK/Modem_OOK_BSC.hpp"
 #include "Module/Modem/OOK/Modem_OOK_BEC.hpp"
 #include "Module/Modem/OOK/Modem_OOK_AWGN.hpp"
@@ -164,7 +165,12 @@ void Modem
 	if (this->type == "BPSK" || this->type == "OOK")
 		this->bps = 1;
 
-	std::unique_ptr<tools::Constellation<float>> cstl(this->build_constellation<float>());
+	std::unique_ptr<tools::Constellation<float>> cstl;
+	try
+	{
+		cstl.reset(this->build_constellation<float>());
+	}
+	catch(tools::cannot_allocate &) {}
 
 	if (cstl != nullptr && this->type == "USER")
 		this->bps = cstl->get_n_bits_per_symbol();
@@ -257,19 +263,19 @@ tools::Constellation<R>* Modem
 	if (this->type == "PSK" ) return new tools::Constellation_PSK <R>(this->bps);
 	if (this->type == "USER") return new tools::Constellation_user<R>(this->const_path);
 
-	return nullptr;
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 module::Modem<B,R,Q>* Modem
-::_build() const
+::_build(const tools::Constellation<R>* cstl) const
 {
 	if (this->type == "BPSK" && this->implem == "STD" ) return new module::Modem_BPSK     <B,R,Q    >(this->N,                                                                                                           this->no_sig2, this->n_frames);
 	if (this->type == "BPSK" && this->implem == "FAST") return new module::Modem_BPSK_fast<B,R,Q    >(this->N,                                                                                                           this->no_sig2, this->n_frames);
 	if (this->type == "CPM"  && this->implem == "STD" ) return new module::Modem_CPM      <B,R,Q,MAX>(this->N, this->bps, this->cpm_upf, this->cpm_L, this->cpm_k, this->cpm_p, this->cpm_mapping, this->cpm_wave_shape, this->no_sig2, this->n_frames);
 
-	std::unique_ptr<tools::Constellation<R>> cstl(this->build_constellation<R>());
-	if (cstl != nullptr) return new module::Modem_generic<B,R,Q,MAX>(N, std::move(cstl), this->no_sig2, this->n_frames);
+	if (cstl != nullptr)
+		return new module::Modem_generic<B,R,Q,MAX>(N, *cstl, this->no_sig2, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -278,18 +284,17 @@ template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem
 ::_build_scma() const
 {
-	std::unique_ptr<tools::Codebook<R>> CB(new tools::Codebook<R>(this->codebook));
-	if (this->psi == "PSI0") return new module::Modem_SCMA<B,R,Q,tools::psi_0<Q>>(this->N, std::move(CB), this->no_sig2, this->n_ite, this->n_frames);
-	if (this->psi == "PSI1") return new module::Modem_SCMA<B,R,Q,tools::psi_1<Q>>(this->N, std::move(CB), this->no_sig2, this->n_ite, this->n_frames);
-	if (this->psi == "PSI2") return new module::Modem_SCMA<B,R,Q,tools::psi_2<Q>>(this->N, std::move(CB), this->no_sig2, this->n_ite, this->n_frames);
-	if (this->psi == "PSI3") return new module::Modem_SCMA<B,R,Q,tools::psi_3<Q>>(this->N, std::move(CB), this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI0") return new module::Modem_SCMA<B,R,Q,tools::psi_0<Q>>(this->N, this->codebook, this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI1") return new module::Modem_SCMA<B,R,Q,tools::psi_1<Q>>(this->N, this->codebook, this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI2") return new module::Modem_SCMA<B,R,Q,tools::psi_2<Q>>(this->N, this->codebook, this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI3") return new module::Modem_SCMA<B,R,Q,tools::psi_3<Q>>(this->N, this->codebook, this->no_sig2, this->n_ite, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem
-::build() const
+::build(const tools::Constellation<R>* cstl) const
 {
 	if (this->type == "SCMA" && this->implem == "STD")
 	{
@@ -303,10 +308,10 @@ module::Modem<B,R,Q>* Modem
 	}
 	else
 	{
-		if (this->max == "MAX"  ) return _build<B,R,Q,tools::max          <Q>>();
-		if (this->max == "MAXL" ) return _build<B,R,Q,tools::max_linear   <Q>>();
-		if (this->max == "MAXS" ) return _build<B,R,Q,tools::max_star     <Q>>();
-		if (this->max == "MAXSS") return _build<B,R,Q,tools::max_star_safe<Q>>();
+		if (this->max == "MAX"  ) return _build<B,R,Q,tools::max          <Q>>(cstl);
+		if (this->max == "MAXL" ) return _build<B,R,Q,tools::max_linear   <Q>>(cstl);
+		if (this->max == "MAXS" ) return _build<B,R,Q,tools::max_star     <Q>>(cstl);
+		if (this->max == "MAXSS") return _build<B,R,Q,tools::max_star_safe<Q>>(cstl);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
@@ -402,12 +407,12 @@ bool Modem
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,Q_8 >() const;
-template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,R_8 >() const;
-template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::build<B_16,R_16,Q_16>() const;
-template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::build<B_16,R_16,R_16>() const;
-template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::build<B_32,R_32,Q_32>() const;
-template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::build<B_64,R_64,Q_64>() const;
+template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,Q_8 >(const tools::Constellation<R_8 >*) const;
+template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,R_8 >(const tools::Constellation<R_8 >*) const;
+template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::build<B_16,R_16,Q_16>(const tools::Constellation<R_16>*) const;
+template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::build<B_16,R_16,R_16>(const tools::Constellation<R_16>*) const;
+template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::build<B_32,R_32,Q_32>(const tools::Constellation<R_32>*) const;
+template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::build<B_64,R_64,Q_64>(const tools::Constellation<R_64>*) const;
 
 template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,Q_8 >(const tools::Distributions<R_8 >&) const;
 template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,R_8 >(const tools::Distributions<R_8 >&) const;
@@ -415,15 +420,19 @@ template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::build<B_
 template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::build<B_16,R_16,R_16>(const tools::Distributions<R_16>&) const;
 template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::build<B_32,R_32,Q_32>(const tools::Distributions<R_32>&) const;
 template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::build<B_64,R_64,Q_64>(const tools::Distributions<R_64>&) const;
+
+template tools::Constellation<R_32>* aff3ct::factory::Modem::build_constellation<R_32>() const;
+template tools::Constellation<R_64>* aff3ct::factory::Modem::build_constellation<R_64>() const;
 #else
-template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::build<B,R,Q>() const;
+template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::build<B,R,Q>(const tools::Constellation<R>*) const;
 
 template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::build<B,R,Q>(const tools::Distributions<R>&) const;
 #if !defined(AFF3CT_32BIT_PREC) && !defined(AFF3CT_64BIT_PREC)
-template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::build<B,R,R>() const;
+template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::build<B,R,R>(const tools::Constellation<R>*) const;
 
 template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::build<B,R,R>(const tools::Distributions<R>&) const;
 #endif
+template tools::Constellation<R>* aff3ct::factory::Modem::build_constellation<R>() const;
 #endif
 
 // ==================================================================================== explicit template instantiation

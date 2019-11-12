@@ -46,6 +46,13 @@ EXIT<B,R>
 	if (params_EXIT.n_threads > 1)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "EXIT simu does not support the multi-threading.");
 
+	try
+	{
+		auto cstl = params_EXIT.mdm->build_constellation<R>();
+		constellation.reset(cstl);
+	}
+	catch(tools::cannot_allocate&) {}
+
 	this->add_module("source"   , params_EXIT.n_threads);
 	this->add_module("codec"    , params_EXIT.n_threads);
 	this->add_module("encoder"  , params_EXIT.n_threads);
@@ -357,7 +364,7 @@ template <typename B, typename R>
 std::unique_ptr<module::Modem<B,R,R>> EXIT<B,R>
 ::build_modem()
 {
-	auto modem = std::unique_ptr<module::Modem<B,R,R>>(params_EXIT.mdm->template build<B,R>());
+	auto modem = std::unique_ptr<module::Modem<B,R,R>>(params_EXIT.mdm->template build<B,R>(this->constellation.get()));
 	modem->set_noise(this->noise);
 	return modem;
 }
@@ -368,7 +375,7 @@ std::unique_ptr<module::Modem<B,R>> EXIT<B,R>
 {
 	std::unique_ptr<factory::Modem> mdm_params(params_EXIT.mdm->clone());
 	mdm_params->N = params_EXIT.cdc->K;
-	auto modem = std::unique_ptr<module::Modem<B,R>>(mdm_params->template build<B,R>());
+	auto modem = std::unique_ptr<module::Modem<B,R>>(mdm_params->template build<B,R>(this->constellation.get()));
 	modem->set_noise(this->noise_a);
 	return modem;
 }

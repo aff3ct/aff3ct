@@ -19,7 +19,7 @@ template <typename B = int, typename R = float, typename Q = R, tools::proto_max
 class Modem_generic : public Modem<B,R,Q>
 {
 private:
-	std::unique_ptr<const tools::Constellation<R>> cstl;
+	const tools::Constellation<R> &cstl;
 
 	const int bits_per_symbol;
 	const int nbr_symbols;
@@ -27,7 +27,7 @@ private:
 	R inv_sigma2;
 
 public:
-	Modem_generic(const int N, std::unique_ptr<const tools::Constellation<R>>&& cstl, const bool disable_sig2 = false,
+	Modem_generic(const int N, const tools::Constellation<R> &cstl, const bool disable_sig2 = false,
 	              const int n_frames = 1);
 
 	virtual ~Modem_generic() = default;

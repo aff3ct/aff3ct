@@ -6,6 +6,7 @@
 #define MODEM_SCMA_HPP_
 
 #include <memory>
+#include <string>
 
 #include "Tools/Code/SCMA/Codebook.hpp"
 #include "Tools/Code/SCMA/modem_SCMA_functions.hpp"
@@ -23,8 +24,7 @@ template <typename B = int, typename R = float, typename Q = R, tools::proto_psi
 class Modem_SCMA : public Modem<B,R,Q>
 {
 private:
-	std::unique_ptr<const tools::Codebook<R>> CB_ptr;
-	const tools::Codebook<R>& CB;
+	const tools::Codebook<R> CB;
 
 	tools::Vector_4D<Q> arr_phi;
 	tools::Vector_3D<Q> msg_user_to_resources;
@@ -35,7 +35,7 @@ private:
 	const int           n_ite;
 
 public:
-	Modem_SCMA(const int N, std::unique_ptr<const tools::Codebook<R>>&& CB, const bool disable_sig2 = false,
+	Modem_SCMA(const int N, const std::string &codebook_path, const bool disable_sig2 = false,
 	           const int n_ite = 1, const int n_frames = 6);
 	virtual ~Modem_SCMA() = default;
 
@@ -48,6 +48,8 @@ public:
 	static bool is_complex_fil();
 	static int size_mod(const int N, const int bps);
 	static int size_fil(const int N, const int bps);
+	static int size_mod(const int N, const std::string &codebook_path);
+	static int size_fil(const int N, const std::string &codebook_path);
 
 protected:
 	void check_noise();

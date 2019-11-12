@@ -190,7 +190,7 @@ std::unique_ptr<module::Modem<B,R,R>> BFER_std<B,R,Q>
 	}
 	else
 	{
-		auto modem = std::unique_ptr<module::Modem<B,R,R>>(params_BFER_std.mdm->template build<B,R,R>());
+		auto modem = std::unique_ptr<module::Modem<B,R,R>>(params_BFER_std.mdm->template build<B,R,R>(this->constellation.get()));
 		modem->set_noise(*this->noise);
 		return modem;
 	}

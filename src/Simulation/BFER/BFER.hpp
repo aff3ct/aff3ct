@@ -7,6 +7,8 @@
 #include <memory>
 
 #include "Factory/Simulation/BFER/BFER.hpp"
+#include "Tools/Constellation/Constellation.hpp"
+#include "Tools/Display/Reporter/Reporter.hpp"
 #include "Tools/Display/Reporter/Reporter.hpp"
 #include "Tools/Display/Terminal/Terminal.hpp"
 #include "Tools/Display/Dumper/Dumper.hpp"
@@ -71,6 +73,9 @@ protected:
 
 	// noise distribution
 	std::unique_ptr<tools::Distributions<R>> distributions;
+
+	// modem constellation
+	std::unique_ptr<tools::Constellation<R>> constellation;
 
 	std::chrono::steady_clock::time_point t_start_noise_point;
 

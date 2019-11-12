@@ -45,6 +45,9 @@ protected:
 	std::unique_ptr<module::Decoder_SISO<  R>> siso;
 	std::unique_ptr<module::Monitor_EXIT<B,R>> monitor;
 
+	// modem constellation
+	std::unique_ptr<tools::Constellation<R>> constellation;
+
 	// terminal and reporters (for the output of the code)
 	std::vector<std::unique_ptr<tools::Reporter>> reporters;
 	std::unique_ptr<tools::Terminal>              terminal;
