@@ -33,7 +33,7 @@ void SC_BFER_std<B,R,Q>
 {
 	BFER_std<B,R,Q>::__build_communication_chain(tid);
 
-	this->monitor_er[tid]->add_handler_check([&]() -> void
+	this->monitor_er[tid]->register_callback_check([&]() -> void
 	{
 		if (!this->keep_looping_noise_point()) // will make the MPI communication
 			sc_core::sc_stop();

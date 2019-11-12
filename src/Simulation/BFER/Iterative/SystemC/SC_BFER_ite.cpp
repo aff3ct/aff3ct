@@ -38,7 +38,7 @@ void SC_BFER_ite<B,R,Q>
 	this->interleaver_bit[tid]->set_custom_name(this->interleaver_llr[tid]->get_name() + "_bit");
 	this->interleaver_llr[tid]->set_custom_name(this->interleaver_llr[tid]->get_name() + "_llr");
 
-	this->monitor_er[tid]->add_handler_check([&]() -> void
+	this->monitor_er[tid]->register_callback_check([&]() -> void
 	{
 		if (!this->keep_looping_noise_point()) // will make the MPI communication
 			sc_core::sc_stop();

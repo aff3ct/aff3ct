@@ -67,6 +67,7 @@ protected:
 
 	bool enable_filter;
 	bool enable_demodulator;
+	uint32_t id_noise_changed_callback;
 
 public:
 	/*!

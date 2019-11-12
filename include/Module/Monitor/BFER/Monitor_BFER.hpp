@@ -48,9 +48,9 @@ private:
 	tools::Histogram<int> err_hist; // the error histogram record
 	bool err_hist_activated;
 
-	std::vector<std::function<void(unsigned, int )>> callbacks_fe;
-	std::vector<std::function<void(          void)>> callbacks_check;
-	std::vector<std::function<void(          void)>> callbacks_fe_limit_achieved;
+	std::vector<std::pair<std::function<void(unsigned, int)>, uint32_t>> callbacks_fe;
+	std::vector<std::pair<std::function<void(void         )>, uint32_t>> callbacks_check;
+	std::vector<std::pair<std::function<void(void         )>, uint32_t>> callbacks_fe_limit_achieved;
 
 public:
 	Monitor_BFER(const int K, const unsigned max_fe, const unsigned max_n_frames = 0, const bool count_unknown_values = false, const int n_frames = 1);
@@ -93,9 +93,13 @@ public:
 	tools::Histogram<int> get_err_hist            () const;
 	void activate_err_histogram(bool val);
 
-	virtual void add_handler_fe               (std::function<void(unsigned, int )> callback);
-	virtual void add_handler_check            (std::function<void(          void)> callback);
-	virtual void add_handler_fe_limit_achieved(std::function<void(          void)> callback);
+	virtual uint32_t register_callback_fe               (std::function<void(unsigned, int)> callback);
+	virtual uint32_t register_callback_check            (std::function<void(void         )> callback);
+	virtual uint32_t register_callback_fe_limit_achieved(std::function<void(void         )> callback);
+
+	virtual bool unregister_callback_fe               (const uint32_t id);
+	virtual bool unregister_callback_check            (const uint32_t id);
+	virtual bool unregister_callback_fe_limit_achieved(const uint32_t id);
 
 	virtual void reset();
 	virtual void clear_callbacks();

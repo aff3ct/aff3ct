@@ -48,7 +48,6 @@ Monitor_EXIT<B,R>
 {
 }
 
-
 template <typename B, typename R>
 bool Monitor_EXIT<B,R>
 ::equivalent(const Monitor_EXIT<B,R>& m, bool do_throw) const
@@ -98,7 +97,7 @@ void Monitor_EXIT<B,R>
 	}
 
 	for (auto c : this->callbacks_measure)
-		c();
+		c.first();
 }
 
 template <typename B, typename R>
@@ -247,7 +246,6 @@ R Monitor_EXIT<B,R>
 	}
 }
 
-
 template <typename B, typename R>
 bool Monitor_EXIT<B,R>
 ::n_trials_achieved() const
@@ -261,9 +259,6 @@ bool Monitor_EXIT<B,R>
 {
 	return n_trials_achieved();
 }
-
-
-
 
 template <typename B, typename R>
 const typename Monitor_EXIT<B,R>::Attributes& Monitor_EXIT<B,R>
@@ -308,10 +303,32 @@ unsigned long long Monitor_EXIT<B,R>
 }
 
 template <typename B, typename R>
-void Monitor_EXIT<B,R>
-::add_handler_measure(std::function<void(void)> callback)
+uint32_t Monitor_EXIT<B,R>
+::register_callback_measure(std::function<void(void)> callback)
 {
-	this->callbacks_measure.push_back(callback);
+	uint32_t id = 0;
+	if (this->callbacks_measure.size())
+		id = this->callbacks_measure[this->callbacks_measure.size() -1].second +1;
+	this->callbacks_measure.push_back(std::make_pair(callback, id));
+	return id;
+}
+
+template <typename B, typename R>
+bool Monitor_EXIT<B,R>
+::unregister_callback_measure(const uint32_t id)
+{
+	auto it = this->callbacks_measure.begin();
+	while (it != this->callbacks_measure.end())
+	{
+		if ((*it).second == id)
+		{
+			it = this->callbacks_measure.erase(it);
+			return true;
+		}
+		else
+			++it;
+	}
+	return false;
 }
 
 template <typename B, typename R>

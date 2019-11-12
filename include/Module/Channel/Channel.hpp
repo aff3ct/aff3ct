@@ -51,6 +51,7 @@ protected:
 	const int N;                // Size of one frame (= number of bits in one frame)
 	tools::Noise<> *noise;      // the current noise to apply to the input signal
 	std::vector<R> noised_data; // vector of the noise applied to the signal
+	uint32_t id_noise_changed_callback;
 
 public:
 	/*!

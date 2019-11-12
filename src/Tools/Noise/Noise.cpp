@@ -89,24 +89,32 @@ void Noise<R>
 }
 
 template<typename R>
-void Noise<R>
-::register_callback_changed(std::function<void()> callback, const void *obj_ptr)
+uint32_t Noise<R>
+::register_callback_changed(std::function<void()> callback)
 {
-	this->callbacks_changed.push_back(std::make_pair(callback, obj_ptr));
+	uint32_t id = 0;
+	if (this->callbacks_changed.size())
+		id = this->callbacks_changed[this->callbacks_changed.size() -1].second +1;
+	this->callbacks_changed.push_back(std::make_pair(callback, id));
+	return id;
 }
 
 template<typename R>
-void Noise<R>
-::unregister_callbacks_changed(const void *obj_ptr)
+bool Noise<R>
+::unregister_callback_changed(const uint32_t id)
 {
 	auto it = this->callbacks_changed.begin();
 	while (it != this->callbacks_changed.end())
 	{
-		if ((*it).second == obj_ptr)
+		if ((*it).second == id)
+		{
 			it = this->callbacks_changed.erase(it);
+			return true;
+		}
 		else
 			++it;
 	}
+	return false;
 }
 
 template<typename R>

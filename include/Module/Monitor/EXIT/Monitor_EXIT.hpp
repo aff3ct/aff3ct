@@ -7,6 +7,8 @@
 
 #include <vector>
 #include <memory>
+#include <cstdint>
+#include <utility>
 #include <functional>
 
 #include "Module/Task.hpp"
@@ -41,7 +43,7 @@ private:
 
 	Attributes vals;
 
-	std::vector<std::function<void(void)>> callbacks_measure;
+	std::vector<std::pair<std::function<void(void)>, uint32_t>> callbacks_measure;
 
 	std::vector<B> bits_buff;
 	std::vector<R> llrs_e_buff;
@@ -79,7 +81,8 @@ public:
 	R                  get_I_A         () const;
 	R                  get_I_E         () const;
 
-	virtual void add_handler_measure(std::function<void(void)> callback);
+	virtual uint32_t register_callback_measure(std::function<void(void)> callback);
+	virtual bool unregister_callback_measure(const uint32_t id);
 
 	virtual void reset();
 	virtual void clear_callbacks();

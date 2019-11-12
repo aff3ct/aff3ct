@@ -388,10 +388,10 @@ void BFER<B,R,Q>
 		simu->__build_communication_chain(tid);
 
 		if (simu->params_BFER.err_track_enable)
-			simu->monitor_er[tid]->add_handler_fe(std::bind(&tools::Dumper::add,
-			                                                simu->dumper[tid].get(),
-			                                                std::placeholders::_1,
-			                                                std::placeholders::_2));
+			simu->monitor_er[tid]->register_callback_fe(std::bind(&tools::Dumper::add,
+			                                                      simu->dumper[tid].get(),
+			                                                      std::placeholders::_1,
+			                                                      std::placeholders::_2));
 	}
 	catch (std::exception const& e)
 	{

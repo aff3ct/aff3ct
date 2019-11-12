@@ -7,6 +7,8 @@
 
 #include <string>
 #include <vector>
+#include <cstdint>
+#include <utility>
 #include <functional>
 
 namespace aff3ct
@@ -20,7 +22,7 @@ class Noise
 {
 protected:
 	R value;
-	std::vector<std::pair<std::function<void()>, const void*>> callbacks_changed;
+	std::vector<std::pair<std::function<void()>, uint32_t>> callbacks_changed;
 
 public:
 	Noise();
@@ -39,8 +41,8 @@ public:
 	bool is_of_type      (Noise_type t) const noexcept;
 	void is_of_type_throw(Noise_type t) const;
 
-	void register_callback_changed(std::function<void()> callback, const void *obj_ptr = nullptr);
-	void unregister_callbacks_changed(const void *obj_ptr);
+	uint32_t register_callback_changed(std::function<void()> callback);
+	bool unregister_callback_changed(const uint32_t id);
 	void clear_callbacks_changed();
 
 	static inline Noise_type str_to_type(const std::string& str);
