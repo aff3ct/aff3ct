@@ -8,9 +8,9 @@
 #include <vector>
 #include <memory>
 #include <cstdint>
-#include <utility>
 #include <functional>
 
+#include "Tools/Algo/Callback/Callback.hpp"
 #include "Tools/Algo/Histogram.hpp"
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
@@ -49,8 +49,8 @@ private:
 	tools::Histogram<R> mutinfo_hist; // the MI histogram record
 	bool mutinfo_hist_activated;
 
-	std::vector<std::pair<std::function<void(void)>, uint32_t>> callbacks_check;
-	std::vector<std::pair<std::function<void(void)>, uint32_t>> callbacks_n_trials_limit_achieved;
+	tools::Callback<> callback_check;
+	tools::Callback<> callback_n_trials_limit_achieved;
 
 public:
 	/*
@@ -85,11 +85,11 @@ public:
 	tools::Histogram<R> get_mutinfo_hist() const;
 	void activate_mutinfo_histogram(bool val);
 
-	virtual uint32_t register_callback_check                  (std::function<void(void)> callback);
-	virtual uint32_t register_callback_n_trials_limit_achieved(std::function<void(void)> callback);
+	virtual uint32_t record_callback_check                  (std::function<void(void)> callback);
+	virtual uint32_t record_callback_n_trials_limit_achieved(std::function<void(void)> callback);
 
-	virtual bool unregister_callback_check                  (const uint32_t id);
-	virtual bool unregister_callback_n_trials_limit_achieved(const uint32_t id);
+	virtual bool unrecord_callback_check                  (const uint32_t id);
+	virtual bool unrecord_callback_n_trials_limit_achieved(const uint32_t id);
 
 	virtual void reset();
 	virtual void clear_callbacks();

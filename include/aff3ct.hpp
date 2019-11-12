@@ -780,6 +780,9 @@
 #ifndef BIT_PACKER_HPP_
 #include <Tools/Algo/Bit_packer.hpp>
 #endif
+#ifndef CALLBACK_HPP__
+#include <Tools/Algo/Callback/Callback.hpp>
+#endif
 #ifndef DRAW_GENERATOR_HPP_
 #include <Tools/Algo/Draw_generator/Draw_generator.hpp>
 #endif

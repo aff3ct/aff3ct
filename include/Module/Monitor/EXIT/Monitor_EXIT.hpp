@@ -8,9 +8,9 @@
 #include <vector>
 #include <memory>
 #include <cstdint>
-#include <utility>
 #include <functional>
 
+#include "Tools/Algo/Callback/Callback.hpp"
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
 #include "Module/Monitor/Monitor.hpp"
@@ -43,7 +43,7 @@ private:
 
 	Attributes vals;
 
-	std::vector<std::pair<std::function<void(void)>, uint32_t>> callbacks_measure;
+	tools::Callback<> callback_measure;
 
 	std::vector<B> bits_buff;
 	std::vector<R> llrs_e_buff;
@@ -81,8 +81,8 @@ public:
 	R                  get_I_A         () const;
 	R                  get_I_E         () const;
 
-	virtual uint32_t register_callback_measure(std::function<void(void)> callback);
-	virtual bool unregister_callback_measure(const uint32_t id);
+	virtual uint32_t record_callback_measure(std::function<void(void)> callback);
+	virtual bool unrecord_callback_measure(const uint32_t id);
 
 	virtual void reset();
 	virtual void clear_callbacks();

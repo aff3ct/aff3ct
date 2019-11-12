@@ -116,12 +116,10 @@ int Monitor_BFER<B>
 		                            V + f * get_K(),
 		                            f);
 
-	for (auto& c : this->callbacks_check)
-		c.first();
+	this->callback_check.notify();
 
 	if (this->fe_limit_achieved())
-		for (auto& c : this->callbacks_fe_limit_achieved)
-			c.first();
+		this->callback_fe_limit_achieved.notify();
 
 	return n_be;
 }
@@ -145,8 +143,7 @@ int Monitor_BFER<B>
 		if (err_hist_activated)
 			err_hist.add_value(bit_errors_count);
 
-		for (auto& c : this->callbacks_fe)
-			c.first(bit_errors_count, frame_id);
+		this->callback_fe.notify(bit_errors_count, frame_id);
 	}
 
 	vals.n_fra++;
@@ -272,89 +269,44 @@ void Monitor_BFER<B>
 
 template <typename B>
 uint32_t Monitor_BFER<B>
-::register_callback_fe(std::function<void(unsigned, int)> callback)
+::record_callback_fe(std::function<void(unsigned, int)> callback)
 {
-	uint32_t id = 0;
-	if (this->callbacks_fe.size())
-		id = this->callbacks_fe[this->callbacks_fe.size() -1].second +1;
-	this->callbacks_fe.push_back(std::make_pair(callback, id));
-	return id;
+	return this->callback_fe.record(callback);
 }
 
 template <typename B>
 uint32_t Monitor_BFER<B>
-::register_callback_check(std::function<void(void)> callback)
+::record_callback_check(std::function<void(void)> callback)
 {
-	uint32_t id = 0;
-	if (this->callbacks_check.size())
-		id = this->callbacks_check[this->callbacks_check.size() -1].second +1;
-	this->callbacks_check.push_back(std::make_pair(callback, id));
-	return id;
+	return this->callback_check.record(callback);
 }
 
 template <typename B>
 uint32_t Monitor_BFER<B>
-::register_callback_fe_limit_achieved(std::function<void(void)> callback)
+::record_callback_fe_limit_achieved(std::function<void(void)> callback)
 {
-	uint32_t id = 0;
-	if (this->callbacks_fe_limit_achieved.size())
-		id = this->callbacks_fe_limit_achieved[this->callbacks_fe_limit_achieved.size() -1].second +1;
-	this->callbacks_fe_limit_achieved.push_back(std::make_pair(callback, id));
-	return id;
+	return this->callback_fe_limit_achieved.record(callback);
 }
 
 template <typename B>
 bool Monitor_BFER<B>
-::unregister_callback_fe(const uint32_t id)
+::unrecord_callback_fe(const uint32_t id)
 {
-	auto it = this->callbacks_fe.begin();
-	while (it != this->callbacks_fe.end())
-	{
-		if ((*it).second == id)
-		{
-			it = this->callbacks_fe.erase(it);
-			return true;
-		}
-		else
-			++it;
-	}
-	return false;
+	return this->callback_fe.unrecord(id);
 }
 
 template <typename B>
 bool Monitor_BFER<B>
-::unregister_callback_check(const uint32_t id)
+::unrecord_callback_check(const uint32_t id)
 {
-	auto it = this->callbacks_check.begin();
-	while (it != this->callbacks_check.end())
-	{
-		if ((*it).second == id)
-		{
-			it = this->callbacks_check.erase(it);
-			return true;
-		}
-		else
-			++it;
-	}
-	return false;
+	return this->callback_check.unrecord(id);
 }
 
 template <typename B>
 bool Monitor_BFER<B>
-::unregister_callback_fe_limit_achieved(const uint32_t id)
+::unrecord_callback_fe_limit_achieved(const uint32_t id)
 {
-	auto it = this->callbacks_fe_limit_achieved.begin();
-	while (it != this->callbacks_fe_limit_achieved.end())
-	{
-		if ((*it).second == id)
-		{
-			it = this->callbacks_fe_limit_achieved.erase(it);
-			return true;
-		}
-		else
-			++it;
-	}
-	return false;
+	return this->callback_fe_limit_achieved.unrecord(id);
 }
 
 template <typename B>
@@ -373,9 +325,9 @@ void Monitor_BFER<B>
 {
 	Monitor::clear_callbacks();
 
-	this->callbacks_fe               .clear();
-	this->callbacks_check            .clear();
-	this->callbacks_fe_limit_achieved.clear();
+	this->callback_fe               .clear();
+	this->callback_check            .clear();
+	this->callback_fe_limit_achieved.clear();
 }
 
 template <typename B>

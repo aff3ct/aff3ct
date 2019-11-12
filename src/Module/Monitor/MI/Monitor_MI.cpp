@@ -92,12 +92,10 @@ R Monitor_MI<B,R>
 	for (auto f = f_start; f < f_stop; f++)
 		loc_MI_sum += this->_get_mutual_info(X + f * get_N(), Y + f * get_N(), f);
 
-	for (auto& c : this->callbacks_check)
-		c.first();
+	this->callback_check.notify();
 
 	if (this->n_trials_limit_achieved())
-		for (auto& c : this->callbacks_n_trials_limit_achieved)
-			c.first();
+		this->callback_n_trials_limit_achieved.notify();
 
 	return loc_MI_sum / (R)(f_stop - f_start) * 10000; // return the mut info computed now %10000 instead of %100
 }
@@ -238,60 +236,30 @@ void  Monitor_MI<B,R>
 
 template <typename B, typename R>
 uint32_t Monitor_MI<B,R>
-::register_callback_check(std::function<void(void)> callback)
+::record_callback_check(std::function<void(void)> callback)
 {
-	uint32_t id = 0;
-	if (this->callbacks_check.size())
-		id = this->callbacks_check[this->callbacks_check.size() -1].second +1;
-	this->callbacks_check.push_back(std::make_pair(callback, id));
-	return id;
+	return this->callback_check.record(callback);
 }
 
 template <typename B, typename R>
 uint32_t Monitor_MI<B,R>
-::register_callback_n_trials_limit_achieved(std::function<void(void)> callback)
+::record_callback_n_trials_limit_achieved(std::function<void(void)> callback)
 {
-	uint32_t id = 0;
-	if (this->callbacks_n_trials_limit_achieved.size())
-		id = this->callbacks_n_trials_limit_achieved[this->callbacks_n_trials_limit_achieved.size() -1].second +1;
-	this->callbacks_n_trials_limit_achieved.push_back(std::make_pair(callback, id));
-	return id;
+	return this->callback_n_trials_limit_achieved.record(callback);
 }
 
 template <typename B, typename R>
 bool Monitor_MI<B,R>
-::unregister_callback_check(const uint32_t id)
+::unrecord_callback_check(const uint32_t id)
 {
-	auto it = this->callbacks_check.begin();
-	while (it != this->callbacks_check.end())
-	{
-		if ((*it).second == id)
-		{
-			it = this->callbacks_check.erase(it);
-			return true;
-		}
-		else
-			++it;
-	}
-	return false;
+	return this->callback_check.unrecord(id);
 }
 
 template <typename B, typename R>
 bool Monitor_MI<B,R>
-::unregister_callback_n_trials_limit_achieved(const uint32_t id)
+::unrecord_callback_n_trials_limit_achieved(const uint32_t id)
 {
-	auto it = this->callbacks_n_trials_limit_achieved.begin();
-	while (it != this->callbacks_n_trials_limit_achieved.end())
-	{
-		if ((*it).second == id)
-		{
-			it = this->callbacks_n_trials_limit_achieved.erase(it);
-			return true;
-		}
-		else
-			++it;
-	}
-	return false;
+	return this->callback_n_trials_limit_achieved.unrecord(id);
 }
 
 template <typename B, typename R>
@@ -310,8 +278,8 @@ void Monitor_MI<B,R>
 {
 	Monitor::clear_callbacks();
 
-	this->callbacks_check.clear();
-	this->callbacks_n_trials_limit_achieved.clear();
+	this->callback_check.clear();
+	this->callback_n_trials_limit_achieved.clear();
 }
 
 template <typename B, typename R>

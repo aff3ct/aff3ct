@@ -70,8 +70,8 @@ void BFER_std<B,R,Q>
 	{
 		auto& interleaver = codec[tid]->get_interleaver(); // can raise an exceptions
 		if (interleaver->is_uniform())
-			this->monitor_er[tid]->register_callback_check(std::bind(&tools::Interleaver_core<>::refresh,
-			                                                         interleaver.get()));
+			this->monitor_er[tid]->record_callback_check(std::bind(&tools::Interleaver_core<>::refresh,
+			                                                       interleaver.get()));
 
 		if (this->params_BFER_std.err_track_enable && interleaver->is_uniform())
 			this->dumper[tid]->register_data(interleaver->get_lut(),

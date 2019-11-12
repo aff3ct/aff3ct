@@ -27,7 +27,7 @@ void Noise<R>
 ::copy(const Noise<R>& other)
 {
 	this->value = other.value;
-	this->notify_noise_changed();
+	this->callback_changed.notify();
 }
 
 template <typename R>
@@ -36,15 +36,7 @@ void Noise<R>
 {
 	this->value = value;
 	this->check();
-	this->notify_noise_changed();
-}
-
-template <typename R>
-void Noise<R>
-::notify_noise_changed()
-{
-	for (auto c : this->callbacks_changed)
-		c.first();
+	this->callback_changed.notify();
 }
 
 template <typename R>
@@ -90,38 +82,23 @@ void Noise<R>
 
 template<typename R>
 uint32_t Noise<R>
-::register_callback_changed(std::function<void()> callback)
+::record_callback_changed(std::function<void()> callback)
 {
-	uint32_t id = 0;
-	if (this->callbacks_changed.size())
-		id = this->callbacks_changed[this->callbacks_changed.size() -1].second +1;
-	this->callbacks_changed.push_back(std::make_pair(callback, id));
-	return id;
+	return this->callback_changed.record(callback);
 }
 
 template<typename R>
 bool Noise<R>
-::unregister_callback_changed(const uint32_t id)
+::unrecord_callback_changed(const uint32_t id)
 {
-	auto it = this->callbacks_changed.begin();
-	while (it != this->callbacks_changed.end())
-	{
-		if ((*it).second == id)
-		{
-			it = this->callbacks_changed.erase(it);
-			return true;
-		}
-		else
-			++it;
-	}
-	return false;
+	return this->callback_changed.unrecord(id);
 }
 
 template<typename R>
 void Noise<R>
 ::clear_callbacks_changed()
 {
-	this->callbacks_changed.clear();
+	this->callback_changed.clear();
 }
 
 // ==================================================================================== explicit template instantiation

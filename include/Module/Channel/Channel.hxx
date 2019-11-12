@@ -77,7 +77,7 @@ Channel<R>
 ::~Channel()
 {
 	if (this->noise != nullptr)
-		this->noise->unregister_callback_changed(this->id_noise_changed_callback);
+		this->noise->unrecord_callback_changed(this->id_noise_changed_callback);
 }
 
 template <typename R>
@@ -101,9 +101,9 @@ void Channel<R>
 	if (&noise != this->noise)
 	{
 		if (this->noise != nullptr)
-			this->noise->unregister_callback_changed(this->id_noise_changed_callback);
+			this->noise->unrecord_callback_changed(this->id_noise_changed_callback);
 		this->noise = &noise;
-		this->id_noise_changed_callback = this->noise->register_callback_changed([this]() { this->noise_changed(); });
+		this->id_noise_changed_callback = this->noise->record_callback_changed([this]() { this->noise_changed(); });
 		this->check_noise();
 		this->noise_changed();
 	}
