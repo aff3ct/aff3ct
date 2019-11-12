@@ -31,12 +31,12 @@ public:
 
 	// optional parameters
 	// ------- modulator parameters
-	std::string type       = "BPSK"; // modulation type (PAM, QAM, ...)
-	std::string implem     = "STD";
-	std::string const_path = "";     // PATH to constellation file (CSV file)
-	std::string codebook   = "";     // PATH to codebook file
-	bool        complex    = true;   // true if the modulated signal is complex
-	int         bps        = 1;      // bits per symbol
+	std::string type          = "BPSK"; // modulation type (PAM, QAM, ...)
+	std::string implem        = "STD";
+	std::string const_path    = "";     // PATH to constellation file (CSV file)
+	std::string codebook_path = "";     // PATH to codebook file
+	bool        complex       = true;   // true if the modulated signal is complex
+	int         bps           = 1;      // bits per symbol
 
 	// -------- CPM parameters
 	std::string cpm_std        = "";        // the selection of a default cpm standard hardly implemented (GSM)

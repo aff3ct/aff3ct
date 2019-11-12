@@ -66,7 +66,7 @@ void Modem
 	tools::add_arg(args, p, class_name+"p+const-path",
 		cli::File(cli::openmode::read_write));
 
-	tools::add_arg(args, p, class_name+"p+codebook",
+	tools::add_arg(args, p, class_name+"p+cb-path",
 		cli::File(cli::openmode::read));
 
 	tools::add_arg(args, p, class_name+"p+cpm-std",
@@ -113,10 +113,10 @@ void Modem
 	auto p = this->get_prefix();
 
 	// ----------------------------------------------------------------------------------------------------- modulator
-	if(vals.exist({p+"-type"    })) this->type     = vals.at     ({p+"-type"    });
-	if(vals.exist({p+"-implem"  })) this->implem   = vals.at     ({p+"-implem"  });
-	if(vals.exist({p+"-cpm-std" })) this->cpm_std  = vals.at     ({p+"-cpm-std" });
-	if(vals.exist({p+"-codebook"})) this->codebook = vals.to_file({p+"-codebook"});
+	if(vals.exist({p+"-type"    })) this->type          = vals.at     ({p+"-type"    });
+	if(vals.exist({p+"-implem"  })) this->implem        = vals.at     ({p+"-implem"  });
+	if(vals.exist({p+"-cpm-std" })) this->cpm_std       = vals.at     ({p+"-cpm-std" });
+	if(vals.exist({p+"-cb-path" })) this->codebook_path = vals.to_file({p+"-cb-path"});
 
 	if (this->type == "CPM")
 	{
@@ -143,7 +143,7 @@ void Modem
 
 	if (this->type == "SCMA")
 	{
-		tools::Codebook<float> cb(this->codebook);
+		tools::Codebook<float> cb(this->codebook_path);
 
 		this->bps      = (int)cb.get_system_bps(); // codebook bps is float so here bps is stocked rounded
 		this->n_frames = cb.get_number_of_users();
@@ -238,9 +238,9 @@ void Modem
 		headers[p].push_back(std::make_pair("Max type", demod_max));
 	if (this->type == "SCMA")
 	{
-		headers[p].push_back(std::make_pair("Number of iterations", demod_ite));
-		headers[p].push_back(std::make_pair("Psi function",         demod_psi));
-		headers[p].push_back(std::make_pair("Codebook",             codebook ));
+		headers[p].push_back(std::make_pair("Number of iterations", demod_ite    ));
+		headers[p].push_back(std::make_pair("Psi function",         demod_psi    ));
+		headers[p].push_back(std::make_pair("Codebook",             codebook_path));
 	}
 
 	if (full) headers[p].push_back(std::make_pair("Channel type", channel_type));
@@ -284,10 +284,10 @@ template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem
 ::_build_scma() const
 {
-	if (this->psi == "PSI0") return new module::Modem_SCMA<B,R,Q,tools::psi_0<Q>>(this->N, this->codebook, this->no_sig2, this->n_ite, this->n_frames);
-	if (this->psi == "PSI1") return new module::Modem_SCMA<B,R,Q,tools::psi_1<Q>>(this->N, this->codebook, this->no_sig2, this->n_ite, this->n_frames);
-	if (this->psi == "PSI2") return new module::Modem_SCMA<B,R,Q,tools::psi_2<Q>>(this->N, this->codebook, this->no_sig2, this->n_ite, this->n_frames);
-	if (this->psi == "PSI3") return new module::Modem_SCMA<B,R,Q,tools::psi_3<Q>>(this->N, this->codebook, this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI0") return new module::Modem_SCMA<B,R,Q,tools::psi_0<Q>>(this->N, this->codebook_path, this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI1") return new module::Modem_SCMA<B,R,Q,tools::psi_1<Q>>(this->N, this->codebook_path, this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI2") return new module::Modem_SCMA<B,R,Q,tools::psi_2<Q>>(this->N, this->codebook_path, this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI3") return new module::Modem_SCMA<B,R,Q,tools::psi_3<Q>>(this->N, this->codebook_path, this->no_sig2, this->n_ite, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

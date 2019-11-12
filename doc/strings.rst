@@ -587,7 +587,7 @@
    Give the path to the ordered modulation symbols (constellation), to use with
    the ``USER`` |modem|.
 
-.. |factory::Modem::p+codebook| replace::
+.. |factory::Modem::p+cb-path| replace::
    Give the path to the codebook, to use with the ``SCMA`` |modem|.
 
 .. |factory::Modem::p+cpm-std| replace::

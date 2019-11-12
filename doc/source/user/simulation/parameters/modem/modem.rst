@@ -386,16 +386,16 @@ Where |n0_equation|
 See the :ref:`mdm-mdm-no-sig2` parameter to disable the division by
 :math:`\sigma^2`.
 
-.. _mdm-mdm-codebook:
+.. _mdm-mdm-cb-path:
 
-``--mdm-codebook``
-""""""""""""""""""
+``--mdm-cb-path``
+"""""""""""""""""
 
    :Type: file
    :Rights: read/write
-   :Examples: ``--mdm-codebook conf/mod/SCMA/CS1.cb``
+   :Examples: ``--mdm-cb-path conf/mod/SCMA/CS1.cb``
 
-|factory::Modem::p+codebook|
+|factory::Modem::p+cb-path|
 
 .. note:: Only 3 |BPS| codebook symbols are supported at this time.
 
