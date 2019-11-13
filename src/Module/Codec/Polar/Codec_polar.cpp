@@ -132,15 +132,16 @@ Codec_polar<B,Q>
 		{
 			if (fb_params.type == "BEC")
 			{
-				auto ep = tools::Event_probability<float>(fb_params.noise);
+				tools::Event_probability<> ep(fb_params.noise);
 				fb_generator->set_noise(ep);
+				fb_generator->generate(frozen_bits);
 			}
 			else /* type = GA, TV or FILE */
 			{
-				auto sigma = tools::Sigma<float>(fb_params.noise);
+				tools::Sigma<> sigma(fb_params.noise);
 				fb_generator->set_noise(sigma);
+				fb_generator->generate(frozen_bits);
 			}
-			fb_generator->generate(frozen_bits);
 			if (this->N_cw != this->N && puncturer_shortlast)
 				puncturer_shortlast->gen_frozen_bits(frozen_bits);
 			this->notify_frozenbits_update();
