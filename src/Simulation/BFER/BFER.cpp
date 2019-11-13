@@ -79,9 +79,8 @@ void BFER<B,R,Q>
 	// build the communication chain in multi-threaded mode
 	std::vector<std::thread> threads(params_BFER.n_threads -1);
 	for (auto tid = 1; tid < params_BFER.n_threads; tid++)
-		threads[tid -1] = std::thread(BFER<B,R,Q>::start_thread_build_comm_chain, this, tid);
-
-	BFER<B,R,Q>::start_thread_build_comm_chain(this, 0);
+		threads[tid -1] = std::thread(&BFER<B,R,Q>::start_thread_build_comm_chain, this, tid);
+	this->start_thread_build_comm_chain(0);
 
 	// join the slave threads with the master thread
 	for (auto tid = 1; tid < params_BFER.n_threads; tid++)
@@ -381,39 +380,39 @@ void BFER<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void BFER<B,R,Q>
-::start_thread_build_comm_chain(BFER<B,R,Q> *simu, const int tid)
+::start_thread_build_comm_chain(const int tid)
 {
 	try
 	{
-		simu->__build_communication_chain(tid);
+		this->__build_communication_chain(tid);
 
-		if (simu->params_BFER.err_track_enable)
-			simu->monitor_er[tid]->record_callback_fe(std::bind(&tools::Dumper::add,
-			                                                    simu->dumper[tid].get(),
+		if (this->params_BFER.err_track_enable)
+			this->monitor_er[tid]->record_callback_fe(std::bind(&tools::Dumper::add,
+			                                                    this->dumper[tid].get(),
 			                                                    std::placeholders::_1,
 			                                                    std::placeholders::_2));
 	}
 	catch (std::exception const& e)
 	{
 		tools::Terminal::stop();
-		simu->simu_error = true;
+		this->simu_error = true;
 
-		simu->mutex_exception.lock();
+		this->mutex_exception.lock();
 
 		auto save = tools::exception::no_backtrace;
 		tools::exception::no_backtrace = true;
 		std::string msg = e.what(); // get only the function signature
 		tools::exception::no_backtrace = save;
 
-		if (std::find(simu->prev_err_messages.begin(), simu->prev_err_messages.end(), msg) ==
-		                                               simu->prev_err_messages.end())
+		if (std::find(this->prev_err_messages.begin(), this->prev_err_messages.end(), msg) ==
+		                                               this->prev_err_messages.end())
 		{
 			// with backtrace if debug mode
 			rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::tag::error);
 			// save only the function signature
-			simu->prev_err_messages.push_back(msg);
+			this->prev_err_messages.push_back(msg);
 		}
-		simu->mutex_exception.unlock();
+		this->mutex_exception.unlock();
 	}
 }
 

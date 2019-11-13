@@ -99,7 +99,7 @@ protected:
 	bool stop_time_reached();
 
 private:
-	static void start_thread_build_comm_chain(BFER<B,R,Q> *simu, const int tid);
+	void start_thread_build_comm_chain(const int tid);
 };
 }
 }
