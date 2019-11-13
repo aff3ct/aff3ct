@@ -57,20 +57,20 @@ Reporter::report_t Reporter_noise<R>
 	{
 		case Noise_type::SIGMA:
 		{
-			auto sig = dynamic_cast<const tools::Sigma<R>&>(noise);
+			auto sig = dynamic_cast<const tools::Sigma<R>*>(&noise);
 
 			if (show_sigma)
 			{
-				stream << std::setprecision(4) << std::fixed << sig.get_value();
+				stream << std::setprecision(4) << std::fixed << sig->get_value();
 				noise_report.push_back(stream.str());
 				stream.str("");
 			}
 
-			stream << std::setprecision(2) << std::fixed << sig.get_esn0();
+			stream << std::setprecision(2) << std::fixed << sig->get_esn0();
 			noise_report.push_back(stream.str());
 			stream.str("");
 
-			stream << std::setprecision(2) << std::fixed << sig.get_ebn0();
+			stream << std::setprecision(2) << std::fixed << sig->get_ebn0();
 			break;
 		}
 		case Noise_type::ROP:
