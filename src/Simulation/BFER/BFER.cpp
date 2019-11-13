@@ -32,7 +32,7 @@ BFER<B,R,Q>
 
   bit_rate((float)params_BFER.src->K / (float)params_BFER.cdc->N),
 
-  noise(params_BFER.noise->template build<>(0.f, bit_rate, params_BFER.mdm->bps, params_BFER.mdm->cpm_upf)),
+  noise(params_BFER.noise->template build<>()),
 
   monitor_mi(params_BFER.n_threads),
   monitor_er(params_BFER.n_threads),
@@ -54,9 +54,8 @@ BFER<B,R,Q>
 	}
 
 	if (!params_BFER.noise->pdf_path.empty())
-		distributions.reset(new tools::Distributions<R>(params_BFER.noise->pdf_path,
-		                                                tools::Distribution_mode::SUMMATION,
-		                                                params_BFER.mdm->rop_est_bits > 0));
+		this->distributions.reset(new tools::Distributions<R>(params_BFER.noise->pdf_path,
+		                                                      tools::Distribution_mode::SUMMATION));
 
 	try
 	{
@@ -64,7 +63,6 @@ BFER<B,R,Q>
 		constellation.reset(cstl);
 	}
 	catch(tools::cannot_allocate&) {}
-
 
 	this->build_monitors ();
 	this->build_reporters();
@@ -114,10 +112,6 @@ void BFER<B,R,Q>
 	{
 		params_BFER.noise->template update<>(*this->noise, params_BFER.noise->range[noise_idx], bit_rate,
 		                                     params_BFER.mdm->bps, params_BFER.mdm->cpm_upf);
-
-		// manage noise distributions to be sure it exists
-		if (this->distributions != nullptr)
-			this->distributions->read_distribution(this->noise->get_value());
 
 		if (params_BFER.err_track_revert)
 		{

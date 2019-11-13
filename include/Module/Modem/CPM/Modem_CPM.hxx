@@ -175,7 +175,9 @@ void Modem_CPM<B,R,Q,MAX>
 ::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set.");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
+	else if (!this->noise->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	const auto Y_real = Y_N1;
 	const auto Y_imag = Y_N1 + this->N_mod / 2;

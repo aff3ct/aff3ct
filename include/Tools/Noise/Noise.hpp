@@ -32,6 +32,8 @@ public:
 
 	R get_value() const; // return the stocked noise, throw if not set
 
+	bool is_set() const;
+
 	void set_value(const R value); // set the noise val and call 'check' to check that it respects the rules
 
 	virtual void copy(const Noise<R>& other); // set this noise as the 'other' one

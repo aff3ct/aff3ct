@@ -43,6 +43,10 @@ public:
 
 	// builder
 	template <typename R = float>
+	tools::Noise<R>* build() const;
+
+	// builder
+	template <typename R = float>
 	tools::Noise<R>* build(R noise_val, R bit_rate = 1., int bps = 1, int upf = 1) const;
 
 	template <typename R = float>

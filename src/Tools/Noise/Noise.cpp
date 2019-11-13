@@ -31,6 +31,16 @@ void Noise<R>
 }
 
 template <typename R>
+bool Noise<R>
+::is_set() const
+{
+	if (this->value == std::numeric_limits<R>::infinity())
+		return false;
+	else
+		return true;
+}
+
+template <typename R>
 void Noise<R>
 ::set_value(const R value)
 {
@@ -43,7 +53,7 @@ template <typename R>
 R Noise<R>
 ::get_value() const
 {
-	if (this->value == std::numeric_limits<R>::infinity())
+	if (!this->is_set())
 	{
 		std::stringstream message;
 		message << "'value' is not set.";

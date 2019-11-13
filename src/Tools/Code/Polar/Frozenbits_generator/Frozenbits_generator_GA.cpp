@@ -20,7 +20,7 @@ Frozenbits_generator_GA
 void Frozenbits_generator_GA
 ::evaluate()
 {
-	this-> check_noise();
+	this->check_noise();
 
 	for (unsigned i = 0; i != this->best_channels.size(); i++)
 		this->best_channels[i] = i;

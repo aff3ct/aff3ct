@@ -50,7 +50,7 @@ const tools::Noise<>& Frozenbits_generator
 	if (this->noise == nullptr)
 	{
 		std::stringstream message;
-		message << "No 'noise' has been set.";
+		message << "'noise' should not be nullptr.";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -114,8 +114,12 @@ void Frozenbits_generator
 	if (this->noise == nullptr)
 	{
 		std::stringstream message;
-		message << "No noise has been set.";
+		message << "'noise' should not be nullptr.";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+	if (!this->noise->is_set())
+	{
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 	}
 }
 

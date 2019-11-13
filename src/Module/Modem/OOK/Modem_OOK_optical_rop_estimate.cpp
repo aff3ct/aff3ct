@@ -53,20 +53,6 @@ template <typename B, typename R, typename Q>
 void Modem_OOK_optical_rop_estimate<B,R,Q>
 ::init()
 {
-	if (this->noise == nullptr)
-	{
-		std::stringstream message;
-		message << "'this->noise' can't be nullptr.";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-	else if (this->noise->get_value() != (R)0)
-	{
-		std::stringstream message;
-		message << "'this->noise->get_value()' has to be equal to 0 ('this->noise->get_value()' = "
-		        << this->noise->get_value() << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	if (ROP_known_bits.size() > (size_t)this->N)
 	{
 		std::stringstream message;

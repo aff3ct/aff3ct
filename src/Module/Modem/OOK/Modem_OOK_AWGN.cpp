@@ -70,7 +70,9 @@ void Modem_OOK_AWGN<B,R,Q>
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 		if (this->noise == nullptr)
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set.");
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
+		else if (!this->noise->is_set())
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 		for (auto i = 0; i < this->N_fil; i++)
 			Y_N2[i] = -((Q)2.0 * Y_N1[i] - (Q)1) * (Q)sigma_factor * (Q)H_N[i];

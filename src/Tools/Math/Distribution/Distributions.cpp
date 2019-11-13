@@ -13,8 +13,8 @@ template<typename R>
 const int aff3ct::tools::Distributions<R>::saved_noise_precision = (int)1e6;
 
 template<typename R>
-Distributions<R>::
-Distributions(const std::string& filename, Distribution_mode mode, bool read_all_at_init)
+Distributions<R>
+::Distributions(const std::string& filename, Distribution_mode mode)
 : f_distributions(filename, std::ios::binary), mode(mode)
 {
 	if (f_distributions.fail())
@@ -26,18 +26,16 @@ Distributions(const std::string& filename, Distribution_mode mode, bool read_all
 
 	read_noise_range();
 
-	if (read_all_at_init)
-		for(unsigned i = 0; i < this->noise_file_index.size(); i++)
-			read_distribution_from_file(i);
+	for(unsigned i = 0; i < this->noise_file_index.size(); i++)
+		read_distribution_from_file(i);
 }
 
 template<typename R>
-const std::vector<R>& Distributions<R>::
-get_noise_range() const
+const std::vector<R>& Distributions<R>
+::get_noise_range() const
 {
 	return this->noise_range_sorted;
 }
-
 
 void my_getline(std::istream &is, std::string &line)
 {
@@ -61,8 +59,8 @@ void my_getline(std::istream &is, std::string &line)
 }
 
 template<typename R>
-void Distributions<R>::
-read_noise_range()
+void Distributions<R>
+::read_noise_range()
 {
 	file_go_to_pos(); // set the stream at the beginning of the file
 
@@ -120,21 +118,21 @@ read_noise_range()
 }
 
 template<typename R>
-bool Distributions<R>::
-has_distribution(R noise) const
+bool Distributions<R>
+::has_distribution(R noise) const
 {
 	return this->distributions.find(calibrated_noise(noise)) != this->distributions.end();
 }
 
 template<typename R>
-const Distribution<R>& Distributions<R>::
-get_distribution(R noise) const
+const Distribution<R>& Distributions<R>
+::get_distribution(R noise) const
 {
 	auto it = this->distributions.find(calibrated_noise(noise));
 	if (it == this->distributions.end())
 	{
 		std::stringstream message;
-		message << "Undefined noise 'noise' in the distributions ('noise' = " << noise << ").";
+		message << "Undefined 'noise' in the distributions ('noise' = " << noise << ").";
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -149,8 +147,8 @@ get_distribution(R noise) const
 }
 
 template<typename R>
-void Distributions<R>::
-add_distribution(R noise, std::unique_ptr<Distribution<R>>&& new_distribution)
+void Distributions<R>
+::add_distribution(R noise, std::unique_ptr<Distribution<R>>&& new_distribution)
 {
 	if (new_distribution == nullptr)
 	{
@@ -173,8 +171,8 @@ add_distribution(R noise, std::unique_ptr<Distribution<R>>&& new_distribution)
 }
 
 template<typename R>
-void Distributions<R>::
-file_go_to_pos(unsigned index)
+void Distributions<R>
+::file_go_to_pos(unsigned index)
 {
 	f_distributions.clear();
 
@@ -185,8 +183,8 @@ file_go_to_pos(unsigned index)
 }
 
 template<typename R>
-void Distributions<R>::
-read_distribution(R noise)
+void Distributions<R>
+::read_distribution(R noise)
 {
 	if (has_distribution(noise))
 		return;
@@ -201,8 +199,8 @@ read_distribution(R noise)
 }
 
 template<typename R>
-void Distributions<R>::
-read_distribution_from_file(unsigned index)
+void Distributions<R>
+::read_distribution_from_file(unsigned index)
 {
 	if (has_distribution(this->noise_range.at(index)))
 		return; // distribution already read
@@ -303,8 +301,8 @@ read_distribution_from_file(unsigned index)
 }
 
 template<typename R>
-int Distributions<R>::
-calibrated_noise(R noise)
+int Distributions<R>
+::calibrated_noise(R noise)
 {
 	return (int)(noise*(R)saved_noise_precision);
 }

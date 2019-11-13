@@ -130,7 +130,9 @@ void Modem_SCMA<B,R,Q,PSI>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No 'noise' has been set.");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
+	else if (!this->noise->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	for (auto batch = 0 ; batch < (this->N +1) / 2 ; batch++)
 	{
@@ -163,7 +165,9 @@ void Modem_SCMA<B,R,Q,PSI>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No 'noise' has been set.");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
+	else if (!this->noise->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	for (auto batch = 0 ; batch < (this->N +1) / 2 ; batch++)
 	{
@@ -189,7 +193,9 @@ void Modem_SCMA<B,R,Q,PSI>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No 'noise' has been set.");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
+	else if (!this->noise->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	// initial probability of each codeword/user
 	auto init_proba = (Q)1. / (Q)CB.get_codebook_size();

@@ -196,7 +196,7 @@ const tools::Noise<>& Codec<B,Q>
 	if (this->noise == nullptr)
 	{
 		std::stringstream message;
-		message << "No 'noise' has been set.";
+		message << "'noise' should not be nullptr.";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -212,9 +212,14 @@ void Codec<B,Q>
 		if (this->noise != nullptr)
 			this->noise->unrecord_callback_changed(this->id_noise_changed_callback);
 		this->noise = &noise;
-		this->id_noise_changed_callback = this->noise->record_callback_changed([this]() { this->noise_changed(); });
+		this->id_noise_changed_callback = this->noise->record_callback_changed([this]()
+		{
+			if (this->noise->is_set())
+				this->noise_changed();
+		});
 		this->check_noise();
-		this->noise_changed();
+		if (this->noise->is_set())
+			this->noise_changed();
 	}
 }
 
@@ -231,7 +236,7 @@ void Codec<B,Q>
 	if (this->noise == nullptr)
 	{
 		std::stringstream message;
-		message << "No noise has been set.";
+		message << "'noise' should not be nullptr.";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 }

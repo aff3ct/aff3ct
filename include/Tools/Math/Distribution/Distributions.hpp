@@ -9,6 +9,7 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include <mutex>
 #include <memory>
 #include <vector>
 
@@ -44,8 +45,10 @@ protected:
 	size_t y0_pos;
 	size_t y1_pos;
 
+	std::mutex mtx;
+
 public:
-	explicit Distributions(const std::string& filename, Distribution_mode mode = Distribution_mode::SUMMATION, bool read_all_at_init = false);
+	explicit Distributions(const std::string& filename, Distribution_mode mode = Distribution_mode::SUMMATION);
 
 	virtual ~Distributions() = default;
 

@@ -29,7 +29,7 @@ Frozenbits_generator_TV
 void Frozenbits_generator_TV
 ::evaluate()
 {
-	this-> check_noise();
+	this->check_noise();
 
 	std::ostringstream s_stream;
 	s_stream << std::setiosflags(std::ios::fixed) << std::setprecision(3) << this->noise->get_value();

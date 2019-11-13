@@ -188,7 +188,9 @@ void Modem_generic<B,R,Q,MAX>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set.");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
+	else if (!this->noise->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	auto size = this->N;
 
@@ -224,7 +226,9 @@ void Modem_generic<B,R,Q,MAX>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set.");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
+	else if (!this->noise->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	auto size = this->N;
 
@@ -263,7 +267,9 @@ void Modem_generic<B,R,Q,MAX>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set.");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
+	else if (!this->noise->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	auto size = this->N;
 
@@ -318,7 +324,9 @@ void Modem_generic<B,R,Q,MAX>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set.");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
+	else if (!this->noise->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	auto size = this->N;
 
@@ -456,7 +464,9 @@ void Modem_generic<B,R,Q,MAX>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set.");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
+	else if (!this->noise->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	auto size = this->N;
 
@@ -490,7 +500,9 @@ void Modem_generic<B,R,Q,MAX>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set.");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
+	else if (!this->noise->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	auto size = this->N;
 
@@ -524,7 +536,9 @@ void Modem_generic<B,R,Q,MAX>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set.");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
+	else if (!this->noise->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	auto size = this->N;
 
@@ -577,7 +591,9 @@ void Modem_generic<B,R,Q,MAX>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
 	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set.");
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
+	else if (!this->noise->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	auto size = this->N;
 
