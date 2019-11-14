@@ -93,9 +93,10 @@ void BFER_ite_threads<B,R,Q>
 	auto &csb = *this->coset_bit      [tid];
 	auto &mnt = *this->monitor_er     [tid];
 
-	auto &enc = *cdc.get_encoder();
-	auto &dcs = *cdc.get_decoder_siso();
-	auto &dch = *cdc.get_decoder_siho();
+	auto &enc = cdc.get_encoder();
+	auto &dcs = cdc.get_decoder_siso();
+	auto &dch = cdc.get_decoder_siho();
+	auto &ext = cdc.get_extractor();
 
 	using namespace module;
 
@@ -196,8 +197,8 @@ void BFER_ite_threads<B,R,Q>
 	// --------------------------------------------------------------------------------------------------- CRC checking
 	if (this->params_BFER_ite.crc->type != "NO")
 	{
-		cdc[cdc::sck::extract_sys_bit::Y_N](itl[itl::sck::deinterleave   ::nat]);
-		crc[crc::sck::check          ::V_K](cdc[cdc::sck::extract_sys_bit::V_K]);
+		ext[ext::sck::get_sys_bit::Y_N](itl[itl::sck::deinterleave::nat]);
+		crc[crc::sck::check      ::V_K](ext[ext::sck::get_sys_bit ::V_K]);
 	}
 
 	// ------------------------------------------------------------------------------------------------------- decoding
@@ -317,9 +318,10 @@ void BFER_ite_threads<B,R,Q>
 	auto &coset_bit       = *this->coset_bit      [tid];
 	auto &monitor         = *this->monitor_er     [tid];
 
-	auto &encoder      = *codec.get_encoder();
-	auto &decoder_siso = *codec.get_decoder_siso();
-	auto &decoder_siho = *codec.get_decoder_siho();
+	auto &encoder      = codec.get_encoder();
+	auto &decoder_siso = codec.get_decoder_siso();
+	auto &decoder_siho = codec.get_decoder_siho();
+	auto &extractor    = codec.get_extractor();
 
 	using namespace module;
 
@@ -382,7 +384,7 @@ void BFER_ite_threads<B,R,Q>
 			// ------------------------------------------------------------------------------------------- CRC checking
 			if (this->params_BFER_ite.crc->type != "NO" && ite >= this->params_BFER_ite.crc_start)
 			{
-				codec[cdc::tsk::extract_sys_bit].exec();
+				extractor[ext::tsk::get_sys_bit].exec();
 				if (crc[crc::tsk::check].exec())
 					break;
 			}

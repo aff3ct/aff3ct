@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "Factory/Module/Codec/Uncoded/Codec_uncoded.hpp"
+#include "Factory/Tools/Codec/Uncoded/Codec_uncoded.hpp"
 
 namespace aff3ct
 {

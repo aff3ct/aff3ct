@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "Factory/Module/Codec/RSC_DB/Codec_RSC_DB.hpp"
+#include "Factory/Tools/Codec/RSC_DB/Codec_RSC_DB.hpp"
 
 namespace aff3ct
 {

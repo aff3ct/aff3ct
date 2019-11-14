@@ -62,15 +62,16 @@ public:
 
 	// builder
 	template <typename B = int, typename Q = float>
-	module::Decoder_SIHO<B,Q>* build(const module::Interleaver<Q>              &itl,
-	                                       module::Decoder_chase_pyndiah<B,Q>  &cp_r,
-	                                       module::Decoder_chase_pyndiah<B,Q>  &cp_c,
-	                                 const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
+	module::Decoder_SIHO<B,Q>* build(const module::Interleaver<Q>             &itl,
+	                                       module::Decoder_chase_pyndiah<B,Q> &cp_r,
+	                                       module::Decoder_chase_pyndiah<B,Q> &cp_c,
+	                                       module::Encoder<B>                 *encoder = nullptr) const;
 
 	template <typename B = int, typename Q = float>
 	module::Decoder_SISO_SIHO<B,Q>* build_siso(const module::Interleaver<Q>             &itl,
 	                                                 module::Decoder_chase_pyndiah<B,Q> &cp_r,
-	                                                 module::Decoder_chase_pyndiah<B,Q> &cp_c) const;
+	                                                 module::Decoder_chase_pyndiah<B,Q> &cp_c,
+	                                                 module::Encoder<B>                 *encoder = nullptr) const;
 
 };
 }

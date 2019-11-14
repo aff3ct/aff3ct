@@ -8,7 +8,7 @@
 
 #include "Tools/auto_cloned_unique_ptr.hpp"
 #include "Factory/Module/Interleaver/Interleaver.hpp"
-#include "Factory/Module/Codec/Codec_SISO_SIHO.hpp"
+#include "Factory/Tools/Codec/Codec_SISO_SIHO.hpp"
 #include "Factory/Simulation/BFER/BFER.hpp"
 
 namespace aff3ct

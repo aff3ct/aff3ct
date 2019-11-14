@@ -3,9 +3,6 @@
 #include <mipp.h>
 
 #include "Launcher/Simulation/BFER_std.hpp"
-
-#include "Factory/Module/Codec/RSC/Codec_RSC.hpp"
-
 #include "Launcher/Code/RSC/RSC.hpp"
 
 using namespace aff3ct;

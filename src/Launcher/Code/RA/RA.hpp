@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "Factory/Module/Codec/RA/Codec_RA.hpp"
+#include "Factory/Tools/Codec/RA/Codec_RA.hpp"
 
 namespace aff3ct
 {

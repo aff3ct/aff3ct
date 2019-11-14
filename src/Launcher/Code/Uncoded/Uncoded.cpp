@@ -1,4 +1,3 @@
-#include "Factory/Module/Codec/Uncoded/Codec_uncoded.hpp"
 #include "Launcher/Code/Uncoded/Uncoded.hpp"
 
 using namespace aff3ct;

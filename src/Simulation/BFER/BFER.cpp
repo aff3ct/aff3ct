@@ -333,7 +333,7 @@ void BFER<B,R,Q>
 	for (auto tid = 0; tid < params_BFER.n_threads; tid++)
 	{
 		this->monitor_er[tid] = this->build_monitor_er(tid);
-		this->set_module("monitor_er", tid, this->monitor_er[tid]);
+		this->set_module("monitor_er", tid, *this->monitor_er[tid]);
 	}
 
 	// build a monitor to reduce BER/FER from the other monitors
@@ -346,7 +346,7 @@ void BFER<B,R,Q>
 		for (auto tid = 0; tid < params_BFER.n_threads; tid++)
 		{
 			this->monitor_mi[tid] = this->build_monitor_mi(tid);
-			this->set_module("monitor_mi", tid, this->monitor_mi[tid]);
+			this->set_module("monitor_mi", tid, *this->monitor_mi[tid]);
 		}
 
 		// build a monitor to reduce M from the other monitors

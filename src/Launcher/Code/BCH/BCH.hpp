@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "Factory/Module/Codec/BCH/Codec_BCH.hpp"
+#include "Factory/Tools/Codec/BCH/Codec_BCH.hpp"
 
 namespace aff3ct
 {

@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "Factory/Module/Codec/Turbo/Codec_turbo.hpp"
+#include "Factory/Tools/Codec/Turbo/Codec_turbo.hpp"
 
 namespace aff3ct
 {

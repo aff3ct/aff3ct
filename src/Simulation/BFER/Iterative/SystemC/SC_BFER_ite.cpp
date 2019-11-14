@@ -33,7 +33,7 @@ void SC_BFER_ite<B,R,Q>
 {
 	BFER_ite<B,R,Q>::__build_communication_chain(tid);
 
-	this->set_module("coset_real_i", tid, coset_real_i);
+	this->set_module("coset_real_i", tid, *coset_real_i);
 
 	this->interleaver_bit[tid]->set_custom_name(this->interleaver_llr[tid]->get_name() + "_bit");
 	this->interleaver_llr[tid]->set_custom_name(this->interleaver_llr[tid]->get_name() + "_llr");
@@ -55,7 +55,7 @@ void SC_BFER_ite<B,R,Q>
 	// create the sc_module inside the objects of the communication chain
 	this->source         [tid]               ->sc.create_module(+src::tsk::generate  );
 	this->crc            [tid]               ->sc.create_module(+crc::tsk::build     );
-	this->codec          [tid]->get_encoder()->sc.create_module(+enc::tsk::encode    );
+	this->codec          [tid]->get_encoder() .sc.create_module(+enc::tsk::encode    );
 	this->interleaver_bit[tid]               ->sc.create_module(+itl::tsk::interleave);
 	this->modem          [tid]               ->sc.create_module(+mdm::tsk::modulate  );
 	this->modem          [tid]               ->sc.create_module(+mdm::tsk::filter    );
@@ -74,8 +74,8 @@ void SC_BFER_ite<B,R,Q>
 	this->interleaver_llr[tid]                    ->sc.create_module(+itl::tsk::interleave  );
 	this->quantizer      [tid]                    ->sc.create_module(+qnt::tsk::process     );
 	this->interleaver_llr[tid]                    ->sc.create_module(+itl::tsk::deinterleave);
-	this->codec          [tid]->get_decoder_siho()->sc.create_module(+dec::tsk::decode_siho );
-	this->codec          [tid]->get_decoder_siso()->sc.create_module(+dec::tsk::decode_siso );
+	this->codec          [tid]->get_decoder_siho() .sc.create_module(+dec::tsk::decode_siho );
+	this->codec          [tid]->get_decoder_siso() .sc.create_module(+dec::tsk::decode_siso );
 	this->monitor_er     [tid]                    ->sc.create_module(+mnt::tsk::check_errors);
 
 	if (this->params_BFER_ite.coset)
@@ -140,7 +140,7 @@ void SC_BFER_ite<B,R,Q>
 
 	auto &src = *this->source         [0];
 	auto &crc = *this->crc            [0];
-	auto &enc = *this->codec          [0]->get_encoder();
+	auto &enc =  this->codec          [0]->get_encoder();
 	auto &itb = *this->interleaver_bit[0];
 	auto &itl = *this->interleaver_llr[0];
 	auto &mdm = *this->modem          [0];
@@ -148,8 +148,8 @@ void SC_BFER_ite<B,R,Q>
 	auto &qnt = *this->quantizer      [0];
 	auto &csr = *this->coset_real     [0];
 	auto &csi = *this->coset_real_i;
-	auto &dch = *this->codec          [0]->get_decoder_siho();
-	auto &dcs = *this->codec          [0]->get_decoder_siso();
+	auto &dch =  this->codec          [0]->get_decoder_siho();
+	auto &dcs =  this->codec          [0]->get_decoder_siso();
 	auto &csb = *this->coset_bit      [0];
 	auto &mnt = *this->monitor_er     [0];
 

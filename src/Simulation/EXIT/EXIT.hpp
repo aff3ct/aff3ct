@@ -10,7 +10,7 @@
 #include "Tools/Noise/Sigma.hpp"
 #include "Tools/Display/Reporter/Reporter.hpp"
 #include "Module/Source/Source.hpp"
-#include "Module/Codec/Codec_SISO.hpp"
+#include "Tools/Codec/Codec_SISO.hpp"
 #include "Module/Modem/Modem.hpp"
 #include "Module/Channel/Channel.hpp"
 #include "Module/Decoder/Decoder_SISO.hpp"
@@ -37,7 +37,7 @@ protected:
 
 	// communication chain
 	std::unique_ptr<module::Source      <B  >> source;
-	std::unique_ptr<module::Codec_SISO  <B,R>> codec;
+	std::unique_ptr<tools ::Codec_SISO  <B,R>> codec;
 	std::unique_ptr<module::Modem       <B,R>> modem;
 	std::unique_ptr<module::Modem       <B,R>> modem_a;
 	std::unique_ptr<module::Channel     <  R>> channel;
@@ -64,7 +64,7 @@ protected:
 	void simulation_loop           ();
 
 	std::unique_ptr<module::Source      <B  >> build_source   (              );
-	std::unique_ptr<module::Codec_SISO  <B,R>> build_codec    (              );
+	std::unique_ptr<tools ::Codec_SISO  <B,R>> build_codec    (              );
 	std::unique_ptr<module::Modem       <B,R>> build_modem    (              );
 	std::unique_ptr<module::Modem       <B,R>> build_modem_a  (              );
 	std::unique_ptr<module::Channel     <  R>> build_channel  (const int size);

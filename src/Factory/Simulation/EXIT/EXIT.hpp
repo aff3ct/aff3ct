@@ -14,7 +14,7 @@
 #include "Factory/Module/Channel/Channel.hpp"
 #include "Factory/Module/Quantizer/Quantizer.hpp"
 #include "Factory/Module/Monitor/EXIT/Monitor_EXIT.hpp"
-#include "Factory/Module/Codec/Codec_SISO.hpp"
+#include "Factory/Tools/Codec/Codec_SISO.hpp"
 #include "Factory/Tools/Display/Terminal/Terminal.hpp"
 #include "Factory/Simulation/Simulation.hpp"
 

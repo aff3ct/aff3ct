@@ -84,13 +84,13 @@ void BFER_std_threads<B,R,Q>
 
 	auto &src = *this->source    [tid];
 	auto &crc = *this->crc       [tid];
-	auto &enc = *this->codec     [tid]->get_encoder();
-	auto &pct = *this->codec     [tid]->get_puncturer();
+	auto &enc =  this->codec     [tid]->get_encoder();
+	auto &pct =  this->codec     [tid]->get_puncturer();
 	auto &mdm = *this->modem     [tid];
 	auto &chn = *this->channel   [tid];
 	auto &qnt = *this->quantizer [tid];
 	auto &csr = *this->coset_real[tid];
-	auto &dec = *this->codec     [tid]->get_decoder_siho();
+	auto &dec =  this->codec     [tid]->get_decoder_siho();
 	auto &csb = *this->coset_bit [tid];
 	auto &mnt = *this->monitor_er[tid];
 
@@ -261,13 +261,13 @@ void BFER_std_threads<B,R,Q>
 {
 	auto &source     = *this->source    [tid];
 	auto &crc        = *this->crc       [tid];
-	auto &encoder    = *this->codec     [tid]->get_encoder();
-	auto &puncturer  = *this->codec     [tid]->get_puncturer();
+	auto &encoder    =  this->codec     [tid]->get_encoder();
+	auto &puncturer  =  this->codec     [tid]->get_puncturer();
 	auto &modem      = *this->modem     [tid];
 	auto &channel    = *this->channel   [tid];
 	auto &quantizer  = *this->quantizer [tid];
 	auto &coset_real = *this->coset_real[tid];
-	auto &decoder    = *this->codec     [tid]->get_decoder_siho();
+	auto &decoder    =  this->codec     [tid]->get_decoder_siho();
 	auto &coset_bit  = *this->coset_bit [tid];
 	auto &monitor    = *this->monitor_er[tid];
 

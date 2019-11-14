@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "Factory/Module/Codec/LDPC/Codec_LDPC.hpp"
+#include "Factory/Tools/Codec/LDPC/Codec_LDPC.hpp"
 
 namespace aff3ct
 {

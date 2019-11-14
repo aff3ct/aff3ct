@@ -6,7 +6,6 @@
 #define FACTORY_DECODER_BCH_HPP
 
 #include <string>
-#include <memory>
 #include <map>
 #include <cli.hpp>
 
@@ -46,11 +45,11 @@ public:
 	// builder
 	template <typename B = int, typename Q = float>
 	module::Decoder_SIHO<B,Q>* build(const tools::BCH_polynomial_generator<B> &GF,
-	                                 const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
+	                                 module::Encoder<B> *encoder = nullptr) const;
 
 	template <typename B = int, typename Q = float>
 	module::Decoder_SIHO_HIHO<B,Q>* build_hiho(const tools::BCH_polynomial_generator<B> &GF,
-	                                           const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
+	                                           module::Encoder<B> *encoder = nullptr) const;
 
 };
 }

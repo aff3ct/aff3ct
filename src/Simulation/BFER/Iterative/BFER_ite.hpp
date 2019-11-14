@@ -8,7 +8,7 @@
 #include "Tools/Interleaver/Interleaver_core.hpp"
 #include "Module/Source/Source.hpp"
 #include "Module/CRC/CRC.hpp"
-#include "Module/Codec/Codec_SISO_SIHO.hpp"
+#include "Tools/Codec/Codec_SISO_SIHO.hpp"
 #include "Module/Modem/Modem.hpp"
 #include "Module/Channel/Channel.hpp"
 #include "Module/Quantizer/Quantizer.hpp"
@@ -30,7 +30,7 @@ protected:
 	// communication chain
 	std::vector<std::unique_ptr<module::Source          <B    >>> source;
 	std::vector<std::unique_ptr<module::CRC             <B    >>> crc;
-	std::vector<std::unique_ptr<module::Codec_SISO_SIHO <B,  Q>>> codec;
+	std::vector<std::unique_ptr<tools ::Codec_SISO_SIHO <B,  Q>>> codec;
 	std::vector<std::unique_ptr<module::Modem           <B,R,Q>>> modem;
 	std::vector<std::unique_ptr<module::Channel         <R    >>> channel;
 	std::vector<std::unique_ptr<module::Quantizer       <R,Q  >>> quantizer;
@@ -52,7 +52,7 @@ protected:
 
 	virtual std::unique_ptr<module::Source          <B    >> build_source     (const int tid = 0);
 	virtual std::unique_ptr<module::CRC             <B    >> build_crc        (const int tid = 0);
-	virtual std::unique_ptr<module::Codec_SISO_SIHO <B,Q  >> build_codec      (const int tid = 0);
+	virtual std::unique_ptr<tools ::Codec_SISO_SIHO <B,Q  >> build_codec      (const int tid = 0);
 	virtual std::unique_ptr<module::Modem           <B,R,Q>> build_modem      (const int tid = 0);
 	virtual std::unique_ptr<module::Channel         <R    >> build_channel    (const int tid = 0);
 	virtual std::unique_ptr<module::Quantizer       <R,Q  >> build_quantizer  (const int tid = 0);

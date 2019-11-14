@@ -55,26 +55,26 @@ void BFER_std<B,R,Q>
 	coset_real [tid] = build_coset_real(tid);
 	coset_bit  [tid] = build_coset_bit (tid);
 
-	this->set_module("source"    , tid, source    [tid]);
-	this->set_module("crc"       , tid, crc       [tid]);
-	this->set_module("encoder"   , tid, codec     [tid]->get_encoder());
-	this->set_module("puncturer" , tid, codec     [tid]->get_puncturer());
-	this->set_module("modem"     , tid, modem     [tid]);
-	this->set_module("channel"   , tid, channel   [tid]);
-	this->set_module("quantizer" , tid, quantizer [tid]);
-	this->set_module("coset_real", tid, coset_real[tid]);
-	this->set_module("decoder"   , tid, codec     [tid]->get_decoder_siho());
-	this->set_module("coset_bit" , tid, coset_bit [tid]);
+	this->set_module("source"    , tid, *source    [tid]);
+	this->set_module("crc"       , tid, *crc       [tid]);
+	this->set_module("encoder"   , tid,  codec     [tid]->get_encoder());
+	this->set_module("puncturer" , tid,  codec     [tid]->get_puncturer());
+	this->set_module("modem"     , tid, *modem     [tid]);
+	this->set_module("channel"   , tid, *channel   [tid]);
+	this->set_module("quantizer" , tid, *quantizer [tid]);
+	this->set_module("coset_real", tid, *coset_real[tid]);
+	this->set_module("decoder"   , tid,  codec     [tid]->get_decoder_siho());
+	this->set_module("coset_bit" , tid, *coset_bit [tid]);
 
 	try
 	{
 		auto& interleaver = codec[tid]->get_interleaver(); // can raise an exceptions
-		if (interleaver->is_uniform())
+		if (interleaver.is_uniform())
 			this->monitor_er[tid]->record_callback_check(std::bind(&tools::Interleaver_core<>::refresh,
-			                                                       interleaver.get()));
+			                                                       &interleaver));
 
-		if (this->params_BFER_std.err_track_enable && interleaver->is_uniform())
-			this->dumper[tid]->register_data(interleaver->get_lut(),
+		if (this->params_BFER_std.err_track_enable && interleaver.is_uniform())
+			this->dumper[tid]->register_data(interleaver.get_lut(),
 			                                 this->params_BFER_std.err_track_threshold,
 			                                 "itl",
 			                                 false,
@@ -88,7 +88,7 @@ void BFER_std<B,R,Q>
 		using namespace module;
 
 		auto &source  = *this->source [tid];
-		auto &encoder = *this->codec  [tid]->get_encoder();
+		auto &encoder =  this->codec  [tid]->get_encoder();
 		auto &channel = *this->channel[tid];
 
 		source[src::tsk::generate].set_autoalloc(true);
@@ -144,7 +144,7 @@ std::unique_ptr<module::CRC<B>> BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<module::Codec_SIHO<B,Q>> BFER_std<B,R,Q>
+std::unique_ptr<tools::Codec_SIHO<B,Q>> BFER_std<B,R,Q>
 ::build_codec(const int tid)
 {
 	const auto seed_enc = rd_engine_seed[tid]();
@@ -174,7 +174,7 @@ std::unique_ptr<module::Codec_SIHO<B,Q>> BFER_std<B,R,Q>
 	auto crc = this->params_BFER_std.crc->type == "NO" ? nullptr : this->crc[tid].get();
 
 	auto param_siho = dynamic_cast<factory::Codec_SIHO*>(params_cdc.get());
-	auto codec = std::unique_ptr<module::Codec_SIHO<B,Q>>(param_siho->template build<B, Q>(crc));
+	auto codec = std::unique_ptr<tools::Codec_SIHO<B,Q>>(param_siho->template build<B, Q>(crc));
 	codec->set_noise(*this->noise);
 	return codec;
 }

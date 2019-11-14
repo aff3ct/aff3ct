@@ -65,12 +65,7 @@ protected:
 	// cast module T in module::Module
 	template <typename T>
 	typename std::enable_if<std::is_base_of<module::Module, T>::value, void>::type
-	set_module(const std::string& module_name, const int tid, const std::shared_ptr<T>& mod);
-
-	// cast module T in module::Module
-	template <typename T>
-	typename std::enable_if<std::is_base_of<module::Module, T>::value, void>::type
-	set_module(const std::string& module_name, const int tid, const std::unique_ptr<T>& mod);
+	set_module(const std::string& module_name, const int tid, const T& mod);
 };
 }
 }

@@ -3,9 +3,6 @@
 #include <mipp.h>
 
 #include "Launcher/Simulation/BFER_std.hpp"
-
-#include "Factory/Module/Codec/Turbo/Codec_turbo.hpp"
-
 #include "Launcher/Code/Turbo/Turbo.hpp"
 
 using namespace aff3ct;

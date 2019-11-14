@@ -5,7 +5,7 @@
 #include <map>
 #include <cli.hpp>
 
-#include "Factory/Module/Codec/Codec_SIHO.hpp"
+#include "Factory/Tools/Codec/Codec_SIHO.hpp"
 #include "Factory/Simulation/BFER/BFER.hpp"
 
 namespace aff3ct

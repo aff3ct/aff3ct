@@ -51,9 +51,9 @@ void SC_BFER_std<B,R,Q>
 	// create the sc_module inside the objects of the communication chain
 	this->source   [tid]                 ->sc.create_module(+src::tsk::generate  );
 	this->crc      [tid]                 ->sc.create_module(+crc::tsk::build     );
-	this->codec    [tid]->get_encoder()  ->sc.create_module(+enc::tsk::encode    );
-	this->codec    [tid]->get_puncturer()->sc.create_module(+pct::tsk::puncture  );
-	this->codec    [tid]->get_puncturer()->sc.create_module(+pct::tsk::depuncture);
+	this->codec    [tid]->get_encoder()   .sc.create_module(+enc::tsk::encode    );
+	this->codec    [tid]->get_puncturer() .sc.create_module(+pct::tsk::puncture  );
+	this->codec    [tid]->get_puncturer() .sc.create_module(+pct::tsk::depuncture);
 	this->modem    [tid]                 ->sc.create_module(+mdm::tsk::modulate  );
 	this->modem    [tid]                 ->sc.create_module(+mdm::tsk::filter    );
 	if (this->params_BFER_std.chn->type.find("RAYLEIGH") != std::string::npos)
@@ -72,7 +72,7 @@ void SC_BFER_std<B,R,Q>
 		this->modem  [tid]->sc.create_module(+mdm::tsk::demodulate);
 	}
 	this->quantizer [tid]                    ->sc.create_module(+qnt::tsk::process        );
-	this->codec     [tid]->get_decoder_siho()->sc.create_module(+dec::tsk::decode_siho    );
+	this->codec     [tid]->get_decoder_siho() .sc.create_module(+dec::tsk::decode_siho    );
 	this->monitor_er[tid]                    ->sc.create_module(+mnt::tsk::check_errors   );
 	if (this->params_BFER_std.mnt_mutinfo) // this->monitor_mi[tid] != nullptr
 	this->monitor_mi[tid]                    ->sc.create_module(+mnt::tsk::get_mutual_info);
@@ -118,13 +118,13 @@ void SC_BFER_std<B,R,Q>
 
 	auto &src = *this->source    [0];
 	auto &crc = *this->crc       [0];
-	auto &enc = *this->codec     [0]->get_encoder();
-	auto &pct = *this->codec     [0]->get_puncturer();
+	auto &enc =  this->codec     [0]->get_encoder();
+	auto &pct =  this->codec     [0]->get_puncturer();
 	auto &mdm = *this->modem     [0];
 	auto &chn = *this->channel   [0];
 	auto &qnt = *this->quantizer [0];
 	auto &csr = *this->coset_real[0];
-	auto &dec = *this->codec     [0]->get_decoder_siho();
+	auto &dec =  this->codec     [0]->get_decoder_siho();
 	auto &csb = *this->coset_bit [0];
 	auto &mnt = *this->monitor_er[0];
 

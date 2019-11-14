@@ -56,10 +56,10 @@ protected:
 	Decoder(const std::string &n, const std::string &p);
 
 	template <typename B = int, typename Q = float>
-	module::Decoder_SIHO<B,Q>* build(const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
+	module::Decoder_SIHO<B,Q>* build(module::Encoder<B> *encoder = nullptr) const;
 
 	template <typename B = int, typename Q = float>
-	module::Decoder_SIHO_HIHO<B,Q>* build_hiho(const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
+	module::Decoder_SIHO_HIHO<B,Q>* build_hiho(module::Encoder<B> *encoder = nullptr) const;
 };
 }
 }

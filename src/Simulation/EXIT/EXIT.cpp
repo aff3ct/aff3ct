@@ -54,7 +54,7 @@ EXIT<B,R>
 	catch(tools::cannot_allocate&) {}
 
 	this->add_module("source"   , params_EXIT.n_threads);
-	this->add_module("codec"    , params_EXIT.n_threads);
+	this->add_module("extractor", params_EXIT.n_threads);
 	this->add_module("encoder"  , params_EXIT.n_threads);
 	this->add_module("decoder"  , params_EXIT.n_threads);
 	this->add_module("modem"    , params_EXIT.n_threads);
@@ -65,7 +65,7 @@ EXIT<B,R>
 
 	this->monitor = this->build_monitor();
 
-	this->set_module("monitor", 0, this->monitor);
+	this->set_module("monitor", 0, *this->monitor);
 
 	auto reporter_noise = new tools::Reporter_noise<>(this->noise);
 	reporters.push_back(std::unique_ptr<tools::Reporter_noise<>>(reporter_noise));
@@ -95,16 +95,16 @@ void EXIT<B,R>
 	channel_a = build_channel_a(K_mod);
 	terminal  = build_terminal (     );
 
-	this->set_module("source"   , 0, source);
-	this->set_module("codec"    , 0, codec);
-	this->set_module("encoder"  , 0, codec->get_encoder());
-	this->set_module("decoder"  , 0, codec->get_decoder_siso());
-	this->set_module("modem"    , 0, modem);
-	this->set_module("modem_a"  , 0, modem_a);
-	this->set_module("channel"  , 0, channel);
-	this->set_module("channel_a", 0, channel_a);
+	this->set_module("source"   , 0, *source);
+	this->set_module("extractor", 0,  codec->get_extractor());
+	this->set_module("encoder"  , 0,  codec->get_encoder());
+	this->set_module("decoder"  , 0,  codec->get_decoder_siso());
+	this->set_module("modem"    , 0, *modem);
+	this->set_module("modem_a"  , 0, *modem_a);
+	this->set_module("channel"  , 0, *channel);
+	this->set_module("channel_a", 0, *channel_a);
 
-	if (codec->get_decoder_siso()->get_n_frames() > 1)
+	if (codec->get_decoder_siso().get_n_frames() > 1)
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "The inter frame is not supported.");
 }
 
@@ -220,9 +220,9 @@ void EXIT<B,R>
 ::sockets_binding()
 {
 	auto &src = *this->source;
-	auto &cdc = *this->codec;
-	auto &enc = *this->codec->get_encoder();
-	auto &dec = *this->codec->get_decoder_siso();
+	auto &ext =  this->codec->get_extractor();
+	auto &enc =  this->codec->get_encoder();
+	auto &dec =  this->codec->get_decoder_siso();
 	auto &mdm = *this->modem;
 	auto &mda = *this->modem_a;
 	auto &chn = *this->channel;
@@ -252,26 +252,26 @@ void EXIT<B,R>
 	// Rayleigh channel
 	if (params_EXIT.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
-		mnt[mnt::sck::check_mutual_info::llrs_a](mda[mdm::sck::demodulate_wg::Y_N2]);
-		chn[chn::sck::add_noise_wg     ::X_N   ](mdm[mdm::sck::modulate     ::X_N2]);
-		mdm[mdm::sck::demodulate_wg    ::H_N   ](chn[chn::sck::add_noise_wg ::H_N ]);
-		mdm[mdm::sck::demodulate_wg    ::Y_N1  ](chn[chn::sck::add_noise_wg ::Y_N ]);
-		cdc[cdc::sck::add_sys_ext      ::ext   ](mda[mdm::sck::demodulate_wg::Y_N2]);
-		cdc[cdc::sck::add_sys_ext      ::Y_N   ](mdm[mdm::sck::demodulate_wg::Y_N2]);
-		dec[dec::sck::decode_siso      ::Y_N1  ](mdm[mdm::sck::demodulate_wg::Y_N2]);
+		mnt[mnt::sck::check_mutual_info  ::llrs_a](mda[mdm::sck::demodulate_wg::Y_N2]);
+		chn[chn::sck::add_noise_wg       ::X_N   ](mdm[mdm::sck::modulate     ::X_N2]);
+		mdm[mdm::sck::demodulate_wg      ::H_N   ](chn[chn::sck::add_noise_wg ::H_N ]);
+		mdm[mdm::sck::demodulate_wg      ::Y_N1  ](chn[chn::sck::add_noise_wg ::Y_N ]);
+		ext[ext::sck::add_sys_and_ext_llr::ext   ](mda[mdm::sck::demodulate_wg::Y_N2]);
+		ext[ext::sck::add_sys_and_ext_llr::Y_N   ](mdm[mdm::sck::demodulate_wg::Y_N2]);
+		dec[dec::sck::decode_siso        ::Y_N1  ](mdm[mdm::sck::demodulate_wg::Y_N2]);
 	}
 	else // additive channel (AWGN, USER, NO)
 	{
-		mnt[mnt::sck::check_mutual_info::llrs_a](mda[mdm::sck::demodulate::Y_N2]);
-		chn[chn::sck::add_noise        ::X_N   ](mdm[mdm::sck::modulate  ::X_N2]);
-		mdm[mdm::sck::demodulate       ::Y_N1  ](chn[chn::sck::add_noise ::Y_N ]);
-		cdc[cdc::sck::add_sys_ext      ::ext   ](mda[mdm::sck::demodulate::Y_N2]);
-		cdc[cdc::sck::add_sys_ext      ::Y_N   ](mdm[mdm::sck::demodulate::Y_N2]);
-		dec[dec::sck::decode_siso      ::Y_N1  ](mdm[mdm::sck::demodulate::Y_N2]);
+		mnt[mnt::sck::check_mutual_info  ::llrs_a](mda[mdm::sck::demodulate::Y_N2]);
+		chn[chn::sck::add_noise          ::X_N   ](mdm[mdm::sck::modulate  ::X_N2]);
+		mdm[mdm::sck::demodulate         ::Y_N1  ](chn[chn::sck::add_noise ::Y_N ]);
+		ext[ext::sck::add_sys_and_ext_llr::ext   ](mda[mdm::sck::demodulate::Y_N2]);
+		ext[ext::sck::add_sys_and_ext_llr::Y_N   ](mdm[mdm::sck::demodulate::Y_N2]);
+		dec[dec::sck::decode_siso        ::Y_N1  ](mdm[mdm::sck::demodulate::Y_N2]);
 	}
 
-	cdc[cdc::sck::extract_sys_llr  ::Y_N   ](dec[dec::sck::decode_siso    ::Y_N2]);
-	mnt[mnt::sck::check_mutual_info::llrs_e](cdc[cdc::sck::extract_sys_llr::Y_K ]);
+	ext[ext::sck::get_sys_llr      ::Y_N   ](dec[dec::sck::decode_siso::Y_N2]);
+	mnt[mnt::sck::check_mutual_info::llrs_e](ext[ext::sck::get_sys_llr::Y_K ]);
 }
 
 template <typename B, typename R>
@@ -279,9 +279,9 @@ void EXIT<B,R>
 ::simulation_loop()
 {
 	auto &source    = *this->source;
-	auto &codec     = *this->codec;
-	auto &encoder   = *this->codec->get_encoder();
-	auto &decoder   = *this->codec->get_decoder_siso();
+	auto &extractor =  this->codec->get_extractor();
+	auto &encoder   =  this->codec->get_encoder();
+	auto &decoder   =  this->codec->get_decoder_siso();
 	auto &modem     = *this->modem;
 	auto &modem_a   = *this->modem_a;
 	auto &channel   = *this->channel;
@@ -337,10 +337,10 @@ void EXIT<B,R>
 			modem  [mdm::tsk::demodulate].exec();
 		}
 
-		codec  [cdc::tsk::add_sys_ext      ].exec();
-		decoder[dec::tsk::decode_siso      ].exec();
-		codec  [cdc::tsk::extract_sys_llr  ].exec();
-		monitor[mnt::tsk::check_mutual_info].exec();
+		extractor[ext::tsk::add_sys_and_ext_llr].exec();
+		decoder  [dec::tsk::decode_siso        ].exec();
+		extractor[ext::tsk::get_sys_llr        ].exec();
+		monitor  [mnt::tsk::check_mutual_info  ].exec();
 	}
 }
 
@@ -352,10 +352,10 @@ std::unique_ptr<module::Source<B>> EXIT<B,R>
 }
 
 template <typename B, typename R>
-std::unique_ptr<module::Codec_SISO<B,R>> EXIT<B,R>
+std::unique_ptr<tools::Codec_SISO<B,R>> EXIT<B,R>
 ::build_codec()
 {
-	auto codec = std::unique_ptr<module::Codec_SISO<B,R>>(params_EXIT.cdc->template build<B,R>());
+	auto codec = std::unique_ptr<tools::Codec_SISO<B,R>>(params_EXIT.cdc->template build<B,R>());
 	codec->set_noise(this->noise);
 	return codec;
 }
@@ -394,11 +394,11 @@ std::unique_ptr<module::Channel<R>> EXIT<B,R>
 ::build_channel_a(const int size)
 {
 	std::unique_ptr<factory::Channel> chn_params(params_EXIT.chn->clone());
-	chn_params->N   = factory::Modem::get_buffer_size_after_modulation(params_EXIT.mdm->type,
-	                                                                   params_EXIT.cdc->K,
-	                                                                   params_EXIT.mdm->bps,
-	                                                                   params_EXIT.mdm->cpm_upf,
-	                                                                   params_EXIT.mdm->cpm_L);
+	chn_params->N = factory::Modem::get_buffer_size_after_modulation(params_EXIT.mdm->type,
+	                                                                 params_EXIT.cdc->K,
+	                                                                 params_EXIT.mdm->bps,
+	                                                                 params_EXIT.mdm->cpm_upf,
+	                                                                 params_EXIT.mdm->cpm_L);
 
 	auto channel = std::unique_ptr<module::Channel<R>>(chn_params->template build<R>());
 	channel->set_noise(this->noise_a);
