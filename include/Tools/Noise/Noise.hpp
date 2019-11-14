@@ -52,7 +52,6 @@ public:
 	static inline std::string type_to_str(Noise_type t);
 
 protected:
-	void notify_noise_changed();
 	virtual void check() const;
 };
 }
