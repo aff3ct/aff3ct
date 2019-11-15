@@ -5,6 +5,8 @@
 #ifndef CHANNEL_AWGN_LLR_HPP_
 #define CHANNEL_AWGN_LLR_HPP_
 
+#include <memory>
+
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Gaussian_noise_generator.hpp"
 #include "Module/Channel/Channel.hpp"
 
@@ -17,7 +19,7 @@ class Channel_AWGN_LLR : public Channel<R>
 {
 private:
 	const bool add_users;
-	tools::Gaussian_gen<R>* gaussian_generator;
+	std::unique_ptr<tools::Gaussian_gen<R>> gaussian_generator;
 	const bool is_autoalloc_gaussian_gen;
 
 public:
@@ -32,7 +34,7 @@ public:
 	                          const bool add_users = false,
 	                          const int n_frames = 1);
 
-	virtual ~Channel_AWGN_LLR();
+	virtual ~Channel_AWGN_LLR() = default;
 
 	void set_seed(const int seed);
 

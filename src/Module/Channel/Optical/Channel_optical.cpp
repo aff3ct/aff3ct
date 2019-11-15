@@ -22,7 +22,7 @@ Channel_optical<R>
                   tools::User_pdf_noise_generator<R>& pdf_noise_generator,
                   const int n_frames)
 : Channel<R>(N, n_frames),
-  pdf_noise_generator(&pdf_noise_generator),
+  pdf_noise_generator(pdf_noise_generator.clone()),
   is_autoalloc_pdf_gen(false)
 {
 	const std::string name = "Channel_optical";
@@ -30,35 +30,26 @@ Channel_optical<R>
 }
 
 template <typename R>
-Channel_optical<R>
-::Channel_optical(const int N,
-                  const tools::Distributions<R>& dist,
-                  const tools::User_pdf_noise_generator_implem implem,
-                  const int seed,
-                  const int n_frames)
-: Channel<R>(N, n_frames),
-  pdf_noise_generator(nullptr),
-  is_autoalloc_pdf_gen(true)
+tools::User_pdf_noise_generator<R>* create_user_pdf_noise_generator(const tools::Distributions<R>& dist,
+                                                                   const tools::User_pdf_noise_generator_implem implem,
+                                                                   const int seed)
 {
-	const std::string name = "Channel_optical";
-	this->set_name(name);
-
 	switch (implem)
 	{
 		case tools::User_pdf_noise_generator_implem::STD:
-			this->pdf_noise_generator = new tools::User_pdf_noise_generator_std<R>(dist, seed);
+			return new tools::User_pdf_noise_generator_std<R>(dist, seed);
 			break;
 		case tools::User_pdf_noise_generator_implem::FAST:
-			this->pdf_noise_generator = new tools::User_pdf_noise_generator_fast<R>(dist, seed);
+			return new tools::User_pdf_noise_generator_fast<R>(dist, seed);
 			break;
 #ifdef AFF3CT_CHANNEL_GSL
 		case tools::User_pdf_noise_generator_implem::GSL:
-			this->pdf_noise_generator = new tools::User_pdf_noise_generator_GSL<R>(dist, seed);
+			return new tools::User_pdf_noise_generator_GSL<R>(dist, seed);
 			break;
 #endif
 #ifdef AFF3CT_CHANNEL_MKL
 		case tools::User_pdf_noise_generator_implem::MKL:
-			this->pdf_noise_generator = new tools::User_pdf_noise_generator_MKL<R>(dist, seed);
+			return new tools::User_pdf_noise_generator_MKL<R>(dist, seed);
 			break;
 #endif
 		default:
@@ -70,10 +61,17 @@ Channel_optical<R>
 
 template <typename R>
 Channel_optical<R>
-::~Channel_optical()
+::Channel_optical(const int N,
+                  const tools::Distributions<R>& dist,
+                  const tools::User_pdf_noise_generator_implem implem,
+                  const int seed,
+                  const int n_frames)
+: Channel<R>(N, n_frames),
+  pdf_noise_generator(create_user_pdf_noise_generator<R>(dist, implem, seed)),
+  is_autoalloc_pdf_gen(true)
 {
-	if (this->is_autoalloc_pdf_gen)
-		delete pdf_noise_generator;
+	const std::string name = "Channel_optical";
+	this->set_name(name);
 }
 
 template <typename R>

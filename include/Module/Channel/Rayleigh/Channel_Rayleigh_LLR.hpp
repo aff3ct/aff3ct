@@ -5,6 +5,7 @@
 #ifndef CHANNEL_RAYLEIGH_LLR_HPP_
 #define CHANNEL_RAYLEIGH_LLR_HPP_
 
+#include <memory>
 #include <vector>
 
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Gaussian_noise_generator.hpp"
@@ -21,7 +22,7 @@ private:
 	const bool complex;
 	const bool add_users;
 	std::vector<R> gains;
-	tools::Gaussian_noise_generator<R> *gaussian_generator;
+	std::unique_ptr<tools::Gaussian_noise_generator<R>> gaussian_generator;
 	const bool is_autoalloc_gaussian_gen;
 
 public:
@@ -38,7 +39,7 @@ public:
 	                     const bool add_users = false,
 	                     const int n_frames = 1);
 
-	virtual ~Channel_Rayleigh_LLR();
+	virtual ~Channel_Rayleigh_LLR() = default;
 
 	void set_seed(const int seed);
 

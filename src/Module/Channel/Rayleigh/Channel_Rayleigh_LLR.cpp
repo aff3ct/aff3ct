@@ -29,7 +29,7 @@ Channel_Rayleigh_LLR<R>
   complex(complex),
   add_users(add_users),
   gains(complex ? N * n_frames : 2 * N * n_frames),
-  gaussian_generator(&gaussian_generator),
+  gaussian_generator(gaussian_generator.clone()),
   is_autoalloc_gaussian_gen(false)
 {
 	const std::string name = "Channel_Rayleigh_LLR";
@@ -44,46 +44,24 @@ Channel_Rayleigh_LLR<R>
 }
 
 template <typename R>
-Channel_Rayleigh_LLR<R>
-::Channel_Rayleigh_LLR(const int N,
-                       const bool complex,
-                       const tools::Gaussian_noise_generator_implem implem,
-                       const int seed,
-                       const bool add_users,
-                       const int n_frames)
-: Channel<R>(N, n_frames),
-  complex(complex),
-  add_users(add_users),
-  gains(complex ? N * n_frames : 2 * N * n_frames),
-  gaussian_generator(nullptr),
-  is_autoalloc_gaussian_gen(true)
+tools::Gaussian_gen<R>* create_gaussian_generator(const tools::Gaussian_noise_generator_implem implem, const int seed)
 {
-	const std::string name = "Channel_Rayleigh_LLR";
-	this->set_name(name);
-
-	if (complex && (N % 2))
-	{
-		std::stringstream message;
-		message << "'N' has to be divisible by 2 ('N' = " << N << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	switch (implem)
 	{
 		case tools::Gaussian_noise_generator_implem::STD:
-			this->gaussian_generator = new tools::Gaussian_noise_generator_std<R>(seed);
+			return new tools::Gaussian_noise_generator_std<R>(seed);
 			break;
 		case tools::Gaussian_noise_generator_implem::FAST:
-			this->gaussian_generator = new tools::Gaussian_noise_generator_fast<R>(seed);
+			return new tools::Gaussian_noise_generator_fast<R>(seed);
 			break;
 #ifdef AFF3CT_CHANNEL_GSL
 		case tools::Gaussian_noise_generator_implem::GSL:
-			this->gaussian_generator = new tools::Gaussian_noise_generator_GSL<R>(seed);
+			return new tools::Gaussian_noise_generator_GSL<R>(seed);
 			break;
 #endif
 #ifdef AFF3CT_CHANNEL_MKL
 		case tools::Gaussian_noise_generator_implem::MKL:
-			this->gaussian_generator = new tools::Gaussian_noise_generator_MKL<R>(seed);
+			return new tools::Gaussian_noise_generator_MKL<R>(seed);
 			break;
 #endif
 		default:
@@ -95,10 +73,28 @@ Channel_Rayleigh_LLR<R>
 
 template <typename R>
 Channel_Rayleigh_LLR<R>
-::~Channel_Rayleigh_LLR()
+::Channel_Rayleigh_LLR(const int N,
+                       const bool complex,
+                       const tools::Gaussian_noise_generator_implem implem,
+                       const int seed,
+                       const bool add_users,
+                       const int n_frames)
+: Channel<R>(N, n_frames),
+  complex(complex),
+  add_users(add_users),
+  gains(complex ? N * n_frames : 2 * N * n_frames),
+  gaussian_generator(create_gaussian_generator<R>(implem, seed)),
+  is_autoalloc_gaussian_gen(true)
 {
-	if (this->is_autoalloc_gaussian_gen)
-		delete gaussian_generator;
+	const std::string name = "Channel_Rayleigh_LLR";
+	this->set_name(name);
+
+	if (complex && (N % 2))
+	{
+		std::stringstream message;
+		message << "'N' has to be divisible by 2 ('N' = " << N << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename R>

@@ -5,6 +5,8 @@
 #ifndef CHANNEL_BEC_HPP_
 #define CHANNEL_BEC_HPP_
 
+#include <memory>
+
 #include "Tools/types.h"
 #include "Tools/Algo/Draw_generator/Event_generator/Event_generator.hpp"
 #include "Module/Channel/User/Channel_user_be.hpp"
@@ -17,7 +19,7 @@ template <typename R = float>
 class Channel_binary_erasure : public Channel<R>
 {
 protected:
-	tools::Event_generator<R> *event_generator;
+	std::unique_ptr<tools::Event_generator<R>> event_generator;
 	const bool is_autoalloc_event_gen;
 
 	using E = typename tools::matching_types<R>::B;
@@ -32,7 +34,7 @@ public:
 	                                const int seed = 0,
 	                                const int n_frames = 1);
 
-	virtual ~Channel_binary_erasure();
+	virtual ~Channel_binary_erasure() = default;
 
 	void set_seed(const int seed);
 

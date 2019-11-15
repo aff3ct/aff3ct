@@ -5,6 +5,8 @@
 #ifndef CHANNEL_BSC_HPP_
 #define CHANNEL_BSC_HPP_
 
+#include <memory>
+
 #include "Tools/types.h"
 #include "Tools/Algo/Draw_generator/Event_generator/Event_generator.hpp"
 #include "Module/Channel/Channel.hpp"
@@ -17,7 +19,7 @@ template <typename R = float>
 class Channel_binary_symmetric : public Channel<R>
 {
 protected:
-	tools::Event_generator<R> *event_generator;
+	std::unique_ptr<tools::Event_generator<R>> event_generator;
 	const bool is_autoalloc_event_gen;
 
 	using E = typename tools::matching_types<R>::B; //Event type
@@ -32,7 +34,7 @@ public:
 	                                  const int seed = 0,
 	                                  const int n_frames = 1);
 
-	virtual ~Channel_binary_symmetric();
+	virtual ~Channel_binary_symmetric() = default;
 
 	void set_seed(const int seed);
 

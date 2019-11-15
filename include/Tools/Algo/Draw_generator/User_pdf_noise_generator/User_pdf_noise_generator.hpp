@@ -36,8 +36,8 @@ protected:
 
 public:
 	explicit User_pdf_noise_generator(const tools::Distributions<R>& dists);
-
 	virtual ~User_pdf_noise_generator() = default;
+	virtual User_pdf_noise_generator<R>* clone() = 0;
 
 	const Distributions<R>& get_distributions() const;
 

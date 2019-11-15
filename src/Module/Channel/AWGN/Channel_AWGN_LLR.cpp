@@ -24,7 +24,7 @@ Channel_AWGN_LLR<R>
                    const int n_frames)
 : Channel<R>(N, n_frames),
   add_users(add_users),
-  gaussian_generator(&gaussian_generator),
+  gaussian_generator(gaussian_generator.clone()),
   is_autoalloc_gaussian_gen(false)
 {
 	const std::string name = "Channel_AWGN_LLR";
@@ -32,36 +32,24 @@ Channel_AWGN_LLR<R>
 }
 
 template <typename R>
-Channel_AWGN_LLR<R>
-::Channel_AWGN_LLR(const int N,
-                   const tools::Gaussian_noise_generator_implem implem,
-                   const int seed,
-                   const bool add_users,
-                   const int n_frames)
-: Channel<R>(N, n_frames),
-  add_users(add_users),
-  gaussian_generator(nullptr),
-  is_autoalloc_gaussian_gen(true)
+tools::Gaussian_gen<R>* create_gaussian_generator(const tools::Gaussian_noise_generator_implem implem, const int seed)
 {
-	const std::string name = "Channel_AWGN_LLR";
-	this->set_name(name);
-
 	switch (implem)
 	{
 		case tools::Gaussian_noise_generator_implem::STD:
-			this->gaussian_generator = new tools::Gaussian_noise_generator_std<R>(seed);
+			return new tools::Gaussian_noise_generator_std<R>(seed);
 			break;
 		case tools::Gaussian_noise_generator_implem::FAST:
-			this->gaussian_generator = new tools::Gaussian_noise_generator_fast<R>(seed);
+			return new tools::Gaussian_noise_generator_fast<R>(seed);
 			break;
 #ifdef AFF3CT_CHANNEL_GSL
 		case tools::Gaussian_noise_generator_implem::GSL:
-			this->gaussian_generator = new tools::Gaussian_noise_generator_GSL<R>(seed);
+			return new tools::Gaussian_noise_generator_GSL<R>(seed);
 			break;
 #endif
 #ifdef AFF3CT_CHANNEL_MKL
 		case tools::Gaussian_noise_generator_implem::MKL:
-			this->gaussian_generator = new tools::Gaussian_noise_generator_MKL<R>(seed);
+			return new tools::Gaussian_noise_generator_MKL<R>(seed);
 			break;
 #endif
 		default:
@@ -73,10 +61,18 @@ Channel_AWGN_LLR<R>
 
 template <typename R>
 Channel_AWGN_LLR<R>
-::~Channel_AWGN_LLR()
+::Channel_AWGN_LLR(const int N,
+                   const tools::Gaussian_noise_generator_implem implem,
+                   const int seed,
+                   const bool add_users,
+                   const int n_frames)
+: Channel<R>(N, n_frames),
+  add_users(add_users),
+  gaussian_generator(create_gaussian_generator<R>(implem, seed)),
+  is_autoalloc_gaussian_gen(true)
 {
-	if (this->is_autoalloc_gaussian_gen)
-		delete gaussian_generator;
+	const std::string name = "Channel_AWGN_LLR";
+	this->set_name(name);
 }
 
 template <typename R>

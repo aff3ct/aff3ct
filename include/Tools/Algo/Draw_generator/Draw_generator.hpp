@@ -14,8 +14,8 @@ class Draw_generator
 {
 public:
 	Draw_generator() = default;
-
 	virtual ~Draw_generator() = default;
+	virtual Draw_generator<R>* clone() = 0;
 
 	virtual void set_seed(const int seed) = 0;
 };

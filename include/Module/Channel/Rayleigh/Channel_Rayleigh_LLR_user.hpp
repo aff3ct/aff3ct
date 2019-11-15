@@ -5,6 +5,7 @@
 #ifndef CHANNEL_RAYLEIGH_LLR_USER_HPP_
 #define CHANNEL_RAYLEIGH_LLR_USER_HPP_
 
+#include <memory>
 #include <vector>
 #include <string>
 
@@ -22,7 +23,7 @@ protected:
 	const bool complex;
 	const bool add_users;
 	std::vector<R> gains;
-	tools::Gaussian_noise_generator<R> *gaussian_generator;
+	std::unique_ptr<tools::Gaussian_noise_generator<R>> gaussian_generator;
 	const bool is_autoalloc_gaussian_gen;
 
 	std::vector<R> gains_stock;
@@ -48,7 +49,7 @@ public:
 	                          const bool add_users = false,
 	                          const int n_frames = 1);
 
-	virtual ~Channel_Rayleigh_LLR_user();
+	virtual ~Channel_Rayleigh_LLR_user() = default;
 
 	void set_seed(const int seed);
 

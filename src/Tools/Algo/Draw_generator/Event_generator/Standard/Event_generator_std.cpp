@@ -12,6 +12,13 @@ Event_generator_std<R,E>
 }
 
 template <typename R, typename E>
+Event_generator_std<R,E>* Event_generator_std<R,E>
+::clone()
+{
+	return new Event_generator_std<R,E>(*this);
+}
+
+template <typename R, typename E>
 void Event_generator_std<R,E>
 ::set_seed(const int seed)
 {

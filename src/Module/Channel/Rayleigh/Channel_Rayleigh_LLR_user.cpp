@@ -32,7 +32,7 @@ Channel_Rayleigh_LLR_user<R>
   complex(complex),
   add_users(add_users),
   gains(N * n_frames),
-  gaussian_generator(&gaussian_generator),
+  gaussian_generator(gaussian_generator.clone()),
   is_autoalloc_gaussian_gen(false),
   gain_occur(gain_occurrences),
   current_gain_occur(0),
@@ -51,6 +51,34 @@ Channel_Rayleigh_LLR_user<R>
 }
 
 template <typename R>
+tools::Gaussian_gen<R>* create_gaussian_generator(const tools::Gaussian_noise_generator_implem implem, const int seed)
+{
+	switch (implem)
+	{
+		case tools::Gaussian_noise_generator_implem::STD:
+			return new tools::Gaussian_noise_generator_std<R>(seed);
+			break;
+		case tools::Gaussian_noise_generator_implem::FAST:
+			return new tools::Gaussian_noise_generator_fast<R>(seed);
+			break;
+#ifdef AFF3CT_CHANNEL_GSL
+		case tools::Gaussian_noise_generator_implem::GSL:
+			return new tools::Gaussian_noise_generator_GSL<R>(seed);
+			break;
+#endif
+#ifdef AFF3CT_CHANNEL_MKL
+		case tools::Gaussian_noise_generator_implem::MKL:
+			return new tools::Gaussian_noise_generator_MKL<R>(seed);
+			break;
+#endif
+		default:
+			std::stringstream message;
+			message << "Unsupported 'implem' ('implem' = " << (int)implem << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	};
+}
+
+template <typename R>
 Channel_Rayleigh_LLR_user<R>
 ::Channel_Rayleigh_LLR_user(const int N,
                             const bool complex,
@@ -64,7 +92,7 @@ Channel_Rayleigh_LLR_user<R>
   complex(complex),
   add_users(add_users),
   gains(N * n_frames),
-  gaussian_generator(nullptr),
+  gaussian_generator(create_gaussian_generator<R>(implem, seed)),
   is_autoalloc_gaussian_gen(true),
   gain_occur(gain_occurrences),
   current_gain_occur(0),
@@ -73,30 +101,6 @@ Channel_Rayleigh_LLR_user<R>
 	const std::string name = "Channel_Rayleigh_LLR_user";
 	this->set_name(name);
 
-	switch (implem)
-	{
-		case tools::Gaussian_noise_generator_implem::STD:
-			this->gaussian_generator = new tools::Gaussian_noise_generator_std<R>(seed);
-			break;
-		case tools::Gaussian_noise_generator_implem::FAST:
-			this->gaussian_generator = new tools::Gaussian_noise_generator_fast<R>(seed);
-			break;
-#ifdef AFF3CT_CHANNEL_GSL
-		case tools::Gaussian_noise_generator_implem::GSL:
-			this->gaussian_generator = new tools::Gaussian_noise_generator_GSL<R>(seed);
-			break;
-#endif
-#ifdef AFF3CT_CHANNEL_MKL
-		case tools::Gaussian_noise_generator_implem::MKL:
-			this->gaussian_generator = new tools::Gaussian_noise_generator_MKL<R>(seed);
-			break;
-#endif
-		default:
-			std::stringstream message;
-			message << "Unsupported 'implem' ('implem' = " << (int)implem << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	};
-
 	if (complex || add_users)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Arguments 'complex' and 'add_users' are not supported yet.");
 
@@ -104,14 +108,6 @@ Channel_Rayleigh_LLR_user<R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Argument 'gain_occurrences' must be strictly positive.");
 
 	read_gains(gains_filename);
-}
-
-template <typename R>
-Channel_Rayleigh_LLR_user<R>
-::~Channel_Rayleigh_LLR_user()
-{
-	if (this->is_autoalloc_gaussian_gen)
-		delete gaussian_generator;
 }
 
 template <typename R>

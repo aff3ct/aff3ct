@@ -23,7 +23,7 @@ Channel_binary_symmetric<R>
                            tools::Event_generator<R> &event_generator,
                            const int n_frames)
 : Channel<R>(N, n_frames),
-  event_generator(&event_generator),
+  event_generator(event_generator.clone()),
   is_autoalloc_event_gen(false)
 {
 	const std::string name = "Channel_binary_symmetric";
@@ -31,34 +31,24 @@ Channel_binary_symmetric<R>
 }
 
 template <typename R>
-Channel_binary_symmetric<R>
-::Channel_binary_symmetric(const int N,
-                           const tools::Event_generator_implem implem,
-                           const int seed,
-                           const int n_frames)
-: Channel<R>(N, n_frames),
-  event_generator(nullptr),
-  is_autoalloc_event_gen(true)
+tools::Event_generator<R>* create_event_generator(const tools::Event_generator_implem implem, const int seed)
 {
-	const std::string name = "Channel_binary_symmetric";
-	this->set_name(name);
-
 	switch (implem)
 	{
 		case tools::Event_generator_implem::STD:
-			this->event_generator = new tools::Event_generator_std<R>(seed);
+			return new tools::Event_generator_std<R>(seed);
 			break;
 		case tools::Event_generator_implem::FAST:
-			this->event_generator = new tools::Event_generator_fast<R>(seed);
+			return new tools::Event_generator_fast<R>(seed);
 			break;
 #ifdef AFF3CT_CHANNEL_GSL
 		case tools::Event_generator_implem::GSL:
-			this->event_generator = new tools::Event_generator_GSL<R>(seed);
+			return new tools::Event_generator_GSL<R>(seed);
 			break;
 #endif
 #ifdef AFF3CT_CHANNEL_MKL
 		case tools::Event_generator_implem::MKL:
-			this->event_generator = new tools::Event_generator_MKL<R>(seed);
+			return new tools::Event_generator_MKL<R>(seed);
 			break;
 #endif
 		default:
@@ -70,10 +60,16 @@ Channel_binary_symmetric<R>
 
 template <typename R>
 Channel_binary_symmetric<R>
-::~Channel_binary_symmetric()
+::Channel_binary_symmetric(const int N,
+                           const tools::Event_generator_implem implem,
+                           const int seed,
+                           const int n_frames)
+: Channel<R>(N, n_frames),
+  event_generator(create_event_generator<R>(implem, seed)),
+  is_autoalloc_event_gen(true)
 {
-	if (this->is_autoalloc_event_gen)
-		delete event_generator;
+	const std::string name = "Channel_binary_symmetric";
+	this->set_name(name);
 }
 
 template <typename R>
