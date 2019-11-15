@@ -53,6 +53,7 @@ public:
 	explicit Module(const int n_frames = 1);
 
 #ifndef AFF3CT_SYSTEMC_MODULE
+	virtual void copy(const Module &m);
 	virtual Module* clone() const;
 #endif
 

@@ -22,27 +22,34 @@ Module
 }
 
 #ifndef AFF3CT_SYSTEMC_MODULE
-Module* Module
-::clone() const
-{
-	auto m = new Module(*this);
-	m->tasks_with_nullptr.clear();
-	m->tasks.clear();
 
-	for (auto &t : this->tasks_with_nullptr)
+void Module
+::copy(const Module &m)
+{
+	this->tasks_with_nullptr.clear();
+	this->tasks.clear();
+
+	for (auto &t : m.tasks_with_nullptr)
 	{
 		if (t == nullptr)
-			m->tasks_with_nullptr.push_back(nullptr);
+			this->tasks_with_nullptr.push_back(nullptr);
 		else
 		{
 			auto t_new = std::shared_ptr<Task>(t->clone());
-			m->tasks_with_nullptr.push_back(t_new);
-			m->tasks.push_back(std::move(t_new));
+			this->tasks_with_nullptr.push_back(t_new);
+			this->tasks.push_back(std::move(t_new));
 		}
 	}
+}
 
+Module* Module
+::clone() const
+{
+	auto m = new Module(*this); // soft copy constructor
+	m->copy(*this); // hard copy
 	return m;
 }
+
 #endif
 
 int Module
