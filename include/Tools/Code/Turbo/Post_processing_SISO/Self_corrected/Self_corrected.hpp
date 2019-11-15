@@ -20,7 +20,6 @@ class Self_corrected : public Post_processing_SISO<B,R>
 private:
 	const int K;
 	const int simd_inter_frame_level;
-
 	const int m;
 	const int M;
 

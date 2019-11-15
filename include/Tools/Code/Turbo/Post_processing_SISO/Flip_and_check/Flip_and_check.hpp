@@ -27,7 +27,6 @@ private:
 	mipp::vector<B> fnc_ite;
 
 public:
-
 	Flip_and_check(const int             K,
 	               const int             n_ite,
 	                     module::CRC<B> &crc,

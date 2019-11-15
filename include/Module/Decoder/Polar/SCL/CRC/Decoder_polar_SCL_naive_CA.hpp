@@ -17,7 +17,7 @@ template <typename B, typename R, tools::proto_f<R> F = tools::f_LLR, tools::pro
 class Decoder_polar_SCL_naive_CA : public Decoder_polar_SCL_naive<B,R,F,G>
 {
 protected:
-	CRC<B>& crc;
+	CRC<B> crc;
 
 public:
 	Decoder_polar_SCL_naive_CA(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,

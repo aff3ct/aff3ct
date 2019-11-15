@@ -18,9 +18,9 @@ template <typename B = int, typename R = float>
 class CRC_checker : public Post_processing_SISO<B,R>
 {
 protected:
-	const int             start_crc_check_ite;
-	const int             simd_inter_frame_level;
-	      module::CRC<B> &crc;
+	const int            start_crc_check_ite;
+	const int            simd_inter_frame_level;
+	      module::CRC<B> crc;
 
 public:
 	CRC_checker(module::CRC<B> &crc, const int start_crc_check_ite = 2, const int simd_inter_frame_level = 1);

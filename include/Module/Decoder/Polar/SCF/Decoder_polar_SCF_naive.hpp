@@ -22,7 +22,7 @@ template <typename B = int, typename R = float, tools::proto_f<  R> F = tools::f
 class Decoder_polar_SCF_naive : public Decoder_polar_SC_naive<B,R,F,G,H>
 {
 protected:
-	CRC<B>& crc;
+	CRC<B> crc;
 
 	const int n_flips;
 	std::vector<int> index;

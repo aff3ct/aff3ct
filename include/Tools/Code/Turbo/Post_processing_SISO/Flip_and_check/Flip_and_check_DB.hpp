@@ -20,7 +20,6 @@ class Flip_and_check_DB : public CRC_checker_DB<B,R>
 {
 private:
 	const int K;
-
 	const int q;
 	mipp::vector<R> metric;
 	mipp::vector<B> s_tmp;

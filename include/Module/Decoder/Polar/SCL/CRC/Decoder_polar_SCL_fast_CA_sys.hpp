@@ -30,7 +30,7 @@ private:
 	bool fast_store;
 
 protected:
-	CRC<B>& crc;
+	CRC<B> crc;
 	mipp::vector<B> U_test;
 
 public:
