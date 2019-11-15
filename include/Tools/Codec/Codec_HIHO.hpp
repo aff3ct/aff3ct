@@ -21,7 +21,7 @@ private:
 	std::shared_ptr<module::Decoder_HIHO<B>> decoder_hiho;
 
 public:
-	Codec_HIHO(const int K, const int N_cw, const int N, const int tail_length = 0, const int n_frames = 1);
+	Codec_HIHO(const int K, const int N_cw, const int N, const int n_frames = 1);
 
 	virtual ~Codec_HIHO() = default;
 

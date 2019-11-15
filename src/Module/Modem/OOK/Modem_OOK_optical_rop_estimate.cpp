@@ -16,17 +16,17 @@ using namespace aff3ct::module;
 
 template <typename B, typename R, typename Q>
 Modem_OOK_optical_rop_estimate<B,R,Q>
-::Modem_OOK_optical_rop_estimate(const int N, std::vector<size_t> ROP_known_bits, const tools::Distributions<R>& dist,
+::Modem_OOK_optical_rop_estimate(const int N, const std::vector<size_t> &ROP_known_bits, const tools::Distributions<R>& dist,
                                  const int n_frames)
 : module::Modem_OOK<B,R,Q>(N, n_frames),
-  ROP_known_bits(std::move(ROP_known_bits)),
+  ROP_known_bits(ROP_known_bits),
   dist(dist),
-  rop_noise(new tools::ROP<>(0))
+  rop_noise(0)
 {
 	const std::string name = "Modem_OOK_optical_rop_estimate";
 	this->set_name(name);
 
-	this->set_noise(*this->rop_noise);
+	this->set_noise(this->rop_noise);
 
 	init();
 }
@@ -37,12 +37,12 @@ Modem_OOK_optical_rop_estimate<B,R,Q>
 : module::Modem_OOK<B,R,Q>(N, n_frames),
   ROP_known_bits(n_known_bits),
   dist(dist),
-  rop_noise(new tools::ROP<>(0))
+  rop_noise(0)
 {
 	const std::string name = "Modem_OOK_optical_rop_estimate";
 	this->set_name(name);
 
-	this->set_noise(*this->rop_noise);
+	this->set_noise(this->rop_noise);
 
 	std::iota(ROP_known_bits.begin(), ROP_known_bits.end(), 0);
 

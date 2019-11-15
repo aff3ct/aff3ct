@@ -27,7 +27,7 @@ private:
 public:
 	explicit Event_generator_fast(const int seed = 0);
 	virtual ~Event_generator_fast() = default;
-	virtual Event_generator_fast<R,E>* clone();
+	virtual Event_generator_fast<R,E>* clone() const;
 
 	virtual void set_seed(const int seed);
 	virtual void generate(E *draw, const unsigned length, const R event_probability);

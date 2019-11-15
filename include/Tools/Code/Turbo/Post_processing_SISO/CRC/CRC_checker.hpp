@@ -23,7 +23,7 @@ protected:
 	      module::CRC<B> crc;
 
 public:
-	CRC_checker(module::CRC<B> &crc, const int start_crc_check_ite = 2, const int simd_inter_frame_level = 1);
+	CRC_checker(const module::CRC<B> &crc, const int start_crc_check_ite = 2, const int simd_inter_frame_level = 1);
 
 	virtual ~CRC_checker() = default;
 

@@ -12,8 +12,8 @@ template <typename B, typename Q>
 Codec_repetition<B,Q>
 ::Codec_repetition(const factory::Encoder_repetition &enc_params,
                    const factory::Decoder_repetition &dec_params)
-: Codec     <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames)
+: Codec     <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames),
+  Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames)
 {
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)

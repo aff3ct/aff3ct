@@ -34,7 +34,7 @@ protected:
 public:
 	Channel_Rayleigh_LLR_user(const int N,
 	                          const bool complex,
-	                          tools::Gaussian_gen<R> &gaussian_generator,
+	                          const tools::Gaussian_gen<R> &gaussian_generator,
 	                          const std::string& gains_filename,
 	                          const int gain_occurrences = 1,
 	                          const bool add_users = false,

@@ -27,7 +27,7 @@ private:
 public:
 	explicit User_pdf_noise_generator_MKL(const tools::Distributions<R>& dists, const int seed = 0, Interpolation_type inter_type = Interpolation_type::NEAREST);
 	virtual ~User_pdf_noise_generator_MKL();
-	virtual User_pdf_noise_generator_MKL<R>* clone();
+	virtual User_pdf_noise_generator_MKL<R>* clone() const;
 
 	virtual void set_seed(const int seed);
 

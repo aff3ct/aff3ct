@@ -26,7 +26,7 @@ protected:
 
 public:
 	Channel_binary_erasure(const int N,
-	                       tools::Event_generator<R> &event_generator,
+	                       const tools::Event_generator<R> &event_generator,
 	                       const int n_frames = 1);
 
 	explicit Channel_binary_erasure(const int N,

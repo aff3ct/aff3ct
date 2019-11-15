@@ -35,11 +35,11 @@ protected:
 
 public:
 	Decoder_polar_SCL_MEM_fast_CA_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-	                                  CRC<B>& crc, const int n_frames = 1);
+	                                  const CRC<B>& crc, const int n_frames = 1);
 
 	Decoder_polar_SCL_MEM_fast_CA_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
 	                                  std::vector<std::unique_ptr<tools::Pattern_polar_i>> &&polar_patterns,
-	                                  const int idx_r0, const int idx_r1, CRC<B>& crc, const int n_frames = 1);
+	                                  const int idx_r0, const int idx_r1, const CRC<B>& crc, const int n_frames = 1);
 
 	virtual ~Decoder_polar_SCL_MEM_fast_CA_sys() = default;
 

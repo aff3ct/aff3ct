@@ -19,7 +19,7 @@ template <typename B = int, typename Q = float>
 class Codec_SIHO_HIHO : public Codec_SIHO<B,Q>, public Codec_HIHO<B,Q>
 {
 public:
-	Codec_SIHO_HIHO(const int K, const int N_cw, const int N, const int tail_length = 0, const int n_frames = 1);
+	Codec_SIHO_HIHO(const int K, const int N_cw, const int N, const int n_frames = 1);
 
 	virtual ~Codec_SIHO_HIHO() = default;
 

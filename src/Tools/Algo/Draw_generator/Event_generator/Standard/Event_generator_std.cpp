@@ -13,7 +13,7 @@ Event_generator_std<R,E>
 
 template <typename R, typename E>
 Event_generator_std<R,E>* Event_generator_std<R,E>
-::clone()
+::clone() const
 {
 	return new Event_generator_std<R,E>(*this);
 }

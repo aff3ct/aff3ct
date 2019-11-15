@@ -19,7 +19,7 @@ using namespace aff3ct::module;
 template <typename R>
 Channel_AWGN_LLR<R>
 ::Channel_AWGN_LLR(const int N,
-                   tools::Gaussian_gen<R> &gaussian_generator,
+                   const tools::Gaussian_gen<R> &gaussian_generator,
                    const bool add_users,
                    const int n_frames)
 : Channel<R>(N, n_frames),

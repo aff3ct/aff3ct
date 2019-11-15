@@ -14,8 +14,8 @@ template <typename B, typename Q>
 Codec_uncoded<B,Q>
 ::Codec_uncoded(const factory::Encoder_NO &enc_params,
                 const factory::Decoder_NO &dec_params)
-: Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames)
+: Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames),
+  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames)
 {
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)

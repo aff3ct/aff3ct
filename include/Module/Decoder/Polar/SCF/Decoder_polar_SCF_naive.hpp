@@ -28,9 +28,10 @@ protected:
 	std::vector<int> index;
 	int current_flip_index;
 	std::vector<tools::Binary_node<Contents_SC<B,R>>*> leaves;
+
 public:
 	Decoder_polar_SCF_naive(const int& K, const int& N, const std::vector<bool>& frozen_bits,
-	                        CRC<B>& crc, const int n_flips, const int n_frames = 1);
+	                        const CRC<B>& crc, const int n_flips, const int n_frames = 1);
 	virtual ~Decoder_polar_SCF_naive() = default;
 
 protected:

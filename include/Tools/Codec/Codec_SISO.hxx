@@ -9,8 +9,8 @@ namespace tools
 {
 template <typename B, typename Q>
 Codec_SISO<B,Q>
-::Codec_SISO(const int K, const int N_cw, const int N, const int tail_length, const int n_frames)
-: Codec<B,Q>(K, N_cw, N, tail_length, n_frames), decoder_siso(nullptr)
+::Codec_SISO(const int K, const int N_cw, const int N, const int n_frames)
+: Codec<B,Q>(K, N_cw, N, n_frames), decoder_siso(nullptr)
 {
 }
 

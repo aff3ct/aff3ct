@@ -38,12 +38,11 @@ protected :
 	const int K;
 	const int N_cw;
 	const int N;
-	const int tail_length;
 	Noise<> *noise;
 	uint32_t id_noise_changed_callback;
 
 public:
-	Codec(const int K, const int N_cw, const int N, const int tail_length = 0, const int n_frames = 1);
+	Codec(const int K, const int N_cw, const int N, const int n_frames = 1);
 
 	virtual ~Codec();
 

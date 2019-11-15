@@ -17,7 +17,7 @@ Event_generator_fast<R,E>
 
 template <typename R, typename E>
 Event_generator_fast<R,E>* Event_generator_fast<R,E>
-::clone()
+::clone() const
 {
 	return new Event_generator_fast<R,E>(*this);
 }

@@ -19,7 +19,7 @@ using namespace aff3ct::module;
 template <typename R>
 Channel_optical<R>
 ::Channel_optical(const int N,
-                  tools::User_pdf_noise_generator<R>& pdf_noise_generator,
+                  const tools::User_pdf_noise_generator<R>& pdf_noise_generator,
                   const int n_frames)
 : Channel<R>(N, n_frames),
   pdf_noise_generator(pdf_noise_generator.clone()),

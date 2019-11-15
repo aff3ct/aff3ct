@@ -20,8 +20,8 @@ Codec_turbo_DB<B,Q>
                  const factory::Interleaver        &itl_params,
                  const factory::Puncturer_turbo_DB *pct_params,
                  module::CRC<B>* crc)
-: Codec     <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames)
+: Codec     <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.n_frames),
+  Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.n_frames)
 {
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
@@ -117,7 +117,7 @@ Codec_turbo_DB<B,Q>
 			add_post_processings(dec_params.fnc->build<B,Q>(*crc));
 		}
 		else if (crc != nullptr && crc->get_size() > 0)
-			add_post_processings(new CRC_checker_DB<B,Q>(*crc,
+			add_post_processings(new CRC_checker_DB<B,Q>(static_cast<const module::CRC<B>>(*crc),
 			                                             dec_params.crc_start_ite,
 			                                             decoder_turbo->get_simd_inter_frame_level()));
 

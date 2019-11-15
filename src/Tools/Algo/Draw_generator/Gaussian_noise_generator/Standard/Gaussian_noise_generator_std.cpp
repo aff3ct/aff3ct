@@ -12,7 +12,7 @@ Gaussian_noise_generator_std<R>
 
 template <typename R>
 Gaussian_noise_generator_std<R>* Gaussian_noise_generator_std<R>
-::clone()
+::clone() const
 {
 	return new Gaussian_noise_generator_std<R>(*this);
 }

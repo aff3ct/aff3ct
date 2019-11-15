@@ -28,7 +28,7 @@ private:
 public:
 	Channel_Rayleigh_LLR(const int N,
 	                     const bool complex,
-	                     tools::Gaussian_gen<R> &gaussian_generator,
+	                     const tools::Gaussian_gen<R> &gaussian_generator,
 	                     const bool add_users = false,
 	                     const int n_frames = 1);
 

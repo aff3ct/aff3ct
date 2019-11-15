@@ -31,7 +31,7 @@ class Gaussian_noise_generator : public Draw_generator<R>
 public:
 	Gaussian_noise_generator() = default;
 	virtual ~Gaussian_noise_generator() = default;
-	virtual Gaussian_noise_generator<R>* clone() = 0;
+	virtual Gaussian_noise_generator<R>* clone() const = 0;
 
 	template <class A = std::allocator<R>>
 	void generate(std::vector<R,A> &noise, const R sigma, const R mu = 0.0);

@@ -29,7 +29,7 @@ Event_generator_MKL<R,E>
 
 template <typename R, typename E>
 Event_generator_MKL<R,E>* Event_generator_MKL<R,E>
-::clone()
+::clone() const
 {
 	Event_generator_MKL<R,E>* eg = new Event_generator_MKL<R,E>(*this);
 	VSLStreamStatePtr new_ptr;

@@ -23,7 +23,7 @@ class Modem_OOK_optical_rop_estimate : public Modem_OOK<B,R,Q>
 protected:
 	std::vector<size_t> ROP_known_bits;
 	const tools::Distributions<R>& dist;
-	std::unique_ptr<tools::Received_optical_power<>> rop_noise;
+	tools::Received_optical_power<> rop_noise;
 
 	std::vector<R> dist_ROP_range;
 	std::vector<R> dist_meanvoltage_p0;
@@ -33,7 +33,7 @@ public:
 	/*
 	 * The 'ROP_known_bits' positions of the original frame are used for the ROP estimation
 	 */
-	Modem_OOK_optical_rop_estimate(const int N, std::vector<size_t> ROP_known_bits,
+	Modem_OOK_optical_rop_estimate(const int N, const std::vector<size_t> &ROP_known_bits,
 	                               const tools::Distributions<R>& dist,
 	                               const int n_frames = 1);
 

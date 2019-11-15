@@ -7,9 +7,9 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 CRC_checker_DB<B,R>
-::CRC_checker_DB(module::CRC<B> &crc, const int start_crc_check_ite, const int simd_inter_frame_level)
+::CRC_checker_DB(const module::CRC<B> &crc, const int start_crc_check_ite, const int simd_inter_frame_level)
 : CRC_checker<B,R>(crc, start_crc_check_ite, simd_inter_frame_level),
-  apost           (2 * (crc.get_K() + crc.get_size()) * simd_inter_frame_level)
+  apost           (2 * (this->crc.get_K() + this->crc.get_size()) * simd_inter_frame_level)
 {
 }
 

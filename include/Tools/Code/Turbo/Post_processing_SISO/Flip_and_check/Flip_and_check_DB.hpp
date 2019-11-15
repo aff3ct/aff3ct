@@ -31,7 +31,7 @@ private:
 public:
 	Flip_and_check_DB(const int             K,
 	                  const int             n_ite,
-	                        module::CRC<B>  &crc,
+	                  const module::CRC<B> &crc,
 	                  const int             start_crc_check_ite,
 	                  const int             q,
 	                  const int             m                      =  1,

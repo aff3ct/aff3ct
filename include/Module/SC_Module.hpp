@@ -108,7 +108,7 @@ class SC_Module_container
 {
 protected:
 	Module &module;
-	std::vector<std::unique_ptr<SC_Module>> sc_modules;
+	std::vector<std::shared_ptr<SC_Module>> sc_modules;
 
 public:
 	explicit SC_Module_container(Module &module);

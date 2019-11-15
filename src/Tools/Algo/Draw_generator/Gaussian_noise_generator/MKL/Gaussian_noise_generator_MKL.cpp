@@ -26,7 +26,7 @@ Gaussian_noise_generator_MKL<R>
 
 template <typename R>
 Gaussian_noise_generator_MKL<R>* Gaussian_noise_generator_MKL<R>
-::clone()
+::clone() const
 {
 	Gaussian_noise_generator_MKL<R>* eg = new Gaussian_noise_generator_MKL<R>(*this);
 	VSLStreamStatePtr new_ptr;

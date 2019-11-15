@@ -24,7 +24,7 @@ private:
 public:
 	explicit Event_generator_GSL(const int seed = 0);
 	virtual ~Event_generator_GSL();
-	virtual Event_generator_GSL<R,E>* clone();
+	virtual Event_generator_GSL<R,E>* clone() const;
 
 	virtual void set_seed(const int seed);
 	virtual void generate(E *draw, const unsigned length, const R event_probability);

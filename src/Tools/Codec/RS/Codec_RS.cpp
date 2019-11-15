@@ -14,8 +14,8 @@ template <typename B, typename Q>
 Codec_RS<B,Q>
 ::Codec_RS(const factory::Encoder_RS &enc_params,
            const factory::Decoder_RS &dec_params)
-: Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  Codec_SIHO_HIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
+: Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames),
+  Codec_SIHO_HIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames),
   GF_poly(next_power_of_2(dec_params.N_cw) -1, dec_params.t)
 {
 	// ----------------------------------------------------------------------------------------------------- exceptions

@@ -22,7 +22,7 @@ template <typename R>
 Channel_Rayleigh_LLR<R>
 ::Channel_Rayleigh_LLR(const int N,
                        const bool complex,
-                       tools::Gaussian_gen<R> &gaussian_generator,
+                       const tools::Gaussian_gen<R> &gaussian_generator,
                        const bool add_users,
                        const int n_frames)
 : Channel<R>(N, n_frames),

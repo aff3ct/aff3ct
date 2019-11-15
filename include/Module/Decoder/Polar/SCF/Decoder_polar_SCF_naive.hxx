@@ -16,7 +16,7 @@ namespace module
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 Decoder_polar_SCF_naive<B,R,F,G,H>
 ::Decoder_polar_SCF_naive(const int& K, const int& N, const std::vector<bool>& frozen_bits,
-                          CRC<B>& crc, const int n_flips, const int n_frames)
+                          const CRC<B>& crc, const int n_flips, const int n_frames)
 : Decoder(K, N, n_frames, 1),
   Decoder_polar_SC_naive<B,R,F,G,H>(K, N, frozen_bits, n_frames),
   crc(crc),
@@ -27,10 +27,10 @@ Decoder_polar_SCF_naive<B,R,F,G,H>
 	const std::string name = "Decoder_polar_SCF_naive";
 	this->set_name(name);
 
-	if (crc.get_size() > K)
+	if (this->crc.get_size() > K)
 	{
 		std::stringstream message;
-		message << "'crc.get_size()' has to be equal or smaller than 'K' ('crc.get_size()' = " << crc.get_size()
+		message << "'crc.get_size()' has to be equal or smaller than 'K' ('crc.get_size()' = " << this->crc.get_size()
 		        << ", 'K' = " << K << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}

@@ -23,7 +23,7 @@ class Decoder_polar_SCF_naive_sys : public Decoder_polar_SCF_naive<B,R,F,G,H>
 {
 public:
 	Decoder_polar_SCF_naive_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits,
-	                            CRC<B>& crc, const int n_flips, const int n_frames = 1);
+	                            const CRC<B>& crc, const int n_flips, const int n_frames = 1);
 	virtual ~Decoder_polar_SCF_naive_sys() = default;
 
 protected:

@@ -15,10 +15,10 @@ class Decoder_LDPC_BP
 {
 protected:
 	const int                   n_ite;
-	const tools::Sparse_matrix  H; // In vertical way
-	                               // CN are along the columns -> H.get_n_cols() == M (often M=N-K)
-	                               // VN are along the rows    -> H.get_n_rows() == N
-	                               // automatically transpose in the constructor if needed
+	const tools::Sparse_matrix  &H; // In vertical way
+	                                // CN are along the columns -> H.get_n_cols() == M (often M=N-K)
+	                                // VN are along the rows    -> H.get_n_rows() == N
+	                                // automatically transpose in the constructor if needed
 	const bool                  enable_syndrome;
 	const int                   syndrome_depth;
 

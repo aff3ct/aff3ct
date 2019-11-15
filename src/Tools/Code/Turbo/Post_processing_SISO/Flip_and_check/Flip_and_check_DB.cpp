@@ -9,7 +9,7 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Flip_and_check_DB<B,R>
-::Flip_and_check_DB(const int K, const int n_ite, module::CRC<B> &crc, const int start_crc_check_ite,
+::Flip_and_check_DB(const int K, const int n_ite, const module::CRC<B> &crc, const int start_crc_check_ite,
                     const int q, const int m, const int M, const int s,
                     const int simd_inter_frame_level)
 : CRC_checker_DB<B,R>(crc, start_crc_check_ite, simd_inter_frame_level),

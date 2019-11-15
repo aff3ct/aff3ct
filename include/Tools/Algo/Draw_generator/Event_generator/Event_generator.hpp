@@ -31,7 +31,7 @@ class Event_generator : public Draw_generator<R>
 public:
 	Event_generator() = default;
 	virtual ~Event_generator() = default;
-	virtual Event_generator<R,E>* clone() = 0;
+	virtual Event_generator<R,E>* clone() const = 0;
 
 	template <class A = std::allocator<E>>
 	void generate(std::vector<E,A> &draw, const R event_probability);

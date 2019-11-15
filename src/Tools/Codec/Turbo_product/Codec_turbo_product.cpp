@@ -16,8 +16,8 @@ Codec_turbo_product<B,Q>
 ::Codec_turbo_product(const factory::Encoder_turbo_product &enc_params,
                       const factory::Decoder_turbo_product &dec_params,
                       const factory::Interleaver           &itl_params)
-: Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, 0, enc_params.n_frames),
-  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, 0, enc_params.n_frames),
+: Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames),
+  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames),
   GF_poly(dec_params.sub->N_cw, dec_params.sub->t)
 {
 	// ----------------------------------------------------------------------------------------------------- exceptions

@@ -10,8 +10,8 @@ namespace tools
 
 template <typename B, typename Q>
 Codec_SIHO<B,Q>
-::Codec_SIHO(const int K, const int N_cw, const int N, const int tail_length, const int n_frames)
-: Codec<B,Q>(K, N_cw, N, tail_length, n_frames)
+::Codec_SIHO(const int K, const int N_cw, const int N, const int n_frames)
+: Codec<B,Q>(K, N_cw, N, n_frames)
 {
 }
 

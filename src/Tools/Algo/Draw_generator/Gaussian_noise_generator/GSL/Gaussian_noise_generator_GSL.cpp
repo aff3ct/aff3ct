@@ -28,7 +28,7 @@ Gaussian_noise_generator_GSL<R>
 
 template <typename R>
 Gaussian_noise_generator_GSL<R>* Gaussian_noise_generator_GSL<R>
-::clone()
+::clone() const
 {
 	Gaussian_noise_generator_GSL<R>* eg = new Gaussian_noise_generator_GSL<R>(*this);
 	eg->rng = (void*)gsl_rng_alloc(gsl_rng_mt19937);

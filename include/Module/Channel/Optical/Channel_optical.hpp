@@ -30,7 +30,7 @@ protected:
 
 public:
 	Channel_optical(const int N,
-	                tools::User_pdf_noise_generator<R>& pdf_noise_generator,
+	                const tools::User_pdf_noise_generator<R>& pdf_noise_generator,
 	                const int n_frames = 1);
 
 	Channel_optical(const int N,

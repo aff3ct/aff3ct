@@ -13,8 +13,8 @@ template <typename B, typename Q>
 Codec_RSC_DB<B,Q>
 ::Codec_RSC_DB(const factory::Encoder_RSC_DB &enc_params,
                const factory::Decoder_RSC_DB &dec_params)
-: Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
-  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
+: Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames),
+  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames),
   buffered_encoding(enc_params.buffered)
 {
 	// ----------------------------------------------------------------------------------------------------- exceptions

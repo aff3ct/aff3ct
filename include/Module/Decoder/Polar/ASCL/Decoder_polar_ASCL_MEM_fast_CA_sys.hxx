@@ -10,8 +10,8 @@ namespace module
 template <typename B, typename R, class API_polar>
 Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 ::Decoder_polar_ASCL_MEM_fast_CA_sys(const int& K, const int& N, const int& L_max,
-                                     const std::vector<bool>& frozen_bits, CRC<B>& crc, const bool is_full_adaptive,
-                                     const int n_frames)
+                                     const std::vector<bool>& frozen_bits, const CRC<B>& crc,
+                                     const bool is_full_adaptive, const int n_frames)
 : Decoder(K, N, n_frames, 1),
   Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>(K, N, L_max, frozen_bits, crc, n_frames),
   sc_decoder                                      (K, N       , frozen_bits,      n_frames),
@@ -27,7 +27,7 @@ Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
                                      const std::vector<bool>& frozen_bits,
                                      std::vector<std::unique_ptr<tools::Pattern_polar_i>> &&polar_patterns,
                                      const int idx_r0, const int idx_r1,
-                                     CRC<B>& crc, const bool is_full_adaptive, const int n_frames)
+                                     const CRC<B>& crc, const bool is_full_adaptive, const int n_frames)
 : Decoder(K, N, n_frames, 1),
   Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>(K, N, L_max, frozen_bits, std::move(polar_patterns), idx_r0, idx_r1, crc, n_frames),
   sc_decoder                                      (K, N       , frozen_bits,                                                 n_frames),

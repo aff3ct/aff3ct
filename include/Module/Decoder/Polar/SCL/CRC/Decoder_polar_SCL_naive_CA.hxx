@@ -11,17 +11,17 @@ namespace module
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 Decoder_polar_SCL_naive_CA<B,R,F,G>
 ::Decoder_polar_SCL_naive_CA(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-                             CRC<B>& crc, const int n_frames)
+                             const CRC<B>& crc, const int n_frames)
 : Decoder(K, N, n_frames, 1),
   Decoder_polar_SCL_naive<B,R,F,G>(K, N, L, frozen_bits, n_frames), crc(crc)
 {
 	const std::string name = "Decoder_polar_SCL_naive_CA";
 	this->set_name(name);
 
-	if (crc.get_size() > K)
+	if (this->crc.get_size() > K)
 	{
 		std::stringstream message;
-		message << "'crc.get_size()' has to be equal or smaller than 'K' ('crc.get_size()' = " << crc.get_size()
+		message << "'crc.get_size()' has to be equal or smaller than 'K' ('crc.get_size()' = " << this->crc.get_size()
 		        << ", 'K' = " << K << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}

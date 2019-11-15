@@ -20,7 +20,7 @@ using namespace aff3ct::module;
 template<typename R>
 Channel_binary_symmetric<R>
 ::Channel_binary_symmetric(const int N,
-                           tools::Event_generator<R> &event_generator,
+                           const tools::Event_generator<R> &event_generator,
                            const int n_frames)
 : Channel<R>(N, n_frames),
   event_generator(event_generator.clone()),

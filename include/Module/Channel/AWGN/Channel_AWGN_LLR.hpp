@@ -24,7 +24,7 @@ private:
 
 public:
 	Channel_AWGN_LLR(const int N,
-	                 tools::Gaussian_gen<R> &noise_generator,
+	                 const tools::Gaussian_gen<R> &noise_generator,
 	                 const bool add_users = false,
 	                 const int n_frames = 1);
 

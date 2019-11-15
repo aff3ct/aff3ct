@@ -265,7 +265,7 @@ void SC_Module_container
 			erase_module(id);
 
 		const std::string module_name = module.get_custom_name().empty() ? module.get_name() : module.get_custom_name();
-		sc_modules[id] = std::unique_ptr<SC_Module>(new SC_Module(module[id], (module_name + "::" + module[id].get_name()).c_str()));
+		sc_modules[id] = std::shared_ptr<SC_Module>(new SC_Module(module[id], (module_name + "::" + module[id].get_name()).c_str()));
 	}
 	else
 	{

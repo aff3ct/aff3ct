@@ -41,7 +41,7 @@ User_pdf_noise_generator_MKL<R>
 
 template <typename R>
 User_pdf_noise_generator_MKL<R>* User_pdf_noise_generator_MKL<R>
-::clone()
+::clone() const
 {
 	User_pdf_noise_generator_MKL<R>* eg = new User_pdf_noise_generator_MKL<R>(*this);
 	VSLStreamStatePtr new_ptr;

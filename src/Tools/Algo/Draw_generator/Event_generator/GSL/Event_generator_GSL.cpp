@@ -25,7 +25,7 @@ Event_generator_GSL<R,E>
 
 template <typename R, typename E>
 Event_generator_GSL<R,E>* Event_generator_GSL<R,E>
-::clone()
+::clone() const
 {
 	Event_generator_GSL<R,E>* eg = new Event_generator_GSL<R,E>(*this);
 	eg->rng = (void*)gsl_rng_alloc(gsl_rng_mt19937);

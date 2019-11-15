@@ -12,8 +12,8 @@ namespace tools
 
 template <typename B, typename Q>
 Codec<B,Q>
-::Codec(const int K, const int N_cw, const int N, const int tail_length, const int n_frames)
-: K(K), N_cw(N_cw), N(N), tail_length(tail_length), noise(nullptr)
+::Codec(const int K, const int N_cw, const int N, const int n_frames)
+: K(K), N_cw(N_cw), N(N), noise(nullptr)
 {
 	if (K <= 0)
 	{
