@@ -5,7 +5,6 @@
 #ifndef DECODER_POLAR_SCL_MEM_FAST_SYS
 #define DECODER_POLAR_SCL_MEM_FAST_SYS
 
-#include <memory>
 #include <vector>
 #include <mipp.h>
 
@@ -67,7 +66,7 @@ public:
 	                               const int n_frames = 1);
 
 	Decoder_polar_SCL_MEM_fast_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-	                               std::vector<std::unique_ptr<tools::Pattern_polar_i>> &&polar_patterns,
+	                               const std::vector<tools::Pattern_polar_i*> &polar_patterns,
 	                               const int idx_r0, const int idx_r1,
 	                               const int n_frames = 1);
 

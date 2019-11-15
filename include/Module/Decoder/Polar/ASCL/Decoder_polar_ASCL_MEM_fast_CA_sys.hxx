@@ -25,12 +25,12 @@ template <typename B, typename R, class API_polar>
 Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 ::Decoder_polar_ASCL_MEM_fast_CA_sys(const int& K, const int& N, const int& L_max,
                                      const std::vector<bool>& frozen_bits,
-                                     std::vector<std::unique_ptr<tools::Pattern_polar_i>> &&polar_patterns,
+                                     const std::vector<tools::Pattern_polar_i*> &polar_patterns,
                                      const int idx_r0, const int idx_r1,
                                      const CRC<B>& crc, const bool is_full_adaptive, const int n_frames)
 : Decoder(K, N, n_frames, 1),
-  Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>(K, N, L_max, frozen_bits, std::move(polar_patterns), idx_r0, idx_r1, crc, n_frames),
-  sc_decoder                                      (K, N       , frozen_bits,                                                 n_frames),
+  Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>(K, N, L_max, frozen_bits, polar_patterns, idx_r0, idx_r1, crc, n_frames),
+  sc_decoder                                      (K, N       , frozen_bits,                                      n_frames),
   L_max(L_max), is_full_adaptive(is_full_adaptive)
 {
 	const std::string name = "Decoder_polar_ASCL_MEM_fast_CA_sys";

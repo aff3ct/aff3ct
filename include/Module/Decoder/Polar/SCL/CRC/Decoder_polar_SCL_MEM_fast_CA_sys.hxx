@@ -34,11 +34,11 @@ Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>
 template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>
 ::Decoder_polar_SCL_MEM_fast_CA_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-                                    std::vector<std::unique_ptr<tools::Pattern_polar_i>> &&polar_patterns,
+                                    const std::vector<tools::Pattern_polar_i*> &polar_patterns,
                                     const int idx_r0, const int idx_r1,
                                     const CRC<B>& crc, const int n_frames)
 : Decoder(K, N, n_frames, API_polar::get_n_frames()),
-  Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>(K, N, L, frozen_bits, std::move(polar_patterns), idx_r0, idx_r1, n_frames),
+  Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>(K, N, L, frozen_bits, polar_patterns, idx_r0, idx_r1, n_frames),
   fast_store(false), crc(crc), U_test(K)
 {
 	const std::string name = "Decoder_polar_SCL_MEM_fast_CA_sys";

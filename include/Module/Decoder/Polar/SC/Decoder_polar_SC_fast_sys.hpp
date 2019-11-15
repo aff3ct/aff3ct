@@ -5,7 +5,6 @@
 #ifndef DECODER_POLAR_SC_FAST_SYS_
 #define DECODER_POLAR_SC_FAST_SYS_
 
-#include <memory>
 #include <vector>
 #include <mipp.h>
 
@@ -52,7 +51,7 @@ public:
 	Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int n_frames = 1);
 
 	Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits,
-	                          std::vector<std::unique_ptr<tools::Pattern_polar_i>>&& polar_patterns,
+	                          const std::vector<tools::Pattern_polar_i*> &polar_patterns,
 	                          const int idx_r0, const int idx_r1, const int n_frames = 1);
 
 	virtual ~Decoder_polar_SC_fast_sys() = default;

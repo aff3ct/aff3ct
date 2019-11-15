@@ -5,7 +5,6 @@
 #ifndef DECODER_POLAR_ASCL_MEM_FAST_SYS_CA
 #define DECODER_POLAR_ASCL_MEM_FAST_SYS_CA
 
-#include <memory>
 #include <vector>
 
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
@@ -39,7 +38,7 @@ public:
 
 	Decoder_polar_ASCL_MEM_fast_CA_sys(const int& K, const int& N, const int& max_L,
 	                                   const std::vector<bool>& frozen_bits,
-	                                   std::vector<std::unique_ptr<tools::Pattern_polar_i>> &&polar_patterns,
+	                                   const std::vector<tools::Pattern_polar_i*> &polar_patterns,
 	                                   const int idx_r0, const int idx_r1,
 	                                   const CRC<B>& crc, const bool is_full_adaptive = true, const int n_frames = 1);
 
