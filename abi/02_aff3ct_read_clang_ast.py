@@ -858,6 +858,8 @@ def find_task_method(class_entry, module_task_entry):
     # lookup all methods
     for method, method_entry in class_entry['class_all_methods_index'].items():
         # early filter out unlikely candidates
+        if method_entry['method_kind'] == 'task':
+            continue
         if 'method_output' in method_entry and method_entry['method_output'] is not None:
             continue
         if method_entry['method_short_name'] != module_task_name:
@@ -888,9 +890,12 @@ def find_task_method(class_entry, module_task_entry):
 # change a class method into a module task
 def make_task(class_entry, method_entry, module_task_entry):
     method = method_entry['method_signature']
+    # check if the class method has not already been changed into a module task
+    if method_entry['method_kind'] == 'task':
+        return
     # sanity check
     if method_entry['method_kind'] != 'method':
-        sys.stderr.write("invalid task kind" + "\n")
+        sys.stderr.write("invalid task kind (method_kind = "+method_entry['method_kind']+")" + "\n")
         sys.exit(1)
 
     # change method kind into 'task'
@@ -899,36 +904,37 @@ def make_task(class_entry, method_entry, module_task_entry):
     for socket in method_entry['method_arguments']:
         if '=' in socket['arg_signature']:
             continue
-        # copy() is mandatory here, as keys() aliases the dict keys list which will be modified
-        old_keys = socket.copy().keys()
-        for old_key in old_keys:
-            new_key = 'soc'+old_key[3:]
-            if setting_keep_task_method:
-                socket[new_key] = socket[old_key]
-            else:
-                socket[new_key] = socket.pop(old_key)
-        socket_rank = socket['soc_rank']
-        socket_nb = socket_nb+1
-        module_task_socket = module_task_entry['sockets'][socket_rank]
-        if socket['soc_shape'] != '<fixme>':
-            sys.stderr.write("invalid socket shape" + "\n")
-            sys.exit(1)
-        socket['soc_shape'] = '<task>' # shape of task sockets is implicitly known
-        socket_dir = module_task_socket['soc_dir']
+        socket_rank = socket['arg_rank']
+        if socket_rank < len(module_task_entry['sockets']):
+            # copy() is mandatory here, as keys() aliases the dict keys list which will be modified
+            old_keys = socket.copy().keys()
+            for old_key in old_keys:
+                new_key = 'soc'+old_key[3:]
+                if setting_keep_task_method:
+                    socket[new_key] = socket[old_key]
+                else:
+                    socket[new_key] = socket.pop(old_key)
+            socket_nb = socket_nb+1
+            module_task_socket = module_task_entry['sockets'][socket_rank]
+            if socket['soc_shape'] != '<fixme>':
+                sys.stderr.write("invalid socket shape" + "\n")
+                sys.exit(1)
+            socket['soc_shape'] = '<task>' # shape of task sockets is implicitly known
+            socket_dir = module_task_socket['soc_dir']
 
-        # normalize keywords
-        if socket_dir == 'in':
-            socket_dir = 'input'
-        elif socket_dir == 'inout':
-            socket_dir = 'inputoutput'
-        elif socket_dir == 'out':
-            socket_dir = 'output'
+            # normalize keywords
+            if socket_dir == 'in':
+                socket_dir = 'input'
+            elif socket_dir == 'inout':
+                socket_dir = 'inputoutput'
+            elif socket_dir == 'out':
+                socket_dir = 'output'
 
-        if socket['soc_dir'] != '<fixme>' and socket['soc_dir'] != socket_dir:
-            sys.stderr.write("invalid socket direction: " + socket['soc_dir'] + "\n")
-            sys.exit(1)
-        socket['soc_dir'] = socket_dir
-        socket['soc_fixme'] = False
+            if socket['soc_dir'] != '<fixme>' and socket['soc_dir'] != socket_dir:
+                sys.stderr.write("invalid socket direction: " + socket['soc_dir'] + "\n")
+                sys.exit(1)
+            socket['soc_dir'] = socket_dir
+            socket['soc_fixme'] = False
 
     method_entry['method_nb_sockets'] = socket_nb
     if setting_keep_task_method:
