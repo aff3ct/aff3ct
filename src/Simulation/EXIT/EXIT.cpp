@@ -357,6 +357,10 @@ std::unique_ptr<tools::Codec_SISO<B,R>> EXIT<B,R>
 {
 	auto codec = std::unique_ptr<tools::Codec_SISO<B,R>>(params_EXIT.cdc->template build<B,R>());
 	codec->set_noise(this->noise);
+
+	auto ptr = codec.get();
+	this->noise.record_callback_changed([ptr]() { ptr->noise_changed(); });
+
 	return codec;
 }
 
@@ -366,6 +370,10 @@ std::unique_ptr<module::Modem<B,R,R>> EXIT<B,R>
 {
 	auto modem = std::unique_ptr<module::Modem<B,R,R>>(params_EXIT.mdm->template build<B,R>(this->constellation.get()));
 	modem->set_noise(this->noise);
+
+	auto ptr = modem.get();
+	this->noise.record_callback_changed([ptr]() { ptr->noise_changed(); });
+
 	return modem;
 }
 
@@ -377,6 +385,10 @@ std::unique_ptr<module::Modem<B,R>> EXIT<B,R>
 	mdm_params->N = params_EXIT.cdc->K;
 	auto modem = std::unique_ptr<module::Modem<B,R>>(mdm_params->template build<B,R>(this->constellation.get()));
 	modem->set_noise(this->noise_a);
+
+	auto ptr = modem.get();
+	this->noise_a.record_callback_changed([ptr]() { ptr->noise_changed(); });
+
 	return modem;
 }
 
@@ -386,6 +398,10 @@ std::unique_ptr<module::Channel<R>> EXIT<B,R>
 {
 	auto channel = std::unique_ptr<module::Channel<R>>(params_EXIT.chn->template build<R>());
 	channel->set_noise(this->noise);
+
+	auto ptr = channel.get();
+	this->noise.record_callback_changed([ptr]() { ptr->noise_changed(); });
+
 	return channel;
 }
 
@@ -402,6 +418,10 @@ std::unique_ptr<module::Channel<R>> EXIT<B,R>
 
 	auto channel = std::unique_ptr<module::Channel<R>>(chn_params->template build<R>());
 	channel->set_noise(this->noise_a);
+
+	auto ptr = channel.get();
+	this->noise_a.record_callback_changed([ptr]() { ptr->noise_changed(); });
+
 	return channel;
 }
 

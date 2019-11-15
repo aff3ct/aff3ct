@@ -5,6 +5,8 @@
 #include <chrono>
 #include <vector>
 #include <memory>
+#include <cstdint>
+#include <functional>
 
 #include "Factory/Simulation/BFER/BFER.hpp"
 #include "Tools/Constellation/Constellation.hpp"
@@ -35,6 +37,7 @@ private:
 	const factory::BFER &params_BFER;
 
 protected:
+	std::mutex               mutex_noise;
 	std::mutex               mutex_exception;
 	std::vector<std::string> prev_err_messages;
 	std::vector<std::string> prev_err_messages_to_display;
@@ -78,6 +81,8 @@ protected:
 	std::unique_ptr<tools::Constellation<R>> constellation;
 
 	std::chrono::steady_clock::time_point t_start_noise_point;
+
+	std::vector<uint32_t> callback_ids;
 
 public:
 	explicit BFER(const factory::BFER& params_BFER);

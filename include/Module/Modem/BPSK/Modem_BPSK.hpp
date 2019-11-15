@@ -27,9 +27,10 @@ public:
 	static int size_mod(const int N);
 	static int size_fil(const int N);
 
+	void noise_changed();
+
 protected:
 	void check_noise();
-	void noise_changed();
 
 	void   _modulate    (              const B *X_N1,                R *X_N2, const int frame_id);
 	void     _filter    (              const R *Y_N1,                R *Y_N2, const int frame_id);

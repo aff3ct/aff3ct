@@ -60,14 +60,13 @@ public:
 	inline Socket& operator[](const mdm::sck::tdemodulate_wg s);
 
 protected:
-	const int N;           /*!< Size of one frame (= number of bits in one frame) */
-	const int N_mod;       /*!< Number of transmitted elements after the modulation (could be smaller, bigger or equal to N) */
-	const int N_fil;       /*!< Number of transmitted elements after the filtering process */
-	tools::Noise<> *noise; /*!< the current noise applied to the input signal */
+	const int N;                 /*!< Size of one frame (= number of bits in one frame) */
+	const int N_mod;             /*!< Number of transmitted elements after the modulation (could be smaller, bigger or equal to N) */
+	const int N_fil;             /*!< Number of transmitted elements after the filtering process */
+	const tools::Noise<> *noise; /*!< the current noise applied to the input signal */
 
 	bool enable_filter;
 	bool enable_demodulator;
-	uint32_t id_noise_changed_callback;
 
 public:
 	/*!
@@ -102,7 +101,7 @@ public:
 	/*!
 	 * \brief Destructor.
 	 */
-	virtual ~Modem();
+	virtual ~Modem() = default;
 
 	int get_N() const;
 
@@ -116,7 +115,7 @@ public:
 
 	const tools::Noise<>* get_noise() const;
 
-	void set_noise(tools::Noise<>& noise);
+	void set_noise(const tools::Noise<>& noise);
 
 	/*!
 	 * \brief Modulates a vector of bits or symbols.
@@ -241,9 +240,9 @@ public:
 	static int get_buffer_size_after_filtering(const int N, const int n_b_per_s, const int tl, const int max_wa_id,
 	                                           const bool complex);
 
-protected:
 	virtual void noise_changed();
 
+protected:
 	virtual void _modulate(const B *X_N1, R *X_N2, const int frame_id);
 
 	virtual void _tmodulate(const Q *X_N1, R *X_N2, const int frame_id);

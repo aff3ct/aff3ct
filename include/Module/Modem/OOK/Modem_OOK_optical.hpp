@@ -24,9 +24,10 @@ public:
 	                  const int n_frames = 1);
 	virtual ~Modem_OOK_optical() = default;
 
+	void noise_changed();
+
 protected:
 	void check_noise();
-	void noise_changed();
 
 	void _demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id);
 };

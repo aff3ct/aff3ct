@@ -52,14 +52,6 @@ Codec<B,Q>
 }
 
 template <typename B, typename Q>
-Codec<B,Q>
-::~Codec()
-{
-	if (this->noise != nullptr)
-		this->noise->unrecord_callback_changed(this->id_noise_changed_callback);
-}
-
-template <typename B, typename Q>
 Interleaver_core<>& Codec<B,Q>
 ::get_interleaver()
 {
@@ -131,22 +123,11 @@ const Noise<>& Codec<B,Q>
 
 template <typename B, typename Q>
 void Codec<B,Q>
-::set_noise(Noise<>& noise)
+::set_noise(const Noise<>& noise)
 {
-	if (&noise != this->noise)
-	{
-		if (this->noise != nullptr)
-			this->noise->unrecord_callback_changed(this->id_noise_changed_callback);
-		this->noise = &noise;
-		this->id_noise_changed_callback = this->noise->record_callback_changed([this]()
-		{
-			if (this->noise->is_set())
-				this->noise_changed();
-		});
-		this->check_noise();
-		if (this->noise->is_set())
-			this->noise_changed();
-	}
+	this->noise = &noise;
+	if (this->noise->is_set())
+		this->noise_changed();
 }
 
 template <typename B, typename Q>

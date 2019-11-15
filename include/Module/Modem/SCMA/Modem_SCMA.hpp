@@ -51,9 +51,10 @@ public:
 	static int size_mod(const int N, const std::string &codebook_path);
 	static int size_fil(const int N, const std::string &codebook_path);
 
+	void noise_changed();
+
 protected:
 	void check_noise();
-	void noise_changed();
 
 private:
 	Q phi(const Q* Y_N1, int i, int j, int k, int re, int batch);

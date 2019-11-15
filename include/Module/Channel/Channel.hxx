@@ -73,14 +73,6 @@ Channel<R>
 }
 
 template <typename R>
-Channel<R>
-::~Channel()
-{
-	if (this->noise != nullptr)
-		this->noise->unrecord_callback_changed(this->id_noise_changed_callback);
-}
-
-template <typename R>
 int Channel<R>
 ::get_N() const
 {
@@ -96,22 +88,11 @@ const std::vector<R>& Channel<R>
 
 template <typename R>
 void Channel<R>
-::set_noise(tools::Noise<>& noise)
+::set_noise(const tools::Noise<>& noise)
 {
-	if (&noise != this->noise)
-	{
-		if (this->noise != nullptr)
-			this->noise->unrecord_callback_changed(this->id_noise_changed_callback);
-		this->noise = &noise;
-		this->id_noise_changed_callback = this->noise->record_callback_changed([this]()
-		{
-			if (this->noise->is_set())
-				this->noise_changed();
-		});
-		this->check_noise();
-		if (this->noise->is_set())
-			this->noise_changed();
-	}
+	this->noise = &noise;
+	if (this->noise->is_set())
+		this->noise_changed();
 }
 
 template <typename R>

@@ -144,14 +144,6 @@ Modem<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-Modem<B,R,Q>
-::~Modem()
-{
-	if (this->noise != nullptr)
-		this->noise->unrecord_callback_changed(this->id_noise_changed_callback);
-}
-
-template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
 ::init_processes()
 {
@@ -278,22 +270,11 @@ bool Modem<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::set_noise(tools::Noise<>& noise)
+::set_noise(const tools::Noise<>& noise)
 {
-	if (&noise != this->noise)
-	{
-		if (this->noise != nullptr)
-			this->noise->unrecord_callback_changed(this->id_noise_changed_callback);
-		this->noise = &noise;
-		this->id_noise_changed_callback = this->noise->record_callback_changed([this]()
-		{
-			if (this->noise->is_set())
-				this->noise_changed();
-		});
-		this->check_noise();
-		if (this->noise->is_set())
-			this->noise_changed();
-	}
+	this->noise = &noise;
+	if (this->noise->is_set())
+		this->noise_changed();
 }
 
 template <typename B, typename R, typename Q>

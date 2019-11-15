@@ -176,6 +176,10 @@ std::unique_ptr<tools::Codec_SIHO<B,Q>> BFER_std<B,R,Q>
 	auto param_siho = dynamic_cast<factory::Codec_SIHO*>(params_cdc.get());
 	auto codec = std::unique_ptr<tools::Codec_SIHO<B,Q>>(param_siho->template build<B, Q>(crc));
 	codec->set_noise(*this->noise);
+
+	auto ptr = codec.get();
+	this->noise->record_callback_changed([ptr](){ ptr->noise_changed(); });
+
 	return codec;
 }
 
@@ -187,12 +191,20 @@ std::unique_ptr<module::Modem<B,R,R>> BFER_std<B,R,Q>
 	{
 		auto modem = std::unique_ptr<module::Modem<B,R,R>>(params_BFER_std.mdm->template build<B,R,R>(*this->distributions));
 		modem->set_noise(*this->noise);
+
+		auto ptr = modem.get();
+		this->noise->record_callback_changed([ptr](){ ptr->noise_changed(); });
+
 		return modem;
 	}
 	else
 	{
 		auto modem = std::unique_ptr<module::Modem<B,R,R>>(params_BFER_std.mdm->template build<B,R,R>(this->constellation.get()));
 		modem->set_noise(*this->noise);
+
+		auto ptr = modem.get();
+		this->noise->record_callback_changed([ptr](){ ptr->noise_changed(); });
+
 		return modem;
 	}
 }
@@ -210,12 +222,20 @@ std::unique_ptr<module::Channel<R>> BFER_std<B,R,Q>
 	{
 		auto channel = std::unique_ptr<module::Channel<R>>(params_chn->template build<R>(*this->distributions));
 		channel->set_noise(*this->noise);
+
+		auto ptr = channel.get();
+		this->noise->record_callback_changed([ptr](){ ptr->noise_changed(); });
+
 		return channel;
 	}
 	else
 	{
 		auto channel = std::unique_ptr<module::Channel<R>>(params_chn->template build<R>());
 		channel->set_noise(*this->noise);
+
+		auto ptr = channel.get();
+		this->noise->record_callback_changed([ptr](){ ptr->noise_changed(); });
+
 		return channel;
 	}
 }

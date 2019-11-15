@@ -49,10 +49,10 @@ public:
 	bool is_generated_decoder() const;
 	const Frozenbits_generator& get_frozen_bits_generator() const;
 
+	void noise_changed();
 	virtual void notify_frozenbits_update();
 
 protected:
-	void noise_changed();
 	void check_noise();
 };
 }

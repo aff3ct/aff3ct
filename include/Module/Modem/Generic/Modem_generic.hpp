@@ -37,9 +37,10 @@ public:
 	static int size_mod(const int N, const tools::Constellation<R>& c);
 	static int size_fil(const int N, const tools::Constellation<R>& c);
 
+	void noise_changed();
+
 protected:
 	void check_noise();
-	void noise_changed();
 
 	void   _tmodulate   (              const Q *X_N1,                 R *X_N2, const int frame_id);
 	void   _modulate    (              const B *X_N1,                 R *X_N2, const int frame_id);

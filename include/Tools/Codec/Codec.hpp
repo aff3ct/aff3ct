@@ -38,13 +38,12 @@ protected :
 	const int K;
 	const int N_cw;
 	const int N;
-	Noise<> *noise;
-	uint32_t id_noise_changed_callback;
+	const Noise<> *noise;
 
 public:
 	Codec(const int K, const int N_cw, const int N, const int n_frames = 1);
 
-	virtual ~Codec();
+	virtual ~Codec() = default;
 
 	Interleaver_core<>& get_interleaver();
 	module::Encoder<B>& get_encoder();
@@ -53,10 +52,11 @@ public:
 
 	const Noise<>& get_noise() const;
 
-	virtual void set_noise(Noise<>& noise);
+	virtual void set_noise(const Noise<>& noise);
+
+	virtual void noise_changed();
 
 protected:
-	virtual void noise_changed();
 	virtual void check_noise();
 
 	virtual void set_interleaver(std::unique_ptr<Interleaver_core<>> &&itl);
