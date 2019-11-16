@@ -54,6 +54,12 @@ Decoder
 	this->tasks_with_nullptr.resize((size_t)dec::tsk::SIZE);
 }
 
+Decoder* Decoder
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
 int Decoder
 ::get_K() const
 {

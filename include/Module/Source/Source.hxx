@@ -50,6 +50,13 @@ Source<B>
 }
 
 template <typename B>
+Source<B>* Source<B>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B>
 int Source<B>
 ::get_K() const
 {

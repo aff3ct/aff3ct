@@ -148,6 +148,15 @@ Quantizer_pow2_fast<double, double>
 }
 
 template<typename R, typename Q>
+Quantizer_pow2_fast<R,Q>* Quantizer_pow2_fast<R,Q>
+::clone() const
+{
+	auto m = new Quantizer_pow2_fast<R,Q>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template<typename R, typename Q>
 void Quantizer_pow2_fast<R,Q>
 ::_process(const R *Y_N1, Q *Y_N2, const int frame_id)
 {

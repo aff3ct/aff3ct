@@ -96,6 +96,8 @@ public:
 	 */
 	Modem(const int N, const int n_frames);
 
+	virtual Modem<B,R,Q>* clone() const;
+
 	void init_processes();
 
 	/*!

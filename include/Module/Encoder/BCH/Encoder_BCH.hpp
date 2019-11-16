@@ -28,6 +28,8 @@ public:
 
 	virtual ~Encoder_BCH() = default;
 
+	virtual Encoder_BCH<B>* clone() const;
+
 	bool is_codeword(const B *X_N);
 
 protected:

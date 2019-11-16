@@ -25,6 +25,15 @@ Modem_BPSK_fast<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
+Modem_BPSK_fast<B,R,Q>* Modem_BPSK_fast<B,R,Q>
+::clone() const
+{
+	auto m = new Modem_BPSK_fast<B,R,Q>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
 ::check_noise()
 {

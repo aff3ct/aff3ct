@@ -35,6 +35,15 @@ Modem_generic<B,R,Q,MAX>
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+Modem_generic<B,R,Q,MAX>* Modem_generic<B,R,Q,MAX>
+::clone() const
+{
+	auto m = new Modem_generic<B,R,Q,MAX>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_generic<B,R,Q,MAX>
 ::check_noise()
 {

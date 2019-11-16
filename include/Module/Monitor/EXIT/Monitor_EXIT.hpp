@@ -56,6 +56,8 @@ public:
 
 	virtual ~Monitor_EXIT() = default;
 
+	virtual Monitor_EXIT<B,R>* clone() const;
+
 	bool equivalent(const Monitor_EXIT<B,R>& m, bool do_throw = false) const; // check if this monitor and "m" have equivalent construction arguments
 	                                                                          // and then can be merged by "collect" or "copy" methods
 	/*!

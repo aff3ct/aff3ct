@@ -58,6 +58,8 @@ public:
 	          const int  n_frames           = 1);
 	virtual ~Modem_CPM() = default;
 
+	virtual Modem_CPM<B,R,Q,MAX>* clone() const;
+
 	static bool is_complex_mod();
 	static bool is_complex_fil();
 	static int size_mod(const int N, const int bps, const int L, const int p, const int ups);

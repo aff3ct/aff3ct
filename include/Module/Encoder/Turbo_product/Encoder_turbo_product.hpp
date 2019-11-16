@@ -5,6 +5,7 @@
 #ifndef ENCODER_TURBO_PRODUCT_HPP_
 #define ENCODER_TURBO_PRODUCT_HPP_
 
+#include <memory>
 #include <vector>
 
 #include "Module/Interleaver/Interleaver.hpp"
@@ -20,18 +21,23 @@ class Encoder_turbo_product : public Encoder<B>
 protected:
 	const Interleaver<B> &pi; // the interleaver
 
-	Encoder<B> &enc_r;       // row encoder
-	Encoder<B> &enc_c;       // col encoder
+	std::shared_ptr<Encoder<B>> enc_r; // row encoder
+	std::shared_ptr<Encoder<B>> enc_c; // col encoder
 
 	const bool parity_extended;
 
-	std::vector<B> X_N_i;     // internal buffer in the interleaved domain
+	std::vector<B> X_N_i; // internal buffer in the interleaved domain
 
 public:
-	Encoder_turbo_product(const Interleaver<B> &pi, Encoder<B> &enc_r, Encoder<B> &enc_c, const int n_frames = 1);
+	Encoder_turbo_product(const Interleaver<B> &pi, const Encoder<B> &enc_r, const Encoder<B> &enc_c,
+	                      const int n_frames = 1);
 	virtual ~Encoder_turbo_product() = default;
+	virtual Encoder_turbo_product<B>* clone() const;
 
 	virtual void _encode(const B *U_K, B *X_N, const int frame_id); using Encoder<B>::encode;
+
+protected:
+	virtual void deep_copy(const Encoder_turbo_product<B> &m);
 
 	/* to use with a GENIUS BCH decoder to save data in the sub encoders : will work only with a inter frame level of 1
 	   else data is overwritten by the following frames

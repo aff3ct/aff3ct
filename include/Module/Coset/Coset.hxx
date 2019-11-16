@@ -54,6 +54,13 @@ Coset<B,D>
 }
 
 template <typename B, typename D>
+Coset<B,D>* Coset<B,D>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename D>
 int Coset<B,D>
 ::get_size() const
 {

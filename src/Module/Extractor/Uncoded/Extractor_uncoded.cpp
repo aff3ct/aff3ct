@@ -18,6 +18,15 @@ Extractor_uncoded<B,Q>
 }
 
 template <typename B, typename Q>
+Extractor_uncoded<B,Q>* Extractor_uncoded<B,Q>
+::clone() const
+{
+	auto m = new Extractor_uncoded<B,Q>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename Q>
 const std::vector<uint32_t>& Extractor_uncoded<B,Q>
 ::get_info_bits_pos()
 {

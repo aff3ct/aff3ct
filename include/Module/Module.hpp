@@ -52,15 +52,12 @@ public:
 	 */
 	explicit Module(const int n_frames = 1);
 
-#ifndef AFF3CT_SYSTEMC_MODULE
-	virtual void copy(const Module &m);
-	virtual Module* clone() const;
-#endif
-
 	/*!
 	 * \brief Destructor.
 	 */
 	virtual ~Module() = default;
+
+	virtual Module* clone() const;
 
 	/*!
 	 * \brief Get the number of frames.
@@ -82,6 +79,8 @@ public:
 	inline Task& operator[](const size_t id);
 
 protected:
+	virtual void deep_copy(const Module &m);
+
 	void set_name(const std::string &name);
 
 	void set_short_name(const std::string &short_name);

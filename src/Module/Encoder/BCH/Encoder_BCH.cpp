@@ -28,6 +28,15 @@ Encoder_BCH<B>
 }
 
 template <typename B>
+Encoder_BCH<B>* Encoder_BCH<B>
+::clone() const
+{
+	auto m = new Encoder_BCH<B>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B>
 void Encoder_BCH<B>
 ::__encode(const B *U_K, B *par)
 {

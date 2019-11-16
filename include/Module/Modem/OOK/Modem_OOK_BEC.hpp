@@ -18,6 +18,8 @@ public:
 	Modem_OOK_BEC(const int N, const int n_frames = 1);
 	virtual ~Modem_OOK_BEC() = default;
 
+	virtual Modem_OOK_BEC<B,R,Q>* clone() const;
+
 protected:
 	void check_noise();
 

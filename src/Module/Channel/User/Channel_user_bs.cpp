@@ -18,6 +18,15 @@ Channel_user_bs<R>
 }
 
 template <typename R>
+Channel_user_bs<R>* Channel_user_bs<R>
+::clone() const
+{
+	auto m = new Channel_user_bs<R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename R>
 void Channel_user_bs<R>
 ::add_noise(const R *X_N, R *Y_N, const int frame_id)
 {

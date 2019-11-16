@@ -33,7 +33,6 @@ Channel_Rayleigh_LLR_user<R>
   add_users(add_users),
   gains(N * n_frames),
   gaussian_generator(gaussian_generator.clone()),
-  is_autoalloc_gaussian_gen(false),
   gain_occur(gain_occurrences),
   current_gain_occur(0),
   gain_index(0)
@@ -93,7 +92,6 @@ Channel_Rayleigh_LLR_user<R>
   add_users(add_users),
   gains(N * n_frames),
   gaussian_generator(create_gaussian_generator<R>(implem, seed)),
-  is_autoalloc_gaussian_gen(true),
   gain_occur(gain_occurrences),
   current_gain_occur(0),
   gain_index(0)
@@ -108,6 +106,23 @@ Channel_Rayleigh_LLR_user<R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Argument 'gain_occurrences' must be strictly positive.");
 
 	read_gains(gains_filename);
+}
+
+template <typename R>
+Channel_Rayleigh_LLR_user<R>* Channel_Rayleigh_LLR_user<R>
+::clone() const
+{
+	auto m = new Channel_Rayleigh_LLR_user<R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename R>
+void Channel_Rayleigh_LLR_user<R>
+::deep_copy(const Channel_Rayleigh_LLR_user<R> &m)
+{
+	Module::deep_copy(m);
+	this->gaussian_generator.reset(m.gaussian_generator->clone());
 }
 
 template <typename R>

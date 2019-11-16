@@ -42,6 +42,15 @@ CRC_polynomial_fast<B>
 }
 
 template <typename B>
+CRC_polynomial_fast<B>* CRC_polynomial_fast<B>
+::clone() const
+{
+	auto m = new CRC_polynomial_fast<B>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B>
 void CRC_polynomial_fast<B>
 ::_build(const B *U_K1, B *U_K2, const int frame_id)
 {

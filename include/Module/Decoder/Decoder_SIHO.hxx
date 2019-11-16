@@ -74,6 +74,13 @@ Decoder_SIHO<B,R>
 }
 
 template <typename B, typename R>
+Decoder* Decoder_SIHO<B,R>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename R>
 template <class AR, class AB>
 void Decoder_SIHO<B,R>
 ::decode_siho(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_K, const int frame_id)

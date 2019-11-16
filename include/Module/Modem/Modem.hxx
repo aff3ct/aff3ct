@@ -144,6 +144,13 @@ Modem<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
+Modem<B,R,Q>* Modem<B,R,Q>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
 ::init_processes()
 {

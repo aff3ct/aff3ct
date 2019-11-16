@@ -5,6 +5,7 @@
 #ifndef DECODER_POLAR_SCL_FAST_SYS_CA
 #define DECODER_POLAR_SCL_FAST_SYS_CA
 
+#include <memory>
 #include <vector>
 #include <mipp.h>
 
@@ -29,7 +30,7 @@ private:
 	bool fast_store;
 
 protected:
-	CRC<B> crc;
+	std::shared_ptr<CRC<B>> crc;
 	mipp::vector<B> U_test;
 
 public:

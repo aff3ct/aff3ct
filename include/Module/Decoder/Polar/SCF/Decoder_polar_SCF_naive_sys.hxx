@@ -46,7 +46,7 @@ bool Decoder_polar_SCF_naive_sys<B,R,F,G,H>
 		if (!this->frozen_bits[i])
 			U_test.push_back(this->polar_tree.get_root()->get_c()->s[i]);
 
-	return this->crc.check(U_test, this->get_simd_inter_frame_level());
+	return this->crc->check(U_test, this->get_simd_inter_frame_level());
 }
 }
 }

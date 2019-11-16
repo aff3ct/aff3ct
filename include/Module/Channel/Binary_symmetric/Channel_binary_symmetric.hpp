@@ -19,8 +19,7 @@ template <typename R = float>
 class Channel_binary_symmetric : public Channel<R>
 {
 protected:
-	std::unique_ptr<tools::Event_generator<R>> event_generator;
-	const bool is_autoalloc_event_gen;
+	std::shared_ptr<tools::Event_generator<R>> event_generator;
 
 	using E = typename tools::matching_types<R>::B; //Event type
 
@@ -36,9 +35,12 @@ public:
 
 	virtual ~Channel_binary_symmetric() = default;
 
+	virtual Channel_binary_symmetric<R>* clone() const;
+
 	void set_seed(const int seed);
 
 protected:
+	virtual void deep_copy(const Channel_binary_symmetric<R>& m);
 	void _add_noise(const R *X_N, R *Y_N, const int frame_id = -1);
 	virtual void check_noise();
 };

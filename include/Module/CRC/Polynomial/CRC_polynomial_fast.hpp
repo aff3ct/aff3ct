@@ -24,6 +24,7 @@ protected:
 public:
 	CRC_polynomial_fast(const int K, const std::string &poly_key, const int size = 0, const int n_frames = 1);
 	virtual ~CRC_polynomial_fast() = default;
+	virtual CRC_polynomial_fast<B>* clone() const;
 
 protected:
 	virtual void _build       (const B *U_K1, B *U_K2, const int frame_id);

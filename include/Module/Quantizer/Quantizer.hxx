@@ -53,6 +53,13 @@ Quantizer<R,Q>
 }
 
 template <typename R, typename Q>
+Quantizer<R,Q>* Quantizer<R,Q>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename R, typename Q>
 int Quantizer<R,Q>
 ::get_N() const
 {

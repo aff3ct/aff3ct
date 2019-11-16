@@ -16,6 +16,15 @@ Extractor_polar<B,Q>
 }
 
 template <typename B, typename Q>
+Extractor_polar<B,Q>* Extractor_polar<B,Q>
+::clone() const
+{
+	auto m = new Extractor_polar<B,Q>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename Q>
 const std::vector<uint32_t>& Extractor_polar<B,Q>
 ::get_info_bits_pos()
 {

@@ -55,6 +55,8 @@ public:
 	 */
 	virtual ~Decoder_SIHO() = default;
 
+	virtual Decoder* clone() const;
+
 	/*!
 	 * \brief Decodes the noisy frame.
 	 *

@@ -14,6 +14,15 @@ Encoder_RSC3_CPE_sys<B>
 }
 
 template <typename B>
+Encoder_RSC3_CPE_sys<B>* Encoder_RSC3_CPE_sys<B>
+::clone() const
+{
+	auto m = new Encoder_RSC3_CPE_sys<B>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B>
 int Encoder_RSC3_CPE_sys<B>
 ::inner_encode(const int bit_sys, int &state)
 {

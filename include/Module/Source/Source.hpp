@@ -60,6 +60,8 @@ public:
 	 */
 	virtual ~Source() = default;
 
+	virtual Source<B>* clone() const;
+
 	virtual int get_K() const;
 
 	/*!

@@ -51,6 +51,31 @@ Monitor_MI<B,R>
 {
 }
 
+template <typename B, typename R>
+Monitor_MI<B,R>* Monitor_MI<B,R>
+::clone() const
+{
+	if (this->callback_check.size())
+	{
+		std::stringstream message;
+		message << "'callback_check.size()' has to be equal to 0 ('callback_check.size()' = "
+		        << this->callback_check.size() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (this->callback_n_trials_limit_achieved.size())
+	{
+		std::stringstream message;
+		message << "'callback_n_trials_limit_achieved.size()' has to be equal to 0 "
+		        << "('callback_n_trials_limit_achieved.size()' = "
+		        << this->callback_n_trials_limit_achieved.size() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	auto m = new Monitor_MI<B,R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
 
 template <typename B, typename R>
 bool Monitor_MI<B,R>

@@ -18,6 +18,8 @@ public:
 	Modem_OOK(const int N, const int n_frames = 1);
 	virtual ~Modem_OOK() = default;
 
+	virtual Modem_OOK<B,R,Q>* clone() const;
+
 	static bool is_complex_mod();
 	static bool is_complex_fil();
 	static int size_mod(const int N);

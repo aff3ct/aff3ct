@@ -21,10 +21,8 @@ Module
 	}
 }
 
-#ifndef AFF3CT_SYSTEMC_MODULE
-
 void Module
-::copy(const Module &m)
+::deep_copy(const Module &m)
 {
 	this->tasks_with_nullptr.clear();
 	this->tasks.clear();
@@ -45,12 +43,8 @@ void Module
 Module* Module
 ::clone() const
 {
-	auto m = new Module(*this); // soft copy constructor
-	m->copy(*this); // hard copy
-	return m;
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
-
-#endif
 
 int Module
 ::get_n_frames() const

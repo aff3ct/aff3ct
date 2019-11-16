@@ -49,6 +49,8 @@ public:
 	 */
 	virtual ~Monitor() = default;
 
+	virtual Monitor* clone() const;
+
 	virtual void reset();
 
 	virtual void clear_callbacks();

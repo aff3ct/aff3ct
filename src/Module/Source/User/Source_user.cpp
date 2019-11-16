@@ -68,6 +68,15 @@ Source_user<B>
 }
 
 template <typename B>
+Source_user<B>* Source_user<B>
+::clone() const
+{
+	auto m = new Source_user<B>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B>
 void Source_user<B>
 ::_generate(B *U_K, const int frame_id)
 {

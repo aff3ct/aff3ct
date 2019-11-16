@@ -23,8 +23,7 @@ protected:
 	const bool complex;
 	const bool add_users;
 	std::vector<R> gains;
-	std::unique_ptr<tools::Gaussian_noise_generator<R>> gaussian_generator;
-	const bool is_autoalloc_gaussian_gen;
+	std::shared_ptr<tools::Gaussian_noise_generator<R>> gaussian_generator;
 
 	std::vector<R> gains_stock;
 	const unsigned gain_occur;
@@ -51,11 +50,15 @@ public:
 
 	virtual ~Channel_Rayleigh_LLR_user() = default;
 
+	virtual Channel_Rayleigh_LLR_user<R>* clone() const;
+
 	void set_seed(const int seed);
 
 	virtual void add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id = -1); using Channel<R>::add_noise_wg;
 
 protected:
+	virtual void deep_copy(const Channel_Rayleigh_LLR_user<R>& m);
+
 	void read_gains(const std::string& gains_filename);
 
 	virtual void check_noise();

@@ -39,6 +39,8 @@ public:
 	           const int n_ite = 1, const int n_frames = 6);
 	virtual ~Modem_SCMA() = default;
 
+	virtual Modem_SCMA<B,R,Q,PSI>* clone() const;
+
 	virtual void modulate     (              const B* X_N1, R *X_N2, const int frame_id = -1); using Modem<B,R,Q>::modulate;
 	virtual void demodulate   (              const Q *Y_N1, Q *Y_N2, const int frame_id = -1); using Modem<B,R,Q>::demodulate;
 	virtual void demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id = -1); using Modem<B,R,Q>::demodulate_wg;

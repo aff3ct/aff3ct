@@ -22,6 +22,8 @@ public:
 	explicit Modem_BPSK(const int N, const bool disable_sig2 = false, const int n_frames = 1);
 	virtual ~Modem_BPSK() = default;
 
+	virtual Modem_BPSK<B,R,Q>* clone() const;
+
 	static bool is_complex_mod();
 	static bool is_complex_fil();
 	static int size_mod(const int N);

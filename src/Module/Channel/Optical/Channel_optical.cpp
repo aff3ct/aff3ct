@@ -22,8 +22,7 @@ Channel_optical<R>
                   const tools::User_pdf_noise_generator<R>& pdf_noise_generator,
                   const int n_frames)
 : Channel<R>(N, n_frames),
-  pdf_noise_generator(pdf_noise_generator.clone()),
-  is_autoalloc_pdf_gen(false)
+  pdf_noise_generator(pdf_noise_generator.clone())
 {
 	const std::string name = "Channel_optical";
 	this->set_name(name);
@@ -67,11 +66,27 @@ Channel_optical<R>
                   const int seed,
                   const int n_frames)
 : Channel<R>(N, n_frames),
-  pdf_noise_generator(create_user_pdf_noise_generator<R>(dist, implem, seed)),
-  is_autoalloc_pdf_gen(true)
+  pdf_noise_generator(create_user_pdf_noise_generator<R>(dist, implem, seed))
 {
 	const std::string name = "Channel_optical";
 	this->set_name(name);
+}
+
+template <typename R>
+Channel_optical<R>* Channel_optical<R>
+::clone() const
+{
+	auto m = new Channel_optical<R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename R>
+void Channel_optical<R>
+::deep_copy(const Channel_optical<R> &m)
+{
+	Module::deep_copy(m);
+	this->pdf_noise_generator.reset(m.pdf_noise_generator->clone());
 }
 
 template <typename R>

@@ -69,6 +69,8 @@ public:
 	 */
 	virtual ~Encoder() = default;
 
+	virtual Encoder<B>* clone() const;
+
 	int get_K() const;
 
 	int get_N() const;

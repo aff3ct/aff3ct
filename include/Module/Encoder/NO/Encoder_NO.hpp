@@ -18,6 +18,8 @@ public:
 	Encoder_NO(const int K, const int n_frames = 1);
 	virtual ~Encoder_NO() = default;
 
+	virtual Encoder_NO<B>* clone() const;
+
 	bool is_codeword(const B *X_K);
 
 protected:

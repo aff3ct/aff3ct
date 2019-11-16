@@ -24,6 +24,15 @@ Encoder_LDPC_from_QC<B>
 }
 
 template <typename B>
+Encoder_LDPC_from_QC<B>* Encoder_LDPC_from_QC<B>
+::clone() const
+{
+	auto m = new Encoder_LDPC_from_QC<B>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B>
 void Encoder_LDPC_from_QC<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {

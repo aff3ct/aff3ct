@@ -55,6 +55,8 @@ public:
 	 */
 	virtual ~Decoder() = default;
 
+	virtual Decoder* clone() const;
+
 	int get_K() const;
 
 	int get_N() const;

@@ -31,6 +31,7 @@ public:
 	bool unrecord(const uint32_t id);
 	void clear();
 	void notify(Args ... args);
+	size_t size() const;
 };
 }
 }

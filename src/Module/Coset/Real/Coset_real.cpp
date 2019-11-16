@@ -13,6 +13,15 @@ Coset_real<B,D>::Coset_real(const int size, const int n_frames)
 }
 
 template <typename B, typename D>
+Coset_real<B,D>* Coset_real<B,D>
+::clone() const
+{
+	auto m = new Coset_real<B,D>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename D>
 void Coset_real<B,D>::_apply(const B *ref, const D *in, D *out, const int frame_id)
 {
 	for (auto i = 0; i < this->size; i++)

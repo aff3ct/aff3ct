@@ -9,7 +9,7 @@ template <typename B, typename R>
 CRC_checker_DB<B,R>
 ::CRC_checker_DB(const module::CRC<B> &crc, const int start_crc_check_ite, const int simd_inter_frame_level)
 : CRC_checker<B,R>(crc, start_crc_check_ite, simd_inter_frame_level),
-  apost           (2 * (this->crc.get_K() + this->crc.get_size()) * simd_inter_frame_level)
+  apost           (2 * (this->crc->get_K() + this->crc->get_size()) * simd_inter_frame_level)
 {
 }
 
@@ -32,7 +32,7 @@ bool CRC_checker_DB<B,R>
 			s[i  ] = (std::max(apost[2*i+2], apost[2*i+3]) - std::max(apost[2*i+0], apost[2*i+1])) > 0;
 			s[i+1] = (std::max(apost[2*i+1], apost[2*i+3]) - std::max(apost[2*i+0], apost[2*i+2])) > 0;
 		}
-		return this->crc.check(s, this->simd_inter_frame_level);
+		return this->crc->check(s, this->simd_inter_frame_level);
 	}
 
 	return false;

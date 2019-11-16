@@ -50,6 +50,8 @@ public:
 	Extractor(const int K, const int N, const int tail_length = 0, const int n_frames = 1);
 	virtual ~Extractor() = default;
 
+	virtual Extractor<B,Q>* clone() const;
+
 	template <class A = std::allocator<Q>>
 	void get_sys_llr(const std::vector<Q,A> &Y_N, std::vector<Q,A> &Y_K, const int frame_id = -1);
 

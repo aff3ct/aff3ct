@@ -14,6 +14,15 @@ Source_AZCW<B>
 }
 
 template <typename B>
+Source_AZCW<B>* Source_AZCW<B>
+::clone() const
+{
+	auto m = new Source_AZCW<B>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B>
 void Source_AZCW<B>
 ::_generate(B *U_K, const int frame_id)
 {

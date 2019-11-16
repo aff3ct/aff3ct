@@ -5,6 +5,7 @@
 #ifndef DECODER_POLAR_SCF_NAIVE_
 #define DECODER_POLAR_SCF_NAIVE_
 
+#include <memory>
 #include <vector>
 
 #include "Tools/Algo/Tree/Binary_node.hpp"
@@ -22,7 +23,7 @@ template <typename B = int, typename R = float, tools::proto_f<  R> F = tools::f
 class Decoder_polar_SCF_naive : public Decoder_polar_SC_naive<B,R,F,G,H>
 {
 protected:
-	CRC<B> crc;
+	std::shared_ptr<CRC<B>> crc;
 
 	const int n_flips;
 	std::vector<int> index;

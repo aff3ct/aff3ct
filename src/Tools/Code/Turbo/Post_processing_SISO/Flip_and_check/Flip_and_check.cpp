@@ -89,7 +89,7 @@ bool Flip_and_check<B,R>
 		std::copy(s.begin(), s.end(), s_tmp.begin());
 		for (auto depth = 0; depth < q; depth++)
 			s_tmp[positions[depth]] ^= tab_flips[pattern][depth];
-		check_crc = this->crc.check(s_tmp, this->simd_inter_frame_level);
+		check_crc = this->crc->check(s_tmp, this->simd_inter_frame_level);
 		pattern++;
 	}
 	while ((pattern < (int)tab_flips.size()) && !check_crc);

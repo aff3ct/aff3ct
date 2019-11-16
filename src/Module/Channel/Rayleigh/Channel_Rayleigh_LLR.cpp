@@ -29,8 +29,7 @@ Channel_Rayleigh_LLR<R>
   complex(complex),
   add_users(add_users),
   gains(complex ? N * n_frames : 2 * N * n_frames),
-  gaussian_generator(gaussian_generator.clone()),
-  is_autoalloc_gaussian_gen(false)
+  gaussian_generator(gaussian_generator.clone())
 {
 	const std::string name = "Channel_Rayleigh_LLR";
 	this->set_name(name);
@@ -83,8 +82,7 @@ Channel_Rayleigh_LLR<R>
   complex(complex),
   add_users(add_users),
   gains(complex ? N * n_frames : 2 * N * n_frames),
-  gaussian_generator(create_gaussian_generator<R>(implem, seed)),
-  is_autoalloc_gaussian_gen(true)
+  gaussian_generator(create_gaussian_generator<R>(implem, seed))
 {
 	const std::string name = "Channel_Rayleigh_LLR";
 	this->set_name(name);
@@ -95,6 +93,23 @@ Channel_Rayleigh_LLR<R>
 		message << "'N' has to be divisible by 2 ('N' = " << N << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+template <typename R>
+Channel_Rayleigh_LLR<R>* Channel_Rayleigh_LLR<R>
+::clone() const
+{
+	auto m = new Channel_Rayleigh_LLR<R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename R>
+void Channel_Rayleigh_LLR<R>
+::deep_copy(const Channel_Rayleigh_LLR<R> &m)
+{
+	Module::deep_copy(m);
+	this->gaussian_generator.reset(m.gaussian_generator->clone());
 }
 
 template <typename R>

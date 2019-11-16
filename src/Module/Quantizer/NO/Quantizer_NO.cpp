@@ -14,6 +14,15 @@ Quantizer_NO<R,Q>
 }
 
 template<typename R, typename Q>
+Quantizer_NO<R,Q>* Quantizer_NO<R,Q>
+::clone() const
+{
+	auto m = new Quantizer_NO<R,Q>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template<typename R, typename Q>
 void Quantizer_NO<R,Q>
 ::_process(const R *Y_N1, Q *Y_N2, const int frame_id)
 {

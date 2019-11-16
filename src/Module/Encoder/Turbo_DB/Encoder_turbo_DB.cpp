@@ -12,11 +12,11 @@ using namespace aff3ct::module;
 template <typename B>
 Encoder_turbo_DB<B>
 ::Encoder_turbo_DB(const int& K, const int& N, const Interleaver<B> &pi,
-                   Encoder_RSC_DB<B> &enco_n, Encoder_RSC_DB<B> &enco_i)
+                   const Encoder_RSC_DB<B> &enco_n, const Encoder_RSC_DB<B> &enco_i)
 : Encoder<B>(K, N, enco_n.get_n_frames()),
   pi(pi),
-  enco_n(enco_n),
-  enco_i(enco_i),
+  enco_n(enco_n.clone()),
+  enco_i(enco_i.clone()),
   U_K_cpy(K * enco_n.get_n_frames()),
   U_K_i  (K * enco_n.get_n_frames()),
   X_N_tmp(N * enco_n.get_n_frames()),
@@ -65,6 +65,24 @@ Encoder_turbo_DB<B>
 	}
 }
 
+template <typename B>
+Encoder_turbo_DB<B>* Encoder_turbo_DB<B>
+::clone() const
+{
+	auto m = new Encoder_turbo_DB<B>(*this);
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B>
+void Encoder_turbo_DB<B>
+::deep_copy(const Encoder_turbo_DB<B> &m)
+{
+	Module::deep_copy(m);
+	this->enco_n.reset(m.enco_n->clone());
+	this->enco_i.reset(m.enco_i->clone());
+}
+
 // [   AB   ][  WnWi  ][  YnYi  ]
 template <typename B>
 void Encoder_turbo_DB<B>
@@ -82,16 +100,16 @@ void Encoder_turbo_DB<B>
 		U_K_i[frame_id * this->K + i +1] = U_K_cpy[frame_id * this->K + l * 2 +1];
 	}
 
-	enco_n.encode(U_K - frame_id * enco_n.get_K(), X_N_tmp.data(), frame_id);
+	enco_n->encode(U_K - frame_id * enco_n->get_K(), X_N_tmp.data(), frame_id);
 
-	std::copy(X_N_tmp.begin() + frame_id * enco_n.get_N() + enco_n.get_K(),
-	          X_N_tmp.begin() + frame_id * enco_n.get_N() + enco_n.get_N(),
+	std::copy(X_N_tmp.begin() + frame_id * enco_n->get_N() + enco_n->get_K(),
+	          X_N_tmp.begin() + frame_id * enco_n->get_N() + enco_n->get_N(),
 	          this->par_n.begin());
 
-	enco_i.encode(U_K_i.data(), X_N_tmp.data(), frame_id);
+	enco_i->encode(U_K_i.data(), X_N_tmp.data(), frame_id);
 
-	std::copy(X_N_tmp.begin() + frame_id * enco_i.get_N() + enco_i.get_K(),
-	          X_N_tmp.begin() + frame_id * enco_i.get_N() + enco_i.get_N(),
+	std::copy(X_N_tmp.begin() + frame_id * enco_i->get_N() + enco_i->get_K(),
+	          X_N_tmp.begin() + frame_id * enco_i->get_N() + enco_i->get_N(),
 	          this->par_i.begin());
 
 	std::copy(U_K, U_K + this->K, X_N);
@@ -124,7 +142,7 @@ bool Encoder_turbo_DB<B>
 		X_N_par_n[i +1] = X_N[2 * this->K + i +0];
 	}
 
-	if (!enco_n.is_codeword(X_N_tmp.data()))
+	if (!enco_n->is_codeword(X_N_tmp.data()))
 		return false;
 
 	for (auto i = 0; i < this->K; i += 4)
@@ -145,7 +163,7 @@ bool Encoder_turbo_DB<B>
 		X_N_par_i[i +1] = X_N[2 * this->K + i +1];
 	}
 
-	if (!enco_i.is_codeword(X_N_tmp.data()))
+	if (!enco_i->is_codeword(X_N_tmp.data()))
 		return false;
 
 	return true;

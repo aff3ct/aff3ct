@@ -25,8 +25,7 @@ template <typename R = float>
 class Channel_optical : public Channel<R>
 {
 protected:
-	std::unique_ptr<tools::User_pdf_noise_generator<R>> pdf_noise_generator;
-	const bool is_autoalloc_pdf_gen;
+	std::shared_ptr<tools::User_pdf_noise_generator<R>> pdf_noise_generator;
 
 public:
 	Channel_optical(const int N,
@@ -41,11 +40,15 @@ public:
 
 	virtual ~Channel_optical() = default;
 
+	virtual Channel_optical<R>* clone() const;
+
 	void set_seed(const int seed);
 
 	void _add_noise(const R *X_N, R *Y_N, const int frame_id = -1);
 
 protected:
+	virtual void deep_copy(const Channel_optical<R>& m);
+
 	virtual void check_noise();
 };
 }

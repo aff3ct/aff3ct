@@ -24,8 +24,7 @@ Channel_AWGN_LLR<R>
                    const int n_frames)
 : Channel<R>(N, n_frames),
   add_users(add_users),
-  gaussian_generator(gaussian_generator.clone()),
-  is_autoalloc_gaussian_gen(false)
+  gaussian_generator(gaussian_generator.clone())
 {
 	const std::string name = "Channel_AWGN_LLR";
 	this->set_name(name);
@@ -68,11 +67,27 @@ Channel_AWGN_LLR<R>
                    const int n_frames)
 : Channel<R>(N, n_frames),
   add_users(add_users),
-  gaussian_generator(create_gaussian_generator<R>(implem, seed)),
-  is_autoalloc_gaussian_gen(true)
+  gaussian_generator(create_gaussian_generator<R>(implem, seed))
 {
 	const std::string name = "Channel_AWGN_LLR";
 	this->set_name(name);
+}
+
+template <typename R>
+Channel_AWGN_LLR<R>* Channel_AWGN_LLR<R>
+::clone() const
+{
+	auto m = new Channel_AWGN_LLR<R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename R>
+void Channel_AWGN_LLR<R>
+::deep_copy(const Channel_AWGN_LLR<R> &m)
+{
+	Module::deep_copy(m);
+	this->gaussian_generator.reset(m.gaussian_generator->clone());
 }
 
 template <typename R>

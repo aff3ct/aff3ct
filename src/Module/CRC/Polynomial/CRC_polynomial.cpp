@@ -45,6 +45,15 @@ CRC_polynomial<B>
 }
 
 template <typename B>
+CRC_polynomial<B>* CRC_polynomial<B>
+::clone() const
+{
+	auto m = new CRC_polynomial<B>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B>
 int CRC_polynomial<B>
 ::get_size(const std::string &poly_key)
 {

@@ -14,6 +14,15 @@ Encoder_NO<B>
 }
 
 template <typename B>
+Encoder_NO<B>* Encoder_NO<B>
+::clone() const
+{
+	auto m = new Encoder_NO<B>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B>
 void Encoder_NO<B>
 ::_encode(const B *U_K, B *X_K, const int frame_id)
 {

@@ -47,5 +47,12 @@ Decoder_SISO_SIHO<B,R>
 	this->set_name(name);
 }
 
+template <typename B, typename R>
+Decoder* Decoder_SISO_SIHO<B,R>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
 }
 }

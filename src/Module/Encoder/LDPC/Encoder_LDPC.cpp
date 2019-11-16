@@ -18,6 +18,15 @@ Encoder_LDPC<B>
 }
 
 template <typename B>
+Encoder_LDPC<B>* Encoder_LDPC<B>
+::clone() const
+{
+	auto m = new Encoder_LDPC<B>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B>
 Encoder_LDPC<B>
 ::Encoder_LDPC(const int K, const int N, const tools::Sparse_matrix &G, const int n_frames)
 : Encoder<B>(K, N, n_frames), G(G)

@@ -17,6 +17,15 @@ Extractor_RSC<B,Q>
 }
 
 template <typename B, typename Q>
+Extractor_RSC<B,Q>* Extractor_RSC<B,Q>
+::clone() const
+{
+	auto m = new Extractor_RSC<B,Q>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename Q>
 void Extractor_RSC<B,Q>
 ::_get_sys_and_par_llr(const Q* Y_N, Q* sys, Q* par, const int frame_id)
 {

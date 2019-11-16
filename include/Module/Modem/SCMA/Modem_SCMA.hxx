@@ -52,6 +52,15 @@ Modem_SCMA<B,R,Q,PSI>
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
+Modem_SCMA<B,R,Q,PSI>* Modem_SCMA<B,R,Q,PSI>
+::clone() const
+{
+	auto m = new Modem_SCMA<B,R,Q,PSI>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 void Modem_SCMA<B,R,Q,PSI>
 ::check_noise()
 {

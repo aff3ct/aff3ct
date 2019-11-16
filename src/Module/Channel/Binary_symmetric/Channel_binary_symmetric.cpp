@@ -23,8 +23,7 @@ Channel_binary_symmetric<R>
                            const tools::Event_generator<R> &event_generator,
                            const int n_frames)
 : Channel<R>(N, n_frames),
-  event_generator(event_generator.clone()),
-  is_autoalloc_event_gen(false)
+  event_generator(event_generator.clone())
 {
 	const std::string name = "Channel_binary_symmetric";
 	this->set_name(name);
@@ -65,11 +64,27 @@ Channel_binary_symmetric<R>
                            const int seed,
                            const int n_frames)
 : Channel<R>(N, n_frames),
-  event_generator(create_event_generator<R>(implem, seed)),
-  is_autoalloc_event_gen(true)
+  event_generator(create_event_generator<R>(implem, seed))
 {
 	const std::string name = "Channel_binary_symmetric";
 	this->set_name(name);
+}
+
+template <typename R>
+Channel_binary_symmetric<R>* Channel_binary_symmetric<R>
+::clone() const
+{
+	auto m = new Channel_binary_symmetric<R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename R>
+void Channel_binary_symmetric<R>
+::deep_copy(const Channel_binary_symmetric<R> &m)
+{
+	Module::deep_copy(m);
+	this->event_generator.reset(m.event_generator->clone());
 }
 
 template <typename R>

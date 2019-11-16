@@ -77,6 +77,13 @@ Encoder<B>
 }
 
 template <typename B>
+Encoder<B>* Encoder<B>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B>
 int Encoder<B>
 ::get_K() const
 {

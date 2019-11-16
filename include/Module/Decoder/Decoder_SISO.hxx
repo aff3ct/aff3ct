@@ -48,6 +48,13 @@ Decoder_SISO<R>
 }
 
 template <typename R>
+Decoder* Decoder_SISO<R>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename R>
 template <class A>
 void Decoder_SISO<R>
 ::decode_siso(const std::vector<R,A> &sys, const std::vector<R,A> &par, std::vector<R,A> &ext,

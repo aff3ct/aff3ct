@@ -26,6 +26,7 @@ public:
 	              const int n_frames = 1);
 	virtual ~Extractor_RSC() = default;
 
+	virtual Extractor_RSC<B,Q>* clone() const;
 
 protected:
 	const std::vector<uint32_t>& get_info_bits_pos();

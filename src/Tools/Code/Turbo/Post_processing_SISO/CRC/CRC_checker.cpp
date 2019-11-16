@@ -9,7 +9,7 @@ CRC_checker<B,R>
 : Post_processing_SISO<B,R>(),
   start_crc_check_ite   (start_crc_check_ite   ),
   simd_inter_frame_level(simd_inter_frame_level),
-  crc                   (crc                   )
+  crc                   (crc.clone()           )
 {
 }
 
@@ -36,7 +36,7 @@ bool CRC_checker<B,R>
 		for (auto i = loop_size1 * mipp::nElReg<R>(); i < loop_size2; i++)
 			s[i] = (sys[i] + ext[i]) < 0;
 
-		return crc.check(s, simd_inter_frame_level);
+		return crc->check(s, simd_inter_frame_level);
 	}
 
 	return false;

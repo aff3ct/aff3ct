@@ -53,6 +53,38 @@ Monitor_BFER<B>
 {
 }
 
+template <typename B>
+Monitor_BFER<B>* Monitor_BFER<B>
+::clone() const
+{
+	if (this->callback_fe.size())
+	{
+		std::stringstream message;
+		message << "'callback_fe.size()' has to be equal to 0 ('callback_fe.size()' = "
+		        << this->callback_fe.size() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (this->callback_check.size())
+	{
+		std::stringstream message;
+		message << "'callback_check.size()' has to be equal to 0 ('callback_check.size()' = "
+		        << this->callback_check.size() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (this->callback_fe_limit_achieved.size())
+	{
+		std::stringstream message;
+		message << "'callback_fe_limit_achieved.size()' has to be equal to 0 ('callback_fe_limit_achieved.size()' = "
+		        << this->callback_fe_limit_achieved.size() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	auto m = new Monitor_BFER<B>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
 
 template <typename B>
 bool Monitor_BFER<B>

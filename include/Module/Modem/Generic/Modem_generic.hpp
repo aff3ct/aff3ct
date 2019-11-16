@@ -32,6 +32,8 @@ public:
 
 	virtual ~Modem_generic() = default;
 
+	virtual Modem_generic<B,R,Q,MAX>* clone() const;
+
 	static bool is_complex_mod(const tools::Constellation<R>& c);
 	static bool is_complex_fil(const tools::Constellation<R>& c);
 	static int size_mod(const int N, const tools::Constellation<R>& c);

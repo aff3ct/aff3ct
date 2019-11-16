@@ -13,15 +13,15 @@ Decoder_polar_SCL_naive_CA<B,R,F,G>
 ::Decoder_polar_SCL_naive_CA(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
                              const CRC<B>& crc, const int n_frames)
 : Decoder(K, N, n_frames, 1),
-  Decoder_polar_SCL_naive<B,R,F,G>(K, N, L, frozen_bits, n_frames), crc(crc)
+  Decoder_polar_SCL_naive<B,R,F,G>(K, N, L, frozen_bits, n_frames), crc(crc.clone())
 {
 	const std::string name = "Decoder_polar_SCL_naive_CA";
 	this->set_name(name);
 
-	if (this->crc.get_size() > K)
+	if (this->crc->get_size() > K)
 	{
 		std::stringstream message;
-		message << "'crc.get_size()' has to be equal or smaller than 'K' ('crc.get_size()' = " << this->crc.get_size()
+		message << "'crc->get_size()' has to be equal or smaller than 'K' ('crc->get_size()' = " << this->crc->get_size()
 		        << ", 'K' = " << K << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
@@ -41,7 +41,7 @@ void Decoder_polar_SCL_naive_CA<B,R,F,G>
 			if (!this->frozen_bits[leaf])
 				U_test.push_back(this->leaves_array[path][leaf]->get_c()->s[0]);
 
-		bool decode_result = crc.check(U_test, this->get_simd_inter_frame_level());
+		bool decode_result = crc->check(U_test, this->get_simd_inter_frame_level());
 		if (!decode_result)
 			this->active_paths.erase(path);
 	}

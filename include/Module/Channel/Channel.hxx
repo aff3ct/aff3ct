@@ -73,6 +73,13 @@ Channel<R>
 }
 
 template <typename R>
+Channel<R>* Channel<R>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename R>
 int Channel<R>
 ::get_N() const
 {

@@ -19,7 +19,7 @@ Decoder_polar_SCF_naive<B,R,F,G,H>
                           const CRC<B>& crc, const int n_flips, const int n_frames)
 : Decoder(K, N, n_frames, 1),
   Decoder_polar_SC_naive<B,R,F,G,H>(K, N, frozen_bits, n_frames),
-  crc(crc),
+  crc(crc.clone()),
   n_flips(n_flips),
   index(K),
   current_flip_index(-1)
@@ -27,10 +27,10 @@ Decoder_polar_SCF_naive<B,R,F,G,H>
 	const std::string name = "Decoder_polar_SCF_naive";
 	this->set_name(name);
 
-	if (this->crc.get_size() > K)
+	if (this->crc->get_size() > K)
 	{
 		std::stringstream message;
-		message << "'crc.get_size()' has to be equal or smaller than 'K' ('crc.get_size()' = " << this->crc.get_size()
+		message << "'crc->get_size()' has to be equal or smaller than 'K' ('crc->get_size()' = " << this->crc->get_size()
 		        << ", 'K' = " << K << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
@@ -204,7 +204,7 @@ bool Decoder_polar_SCF_naive<B,R,F,G,H>
 	for (auto leaf = 0 ; leaf < this->N ; leaf++)
 		if (!this->frozen_bits[leaf])
 			U_test.push_back(leaves[leaf]->get_c()->s[0]);
-	return this->crc.check(U_test, this->get_simd_inter_frame_level());
+	return this->crc->check(U_test, this->get_simd_inter_frame_level());
 }
 }
 }

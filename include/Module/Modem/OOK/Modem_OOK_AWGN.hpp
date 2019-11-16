@@ -24,6 +24,8 @@ public:
 	               const int n_frames = 1);
 	virtual ~Modem_OOK_AWGN() = default;
 
+	virtual Modem_OOK_AWGN<B,R,Q>* clone() const;
+
 	void noise_changed();
 
 protected:

@@ -72,6 +72,13 @@ Decoder_HIHO<B>
 }
 
 template <typename B>
+Decoder* Decoder_HIHO<B>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B>
 template <class A>
 void Decoder_HIHO<B>
 ::decode_hiho(const std::vector<B,A>& Y_N, std::vector<B,A>& V_K, const int frame_id)

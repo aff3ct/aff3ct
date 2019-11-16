@@ -22,6 +22,15 @@ Source_random_fast<B>
 }
 
 template <typename B>
+Source_random_fast<B>* Source_random_fast<B>
+::clone() const
+{
+	auto m = new Source_random_fast<B>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B>
 void Source_random_fast<B>
 ::_generate(B *U_K, const int frame_id)
 {

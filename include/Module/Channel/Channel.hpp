@@ -66,6 +66,8 @@ public:
 	 */
 	virtual ~Channel() = default;
 
+	virtual Channel<R>* clone() const;
+
 	int get_N() const;
 
 	const std::vector<R>& get_noised_data() const;

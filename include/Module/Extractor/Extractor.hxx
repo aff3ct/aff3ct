@@ -124,6 +124,13 @@ Extractor<B,Q>
 }
 
 template <typename B, typename Q>
+Extractor<B,Q>* Extractor<B,Q>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename Q>
 template <class A>
 void Extractor<B,Q>
 ::get_sys_llr(const std::vector<Q,A> &Y_N, std::vector<Q,A> &Y_K, const int frame_id)

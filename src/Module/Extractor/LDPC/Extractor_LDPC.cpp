@@ -16,6 +16,15 @@ Extractor_LDPC<B,Q>
 }
 
 template <typename B, typename Q>
+Extractor_LDPC<B,Q>* Extractor_LDPC<B,Q>
+::clone() const
+{
+	auto m = new Extractor_LDPC<B,Q>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename Q>
 const std::vector<uint32_t>& Extractor_LDPC<B,Q>
 ::get_info_bits_pos()
 {

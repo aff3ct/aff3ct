@@ -49,6 +49,15 @@ Puncturer_LDPC<B,Q>
 	}
 }
 
+template<typename B, typename Q>
+Puncturer_LDPC<B,Q>* Puncturer_LDPC<B,Q>
+::clone() const
+{
+	auto m = new Puncturer_LDPC<B,Q>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
 template <typename B, typename Q>
 void Puncturer_LDPC<B,Q>
 ::_puncture(const B *X_N1, B *X_N2, const int frame_id) const

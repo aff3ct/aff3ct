@@ -63,6 +63,8 @@ public:
 
 	virtual ~Monitor_MI() = default;
 
+	virtual Monitor_MI<B,R>* clone() const;
+
 	bool equivalent(const Monitor_MI<B,R>& m, bool do_throw = false) const; // check if this monitor and "m" have equivalent construction arguments
 	                                                                        // and then can be merged by "collect" or "copy" methods
 	template <class AB = std::allocator<B>, class AR = std::allocator<R>>

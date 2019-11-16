@@ -16,6 +16,15 @@ Encoder_coset<B>
 }
 
 template <typename B>
+Encoder_coset<B>* Encoder_coset<B>
+::clone() const
+{
+	auto m = new Encoder_coset<B>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B>
 void Encoder_coset<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {

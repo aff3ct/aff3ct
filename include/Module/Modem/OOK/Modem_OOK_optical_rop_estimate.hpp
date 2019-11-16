@@ -45,6 +45,8 @@ public:
 	                               const int n_frames = 1);
 	virtual ~Modem_OOK_optical_rop_estimate() = default;
 
+	virtual Modem_OOK_optical_rop_estimate<B,R,Q>* clone() const;
+
 protected:
 	// H_N is replaced by X_N, that is the output of the modulation in order to estimate values
 	void _demodulate_wg(const R *X_N, const Q *Y_N1, Q *Y_N2, const int frame_id = -1);

@@ -27,6 +27,8 @@ public:
 	                    const std::string& G_save_path = "", const bool G_save_path_single_thread = true,
 	                    const int n_frames = 1);
 	virtual ~Encoder_LDPC_from_H() = default;
+
+	virtual Encoder_LDPC_from_H<B>* clone() const;
 };
 
 }

@@ -53,7 +53,7 @@ void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 	sc_decoder._decode_siho(Y_N, V_K, frame_id);
 
 	// check the CRC
-	auto crc_decode_result = this->crc.check(V_K, this->get_simd_inter_frame_level());
+	auto crc_decode_result = this->crc->check(V_K, this->get_simd_inter_frame_level());
 
 	// delete the path if the CRC result is negative
 	if (!crc_decode_result && L_max > 1)

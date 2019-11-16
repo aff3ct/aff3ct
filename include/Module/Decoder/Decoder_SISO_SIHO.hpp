@@ -46,6 +46,8 @@ public:
 	 * \brief Destructor.
 	 */
 	virtual ~Decoder_SISO_SIHO() = default;
+
+	virtual Decoder* clone() const;
 };
 }
 }

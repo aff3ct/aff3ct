@@ -61,5 +61,13 @@ void Callback<Args...>
 		c.first(args...);
 }
 
+template <class... Args>
+size_t Callback<Args...>
+::size() const
+{
+	std::lock_guard<std::mutex> lg(this->mtx);
+	return this->callbacks.size();
+}
+
 }
 }

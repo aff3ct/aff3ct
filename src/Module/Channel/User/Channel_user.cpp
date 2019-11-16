@@ -59,6 +59,15 @@ void Channel_user<R>
 }
 
 template <typename R>
+Channel_user<R>* Channel_user<R>
+::clone() const
+{
+	auto m = new Channel_user<R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename R>
 void Channel_user<R>
 ::set_noise(const int frame_id)
 {

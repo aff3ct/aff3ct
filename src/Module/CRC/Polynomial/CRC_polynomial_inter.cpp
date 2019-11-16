@@ -21,6 +21,15 @@ CRC_polynomial_inter<B>
 }
 
 template <typename B>
+CRC_polynomial_inter<B>* CRC_polynomial_inter<B>
+::clone() const
+{
+	auto m = new CRC_polynomial_inter<B>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B>
 bool CRC_polynomial_inter<B>
 ::check(const B *V_K, const int n_frames, const int frame_id)
 {

@@ -62,6 +62,8 @@ public:
 
 	virtual ~Monitor_BFER() = default;
 
+	virtual Monitor_BFER<B>* clone() const;
+
 	bool equivalent(const Monitor_BFER<B>& m, bool do_throw = false) const; // check if this monitor and "m" have equivalent construction arguments
 	                                                                        // and then can be merged by "collect" or "copy" methods
 	/*!

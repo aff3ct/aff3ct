@@ -98,6 +98,13 @@ Puncturer<B,Q>
 }
 
 template <typename B, typename Q>
+Puncturer<B,Q>* Puncturer<B,Q>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename Q>
 int Puncturer<B,Q>
 ::get_K() const
 {

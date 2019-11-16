@@ -49,6 +49,23 @@ Monitor_EXIT<B,R>
 }
 
 template <typename B, typename R>
+Monitor_EXIT<B,R>* Monitor_EXIT<B,R>
+::clone() const
+{
+	if (this->callback_measure.size())
+	{
+		std::stringstream message;
+		message << "'callback_measure.size()' has to be equal to 0 ('callback_measure.size()' = "
+		        << this->callback_measure.size() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	auto m = new Monitor_EXIT<B,R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename R>
 bool Monitor_EXIT<B,R>
 ::equivalent(const Monitor_EXIT<B,R>& m, bool do_throw) const
 {

@@ -17,6 +17,15 @@ Modem_OOK<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
+Modem_OOK<B,R,Q>* Modem_OOK<B,R,Q>
+::clone() const
+{
+	auto m = new Modem_OOK<B,R,Q>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename R, typename Q>
 void Modem_OOK<B,R,Q>
 ::_modulate(const B *X_N1, R *X_N2, const int frame_id)
 {

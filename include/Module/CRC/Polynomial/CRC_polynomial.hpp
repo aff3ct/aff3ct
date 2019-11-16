@@ -28,6 +28,7 @@ protected:
 public:
 	CRC_polynomial(const int K, const std::string &poly_key, const int size = 0, const int n_frames = 1);
 	virtual ~CRC_polynomial() = default;
+	virtual CRC_polynomial<B>* clone() const;
 
 	static int         get_size (const std::string &poly_key);
 	static std::string get_name (const std::string &poly_key);

@@ -66,6 +66,8 @@ public:
 	 */
 	virtual ~CRC() = default;
 
+	virtual CRC<B>* clone() const;
+
 	int get_K() const;
 
 	/*!

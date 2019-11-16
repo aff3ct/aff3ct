@@ -52,6 +52,8 @@ public:
 	 */
 	virtual ~Decoder_SISO() = default;
 
+	virtual Decoder* clone() const;
+
 	/*!
 	 * \brief Decodes a given noisy codeword. This prototype supposes that the encoded frame is systematic, can't be
 	 *        used otherwise.

@@ -34,6 +34,8 @@ public:
 	Encoder_LDPC(const int K, const int N, const tools::Sparse_matrix &G, const tools::Sparse_matrix &H, const int n_frames = 1);
 	virtual ~Encoder_LDPC() = default;
 
+	virtual Encoder_LDPC<B>* clone() const;
+
 	virtual bool is_codeword(const B *X_N);
 
 protected:
