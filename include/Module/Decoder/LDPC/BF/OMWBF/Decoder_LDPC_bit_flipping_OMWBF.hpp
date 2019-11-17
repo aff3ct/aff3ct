@@ -30,6 +30,7 @@ public:
 	                                const int syndrome_depth = 1,
 	                                const int n_frames = 1);
 	virtual ~Decoder_LDPC_bit_flipping_OMWBF() = default;
+	virtual Decoder_LDPC_bit_flipping_OMWBF<B,R>* clone() const;
 
 protected:
 	// BF functions for decoding

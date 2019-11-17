@@ -253,8 +253,8 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_LDPC
 	}
 	else if (this->type == "BIT_FLIPPING")
 	{
-		     if (this->implem == "WBF" ) return new module::Decoder_LDPC_bit_flipping_OMWBF<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, (Q)0.               , this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		     if (this->implem == "MWBF") return new module::Decoder_LDPC_bit_flipping_OMWBF<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, (Q)this->mwbf_factor, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		if (this->implem == "WBF" ) return new module::Decoder_LDPC_bit_flipping_OMWBF<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, (Q)0.               , this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		if (this->implem == "MWBF") return new module::Decoder_LDPC_bit_flipping_OMWBF<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, (Q)this->mwbf_factor, this->enable_syndrome, this->syndrome_depth, this->n_frames);
 	}
 #ifdef __cpp_aligned_new
 	else if (this->type == "BP_HORIZONTAL_LAYERED" && this->simd_strategy == "INTER")

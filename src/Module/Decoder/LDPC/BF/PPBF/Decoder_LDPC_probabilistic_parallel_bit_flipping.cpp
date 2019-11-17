@@ -20,8 +20,7 @@ Decoder_LDPC_probabilistic_parallel_bit_flipping<B,R>
                                                          const int n_frames)
 : Decoder(K, N, n_frames, 1),
   Decoder_LDPC_bit_flipping_hard<B,R>(K, N, n_ite, H, info_bits_pos, enable_syndrome, syndrome_depth, n_frames),
-  rd_engine        (seed                    ),
-  bernouilli_dist  (bernouilli_probas.size())
+  rd_engine(seed)
 {
 	const std::string name = "Decoder_LDPC_probabilistic_parallel_bit_flipping";
 	this->set_name(name);
@@ -44,7 +43,16 @@ Decoder_LDPC_probabilistic_parallel_bit_flipping<B,R>
 
 	// generate Bernouilli distributions
 	for (unsigned i = 0; i < bernouilli_dist.size(); i++)
-		bernouilli_dist[i].reset(new std::bernoulli_distribution(bernouilli_probas[i]));
+		bernouilli_dist.push_back(std::bernoulli_distribution(bernouilli_probas[i]));
+}
+
+template <typename B, typename R>
+Decoder_LDPC_probabilistic_parallel_bit_flipping<B,R>* Decoder_LDPC_probabilistic_parallel_bit_flipping<B,R>
+::clone() const
+{
+	auto m = new Decoder_LDPC_probabilistic_parallel_bit_flipping<B,R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
 }
 
 template <typename B, typename R>
@@ -79,7 +87,7 @@ void Decoder_LDPC_probabilistic_parallel_bit_flipping<B,R>
 		for (unsigned c = 0; c < var_degree; c++)
 			energy += CN[var_node[c]];
 
-		VN[v] ^= (B)(*bernouilli_dist[energy])(this->rd_engine);
+		VN[v] ^= (B)(bernouilli_dist[energy])(this->rd_engine);
 	}
 }
 

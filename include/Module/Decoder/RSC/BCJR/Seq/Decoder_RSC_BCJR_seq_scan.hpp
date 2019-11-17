@@ -22,6 +22,7 @@ public:
 	                          const bool buffered_encoding = true,
 	                          const int n_frames = 1);
 	virtual ~Decoder_RSC_BCJR_seq_scan() = default;
+	virtual Decoder_RSC_BCJR_seq_scan<B,R,RD>* clone() const;
 
 protected:
 	virtual void _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);

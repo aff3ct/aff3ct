@@ -25,17 +25,17 @@ template <typename B, typename R>
 Decoder_chase_pyndiah<B,R>
 ::Decoder_chase_pyndiah(const int K, const int N, // N includes the parity bit if any
                         const int n_frames,
-                        Decoder_BCH<B,R> &dec_,
-                        Encoder    <B  > &enc_,
+                        const Decoder_BCH<B,R> &dec_,
+                        const Encoder    <B  > &enc_,
                         const int n_least_reliable_positions_,
                         const int n_test_vectors_,
                         const int n_competitors_,
                         const std::vector<float>& cp_coef)
 : Decoder               (K, N, n_frames),
   Decoder_SISO_SIHO<B,R>(K, N, n_frames),
-  dec                       (dec_                                                                    ),
-  enc                       (enc_                                                                    ),
-  N_np                      (dec.get_N()                                                             ),
+  dec                       (dec_.clone()                                                            ),
+  enc                       (enc_.clone()                                                            ),
+  N_np                      (dec->get_N()                                                            ),
   n_least_reliable_positions(n_least_reliable_positions_                                             ),
   n_test_vectors            (n_test_vectors_ ? n_test_vectors_ : (int)1 << n_least_reliable_positions),
   n_competitors             (n_competitors_  ? n_competitors_  : n_test_vectors                      ),
@@ -77,21 +77,21 @@ Decoder_chase_pyndiah<B,R>
 	}
 
 
-	if (enc.get_K() != dec.get_K())
+	if (enc->get_K() != dec->get_K())
 	{
 		std::stringstream message;
-		message << "'enc.get_K()' has to be equal to 'dec.get_K()' "
-		        << "('enc.get_K()' = " << enc.get_K()
-		        << ", 'dec.get_K()' = " << dec.get_K() << ").";
+		message << "'enc->get_K()' has to be equal to 'dec->get_K()' "
+		        << "('enc->get_K()' = " << enc->get_K()
+		        << ", 'dec->get_K()' = " << dec->get_K() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (enc.get_N() != dec.get_N())
+	if (enc->get_N() != dec->get_N())
 	{
 		std::stringstream message;
-		message << "'enc.get_N()' has to be equal to 'dec.get_K()' "
-		        << "('enc.get_N()' = " << enc.get_N()
-		        << ", 'dec.get_N()' = " << dec.get_N() << ").";
+		message << "'enc->get_N()' has to be equal to 'dec->get_K()' "
+		        << "('enc->get_N()' = " << enc->get_N()
+		        << ", 'dec->get_N()' = " << dec->get_N() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -107,10 +107,28 @@ Decoder_chase_pyndiah<B,R>
 }
 
 template <typename B, typename R>
+Decoder_chase_pyndiah<B,R>* Decoder_chase_pyndiah<B,R>
+::clone() const
+{
+	auto m = new Decoder_chase_pyndiah<B,R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename R>
+void Decoder_chase_pyndiah<B,R>
+::deep_copy(const Decoder_chase_pyndiah<B,R> &m)
+{
+	Module::deep_copy(m);
+	this->dec.reset(m.dec->clone());
+	this->enc.reset(m.enc->clone());
+}
+
+template <typename B, typename R>
 const std::vector<uint32_t>& Decoder_chase_pyndiah<B,R>
 ::get_info_bits_pos()
 {
-	return enc.get_info_bits_pos();
+	return enc->get_info_bits_pos();
 }
 
 template <typename B, typename R>
@@ -142,7 +160,7 @@ void Decoder_chase_pyndiah<B,R>
 	decode_chase(Y_N, frame_id);
 
 	auto* DW = test_vect.data() + competitors.front().pos;
-	auto& info_bits_pos = enc.get_info_bits_pos();
+	auto& info_bits_pos = enc->get_info_bits_pos();
 
 	for (int j = 0; j < this->K; j++)
 		V_K[j] = DW[info_bits_pos[j]];
@@ -204,9 +222,9 @@ void Decoder_chase_pyndiah<B,R>
 
 	// if (this->parity_extended)
 	// {
-	// 	auto parity_calc = tools::compute_parity(hard_Y_N.data(), dec.get_N());
-	// 	parity_diff = parity_calc ^ hard_Y_N[dec.get_N()];
-	// 	hard_Y_N[dec.get_N()] = parity_calc;
+	// 	auto parity_calc = tools::compute_parity(hard_Y_N.data(), dec->get_N());
+	// 	parity_diff = parity_calc ^ hard_Y_N[dec->get_N()];
+	// 	hard_Y_N[dec->get_N()] = parity_calc;
 	// }
 	// else
 	// 	parity_diff = false;
@@ -289,9 +307,9 @@ void Decoder_chase_pyndiah<B,R>
 		// rearrange hard_Y_N to be a good candidate
 		bit_flipping(hard_Y_N.data(), c);
 
-		dec.decode_hiho_cw(hard_Y_N.data() - dec_offset, test_vect.data() + c*this->N - dec_offset, frame_id); // parity bit is ignored by the decoder
-		//is_wrong[c] = !enc.is_codeword(test_vect.data() + c*this->N);
-		is_wrong[c] = !dec.get_last_is_codeword(frame_id);
+		dec->decode_hiho_cw(hard_Y_N.data() - dec_offset, test_vect.data() + c*this->N - dec_offset, frame_id); // parity bit is ignored by the decoder
+		//is_wrong[c] = !enc->is_codeword(test_vect.data() + c*this->N);
+		is_wrong[c] = !dec->get_last_is_codeword(frame_id);
 
 		if (this->parity_extended)
 			test_vect[(c+1)*this->N -1] = tools::compute_parity(test_vect.data() + c*this->N, N_np);

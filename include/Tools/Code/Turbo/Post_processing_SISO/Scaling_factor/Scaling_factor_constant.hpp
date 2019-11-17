@@ -30,6 +30,8 @@ public:
 	bool siso_i(const int ite,
 	            const mipp::vector<R>& sys,
 	                  mipp::vector<R>& ext);
+
+	virtual Scaling_factor_constant<B,R>* clone() const;
 };
 }
 }

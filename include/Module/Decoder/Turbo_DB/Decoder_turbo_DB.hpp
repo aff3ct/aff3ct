@@ -5,9 +5,11 @@
 #ifndef DECODER_TURBO_DB_HPP
 #define DECODER_TURBO_DB_HPP
 
-#include <functional>
+#include <memory>
 #include <vector>
+#include <mipp.h>
 
+#include "Tools/Code/Turbo/Post_processing_SISO/Post_processing_SISO.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
 #include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR.hpp"
 
@@ -24,8 +26,8 @@ protected:
 	const int                 n_ite; // number of iterations
 
 	const Interleaver  <R>   &pi;
-	Decoder_RSC_DB_BCJR<B,R> &siso_n;
-	Decoder_RSC_DB_BCJR<B,R> &siso_i;
+	std::shared_ptr<Decoder_RSC_DB_BCJR<B,R>> siso_n;
+	std::shared_ptr<Decoder_RSC_DB_BCJR<B,R>> siso_i;
 
 	mipp::vector<R> l_cpy;
 	mipp::vector<R> l_sn;  // systematic LLRs                  in the natural     domain
@@ -40,34 +42,22 @@ protected:
 	mipp::vector<R> l_e2i; // extrinsic  LLRs                  in the interleaved domain
 	mipp::vector<B> s;     // bit decision
 
-	std::vector<std::function<bool(const int ite,
-	                               const mipp::vector<R>& sys,
-	                                     mipp::vector<R>& ext,
-	                                     mipp::vector<B>& s)>> callbacks_siso_n;
-	std::vector<std::function<bool(const int ite,
-	                               const mipp::vector<R>& sys,
-	                                     mipp::vector<R>& ext)>> callbacks_siso_i;
-	std::vector<std::function<void(const int n_ite)>> callbacks_end;
+	std::vector<std::shared_ptr<tools::Post_processing_SISO<B,R>>> post_processings;
 
 public:
 	Decoder_turbo_DB(const int& K,
 	                 const int& N,
 	                 const int& n_ite,
 	                 const Interleaver<R> &pi,
-	                 Decoder_RSC_DB_BCJR<B,R> &siso_n,
-	                 Decoder_RSC_DB_BCJR<B,R> &siso_i);
+	                 const Decoder_RSC_DB_BCJR<B,R> &siso_n,
+	                 const Decoder_RSC_DB_BCJR<B,R> &siso_i);
 	virtual ~Decoder_turbo_DB() = default;
+	virtual Decoder_turbo_DB<B,R>* clone() const;
 
-	void add_handler_siso_n(std::function<bool(const int,
-	                                           const mipp::vector<R>&,
-	                                                 mipp::vector<R>&,
-	                                                 mipp::vector<B>&)> callback);
-	void add_handler_siso_i(std::function<bool(const int,
-	                                           const mipp::vector<R>&,
-	                                                 mipp::vector<R>&)> callback);
-	void add_handler_end(std::function<void(const int)> callback);
+	void add_post_processing(const tools::Post_processing_SISO<B,R> &post_processing);
 
 protected:
+	virtual void deep_copy(const Decoder_turbo_DB<B,R> &m);
 	virtual void _decode_siho(const R *Y_N, B *V_K, const int frame_id);
 	virtual void _load       (const R *Y_N                            );
 	virtual void _store      (              B *V_K                    ) const;

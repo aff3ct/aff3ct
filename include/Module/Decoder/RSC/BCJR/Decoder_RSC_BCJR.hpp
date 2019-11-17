@@ -34,6 +34,7 @@ protected:
 	                 const int n_frames = 1,
 	                 const int simd_inter_frame_level = 1);
 	virtual ~Decoder_RSC_BCJR() = default;
+	virtual Decoder_RSC_BCJR<B,R>* clone() const;
 
 public:
 	virtual int tail_length() const;

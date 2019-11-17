@@ -26,6 +26,8 @@ public:
 
 	virtual ~CRC_checker_DB() = default;
 
+	virtual CRC_checker_DB<B,R>* clone() const;
+
 	virtual bool siso_n(const int ite,
 	                    const mipp::vector<R>& sys,
 	                          mipp::vector<R>& ext,

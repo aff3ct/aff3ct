@@ -27,6 +27,15 @@ Decoder_RSC_BCJR_seq_scan<B,R,RD>
 }
 
 template <typename B, typename R, typename RD>
+Decoder_RSC_BCJR_seq_scan<B,R,RD>* Decoder_RSC_BCJR_seq_scan<B,R,RD>
+::clone() const
+{
+	auto m = new Decoder_RSC_BCJR_seq_scan<B,R,RD>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename R, typename RD>
 void Decoder_RSC_BCJR_seq_scan<B,R,RD>
 ::compute_gamma(const R *sys, const R *par)
 {

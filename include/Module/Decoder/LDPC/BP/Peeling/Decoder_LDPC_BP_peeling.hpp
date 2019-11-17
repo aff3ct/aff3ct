@@ -34,6 +34,7 @@ public:
 	                        const int syndrome_depth = 1,
 	                        const int n_frames = 1);
 	virtual ~Decoder_LDPC_BP_peeling() = default;
+	virtual Decoder_LDPC_BP_peeling<B,R>* clone() const;
 
 protected:
 	void _store         (B *V_K,               const int frame_id);

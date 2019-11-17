@@ -23,6 +23,15 @@ Self_corrected<B,R>
 }
 
 template <typename B, typename R>
+Self_corrected<B,R>* Self_corrected<B,R>
+::clone() const
+{
+	auto t = new Self_corrected<B,R>(*this); // soft copy constructor
+	t->deep_copy(*this); // hard copy
+	return t;
+}
+
+template <typename B, typename R>
 bool Self_corrected<B,R>
 ::siso_n(const int ite,
          const mipp::vector<R>& sys,

@@ -28,10 +28,15 @@ public:
 
 	virtual ~CRC_checker() = default;
 
+	virtual CRC_checker<B,R>* clone() const;
+
 	virtual bool siso_n(const int ite,
 	                    const mipp::vector<R>& sys,
 	                          mipp::vector<R>& ext,
 	                          mipp::vector<B>& s);
+
+protected:
+	void deep_copy(const CRC_checker<B,R>& t);
 };
 }
 }

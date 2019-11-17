@@ -27,6 +27,13 @@ Decoder_BCH<B, R>
 }
 
 template <typename B, typename R>
+Decoder_BCH<B,R>* Decoder_BCH<B,R>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename R>
 bool Decoder_BCH<B, R>
 ::get_last_is_codeword(const int frame_id) const
 {

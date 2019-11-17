@@ -44,6 +44,7 @@ public:
 	                                    const int syndrome_depth = 1,
 	                                    const int n_frames = 1);
 	virtual ~Decoder_LDPC_BP_flooding_Gallager_A() = default;
+	virtual Decoder_LDPC_BP_flooding_Gallager_A<B,R>* clone() const;
 
 protected:
 	void _decode_hiho   (const B *Y_N, B *V_K, const int frame_id);

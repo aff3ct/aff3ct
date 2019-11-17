@@ -12,6 +12,15 @@ Scaling_factor_seq<B,R>
 }
 
 template <typename B, typename R>
+Scaling_factor_seq<B,R>* Scaling_factor_seq<B,R>
+::clone() const
+{
+	auto t = new Scaling_factor_seq<B,R>(*this); // soft copy constructor
+	t->deep_copy(*this); // hard copy
+	return t;
+}
+
+template <typename B, typename R>
 bool Scaling_factor_seq<B,R>
 ::siso_n(const int ite,
          const mipp::vector<R>& sys,

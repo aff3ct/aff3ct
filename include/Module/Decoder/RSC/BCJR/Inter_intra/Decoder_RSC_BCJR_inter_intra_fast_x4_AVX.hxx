@@ -115,6 +115,15 @@ Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAX>
 }
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
+Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAX>* Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAX>
+::clone() const
+{
+	auto m = new Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAX>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename R, tools::proto_max_i<R> MAX>
 void Decoder_RSC_BCJR_inter_intra_fast_x4_AVX<B,R,MAX>
 ::compute_gamma(const R *sys, const R *par)
 {

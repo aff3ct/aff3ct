@@ -22,6 +22,15 @@ Decoder_RSC_DB_BCJR_generic<B,R,MAX>
 }
 
 template <typename B, typename R, tools::proto_max<R> MAX>
+Decoder_RSC_DB_BCJR_generic<B,R,MAX>* Decoder_RSC_DB_BCJR_generic<B,R,MAX>
+::clone() const
+{
+	auto m = new Decoder_RSC_DB_BCJR_generic<B,R,MAX>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename R, tools::proto_max<R> MAX>
 void Decoder_RSC_DB_BCJR_generic<B,R,MAX>
 ::__fwd_recursion(const R *sys, const R *par)
 {

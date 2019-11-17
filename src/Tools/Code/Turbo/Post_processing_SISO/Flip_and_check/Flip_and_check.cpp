@@ -43,6 +43,15 @@ Flip_and_check<B,R>
 }
 
 template <typename B, typename R>
+Flip_and_check<B,R>* Flip_and_check<B,R>
+::clone() const
+{
+	auto t = new Flip_and_check<B,R>(*this); // soft copy constructor
+	t->deep_copy(*this); // hard copy
+	return t;
+}
+
+template <typename B, typename R>
 bool Flip_and_check<B,R>
 ::siso_n(const int ite,
          const mipp::vector<R>& sys,

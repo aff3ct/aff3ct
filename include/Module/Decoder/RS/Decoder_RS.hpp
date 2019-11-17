@@ -38,6 +38,8 @@ public:
 
 	virtual ~Decoder_RS() = default;
 
+	virtual Decoder_RS<B,R>* clone() const;
+
 protected:
 	virtual void _decode        (      S *Y_N,         const int frame_id) = 0;
 	virtual void _decode_hiho   (const B *Y_N, B *V_K, const int frame_id);

@@ -12,8 +12,8 @@ template <typename B, typename R>
 Decoder_chase_pyndiah_fast<B,R>
 ::Decoder_chase_pyndiah_fast(const int K, const int N, // N includes the parity bit if any
                              const int n_frames,
-                             Decoder_BCH<B,R> &dec_,
-                             Encoder    <B  > &enc_,
+                             const Decoder_BCH<B,R> &dec_,
+                             const Encoder    <B  > &enc_,
                              const int n_least_reliable_positions_,
                              const int n_test_vectors_,
                              const int n_competitors_,
@@ -23,6 +23,15 @@ Decoder_chase_pyndiah_fast<B,R>
 {
 	const std::string name = "Decoder_chase_pyndiah_fast";
 	this->set_name(name);
+}
+
+template <typename B, typename R>
+Decoder_chase_pyndiah_fast<B,R>* Decoder_chase_pyndiah_fast<B,R>
+::clone() const
+{
+	auto m = new Decoder_chase_pyndiah_fast<B,R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
 }
 
 template <typename B, typename R>

@@ -16,6 +16,15 @@ Decoder_repetition_std<B,R>
 }
 
 template <typename B, typename R>
+Decoder_repetition_std<B,R>* Decoder_repetition_std<B,R>
+::clone() const
+{
+	auto m = new Decoder_repetition_std<B,R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename R>
 void Decoder_repetition_std<B,R>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {

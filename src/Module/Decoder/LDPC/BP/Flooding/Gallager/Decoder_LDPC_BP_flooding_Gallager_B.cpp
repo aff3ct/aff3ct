@@ -21,6 +21,15 @@ Decoder_LDPC_BP_flooding_Gallager_B<B,R>
 }
 
 template <typename B, typename R>
+Decoder_LDPC_BP_flooding_Gallager_B<B,R>* Decoder_LDPC_BP_flooding_Gallager_B<B,R>
+::clone() const
+{
+	auto m = new Decoder_LDPC_BP_flooding_Gallager_B<B,R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename R>
 void Decoder_LDPC_BP_flooding_Gallager_B<B,R>
 ::_initialize_var_to_chk(const B *Y_N, const std::vector<int8_t> &chk_to_var, std::vector<int8_t> &var_to_chk,
                          const int ite)

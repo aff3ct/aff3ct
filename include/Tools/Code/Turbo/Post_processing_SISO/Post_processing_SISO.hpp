@@ -17,6 +17,8 @@ class Post_processing_SISO
 public:
 	virtual ~Post_processing_SISO() = default;
 
+	virtual Post_processing_SISO<B,R>* clone() const;
+
 	virtual bool siso_n(const int ite,
 	                    const mipp::vector<R>& sys,
 	                          mipp::vector<R>& ext,
@@ -27,6 +29,9 @@ public:
 	                          mipp::vector<R>& ext);
 
 	virtual void end(const int n_ite);
+
+protected:
+	void deep_copy(const Post_processing_SISO<B,R>& t);
 };
 }
 }

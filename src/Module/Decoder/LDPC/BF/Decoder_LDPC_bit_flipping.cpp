@@ -109,6 +109,13 @@ Decoder_LDPC_bit_flipping<B,R>
 }
 
 template <typename B, typename R>
+Decoder_LDPC_bit_flipping<B,R>* Decoder_LDPC_bit_flipping<B,R>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename R>
 void Decoder_LDPC_bit_flipping<B,R>
 ::_reset(const int frame_id)
 {

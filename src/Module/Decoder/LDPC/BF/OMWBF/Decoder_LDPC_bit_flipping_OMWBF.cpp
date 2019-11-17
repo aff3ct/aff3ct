@@ -36,6 +36,15 @@ Decoder_LDPC_bit_flipping_OMWBF<B,R>
 }
 
 template <typename B, typename R>
+Decoder_LDPC_bit_flipping_OMWBF<B,R>* Decoder_LDPC_bit_flipping_OMWBF<B,R>
+::clone() const
+{
+	auto m = new Decoder_LDPC_bit_flipping_OMWBF<B,R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename R>
 bool Decoder_LDPC_bit_flipping_OMWBF<B,R>
 ::BF_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V)
 {

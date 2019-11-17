@@ -17,6 +17,7 @@ class Decoder_repetition_std : public Decoder_repetition<B,R>
 public:
 	Decoder_repetition_std(const int& K, const int& N, const bool buffered_encoding = true, const int n_frames = 1);
 	virtual ~Decoder_repetition_std() = default;
+	virtual Decoder_repetition_std<B,R>* clone() const;
 
 protected:
 	void _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);

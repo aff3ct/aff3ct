@@ -7,6 +7,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <memory>
 
 #include "Module/Decoder/BCH/Decoder_BCH.hpp"
 #include "Module/Encoder/Encoder.hpp"
@@ -49,8 +50,8 @@ protected:
 	};
 
 protected:
-	Decoder_BCH<B,R> &dec;
-	Encoder    <B  > &enc;
+	std::shared_ptr<Decoder_BCH<B,R>> dec;
+	std::shared_ptr<Encoder    <B  >> enc;
 
 	const int  N_np; // N without the parity bit: can be equal to N if there is no parity bit in the code
 	const int  n_least_reliable_positions;  // the number of least reliable positions to flip to create test vectors
@@ -78,14 +79,16 @@ public:
 
 	Decoder_chase_pyndiah(const int K, const int N, // N with the parity bit if any
 	                      const int n_frames,
-	                      Decoder_BCH<B,R> &dec,
-	                      Encoder    <B  > &enc,
+	                      const Decoder_BCH<B,R> &dec,
+	                      const Encoder    <B  > &enc,
 	                      const int n_least_reliable_positions = 2,
 	                      const int n_test_vectors = 0,
 	                      const int n_competitors  = 0,
 	                      const std::vector<float>& cp_coef = {1,1,1,1,0}); // the a b c d and e coef
 
 	virtual ~Decoder_chase_pyndiah() = default;
+
+	virtual Decoder_chase_pyndiah<B,R>* clone() const;
 
 
 	void _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id); // size is length with parity bit if any
@@ -100,6 +103,7 @@ public:
 	void clear_beta();
 
 protected:
+	virtual void deep_copy(const Decoder_chase_pyndiah<B,R> &m);
 	virtual void decode_chase           (const R *Y_N, const int frame_id);
 	virtual void find_least_reliable_pos(const R* Y_N);
 	virtual void compute_test_vectors   (              const int frame_id);

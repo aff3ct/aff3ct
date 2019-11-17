@@ -28,6 +28,13 @@ Decoder_repetition<B,R>
 }
 
 template <typename B, typename R>
+Decoder_repetition<B,R>* Decoder_repetition<B,R>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename R>
 void Decoder_repetition<B,R>
 ::_load(const R *Y_N)
 {

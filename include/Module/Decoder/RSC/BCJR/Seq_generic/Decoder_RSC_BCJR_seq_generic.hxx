@@ -100,6 +100,13 @@ Decoder_RSC_BCJR_seq_generic<B,R>
 	RSC_BCJR_seq_generic_init<R>::apply(alpha, beta, K, this->n_states, this->n_ff);
 }
 
+template <typename B, typename R>
+Decoder_RSC_BCJR_seq_generic<B,R>* Decoder_RSC_BCJR_seq_generic<B,R>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
 // =================================================================================================== sys/par division
 template <typename R>
 struct RSC_BCJR_seq_generic_div_or_not

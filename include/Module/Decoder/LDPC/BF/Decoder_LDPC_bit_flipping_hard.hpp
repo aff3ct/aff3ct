@@ -23,7 +23,7 @@ protected:
 	const int  syndrome_depth;
 	      int  cur_syndrome_depth;
 
-	const tools::Sparse_matrix  H; // In vertical way
+	const tools::Sparse_matrix &H; // In vertical way
 	                               // CN are along the columns -> H.get_n_cols() == M (often M=N-K)
 	                               // VN are along the rows    -> H.get_n_rows() == N
 	                               // automatically transpose in the constructor if needed
@@ -43,6 +43,7 @@ public:
 	                               const int syndrome_depth = 1,
 	                               const int n_frames = 1);
 	virtual ~Decoder_LDPC_bit_flipping_hard() = default;
+	virtual Decoder_LDPC_bit_flipping_hard<B,R>* clone() const;
 
 protected:
 	void _store         (B *V_K,               const int frame_id);

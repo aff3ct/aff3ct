@@ -122,17 +122,8 @@ Codec_turbo_DB<B,Q>
 			                                             decoder_turbo->get_simd_inter_frame_level()));
 
 		for (auto i = 0; i < (int)post_pros.size(); i++)
-		{
 			if (post_pros[i] != nullptr)
-			{
-				using namespace std::placeholders;
-
-				auto pp = post_pros[i];
-				decoder_turbo->add_handler_siso_n(std::bind(&Post_processing_SISO<B,Q>::siso_n, pp, _1, _2, _3, _4));
-				decoder_turbo->add_handler_siso_i(std::bind(&Post_processing_SISO<B,Q>::siso_i, pp, _1, _2, _3    ));
-				decoder_turbo->add_handler_end   (std::bind(&Post_processing_SISO<B,Q>::end,    pp, _1            ));
-			}
-		}
+				decoder_turbo->add_post_processing(*post_pros[i]);
 	}
 }
 

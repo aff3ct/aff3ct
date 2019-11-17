@@ -45,6 +45,13 @@ Decoder_RSC_BCJR_inter_intra<B,R>
 }
 
 template <typename B, typename R>
+Decoder_RSC_BCJR_inter_intra<B,R>* Decoder_RSC_BCJR_inter_intra<B,R>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename R>
 void Decoder_RSC_BCJR_inter_intra<B,R>
 ::_load(const R *Y_N)
 {

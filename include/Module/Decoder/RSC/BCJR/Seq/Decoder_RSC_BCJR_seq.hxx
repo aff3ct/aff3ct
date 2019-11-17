@@ -107,6 +107,13 @@ Decoder_RSC_BCJR_seq<B,R>
 	RSC_BCJR_seq_init<R>::apply(alpha, beta, K);
 }
 
+template <typename B, typename R>
+Decoder_RSC_BCJR_seq<B,R>* Decoder_RSC_BCJR_seq<B,R>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
 // =================================================================================================== sys/par division
 template <typename R>
 struct RSC_BCJR_seq_div_or_not

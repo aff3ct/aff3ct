@@ -26,6 +26,7 @@ protected:
 	                             const bool buffered_encoding = true,
 	                             const int n_frames = 1);
 	virtual ~Decoder_RSC_BCJR_inter_intra() = default;
+	virtual Decoder_RSC_BCJR_inter_intra<B,R>* clone() const;
 
 public:
 	void decode_siso(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext,

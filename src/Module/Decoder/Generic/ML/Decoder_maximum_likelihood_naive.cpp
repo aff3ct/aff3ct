@@ -12,7 +12,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_maximum_likelihood_naive<B,R>
-::Decoder_maximum_likelihood_naive(const int K, const int N, Encoder<B> &encoder, const bool hamming, const int n_frames)
+::Decoder_maximum_likelihood_naive(const int K, const int N, const Encoder<B> &encoder, const bool hamming,
+                                   const int n_frames)
 : Decoder                        (K, N,          n_frames, 1),
   Decoder_maximum_likelihood<B,R>(K, N, encoder, n_frames   ),
   hamming(hamming),
@@ -38,19 +39,28 @@ Decoder_maximum_likelihood_naive<B,R>
 }
 
 template <typename B, typename R>
+Decoder_maximum_likelihood_naive<B,R>* Decoder_maximum_likelihood_naive<B,R>
+::clone() const
+{
+	auto m = new Decoder_maximum_likelihood_naive<B,R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename R>
 void Decoder_maximum_likelihood_naive<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	if (!this->encoder.is_sys())
+	if (!this->encoder->is_sys())
 	{
 		std::stringstream message;
-		message << "'encoder.is_sys()' has to be true.";
+		message << "'encoder->is_sys()' has to be true.";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	this->_decode_siho_cw(Y_N, this->best_X_N.data(), frame_id);
 
-	const auto &info_bits_pos = this->encoder.get_info_bits_pos();
+	const auto &info_bits_pos = this->encoder->get_info_bits_pos();
 	for (auto k = 0; k < this->K; k++)
 		V_K[k] = this->best_X_N[info_bits_pos[k]];
 }
@@ -77,7 +87,7 @@ void Decoder_maximum_likelihood_naive<B,R>
 			auto data = (uint64_t*)this->X_N.data();
 			data[0] = x;
 			tools::Bit_packer::unpack(this->X_N.data(), this->N);
-			if (this->encoder.is_codeword(this->X_N.data()))
+			if (this->encoder->is_codeword(this->X_N.data()))
 			{
 				// compute the Euclidean distance between the input LLR and the current codeword
 				auto cur_euclidean_dist = this->compute_euclidean_dist(this->X_N.data(), Y_N);
@@ -101,16 +111,16 @@ template <typename B, typename R>
 void Decoder_maximum_likelihood_naive<B,R>
 ::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 {
-	if (!this->encoder.is_sys())
+	if (!this->encoder->is_sys())
 	{
 		std::stringstream message;
-		message << "'encoder.is_sys()' has to be true.";
+		message << "'encoder->is_sys()' has to be true.";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	this->_decode_hiho_cw(Y_N, this->best_X_N.data(), frame_id);
 
-	const auto &info_bits_pos = this->encoder.get_info_bits_pos();
+	const auto &info_bits_pos = this->encoder->get_info_bits_pos();
 	for (auto k = 0; k < this->K; k++)
 		V_K[k] = this->best_X_N[info_bits_pos[k]];
 }
@@ -129,7 +139,7 @@ void Decoder_maximum_likelihood_naive<B,R>
 		auto data = (uint64_t*)this->X_N.data();
 		data[0] = x;
 		tools::Bit_packer::unpack(this->X_N.data(), this->N);
-		if (this->encoder.is_codeword(this->X_N.data()))
+		if (this->encoder->is_codeword(this->X_N.data()))
 		{
 			// compute the Hamming distance between the input bits and the current codeword
 			auto cur_hamming_dist = this->compute_hamming_dist(this->X_N.data(), Y_N);

@@ -55,6 +55,15 @@ Decoder_BCH_fast<B,R>
 	this->last_is_codeword.resize(n_frames + mipp::N<B>()); // in case where only the last frame_id is called to prevent memory leak
 }
 
+template <typename B, typename R>
+Decoder_BCH_fast<B,R>* Decoder_BCH_fast<B,R>
+::clone() const
+{
+	auto m = new Decoder_BCH_fast<B,R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
 template <typename B, class A = std::allocator<B>>
 mipp::Reg<B> read_array(const std::vector<B,A>& array, mipp::Reg<B> r_idx, const mipp::Msk<mipp::N<B>()>& m_idx = true)
 {

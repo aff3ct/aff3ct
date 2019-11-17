@@ -26,6 +26,8 @@ public:
 
 	virtual ~Decoder_BCH() = default;
 
+	virtual Decoder_BCH<B,R>* clone() const;
+
 	bool get_last_is_codeword(const int frame_id = -1) const;
 };
 }

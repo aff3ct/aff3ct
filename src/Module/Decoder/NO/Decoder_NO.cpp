@@ -18,6 +18,15 @@ Decoder_NO<B,R>
 }
 
 template <typename B, typename R>
+Decoder_NO<B,R>* Decoder_NO<B,R>
+::clone() const
+{
+	auto m = new Decoder_NO<B,R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename R>
 void Decoder_NO<B,R>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {

@@ -13,8 +13,8 @@ Decoder_turbo_product<B,R>
 ::Decoder_turbo_product(const int& n_ite,
                         const std::vector<float>& alpha,
                         const Interleaver<R>& pi,
-                        Decoder_chase_pyndiah<B,R> &cp_r,
-                        Decoder_chase_pyndiah<B,R> &cp_c,
+                        const Decoder_chase_pyndiah<B,R> &cp_r,
+                        const Decoder_chase_pyndiah<B,R> &cp_c,
                         const std::vector<float>& beta,
                         const int n_frames)
 : Decoder               (cp_r.get_K() * cp_c.get_K(), pi.get_core().get_size(), n_frames, 1),
@@ -23,8 +23,8 @@ Decoder_turbo_product<B,R>
   alpha(alpha),
   beta (beta ),
   pi   (pi   ),
-  cp_r (cp_r ),
-  cp_c (cp_c ),
+  cp_r (cp_r.clone()),
+  cp_c (cp_c.clone()),
 
   Y_N_i (this->N),
   Y_N_pi(this->N),
@@ -106,9 +106,27 @@ Decoder_turbo_product<B,R>
 
 	if (beta.size())
 	{
-		cp_r.clear_beta();
-		cp_c.clear_beta();
+		this->cp_r->clear_beta();
+		this->cp_c->clear_beta();
 	}
+}
+
+template <typename B, typename R>
+Decoder_turbo_product<B,R>* Decoder_turbo_product<B,R>
+::clone() const
+{
+	auto m = new Decoder_turbo_product<B,R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename R>
+void Decoder_turbo_product<B,R>
+::deep_copy(const Decoder_turbo_product<B,R> &m)
+{
+	Module::deep_copy(m);
+	this->cp_r.reset(m.cp_r->clone());
+	this->cp_c.reset(m.cp_c->clone());
 }
 
 template <typename B, typename R>
@@ -178,8 +196,8 @@ template <typename B, typename R>
 void Decoder_turbo_product<B,R>
 ::_decode(const R *Y_N_cha, int return_K_siso)
 {
-	const int n_cols = cp_r.get_N();
-	const int n_rows = cp_c.get_N();
+	const int n_cols = cp_r->get_N();
+	const int n_rows = cp_c->get_N();
 
 	pi.interleave(Y_N_cha, Y_N_cha_i.data(), 0, 1); // interleave data from the channel
 
@@ -189,14 +207,14 @@ void Decoder_turbo_product<B,R>
 
 		if (beta.size())
 		{
-			cp_c.set_beta((R)beta[2*i+0]);
-			cp_r.set_beta((R)beta[2*i+1]);
+			cp_c->set_beta((R)beta[2*i+0]);
+			cp_r->set_beta((R)beta[2*i+1]);
 		}
 
 		// decode each col
 		for (int j = 0; j < n_cols; j++)
 		{
-			cp_c.decode_siso(Y_N_pi.data(), Y_N_pi.data(), j); // decode j-th column
+			cp_c->decode_siso(Y_N_pi.data(), Y_N_pi.data(), j); // decode j-th column
 
 			auto* cha_ptr = Y_N_cha_i.data() + j*n_rows;
 			auto* last_it = Y_N_pi.data() + (j+1)*n_rows;
@@ -216,7 +234,7 @@ void Decoder_turbo_product<B,R>
 		{
 			for (int j = 0; j < n_rows; j++)
 			{
-				cp_r.decode_siso(Y_N_i.data(), Y_N_i.data(), j); // decode j-th row
+				cp_r->decode_siso(Y_N_i.data(), Y_N_i.data(), j); // decode j-th row
 
 				auto* cha_ptr = Y_N_cha + j*n_cols;
 				auto* last_it = Y_N_i.data() + (j+1)*n_cols;
@@ -230,18 +248,18 @@ void Decoder_turbo_product<B,R>
 		}
 		else if(return_K_siso == 0)
 		{
-			for (int j = 0; j < cp_c.get_K(); j++)
+			for (int j = 0; j < cp_c->get_K(); j++)
 			{
-				auto pos = (int)cp_c.get_info_bits_pos()[j];
+				auto pos = (int)cp_c->get_info_bits_pos()[j];
 
-				cp_r.decode_siho(Y_N_i.data(), V_K_i.data() + (j - pos)*cp_r.get_K(), pos); // decode pos-th row,
+				cp_r->decode_siho(Y_N_i.data(), V_K_i.data() + (j - pos)*cp_r->get_K(), pos); // decode pos-th row,
 				                                                                // offset pos automatically added by decoder
 			}
 		}
 		else if (return_K_siso == 1)
 		{
 			for (int j = 0; j < n_cols; j++)
-				cp_r.decode_siho_cw(Y_N_i.data(), V_N_i.data(), j); // decode j-th row
+				cp_r->decode_siho_cw(Y_N_i.data(), V_N_i.data(), j); // decode j-th row
 		}
 	}
 }

@@ -39,6 +39,7 @@ public:
 	                                   const int syndrome_depth = 1,
 	                                   const int n_frames = 1);
 	virtual ~Decoder_LDPC_BP_horizontal_layered() = default;
+	virtual Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>* clone() const;
 
 protected:
 	void _reset(const int frame_id);

@@ -26,6 +26,15 @@ Decoder_RSC_BCJR_inter_very_fast<B,R,MAX>
 	this->set_name(name);
 }
 
+template <typename B, typename R, tools::proto_max_i<R> MAX>
+Decoder_RSC_BCJR_inter_very_fast<B,R,MAX>* Decoder_RSC_BCJR_inter_very_fast<B,R,MAX>
+::clone() const
+{
+	auto m = new Decoder_RSC_BCJR_inter_very_fast<B,R,MAX>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
 // Slower and I don't know why... It should be faster without the loading of the alpha metrics
 //
 // template <typename B, typename R, tools::proto_max_i<R> MAX>

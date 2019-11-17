@@ -59,6 +59,15 @@ Decoder_RA<B, R>
 }
 
 template <typename B, typename R>
+Decoder_RA<B,R>* Decoder_RA<B,R>
+::clone() const
+{
+	auto m = new Decoder_RA<B,R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename R>
 void Decoder_RA<B, R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {

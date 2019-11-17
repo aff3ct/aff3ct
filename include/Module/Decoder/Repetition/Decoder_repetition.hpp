@@ -27,6 +27,7 @@ protected:
 
 	Decoder_repetition(const int& K, const int& N, const bool buffered_encoding = true, const int n_frames = 1);
 	virtual ~Decoder_repetition() = default;
+	virtual Decoder_repetition<B,R>* clone() const;
 
 	void _load       (const R *Y_N                            );
 	void _decode_siho(const R *Y_N, B *V_K, const int frame_id);

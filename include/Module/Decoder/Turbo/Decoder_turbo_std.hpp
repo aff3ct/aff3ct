@@ -21,10 +21,11 @@ public:
 	                  const int& N,
 	                  const int& n_ite,
 	                  const Interleaver<R> &pi,
-	                  Decoder_SISO<R> &siso_n,
-	                  Decoder_SISO<R> &siso_i,
+	                  const Decoder_SISO<R> &siso_n,
+	                  const Decoder_SISO<R> &siso_i,
 	                  const bool buffered_encoding = true);
 	virtual ~Decoder_turbo_std() = default;
+	virtual Decoder_turbo_std<B,R>* clone() const;
 
 protected:
 	virtual void _decode_siho(const R *Y_N, B *V_K, const int frame_id);

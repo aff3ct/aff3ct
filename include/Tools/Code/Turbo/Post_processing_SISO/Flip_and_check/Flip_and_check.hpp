@@ -39,6 +39,8 @@ public:
 
 	virtual ~Flip_and_check() = default;
 
+	virtual Flip_and_check<B,R>* clone() const;
+
 	bool siso_n(const int ite,
 	            const mipp::vector<R>& sys,
 	                  mipp::vector<R>& ext,

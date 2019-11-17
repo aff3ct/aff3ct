@@ -51,6 +51,7 @@ protected:
 	                          const int syndrome_depth = 1,
 	                          const int n_frames = 1);
 	virtual ~Decoder_LDPC_bit_flipping() = default;
+	virtual Decoder_LDPC_bit_flipping<B,R>* clone() const;
 
 	void _reset(int frame_id);
 

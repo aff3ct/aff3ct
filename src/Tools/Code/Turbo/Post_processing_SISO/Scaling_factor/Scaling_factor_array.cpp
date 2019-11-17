@@ -29,6 +29,15 @@ bool Scaling_factor_array<B,R>
 }
 
 template <typename B, typename R>
+Scaling_factor_array<B,R>* Scaling_factor_array<B,R>
+::clone() const
+{
+	auto t = new Scaling_factor_array<B,R>(*this); // soft copy constructor
+	t->deep_copy(*this); // hard copy
+	return t;
+}
+
+template <typename B, typename R>
 bool Scaling_factor_array<B,R>
 ::siso_i(const int ite,
          const mipp::vector<R>& sys,

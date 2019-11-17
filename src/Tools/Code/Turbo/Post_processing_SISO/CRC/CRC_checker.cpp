@@ -14,6 +14,24 @@ CRC_checker<B,R>
 }
 
 template <typename B, typename R>
+CRC_checker<B,R>* CRC_checker<B,R>
+::clone() const
+{
+	auto t = new CRC_checker<B,R>(*this); // soft copy constructor
+	t->deep_copy(*this); // hard copy
+	return t;
+}
+
+
+template <typename B, typename R>
+void CRC_checker<B,R>
+::deep_copy(const CRC_checker<B,R> &t)
+{
+	Post_processing_SISO<B,R>::deep_copy(t);
+	this->crc.reset(t.crc->clone());
+}
+
+template <typename B, typename R>
 bool CRC_checker<B,R>
 ::siso_n(const int ite,
          const mipp::vector<R>& sys,

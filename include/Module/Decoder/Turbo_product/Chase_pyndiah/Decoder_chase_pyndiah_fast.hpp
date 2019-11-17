@@ -25,14 +25,16 @@ class Decoder_chase_pyndiah_fast : public Decoder_chase_pyndiah<B,R>
 public:
 	Decoder_chase_pyndiah_fast(const int K, const int N, // N with the parity bit if any
 	                           const int n_frames,
-	                           Decoder_BCH<B,R> &dec,
-	                           Encoder    <B  > &enc,
+	                           const Decoder_BCH<B,R> &dec,
+	                           const Encoder    <B  > &enc,
 	                           const int n_least_reliable_positions = 2,
 	                           const int n_test_vectors = 0,
 	                           const int n_competitors  = 0,
 	                           const std::vector<float>& cp_coef = {1,1,1,1,0}); // the a b c d and e coef
 
 	virtual ~Decoder_chase_pyndiah_fast() = default;
+
+	virtual Decoder_chase_pyndiah_fast<B,R>* clone() const;
 
 protected:
 	virtual void compute_metrics    (const R* Y_N);

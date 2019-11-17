@@ -68,6 +68,15 @@ Decoder_LDPC_BP_flooding<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
+Decoder_LDPC_BP_flooding<B,R,Update_rule>* Decoder_LDPC_BP_flooding<B,R,Update_rule>
+::clone() const
+{
+	auto m = new Decoder_LDPC_BP_flooding<B,R,Update_rule>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 ::_reset(const int frame_id)
 {

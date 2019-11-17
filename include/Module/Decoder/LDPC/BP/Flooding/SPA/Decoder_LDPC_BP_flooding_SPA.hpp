@@ -30,6 +30,7 @@ public:
 	                             const int syndrome_depth = 1,
 	                             const int n_frames = 1);
 	virtual ~Decoder_LDPC_BP_flooding_SPA() = default;
+	virtual Decoder_LDPC_BP_flooding_SPA<B,R>* clone() const;
 
 protected:
 	void _decode_single_ite(const std::vector<R> &msg_var_to_chk, std::vector<R> &msg_chk_to_var);

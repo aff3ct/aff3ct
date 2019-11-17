@@ -24,9 +24,10 @@ protected:
 	uint32_t min_hamming_dist;
 
 public:
-	Decoder_maximum_likelihood_naive(const int K, const int N, Encoder<B> &encoder, const bool hamming = false,
+	Decoder_maximum_likelihood_naive(const int K, const int N, const Encoder<B> &encoder, const bool hamming = false,
 	                                 const int n_frames = 1);
 	virtual ~Decoder_maximum_likelihood_naive() = default;
+	virtual Decoder_maximum_likelihood_naive<B,R>* clone() const;
 
 protected:
 	void _decode_siho   (const R *Y_N,  B *V_K, const int frame_id);

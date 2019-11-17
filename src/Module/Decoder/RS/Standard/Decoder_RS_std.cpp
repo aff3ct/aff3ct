@@ -29,6 +29,15 @@ Decoder_RS_std<B,R>
 }
 
 template <typename B, typename R>
+Decoder_RS_std<B,R>* Decoder_RS_std<B,R>
+::clone() const
+{
+	auto m = new Decoder_RS_std<B,R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename R>
 void Decoder_RS_std<B,R>
 ::_decode(S *Y_N, const int frame_id)
 {

@@ -35,6 +35,7 @@ public:
 	                    const bool buffered_encoding = true,
 	                    const int n_frames = 1);
 	virtual ~Decoder_RSC_DB_BCJR() = default;
+	virtual Decoder_RSC_DB_BCJR<B,R>* clone() const;
 
 	void notify_new_frame();
 

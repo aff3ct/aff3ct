@@ -45,6 +45,8 @@ public:
 	            const mipp::vector<R>& sys,
 	                  mipp::vector<R>& ext);
 
+	virtual Self_corrected<B,R>* clone() const;
+
 private:
 	void collect (const int ite, const mipp::vector<R> &cur_ext, std::vector<mipp::vector<R>> &ext_hist);
 	void calc_osc(const int ite, const std::vector<mipp::vector<R>> &ext_hist, mipp::vector<B> &osc);

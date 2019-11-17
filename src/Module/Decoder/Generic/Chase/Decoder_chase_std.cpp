@@ -12,11 +12,11 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_chase_std<B,R>
-::Decoder_chase_std(const int K, const int N, Encoder<B> &encoder, const uint32_t max_flips, const bool hamming,
+::Decoder_chase_std(const int K, const int N, const Encoder<B> &encoder, const uint32_t max_flips, const bool hamming,
                     const int n_frames)
 : Decoder          (K, N, n_frames, 1),
   Decoder_SIHO<B,R>(K, N, n_frames, 1),
-  encoder(encoder),
+  encoder(encoder.clone()),
   best_X_N(N),
   less_reliable_llrs(N),
   max_flips(max_flips),
@@ -45,19 +45,36 @@ Decoder_chase_std<B,R>
 }
 
 template <typename B, typename R>
+Decoder_chase_std<B,R>* Decoder_chase_std<B,R>
+::clone() const
+{
+	auto m = new Decoder_chase_std<B,R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
+template <typename B, typename R>
+void Decoder_chase_std<B,R>
+::deep_copy(const Decoder_chase_std<B,R> &m)
+{
+	Module::deep_copy(m);
+	this->encoder.reset(m.encoder->clone());
+}
+
+template <typename B, typename R>
 void Decoder_chase_std<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	if (!this->encoder.is_sys())
+	if (!this->encoder->is_sys())
 	{
 		std::stringstream message;
-		message << "'encoder.is_sys()' has to be true.";
+		message << "'encoder->is_sys()' has to be true.";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	this->_decode_siho_cw(Y_N, this->best_X_N.data(), frame_id);
 
-	const auto &info_bits_pos = this->encoder.get_info_bits_pos();
+	const auto &info_bits_pos = this->encoder->get_info_bits_pos();
 	for (auto k = 0; k < this->K; k++)
 		V_K[k] = this->best_X_N[info_bits_pos[k]];
 }
@@ -80,7 +97,7 @@ void Decoder_chase_std<B,R>
 			}
 
 		if (cur_euclidean_dist < this->min_euclidean_dist)
-			if (encoder.is_codeword(V_N))
+			if (encoder->is_codeword(V_N))
 			{
 				this->min_euclidean_dist = cur_euclidean_dist;
 				this->best_test = t;
@@ -115,7 +132,7 @@ void Decoder_chase_std<B,R>
 			}
 
 		if (cur_hamming_dist < this->min_hamming_dist)
-			if (encoder.is_codeword(V_N))
+			if (encoder->is_codeword(V_N))
 			{
 				this->min_hamming_dist = cur_hamming_dist;
 				this->best_test = t;
@@ -138,7 +155,7 @@ void Decoder_chase_std<B,R>
 {
 	tools::hard_decide(Y_N, V_N, this->N);
 
-	if (this->max_flips && !this->encoder.is_codeword(V_N))
+	if (this->max_flips && !this->encoder->is_codeword(V_N))
 	{
 		std::iota(less_reliable_llrs.begin(), less_reliable_llrs.end(), 0);
 
@@ -150,7 +167,7 @@ void Decoder_chase_std<B,R>
 		});
 
 		V_N[less_reliable_llrs[0]] = !V_N[less_reliable_llrs[0]];
-		if (!this->encoder.is_codeword(V_N))
+		if (!this->encoder->is_codeword(V_N))
 		{
 			V_N[less_reliable_llrs[0]] = !V_N[less_reliable_llrs[0]];
 			if (this->hamming)

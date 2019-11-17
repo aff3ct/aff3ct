@@ -21,6 +21,15 @@ Decoder_LDPC_BP_flooding_Gallager_E<B,R>
 	this->set_name(name);
 }
 
+template <typename B, typename R>
+Decoder_LDPC_BP_flooding_Gallager_E<B,R>* Decoder_LDPC_BP_flooding_Gallager_E<B,R>
+::clone() const
+{
+	auto m = new Decoder_LDPC_BP_flooding_Gallager_E<B,R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
+}
+
 template <typename T> inline constexpr
 T signum(T x, std::false_type is_signed) {
 	return T(0) < x;

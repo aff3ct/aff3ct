@@ -41,6 +41,8 @@ public:
 
 	virtual ~Flip_and_check_DB() = default;
 
+	virtual Flip_and_check_DB<B,R>* clone() const;
+
 	bool siso_n(const int ite,
 	            const mipp::vector<R>& sys,
 	                  mipp::vector<R>& ext,

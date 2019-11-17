@@ -15,14 +15,14 @@ Decoder_turbo_DB<B,R>
                    const int& N,
                    const int& n_ite,
                    const Interleaver<R> &pi,
-                   Decoder_RSC_DB_BCJR<B,R> &siso_n,
-                   Decoder_RSC_DB_BCJR<B,R> &siso_i)
+                   const Decoder_RSC_DB_BCJR<B,R> &siso_n,
+                   const Decoder_RSC_DB_BCJR<B,R> &siso_i)
 : Decoder          (K, N, siso_n.get_n_frames(), 1),
   Decoder_SIHO<B,R>(K, N, siso_n.get_n_frames(), 1),
   n_ite            (n_ite),
   pi               (pi),
-  siso_n           (siso_n),
-  siso_i           (siso_i),
+  siso_n           (siso_n.clone()),
+  siso_i           (siso_i.clone()),
   l_cpy            (2 * K),
   l_sn             (2 * K),
   l_si             (2 * K),
@@ -104,35 +104,39 @@ Decoder_turbo_DB<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_turbo_DB<B,R>
-::add_handler_siso_n(std::function<bool(const int,
-                                        const mipp::vector<R>&,
-                                              mipp::vector<R>&,
-                                              mipp::vector<B>&)> callback)
+Decoder_turbo_DB<B,R>* Decoder_turbo_DB<B,R>
+::clone() const
 {
-	this->callbacks_siso_n.push_back(callback);
+	auto m = new Decoder_turbo_DB<B,R>(*this); // soft copy constructor
+	m->deep_copy(*this); // hard copy
+	return m;
 }
 
 template <typename B, typename R>
 void Decoder_turbo_DB<B,R>
-::add_handler_siso_i(std::function<bool(const int, const mipp::vector<R>&, mipp::vector<R>&)> callback)
+::deep_copy(const Decoder_turbo_DB<B,R> &m)
 {
-	this->callbacks_siso_i.push_back(callback);
+	Module::deep_copy(m);
+	this->siso_n.reset(m.siso_n->clone());
+	this->siso_i.reset(m.siso_i->clone());
+	this->post_processings.clear();
+	for (auto &pp : m.post_processings)
+		this->post_processings.push_back(std::shared_ptr<tools::Post_processing_SISO<B,R>>(pp->clone()));
 }
 
 template <typename B, typename R>
 void Decoder_turbo_DB<B,R>
-::add_handler_end(std::function<void(const int)> callback)
+::add_post_processing(const tools::Post_processing_SISO<B,R> &post_processing)
 {
-	this->callbacks_end.push_back(callback);
+	this->post_processings.push_back(std::shared_ptr<tools::Post_processing_SISO<B,R>>(post_processing.clone()));
 }
 
 template <typename B, typename R>
 void Decoder_turbo_DB<B,R>
 ::_load(const R *Y_N)
 {
-	this->siso_n.notify_new_frame();
-	this->siso_i.notify_new_frame();
+	this->siso_n->notify_new_frame();
+	this->siso_i->notify_new_frame();
 
 	auto j = 0;
 	for (auto i = 0; i < this->K/2; i++)
@@ -192,11 +196,11 @@ void Decoder_turbo_DB<B,R>
 			this->l_sen[i] = this->l_sn[i] + this->l_e1n[i];
 
 		// SISO in the natural domain
-		this->siso_n.decode_siso(this->l_sen.data(), this->l_pn.data(), this->l_e2n.data(), n_frames);
+		this->siso_n->decode_siso(this->l_sen.data(), this->l_pn.data(), this->l_e2n.data(), n_frames);
 
-		for (auto cb : this->callbacks_siso_n)
+		for (auto &pp : this->post_processings)
 		{
-			stop = cb(ite, this->l_sen, this->l_e2n, this->s);
+			stop = pp->siso_n(ite, this->l_sen, this->l_e2n, this->s);
 			if (stop) break;
 		}
 
@@ -218,11 +222,11 @@ void Decoder_turbo_DB<B,R>
 				this->l_sei[i] = this->l_si[i] + this->l_e1i[i];
 
 			// SISO in the interleaved domain
-			this->siso_i.decode_siso(this->l_sei.data(), this->l_pi.data(), this->l_e2i.data(), n_frames);
+			this->siso_i->decode_siso(this->l_sei.data(), this->l_pi.data(), this->l_e2i.data(), n_frames);
 
-			for (auto cb : this->callbacks_siso_i)
+			for (auto &pp : this->post_processings)
 			{
-				stop = cb(ite, this->l_sei, this->l_e2i);
+				stop = pp->siso_i(ite, this->l_sei, this->l_e2i);
 				if (stop) break;
 			}
 
@@ -257,8 +261,9 @@ void Decoder_turbo_DB<B,R>
 	}
 	while ((ite <= this->n_ite) && !stop);
 
-	for (auto cb : this->callbacks_end)
-		cb(ite -1);
+	for (auto &pp : this->post_processings)
+		pp->end(ite -1);
+
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE

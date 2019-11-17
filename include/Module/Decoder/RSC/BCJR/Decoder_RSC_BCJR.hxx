@@ -45,6 +45,13 @@ Decoder_RSC_BCJR<B,R>
 }
 
 template <typename B, typename R>
+Decoder_RSC_BCJR<B,R>* Decoder_RSC_BCJR<B,R>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename R>
 int Decoder_RSC_BCJR<B,R>
 ::tail_length() const
 {

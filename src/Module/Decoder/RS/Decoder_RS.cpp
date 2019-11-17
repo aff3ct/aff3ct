@@ -40,6 +40,13 @@ Decoder_RS<B, R>
 }
 
 template <typename B, typename R>
+Decoder_RS<B,R>* Decoder_RS<B,R>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename R>
 void Decoder_RS<B, R>
 ::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 {
