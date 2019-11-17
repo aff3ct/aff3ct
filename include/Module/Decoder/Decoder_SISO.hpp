@@ -52,7 +52,11 @@ public:
 	 */
 	virtual ~Decoder_SISO() = default;
 
+#ifdef _MSC_VER // Windows with MSVC
 	virtual Decoder* clone() const;
+#else
+	virtual Decoder_SISO<R>* clone() const;
+#endif
 
 	/*!
 	 * \brief Decodes a given noisy codeword. This prototype supposes that the encoded frame is systematic, can't be

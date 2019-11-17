@@ -54,8 +54,8 @@ template <typename B>
 Encoder_RS<B>* Encoder_RS<B>
 ::clone() const
 {
-	auto m = new Encoder_RS<B>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Encoder_RS(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

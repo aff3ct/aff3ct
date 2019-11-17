@@ -81,8 +81,8 @@ Monitor_BFER<B>* Monitor_BFER<B>
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	auto m = new Monitor_BFER<B>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Monitor_BFER(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

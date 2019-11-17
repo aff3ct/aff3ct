@@ -62,8 +62,8 @@ template <typename B, typename R>
 Decoder_RA<B,R>* Decoder_RA<B,R>
 ::clone() const
 {
-	auto m = new Decoder_RA<B,R>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Decoder_RA(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

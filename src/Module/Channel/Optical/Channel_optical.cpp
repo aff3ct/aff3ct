@@ -76,8 +76,8 @@ template <typename R>
 Channel_optical<R>* Channel_optical<R>
 ::clone() const
 {
-	auto m = new Channel_optical<R>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Channel_optical(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

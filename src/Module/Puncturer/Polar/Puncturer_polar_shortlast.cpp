@@ -43,8 +43,8 @@ template<typename B, typename Q>
 Puncturer_polar_shortlast<B,Q>* Puncturer_polar_shortlast<B,Q>
 ::clone() const
 {
-	auto m = new Puncturer_polar_shortlast<B,Q>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Puncturer_polar_shortlast(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

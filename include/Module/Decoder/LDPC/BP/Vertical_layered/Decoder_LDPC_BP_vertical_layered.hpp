@@ -40,7 +40,12 @@ public:
 	                                 const int syndrome_depth = 1,
 	                                 const int n_frames = 1);
 	virtual ~Decoder_LDPC_BP_vertical_layered() = default;
+
+#ifdef _MSC_VER // Windows with MSVC
+	virtual Decoder* clone() const;
+#else
 	virtual Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>* clone() const;
+#endif
 
 protected:
 	void _reset(const int frame_id);

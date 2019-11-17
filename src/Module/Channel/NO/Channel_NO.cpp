@@ -21,8 +21,8 @@ template <typename R>
 Channel_NO<R>* Channel_NO<R>
 ::clone() const
 {
-	auto m = new Channel_NO<R>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Channel_NO(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

@@ -69,8 +69,8 @@ template <typename B>
 Encoder_turbo_DB<B>* Encoder_turbo_DB<B>
 ::clone() const
 {
-	auto m = new Encoder_turbo_DB<B>(*this);
-	m->deep_copy(*this); // hard copy
+	auto m = new Encoder_turbo_DB(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

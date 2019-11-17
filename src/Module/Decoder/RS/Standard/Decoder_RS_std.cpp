@@ -32,8 +32,8 @@ template <typename B, typename R>
 Decoder_RS_std<B,R>* Decoder_RS_std<B,R>
 ::clone() const
 {
-	auto m = new Decoder_RS_std<B,R>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Decoder_RS_std(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

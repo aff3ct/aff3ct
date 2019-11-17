@@ -41,8 +41,8 @@ template <typename B>
 Encoder_polar<B>* Encoder_polar<B>
 ::clone() const
 {
-	auto m = new Encoder_polar<B>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Encoder_polar(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

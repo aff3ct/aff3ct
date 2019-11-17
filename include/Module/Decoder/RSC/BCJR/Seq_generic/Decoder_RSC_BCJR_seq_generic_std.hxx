@@ -27,11 +27,15 @@ Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 }
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
+#ifdef _MSC_VER // Windows with MSVC
+Decoder_RSC_BCJR_seq_generic<B,R>* Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
+#else
 Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>* Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
+#endif
 ::clone() const
 {
-	auto m = new Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Decoder_RSC_BCJR_seq_generic_std(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

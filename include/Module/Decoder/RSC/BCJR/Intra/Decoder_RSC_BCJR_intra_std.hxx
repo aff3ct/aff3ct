@@ -41,11 +41,15 @@ Decoder_RSC_BCJR_intra_std<B,R,MAX>
 }
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
+#ifdef _MSC_VER // Windows with MSVC
+Decoder_RSC_BCJR_intra<B,R>* Decoder_RSC_BCJR_intra_std<B,R,MAX>
+#else
 Decoder_RSC_BCJR_intra_std<B,R,MAX>* Decoder_RSC_BCJR_intra_std<B,R,MAX>
+#endif
 ::clone() const
 {
-	auto m = new Decoder_RSC_BCJR_intra_std<B,R,MAX>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Decoder_RSC_BCJR_intra_std(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

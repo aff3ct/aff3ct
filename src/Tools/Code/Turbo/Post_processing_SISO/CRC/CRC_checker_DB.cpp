@@ -17,8 +17,8 @@ template <typename B, typename R>
 CRC_checker_DB<B,R>* CRC_checker_DB<B,R>
 ::clone() const
 {
-	auto t = new CRC_checker_DB<B,R>(*this); // soft copy constructor
-	t->deep_copy(*this); // hard copy
+	auto t = new CRC_checker_DB(*this);
+	t->deep_copy(*this);
 	return t;
 }
 

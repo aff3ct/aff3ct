@@ -31,8 +31,8 @@ template <typename B>
 Encoder_BCH<B>* Encoder_BCH<B>
 ::clone() const
 {
-	auto m = new Encoder_BCH<B>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Encoder_BCH(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

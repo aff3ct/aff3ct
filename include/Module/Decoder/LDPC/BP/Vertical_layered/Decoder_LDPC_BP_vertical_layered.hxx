@@ -46,11 +46,15 @@ Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
+#ifdef _MSC_VER // Windows with MSVC
+Decoder* Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>
+#else
 Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>* Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>
+#endif
 ::clone() const
 {
-	auto m = new Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Decoder_LDPC_BP_vertical_layered(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

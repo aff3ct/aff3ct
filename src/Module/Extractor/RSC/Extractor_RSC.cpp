@@ -20,8 +20,8 @@ template <typename B, typename Q>
 Extractor_RSC<B,Q>* Extractor_RSC<B,Q>
 ::clone() const
 {
-	auto m = new Extractor_RSC<B,Q>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Extractor_RSC(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

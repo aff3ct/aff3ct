@@ -29,8 +29,8 @@ template <typename B, typename R>
 Scaling_factor_constant<B,R>* Scaling_factor_constant<B,R>
 ::clone() const
 {
-	auto t = new Scaling_factor_constant<B,R>(*this); // soft copy constructor
-	t->deep_copy(*this); // hard copy
+	auto t = new Scaling_factor_constant(*this);
+	t->deep_copy(*this);
 	return t;
 }
 

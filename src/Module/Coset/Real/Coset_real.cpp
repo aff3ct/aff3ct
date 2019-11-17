@@ -16,8 +16,8 @@ template <typename B, typename D>
 Coset_real<B,D>* Coset_real<B,D>
 ::clone() const
 {
-	auto m = new Coset_real<B,D>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Coset_real(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

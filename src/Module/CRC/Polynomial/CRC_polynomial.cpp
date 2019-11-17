@@ -48,8 +48,8 @@ template <typename B>
 CRC_polynomial<B>* CRC_polynomial<B>
 ::clone() const
 {
-	auto m = new CRC_polynomial<B>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new CRC_polynomial(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

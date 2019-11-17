@@ -39,8 +39,8 @@ template <typename B, typename R>
 Decoder_LDPC_bit_flipping_OMWBF<B,R>* Decoder_LDPC_bit_flipping_OMWBF<B,R>
 ::clone() const
 {
-	auto m = new Decoder_LDPC_bit_flipping_OMWBF<B,R>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Decoder_LDPC_bit_flipping_OMWBF(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

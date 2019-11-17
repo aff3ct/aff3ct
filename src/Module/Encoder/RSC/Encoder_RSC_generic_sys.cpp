@@ -59,8 +59,8 @@ template <typename B>
 Encoder_RSC_generic_sys<B>* Encoder_RSC_generic_sys<B>
 ::clone() const
 {
-	auto m = new Encoder_RSC_generic_sys<B>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Encoder_RSC_generic_sys(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

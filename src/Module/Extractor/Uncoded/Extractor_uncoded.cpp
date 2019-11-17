@@ -21,8 +21,8 @@ template <typename B, typename Q>
 Extractor_uncoded<B,Q>* Extractor_uncoded<B,Q>
 ::clone() const
 {
-	auto m = new Extractor_uncoded<B,Q>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Extractor_uncoded(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

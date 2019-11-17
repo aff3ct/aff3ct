@@ -27,7 +27,7 @@ template <typename R>
 User_pdf_noise_generator_fast<R>* User_pdf_noise_generator_fast<R>
 ::clone() const
 {
-	return new User_pdf_noise_generator_fast<R>(*this);
+	return new User_pdf_noise_generator_fast(*this);
 }
 
 template <typename R>

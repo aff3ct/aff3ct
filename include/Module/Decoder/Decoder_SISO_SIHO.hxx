@@ -48,7 +48,11 @@ Decoder_SISO_SIHO<B,R>
 }
 
 template <typename B, typename R>
+#ifdef _MSC_VER // Windows with MSVC
 Decoder* Decoder_SISO_SIHO<B,R>
+#else
+Decoder_SISO_SIHO<B,R>* Decoder_SISO_SIHO<B,R>
+#endif
 ::clone() const
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);

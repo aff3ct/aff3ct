@@ -21,8 +21,8 @@ template <typename B>
 Encoder_LDPC<B>* Encoder_LDPC<B>
 ::clone() const
 {
-	auto m = new Encoder_LDPC<B>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Encoder_LDPC(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

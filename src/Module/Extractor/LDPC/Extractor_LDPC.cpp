@@ -19,8 +19,8 @@ template <typename B, typename Q>
 Extractor_LDPC<B,Q>* Extractor_LDPC<B,Q>
 ::clone() const
 {
-	auto m = new Extractor_LDPC<B,Q>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Extractor_LDPC(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

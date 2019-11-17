@@ -47,7 +47,11 @@ public:
 	 */
 	virtual ~Decoder_SISO_SIHO() = default;
 
+#ifdef _MSC_VER // Windows with MSVC
 	virtual Decoder* clone() const;
+#else
+	virtual Decoder_SISO_SIHO<B,R>* clone() const;
+#endif
 };
 }
 }

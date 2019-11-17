@@ -18,8 +18,8 @@ template<typename B, typename Q>
 Puncturer_NO<B,Q>* Puncturer_NO<B,Q>
 ::clone() const
 {
-	auto m = new Puncturer_NO<B,Q>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Puncturer_NO(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

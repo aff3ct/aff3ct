@@ -38,8 +38,8 @@ template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modem_generic<B,R,Q,MAX>* Modem_generic<B,R,Q,MAX>
 ::clone() const
 {
-	auto m = new Modem_generic<B,R,Q,MAX>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Modem_generic(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

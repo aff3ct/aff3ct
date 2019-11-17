@@ -56,8 +56,8 @@ template <typename B, typename R>
 Flip_and_check_DB<B,R>* Flip_and_check_DB<B,R>
 ::clone() const
 {
-	auto t = new Flip_and_check_DB<B,R>(*this); // soft copy constructor
-	t->deep_copy(*this); // hard copy
+	auto t = new Flip_and_check_DB(*this);
+	t->deep_copy(*this);
 	return t;
 }
 

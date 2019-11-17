@@ -167,8 +167,8 @@ template<typename R, typename Q>
 Quantizer_custom<R,Q>* Quantizer_custom<R,Q>
 ::clone() const
 {
-	auto m = new Quantizer_custom<R,Q>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Quantizer_custom(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

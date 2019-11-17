@@ -154,8 +154,8 @@ template <typename B>
 Encoder_user<B>* Encoder_user<B>
 ::clone() const
 {
-	auto m = new Encoder_user<B>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Encoder_user(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

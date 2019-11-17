@@ -30,8 +30,8 @@ template <typename B, typename R>
 Decoder_LDPC_BP_peeling<B,R>* Decoder_LDPC_BP_peeling<B,R>
 ::clone() const
 {
-	auto m = new Decoder_LDPC_BP_peeling<B,R>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Decoder_LDPC_BP_peeling(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

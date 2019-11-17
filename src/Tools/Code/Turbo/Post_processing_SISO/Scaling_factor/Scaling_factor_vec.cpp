@@ -17,8 +17,8 @@ template <typename B, typename R>
 Scaling_factor_vec<B,R>* Scaling_factor_vec<B,R>
 ::clone() const
 {
-	auto t = new Scaling_factor_vec<B,R>(*this); // soft copy constructor
-	t->deep_copy(*this); // hard copy
+	auto t = new Scaling_factor_vec(*this);
+	t->deep_copy(*this);
 	return t;
 }
 

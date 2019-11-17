@@ -44,8 +44,8 @@ template <typename B>
 Encoder_turbo_legacy<B>* Encoder_turbo_legacy<B>
 ::clone() const
 {
-	auto m = new Encoder_turbo_legacy<B>(*this);
-	m->deep_copy(*this); // hard copy
+	auto m = new Encoder_turbo_legacy(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

@@ -55,7 +55,11 @@ public:
 	 */
 	virtual ~Decoder_SIHO() = default;
 
+#ifdef _MSC_VER // Windows with MSVC
 	virtual Decoder* clone() const;
+#else
+	virtual Decoder_SIHO<B,R>* clone() const;
+#endif
 
 	/*!
 	 * \brief Decodes the noisy frame.

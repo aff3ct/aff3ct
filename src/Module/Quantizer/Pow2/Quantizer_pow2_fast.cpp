@@ -151,8 +151,8 @@ template<typename R, typename Q>
 Quantizer_pow2_fast<R,Q>* Quantizer_pow2_fast<R,Q>
 ::clone() const
 {
-	auto m = new Quantizer_pow2_fast<R,Q>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Quantizer_pow2_fast(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

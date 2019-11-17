@@ -17,8 +17,8 @@ template <typename B>
 Source_AZCW<B>* Source_AZCW<B>
 ::clone() const
 {
-	auto m = new Source_AZCW<B>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Source_AZCW(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

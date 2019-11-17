@@ -62,8 +62,8 @@ template <typename R>
 Channel_user<R>* Channel_user<R>
 ::clone() const
 {
-	auto m = new Channel_user<R>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Channel_user(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

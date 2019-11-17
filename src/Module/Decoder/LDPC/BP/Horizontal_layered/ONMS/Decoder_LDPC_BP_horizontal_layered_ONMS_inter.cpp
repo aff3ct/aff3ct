@@ -54,8 +54,8 @@ template <typename B, typename R>
 Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>* Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 ::clone() const
 {
-	auto m = new Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Decoder_LDPC_BP_horizontal_layered_ONMS_inter(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

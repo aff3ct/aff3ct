@@ -17,8 +17,8 @@ template <typename B>
 Source_random<B>* Source_random<B>
 ::clone() const
 {
-	auto m = new Source_random<B>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Source_random(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

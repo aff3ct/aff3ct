@@ -23,7 +23,12 @@ public:
 	                             const bool buffered_encoding = true,
 	                             const int n_frames = 1);
 	virtual ~Decoder_RSC_DB_BCJR_DVB_RCS2() = default;
+
+#ifdef _MSC_VER // Windows with MSVC
+	virtual Decoder_RSC_DB_BCJR<B,R>* clone() const;
+#else
 	virtual Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>* clone() const;
+#endif
 
 protected:
 	void __fwd_recursion(const R *sys, const R *par        );

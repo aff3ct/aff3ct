@@ -74,8 +74,8 @@ template <typename R>
 Channel_binary_erasure<R>* Channel_binary_erasure<R>
 ::clone() const
 {
-	auto m = new Channel_binary_erasure<R>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Channel_binary_erasure(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

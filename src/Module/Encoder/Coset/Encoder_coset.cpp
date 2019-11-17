@@ -19,8 +19,8 @@ template <typename B>
 Encoder_coset<B>* Encoder_coset<B>
 ::clone() const
 {
-	auto m = new Encoder_coset<B>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Encoder_coset(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

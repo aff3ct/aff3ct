@@ -19,8 +19,8 @@ template <typename B>
 Encoder_AZCW<B>* Encoder_AZCW<B>
 ::clone() const
 {
-	auto m = new Encoder_AZCW<B>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Encoder_AZCW(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

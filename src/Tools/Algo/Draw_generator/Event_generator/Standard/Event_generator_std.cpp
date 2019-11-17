@@ -15,7 +15,7 @@ template <typename R, typename E>
 Event_generator_std<R,E>* Event_generator_std<R,E>
 ::clone() const
 {
-	return new Event_generator_std<R,E>(*this);
+	return new Event_generator_std(*this);
 }
 
 template <typename R, typename E>

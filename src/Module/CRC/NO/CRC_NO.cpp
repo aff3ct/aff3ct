@@ -18,8 +18,8 @@ template <typename B>
 CRC_NO<B>* CRC_NO<B>
 ::clone() const
 {
-	auto m = new CRC_NO<B>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new CRC_NO(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

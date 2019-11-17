@@ -112,8 +112,8 @@ template <typename R>
 Channel_Rayleigh_LLR_user<R>* Channel_Rayleigh_LLR_user<R>
 ::clone() const
 {
-	auto m = new Channel_Rayleigh_LLR_user<R>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Channel_Rayleigh_LLR_user(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

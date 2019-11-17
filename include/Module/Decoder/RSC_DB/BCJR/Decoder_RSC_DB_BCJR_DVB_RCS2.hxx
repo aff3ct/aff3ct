@@ -29,11 +29,15 @@ Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>
 }
 
 template <typename B, typename R, tools::proto_max<R> MAX>
+#ifdef _MSC_VER // Windows with MSVC
+Decoder_RSC_DB_BCJR<B,R>* Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>
+#else
 Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>* Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>
+#endif
 ::clone() const
 {
-	auto m = new Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Decoder_RSC_DB_BCJR_DVB_RCS2(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

@@ -16,8 +16,8 @@ template <typename B, typename D>
 Coset_bit<B,D>* Coset_bit<B,D>
 ::clone() const
 {
-	auto m = new Coset_bit<B,D>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Coset_bit(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

@@ -25,8 +25,8 @@ template <typename B>
 Source_random_fast<B>* Source_random_fast<B>
 ::clone() const
 {
-	auto m = new Source_random_fast<B>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Source_random_fast(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

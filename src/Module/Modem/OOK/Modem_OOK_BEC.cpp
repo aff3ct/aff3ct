@@ -23,8 +23,8 @@ template <typename B, typename R, typename Q>
 Modem_OOK_BEC<B,R,Q>* Modem_OOK_BEC<B,R,Q>
 ::clone() const
 {
-	auto m = new Modem_OOK_BEC<B,R,Q>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Modem_OOK_BEC(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

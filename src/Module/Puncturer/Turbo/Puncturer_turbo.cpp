@@ -43,8 +43,8 @@ template<typename B, typename Q>
 Puncturer_turbo<B,Q>* Puncturer_turbo<B,Q>
 ::clone() const
 {
-	auto m = new Puncturer_turbo<B,Q>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Puncturer_turbo(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

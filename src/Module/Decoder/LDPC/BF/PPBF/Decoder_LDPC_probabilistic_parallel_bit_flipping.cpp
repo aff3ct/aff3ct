@@ -50,8 +50,8 @@ template <typename B, typename R>
 Decoder_LDPC_probabilistic_parallel_bit_flipping<B,R>* Decoder_LDPC_probabilistic_parallel_bit_flipping<B,R>
 ::clone() const
 {
-	auto m = new Decoder_LDPC_probabilistic_parallel_bit_flipping<B,R>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Decoder_LDPC_probabilistic_parallel_bit_flipping(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

@@ -53,8 +53,8 @@ template <typename B, typename R, typename Q>
 Modem_OOK_optical_rop_estimate<B,R,Q>* Modem_OOK_optical_rop_estimate<B,R,Q>
 ::clone() const
 {
-	auto m = new Modem_OOK_optical_rop_estimate<B,R,Q>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Modem_OOK_optical_rop_estimate(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

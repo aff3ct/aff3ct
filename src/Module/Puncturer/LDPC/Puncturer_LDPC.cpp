@@ -53,8 +53,8 @@ template<typename B, typename Q>
 Puncturer_LDPC<B,Q>* Puncturer_LDPC<B,Q>
 ::clone() const
 {
-	auto m = new Puncturer_LDPC<B,Q>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Puncturer_LDPC(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

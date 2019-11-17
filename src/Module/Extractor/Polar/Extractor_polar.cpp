@@ -19,8 +19,8 @@ template <typename B, typename Q>
 Extractor_polar<B,Q>* Extractor_polar<B,Q>
 ::clone() const
 {
-	auto m = new Extractor_polar<B,Q>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Extractor_polar(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

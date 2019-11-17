@@ -27,8 +27,8 @@ template <typename B>
 Encoder_LDPC_from_QC<B>* Encoder_LDPC_from_QC<B>
 ::clone() const
 {
-	auto m = new Encoder_LDPC_from_QC<B>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Encoder_LDPC_from_QC(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

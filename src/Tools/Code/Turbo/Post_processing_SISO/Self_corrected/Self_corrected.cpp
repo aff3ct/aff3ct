@@ -26,8 +26,8 @@ template <typename B, typename R>
 Self_corrected<B,R>* Self_corrected<B,R>
 ::clone() const
 {
-	auto t = new Self_corrected<B,R>(*this); // soft copy constructor
-	t->deep_copy(*this); // hard copy
+	auto t = new Self_corrected(*this);
+	t->deep_copy(*this);
 	return t;
 }
 

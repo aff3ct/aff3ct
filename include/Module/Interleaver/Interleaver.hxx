@@ -70,8 +70,8 @@ template <typename D, typename T>
 Interleaver<D,T>* Interleaver<D,T>
 ::clone() const
 {
-	auto m = new Interleaver<D,T>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Interleaver(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

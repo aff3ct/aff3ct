@@ -60,8 +60,8 @@ Monitor_EXIT<B,R>* Monitor_EXIT<B,R>
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	auto m = new Monitor_EXIT<B,R>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Monitor_EXIT(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

@@ -24,8 +24,8 @@ template <typename B>
 CRC_polynomial_inter<B>* CRC_polynomial_inter<B>
 ::clone() const
 {
-	auto m = new CRC_polynomial_inter<B>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new CRC_polynomial_inter(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

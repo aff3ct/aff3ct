@@ -30,8 +30,8 @@ template <typename B, typename R, typename RD>
 Decoder_RSC_BCJR_seq_scan<B,R,RD>* Decoder_RSC_BCJR_seq_scan<B,R,RD>
 ::clone() const
 {
-	auto m = new Decoder_RSC_BCJR_seq_scan<B,R,RD>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Decoder_RSC_BCJR_seq_scan(*this);
+	m->deep_copy(*this);
 	return m;
 }
 

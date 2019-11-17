@@ -19,7 +19,7 @@ template <typename R, typename E>
 Event_generator_fast<R,E>* Event_generator_fast<R,E>
 ::clone() const
 {
-	return new Event_generator_fast<R,E>(*this);
+	return new Event_generator_fast(*this);
 }
 
 template <typename R, typename E>

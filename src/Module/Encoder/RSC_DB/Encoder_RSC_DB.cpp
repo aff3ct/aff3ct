@@ -162,8 +162,8 @@ template <typename B>
 Encoder_RSC_DB<B>* Encoder_RSC_DB<B>
 ::clone() const
 {
-	auto m = new Encoder_RSC_DB<B>(*this); // soft copy constructor
-	m->deep_copy(*this); // hard copy
+	auto m = new Encoder_RSC_DB(*this);
+	m->deep_copy(*this);
 	return m;
 }
 
