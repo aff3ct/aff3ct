@@ -11,13 +11,13 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_LDPC_probabilistic_parallel_bit_flipping<B,R>
 ::Decoder_LDPC_probabilistic_parallel_bit_flipping(const int &K, const int &N, const int& n_ite,
-                                                         const tools::Sparse_matrix &H,
-                                                         const std::vector<unsigned> &info_bits_pos,
-                                                         const std::vector<float> &bernouilli_probas,
-                                                         const bool enable_syndrome,
-                                                         const int syndrome_depth,
-                                                         const int seed,
-                                                         const int n_frames)
+                                                   const tools::Sparse_matrix &H,
+                                                   const std::vector<unsigned> &info_bits_pos,
+                                                   const std::vector<float> &bernouilli_probas,
+                                                   const bool enable_syndrome,
+                                                   const int syndrome_depth,
+                                                   const int seed,
+                                                   const int n_frames)
 : Decoder(K, N, n_frames, 1),
   Decoder_LDPC_bit_flipping_hard<B,R>(K, N, n_ite, H, info_bits_pos, enable_syndrome, syndrome_depth, n_frames),
   rd_engine(seed)
@@ -42,7 +42,7 @@ Decoder_LDPC_probabilistic_parallel_bit_flipping<B,R>
 	}
 
 	// generate Bernouilli distributions
-	for (unsigned i = 0; i < bernouilli_dist.size(); i++)
+	for (unsigned i = 0; i < bernouilli_probas.size(); i++)
 		bernouilli_dist.push_back(std::bernoulli_distribution(bernouilli_probas[i]));
 }
 
