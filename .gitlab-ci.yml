@@ -395,28 +395,28 @@ build-windows-gcc-x64-avx2:
     - call ./ci/tools/threads.bat
     - ./ci/build-windows-gcc.bat
 
-build-windows-msvc-avx:
-  stage: build
-  variables:
-    GIT_SUBMODULE_STRATEGY: recursive
-  except:
-    - schedules
-  dependencies: []
-  tags:
-    - windows
-    - msvc
-    - cmake
-    - x86
-  artifacts:
-    name: build-windows-msvc-avx
-    paths:
-      - build_windows_msvc_avx
-  script:
-    - set "CFLAGS=-D_CRT_SECURE_NO_DEPRECATE /MT /EHsc /arch:AVX"
-    - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI"
-    - set "NAME=build_windows_msvc_avx"
-    - call ./ci/tools/threads.bat
-    - ./ci/build-windows-msvc.bat
+# build-windows-msvc-avx:
+#   stage: build
+#   variables:
+#     GIT_SUBMODULE_STRATEGY: recursive
+#   except:
+#     - schedules
+#   dependencies: []
+#   tags:
+#     - windows
+#     - msvc
+#     - cmake
+#     - x86
+#   artifacts:
+#     name: build-windows-msvc-avx
+#     paths:
+#       - build_windows_msvc_avx
+#   script:
+#     - set "CFLAGS=-D_CRT_SECURE_NO_DEPRECATE /MT /EHsc /arch:AVX"
+#     - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI"
+#     - set "NAME=build_windows_msvc_avx"
+#     - call ./ci/tools/threads.bat
+#     - ./ci/build-windows-msvc.bat
 
 build-macos-clang-x64-sse4.2:
   stage: build
