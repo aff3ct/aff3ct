@@ -20,9 +20,6 @@ public:
 	Codec_uncoded(const factory::Encoder_NO &enc_params,
 	              const factory::Decoder_NO &dec_params);
 	virtual ~Codec_uncoded() = default;
-
-protected:
-	void _extract_sys_par(const Q *Y_N, Q *sys, Q *par, const int frame_id);
 };
 }
 }
