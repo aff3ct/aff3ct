@@ -18,15 +18,12 @@ template <typename B = int, typename R = float>
 class Decoder_LDPC_bit_flipping_hard : public Decoder_SIHO_HIHO<B,R>
 {
 protected:
-	const int  n_ite;              // number of iterations to perform
+	const int  n_ite; // number of iterations to perform
 	const bool enable_syndrome;
 	const int  syndrome_depth;
 	      int  cur_syndrome_depth;
 
-	const tools::Sparse_matrix &H; // In vertical way
-	                               // CN are along the columns -> H.get_n_cols() == M (often M=N-K)
-	                               // VN are along the rows    -> H.get_n_rows() == N
-	                               // automatically transpose in the constructor if needed
+	const tools::Sparse_matrix &H;
 
 	// data structures for iterative decoding
 	std::vector<B> var_nodes;
