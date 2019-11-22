@@ -124,3 +124,9 @@ void Decoder
 ::_reset(const int frame_id)
 {
 }
+
+void Decoder
+::set_seed(const int seed)
+{
+	// do nothing in the general case, this method has to be overrided
+}

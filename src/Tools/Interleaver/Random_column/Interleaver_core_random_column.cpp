@@ -23,7 +23,6 @@ Interleaver_core_random_column<T>
 	}
 
 	rd_engine.seed(seed);
-
 	this->init();
 }
 
@@ -51,6 +50,14 @@ void Interleaver_core_random_column<T>
 		for (auto c = 0; c < col_size; c++)
 			lut[c + column * col_size] = pi_temp[c];
 	}
+}
+
+template <typename T>
+void Interleaver_core_random_column<T>
+::set_seed(const int seed)
+{
+	rd_engine.seed(seed);
+	this->init();
 }
 
 // ==================================================================================== explicit template instantiation

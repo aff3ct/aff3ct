@@ -63,6 +63,34 @@ void BFER_ite<B,R,Q>
 	interleaver_bit [tid].reset(factory::Interleaver::build<B>(*interleaver_core[tid]));
 	interleaver_llr [tid].reset(factory::Interleaver::build<Q>(*interleaver_core[tid]));
 
+	// set the noise
+	codec  [tid]->set_noise(*this->noise);
+	modem  [tid]->set_noise(*this->noise);
+	channel[tid]->set_noise(*this->noise);
+
+	// register modules to "noise changed" callback
+	auto ptr_cdc = codec  [tid].get();
+	auto ptr_mdm = modem  [tid].get();
+	auto ptr_chn = channel[tid].get();
+	this->noise->record_callback_changed([ptr_cdc](){ ptr_cdc->noise_changed(); });
+	this->noise->record_callback_changed([ptr_mdm](){ ptr_mdm->noise_changed(); });
+	this->noise->record_callback_changed([ptr_chn](){ ptr_chn->noise_changed(); });
+
+	// set the seeds
+	const auto seed_src = rd_engine_seed[tid]();
+	const auto seed_chn = rd_engine_seed[tid]();
+	const auto seed_enc = rd_engine_seed[tid]();
+	const auto seed_dec = rd_engine_seed[tid]();
+	const auto seed_itl = params_BFER_ite.itl->core->seed +
+	                      (params_BFER_ite.itl->core->uniform ? rd_engine_seed[tid]() : 0);
+
+	      source          [tid]->                   set_seed(seed_src);
+	      channel         [tid]->                   set_seed(seed_chn);
+	      interleaver_core[tid]->                   set_seed(seed_itl);
+	try { codec           [tid]->get_encoder     ().set_seed(seed_enc); } catch (...) {}
+	try { codec           [tid]->get_decoder_siho().set_seed(seed_dec); } catch (...) {}
+	try { codec           [tid]->get_decoder_siso().set_seed(seed_dec); } catch (...) {}
+
 	this->set_module("source"         , tid, *source         [tid]);
 	this->set_module("crc"            , tid, *crc            [tid]);
 	this->set_module("extractor"      , tid,  codec          [tid]->get_extractor());
@@ -145,64 +173,38 @@ template <typename B, typename R, typename Q>
 std::unique_ptr<module::Source<B>> BFER_ite<B,R,Q>
 ::build_source(const int tid)
 {
-	const auto seed_src = rd_engine_seed[tid]();
-
-	std::unique_ptr<factory::Source> params_src(params_BFER_ite.src->clone());
-	params_src->seed = seed_src;
-
-	return std::unique_ptr<module::Source<B>>(params_src->template build<B>());
+	return std::unique_ptr<module::Source<B>>(params_BFER_ite.src->build<B>());
 }
 
 template <typename B, typename R, typename Q>
 std::unique_ptr<module::CRC<B>> BFER_ite<B,R,Q>
 ::build_crc(const int tid)
 {
-	return std::unique_ptr<module::CRC<B>>(params_BFER_ite.crc->template build<B>());
+	return std::unique_ptr<module::CRC<B>>(params_BFER_ite.crc->build<B>());
 }
 
 template <typename B, typename R, typename Q>
 std::unique_ptr<tools::Codec_SISO_SIHO<B,Q>> BFER_ite<B,R,Q>
 ::build_codec(const int tid)
 {
-	const auto seed_enc = rd_engine_seed[tid]();
-	const auto seed_dec = rd_engine_seed[tid]();
-
-	std::unique_ptr<factory::Codec> params_cdc(params_BFER_ite.cdc->clone());
-	params_cdc->enc->seed = seed_enc;
-	params_cdc->dec->seed = seed_dec;
-
 	auto crc = this->params_BFER_ite.crc->type == "NO" ? nullptr : this->crc[tid].get();
-
+	std::unique_ptr<factory::Codec> params_cdc(params_BFER_ite.cdc->clone());
 	auto param_siso_siho = dynamic_cast<factory::Codec_SISO_SIHO*>(params_cdc.get());
-
-	auto codec = std::unique_ptr<tools::Codec_SISO_SIHO<B,Q>>(param_siso_siho->template build<B,Q>(crc));
-	codec->set_noise(*this->noise);
-
-	auto ptr = codec.get();
-	this->noise->record_callback_changed([ptr](){ ptr->noise_changed(); });
-
-	return codec;
+	return std::unique_ptr<tools::Codec_SISO_SIHO<B,Q>>(param_siso_siho->template build<B,Q>(crc));
 }
 
 template <typename B, typename R, typename Q>
 std::unique_ptr<tools ::Interleaver_core<>> BFER_ite<B,R,Q>
 ::build_interleaver(const int tid)
 {
-	const auto seed_itl = rd_engine_seed[tid]();
-
 	std::unique_ptr<factory::Interleaver> params_itl(params_BFER_ite.itl->clone());
-	params_itl->core->seed = params_BFER_ite.itl->core->uniform ? params_BFER_ite.itl->core->seed + seed_itl :
-	                                                              params_BFER_ite.itl->core->seed;
-
 	if (params_BFER_ite.err_track_revert && params_BFER_ite.itl->core->uniform)
 	{
 		std::stringstream s_noise;
 		s_noise << std::setprecision(2) << std::fixed << this->noise->get_value();
-
 		params_itl->core->path = params_BFER_ite.err_track_path + "_" + s_noise.str() + ".itl";
 	}
-
-	return std::unique_ptr<tools ::Interleaver_core<>>(params_itl->core->template build<>());
+	return std::unique_ptr<tools ::Interleaver_core<>>(params_itl->core->build<>());
 }
 
 template <typename B, typename R, typename Q>
@@ -210,63 +212,26 @@ std::unique_ptr<module::Modem<B,R,Q>> BFER_ite<B,R,Q>
 ::build_modem(const int tid)
 {
 	if (this->distributions != nullptr)
-	{
-		auto modem = std::unique_ptr<module::Modem<B,R,Q>>(params_BFER_ite.mdm->template build<B,R,Q>(*this->distributions));
-		modem->set_noise(*this->noise);
-
-		auto ptr = modem.get();
-		this->noise->record_callback_changed([ptr](){ ptr->noise_changed(); });
-
-		return modem;
-	}
+		return std::unique_ptr<module::Modem<B,R,Q>>(params_BFER_ite.mdm->build<B,R,Q>(*this->distributions));
 	else
-	{
-		auto modem = std::unique_ptr<module::Modem<B,R,Q>>(params_BFER_ite.mdm->template build<B,R,Q>(this->constellation.get()));
-		modem->set_noise(*this->noise);
-
-		auto ptr = modem.get();
-		this->noise->record_callback_changed([ptr](){ ptr->noise_changed(); });
-
-		return modem;
-	}
+		return std::unique_ptr<module::Modem<B,R,Q>>(params_BFER_ite.mdm->build<B,R,Q>(this->constellation.get()));
 }
 
 template <typename B, typename R, typename Q>
 std::unique_ptr<module::Channel<R>> BFER_ite<B,R,Q>
 ::build_channel(const int tid)
 {
-	const auto seed_chn = rd_engine_seed[tid]();
-
-	std::unique_ptr<factory::Channel> params_chn(params_BFER_ite.chn->clone());
-	params_chn->seed = seed_chn;
-
 	if (this->distributions != nullptr)
-	{
-		auto channel = std::unique_ptr<module::Channel<R>>(params_chn->template build<R>(*this->distributions));
-		channel->set_noise(*this->noise);
-
-		auto ptr = channel.get();
-		this->noise->record_callback_changed([ptr](){ ptr->noise_changed(); });
-
-		return channel;
-	}
+		return std::unique_ptr<module::Channel<R>>(params_BFER_ite.chn->build<R>(*this->distributions));
 	else
-	{
-		auto channel = std::unique_ptr<module::Channel<R>>(params_chn->template build<R>());
-		channel->set_noise(*this->noise);
-
-		auto ptr = channel.get();
-		this->noise->record_callback_changed([ptr](){ ptr->noise_changed(); });
-
-		return channel;
-	}
+		return std::unique_ptr<module::Channel<R>>(params_BFER_ite.chn->build<R>());
 }
 
 template <typename B, typename R, typename Q>
 std::unique_ptr<module::Quantizer<R,Q>> BFER_ite<B,R,Q>
 ::build_quantizer(const int tid)
 {
-	return std::unique_ptr<module::Quantizer<R,Q>>(params_BFER_ite.qnt->template build<R,Q>());
+	return std::unique_ptr<module::Quantizer<R,Q>>(params_BFER_ite.qnt->build<R,Q>());
 }
 
 template <typename B, typename R, typename Q>
@@ -276,7 +241,7 @@ std::unique_ptr<module::Coset<B,Q>> BFER_ite<B,R,Q>
 	factory::Coset cst_params;
 	cst_params.size = params_BFER_ite.cdc->N_cw;
 	cst_params.n_frames = params_BFER_ite.src->n_frames;
-	return std::unique_ptr<module::Coset<B,Q>>(cst_params.template build_real<B,Q>());
+	return std::unique_ptr<module::Coset<B,Q>>(cst_params.build_real<B,Q>());
 }
 
 template <typename B, typename R, typename Q>
@@ -286,7 +251,7 @@ std::unique_ptr<module::Coset<B,B>> BFER_ite<B,R,Q>
 	factory::Coset cst_params;
 	cst_params.size = params_BFER_ite.coded_monitoring ? params_BFER_ite.cdc->N_cw : params_BFER_ite.cdc->K;
 	cst_params.n_frames = params_BFER_ite.src->n_frames;
-	return std::unique_ptr<module::Coset<B,B>>(cst_params.template build_bit<B,B>());
+	return std::unique_ptr<module::Coset<B,B>>(cst_params.build_bit<B,B>());
 }
 
 // ==================================================================================== explicit template instantiation

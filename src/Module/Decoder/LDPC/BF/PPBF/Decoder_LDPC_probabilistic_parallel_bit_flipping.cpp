@@ -91,6 +91,12 @@ void Decoder_LDPC_probabilistic_parallel_bit_flipping<B,R>
 	}
 }
 
+template <typename B, typename R>
+void Decoder_LDPC_probabilistic_parallel_bit_flipping<B,R>
+::set_seed(const int seed)
+{
+	rd_engine.seed(seed);
+}
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"

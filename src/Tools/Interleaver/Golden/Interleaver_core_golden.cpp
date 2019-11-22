@@ -14,7 +14,6 @@ Interleaver_core_golden<T>
 : Interleaver_core<T>(size, "golden", uniform, n_frames), gen(), dist(0.0, size * 0.1)
 {
 	gen.seed(seed);
-
 	this->init();
 }
 
@@ -44,6 +43,14 @@ void Interleaver_core_golden<T>
 	{
 		return tab[i1] < tab[i2];
 	});
+}
+
+template <typename T>
+void Interleaver_core_golden<T>
+::set_seed(const int seed)
+{
+	gen.seed(seed);
+	this->init();
 }
 
 // ==================================================================================== explicit template instantiation

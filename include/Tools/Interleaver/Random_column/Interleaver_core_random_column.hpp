@@ -30,6 +30,8 @@ public:
 
 	virtual Interleaver_core_random_column<T>* clone() const;
 
+	virtual void set_seed(const int seed);
+
 protected:
 	void gen_lut(T *lut, const int frame_id);
 };

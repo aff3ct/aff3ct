@@ -35,6 +35,8 @@ public:
 	virtual ~Decoder_LDPC_probabilistic_parallel_bit_flipping() = default;
 	virtual Decoder_LDPC_probabilistic_parallel_bit_flipping<B,R>* clone() const;
 
+	virtual void set_seed(const int seed);
+
 protected:
 	virtual void cn_process(const B *VN,  B *CN,              const int frame_id);
 	virtual void vn_process(const B *Y_N, B *VN, const B *CN, const int frame_id);

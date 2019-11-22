@@ -36,6 +36,8 @@ public:
 
 	bool is_sys() const;
 
+	virtual void set_seed(const int seed);
+
 protected:
 	void _encode(const B *U_K, B *X_N, const int frame_id);
 };

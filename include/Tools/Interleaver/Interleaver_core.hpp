@@ -54,6 +54,8 @@ public:
 
 	void refresh();
 
+	virtual void set_seed(const int seed);
+
 protected:
 	bool is_initialized() const;
 

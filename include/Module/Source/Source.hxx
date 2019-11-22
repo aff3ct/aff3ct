@@ -96,5 +96,12 @@ void Source<B>
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
+template <typename B>
+void Source<B>
+::set_seed(const int seed)
+{
+	// do nothing in the general case, this method has to be overrided
+}
+
 }
 }

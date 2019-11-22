@@ -74,6 +74,8 @@ public:
 
 	virtual void generate(B *U_K, const int frame_id = -1);
 
+	virtual void set_seed(const int seed);
+
 protected:
 	virtual void _generate(B *U_K, const int frame_id);
 };

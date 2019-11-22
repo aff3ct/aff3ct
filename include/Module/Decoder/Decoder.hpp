@@ -75,6 +75,8 @@ public:
 
 	void reset(const int frame_id = -1);
 
+	virtual void set_seed(const int seed);
+
 protected:
 	virtual void _reset(const int frame_id);
 };

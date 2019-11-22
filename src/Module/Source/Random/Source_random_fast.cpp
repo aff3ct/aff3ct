@@ -70,6 +70,17 @@ void Source_random_fast<B>
 	}
 }
 
+template <typename B>
+void Source_random_fast<B>
+::set_seed(const int seed)
+{
+	mt19937.seed(seed);
+	mipp::vector<int> seeds(mipp::nElReg<int>());
+	for (auto i = 0; i < mipp::nElReg<int>(); i++)
+		seeds[i] = mt19937.rand();
+	mt19937_simd.seed(seeds.data());
+}
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC

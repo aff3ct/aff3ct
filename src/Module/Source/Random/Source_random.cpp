@@ -31,6 +31,13 @@ void Source_random<B>
 		U_K[i] = (B)this->uniform_dist(this->rd_engine);
 }
 
+template <typename B>
+void Source_random<B>
+::set_seed(const int seed)
+{
+	rd_engine.seed(seed);
+}
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC

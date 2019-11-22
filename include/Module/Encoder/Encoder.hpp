@@ -113,6 +113,8 @@ public:
 	 */
 	virtual int tail_length() const;
 
+	virtual void set_seed(const int seed);
+
 protected:
 	virtual void _encode(const B *U_K, B *X_N, const int frame_id);
 
