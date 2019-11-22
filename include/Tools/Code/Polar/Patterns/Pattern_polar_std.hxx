@@ -16,10 +16,13 @@ Pattern_polar_std
 {
 }
 
-Pattern_polar_i* Pattern_polar_std
+Pattern_polar_std* Pattern_polar_std
 ::alloc(const int &N, const Binary_node<Pattern_polar_i>* node) const
 {
-	return new Pattern_polar_std(N, node);
+	if (node == nullptr)
+		return new Pattern_polar_std();
+	else
+		return new Pattern_polar_std(N, node);
 }
 
 polar_node_t Pattern_polar_std

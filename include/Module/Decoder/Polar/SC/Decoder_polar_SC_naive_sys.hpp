@@ -24,6 +24,8 @@ public:
 	                           const int n_frames = 1);
 	virtual ~Decoder_polar_SC_naive_sys() = default;
 
+	virtual Decoder_polar_SC_naive_sys<B,R,F,G,H>* clone() const;
+
 protected:
 	void _store(B *V, bool coded = false) const;
 };

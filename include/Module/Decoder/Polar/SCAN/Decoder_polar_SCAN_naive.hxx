@@ -82,6 +82,16 @@ Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 
 template <typename B, typename R,
           tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
+Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>* Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
+::clone() const
+{
+	auto m = new Decoder_polar_SCAN_naive(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B, typename R,
+          tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
 void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 ::_reset(const int frame_id)
 {

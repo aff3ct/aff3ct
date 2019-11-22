@@ -60,6 +60,41 @@ Decoder_polar_SC_naive<B,R,F,G,H>
 }
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
+Decoder_polar_SC_naive<B,R,F,G,H>* Decoder_polar_SC_naive<B,R,F,G,H>
+::clone() const
+{
+	auto m = new Decoder_polar_SC_naive(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
+void Decoder_polar_SC_naive<B,R,F,G,H>
+::deep_copy(const Decoder_polar_SC_naive<B,R,F,G,H> &m)
+{
+	Module::deep_copy(m);
+	this->recursive_deep_copy(m.polar_tree.get_root(), this->polar_tree.get_root());
+}
+
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
+void Decoder_polar_SC_naive<B,R,F,G,H>
+::recursive_deep_copy(const tools::Binary_node<Contents_SC<B,R>> *nref, tools::Binary_node<Contents_SC<B,R>> *nclone)
+{
+	auto cref = nref->get_contents();
+	auto cclone = new Contents_SC<B,R>(*cref);
+	nclone->set_contents(cclone);
+
+	if (!nref->is_leaf() && !nclone->is_leaf())
+	{
+		if (nref->get_left() != nullptr)
+			this->recursive_deep_copy(nref->get_left(), nclone->get_left());
+
+		if (nref->get_right() != nullptr)
+			this->recursive_deep_copy(nref->get_right(), nclone->get_right());
+	}
+}
+
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
 ::notify_frozenbits_update()
 {

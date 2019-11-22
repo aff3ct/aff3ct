@@ -23,6 +23,8 @@ public:
 
 	virtual ~Decoder_polar_SCL_naive_sys() = default;
 
+	virtual Decoder_polar_SCL_naive_sys<B,R,F,G>* clone() const;
+
 protected:
 	virtual void _store(B *V, bool coded = false) const;
 };

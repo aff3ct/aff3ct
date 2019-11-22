@@ -6,6 +6,7 @@
 #define DECODER_POLAR_ASCL_MEM_FAST_SYS_CA
 
 #include <vector>
+#include <memory>
 
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
@@ -27,7 +28,7 @@ template <typename B = int, typename R = float,
 class Decoder_polar_ASCL_MEM_fast_CA_sys : public Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>
 {
 private:
-	Decoder_polar_SC_fast_sys<B,R,API_polar> sc_decoder;
+	std::shared_ptr<Decoder_polar_SC_fast_sys<B,R,API_polar>> sc_decoder;
 	const int L_max;
 	const bool is_full_adaptive;
 
@@ -44,9 +45,13 @@ public:
 
 	virtual ~Decoder_polar_ASCL_MEM_fast_CA_sys() = default;
 
+	virtual Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>* clone() const;
+
 	virtual void notify_frozenbits_update();
 
 protected:
+	virtual void deep_copy(const Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar> &m);
+
 	void _decode        (const R *Y_N, B *V_K, const int frame_id);
 	void _decode_siho   (const R *Y_N, B *V_K, const int frame_id);
 	void _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id);

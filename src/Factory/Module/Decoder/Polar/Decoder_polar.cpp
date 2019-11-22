@@ -209,7 +209,13 @@ module::Decoder_SIHO<B,Q>* Decoder_polar
 			{
 				int idx_r0, idx_r1;
 				auto polar_patterns = tools::Nodes_parser<>::parse_ptr(this->polar_nodes, idx_r0, idx_r1);
-				if (this->type == "SC"  ) return new module::Decoder_polar_SC_fast_sys<B, Q, API_polar>(this->K, this->N_cw, frozen_bits, polar_patterns, idx_r0, idx_r1, this->n_frames);
+				module::Decoder_SIHO<B,Q>* decoder = nullptr;
+				if (this->type == "SC"  ) decoder = new module::Decoder_polar_SC_fast_sys<B, Q, API_polar>(this->K, this->N_cw, frozen_bits, polar_patterns, idx_r0, idx_r1, this->n_frames);
+
+				for (auto p : polar_patterns)
+					delete p;
+				if (decoder != nullptr)
+					return decoder;
 			}
 		}
 	}
@@ -223,22 +229,28 @@ module::Decoder_SIHO<B,Q>* Decoder_polar
 {
 	int idx_r0, idx_r1;
 	auto polar_patterns = tools::Nodes_parser<>::parse_ptr(this->polar_nodes, idx_r0, idx_r1);
+	module::Decoder_SIHO<B,Q>* decoder = nullptr;
 
 	if (this->implem == "FAST" && this->systematic)
 	{
 		if (crc != nullptr && crc->get_size() > 0)
 		{
-			if (this->type == "ASCL"    ) return new module::Decoder_polar_ASCL_fast_CA_sys    <B, Q, API_polar>(this->K, this->N_cw, this->L, frozen_bits, polar_patterns, idx_r0, idx_r1, *crc, this->full_adaptive, this->n_frames);
-			if (this->type == "ASCL_MEM") return new module::Decoder_polar_ASCL_MEM_fast_CA_sys<B, Q, API_polar>(this->K, this->N_cw, this->L, frozen_bits, polar_patterns, idx_r0, idx_r1, *crc, this->full_adaptive, this->n_frames);
-			if (this->type == "SCL"     ) return new module::Decoder_polar_SCL_fast_CA_sys     <B, Q, API_polar>(this->K, this->N_cw, this->L, frozen_bits, polar_patterns, idx_r0, idx_r1, *crc,                      this->n_frames);
-			if (this->type == "SCL_MEM" ) return new module::Decoder_polar_SCL_MEM_fast_CA_sys <B, Q, API_polar>(this->K, this->N_cw, this->L, frozen_bits, polar_patterns, idx_r0, idx_r1, *crc,                      this->n_frames);
+			if (this->type == "ASCL"    ) decoder = new module::Decoder_polar_ASCL_fast_CA_sys    <B, Q, API_polar>(this->K, this->N_cw, this->L, frozen_bits, polar_patterns, idx_r0, idx_r1, *crc, this->full_adaptive, this->n_frames);
+			if (this->type == "ASCL_MEM") decoder = new module::Decoder_polar_ASCL_MEM_fast_CA_sys<B, Q, API_polar>(this->K, this->N_cw, this->L, frozen_bits, polar_patterns, idx_r0, idx_r1, *crc, this->full_adaptive, this->n_frames);
+			if (this->type == "SCL"     ) decoder = new module::Decoder_polar_SCL_fast_CA_sys     <B, Q, API_polar>(this->K, this->N_cw, this->L, frozen_bits, polar_patterns, idx_r0, idx_r1, *crc,                      this->n_frames);
+			if (this->type == "SCL_MEM" ) decoder = new module::Decoder_polar_SCL_MEM_fast_CA_sys <B, Q, API_polar>(this->K, this->N_cw, this->L, frozen_bits, polar_patterns, idx_r0, idx_r1, *crc,                      this->n_frames);
 		}
 		else
 		{
-			if (this->type == "SCL"     ) return new module::Decoder_polar_SCL_fast_sys        <B, Q, API_polar>(this->K, this->N_cw, this->L, frozen_bits, polar_patterns, idx_r0, idx_r1,                            this->n_frames);
-			if (this->type == "SCL_MEM" ) return new module::Decoder_polar_SCL_MEM_fast_sys    <B, Q, API_polar>(this->K, this->N_cw, this->L, frozen_bits, polar_patterns, idx_r0, idx_r1,                            this->n_frames);
+			if (this->type == "SCL"     ) decoder = new module::Decoder_polar_SCL_fast_sys        <B, Q, API_polar>(this->K, this->N_cw, this->L, frozen_bits, polar_patterns, idx_r0, idx_r1,                            this->n_frames);
+			if (this->type == "SCL_MEM" ) decoder = new module::Decoder_polar_SCL_MEM_fast_sys    <B, Q, API_polar>(this->K, this->N_cw, this->L, frozen_bits, polar_patterns, idx_r0, idx_r1,                            this->n_frames);
 		}
 	}
+
+	for (auto p : polar_patterns)
+		delete p;
+	if (decoder != nullptr)
+		return decoder;
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

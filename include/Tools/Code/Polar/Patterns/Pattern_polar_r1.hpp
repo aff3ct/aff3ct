@@ -23,7 +23,7 @@ protected:
 public:
 	inline Pattern_polar_r1(const int min_level = 0, const int max_level = -1);
 
-	virtual inline Pattern_polar_i* alloc(const int &N, const Binary_node<Pattern_polar_i>* node) const;
+	virtual inline Pattern_polar_r1* alloc(const int &N, const Binary_node<Pattern_polar_i>* node) const;
 
 	virtual ~Pattern_polar_r1() = default;
 

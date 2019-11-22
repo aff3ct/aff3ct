@@ -52,6 +52,23 @@ Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
+Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>* Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
+::clone() const
+{
+	auto m = new Decoder_polar_SCL_fast_CA_sys(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B, typename R, class API_polar>
+void Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
+::deep_copy(const Decoder_polar_SCL_fast_CA_sys<B,R,API_polar> &m)
+{
+	Decoder_polar_SCL_fast_sys<B,R,API_polar>::deep_copy(m);
+	this->crc.reset(m.crc->clone());
+}
+
+template <typename B, typename R, class API_polar>
 bool Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
 ::crc_check(mipp::vector<B> &s)
 {

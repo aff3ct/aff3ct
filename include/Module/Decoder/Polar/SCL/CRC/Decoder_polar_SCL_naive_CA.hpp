@@ -27,7 +27,10 @@ public:
 
 	virtual ~Decoder_polar_SCL_naive_CA() = default;
 
+	virtual Decoder_polar_SCL_naive_CA<B,R,F,G>* clone() const;
+
 protected:
+	virtual void deep_copy(const Decoder_polar_SCL_naive_CA<B,R,F,G>& m);
 	virtual void select_best_path();
 };
 }

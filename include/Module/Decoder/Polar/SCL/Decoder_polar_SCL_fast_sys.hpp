@@ -66,6 +66,8 @@ public:
 
 	virtual ~Decoder_polar_SCL_fast_sys();
 
+	virtual Decoder_polar_SCL_fast_sys<B,R,API_polar>* clone() const;
+
 	virtual void notify_frozenbits_update();
 
 protected:

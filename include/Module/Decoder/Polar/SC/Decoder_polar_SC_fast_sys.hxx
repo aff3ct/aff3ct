@@ -128,8 +128,7 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
   s                (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>(), 0),
   s_bis            (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>()   ),
   frozen_bits      (frozen_bits),
-  polar_patterns   (N,
-                    frozen_bits,
+  polar_patterns   (frozen_bits,
                     {new tools::Pattern_polar_std,
                      new tools::Pattern_polar_r0_left,
                      new tools::Pattern_polar_r0,
@@ -138,7 +137,8 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
                      new tools::Pattern_polar_rep,
                      new tools::Pattern_polar_spc},
                     2,
-                    3)
+                    3,
+                    true)
 {
 	const std::string name = "Decoder_polar_SC_fast_sys";
 	this->set_name(name);
@@ -182,7 +182,7 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
   s                (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>(), 0),
   s_bis            (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>()   ),
   frozen_bits      (frozen_bits),
-  polar_patterns   (N, frozen_bits, polar_patterns, idx_r0, idx_r1)
+  polar_patterns   (frozen_bits, polar_patterns, idx_r0, idx_r1)
 {
 	const std::string name = "Decoder_polar_SC_fast_sys";
 	this->set_name(name);
@@ -212,6 +212,15 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 		        << k << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+template <typename B, typename R, class API_polar>
+Decoder_polar_SC_fast_sys<B,R,API_polar>* Decoder_polar_SC_fast_sys<B,R,API_polar>
+::clone() const
+{
+	auto m = new Decoder_polar_SC_fast_sys(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B, typename R, class API_polar>

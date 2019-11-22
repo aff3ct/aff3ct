@@ -38,6 +38,10 @@ public:
 	 */
 	explicit Binary_tree(int depth);
 
+	Binary_tree(const Binary_tree<T> &bt);
+
+	Binary_tree<T>& operator=(const Binary_tree<T> &bt);
+
 	/*!
 	 * \brief Destructor.
 	 *
@@ -57,11 +61,13 @@ public:
 	 *
 	 * \return a vector of node pointers.
 	 */
-	std::vector<Binary_node<T>*> get_leaves() const;
+	const std::vector<Binary_node<T>*>& get_leaves() const;
 
 private:
+	void init                (int depth);
+	void recursive_copy      (const Binary_node<T> *nref, Binary_node<T> *nclone              );
 	void create_nodes        (Binary_node<T>* cur_node, int cur_depth, std::vector<int>& lanes);
-	void delete_nodes        (Binary_node<T>* cur_node                                        );
+	void delete_nodes        (Binary_node<T>* cur_node                                        ) const;
 	void recursive_get_leaves(Binary_node<T>* cur_node                                        );
 };
 }

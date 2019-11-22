@@ -36,6 +36,8 @@ public:
 	                         const int n_frames = 1);
 	virtual ~Decoder_polar_SCAN_naive() = default;
 
+	virtual Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>* clone() const;
+
 protected:
 	void _reset(const int frame_id);
 

@@ -44,14 +44,19 @@ public:
 	Decoder_polar_SC_naive(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int n_frames = 1);
 	virtual ~Decoder_polar_SC_naive();
 
+	virtual Decoder_polar_SC_naive<B,R,F,G,H>* clone() const;
+
 	virtual void notify_frozenbits_update();
 
 protected:
-	        void _load           (const R *Y_N                                         );
-	virtual void _decode_siho    (const R *Y_N, B *V_K, const int frame_id             );
-	virtual void _decode_siho_cw (const R *Y_N, B *V_N, const int frame_id             );
-	virtual void _store          (              B *V,   bool coded = false             ) const;
-	virtual void recursive_decode(const tools::Binary_node<Contents_SC<B,R>>* node_curr);
+	virtual void deep_copy          (const Decoder_polar_SC_naive<B,R,F,G,H>& m);
+	        void recursive_deep_copy(const tools::Binary_node<Contents_SC<B,R>> *nref,
+	                                       tools::Binary_node<Contents_SC<B,R>> *nclone);
+	        void _load              (const R *Y_N                                         );
+	virtual void _decode_siho       (const R *Y_N, B *V_K, const int frame_id             );
+	virtual void _decode_siho_cw    (const R *Y_N, B *V_N, const int frame_id             );
+	virtual void _store             (              B *V,   bool coded = false             ) const;
+	virtual void recursive_decode   (const tools::Binary_node<Contents_SC<B,R>>* node_curr);
 
 private:
 	void recursive_allocate_nodes_contents  (      tools::Binary_node<Contents_SC<B,R>>* node_curr, const int vector_size               );

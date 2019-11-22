@@ -19,6 +19,15 @@ Decoder_polar_SCL_naive_CA_sys<B,R,F,G>
 }
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
+Decoder_polar_SCL_naive_CA_sys<B,R,F,G>* Decoder_polar_SCL_naive_CA_sys<B,R,F,G>
+::clone() const
+{
+	auto m = new Decoder_polar_SCL_naive_CA_sys(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive_CA_sys<B,R,F,G>
 ::select_best_path()
 {
@@ -29,7 +38,7 @@ void Decoder_polar_SCL_naive_CA_sys<B,R,F,G>
 		U_test.clear();
 
 		for (auto i = 0 ; i < this->N ; i++)
-			if (!this->frozen_bits[i]) U_test.push_back(this->polar_trees[path]->get_root()->get_c()->s[i]);
+			if (!this->frozen_bits[i]) U_test.push_back(this->polar_trees[path].get_root()->get_c()->s[i]);
 
 		bool decode_result = this->crc->check(U_test, this->get_simd_inter_frame_level());
 		if (!decode_result)
@@ -49,11 +58,11 @@ void Decoder_polar_SCL_naive_CA_sys<B,R,F,G>
 		auto k = 0;
 		for (auto i = 0; i < this->N; i++)
 			if (!this->frozen_bits[i])
-				V[k++] = this->polar_trees[*this->active_paths.begin()]->get_root()->get_c()->s[i] ? 1 : 0;
+				V[k++] = this->polar_trees[*this->active_paths.begin()].get_root()->get_c()->s[i] ? 1 : 0;
 	}
 	else
 		for (auto i = 0; i < this->N; i++)
-			V[i] = this->polar_trees[*this->active_paths.begin()]->get_root()->get_c()->s[i] ? 1 : 0;
+			V[i] = this->polar_trees[*this->active_paths.begin()].get_root()->get_c()->s[i] ? 1 : 0;
 }
 }
 }

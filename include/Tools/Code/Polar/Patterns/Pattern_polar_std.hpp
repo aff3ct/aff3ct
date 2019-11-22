@@ -22,7 +22,7 @@ protected:
 public:
 	inline Pattern_polar_std();
 
-	virtual inline Pattern_polar_i* alloc(const int &N, const Binary_node<Pattern_polar_i>* node) const;
+	virtual inline Pattern_polar_std* alloc(const int &N, const Binary_node<Pattern_polar_i>* node) const;
 
 	virtual ~Pattern_polar_std() = default;
 
