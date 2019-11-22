@@ -66,6 +66,15 @@ Codec_RS<B,Q>
 }
 
 template <typename B, typename Q>
+Codec_RS<B,Q>* Codec_RS<B,Q>
+::clone() const
+{
+	auto t = new Codec_RS(*this);
+	t->deep_copy(*this);
+	return t;
+}
+
+template <typename B, typename Q>
 const RS_polynomial_generator& Codec_RS<B,Q>
 ::get_GF_poly() const
 {

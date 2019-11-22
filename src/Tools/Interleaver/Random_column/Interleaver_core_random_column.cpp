@@ -28,6 +28,14 @@ Interleaver_core_random_column<T>
 }
 
 template <typename T>
+Interleaver_core_random_column<T>* Interleaver_core_random_column<T>
+::clone() const
+{
+	auto t = new Interleaver_core_random_column(*this);
+	return t;
+}
+
+template <typename T>
 void Interleaver_core_random_column<T>
 ::gen_lut(T *lut, const int frame_id)
 {

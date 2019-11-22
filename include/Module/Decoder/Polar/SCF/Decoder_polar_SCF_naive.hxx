@@ -50,7 +50,7 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 ::deep_copy(const Decoder_polar_SCF_naive<B,R,F,G,H> &m)
 {
 	Decoder_polar_SC_naive<B,R,F,G,H>::deep_copy(m);
-	this->crc.reset(m.crc->clone());
+	if (m.crc != nullptr) this->crc.reset(m.crc->clone());
 }
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>

@@ -87,7 +87,7 @@ void Channel_AWGN_LLR<R>
 ::deep_copy(const Channel_AWGN_LLR<R> &m)
 {
 	Module::deep_copy(m);
-	this->gaussian_generator.reset(m.gaussian_generator->clone());
+	if (m.gaussian_generator != nullptr) this->gaussian_generator.reset(m.gaussian_generator->clone());
 }
 
 template <typename R>

@@ -25,6 +25,8 @@ public:
 	Interleaver_core_golden(const int size, const int seed = 0, const bool uniform = false, const int n_frames = 1);
 	virtual ~Interleaver_core_golden() = default;
 
+	virtual Interleaver_core_golden<T>* clone() const;
+
 protected:
 	void gen_lut(T *lut, const int frame_id);
 };

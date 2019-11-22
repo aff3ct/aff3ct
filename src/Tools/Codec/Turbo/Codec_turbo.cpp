@@ -1,5 +1,6 @@
 #include <functional>
 #include <sstream>
+#include <memory>
 #include <string>
 #include <ios>
 
@@ -53,8 +54,9 @@ Codec_turbo<B,Q>
 	// ---------------------------------------------------------------------------------------------------------- tools
 	if (!enc_params.json_path.empty())
 	{
-		json_stream.open(enc_params.json_path.c_str(), std::ios::out | std::ios::trunc);
-		json_stream << "[" << std::endl;
+		json_stream.reset(new std::ofstream());
+		json_stream->open(enc_params.json_path.c_str(), std::ios::out | std::ios::trunc);
+		*json_stream << "[" << std::endl;
 	}
 
 	std::unique_ptr<module::Encoder_RSC_sys<B>> encoder_RSC(enc_params.sub1->build<B>());
@@ -88,8 +90,8 @@ Codec_turbo<B,Q>
 
 	try
 	{
-		sub_enc.reset(enc_params.sub1->build<B>(json_stream));
-		this->set_encoder(enc_params.build<B>(this->get_interleaver_bit(), sub_enc, sub_enc));
+		std::unique_ptr<module::Encoder_RSC_sys<B>> sub_enc(enc_params.sub1->build<B>(*json_stream));
+		this->set_encoder(enc_params.build<B>(this->get_interleaver_bit(), *sub_enc, *sub_enc));
 	}
 	catch (cannot_allocate const&)
 	{
@@ -103,7 +105,9 @@ Codec_turbo<B,Q>
 	}
 	catch (cannot_allocate const&)
 	{
-		sub_dec.reset(dec_params.sub1->build_siso<B,Q>(trellis, json_stream, dec_params.n_ite));
+		std::unique_ptr<module::Decoder_SISO<Q>> sub_dec(dec_params.sub1->build_siso<B,Q>(trellis,
+		                                                                                  *json_stream,
+		                                                                                  dec_params.n_ite));
 		decoder_turbo.reset(dec_params.build<B,Q>(this->get_interleaver_llr(), *sub_dec, *sub_dec,
 		                                          &this->get_encoder()));
 		this->set_decoder_siho(std::static_pointer_cast<module::Decoder_SIHO<B,Q>>(decoder_turbo));
@@ -112,27 +116,32 @@ Codec_turbo<B,Q>
 	// ------------------------------------------------------------------------------------------------ post processing
 	if (decoder_turbo)
 	{
+		std::vector<std::unique_ptr<Post_processing_SISO<B,Q>>> post_pros;
+
 		if (dec_params.sf->enable)
-			add_post_processings(dec_params.sf->build<B,Q>());
+			post_pros.push_back(std::unique_ptr<Post_processing_SISO<B,Q>>(dec_params.sf->build<B,Q>()));
 
 		if (dec_params.fnc->enable)
 		{
 			if (crc == nullptr || crc->get_size() == 0)
 				throw runtime_error(__FILE__, __LINE__, __func__, "The Flip aNd Check requires a CRC.");
 
-			add_post_processings(dec_params.fnc->build<B,Q>(*crc));
+			post_pros.push_back(std::unique_ptr<Post_processing_SISO<B,Q>>(dec_params.fnc->build<B,Q>(*crc)));
+
 		}
 		else if (crc != nullptr && crc->get_size() > 0)
-			add_post_processings(new CRC_checker<B,Q>(*crc,
-			                                          dec_params.crc_start_ite,
-			                                          decoder_turbo->get_simd_inter_frame_level()));
+			post_pros.push_back(std::unique_ptr<Post_processing_SISO<B,Q>>(new CRC_checker<B,Q>(
+				*crc,
+				dec_params.crc_start_ite,
+				decoder_turbo->get_simd_inter_frame_level())));
 
 		if (dec_params.self_corrected)
-			add_post_processings(new Self_corrected<B,Q>(dec_params.K,
-			                                             dec_params.n_ite,
-			                                             4,
-			                                             dec_params.n_ite,
-			                                             decoder_turbo->get_simd_inter_frame_level()));
+			post_pros.push_back(std::unique_ptr<Post_processing_SISO<B,Q>>(new Self_corrected<B,Q>(
+				dec_params.K,
+				dec_params.n_ite,
+				4,
+				dec_params.n_ite,
+				decoder_turbo->get_simd_inter_frame_level())));
 
 		for (auto i = 0; i < (int)post_pros.size(); i++)
 			if (post_pros[i] != nullptr)
@@ -144,11 +153,27 @@ template <typename B, typename Q>
 Codec_turbo<B,Q>
 ::~Codec_turbo()
 {
-	if (json_stream.is_open())
+	if (json_stream != nullptr && json_stream->is_open())
 	{
-		json_stream << "[{\"stage\": \"end\"}]]" << std::endl;
-		json_stream.close();
+		*json_stream << "[{\"stage\": \"end\"}]]" << std::endl;
+		json_stream->close();
 	}
+}
+
+template <typename B, typename Q>
+Codec_turbo<B,Q>* Codec_turbo<B,Q>
+::clone() const
+{
+	if (json_stream != nullptr)
+	{
+		std::stringstream message;
+		message << "'json_stream' has to be nullptr.";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	auto t = new Codec_turbo(*this);
+	t->deep_copy(*this);
+	return t;
 }
 
 template <typename B, typename Q>
@@ -157,49 +182,6 @@ const std::vector<std::vector<int>>& Codec_turbo<B,Q>
 {
 	return this->trellis;
 }
-
-template <typename B, typename Q>
-const module::Encoder_RSC_sys<B>& Codec_turbo<B,Q>
-::get_sub_encoder() const
-{
-	if (this->sub_enc == nullptr)
-	{
-		std::stringstream message;
-		message << "'sub_enc' can't be nullptr.";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	return *this->sub_enc.get();
-}
-
-template <typename B, typename Q>
-const module::Decoder_SISO<Q>& Codec_turbo<B,Q>
-::get_sub_decoder() const
-{
-	if (this->sub_dec == nullptr)
-	{
-		std::stringstream message;
-		message << "'sub_dec' can't be nullptr.";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	return *this->sub_dec.get();
-}
-
-template <typename B, typename Q>
-const std::vector<std::shared_ptr<Post_processing_SISO<B,Q>>>& Codec_turbo<B,Q>
-::get_post_processings() const
-{
-	return this->post_pros;
-}
-
-template <typename B, typename Q>
-void Codec_turbo<B,Q>
-::add_post_processings(Post_processing_SISO<B,Q>* p)
-{
-	post_pros.push_back(std::shared_ptr<Post_processing_SISO<B,Q>>(p));
-}
-
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"

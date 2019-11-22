@@ -64,8 +64,8 @@ public:
 	// builder
 	template <typename B = int, typename Q = float>
 	module::Decoder_turbo<B,Q>* build(const module::Interleaver<Q>  &itl,
-	                                        module::Decoder_SISO<Q> &siso_n,
-	                                        module::Decoder_SISO<Q> &siso_i,
+	                                  const module::Decoder_SISO<Q> &siso_n,
+	                                  const module::Decoder_SISO<Q> &siso_i,
 	                                        module::Encoder<B>      *encoder = nullptr) const;
 
 	template <typename B = int, typename Q = float>

@@ -22,6 +22,13 @@ Frozenbits_generator_BEC
 {
 }
 
+Frozenbits_generator_BEC* Frozenbits_generator_BEC
+::clone() const
+{
+	auto t = new Frozenbits_generator_BEC(*this);
+	return t;
+}
+
 void Frozenbits_generator_BEC
 ::evaluate()
 {

@@ -51,7 +51,7 @@ void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 ::deep_copy(const Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar> &m)
 {
 	Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>::deep_copy(m);
-	this->sc_decoder.reset(m.sc_decoder->clone());
+	if (m.sc_decoder != nullptr) this->sc_decoder.reset(m.sc_decoder->clone());
 }
 
 template <typename B, typename R, class API_polar>

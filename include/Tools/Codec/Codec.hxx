@@ -52,6 +52,26 @@ Codec<B,Q>
 }
 
 template <typename B, typename Q>
+Codec<B,Q>* Codec<B,Q>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename Q>
+void Codec<B,Q>
+::deep_copy(const Codec<B,Q> &t)
+{
+	// Codec<B,Q>::deep_copy(t);
+	if (t.interleaver_core != nullptr) this->interleaver_core.reset(t.interleaver_core->clone());
+	if (t.interleaver_bit  != nullptr) this->interleaver_bit .reset(t.interleaver_bit ->clone());
+	if (t.interleaver_llr  != nullptr) this->interleaver_llr .reset(t.interleaver_llr ->clone());
+	if (t.encoder          != nullptr) this->encoder         .reset(t.encoder         ->clone());
+	if (t.puncturer        != nullptr) this->puncturer       .reset(t.puncturer       ->clone());
+	if (t.extractor        != nullptr) this->extractor       .reset(t.extractor       ->clone());
+}
+
+template <typename B, typename Q>
 Interleaver_core<>& Codec<B,Q>
 ::get_interleaver()
 {

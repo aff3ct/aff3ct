@@ -27,6 +27,8 @@ public:
 	             const factory::Decoder_RSC_DB &dec_params);
 	virtual ~Codec_RSC_DB() = default;
 
+	virtual Codec_RSC_DB<B,Q>* clone() const;
+
 	bool is_buffered_encoding() const;
 	const std::vector<std::vector<int>>& get_trellis() const;
 };

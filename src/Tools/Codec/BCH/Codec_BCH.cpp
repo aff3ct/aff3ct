@@ -65,6 +65,15 @@ Codec_BCH<B,Q>
 }
 
 template <typename B, typename Q>
+Codec_BCH<B,Q>* Codec_BCH<B,Q>
+::clone() const
+{
+	auto t = new Codec_BCH(*this);
+	t->deep_copy(*this);
+	return t;
+}
+
+template <typename B, typename Q>
 const BCH_polynomial_generator<B>& Codec_BCH<B,Q>
 ::get_GF_poly() const
 {

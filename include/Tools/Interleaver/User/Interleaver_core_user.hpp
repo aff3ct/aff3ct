@@ -26,6 +26,8 @@ public:
 	Interleaver_core_user(const int size, const std::string &filename, const int n_frames = 1);
 	virtual ~Interleaver_core_user() = default;
 
+	virtual Interleaver_core_user<T>* clone() const;
+
 protected:
 	void gen_lut(T *lut, const int frame_id);
 };

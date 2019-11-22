@@ -65,8 +65,8 @@ void Encoder_turbo<B>
 ::deep_copy(const Encoder_turbo<B> &m)
 {
 	Module::deep_copy(m);
-	this->enco_n.reset(m.enco_n->clone());
-	this->enco_i.reset(m.enco_i->clone());
+	if (m.enco_n != nullptr) this->enco_n.reset(m.enco_n->clone());
+	if (m.enco_i != nullptr) this->enco_i.reset(m.enco_i->clone());
 }
 
 template <typename B>

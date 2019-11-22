@@ -27,6 +27,13 @@ Frozenbits_generator_5G
 {
 }
 
+Frozenbits_generator_5G* Frozenbits_generator_5G
+::clone() const
+{
+	auto t = new Frozenbits_generator_5G(*this);
+	return t;
+}
+
 void Frozenbits_generator_5G
 ::evaluate()
 {

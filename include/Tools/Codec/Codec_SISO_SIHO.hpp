@@ -23,8 +23,13 @@ public:
 
 	virtual ~Codec_SISO_SIHO() = default;
 
+	virtual Codec_SISO_SIHO<B,Q>* clone() const;
+
 	virtual void set_decoder_siso_siho(std::shared_ptr<module::Decoder_SISO_SIHO<B,Q>> dec);
 	virtual void set_decoder_siso_siho(module::Decoder_SISO_SIHO<B,Q>* dec);
+
+protected:
+	virtual void deep_copy(const Codec_SISO_SIHO<B,Q> &t);
 };
 }
 }

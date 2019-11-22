@@ -23,19 +23,15 @@ template <typename B = int, typename Q = float>
 class Codec_turbo_product : public Codec_SISO_SIHO<B,Q>
 {
 protected:
-	const BCH_polynomial_generator<B>                   GF_poly;
-	std::unique_ptr<module::Encoder_BCH<B  >>           enc_bch_rows;
-	std::unique_ptr<module::Encoder_BCH<B  >>           enc_bch_cols;
-	std::unique_ptr<module::Decoder_BCH<B,Q>>           dec_bch_rows;
-	std::unique_ptr<module::Decoder_BCH<B,Q>>           dec_bch_cols;
-	std::unique_ptr<module::Decoder_chase_pyndiah<B,Q>> dec_cp_rows;
-	std::unique_ptr<module::Decoder_chase_pyndiah<B,Q>> dec_cp_cols;
+	const BCH_polynomial_generator<B> GF_poly;
 
 public:
 	Codec_turbo_product(const factory::Encoder_turbo_product &enc_params,
 	                    const factory::Decoder_turbo_product &dec_params,
 	                    const factory::Interleaver           &itl_params);
 	virtual ~Codec_turbo_product() = default;
+
+	virtual Codec_turbo_product<B,Q>* clone() const;
 
 	const BCH_polynomial_generator<B>& get_GF_poly() const;
 	const module::Encoder_BCH<B>& get_encoder_BCH_rows() const;

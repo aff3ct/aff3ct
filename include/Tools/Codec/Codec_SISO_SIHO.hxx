@@ -14,6 +14,22 @@ Codec_SISO_SIHO<B,Q>
 }
 
 template <typename B, typename Q>
+Codec_SISO_SIHO<B,Q>* Codec_SISO_SIHO<B,Q>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename Q>
+void Codec_SISO_SIHO<B,Q>
+::deep_copy(const Codec_SISO_SIHO<B,Q> &t)
+{
+	Codec<B,Q>::deep_copy(t);
+	if (t.decoder_siso != nullptr) this->decoder_siso.reset(t.decoder_siso->clone());
+	if (t.decoder_siho != nullptr) this->decoder_siho.reset(t.decoder_siho->clone());
+}
+
+template <typename B, typename Q>
 void Codec_SISO_SIHO<B,Q>
 ::set_decoder_siso_siho(std::shared_ptr<module::Decoder_SISO_SIHO<B,Q>> dec)
 {

@@ -6,7 +6,6 @@
 #define CODEC_TURBO_DB_HPP_
 
 #include <vector>
-#include <memory>
 
 #include "Tools/Code/Turbo/Post_processing_SISO/Post_processing_SISO.hpp"
 #include "Module/CRC/CRC.hpp"
@@ -26,11 +25,7 @@ template <typename B = int, typename Q = float>
 class Codec_turbo_DB : public Codec_SIHO<B,Q>
 {
 protected:
-	std::vector<std::vector<int>>                           trellis;
-	std::shared_ptr<module::Encoder_RSC_DB<B>>              sub_enc;
-	std::shared_ptr<module::Decoder_RSC_DB_BCJR<B,Q>>       sub_dec_n;
-	std::shared_ptr<module::Decoder_RSC_DB_BCJR<B,Q>>       sub_dec_i;
-	std::vector<std::shared_ptr<Post_processing_SISO<B,Q>>> post_pros;
+	std::vector<std::vector<int>> trellis;
 
 public:
 	Codec_turbo_DB(const factory::Encoder_turbo_DB   &enc_params,
@@ -40,14 +35,9 @@ public:
 	               module::CRC<B>* crc = nullptr);
 	virtual ~Codec_turbo_DB() = default;
 
-	const std::vector<std::vector<int>>& get_trellis() const;
-	const module::Encoder_RSC_DB<B>& get_sub_encoder() const;
-	const module::Decoder_RSC_DB_BCJR<B,Q>& get_sub_decoder_n() const;
-	const module::Decoder_RSC_DB_BCJR<B,Q>& get_sub_decoder_i() const;
-	const std::vector<std::shared_ptr<Post_processing_SISO<B,Q>>>& get_post_processings() const;
+	virtual Codec_turbo_DB<B,Q>* clone() const;
 
-protected:
-	void add_post_processings(Post_processing_SISO<B,Q>* p);
+	const std::vector<std::vector<int>>& get_trellis() const;
 };
 }
 }

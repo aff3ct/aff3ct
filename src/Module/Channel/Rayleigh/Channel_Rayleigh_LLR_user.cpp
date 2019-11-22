@@ -122,7 +122,7 @@ void Channel_Rayleigh_LLR_user<R>
 ::deep_copy(const Channel_Rayleigh_LLR_user<R> &m)
 {
 	Module::deep_copy(m);
-	this->gaussian_generator.reset(m.gaussian_generator->clone());
+	if (m.gaussian_generator != nullptr) this->gaussian_generator.reset(m.gaussian_generator->clone());
 }
 
 template <typename R>

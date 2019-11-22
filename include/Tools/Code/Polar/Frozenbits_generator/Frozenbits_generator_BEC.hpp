@@ -26,6 +26,8 @@ public:
 
 	~Frozenbits_generator_BEC();
 
+	virtual Frozenbits_generator_BEC* clone() const;
+
 protected:
 	void   evaluate();
 	double phi    (double t);

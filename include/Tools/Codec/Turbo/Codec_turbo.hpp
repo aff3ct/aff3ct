@@ -5,7 +5,6 @@
 #ifndef CODEC_TURBO_HPP_
 #define CODEC_TURBO_HPP_
 
-#include <memory>
 #include <vector>
 #include <fstream>
 
@@ -27,11 +26,8 @@ template <typename B = int, typename Q = float>
 class Codec_turbo : public Codec_SIHO<B,Q>
 {
 protected:
-	std::vector<std::vector<int>>                           trellis;
-	std::shared_ptr<module::Encoder_RSC_sys<B>>             sub_enc;
-	std::shared_ptr<module::Decoder_SISO   <Q>>             sub_dec;
-	std::vector<std::shared_ptr<Post_processing_SISO<B,Q>>> post_pros;
-	std::ofstream                                           json_stream;
+	std::vector<std::vector<int>> trellis;
+	std::shared_ptr<std::ofstream> json_stream;
 
 public:
 	Codec_turbo(const factory::Encoder_turbo<> &enc_params,
@@ -41,13 +37,9 @@ public:
 	            module::CRC<B>* crc = nullptr);
 	virtual ~Codec_turbo();
 
-	const std::vector<std::vector<int>>& get_trellis() const;
-	const module::Encoder_RSC_sys<B>& get_sub_encoder() const;
-	const module::Decoder_SISO<Q>& get_sub_decoder() const;
-	const std::vector<std::shared_ptr<Post_processing_SISO<B,Q>>>& get_post_processings() const;
+	virtual Codec_turbo<B,Q>* clone() const;
 
-protected:
-	void add_post_processings(Post_processing_SISO<B,Q>* p);
+	const std::vector<std::vector<int>>& get_trellis() const;
 };
 }
 }

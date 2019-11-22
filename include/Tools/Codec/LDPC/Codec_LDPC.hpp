@@ -27,7 +27,7 @@ protected:
 	Sparse_matrix H;
 	Sparse_matrix G;
 	LDPC_matrix_handler::Positions_vector info_bits_pos;
-	std::unique_ptr<dvbs2_values> dvbs2;
+	std::shared_ptr<dvbs2_values> dvbs2;
 
 public:
 	Codec_LDPC(const factory::Encoder_LDPC   &enc_params,
@@ -35,10 +35,15 @@ public:
 	                 factory::Puncturer_LDPC *pct_params);
 	virtual ~Codec_LDPC() = default;
 
+	virtual Codec_LDPC<B,Q>* clone() const;
+
 	const Sparse_matrix& get_H() const;
 	const Sparse_matrix& get_G() const;
 	const LDPC_matrix_handler::Positions_vector& get_info_bits_pos() const;
 	const dvbs2_values& get_DVBS2() const;
+
+protected:
+	virtual void deep_copy(const Codec_LDPC<B,Q> &t);
 };
 }
 }

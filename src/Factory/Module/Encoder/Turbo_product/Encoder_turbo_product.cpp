@@ -140,8 +140,8 @@ void Encoder_turbo_product
 template <typename B>
 module::Encoder_turbo_product<B>* Encoder_turbo_product
 ::build(const module::Interleaver<B> &itl,
-              module::Encoder_BCH<B> &enc_r,
-              module::Encoder_BCH<B> &enc_c) const
+        const module::Encoder_BCH<B> &enc_r,
+        const module::Encoder_BCH<B> &enc_c) const
 {
 	if (this->type == "TPC") return new module::Encoder_turbo_product<B>(itl, enc_r, enc_c, n_frames);
 
@@ -151,11 +151,11 @@ module::Encoder_turbo_product<B>* Encoder_turbo_product
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Encoder_turbo_product<B_8 >* aff3ct::factory::Encoder_turbo_product::build<B_8 >(const aff3ct::module::Interleaver<B_8 >&, aff3ct::module::Encoder_BCH<B_8 >&, aff3ct::module::Encoder_BCH<B_8 >&) const;
-template aff3ct::module::Encoder_turbo_product<B_16>* aff3ct::factory::Encoder_turbo_product::build<B_16>(const aff3ct::module::Interleaver<B_16>&, aff3ct::module::Encoder_BCH<B_16>&, aff3ct::module::Encoder_BCH<B_16>&) const;
-template aff3ct::module::Encoder_turbo_product<B_32>* aff3ct::factory::Encoder_turbo_product::build<B_32>(const aff3ct::module::Interleaver<B_32>&, aff3ct::module::Encoder_BCH<B_32>&, aff3ct::module::Encoder_BCH<B_32>&) const;
-template aff3ct::module::Encoder_turbo_product<B_64>* aff3ct::factory::Encoder_turbo_product::build<B_64>(const aff3ct::module::Interleaver<B_64>&, aff3ct::module::Encoder_BCH<B_64>&, aff3ct::module::Encoder_BCH<B_64>&) const;
+template aff3ct::module::Encoder_turbo_product<B_8 >* aff3ct::factory::Encoder_turbo_product::build<B_8 >(const aff3ct::module::Interleaver<B_8 >&, const aff3ct::module::Encoder_BCH<B_8 >&, const aff3ct::module::Encoder_BCH<B_8 >&) const;
+template aff3ct::module::Encoder_turbo_product<B_16>* aff3ct::factory::Encoder_turbo_product::build<B_16>(const aff3ct::module::Interleaver<B_16>&, const aff3ct::module::Encoder_BCH<B_16>&, const aff3ct::module::Encoder_BCH<B_16>&) const;
+template aff3ct::module::Encoder_turbo_product<B_32>* aff3ct::factory::Encoder_turbo_product::build<B_32>(const aff3ct::module::Interleaver<B_32>&, const aff3ct::module::Encoder_BCH<B_32>&, const aff3ct::module::Encoder_BCH<B_32>&) const;
+template aff3ct::module::Encoder_turbo_product<B_64>* aff3ct::factory::Encoder_turbo_product::build<B_64>(const aff3ct::module::Interleaver<B_64>&, const aff3ct::module::Encoder_BCH<B_64>&, const aff3ct::module::Encoder_BCH<B_64>&) const;
 #else
-template aff3ct::module::Encoder_turbo_product<B>* aff3ct::factory::Encoder_turbo_product::build<B>(const aff3ct::module::Interleaver<B>&, aff3ct::module::Encoder_BCH<B>&, aff3ct::module::Encoder_BCH<B>&) const;
+template aff3ct::module::Encoder_turbo_product<B>* aff3ct::factory::Encoder_turbo_product::build<B>(const aff3ct::module::Interleaver<B>&, const aff3ct::module::Encoder_BCH<B>&, const aff3ct::module::Encoder_BCH<B>&) const;
 #endif
 // ==================================================================================== explicit template instantiation

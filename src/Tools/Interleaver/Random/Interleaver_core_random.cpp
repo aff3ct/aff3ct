@@ -17,6 +17,14 @@ Interleaver_core_random<T>
 }
 
 template <typename T>
+Interleaver_core_random<T>* Interleaver_core_random<T>
+::clone() const
+{
+	auto t = new Interleaver_core_random(*this);
+	return t;
+}
+
+template <typename T>
 void Interleaver_core_random<T>
 ::gen_lut(T *lut, const int frame_id)
 {

@@ -20,6 +20,8 @@ public:
 	Codec_repetition(const factory::Encoder_repetition &enc_params,
 	                 const factory::Decoder_repetition &dec_params);
 	virtual ~Codec_repetition() = default;
+
+	virtual Codec_repetition<B,Q>* clone() const;
 };
 }
 }

@@ -110,8 +110,8 @@ void Decoder_turbo<B,R>
 ::deep_copy(const Decoder_turbo<B,R> &m)
 {
 	Module::deep_copy(m);
-	this->siso_n.reset(dynamic_cast<Decoder_SISO<R>*>(m.siso_n->clone()));
-	this->siso_i.reset(dynamic_cast<Decoder_SISO<R>*>(m.siso_i->clone()));
+	if (m.siso_n != nullptr) this->siso_n.reset(dynamic_cast<Decoder_SISO<R>*>(m.siso_n->clone()));
+	if (m.siso_i != nullptr) this->siso_i.reset(dynamic_cast<Decoder_SISO<R>*>(m.siso_i->clone()));
 	this->post_processings.clear();
 	for (auto &pp : m.post_processings)
 		this->post_processings.push_back(std::shared_ptr<tools::Post_processing_SISO<B,R>>(pp->clone()));

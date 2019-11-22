@@ -131,7 +131,7 @@ void Encoder_turbo_DB
 
 template <typename B>
 module::Encoder_turbo_DB<B>* Encoder_turbo_DB
-::build(const module::Interleaver<B> &itl, module::Encoder_RSC_DB<B> &sub_enc) const
+::build(const module::Interleaver<B> &itl, const module::Encoder_RSC_DB<B> &sub_enc) const
 {
 	if (this->type == "TURBO_DB") return new module::Encoder_turbo_DB<B>(this->K, this->N_cw, itl, sub_enc, sub_enc);
 
@@ -141,11 +141,11 @@ module::Encoder_turbo_DB<B>* Encoder_turbo_DB
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Encoder_turbo_DB<B_8 >* aff3ct::factory::Encoder_turbo_DB::build<B_8 >(const aff3ct::module::Interleaver<B_8 >&, aff3ct::module::Encoder_RSC_DB<B_8 >&) const;
-template aff3ct::module::Encoder_turbo_DB<B_16>* aff3ct::factory::Encoder_turbo_DB::build<B_16>(const aff3ct::module::Interleaver<B_16>&, aff3ct::module::Encoder_RSC_DB<B_16>&) const;
-template aff3ct::module::Encoder_turbo_DB<B_32>* aff3ct::factory::Encoder_turbo_DB::build<B_32>(const aff3ct::module::Interleaver<B_32>&, aff3ct::module::Encoder_RSC_DB<B_32>&) const;
-template aff3ct::module::Encoder_turbo_DB<B_64>* aff3ct::factory::Encoder_turbo_DB::build<B_64>(const aff3ct::module::Interleaver<B_64>&, aff3ct::module::Encoder_RSC_DB<B_64>&) const;
+template aff3ct::module::Encoder_turbo_DB<B_8 >* aff3ct::factory::Encoder_turbo_DB::build<B_8 >(const aff3ct::module::Interleaver<B_8 >&, const aff3ct::module::Encoder_RSC_DB<B_8 >&) const;
+template aff3ct::module::Encoder_turbo_DB<B_16>* aff3ct::factory::Encoder_turbo_DB::build<B_16>(const aff3ct::module::Interleaver<B_16>&, const aff3ct::module::Encoder_RSC_DB<B_16>&) const;
+template aff3ct::module::Encoder_turbo_DB<B_32>* aff3ct::factory::Encoder_turbo_DB::build<B_32>(const aff3ct::module::Interleaver<B_32>&, const aff3ct::module::Encoder_RSC_DB<B_32>&) const;
+template aff3ct::module::Encoder_turbo_DB<B_64>* aff3ct::factory::Encoder_turbo_DB::build<B_64>(const aff3ct::module::Interleaver<B_64>&, const aff3ct::module::Encoder_RSC_DB<B_64>&) const;
 #else
-template aff3ct::module::Encoder_turbo_DB<B>* aff3ct::factory::Encoder_turbo_DB::build<B>(const aff3ct::module::Interleaver<B>&, aff3ct::module::Encoder_RSC_DB<B>&) const;
+template aff3ct::module::Encoder_turbo_DB<B>* aff3ct::factory::Encoder_turbo_DB::build<B>(const aff3ct::module::Interleaver<B>&, const aff3ct::module::Encoder_RSC_DB<B>&) const;
 #endif
 // ==================================================================================== explicit template instantiation

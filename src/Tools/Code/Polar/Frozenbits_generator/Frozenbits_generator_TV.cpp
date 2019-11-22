@@ -26,6 +26,13 @@ Frozenbits_generator_TV
 {
 }
 
+Frozenbits_generator_TV* Frozenbits_generator_TV
+::clone() const
+{
+	auto t = new Frozenbits_generator_TV(*this);
+	return t;
+}
+
 void Frozenbits_generator_TV
 ::evaluate()
 {

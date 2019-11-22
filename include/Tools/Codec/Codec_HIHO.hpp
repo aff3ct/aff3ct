@@ -17,7 +17,7 @@ namespace tools
 template <typename B = int, typename Q = float>
 class Codec_HIHO : virtual public Codec<B,Q>
 {
-private:
+protected:
 	std::shared_ptr<module::Decoder_HIHO<B>> decoder_hiho;
 
 public:
@@ -25,9 +25,12 @@ public:
 
 	virtual ~Codec_HIHO() = default;
 
+	virtual Codec_HIHO<B,Q>* clone() const;
+
 	module::Decoder_HIHO<B>& get_decoder_hiho();
 
 protected:
+	virtual void deep_copy(const Codec_HIHO<B,Q> &t);
 	void set_decoder_hiho(std::shared_ptr<module::Decoder_HIHO<B>> dec);
 	void set_decoder_hiho(module::Decoder_HIHO<B>* dec);
 };

@@ -157,6 +157,23 @@ Codec_LDPC<B,Q>
 }
 
 template <typename B, typename Q>
+Codec_LDPC<B,Q>* Codec_LDPC<B,Q>
+::clone() const
+{
+	auto t = new Codec_LDPC(*this);
+	t->deep_copy(*this);
+	return t;
+}
+
+template <typename B, typename Q>
+void Codec_LDPC<B,Q>
+::deep_copy(const Codec_LDPC<B,Q> &t)
+{
+	Codec_SISO_SIHO<B,Q>::deep_copy(t);
+	if (t.dvbs2 != nullptr) this->dvbs2.reset(new dvbs2_values(*t.dvbs2));
+}
+
+template <typename B, typename Q>
 const Sparse_matrix& Codec_LDPC<B,Q>
 ::get_H() const
 {

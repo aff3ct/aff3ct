@@ -20,6 +20,8 @@ public:
 	Interleaver_core_NO(const int size, const int n_frames = 1);
 	virtual ~Interleaver_core_NO() = default;
 
+	virtual Interleaver_core_NO<T>* clone() const;
+
 protected:
 	void gen_lut(T *lut, const int frame_id);
 };

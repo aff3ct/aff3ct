@@ -125,8 +125,8 @@ void Decoder_turbo_product<B,R>
 ::deep_copy(const Decoder_turbo_product<B,R> &m)
 {
 	Module::deep_copy(m);
-	this->cp_r.reset(m.cp_r->clone());
-	this->cp_c.reset(m.cp_c->clone());
+	if (m.cp_r != nullptr) this->cp_r.reset(m.cp_r->clone());
+	if (m.cp_c != nullptr) this->cp_c.reset(m.cp_c->clone());
 }
 
 template <typename B, typename R>

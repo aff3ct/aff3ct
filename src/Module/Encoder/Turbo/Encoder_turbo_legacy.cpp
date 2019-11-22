@@ -54,7 +54,7 @@ void Encoder_turbo_legacy<B>
 ::deep_copy(const Encoder_turbo_legacy<B> &m)
 {
 	Encoder_turbo<B>::deep_copy(m);
-	this->sub_enc.reset(m.sub_enc->clone());
+	if (m.sub_enc != nullptr) this->sub_enc.reset(m.sub_enc->clone());
 }
 
 template <typename B>

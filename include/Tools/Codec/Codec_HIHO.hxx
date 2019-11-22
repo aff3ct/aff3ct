@@ -16,6 +16,21 @@ Codec_HIHO<B,Q>
 }
 
 template <typename B, typename Q>
+Codec_HIHO<B,Q>* Codec_HIHO<B,Q>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename Q>
+void Codec_HIHO<B,Q>
+::deep_copy(const Codec_HIHO<B,Q> &t)
+{
+	Codec<B,Q>::deep_copy(t);
+	if (t.decoder_hiho != nullptr) this->decoder_hiho.reset(t.decoder_hiho->clone());
+}
+
+template <typename B, typename Q>
 module::Decoder_HIHO<B>& Codec_HIHO<B,Q>
 ::get_decoder_hiho()
 {

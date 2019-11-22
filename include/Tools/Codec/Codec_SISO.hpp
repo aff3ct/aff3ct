@@ -17,7 +17,7 @@ namespace tools
 template <typename B = int, typename Q = float>
 class Codec_SISO : virtual public Codec<B,Q>
 {
-private:
+protected:
 	std::shared_ptr<module::Decoder_SISO<Q>> decoder_siso;
 
 public:
@@ -25,9 +25,12 @@ public:
 
 	virtual ~Codec_SISO() = default;
 
+	virtual Codec_SISO<B,Q>* clone() const;
+
 	module::Decoder_SISO<Q>& get_decoder_siso();
 
 protected:
+	virtual void deep_copy(const Codec_SISO<B,Q> &t);
 	void set_decoder_siso(std::shared_ptr<module::Decoder_SISO<Q>> dec);
 	void set_decoder_siso(module::Decoder_SISO<Q>* dec);
 };

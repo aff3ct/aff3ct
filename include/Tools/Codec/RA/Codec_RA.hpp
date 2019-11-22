@@ -22,6 +22,8 @@ public:
 	         const factory::Decoder_RA  &dec_params,
 	         const factory::Interleaver &itl_params);
 	virtual ~Codec_RA() = default;
+
+	virtual Codec_RA<B,Q>* clone() const;
 };
 }
 }

@@ -17,6 +17,13 @@ Frozenbits_generator_GA
 {
 }
 
+Frozenbits_generator_GA* Frozenbits_generator_GA
+::clone() const
+{
+	auto t = new Frozenbits_generator_GA(*this);
+	return t;
+}
+
 void Frozenbits_generator_GA
 ::evaluate()
 {

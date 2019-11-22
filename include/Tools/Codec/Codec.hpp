@@ -26,13 +26,13 @@ template <typename B = int, typename Q = float>
 class Codec
 {
 private:
-	std::unique_ptr<Interleaver_core   < >> interleaver_core;
-	std::unique_ptr<module::Interleaver<B>> interleaver_bit;
-	std::unique_ptr<module::Interleaver<Q>> interleaver_llr;
+	std::shared_ptr<Interleaver_core   < >> interleaver_core;
+	std::shared_ptr<module::Interleaver<B>> interleaver_bit;
+	std::shared_ptr<module::Interleaver<Q>> interleaver_llr;
 
-	std::unique_ptr<module::Encoder  <B  >> encoder;
-	std::unique_ptr<module::Puncturer<B,Q>> puncturer;
-	std::unique_ptr<module::Extractor<B,Q>> extractor;
+	std::shared_ptr<module::Encoder  <B  >> encoder;
+	std::shared_ptr<module::Puncturer<B,Q>> puncturer;
+	std::shared_ptr<module::Extractor<B,Q>> extractor;
 
 protected :
 	const int K;
@@ -44,6 +44,8 @@ public:
 	Codec(const int K, const int N_cw, const int N, const int n_frames = 1);
 
 	virtual ~Codec() = default;
+
+	virtual Codec<B,Q>* clone() const;
 
 	Interleaver_core<>& get_interleaver();
 	module::Encoder<B>& get_encoder();
@@ -57,6 +59,8 @@ public:
 	virtual void noise_changed();
 
 protected:
+	virtual void deep_copy(const Codec<B,Q> &t);
+
 	virtual void check_noise();
 
 	virtual void set_interleaver(std::unique_ptr<Interleaver_core<>> &&itl);

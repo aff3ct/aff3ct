@@ -87,6 +87,15 @@ Codec_RSC<B,Q>
 }
 
 template <typename B, typename Q>
+Codec_RSC<B,Q>* Codec_RSC<B,Q>
+::clone() const
+{
+	auto t = new Codec_RSC(*this);
+	t->deep_copy(*this);
+	return t;
+}
+
+template <typename B, typename Q>
 bool Codec_RSC<B,Q>
 ::is_buffered_encoding() const
 {

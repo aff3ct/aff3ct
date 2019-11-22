@@ -60,6 +60,15 @@ Codec_repetition<B,Q>
 	this->set_decoder_siho(dec_params.build<B,Q>(&this->get_encoder()));
 }
 
+template <typename B, typename Q>
+Codec_repetition<B,Q>* Codec_repetition<B,Q>
+::clone() const
+{
+	auto t = new Codec_repetition(*this);
+	t->deep_copy(*this);
+	return t;
+}
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC

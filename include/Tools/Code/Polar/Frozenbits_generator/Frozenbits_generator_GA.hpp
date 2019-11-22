@@ -40,6 +40,8 @@ public:
 
 	virtual ~Frozenbits_generator_GA() = default;
 
+	virtual Frozenbits_generator_GA* clone() const;
+
 protected:
 	void   evaluate();
 	double phi    (double t);

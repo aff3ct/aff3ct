@@ -38,6 +38,8 @@ public:
 
 	virtual ~Interleaver_core() = default;
 
+	virtual Interleaver_core<T>* clone() const = 0;
+
 	const std::vector<T>& get_lut() const;
 
 	const std::vector<T>& get_lut_inv() const;

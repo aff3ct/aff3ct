@@ -53,7 +53,7 @@ void Decoder_maximum_likelihood<B,R>
 ::deep_copy(const Decoder_maximum_likelihood<B,R> &m)
 {
 	Module::deep_copy(m);
-	this->encoder.reset(m.encoder->clone());
+	if (m.encoder != nullptr) this->encoder.reset(m.encoder->clone());
 }
 
 template <typename B, typename R>

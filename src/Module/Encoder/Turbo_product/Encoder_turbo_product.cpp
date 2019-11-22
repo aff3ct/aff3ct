@@ -87,8 +87,8 @@ void Encoder_turbo_product<B>
 ::deep_copy(const Encoder_turbo_product<B> &m)
 {
 	Module::deep_copy(m);
-	this->enc_r.reset(m.enc_r->clone());
-	this->enc_c.reset(m.enc_c->clone());
+	if (m.enc_r != nullptr) this->enc_r.reset(m.enc_r->clone());
+	if (m.enc_c != nullptr) this->enc_c.reset(m.enc_c->clone());
 }
 
 template <typename B>

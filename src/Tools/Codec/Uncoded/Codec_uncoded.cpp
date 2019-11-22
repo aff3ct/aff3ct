@@ -72,6 +72,15 @@ Codec_uncoded<B,Q>
 	this->set_extractor(new module::Extractor_uncoded<B,Q>(enc_params.K, enc_params.n_frames));
 }
 
+template <typename B, typename Q>
+Codec_uncoded<B,Q>* Codec_uncoded<B,Q>
+::clone() const
+{
+	auto t = new Codec_uncoded(*this);
+	t->deep_copy(*this);
+	return t;
+}
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC

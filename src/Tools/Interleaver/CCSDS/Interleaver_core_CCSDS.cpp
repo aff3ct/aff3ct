@@ -16,6 +16,14 @@ Interleaver_core_CCSDS<T>
 }
 
 template <typename T>
+Interleaver_core_CCSDS<T>* Interleaver_core_CCSDS<T>
+::clone() const
+{
+	auto t = new Interleaver_core_CCSDS(*this);
+	return t;
+}
+
+template <typename T>
 void Interleaver_core_CCSDS<T>
 ::gen_lut(T *lut, const int frame_id)
 {

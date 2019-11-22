@@ -50,6 +50,8 @@ public:
 	 */
 	virtual ~Frozenbits_generator() = default;
 
+	virtual Frozenbits_generator* clone() const = 0;
+
 	int get_K() const;
 
 	int get_N() const;

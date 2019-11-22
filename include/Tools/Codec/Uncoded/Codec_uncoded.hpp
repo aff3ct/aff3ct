@@ -20,6 +20,8 @@ public:
 	Codec_uncoded(const factory::Encoder_NO &enc_params,
 	              const factory::Decoder_NO &dec_params);
 	virtual ~Codec_uncoded() = default;
+
+	virtual Codec_uncoded<B,Q>* clone() const;
 };
 }
 }

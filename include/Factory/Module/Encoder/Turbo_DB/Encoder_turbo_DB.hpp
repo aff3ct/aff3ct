@@ -49,7 +49,8 @@ public:
 
 	// builder
 	template <typename B = int>
-	module::Encoder_turbo_DB<B>* build(const module::Interleaver<B> &itl, module::Encoder_RSC_DB<B> &sub_enc) const;
+	module::Encoder_turbo_DB<B>* build(const module::Interleaver<B> &itl,
+	                                   const module::Encoder_RSC_DB<B> &sub_enc) const;
 };
 }
 }

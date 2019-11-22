@@ -18,6 +18,13 @@ Frozenbits_generator_file
 {
 }
 
+Frozenbits_generator_file* Frozenbits_generator_file
+::clone() const
+{
+	auto t = new Frozenbits_generator_file(*this);
+	return t;
+}
+
 void Frozenbits_generator_file
 ::evaluate()
 {

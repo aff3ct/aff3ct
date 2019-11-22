@@ -50,14 +50,6 @@ Codec_turbo_product<B,Q>
 		std::stringstream message;
 		message << "sub decoder can't have a GENIUS implem (dec_params.sub->implem).";
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-
-		// if (enc_params.n_frames != 1)
-		// {
-		// 	std::stringstream message;
-		// 	message << "'enc_params.n_frames' has to be equal to 1 ('enc_params.n_frames' = "
-		// 	        << enc_params.n_frames << ").";
-		// 	throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		// }
 	}
 
 	// ---------------------------------------------------------------------------------------------------- allocations
@@ -74,55 +66,38 @@ Codec_turbo_product<B,Q>
 	int N_cw_p = enc_params.sub->N_cw + (dec_params.parity_extended ? 1 : 0);
 	enc_params.sub->n_frames = N_cw_p;
 
-	enc_bch_rows.reset(enc_params.sub->build<B>(GF_poly));
-	// enc_bch_rows->set_memorizing(dec_params.sub->implem == "GENIUS");
-
-	enc_bch_cols.reset(enc_params.sub->build<B>(GF_poly));
-	// enc_bch_cols->set_memorizing(dec_params.sub->implem == "GENIUS");
+	std::unique_ptr<module::Encoder_BCH<B>> enc_bch(enc_params.sub->build<B>(GF_poly));
 
 	dec_params.sub->n_frames = N_cw_p;
 
-	dec_bch_rows.reset(dynamic_cast<module::Decoder_BCH<B,Q>*>(dec_params.sub->build_hiho<B,Q>(GF_poly)));
-	dec_bch_cols.reset(dynamic_cast<module::Decoder_BCH<B,Q>*>(dec_params.sub->build_hiho<B,Q>(GF_poly)));
+	std::unique_ptr<module::Decoder_BCH<B,Q>> dec_bch(
+		dynamic_cast<module::Decoder_BCH<B,Q>*>(dec_params.sub->build_hiho<B,Q>(GF_poly)));
 
+	std::unique_ptr<module::Decoder_chase_pyndiah<B,Q>> dec_cp;
 	if (dec_params.implem == "FAST")
 	{
-		dec_cp_rows.reset(new module::Decoder_chase_pyndiah_fast<B,Q>(dec_bch_rows->get_K(), N_cw_p, N_cw_p,
-		                                                              *dec_bch_rows, *enc_bch_rows,
-		                                                              dec_params.n_least_reliable_positions,
-		                                                              dec_params.n_test_vectors,
-		                                                              dec_params.n_competitors,
-		                                                              dec_params.cp_coef));
-
-		dec_cp_cols.reset(new module::Decoder_chase_pyndiah_fast<B,Q>(dec_bch_cols->get_K(), N_cw_p, N_cw_p,
-		                                                              *dec_bch_cols, *enc_bch_cols,
-		                                                              dec_params.n_least_reliable_positions,
-		                                                              dec_params.n_test_vectors,
-		                                                              dec_params.n_competitors,
-		                                                              dec_params.cp_coef));
+		dec_cp.reset(new module::Decoder_chase_pyndiah_fast<B,Q>(dec_bch->get_K(), N_cw_p, N_cw_p,
+		                                                         *dec_bch, *enc_bch,
+		                                                         dec_params.n_least_reliable_positions,
+		                                                         dec_params.n_test_vectors,
+		                                                         dec_params.n_competitors,
+		                                                         dec_params.cp_coef));
 	}
 	else
 	{
-		dec_cp_rows.reset(new module::Decoder_chase_pyndiah<B,Q>(dec_bch_rows->get_K(), N_cw_p, N_cw_p,
-		                                                         *dec_bch_rows, *enc_bch_rows,
-		                                                         dec_params.n_least_reliable_positions,
-		                                                         dec_params.n_test_vectors,
-		                                                         dec_params.n_competitors,
-		                                                         dec_params.cp_coef));
-
-		dec_cp_cols.reset(new module::Decoder_chase_pyndiah<B,Q>(dec_bch_cols->get_K(), N_cw_p, N_cw_p,
-		                                                         *dec_bch_cols, *enc_bch_cols,
-		                                                         dec_params.n_least_reliable_positions,
-		                                                         dec_params.n_test_vectors,
-		                                                         dec_params.n_competitors,
-		                                                         dec_params.cp_coef));
+		dec_cp.reset(new module::Decoder_chase_pyndiah<B,Q>(dec_bch->get_K(), N_cw_p, N_cw_p,
+		                                                    *dec_bch, *enc_bch,
+		                                                    dec_params.n_least_reliable_positions,
+		                                                    dec_params.n_test_vectors,
+		                                                    dec_params.n_competitors,
+		                                                    dec_params.cp_coef));
 	}
 
 	(*const_cast<std::string*>(&dec_params.implem)) = "STD";
 
 	try
 	{
-		this->set_encoder(enc_params.build<B>(this->get_interleaver_bit(), *enc_bch_rows, *enc_bch_cols));
+		this->set_encoder(enc_params.build<B>(this->get_interleaver_bit(), *enc_bch, *enc_bch));
 	}
 	catch (cannot_allocate const&)
 	{
@@ -131,12 +106,21 @@ Codec_turbo_product<B,Q>
 
 	try
 	{
-		this->set_decoder_siso_siho(dec_params.build_siso<B,Q>(this->get_interleaver_llr(), *dec_cp_rows, *dec_cp_cols));
+		this->set_decoder_siso_siho(dec_params.build_siso<B,Q>(this->get_interleaver_llr(), *dec_cp, *dec_cp));
 	}
 	catch (cannot_allocate const&)
 	{
-		this->set_decoder_siho(dec_params.build<B,Q>(this->get_interleaver_llr(), *dec_cp_rows, *dec_cp_cols));
+		this->set_decoder_siho(dec_params.build<B,Q>(this->get_interleaver_llr(), *dec_cp, *dec_cp));
 	}
+}
+
+template <typename B, typename Q>
+Codec_turbo_product<B,Q>* Codec_turbo_product<B,Q>
+::clone() const
+{
+	auto t = new Codec_turbo_product(*this);
+	t->deep_copy(*this);
+	return t;
 }
 
 template <typename B, typename Q>
@@ -144,90 +128,6 @@ const BCH_polynomial_generator<B>& Codec_turbo_product<B,Q>
 ::get_GF_poly() const
 {
 	return this->GF_poly;
-}
-
-template <typename B, typename Q>
-const module::Encoder_BCH<B>& Codec_turbo_product<B,Q>
-::get_encoder_BCH_rows() const
-{
-	if (this->enc_bch_rows == nullptr)
-	{
-		std::stringstream message;
-		message << "'enc_bch_rows' can't be nullptr.";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	return *this->enc_bch_rows.get();
-}
-
-template <typename B, typename Q>
-const module::Encoder_BCH<B>& Codec_turbo_product<B,Q>
-::get_encoder_BCH_cols() const
-{
-	if (this->enc_bch_cols == nullptr)
-	{
-		std::stringstream message;
-		message << "'enc_bch_cols' can't be nullptr.";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	return *this->enc_bch_cols.get();
-}
-
-template <typename B, typename Q>
-const module::Decoder_BCH<B,Q>& Codec_turbo_product<B,Q>
-::get_decoder_BCH_rows() const
-{
-	if (this->dec_bch_rows == nullptr)
-	{
-		std::stringstream message;
-		message << "'dec_bch_rows' can't be nullptr.";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	return *this->dec_bch_rows.get();
-}
-
-template <typename B, typename Q>
-const module::Decoder_BCH<B,Q>& Codec_turbo_product<B,Q>
-::get_decoder_BCH_cols() const
-{
-	if (this->dec_bch_cols == nullptr)
-	{
-		std::stringstream message;
-		message << "'dec_bch_cols' can't be nullptr.";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	return *this->dec_bch_cols.get();
-}
-
-template <typename B, typename Q>
-const module::Decoder_chase_pyndiah<B,Q>& Codec_turbo_product<B,Q>
-::get_decoder_chase_pyndiah_rows() const
-{
-	if (this->dec_cp_rows == nullptr)
-	{
-		std::stringstream message;
-		message << "'dec_cp_rows' can't be nullptr.";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	return *this->dec_cp_rows.get();
-}
-
-template <typename B, typename Q>
-const module::Decoder_chase_pyndiah<B,Q>& Codec_turbo_product<B,Q>
-::get_decoder_chase_pyndiah_cols() const
-{
-	if (this->dec_cp_cols == nullptr)
-	{
-		std::stringstream message;
-		message << "'dec_cp_cols' can't be nullptr.";
-		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	return *this->dec_cp_cols.get();
 }
 
 // ==================================================================================== explicit template instantiation

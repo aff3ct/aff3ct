@@ -28,7 +28,7 @@ void CRC_checker<B,R>
 ::deep_copy(const CRC_checker<B,R> &t)
 {
 	Post_processing_SISO<B,R>::deep_copy(t);
-	this->crc.reset(t.crc->clone());
+	if (t.crc != nullptr) this->crc.reset(t.crc->clone());
 }
 
 template <typename B, typename R>

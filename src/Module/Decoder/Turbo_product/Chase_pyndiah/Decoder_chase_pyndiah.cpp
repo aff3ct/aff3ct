@@ -120,8 +120,8 @@ void Decoder_chase_pyndiah<B,R>
 ::deep_copy(const Decoder_chase_pyndiah<B,R> &m)
 {
 	Module::deep_copy(m);
-	this->dec.reset(m.dec->clone());
-	this->enc.reset(m.enc->clone());
+	if (m.dec != nullptr) this->dec.reset(m.dec->clone());
+	if (m.enc != nullptr) this->enc.reset(m.enc->clone());
 }
 
 template <typename B, typename R>

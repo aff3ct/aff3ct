@@ -41,7 +41,7 @@ void Decoder_polar_SCL_naive_CA<B,R,F,G>
 ::deep_copy(const Decoder_polar_SCL_naive_CA<B,R,F,G> &m)
 {
 	Decoder_polar_SCL_naive<B,R,F,G>::deep_copy(m);
-	this->crc.reset(m.crc->clone());
+	if (m.crc != nullptr) this->crc.reset(m.crc->clone());
 }
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>

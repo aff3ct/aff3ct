@@ -84,7 +84,7 @@ void Channel_binary_symmetric<R>
 ::deep_copy(const Channel_binary_symmetric<R> &m)
 {
 	Module::deep_copy(m);
-	this->event_generator.reset(m.event_generator->clone());
+	if (m.event_generator != nullptr) this->event_generator.reset(m.event_generator->clone());
 }
 
 template <typename R>

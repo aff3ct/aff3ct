@@ -30,7 +30,7 @@ protected:
 	std::vector<bool> frozen_bits; // known bits (alias frozen bits) are set to true
 	const bool generated_decoder;
 
-	std::unique_ptr<Frozenbits_generator> fb_generator;
+	std::shared_ptr<Frozenbits_generator> fb_generator;
 
 	module::Puncturer_polar_shortlast<B,Q>* puncturer_shortlast;
 	Frozenbits_notifier* fb_decoder;
@@ -44,6 +44,8 @@ public:
 	            module::CRC<B>* crc = nullptr);
 	virtual ~Codec_polar() = default;
 
+	virtual Codec_polar<B,Q>* clone() const;
+
 	const std::vector<bool>& get_frozen_bits() const;
 	bool is_adaptive_frozen_bits() const;
 	bool is_generated_decoder() const;
@@ -53,6 +55,7 @@ public:
 	virtual void notify_frozenbits_update();
 
 protected:
+	virtual void deep_copy(const Codec_polar<B,Q> &t);
 	void check_noise();
 };
 }

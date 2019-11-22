@@ -19,6 +19,14 @@ Interleaver_core_golden<T>
 }
 
 template <typename T>
+Interleaver_core_golden<T>* Interleaver_core_golden<T>
+::clone() const
+{
+	auto t = new Interleaver_core_golden(*this);
+	return t;
+}
+
+template <typename T>
 void Interleaver_core_golden<T>
 ::gen_lut(T *lut, const int frame_id)
 {

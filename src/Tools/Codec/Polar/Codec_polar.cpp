@@ -167,6 +167,29 @@ Codec_polar<B,Q>
 }
 
 template <typename B, typename Q>
+Codec_polar<B,Q>* Codec_polar<B,Q>
+::clone() const
+{
+	auto t = new Codec_polar(*this);
+	t->deep_copy(*this);
+	return t;
+}
+
+template <typename B, typename Q>
+void Codec_polar<B,Q>
+::deep_copy(const Codec_polar<B,Q> &t)
+{
+	Codec_SISO_SIHO<B,Q>::deep_copy(t);
+	if (t.fb_generator != nullptr) this->fb_generator.reset(t.fb_generator->clone());
+	if (t.puncturer_shortlast != nullptr)
+		this->puncturer_shortlast = dynamic_cast<module::Puncturer_polar_shortlast<B,Q>*>(&this->get_puncturer());
+	if (t.fb_encoder != nullptr)
+		this->fb_encoder = dynamic_cast<Frozenbits_notifier*>(&this->get_encoder());
+	if (t.fb_decoder != nullptr)
+		this->fb_decoder = dynamic_cast<Frozenbits_notifier*>(&this->get_decoder_siho());
+}
+
+template <typename B, typename Q>
 void Codec_polar<B,Q>
 ::notify_frozenbits_update()
 {
