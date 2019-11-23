@@ -62,11 +62,9 @@ template <typename B, typename Q>
 void Codec<B,Q>
 ::deep_copy(const Codec<B,Q> &t)
 {
-	if (t.interleaver_bit != nullptr) this->interleaver_bit.reset(t.interleaver_bit ->clone());
-	if (t.interleaver_llr != nullptr) this->interleaver_llr.reset(t.interleaver_llr ->clone());
-	if (t.encoder         != nullptr) this->encoder        .reset(t.encoder         ->clone());
-	if (t.puncturer       != nullptr) this->puncturer      .reset(t.puncturer       ->clone());
-	if (t.extractor       != nullptr) this->extractor      .reset(t.extractor       ->clone());
+	if (t.encoder   != nullptr) this->encoder  .reset(t.encoder  ->clone());
+	if (t.puncturer != nullptr) this->puncturer.reset(t.puncturer->clone());
+	if (t.extractor != nullptr) this->extractor.reset(t.extractor->clone());
 }
 
 template <typename B, typename Q>

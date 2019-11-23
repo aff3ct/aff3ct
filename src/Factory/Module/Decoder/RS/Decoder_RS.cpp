@@ -107,6 +107,8 @@ module::Decoder_SIHO<B,Q>* Decoder_RS
 			}
 		}
 	}
+
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 // ==================================================================================== explicit template instantiation

@@ -62,8 +62,6 @@ void BFER_ite<B,R,Q>
 		coset_real      [tid] = build_coset_real (tid);
 		coset_bit       [tid] = build_coset_bit  (tid);
 		interleaver_core[tid] = build_interleaver(tid);
-		interleaver_bit [tid].reset(factory::Interleaver::build<B>(*interleaver_core[tid]));
-		interleaver_llr [tid].reset(factory::Interleaver::build<Q>(*interleaver_core[tid]));
 	}
 
 	if (params_BFER_ite.alloc_clone)
@@ -77,9 +75,10 @@ void BFER_ite<B,R,Q>
 		coset_real      [tid].reset(coset_real      [0]->clone());
 		coset_bit       [tid].reset(coset_bit       [0]->clone());
 		interleaver_core[tid].reset(interleaver_core[0]->clone());
-		interleaver_bit [tid].reset(interleaver_bit [0]->clone());
-		interleaver_llr [tid].reset(interleaver_llr [0]->clone());
 	}
+
+	interleaver_bit[tid].reset(factory::Interleaver::build<B>(*interleaver_core[tid]));
+	interleaver_llr[tid].reset(factory::Interleaver::build<Q>(*interleaver_core[tid]));
 
 	// set the noise
 	codec  [tid]->set_noise(*this->noise);
@@ -222,7 +221,7 @@ std::unique_ptr<tools ::Interleaver_core<>> BFER_ite<B,R,Q>
 		s_noise << std::setprecision(2) << std::fixed << this->noise->get_value();
 		params_itl->core->path = params_BFER_ite.err_track_path + "_" + s_noise.str() + ".itl";
 	}
-	return std::unique_ptr<tools ::Interleaver_core<>>(params_itl->core->build<>());
+	return std::unique_ptr<tools::Interleaver_core<>>(params_itl->core->build<>());
 }
 
 template <typename B, typename R, typename Q>

@@ -93,8 +93,9 @@ void Pattern_polar_parser
                             tools::Binary_node<Pattern_polar_i> *nclone)
 {
 	auto cref = nref->get_contents();
-	auto cclone = cref->alloc(cref->get_size(), nclone);
-	nclone->set_contents(cclone);
+	nclone->set_contents((cref != nullptr) ?
+	                     cref->alloc(cref->get_size(), cref->get_size() ? nclone : nullptr) :
+	                     nullptr);
 
 	if (!nref->is_leaf() && !nclone->is_leaf())
 	{
