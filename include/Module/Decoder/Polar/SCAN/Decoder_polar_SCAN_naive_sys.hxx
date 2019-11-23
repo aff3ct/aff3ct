@@ -12,8 +12,7 @@ template <typename B, typename R,
 Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
 ::Decoder_polar_SCAN_naive_sys(const int &K, const int &N, const int &max_iter, const std::vector<bool> &frozen_bits,
                                const int n_frames)
-: Decoder(K, N, n_frames, 1),
-  Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>(K, N, max_iter, frozen_bits, n_frames)
+: Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>(K, N, max_iter, frozen_bits, n_frames)
 {
 	const std::string name = "Decoder_polar_SCAN_naive_sys";
 	this->set_name(name);

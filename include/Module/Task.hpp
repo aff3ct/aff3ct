@@ -32,7 +32,7 @@ class Task
 #endif
 
 protected:
-	const Module &module;
+	Module *module;
 	const std::string name;
 	bool autoalloc;
 	bool autoexec;
@@ -43,7 +43,7 @@ protected:
 	int32_t debug_limit;
 	uint8_t debug_precision;
 	int32_t debug_frame_max;
-	std::function<int(Task& t)> codelet;
+	std::function<int(Module &m, Task& t)> codelet;
 
 	std::vector<mipp::vector<uint8_t>> out_buffers;
 
@@ -65,7 +65,7 @@ protected:
 public:
 	std::vector<std::shared_ptr<Socket>> sockets;
 
-	Task(const Module &module,
+	Task(      Module &module,
 	     const std::string &name,
 	     const bool autoalloc = false,
 	     const bool autoexec  = false,
@@ -132,7 +132,7 @@ protected:
 	template <typename T>
 	size_t create_socket_out(const std::string &name, const size_t n_elmts);
 
-	void create_codelet(std::function<int(Task& t)> &codelet);
+	void create_codelet(std::function<int(Module &m, Task& t)> &codelet);
 
 private:
 	template <typename T>

@@ -10,8 +10,7 @@ const std::string aff3ct::factory::Codec_repetition_prefix = "cdc";
 
 Codec_repetition
 ::Codec_repetition(const std::string &prefix)
-: Codec     (Codec_repetition_name, prefix),
-  Codec_SIHO(Codec_repetition_name, prefix)
+: Codec_SIHO(Codec_repetition_name, prefix)
 {
 	Codec::set_enc(new Encoder_repetition("enc"));
 	Codec::set_dec(new Decoder_repetition("dec"));

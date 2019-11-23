@@ -11,8 +11,7 @@ const std::string aff3ct::factory::Codec_polar_prefix = "cdc";
 
 Codec_polar
 ::Codec_polar(const std::string &prefix)
-: Codec          (Codec_polar_name, prefix),
-  Codec_SISO_SIHO(Codec_polar_name, prefix)
+: Codec_SISO(Codec_polar_name, prefix)
 {
 	Codec::set_enc(new Encoder_polar("enc"));
 	Codec::set_dec(new Decoder_polar("dec"));
@@ -98,7 +97,7 @@ std::vector<std::string> Codec_polar
 void Codec_polar
 ::get_description(cli::Argument_map_info &args) const
 {
-	Codec_SISO_SIHO::get_description(args);
+	Codec_SISO::get_description(args);
 
 	enc->get_description(args);
 	fbg->get_description(args);
@@ -129,7 +128,7 @@ void Codec_polar
 void Codec_polar
 ::store(const cli::Argument_map_value &vals)
 {
-	Codec_SISO_SIHO::store(vals);
+	Codec_SISO::store(vals);
 
 	if (pct != nullptr)
 	{
@@ -163,7 +162,7 @@ void Codec_polar
 void Codec_polar
 ::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
-	Codec_SISO_SIHO::get_headers(headers, full);
+	Codec_SISO::get_headers(headers, full);
 
 	enc->get_headers(headers, full);
 	fbg->get_headers(headers, full);

@@ -65,10 +65,10 @@ Encoder<B>
 	auto &p = this->create_task("encode");
 	auto ps_U_K = this->template create_socket_in <B>(p, "U_K", this->K);
 	auto ps_X_N = this->template create_socket_out<B>(p, "X_N", this->N);
-	this->create_codelet(p, [this, ps_U_K, ps_X_N](Task &t) -> int
+	this->create_codelet(p, [ps_U_K, ps_X_N](Module &m, Task &t) -> int
 	{
-		this->encode(static_cast<B*>(t[ps_U_K].get_dataptr()),
-		             static_cast<B*>(t[ps_X_N].get_dataptr()));
+		static_cast<Encoder<B>&>(m).encode(static_cast<B*>(t[ps_U_K].get_dataptr()),
+		                                   static_cast<B*>(t[ps_X_N].get_dataptr()));
 
 		return 0;
 	});

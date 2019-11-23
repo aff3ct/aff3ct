@@ -7,11 +7,9 @@
 
 #include <vector>
 #include <fstream>
+#include <memory>
 
-#include "Tools/Code/Turbo/Post_processing_SISO/Post_processing_SISO.hpp"
 #include "Module/CRC/CRC.hpp"
-#include "Module/Encoder/RSC/Encoder_RSC_sys.hpp"
-#include "Module/Decoder/Decoder_SISO.hpp"
 #include "Factory/Module/Encoder/Turbo/Encoder_turbo.hpp"
 #include "Factory/Module/Decoder/Turbo/Decoder_turbo.hpp"
 #include "Factory/Module/Interleaver/Interleaver.hpp"
@@ -26,7 +24,7 @@ template <typename B = int, typename Q = float>
 class Codec_turbo : public Codec_SIHO<B,Q>
 {
 protected:
-	std::vector<std::vector<int>> trellis;
+	std::shared_ptr<std::vector<std::vector<int>>> trellis;
 	std::shared_ptr<std::ofstream> json_stream;
 
 public:

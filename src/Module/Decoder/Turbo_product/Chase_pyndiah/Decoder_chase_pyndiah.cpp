@@ -31,8 +31,7 @@ Decoder_chase_pyndiah<B,R>
                         const int n_test_vectors_,
                         const int n_competitors_,
                         const std::vector<float>& cp_coef)
-: Decoder               (K, N, n_frames),
-  Decoder_SISO_SIHO<B,R>(K, N, n_frames),
+: Decoder_SISO<B,R>(K, N, n_frames),
   dec                       (dec_.clone()                                                            ),
   enc                       (enc_.clone()                                                            ),
   N_np                      (dec->get_N()                                                            ),

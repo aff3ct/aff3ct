@@ -13,7 +13,6 @@
 #include "Tools/Factory/Header.hpp"
 #include "Module/Encoder/Encoder.hpp"
 #include "Module/Decoder/Decoder_SIHO.hpp"
-#include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
 #include "Factory/Factory.hpp"
 
 namespace aff3ct
@@ -57,9 +56,6 @@ protected:
 
 	template <typename B = int, typename Q = float>
 	module::Decoder_SIHO<B,Q>* build(module::Encoder<B> *encoder = nullptr) const;
-
-	template <typename B = int, typename Q = float>
-	module::Decoder_SIHO_HIHO<B,Q>* build_hiho(module::Encoder<B> *encoder = nullptr) const;
 };
 }
 }

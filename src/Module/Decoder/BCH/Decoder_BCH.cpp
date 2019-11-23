@@ -11,8 +11,7 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_BCH<B, R>
 ::Decoder_BCH(const int K, const int N, const int t, const int n_frames)
-: Decoder               (K, N, n_frames, 1),
-  Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1),
+: Decoder_SIHO<B,R>(K, N, n_frames, 1),
   t(t), N_p2_1(tools::next_power_of_2(N) -1), last_is_codeword(n_frames)
 {
 	const std::string name = "Decoder_BCH";

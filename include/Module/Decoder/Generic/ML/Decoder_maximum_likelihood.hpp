@@ -9,14 +9,14 @@
 #include <memory>
 
 #include "Module/Encoder/Encoder.hpp"
-#include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_maximum_likelihood : public Decoder_SIHO_HIHO<B,R>
+class Decoder_maximum_likelihood : public Decoder_SIHO<B,R>
 {
 protected:
 	std::shared_ptr<Encoder<B>> encoder;

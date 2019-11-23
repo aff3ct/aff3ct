@@ -12,8 +12,7 @@ const std::string aff3ct::factory::Codec_RS_prefix = "cdc";
 
 Codec_RS
 ::Codec_RS(const std::string &prefix)
-: Codec          (Codec_RS_name, prefix),
-  Codec_SIHO_HIHO(Codec_RS_name, prefix)
+: Codec_SIHO(Codec_RS_name, prefix)
 {
 	Codec::set_enc(new Encoder_RS("enc"));
 	Codec::set_dec(new Decoder_RS("dec"));
@@ -28,7 +27,7 @@ Codec_RS* Codec_RS
 void Codec_RS
 ::get_description(cli::Argument_map_info &args) const
 {
-	Codec_SIHO_HIHO::get_description(args);
+	Codec_SIHO::get_description(args);
 
 	enc->get_description(args);
 	dec->get_description(args);
@@ -47,7 +46,7 @@ void Codec_RS
 void Codec_RS
 ::store(const cli::Argument_map_value &vals)
 {
-	Codec_SIHO_HIHO::store(vals);
+	Codec_SIHO::store(vals);
 
 	auto dec_rs = dynamic_cast<Decoder_RS*>(dec.get());
 
@@ -70,7 +69,7 @@ void Codec_RS
 void Codec_RS
 ::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
-	Codec_SIHO_HIHO::get_headers(headers, full);
+	Codec_SIHO::get_headers(headers, full);
 
 	auto p = get_prefix();
 

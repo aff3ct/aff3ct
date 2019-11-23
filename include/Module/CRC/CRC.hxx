@@ -56,10 +56,10 @@ CRC<B>
 	auto &p1 = this->create_task("build");
 	auto p1s_U_K1 = this->template create_socket_in <B>(p1, "U_K1", this->K             );
 	auto p1s_U_K2 = this->template create_socket_out<B>(p1, "U_K2", this->K + this->size);
-	this->create_codelet(p1, [this, p1s_U_K1, p1s_U_K2](Task &t) -> int
+	this->create_codelet(p1, [p1s_U_K1, p1s_U_K2](Module &m, Task &t) -> int
 	{
-		this->build(static_cast<B*>(t[p1s_U_K1].get_dataptr()),
-		            static_cast<B*>(t[p1s_U_K2].get_dataptr()));
+		static_cast<CRC<B>&>(m).build(static_cast<B*>(t[p1s_U_K1].get_dataptr()),
+		                              static_cast<B*>(t[p1s_U_K2].get_dataptr()));
 
 		return 0;
 	});
@@ -67,19 +67,19 @@ CRC<B>
 	auto &p2 = this->create_task("extract");
 	auto p2s_V_K1 = this->template create_socket_in <B>(p2, "V_K1", this->K + this->size);
 	auto p2s_V_K2 = this->template create_socket_out<B>(p2, "V_K2", this->K             );
-	this->create_codelet(p2, [this, p2s_V_K1, p2s_V_K2](Task &t) -> int
+	this->create_codelet(p2, [p2s_V_K1, p2s_V_K2](Module &m, Task &t) -> int
 	{
-		this->extract(static_cast<B*>(t[p2s_V_K1].get_dataptr()),
-		              static_cast<B*>(t[p2s_V_K2].get_dataptr()));
+		static_cast<CRC<B>&>(m).extract(static_cast<B*>(t[p2s_V_K1].get_dataptr()),
+		                                static_cast<B*>(t[p2s_V_K2].get_dataptr()));
 
 		return 0;
 	});
 
 	auto &p3 = this->create_task("check");
 	auto p3s_V_K = this->template create_socket_in<B>(p3, "V_K", this->K + this->size);
-	this->create_codelet(p3, [this, p3s_V_K](Task &t) -> int
+	this->create_codelet(p3, [p3s_V_K](Module &m, Task &t) -> int
 	{
-		return this->check(static_cast<B*>(t[p3s_V_K].get_dataptr())) ? 1 : 0;
+		return static_cast<CRC<B>&>(m).check(static_cast<B*>(t[p3s_V_K].get_dataptr())) ? 1 : 0;
 	});
 }
 

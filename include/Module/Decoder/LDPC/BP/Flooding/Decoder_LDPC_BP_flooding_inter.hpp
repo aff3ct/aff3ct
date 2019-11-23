@@ -12,7 +12,7 @@
 
 #include "Tools/Code/LDPC/Update_rule/NMS/Update_rule_NMS_simd.hpp"
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
-#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 #include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp"
 
 namespace aff3ct
@@ -20,7 +20,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename R = float, class Update_rule = tools::Update_rule_NMS_simd<R>>
-class Decoder_LDPC_BP_flooding_inter : public Decoder_SISO_SIHO<B,R>, public Decoder_LDPC_BP
+class Decoder_LDPC_BP_flooding_inter : public Decoder_SISO<B,R>, public Decoder_LDPC_BP
 {
 protected:
 	const std::vector<unsigned> &info_bits_pos;
@@ -48,11 +48,7 @@ public:
 	                               const int n_frames = 1);
 	virtual ~Decoder_LDPC_BP_flooding_inter() = default;
 
-#ifdef _MSC_VER // Windows with MSVC
-	virtual Decoder* clone() const;
-#else
 	virtual Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>* clone() const;
-#endif
 
 protected:
 	void _reset(const int frame_id);

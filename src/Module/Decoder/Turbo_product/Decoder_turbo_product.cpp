@@ -17,8 +17,7 @@ Decoder_turbo_product<B,R>
                         const Decoder_chase_pyndiah<B,R> &cp_c,
                         const std::vector<float>& beta,
                         const int n_frames)
-: Decoder               (cp_r.get_K() * cp_c.get_K(), pi.get_core().get_size(), n_frames, 1),
-  Decoder_SISO_SIHO<B,R>(cp_r.get_K() * cp_c.get_K(), pi.get_core().get_size(), n_frames, 1),
+: Decoder_SISO<B,R>(cp_r.get_K() * cp_c.get_K(), pi.get_core().get_size(), n_frames, 1),
   n_ite(n_ite),
   alpha(alpha),
   beta (beta ),

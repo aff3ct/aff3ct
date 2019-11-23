@@ -17,8 +17,7 @@ Decoder_turbo_DB<B,R>
                    const Interleaver<R> &pi,
                    const Decoder_RSC_DB_BCJR<B,R> &siso_n,
                    const Decoder_RSC_DB_BCJR<B,R> &siso_i)
-: Decoder          (K, N, siso_n.get_n_frames(), 1),
-  Decoder_SIHO<B,R>(K, N, siso_n.get_n_frames(), 1),
+: Decoder_SIHO<B,R>(K, N, siso_n.get_n_frames(), 1),
   n_ite            (n_ite),
   pi               (pi),
   siso_n           (siso_n.clone()),

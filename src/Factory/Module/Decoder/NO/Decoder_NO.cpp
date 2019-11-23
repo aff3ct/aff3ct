@@ -46,7 +46,7 @@ void Decoder_NO
 }
 
 template <typename B, typename Q>
-module::Decoder_SISO_SIHO<B,Q>* Decoder_NO
+module::Decoder_SISO<B,Q>* Decoder_NO
 ::build_siso(module::Encoder<B> *encoder) const
 {
 	if (this->type == "NONE" && this->implem == "HARD_DECISION") return new module::Decoder_NO<B,Q>(this->K, this->n_frames);
@@ -82,11 +82,11 @@ template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_NO::build<B
 #endif
 
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Decoder_SISO_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_NO::build_siso<B_8 ,Q_8 >(module::Encoder<B_8 >*) const;
-template aff3ct::module::Decoder_SISO_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_NO::build_siso<B_16,Q_16>(module::Encoder<B_16>*) const;
-template aff3ct::module::Decoder_SISO_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_NO::build_siso<B_32,Q_32>(module::Encoder<B_32>*) const;
-template aff3ct::module::Decoder_SISO_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_NO::build_siso<B_64,Q_64>(module::Encoder<B_64>*) const;
+template aff3ct::module::Decoder_SISO<B_8 ,Q_8 >* aff3ct::factory::Decoder_NO::build_siso<B_8 ,Q_8 >(module::Encoder<B_8 >*) const;
+template aff3ct::module::Decoder_SISO<B_16,Q_16>* aff3ct::factory::Decoder_NO::build_siso<B_16,Q_16>(module::Encoder<B_16>*) const;
+template aff3ct::module::Decoder_SISO<B_32,Q_32>* aff3ct::factory::Decoder_NO::build_siso<B_32,Q_32>(module::Encoder<B_32>*) const;
+template aff3ct::module::Decoder_SISO<B_64,Q_64>* aff3ct::factory::Decoder_NO::build_siso<B_64,Q_64>(module::Encoder<B_64>*) const;
 #else
-template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_NO::build_siso<B,Q>(module::Encoder<B>*) const;
+template aff3ct::module::Decoder_SISO<B,Q>* aff3ct::factory::Decoder_NO::build_siso<B,Q>(module::Encoder<B>*) const;
 #endif
 // ==================================================================================== explicit template instantiation

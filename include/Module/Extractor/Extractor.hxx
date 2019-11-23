@@ -78,10 +78,10 @@ Extractor<B,Q>
 	auto &p1 = this->create_task("get_sys_llr");
 	auto p1s_Y_N = this->template create_socket_in <Q>(p1, "Y_N", this->N);
 	auto p1s_Y_K = this->template create_socket_out<Q>(p1, "Y_K", this->K);
-	this->create_codelet(p1, [this, p1s_Y_N, p1s_Y_K](Task &t) -> int
+	this->create_codelet(p1, [p1s_Y_N, p1s_Y_K](Module &m, Task &t) -> int
 	{
-		this->get_sys_llr(static_cast<Q*>(t[p1s_Y_N].get_dataptr()),
-		                  static_cast<Q*>(t[p1s_Y_K].get_dataptr()));
+		static_cast<Extractor<B,Q>&>(m).get_sys_llr(static_cast<Q*>(t[p1s_Y_N].get_dataptr()),
+		                                            static_cast<Q*>(t[p1s_Y_K].get_dataptr()));
 
 		return 0;
 	});
@@ -89,10 +89,10 @@ Extractor<B,Q>
 	auto &p2 = this->create_task("get_sys_bit");
 	auto p2s_Y_N = this->template create_socket_in <Q>(p2, "Y_N", this->N);
 	auto p2s_V_K = this->template create_socket_out<B>(p2, "V_K", this->K);
-	this->create_codelet(p2, [this, p2s_Y_N, p2s_V_K](Task &t) -> int
+	this->create_codelet(p2, [p2s_Y_N, p2s_V_K](Module &m, Task &t) -> int
 	{
-		this->get_sys_bit(static_cast<Q*>(t[p2s_Y_N].get_dataptr()),
-		                  static_cast<B*>(t[p2s_V_K].get_dataptr()));
+		static_cast<Extractor<B,Q>&>(m).get_sys_bit(static_cast<Q*>(t[p2s_Y_N].get_dataptr()),
+		                                            static_cast<B*>(t[p2s_V_K].get_dataptr()));
 
 		return 0;
 	});
@@ -102,11 +102,11 @@ Extractor<B,Q>
 	auto p3s_Y_N = this->template create_socket_in <Q>(p3, "Y_N", this->N                 );
 	auto p3s_sys = this->template create_socket_out<Q>(p3, "sys", this->K           + tb_2);
 	auto p3s_par = this->template create_socket_out<Q>(p3, "par", this->N - this->K - tb_2);
-	this->create_codelet(p3, [this, &p3s_Y_N, &p3s_sys, &p3s_par](Task &t) -> int
+	this->create_codelet(p3, [&p3s_Y_N, &p3s_sys, &p3s_par](Module &m, Task &t) -> int
 	{
-		this->get_sys_and_par_llr(static_cast<Q*>(t[p3s_Y_N].get_dataptr()),
-		                          static_cast<Q*>(t[p3s_sys].get_dataptr()),
-		                          static_cast<Q*>(t[p3s_par].get_dataptr()));
+		static_cast<Extractor<B,Q>&>(m).get_sys_and_par_llr(static_cast<Q*>(t[p3s_Y_N].get_dataptr()),
+		                                                    static_cast<Q*>(t[p3s_sys].get_dataptr()),
+		                                                    static_cast<Q*>(t[p3s_par].get_dataptr()));
 
 		return 0;
 	});
@@ -114,10 +114,10 @@ Extractor<B,Q>
 	auto &p4 = this->create_task("add_sys_and_ext_llr");
 	auto p4s_ext = this->template create_socket_in    <Q>(p4, "ext", this->K);
 	auto p4s_Y_N = this->template create_socket_in_out<Q>(p4, "Y_N", this->N);
-	this->create_codelet(p4, [this, p4s_ext, p4s_Y_N](Task &t) -> int
+	this->create_codelet(p4, [p4s_ext, p4s_Y_N](Module &m, Task &t) -> int
 	{
-		this->add_sys_and_ext_llr(static_cast<Q*>(t[p4s_ext].get_dataptr()),
-		                          static_cast<Q*>(t[p4s_Y_N].get_dataptr()));
+		static_cast<Extractor<B,Q>&>(m).add_sys_and_ext_llr(static_cast<Q*>(t[p4s_ext].get_dataptr()),
+		                                                    static_cast<Q*>(t[p4s_Y_N].get_dataptr()));
 
 		return 0;
 	});

@@ -29,10 +29,10 @@ Monitor_BFER<B>
 	auto &p = this->create_task("check_errors", (int)mnt::tsk::check_errors);
 	auto ps_U = this->template create_socket_in<B>(p, "U", get_K());
 	auto ps_V = this->template create_socket_in<B>(p, "V", get_K());
-	this->create_codelet(p, [this, ps_U, ps_V](Task &t) -> int
+	this->create_codelet(p, [ps_U, ps_V](Module &m, Task &t) -> int
 	{
-		return this->check_errors(static_cast<B*>(t[ps_U].get_dataptr()),
-		                          static_cast<B*>(t[ps_V].get_dataptr()));
+		return static_cast<Monitor_BFER<B>&>(m).check_errors(static_cast<B*>(t[ps_U].get_dataptr()),
+		                                                     static_cast<B*>(t[ps_V].get_dataptr()));
 	});
 
 	reset();

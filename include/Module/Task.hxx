@@ -53,7 +53,7 @@ bool Task
 const Module& Task
 ::get_module() const
 {
-	return this->module;
+	return *this->module;
 }
 
 std::string Task

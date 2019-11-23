@@ -18,8 +18,7 @@ Decoder_chase_pyndiah_fast<B,R>
                              const int n_test_vectors_,
                              const int n_competitors_,
                              const std::vector<float>& cp_coef)
-: Decoder(K, N, n_frames),
-  Decoder_chase_pyndiah<B,R>(K, N, n_frames, dec_, enc_, n_least_reliable_positions_, n_test_vectors_, n_competitors_, cp_coef)
+: Decoder_chase_pyndiah<B,R>(K, N, n_frames, dec_, enc_, n_least_reliable_positions_, n_test_vectors_, n_competitors_, cp_coef)
 {
 	const std::string name = "Decoder_chase_pyndiah_fast";
 	this->set_name(name);

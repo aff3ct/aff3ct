@@ -9,7 +9,7 @@
 #include <mipp.h>
 
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
-#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 #include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp"
 
 namespace aff3ct
@@ -17,7 +17,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_LDPC_BP_horizontal_layered_ONMS_inter : public Decoder_SISO_SIHO<B,R>, public Decoder_LDPC_BP
+class Decoder_LDPC_BP_horizontal_layered_ONMS_inter : public Decoder_SISO<B,R>, public Decoder_LDPC_BP
 {
 private:
 	const float normalize_factor;

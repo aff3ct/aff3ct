@@ -26,8 +26,8 @@ protected:
 	const bool buffered_encoding;
 
 	const Interleaver<R> &pi;
-	std::shared_ptr<Decoder_SISO<R>> siso_n;
-	std::shared_ptr<Decoder_SISO<R>> siso_i;
+	std::shared_ptr<Decoder_SISO<B,R>> siso_n;
+	std::shared_ptr<Decoder_SISO<B,R>> siso_i;
 
 	mipp::vector<R> l_sn;  // systematic LLRs                  in the natural     domain
 	mipp::vector<R> l_si;  // systematic LLRs                  in the interleaved domain
@@ -48,8 +48,8 @@ public:
 	              const int& N,
 	              const int& n_ite,
 	              const Interleaver<R> &pi,
-	              const Decoder_SISO<R> &siso_n,
-	              const Decoder_SISO<R> &siso_i,
+	              const Decoder_SISO<B,R> &siso_n,
+	              const Decoder_SISO<B,R> &siso_i,
 	              const bool buffered_encoding = true);
 
 	virtual ~Decoder_turbo() = default;

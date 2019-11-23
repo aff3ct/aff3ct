@@ -14,19 +14,19 @@
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 #include "Tools/Code/LDPC/Standard/DVBS2/DVBS2_constants.hpp"
 #include "Tools/Code/LDPC/Matrix_handler/LDPC_matrix_handler.hpp"
-#include "Tools/Codec/Codec_SISO_SIHO.hpp"
+#include "Tools/Codec/Codec_SISO.hpp"
 
 namespace aff3ct
 {
 namespace tools
 {
 template <typename B = int, typename Q = float>
-class Codec_LDPC : public Codec_SISO_SIHO<B,Q>
+class Codec_LDPC : public Codec_SISO<B,Q>
 {
 protected:
-	Sparse_matrix H;
-	Sparse_matrix G;
-	LDPC_matrix_handler::Positions_vector info_bits_pos;
+	std::shared_ptr<Sparse_matrix> H;
+	std::shared_ptr<Sparse_matrix> G;
+	std::shared_ptr<LDPC_matrix_handler::Positions_vector> info_bits_pos;
 	std::shared_ptr<dvbs2_values> dvbs2;
 
 public:

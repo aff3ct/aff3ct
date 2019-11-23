@@ -12,8 +12,7 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_RA<B, R>
 ::Decoder_RA(const int& K, const int& N, const Interleaver<R>& interleaver, int max_iter, const int n_frames)
-: Decoder          (K, N, n_frames, 1),
-  Decoder_SIHO<B,R>(K, N, n_frames, 1),
+: Decoder_SIHO<B,R>(K, N, n_frames, 1),
   rep_count(N/K),
   max_iter(max_iter),
   Fw(N),

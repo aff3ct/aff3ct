@@ -23,9 +23,9 @@ template <typename B = int, typename R = float>
 class Decoder_turbo_DB : public Decoder_SIHO<B,R>
 {
 protected:
-	const int                 n_ite; // number of iterations
+	const int n_ite; // number of iterations
 
-	const Interleaver  <R>   &pi;
+	const Interleaver<R> &pi;
 	std::shared_ptr<Decoder_RSC_DB_BCJR<B,R>> siso_n;
 	std::shared_ptr<Decoder_RSC_DB_BCJR<B,R>> siso_i;
 

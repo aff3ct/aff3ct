@@ -15,9 +15,9 @@ using namespace aff3ct;
 using namespace aff3ct::module;
 
 Task
-::Task(const Module &module, const std::string &name, const bool autoalloc, const bool autoexec,
+::Task(Module &module, const std::string &name, const bool autoalloc, const bool autoexec,
        const bool stats, const bool fast, const bool debug)
-: module(module),
+: module(&module),
   name(name),
   autoalloc(autoalloc),
   autoexec(autoexec),
@@ -28,7 +28,7 @@ Task
   debug_limit(-1),
   debug_precision(2),
   debug_frame_max(-1),
-  codelet([](Task &t) -> int { throw tools::unimplemented_error(__FILE__, __LINE__, __func__); return 0; }),
+  codelet([](Module &m, Task &t) -> int { throw tools::unimplemented_error(__FILE__, __LINE__, __func__); return 0; }),
   n_calls(0),
   duration_total(std::chrono::nanoseconds(0)),
   duration_min(std::chrono::nanoseconds(0)),
@@ -219,7 +219,7 @@ int Task
 {
 	if (fast)
 	{
-		auto exec_status = this->codelet(*this);
+		auto exec_status = this->codelet(*this->module, *this);
 		this->n_calls++;
 		return exec_status;
 	}
@@ -229,9 +229,9 @@ int Task
 		size_t max_n_chars = 0;
 		if (debug)
 		{
-			auto n_fra = (size_t)this->module.get_n_frames();
+			auto n_fra = (size_t)this->module->get_n_frames();
 
-			std::string module_name = module.get_custom_name().empty() ? module.get_name() : module.get_custom_name();
+			std::string module_name = module->get_custom_name().empty() ? module->get_name() : module->get_custom_name();
 
 			std::cout << "# ";
 			std::cout << rang::style::bold << rang::fg::green << module_name << rang::style::reset
@@ -282,7 +282,7 @@ int Task
 		if (stats)
 		{
 			auto t_start = std::chrono::steady_clock::now();
-			exec_status = this->codelet(*this);
+			exec_status = this->codelet(*this->module, *this);
 			auto duration = std::chrono::steady_clock::now() - t_start;
 
 			this->duration_total += duration;
@@ -298,12 +298,12 @@ int Task
 			}
 		}
 		else
-			exec_status = this->codelet(*this);
+			exec_status = this->codelet(*this->module, *this);
 		this->n_calls++;
 
 		if (debug)
 		{
-			auto n_fra = (size_t)this->module.get_n_frames();
+			auto n_fra = (size_t)this->module->get_n_frames();
 			for (auto& s : sockets)
 			{
 				auto s_type = get_socket_type(*s);
@@ -337,7 +337,7 @@ int Task
 	{
 		std::stringstream message;
 		message << "The task cannot be executed because some of the inputs/outputs are not fed ('task.name' = "
-		        << this->get_name() << ", 'module.name' = " << module.get_name() << ").";
+		        << this->get_name() << ", 'module.name' = " << module->get_name() << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 }
@@ -350,7 +350,7 @@ Socket& Task
 	{
 		std::stringstream message;
 		message << "Impossible to create this socket because the name is empty ('task.name' = " << this->get_name()
-		        << ", 'module.name' = " << module.get_name() << ").";
+		        << ", 'module.name' = " << module->get_name() << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -360,7 +360,7 @@ Socket& Task
 			std::stringstream message;
 			message << "Impossible to create this socket because an other socket has the same name ('socket.name' = "
 			        << name << ", 'task.name' = " << this->get_name()
-			        << ", 'module.name' = " << module.get_name() << ").";
+			        << ", 'module.name' = " << module->get_name() << ").";
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
@@ -411,7 +411,7 @@ size_t Task
 }
 
 void Task
-::create_codelet(std::function<int(Task& t)> &codelet)
+::create_codelet(std::function<int(Module &m, Task& t)> &codelet)
 {
 	this->codelet = codelet;
 }
@@ -488,7 +488,7 @@ socket_t Task
 
 	std::stringstream message;
 	message << "The socket does not exist ('s.name' = " << s.get_name() << ", 'task.name' = " << this->get_name()
-	        << ", 'module.name' = " << module.get_name() << ").";
+	        << ", 'module.name' = " << module->get_name() << ").";
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 }
 
@@ -528,14 +528,9 @@ Task* Task
 	{
 		void *dataptr = nullptr;
 		if (this->get_socket_type(*s) == socket_t::SOUT && this->is_autoalloc())
-		{
-			dataptr = (void*)t->out_buffers[out_buffers_counter].data();
-			out_buffers_counter++;
-		}
+			dataptr = (void*)t->out_buffers[out_buffers_counter++].data();
 		else if (this->get_socket_type(*s) == socket_t::SIN)
-		{
 			dataptr = s->get_dataptr();
-		}
 
 		auto s_new = std::shared_ptr<Socket>(new Socket(*t,
 		                                                s->get_name(),

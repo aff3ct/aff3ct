@@ -12,7 +12,7 @@
 #include "Tools/Factory/Header.hpp"
 #include "Module/CRC/CRC.hpp"
 #include "Tools/Codec/Turbo_product/Codec_turbo_product.hpp"
-#include "Factory/Tools/Codec/Codec_SISO_SIHO.hpp"
+#include "Factory/Tools/Codec/Codec_SISO.hpp"
 
 namespace aff3ct
 {
@@ -20,7 +20,7 @@ namespace factory
 {
 extern const std::string Codec_turbo_product_name;
 extern const std::string Codec_turbo_product_prefix;
-class Codec_turbo_product : public Codec_SISO_SIHO
+class Codec_turbo_product : public Codec_SISO
 {
 public:
 	explicit Codec_turbo_product(const std::string &p = Codec_turbo_product_prefix);

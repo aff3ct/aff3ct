@@ -14,8 +14,7 @@ template <typename B, typename R>
 Decoder_chase_std<B,R>
 ::Decoder_chase_std(const int K, const int N, const Encoder<B> &encoder, const uint32_t max_flips, const bool hamming,
                     const int n_frames)
-: Decoder          (K, N, n_frames, 1),
-  Decoder_SIHO<B,R>(K, N, n_frames, 1),
+: Decoder_SIHO<B,R>(K, N, n_frames, 1),
   encoder(encoder.clone()),
   best_X_N(N),
   less_reliable_llrs(N),

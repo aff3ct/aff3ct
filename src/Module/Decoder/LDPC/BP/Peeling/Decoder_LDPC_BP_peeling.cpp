@@ -14,13 +14,11 @@ Decoder_LDPC_BP_peeling<B,R>::Decoder_LDPC_BP_peeling(const int K, const int N, 
                                                       const std::vector<unsigned> &info_bits_pos,
                                                       const bool enable_syndrome, const int syndrome_depth,
                                                       const int n_frames)
-: Decoder               (K, N, n_frames, 1),
-  Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1),
-  Decoder_LDPC_BP       (K, N, n_ite, _H, enable_syndrome, syndrome_depth),
-
-  info_bits_pos  (info_bits_pos       ),
-  var_nodes      (N                   ),
-  check_nodes    (this->H.get_n_cols())
+: Decoder_SIHO<B,R>(K, N, n_frames, 1),
+  Decoder_LDPC_BP  (K, N, n_ite, _H, enable_syndrome, syndrome_depth),
+  info_bits_pos    (info_bits_pos       ),
+  var_nodes        (N                   ),
+  check_nodes      (this->H.get_n_cols())
 {
 	const std::string name = "Decoder_LDPC_BP_peeling";
 	this->set_name(name);

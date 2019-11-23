@@ -9,7 +9,7 @@
 
 #include "Tools/Codec/Codec_SIHO.hpp"
 #include "Module/CRC/CRC.hpp"
-#include "Factory/Tools/Codec/Codec.hpp"
+#include "Factory/Tools/Codec/Codec_HIHO.hpp"
 
 namespace aff3ct
 {
@@ -17,7 +17,7 @@ namespace factory
 {
 extern const std::string Codec_SIHO_name;
 extern const std::string Codec_SIHO_prefix;
-class Codec_SIHO : virtual public Codec
+class Codec_SIHO : public Codec_HIHO
 {
 public:
 	// ----------------------------------------------------------------------------------------------------- PARAMETERS

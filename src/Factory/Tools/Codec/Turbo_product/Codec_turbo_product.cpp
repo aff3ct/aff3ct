@@ -12,8 +12,7 @@ const std::string aff3ct::factory::Codec_turbo_product_prefix = "cdc";
 
 Codec_turbo_product
 ::Codec_turbo_product(const std::string &prefix)
-: Codec          (Codec_turbo_product_name, prefix),
-  Codec_SISO_SIHO(Codec_turbo_product_name, prefix)
+: Codec_SISO(Codec_turbo_product_name, prefix)
 {
 	auto enc_t = new Encoder_turbo_product("enc");
 	auto dec_t = new Decoder_turbo_product("dec");
@@ -32,7 +31,7 @@ Codec_turbo_product* Codec_turbo_product
 void Codec_turbo_product
 ::get_description(cli::Argument_map_info &args) const
 {
-	Codec_SIHO::get_description(args);
+	Codec_SISO::get_description(args);
 
 	auto dec_tur = dynamic_cast<Decoder_turbo_product*>(dec.get());
 
@@ -62,7 +61,7 @@ void Codec_turbo_product
 void Codec_turbo_product
 ::store(const cli::Argument_map_value &vals)
 {
-	Codec_SIHO::store(vals);
+	Codec_SISO::store(vals);
 
 	auto enc_tur = dynamic_cast<Encoder_turbo_product*>(enc.get());
 	auto dec_tur = dynamic_cast<Decoder_turbo_product*>(dec.get());
@@ -101,7 +100,7 @@ void Codec_turbo_product
 void Codec_turbo_product
 ::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
-	Codec_SIHO::get_headers(headers, full);
+	Codec_SISO::get_headers(headers, full);
 	enc->get_headers(headers, full);
 	dec->get_headers(headers, full);
 

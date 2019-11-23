@@ -10,8 +10,7 @@ const std::string aff3ct::factory::Codec_uncoded_prefix = "cdc";
 
 Codec_uncoded
 ::Codec_uncoded(const std::string &prefix)
-: Codec          (Codec_uncoded_name, prefix),
-  Codec_SISO_SIHO(Codec_uncoded_name, prefix)
+: Codec_SISO(Codec_uncoded_name, prefix)
 {
 	Codec::set_enc(new Encoder_NO("enc"));
 	Codec::set_dec(new Decoder_NO("dec"));
@@ -26,7 +25,7 @@ Codec_uncoded* Codec_uncoded
 void Codec_uncoded
 ::get_description(cli::Argument_map_info &args) const
 {
-	Codec_SISO_SIHO::get_description(args);
+	Codec_SISO::get_description(args);
 
 	enc->get_description(args);
 	dec->get_description(args);
@@ -43,7 +42,7 @@ void Codec_uncoded
 void Codec_uncoded
 ::store(const cli::Argument_map_value &vals)
 {
-	Codec_SISO_SIHO::store(vals);
+	Codec_SISO::store(vals);
 
 	enc->type = "NO";
 
@@ -67,7 +66,7 @@ void Codec_uncoded
 void Codec_uncoded
 ::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
-	Codec_SISO_SIHO::get_headers(headers, full);
+	Codec_SISO::get_headers(headers, full);
 
 	enc->get_headers(headers, full);
 	dec->get_headers(headers, full);

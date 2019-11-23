@@ -14,8 +14,7 @@ Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>
                                const std::vector<std::vector<int>> &trellis,
                                const bool buffered_encoding,
                                const int n_frames)
-: Decoder(K, 2 * K, n_frames, 1),
-  Decoder_RSC_DB_BCJR<B,R>(K, trellis, buffered_encoding, n_frames)
+: Decoder_RSC_DB_BCJR<B,R>(K, trellis, buffered_encoding, n_frames)
 {
 	const std::string name = "Decoder_RSC_DB_BCJR_DVB_RCS2";
 	this->set_name(name);
@@ -29,11 +28,7 @@ Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>
 }
 
 template <typename B, typename R, tools::proto_max<R> MAX>
-#ifdef _MSC_VER // Windows with MSVC
-Decoder_RSC_DB_BCJR<B,R>* Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>
-#else
 Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>* Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>
-#endif
 ::clone() const
 {
 	auto m = new Decoder_RSC_DB_BCJR_DVB_RCS2(*this);

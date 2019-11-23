@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
-#include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp"
 
 namespace aff3ct
@@ -17,7 +17,7 @@ namespace module
 {
 
 template<typename B = int, typename R = float>
-class Decoder_LDPC_BP_peeling : public Decoder_SIHO_HIHO<B,R>, public Decoder_LDPC_BP
+class Decoder_LDPC_BP_peeling : public Decoder_SIHO<B,R>, public Decoder_LDPC_BP
 {
 protected:
 	const std::vector<unsigned> &info_bits_pos;

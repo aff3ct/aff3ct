@@ -24,10 +24,9 @@ namespace module
  * \tparam B: type of the bits in the Decoder.
  *
  * The Decoder takes a soft input (real numbers) and return a hard output (bits).
- * Please use Decoder for inheritance (instead of Decoder_HIHO).
  */
 template <typename B = int>
-class Decoder_HIHO : virtual public Decoder
+class Decoder_HIHO : public Decoder
 {
 public:
 	inline Task&   operator[](const dec::tsk                 t);
@@ -54,11 +53,7 @@ public:
 	 */
 	virtual ~Decoder_HIHO() = default;
 
-#ifdef _MSC_VER // Windows with MSVC
-	virtual Decoder* clone() const;
-#else
 	virtual Decoder_HIHO<B>* clone() const;
-#endif
 
 	/*!
 	 * \brief Decodes the noisy frame.

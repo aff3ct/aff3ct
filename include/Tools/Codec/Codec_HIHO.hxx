@@ -46,16 +46,16 @@ module::Decoder_HIHO<B>& Codec_HIHO<B,Q>
 
 template <typename B, typename Q>
 void Codec_HIHO<B,Q>
-::set_decoder_hiho(std::shared_ptr<module::Decoder_HIHO<B>> dec)
+::set_decoder_hiho(module::Decoder_HIHO<B>* dec)
 {
-	this->decoder_hiho = dec;
+	this->set_decoder_hiho(std::shared_ptr<module::Decoder_HIHO<B>>(dec));
 }
 
 template <typename B, typename Q>
 void Codec_HIHO<B,Q>
-::set_decoder_hiho(module::Decoder_HIHO<B>* dec)
+::set_decoder_hiho(std::shared_ptr<module::Decoder_HIHO<B>> dec)
 {
-	this->set_decoder_hiho(std::shared_ptr<module::Decoder_HIHO<B>>(dec));
+	this->decoder_hiho = dec;
 }
 
 }

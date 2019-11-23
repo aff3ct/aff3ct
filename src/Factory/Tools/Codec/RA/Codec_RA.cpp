@@ -10,8 +10,7 @@ const std::string aff3ct::factory::Codec_RA_prefix = "cdc";
 
 Codec_RA
 ::Codec_RA(const std::string &prefix)
-: Codec     (Codec_RA_name, prefix),
-  Codec_SIHO(Codec_RA_name, prefix)
+: Codec_SIHO(Codec_RA_name, prefix)
 {
 	auto enc_t = new Encoder_RA("enc");
 	auto dec_t = new Decoder_RA("dec");

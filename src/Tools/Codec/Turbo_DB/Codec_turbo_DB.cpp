@@ -5,6 +5,9 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Code/Turbo/Post_processing_SISO/CRC/CRC_checker_DB.hpp"
+#include "Tools/Code/Turbo/Post_processing_SISO/Post_processing_SISO.hpp"
+#include "Module/Encoder/RSC_DB/Encoder_RSC_DB.hpp"
+#include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR.hpp"
 #include "Factory/Module/Encoder/Encoder.hpp"
 #include "Factory/Tools/Interleaver/Interleaver_core.hpp"
 #include "Factory/Tools/Code/Turbo/Scaling_factor.hpp"
@@ -21,8 +24,8 @@ Codec_turbo_DB<B,Q>
                  const factory::Interleaver        &itl_params,
                  const factory::Puncturer_turbo_DB *pct_params,
                  module::CRC<B>* crc)
-: Codec     <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.n_frames),
-  Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.n_frames)
+: Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.n_frames),
+  trellis(new std::vector<std::vector<int>>())
 {
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
@@ -51,7 +54,7 @@ Codec_turbo_DB<B,Q>
 
 	// ---------------------------------------------------------------------------------------------------------- tools
 	std::unique_ptr<module::Encoder_RSC_DB<B>> encoder_RSC(enc_params.sub->build<B>());
-	trellis = encoder_RSC->get_trellis();
+	*trellis = encoder_RSC->get_trellis();
 
 	// ---------------------------------------------------------------------------------------------------- allocations
 	this->set_interleaver(itl_params.core->build<>());
@@ -96,7 +99,7 @@ Codec_turbo_DB<B,Q>
 	}
 	catch (cannot_allocate const&)
 	{
-		std::unique_ptr<module::Decoder_RSC_DB_BCJR<B,Q>> sub_dec(dec_params.sub->build_siso<B,Q>(trellis));
+		std::unique_ptr<module::Decoder_RSC_DB_BCJR<B,Q>> sub_dec(dec_params.sub->build_siso<B,Q>(*trellis));
 
 		decoder_turbo.reset(dec_params.build<B,Q>(this->get_interleaver_llr(), *sub_dec, *sub_dec,
 		                                          &this->get_encoder()));
@@ -144,7 +147,7 @@ template <typename B, typename Q>
 const std::vector<std::vector<int>>& Codec_turbo_DB<B,Q>
 ::get_trellis() const
 {
-	return this->trellis;
+	return *this->trellis;
 }
 
 // ==================================================================================== explicit template instantiation

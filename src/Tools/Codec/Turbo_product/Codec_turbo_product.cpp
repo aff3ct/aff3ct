@@ -1,6 +1,9 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
+#include "Module/Encoder/BCH/Encoder_BCH.hpp"
+#include "Module/Decoder/BCH/Decoder_BCH.hpp"
+#include "Module/Decoder/Turbo_product/Chase_pyndiah/Decoder_chase_pyndiah.hpp"
 #include "Factory/Module/Puncturer/Puncturer.hpp"
 #include "Factory/Module/Encoder/Encoder.hpp"
 #include "Factory/Tools/Interleaver/Interleaver_core.hpp"
@@ -16,9 +19,8 @@ Codec_turbo_product<B,Q>
 ::Codec_turbo_product(const factory::Encoder_turbo_product &enc_params,
                       const factory::Decoder_turbo_product &dec_params,
                       const factory::Interleaver           &itl_params)
-: Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames),
-  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames),
-  GF_poly(dec_params.sub->N_cw, dec_params.sub->t)
+: Codec_SISO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames),
+  GF_poly(new BCH_polynomial_generator<B>(dec_params.sub->N_cw, dec_params.sub->t))
 {
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
@@ -66,12 +68,12 @@ Codec_turbo_product<B,Q>
 	int N_cw_p = enc_params.sub->N_cw + (dec_params.parity_extended ? 1 : 0);
 	enc_params.sub->n_frames = N_cw_p;
 
-	std::unique_ptr<module::Encoder_BCH<B>> enc_bch(enc_params.sub->build<B>(GF_poly));
+	std::unique_ptr<module::Encoder_BCH<B>> enc_bch(enc_params.sub->build<B>(*GF_poly));
 
 	dec_params.sub->n_frames = N_cw_p;
 
 	std::unique_ptr<module::Decoder_BCH<B,Q>> dec_bch(
-		dynamic_cast<module::Decoder_BCH<B,Q>*>(dec_params.sub->build_hiho<B,Q>(GF_poly)));
+		dynamic_cast<module::Decoder_BCH<B,Q>*>(dec_params.sub->build<B,Q>(*GF_poly)));
 
 	std::unique_ptr<module::Decoder_chase_pyndiah<B,Q>> dec_cp;
 	if (dec_params.implem == "FAST")
@@ -106,7 +108,7 @@ Codec_turbo_product<B,Q>
 
 	try
 	{
-		this->set_decoder_siso_siho(dec_params.build_siso<B,Q>(this->get_interleaver_llr(), *dec_cp, *dec_cp));
+		this->set_decoder_siso(dec_params.build_siso<B,Q>(this->get_interleaver_llr(), *dec_cp, *dec_cp));
 	}
 	catch (cannot_allocate const&)
 	{
@@ -127,7 +129,7 @@ template <typename B, typename Q>
 const BCH_polynomial_generator<B>& Codec_turbo_product<B,Q>
 ::get_GF_poly() const
 {
-	return this->GF_poly;
+	return *this->GF_poly;
 }
 
 // ==================================================================================== explicit template instantiation

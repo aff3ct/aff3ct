@@ -96,7 +96,7 @@ protected:
 	template <typename T>
 	size_t create_socket_out(Task& task, const std::string &name, const size_t n_elmts);
 
-	void create_codelet(Task& task, std::function<int(Task &t)> codelet);
+	void create_codelet(Task& task, std::function<int(Module &m, Task &t)> codelet);
 
 	void register_timer(Task& task, const std::string &key);
 };

@@ -12,7 +12,7 @@
 #include "Tools/Factory/Header.hpp"
 #include "Module/CRC/CRC.hpp"
 #include "Tools/Codec/LDPC/Codec_LDPC.hpp"
-#include "Factory/Tools/Codec/Codec_SISO_SIHO.hpp"
+#include "Factory/Tools/Codec/Codec_SISO.hpp"
 
 namespace aff3ct
 {
@@ -20,7 +20,7 @@ namespace factory
 {
 extern const std::string Codec_LDPC_name;
 extern const std::string Codec_LDPC_prefix;
-class Codec_LDPC : public Codec_SISO_SIHO
+class Codec_LDPC : public Codec_SISO
 {
 public:
 	explicit Codec_LDPC(const std::string &p = Codec_LDPC_prefix);

@@ -13,8 +13,7 @@ const std::string aff3ct::factory::Codec_turbo_prefix = "cdc";
 
 Codec_turbo
 ::Codec_turbo(const std::string &prefix)
-: Codec     (Codec_turbo_name, prefix),
-  Codec_SIHO(Codec_turbo_name, prefix)
+: Codec_SIHO(Codec_turbo_name, prefix)
 {
 	auto enc_t = new Encoder_turbo<>("enc");
 	auto dec_t = new Decoder_turbo<>("dec");

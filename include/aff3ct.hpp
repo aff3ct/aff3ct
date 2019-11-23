@@ -147,17 +147,11 @@
 #ifndef FACTORY_CODEC_HPP_
 #include <Factory/Tools/Codec/Codec.hpp>
 #endif
-#ifndef FACTORY_CODEC_SIHO_HIHO_HPP_
-#include <Factory/Tools/Codec/Codec_SIHO_HIHO.hpp>
-#endif
 #ifndef FACTORY_CODEC_SIHO_HPP_
 #include <Factory/Tools/Codec/Codec_SIHO.hpp>
 #endif
 #ifndef FACTORY_CODEC_SISO_HPP_
 #include <Factory/Tools/Codec/Codec_SISO.hpp>
-#endif
-#ifndef FACTORY_CODEC_SISO_SIHO_HPP_
-#include <Factory/Tools/Codec/Codec_SISO_SIHO.hpp>
 #endif
 #ifndef FACTORY_CODEC_LDPC_HPP
 #include <Factory/Tools/Codec/LDPC/Codec_LDPC.hpp>
@@ -294,17 +288,11 @@
 #ifndef DECODER_HPP_
 #include <Module/Decoder/Decoder.hpp>
 #endif
-#ifndef DECODER_SIHO_HIHO_HPP_
-#include <Module/Decoder/Decoder_SIHO_HIHO.hpp>
-#endif
 #ifndef DECODER_SIHO_HPP_
 #include <Module/Decoder/Decoder_SIHO.hpp>
 #endif
 #ifndef DECODER_SISO_HPP_
 #include <Module/Decoder/Decoder_SISO.hpp>
-#endif
-#ifndef DECODER_SISO_SIHO_HPP_
-#include <Module/Decoder/Decoder_SISO_SIHO.hpp>
 #endif
 #ifndef DECODER_CHASE_STD_HPP_
 #include <Module/Decoder/Generic/Chase/Decoder_chase_std.hpp>
@@ -858,17 +846,11 @@
 #ifndef CODEC_HPP_
 #include <Tools/Codec/Codec.hpp>
 #endif
-#ifndef CODEC_SIHO_HIHO_HPP_
-#include <Tools/Codec/Codec_SIHO_HIHO.hpp>
-#endif
 #ifndef CODEC_SIHO_HPP_
 #include <Tools/Codec/Codec_SIHO.hpp>
 #endif
 #ifndef CODEC_SISO_HPP_
 #include <Tools/Codec/Codec_SISO.hpp>
-#endif
-#ifndef CODEC_SISO_SIHO_HPP_
-#include <Tools/Codec/Codec_SISO_SIHO.hpp>
 #endif
 #ifndef CODEC_LDPC_HPP_
 #include <Tools/Codec/LDPC/Codec_LDPC.hpp>

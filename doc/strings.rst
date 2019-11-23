@@ -102,6 +102,9 @@
 .. |factory::BFER::p+coset,c| replace::
    Enable the *coset* approach.
 
+.. |factory::BFER::p+clone| replace::
+   Enable the *clone* method to allocate the module objects.
+
 .. |factory::BFER::p+err-trk| replace::
    Track the erroneous frames. When an error is found, the information bits from
    the source, the codeword from the encoder and the applied noise from the

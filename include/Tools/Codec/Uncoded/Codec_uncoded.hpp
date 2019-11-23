@@ -7,14 +7,14 @@
 
 #include "Factory/Module/Encoder/NO/Encoder_NO.hpp"
 #include "Factory/Module/Decoder/NO/Decoder_NO.hpp"
-#include "Tools/Codec/Codec_SISO_SIHO.hpp"
+#include "Tools/Codec/Codec_SISO.hpp"
 
 namespace aff3ct
 {
 namespace tools
 {
 template <typename B = int, typename Q = float>
-class Codec_uncoded : public Codec_SISO_SIHO<B,Q>
+class Codec_uncoded : public Codec_SISO<B,Q>
 {
 public:
 	Codec_uncoded(const factory::Encoder_NO &enc_params,

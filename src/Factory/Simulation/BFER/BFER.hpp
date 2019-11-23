@@ -38,6 +38,7 @@ public:
 	bool        coded_monitoring    = false;
 	bool        ter_sigma           = false;
 	bool        mnt_mutinfo         = false;
+	bool        alloc_clone         = false;
 
 #ifdef AFF3CT_MPI
 	std::chrono::milliseconds mnt_mpi_comm_freq = std::chrono::milliseconds(1000);

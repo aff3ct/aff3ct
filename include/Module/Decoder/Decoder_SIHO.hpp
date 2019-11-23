@@ -10,7 +10,7 @@
 
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
-#include "Module/Decoder/Decoder.hpp"
+#include "Module/Decoder/Decoder_HIHO.hpp"
 
 namespace aff3ct
 {
@@ -25,10 +25,9 @@ namespace module
  * \tparam R: type of the reals (floating-point or fixed-point representation) in the Decoder.
  *
  * The Decoder takes a soft input (real numbers) and return a hard output (bits).
- * Please use Decoder for inheritance (instead of Decoder_SIHO).
  */
 template <typename B = int, typename R = float>
-class Decoder_SIHO : virtual public Decoder
+class Decoder_SIHO : public Decoder_HIHO<B>
 {
 public:
 	inline Task&   operator[](const dec::tsk                 t);
@@ -55,11 +54,7 @@ public:
 	 */
 	virtual ~Decoder_SIHO() = default;
 
-#ifdef _MSC_VER // Windows with MSVC
-	virtual Decoder* clone() const;
-#else
 	virtual Decoder_SIHO<B,R>* clone() const;
-#endif
 
 	/*!
 	 * \brief Decodes the noisy frame.
@@ -81,6 +76,10 @@ protected:
 	virtual void _decode_siho(const R *Y_N, B *V_K, const int frame_id);
 
 	virtual void _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id);
+
+	virtual void _decode_hiho(const B *Y_N, B *V_K, const int frame_id);
+
+	virtual void _decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id);
 };
 }
 }

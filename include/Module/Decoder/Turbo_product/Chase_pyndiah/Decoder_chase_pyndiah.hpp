@@ -11,7 +11,7 @@
 
 #include "Module/Decoder/BCH/Decoder_BCH.hpp"
 #include "Module/Encoder/Encoder.hpp"
-#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 
 namespace aff3ct
 {
@@ -40,7 +40,7 @@ namespace module
  *                = -1 when Hj = 1
  */
 template <typename B = int, typename R = float>
-class Decoder_chase_pyndiah : public Decoder_SISO_SIHO<B,R>
+class Decoder_chase_pyndiah : public Decoder_SISO<B,R>
 {
 protected:
 	struct info

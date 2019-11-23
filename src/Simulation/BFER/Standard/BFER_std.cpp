@@ -46,14 +46,29 @@ void BFER_std<B,R,Q>
 ::__build_communication_chain(const int tid)
 {
 	// build the objects
-	source    [tid] = build_source    (tid);
-	crc       [tid] = build_crc       (tid);
-	codec     [tid] = build_codec     (tid);
-	modem     [tid] = build_modem     (tid);
-	channel   [tid] = build_channel   (tid);
-	quantizer [tid] = build_quantizer (tid);
-	coset_real[tid] = build_coset_real(tid);
-	coset_bit [tid] = build_coset_bit (tid);
+	if (!params_BFER_std.alloc_clone || tid == 0)
+	{
+		source    [tid] = build_source    (tid);
+		crc       [tid] = build_crc       (tid);
+		codec     [tid] = build_codec     (tid);
+		modem     [tid] = build_modem     (tid);
+		channel   [tid] = build_channel   (tid);
+		quantizer [tid] = build_quantizer (tid);
+		coset_real[tid] = build_coset_real(tid);
+		coset_bit [tid] = build_coset_bit (tid);
+	}
+
+	if (params_BFER_std.alloc_clone)
+	{
+		source    [tid].reset(source    [0]->clone());
+		crc       [tid].reset(crc       [0]->clone());
+		codec     [tid].reset(codec     [0]->clone());
+		modem     [tid].reset(modem     [0]->clone());
+		channel   [tid].reset(channel   [0]->clone());
+		quantizer [tid].reset(quantizer [0]->clone());
+		coset_real[tid].reset(coset_real[0]->clone());
+		coset_bit [tid].reset(coset_bit [0]->clone());
+	}
 
 	// set the noise
 	codec  [tid]->set_noise(*this->noise);
@@ -70,11 +85,12 @@ void BFER_std<B,R,Q>
 
 	// set the seeds
 	const auto seed_src = rd_engine_seed[tid]();
-	const auto seed_chn = rd_engine_seed[tid]();
 	const auto seed_enc = rd_engine_seed[tid]();
 	const auto seed_dec = rd_engine_seed[tid]();
 	const auto seed_itl = params_BFER_std.cdc->itl != nullptr ? params_BFER_std.cdc->itl->core->seed +
 	                      (params_BFER_std.cdc->itl->core->uniform ? rd_engine_seed[tid]() : 0) : 0;
+	const auto seed_chn = rd_engine_seed[tid]();
+
 	      source [tid]->                   set_seed(seed_src);
 	      channel[tid]->                   set_seed(seed_chn);
 	try { codec  [tid]->get_encoder     ().set_seed(seed_enc); } catch (...) {}

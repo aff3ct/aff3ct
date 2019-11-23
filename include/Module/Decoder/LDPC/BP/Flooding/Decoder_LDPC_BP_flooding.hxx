@@ -19,15 +19,14 @@ Decoder_LDPC_BP_flooding<B,R,Update_rule>
                            const bool enable_syndrome,
                            const int syndrome_depth,
                            const int n_frames)
-: Decoder               (K, N, n_frames, 1                                    ),
-  Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1                                    ),
-  Decoder_LDPC_BP       (K, N, n_ite, _H, enable_syndrome, syndrome_depth     ),
-  info_bits_pos         (info_bits_pos                                        ),
-  up_rule               (up_rule                                              ),
-  transpose             (this->H.get_n_connections()                          ),
-  post                  (N, -1                                                ),
-  msg_chk_to_var        (n_frames, std::vector<R>(this->H.get_n_connections())),
-  msg_var_to_chk        (n_frames, std::vector<R>(this->H.get_n_connections()))
+: Decoder_SISO<B,R>(K, N, n_frames, 1                                    ),
+  Decoder_LDPC_BP  (K, N, n_ite, _H, enable_syndrome, syndrome_depth     ),
+  info_bits_pos    (info_bits_pos                                        ),
+  up_rule          (up_rule                                              ),
+  transpose        (this->H.get_n_connections()                          ),
+  post             (N, -1                                                ),
+  msg_chk_to_var   (n_frames, std::vector<R>(this->H.get_n_connections())),
+  msg_var_to_chk   (n_frames, std::vector<R>(this->H.get_n_connections()))
 {
 	const std::string name = "Decoder_LDPC_BP_flooding<" + this->up_rule.get_name() + ">";
 	this->set_name(name);
@@ -68,11 +67,7 @@ Decoder_LDPC_BP_flooding<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-#ifdef _MSC_VER // Windows with MSVC
-Decoder* Decoder_LDPC_BP_flooding<B,R,Update_rule>
-#else
 Decoder_LDPC_BP_flooding<B,R,Update_rule>* Decoder_LDPC_BP_flooding<B,R,Update_rule>
-#endif
 ::clone() const
 {
 	auto m = new Decoder_LDPC_BP_flooding(*this);

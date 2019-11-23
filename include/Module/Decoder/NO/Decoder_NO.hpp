@@ -5,14 +5,14 @@
 #ifndef DECODER_NO_HPP_
 #define DECODER_NO_HPP_
 
-#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_NO : public Decoder_SISO_SIHO<B,R>
+class Decoder_NO : public Decoder_SISO<B,R>
 {
 public:
 	Decoder_NO(const int K, const int n_frames = 1);

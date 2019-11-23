@@ -19,8 +19,7 @@ Decoder_LDPC_bit_flipping_OMWBF<B,R>
                                 const bool enable_syndrome,
                                 const int syndrome_depth,
                                 const int n_frames)
-: Decoder(K, N, n_frames, 1),
-  Decoder_LDPC_bit_flipping<B,R>(K, N, n_ite, H, info_bits_pos,mwbf_factor , enable_syndrome, syndrome_depth, n_frames),
+: Decoder_LDPC_bit_flipping<B,R>(K, N, n_ite, H, info_bits_pos,mwbf_factor , enable_syndrome, syndrome_depth, n_frames),
   synd  (this->n_C_nodes),
   energy(this->n_V_nodes)
 {

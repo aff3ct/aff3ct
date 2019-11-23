@@ -14,7 +14,7 @@
 #include "Module/CRC/CRC.hpp"
 #include "Tools/Codec/Polar/Codec_polar.hpp"
 #include "Factory/Tools/Code/Polar/Frozenbits_generator.hpp"
-#include "Factory/Tools/Codec/Codec_SISO_SIHO.hpp"
+#include "Factory/Tools/Codec/Codec_SISO.hpp"
 
 namespace aff3ct
 {
@@ -22,7 +22,7 @@ namespace factory
 {
 extern const std::string Codec_polar_name;
 extern const std::string Codec_polar_prefix;
-class Codec_polar : public Codec_SISO_SIHO
+class Codec_polar : public Codec_SISO
 {
 public:
 	// ----------------------------------------------------------------------------------------------------- PARAMETERS

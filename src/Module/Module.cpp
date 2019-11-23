@@ -34,6 +34,7 @@ void Module
 		else
 		{
 			auto t_new = std::shared_ptr<Task>(t->clone());
+			t_new->module = this;
 			this->tasks_with_nullptr.push_back(t_new);
 			this->tasks.push_back(std::move(t_new));
 		}
@@ -123,7 +124,7 @@ Task& Module
 }
 
 void Module
-::create_codelet(Task& task, std::function<int(Task &t)> codelet)
+::create_codelet(Task& task, std::function<int(Module &m, Task &t)> codelet)
 {
 	task.create_codelet(codelet);
 }

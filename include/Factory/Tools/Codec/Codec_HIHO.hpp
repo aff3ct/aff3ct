@@ -17,7 +17,7 @@ namespace factory
 {
 extern const std::string Codec_HIHO_name;
 extern const std::string Codec_HIHO_prefix;
-class Codec_HIHO : virtual public Codec
+class Codec_HIHO : public Codec
 {
 public:
 	// ----------------------------------------------------------------------------------------------------- PARAMETERS

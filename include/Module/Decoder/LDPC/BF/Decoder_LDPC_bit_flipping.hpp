@@ -8,14 +8,14 @@
 #include <vector>
 
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
-#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_LDPC_bit_flipping : public Decoder_SISO_SIHO<B,R>
+class Decoder_LDPC_bit_flipping : public Decoder_SISO<B,R>
 {
 protected:
 	const int  n_ite;      // number of iterations to perform

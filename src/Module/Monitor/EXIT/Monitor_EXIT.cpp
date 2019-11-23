@@ -22,11 +22,11 @@ Monitor_EXIT<B,R>
 	auto ps_bits   = this->template create_socket_in<B>(p, "bits",   get_N());
 	auto ps_llrs_a = this->template create_socket_in<R>(p, "llrs_a", get_N());
 	auto ps_llrs_e = this->template create_socket_in<R>(p, "llrs_e", get_N());
-	this->create_codelet(p, [this, ps_bits, ps_llrs_a, ps_llrs_e](Task &t) -> int
+	this->create_codelet(p, [ps_bits, ps_llrs_a, ps_llrs_e](Module &m, Task &t) -> int
 	{
-		this->check_mutual_info(static_cast<B*>(t[ps_bits  ].get_dataptr()),
-		                        static_cast<R*>(t[ps_llrs_a].get_dataptr()),
-		                        static_cast<R*>(t[ps_llrs_e].get_dataptr()));
+		static_cast<Monitor_EXIT<B,R>&>(m).check_mutual_info(static_cast<B*>(t[ps_bits  ].get_dataptr()),
+		                                                     static_cast<R*>(t[ps_llrs_a].get_dataptr()),
+		                                                     static_cast<R*>(t[ps_llrs_e].get_dataptr()));
 
 		return 0;
 	});

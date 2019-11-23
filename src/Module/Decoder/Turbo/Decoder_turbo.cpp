@@ -15,16 +15,15 @@ Decoder_turbo<B,R>
                 const int& N,
                 const int& n_ite,
                 const Interleaver<R> &pi,
-                const Decoder_SISO<R> &siso_n,
-                const Decoder_SISO<R> &siso_i,
+                const Decoder_SISO<B,R> &siso_n,
+                const Decoder_SISO<B,R> &siso_i,
                 const bool buffered_encoding)
-: Decoder          (K, N, siso_n.get_n_frames(), siso_n.get_simd_inter_frame_level()),
-  Decoder_SIHO<B,R>(K, N, siso_n.get_n_frames(), siso_n.get_simd_inter_frame_level()),
+: Decoder_SIHO<B,R>(K, N, siso_n.get_n_frames(), siso_n.get_simd_inter_frame_level()),
   n_ite(n_ite),
   buffered_encoding(buffered_encoding),
   pi(pi),
-  siso_n(dynamic_cast<Decoder_SISO<R>*>(siso_n.clone())),
-  siso_i(dynamic_cast<Decoder_SISO<R>*>(siso_i.clone())),
+  siso_n(dynamic_cast<Decoder_SISO<B,R>*>(siso_n.clone())),
+  siso_i(dynamic_cast<Decoder_SISO<B,R>*>(siso_i.clone())),
   l_sn ((K                                                        + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
   l_si ((K                                                        + (siso_i.tail_length() / 2)) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
   l_sen((K                                                        + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
@@ -110,8 +109,8 @@ void Decoder_turbo<B,R>
 ::deep_copy(const Decoder_turbo<B,R> &m)
 {
 	Module::deep_copy(m);
-	if (m.siso_n != nullptr) this->siso_n.reset(dynamic_cast<Decoder_SISO<R>*>(m.siso_n->clone()));
-	if (m.siso_i != nullptr) this->siso_i.reset(dynamic_cast<Decoder_SISO<R>*>(m.siso_i->clone()));
+	if (m.siso_n != nullptr) this->siso_n.reset(dynamic_cast<Decoder_SISO<B,R>*>(m.siso_n->clone()));
+	if (m.siso_i != nullptr) this->siso_i.reset(dynamic_cast<Decoder_SISO<B,R>*>(m.siso_i->clone()));
 	this->post_processings.clear();
 	for (auto &pp : m.post_processings)
 		this->post_processings.push_back(std::shared_ptr<tools::Post_processing_SISO<B,R>>(pp->clone()));

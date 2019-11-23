@@ -50,10 +50,10 @@ Channel<R>
 	auto &p1 = this->create_task("add_noise");
 	auto p1s_X_N = this->template create_socket_in <R>(p1, "X_N", this->N);
 	auto p1s_Y_N = this->template create_socket_out<R>(p1, "Y_N", this->N);
-	this->create_codelet(p1, [this, p1s_X_N, p1s_Y_N](Task &t) -> int
+	this->create_codelet(p1, [p1s_X_N, p1s_Y_N](Module &m, Task &t) -> int
 	{
-		this->add_noise(static_cast<R*>(t[p1s_X_N].get_dataptr()),
-		                static_cast<R*>(t[p1s_Y_N].get_dataptr()));
+		static_cast<Channel<R>&>(m).add_noise(static_cast<R*>(t[p1s_X_N].get_dataptr()),
+		                                      static_cast<R*>(t[p1s_Y_N].get_dataptr()));
 
 		return 0;
 	});
@@ -62,11 +62,11 @@ Channel<R>
 	auto p2s_X_N = this->template create_socket_in <R>(p2, "X_N", this->N);
 	auto p2s_H_N = this->template create_socket_out<R>(p2, "H_N", this->N);
 	auto p2s_Y_N = this->template create_socket_out<R>(p2, "Y_N", this->N);
-	this->create_codelet(p2, [this, p2s_X_N, p2s_H_N, p2s_Y_N](Task &t) -> int
+	this->create_codelet(p2, [p2s_X_N, p2s_H_N, p2s_Y_N](Module &m, Task &t) -> int
 	{
-		this->add_noise_wg(static_cast<R*>(t[p2s_X_N].get_dataptr()),
-		                   static_cast<R*>(t[p2s_H_N].get_dataptr()),
-		                   static_cast<R*>(t[p2s_Y_N].get_dataptr()));
+		static_cast<Channel<R>&>(m).add_noise_wg(static_cast<R*>(t[p2s_X_N].get_dataptr()),
+		                                         static_cast<R*>(t[p2s_H_N].get_dataptr()),
+		                                         static_cast<R*>(t[p2s_Y_N].get_dataptr()));
 
 		return 0;
 	});

@@ -134,6 +134,10 @@ void BFER
 	tools::add_arg(args, pmnt, class_name+"p+red-lazy-freq",
 		cli::Integer(cli::Positive(), cli::Non_zero()));
 #endif
+
+	tools::add_arg(args, p, class_name+"p+clone",
+		cli::None(),
+		cli::arg_rank::ADV);
 }
 
 void BFER
@@ -155,6 +159,7 @@ void BFER
 	if(vals.exist({p+"-err-trk"      })) this->err_track_enable    = true;
 	if(vals.exist({p+"-coset",    "c"})) this->coset               = true;
 	if(vals.exist({p+"-coded",       })) this->coded_monitoring    = true;
+	if(vals.exist({p+"-clone",       })) this->alloc_clone         = true;
 
 	if (this->err_track_revert)
 	{
@@ -213,6 +218,9 @@ void BFER
 
 	std::string enable_rev_track = (this->err_track_revert) ? "on" : "off";
 	headers[p].push_back(std::make_pair("Bad frames replay", enable_rev_track));
+
+	std::string enable_alloc_clone = (this->alloc_clone) ? "on" : "off";
+	headers[p].push_back(std::make_pair("Clone allocations", enable_alloc_clone));
 
 	if (this->err_track_threshold)
 		headers[p].push_back(std::make_pair("Bad frames threshold", std::to_string(this->err_track_threshold)));

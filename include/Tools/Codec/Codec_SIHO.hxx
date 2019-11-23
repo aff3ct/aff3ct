@@ -11,7 +11,7 @@ namespace tools
 template <typename B, typename Q>
 Codec_SIHO<B,Q>
 ::Codec_SIHO(const int K, const int N_cw, const int N, const int n_frames)
-: Codec<B,Q>(K, N_cw, N, n_frames)
+: Codec_HIHO<B,Q>(K, N_cw, N, n_frames)
 {
 }
 
@@ -26,8 +26,9 @@ template <typename B, typename Q>
 void Codec_SIHO<B,Q>
 ::deep_copy(const Codec_SIHO<B,Q> &t)
 {
-	Codec<B,Q>::deep_copy(t);
-	if (t.decoder_siho != nullptr) this->decoder_siho.reset(t.decoder_siho->clone());
+	Codec_HIHO<B,Q>::deep_copy(t);
+	if (this->decoder_hiho != nullptr)
+		this->decoder_siho = std::dynamic_pointer_cast<module::Decoder_SIHO<B,Q>>(this->decoder_hiho);
 }
 
 template <typename B, typename Q>
@@ -46,16 +47,17 @@ module::Decoder_SIHO<B,Q>& Codec_SIHO<B,Q>
 
 template <typename B, typename Q>
 void Codec_SIHO<B,Q>
-::set_decoder_siho(std::shared_ptr<module::Decoder_SIHO<B,Q>> dec)
+::set_decoder_siho(module::Decoder_SIHO<B,Q>* dec)
 {
-	this->decoder_siho = dec;
+	this->set_decoder_siho(std::shared_ptr<module::Decoder_SIHO<B,Q>>(dec));
 }
 
 template <typename B, typename Q>
 void Codec_SIHO<B,Q>
-::set_decoder_siho(module::Decoder_SIHO<B,Q>* dec)
+::set_decoder_siho(std::shared_ptr<module::Decoder_SIHO<B,Q>> dec)
 {
-	this->set_decoder_siho(std::shared_ptr<module::Decoder_SIHO<B,Q>>(dec));
+	this->decoder_siho = dec;
+	this->set_decoder_hiho(this->decoder_siho);
 }
 
 }

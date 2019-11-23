@@ -22,22 +22,21 @@ Decoder_LDPC_bit_flipping<B,R>
                            const bool enable_syndrome,
                            const int syndrome_depth,
                            const int n_frames)
-: Decoder               (K, N, n_frames, 1                         ),
-  Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1                         ),
-  n_ite                 (n_ite                                     ),
-  n_V_nodes             (N                                         ), // same as N but more explicit
-  n_C_nodes             ((int)H.get_n_cols()                       ),
-  n_branches            ((int)H.get_n_connections()                ),
-  mwbf_factor           (mwbf_factor                               ),
-  enable_syndrome       (enable_syndrome                           ),
-  syndrome_depth        (syndrome_depth                            ),
-  H                     (H                                         ),
-  info_bits_pos         (info_bits_pos                             ),
-  Lp_N                  (N,                                      -1), // -1 in order to fail when AZCW
-  C_to_V                (n_frames, std::vector<R>(this->n_branches)),
-  V_to_C                (n_frames, std::vector<R>(this->n_branches)),
-  Y_min                 (this->n_C_nodes                           ),
-  decis                 (this->n_V_nodes                           )
+: Decoder_SISO<B,R>(K, N, n_frames, 1                         ),
+  n_ite            (n_ite                                     ),
+  n_V_nodes        (N                                         ), // same as N but more explicit
+  n_C_nodes        ((int)H.get_n_cols()                       ),
+  n_branches       ((int)H.get_n_connections()                ),
+  mwbf_factor      (mwbf_factor                               ),
+  enable_syndrome  (enable_syndrome                           ),
+  syndrome_depth   (syndrome_depth                            ),
+  H                (H                                         ),
+  info_bits_pos    (info_bits_pos                             ),
+  Lp_N             (N,                                      -1), // -1 in order to fail when AZCW
+  C_to_V           (n_frames, std::vector<R>(this->n_branches)),
+  V_to_C           (n_frames, std::vector<R>(this->n_branches)),
+  Y_min            (this->n_C_nodes                           ),
+  decis            (this->n_V_nodes                           )
 {
 	const std::string name = "Decoder_LDPC_bit_flipping";
 	this->set_name(name);

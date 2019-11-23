@@ -21,10 +21,9 @@ Codec_polar<B,Q>
               const factory::Decoder_polar        &dec_params,
               const factory::Puncturer_polar      *pct_params,
               module::CRC<B>* crc)
-: Codec          <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.n_frames),
-  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.n_frames),
+: Codec_SISO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.n_frames),
   adaptive_fb(fb_params.noise == -1.f),
-  frozen_bits(fb_params.N_cw, true),
+  frozen_bits(new std::vector<bool>(fb_params.N_cw, true)),
   generated_decoder((dec_params.implem.find("_SNR") != std::string::npos)),
   puncturer_shortlast(nullptr),
   fb_decoder(nullptr),
@@ -68,7 +67,7 @@ Codec_polar<B,Q>
 	}
 
 	// ---------------------------------------------------------------------------------------------------- allocations
-	std::fill(frozen_bits.begin(), frozen_bits.begin() + this->K, false);
+	std::fill(frozen_bits->begin(), frozen_bits->begin() + this->K, false);
 
 	if (generated_decoder || !pct_params)
 	{
@@ -96,7 +95,7 @@ Codec_polar<B,Q>
 
 	try
 	{
-		this->set_encoder(enc_params.build<B>(frozen_bits));
+		this->set_encoder(enc_params.build<B>(*frozen_bits));
 		fb_encoder = dynamic_cast<Frozenbits_notifier*>(&this->get_encoder());
 	}
 	catch (cannot_allocate const&)
@@ -106,14 +105,14 @@ Codec_polar<B,Q>
 
 	try
 	{
-		this->set_decoder_siso_siho(dec_params.build_siso<B,Q>(frozen_bits, &this->get_encoder()));
+		this->set_decoder_siso(dec_params.build_siso<B,Q>(*frozen_bits, &this->get_encoder()));
 	}
 	catch (const std::exception&)
 	{
 		if (generated_decoder)
 			this->set_decoder_siho(dec_params.build_gen<B,Q>(crc, &this->get_encoder()));
 		else
-			this->set_decoder_siho(dec_params.build<B,Q>(frozen_bits, crc, &this->get_encoder()));
+			this->set_decoder_siho(dec_params.build<B,Q>(*frozen_bits, crc, &this->get_encoder()));
 	}
 
 	try
@@ -124,7 +123,7 @@ Codec_polar<B,Q>
 
 	this->set_extractor(new module::Extractor_polar<B,Q>(enc_params.K,
 	                                                     enc_params.N_cw,
-	                                                     frozen_bits,
+	                                                     *frozen_bits,
 	                                                     enc_params.n_frames));
 
 	// ------------------------------------------------------------------------------------------------- frozen bit gen
@@ -136,32 +135,32 @@ Codec_polar<B,Q>
 			{
 				Event_probability<> ep(fb_params.noise);
 				fb_generator->set_noise(ep);
-				fb_generator->generate(frozen_bits);
+				fb_generator->generate(*frozen_bits);
 			}
 			else /* type = GA, TV or FILE */
 			{
 				Sigma<> sigma(fb_params.noise);
 				fb_generator->set_noise(sigma);
-				fb_generator->generate(frozen_bits);
+				fb_generator->generate(*frozen_bits);
 			}
 			if (this->N_cw != this->N && puncturer_shortlast)
-				puncturer_shortlast->gen_frozen_bits(frozen_bits);
+				puncturer_shortlast->gen_frozen_bits(*frozen_bits);
 			this->notify_frozenbits_update();
 		}
 	}
 	else
 	{
 		const auto fb = factory::Decoder_polar::get_frozen_bits(dec_params.implem);
-		if (fb.size() != frozen_bits.size())
+		if (fb.size() != frozen_bits->size())
 		{
 			std::stringstream message;
-			message << "'fb.size()' has to be equal to 'frozen_bits.size()' ('fb.size()' = " << fb.size()
-			        << ", 'frozen_bits.size()' = " << frozen_bits.size() << ").";
+			message << "'fb.size()' has to be equal to 'frozen_bits->size()' ('fb.size()' = " << fb.size()
+			        << ", 'frozen_bits->size()' = " << frozen_bits->size() << ").";
 			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
-		std::copy(fb.begin(), fb.end(), frozen_bits.begin());
+		std::copy(fb.begin(), fb.end(), frozen_bits->begin());
 		if (this->N_cw != this->N && puncturer_shortlast)
-			puncturer_shortlast->gen_frozen_bits(frozen_bits);
+			puncturer_shortlast->gen_frozen_bits(*frozen_bits);
 		this->notify_frozenbits_update();
 	}
 }
@@ -179,8 +178,7 @@ template <typename B, typename Q>
 void Codec_polar<B,Q>
 ::deep_copy(const Codec_polar<B,Q> &t)
 {
-	Codec_SISO_SIHO<B,Q>::deep_copy(t);
-	if (t.fb_generator != nullptr) this->fb_generator.reset(t.fb_generator->clone());
+	Codec_SISO<B,Q>::deep_copy(t);
 	if (t.puncturer_shortlast != nullptr)
 		this->puncturer_shortlast = dynamic_cast<module::Puncturer_polar_shortlast<B,Q>*>(&this->get_puncturer());
 	if (t.fb_encoder != nullptr)
@@ -206,10 +204,10 @@ void Codec_polar<B,Q>
 	if (this->adaptive_fb && !this->generated_decoder)
 	{
 		this->fb_generator->set_noise(*this->noise);
-		this->fb_generator->generate(this->frozen_bits);
+		this->fb_generator->generate(*this->frozen_bits);
 		if (this->N_cw != this->N && puncturer_shortlast)
 		{
-			puncturer_shortlast->gen_frozen_bits(frozen_bits);
+			puncturer_shortlast->gen_frozen_bits(*frozen_bits);
 		}
 		this->notify_frozenbits_update();
 	}
@@ -233,7 +231,7 @@ template <typename B, typename Q>
 const std::vector<bool>& Codec_polar<B,Q>
 ::get_frozen_bits() const
 {
-	return this->frozen_bits;
+	return *this->frozen_bits;
 }
 
 template <typename B, typename Q>

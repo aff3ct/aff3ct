@@ -141,10 +141,10 @@ void BFER_ite
 	if (this->ter    != nullptr) { this->ter   ->get_headers(headers, full); }
 }
 
-const Codec_SISO_SIHO* BFER_ite
+const Codec_SISO* BFER_ite
 ::get_cdc() const
 {
-	return dynamic_cast<Codec_SISO_SIHO*>(this->cdc.get());
+	return dynamic_cast<Codec_SISO*>(this->cdc.get());
 }
 
 template <typename B, typename R, typename Q>

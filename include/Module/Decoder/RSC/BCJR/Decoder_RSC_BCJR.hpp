@@ -8,14 +8,14 @@
 #include <vector>
 #include <mipp.h>
 
-#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_RSC_BCJR : public Decoder_SISO_SIHO<B,R>
+class Decoder_RSC_BCJR : public Decoder_SISO<B,R>
 {
 protected:
 	const int  n_states;

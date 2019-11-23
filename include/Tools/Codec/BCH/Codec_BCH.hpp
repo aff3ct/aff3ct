@@ -5,20 +5,22 @@
 #ifndef CODEC_BCH_HPP_
 #define CODEC_BCH_HPP_
 
+#include <memory>
+
 #include "Tools/Code/BCH/BCH_polynomial_generator.hpp"
 #include "Factory/Module/Encoder/BCH/Encoder_BCH.hpp"
 #include "Factory/Module/Decoder/BCH/Decoder_BCH.hpp"
-#include "Tools/Codec/Codec_SIHO_HIHO.hpp"
+#include "Tools/Codec/Codec_SIHO.hpp"
 
 namespace aff3ct
 {
 namespace tools
 {
 template <typename B = int, typename Q = float>
-class Codec_BCH : public Codec_SIHO_HIHO<B,Q>
+class Codec_BCH : public Codec_SIHO<B,Q>
 {
 protected:
-	const BCH_polynomial_generator<B> GF_poly;
+	std::shared_ptr<const BCH_polynomial_generator<B>> GF_poly;
 
 public:
 	Codec_BCH(const factory::Encoder_BCH &enc_params,

@@ -5,20 +5,22 @@
 #ifndef CODEC_RS_HPP_
 #define CODEC_RS_HPP_
 
+#include <memory>
+
 #include "Tools/Code/RS/RS_polynomial_generator.hpp"
 #include "Factory/Module/Encoder/RS/Encoder_RS.hpp"
 #include "Factory/Module/Decoder/RS/Decoder_RS.hpp"
-#include "Tools/Codec/Codec_SIHO_HIHO.hpp"
+#include "Tools/Codec/Codec_SIHO.hpp"
 
 namespace aff3ct
 {
 namespace tools
 {
 template <typename B = int, typename Q = float>
-class Codec_RS : public Codec_SIHO_HIHO<B,Q>
+class Codec_RS : public Codec_SIHO<B,Q>
 {
 protected:
-	const RS_polynomial_generator GF_poly;
+	std::shared_ptr<const RS_polynomial_generator> GF_poly;
 
 public:
 	Codec_RS(const factory::Encoder_RS &enc_params,

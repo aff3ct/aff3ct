@@ -19,8 +19,7 @@ Decoder_RSC_BCJR_intra_fast<B,R,MAX>
                               const std::vector<std::vector<int>> &trellis,
                               const bool buffered_encoding,
                               const int n_frames)
-: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, 1),
-  Decoder_RSC_BCJR_intra<B,R>(K, trellis, buffered_encoding, n_frames)
+: Decoder_RSC_BCJR_intra<B,R>(K, trellis, buffered_encoding, n_frames)
 {
 	const std::string name = "Decoder_RSC_BCJR_intra_fast";
 	this->set_name(name);
@@ -41,11 +40,7 @@ Decoder_RSC_BCJR_intra_fast<B,R,MAX>
 }
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
-#ifdef _MSC_VER // Windows with MSVC
-Decoder_RSC_BCJR_intra<B,R>* Decoder_RSC_BCJR_intra_fast<B,R,MAX>
-#else
 Decoder_RSC_BCJR_intra_fast<B,R,MAX>* Decoder_RSC_BCJR_intra_fast<B,R,MAX>
-#endif
 ::clone() const
 {
 	auto m = new Decoder_RSC_BCJR_intra_fast(*this);

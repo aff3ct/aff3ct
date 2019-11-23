@@ -6,21 +6,22 @@
 #define CODEC_RSC_HPP_
 
 #include <vector>
+#include <memory>
 
 #include "Factory/Module/Encoder/RSC/Encoder_RSC.hpp"
 #include "Factory/Module/Decoder/RSC/Decoder_RSC.hpp"
-#include "Tools/Codec/Codec_SISO_SIHO.hpp"
+#include "Tools/Codec/Codec_SISO.hpp"
 
 namespace aff3ct
 {
 namespace tools
 {
 template <typename B = int, typename Q = float>
-class Codec_RSC : public Codec_SISO_SIHO<B,Q>
+class Codec_RSC : public Codec_SISO<B,Q>
 {
 protected:
 	const bool buffered_encoding;
-	std::vector<std::vector<int>> trellis;
+	std::shared_ptr<std::vector<std::vector<int>>> trellis;
 
 public:
 	Codec_RSC(const factory::Encoder_RSC &enc_params,

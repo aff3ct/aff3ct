@@ -9,7 +9,7 @@
 #include <memory>
 
 #include "Module/Interleaver/Interleaver.hpp"
-#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 #include "Module/Decoder/Turbo_product/Chase_pyndiah/Decoder_chase_pyndiah.hpp"
 
 namespace aff3ct
@@ -31,7 +31,7 @@ namespace module
  *
  */
 template <typename B = int, typename R = float>
-class Decoder_turbo_product : public Decoder_SISO_SIHO<B,R>
+class Decoder_turbo_product : public Decoder_SISO<B,R>
 {
 protected:
 	const int  n_ite; // number of iterations

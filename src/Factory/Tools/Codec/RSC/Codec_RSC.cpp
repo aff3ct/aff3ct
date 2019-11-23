@@ -10,8 +10,7 @@ const std::string aff3ct::factory::Codec_RSC_prefix = "cdc";
 
 Codec_RSC
 ::Codec_RSC(const std::string &prefix)
-: Codec          (Codec_RSC_name, prefix),
-  Codec_SISO_SIHO(Codec_RSC_name, prefix)
+: Codec_SISO(Codec_RSC_name, prefix)
 {
 	Codec::set_enc(new Encoder_RSC("enc"));
 	Codec::set_dec(new Decoder_RSC("dec"));
@@ -26,7 +25,7 @@ Codec_RSC* Codec_RSC
 void Codec_RSC
 ::get_description(cli::Argument_map_info &args) const
 {
-	Codec_SISO_SIHO::get_description(args);
+	Codec_SISO::get_description(args);
 
 	enc->get_description(args);
 	dec->get_description(args);
@@ -44,7 +43,7 @@ void Codec_RSC
 void Codec_RSC
 ::store(const cli::Argument_map_value &vals)
 {
-	Codec_SISO_SIHO::store(vals);
+	Codec_SISO::store(vals);
 
 	auto enc_rsc = dynamic_cast<Encoder_RSC*>(enc.get());
 	auto dec_rsc = dynamic_cast<Decoder_RSC*>(dec.get());
@@ -69,7 +68,7 @@ void Codec_RSC
 void Codec_RSC
 ::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
-	Codec_SISO_SIHO::get_headers(headers, full);
+	Codec_SISO::get_headers(headers, full);
 
 	enc->get_headers(headers, full);
 	dec->get_headers(headers, full);

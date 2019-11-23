@@ -74,15 +74,24 @@ template <typename B, typename R, typename Q>
 void BFER<B,R,Q>
 ::_build_communication_chain()
 {
-	// build the communication chain in multi-threaded mode
-	std::vector<std::thread> threads(params_BFER.n_threads -1);
-	for (auto tid = 1; tid < params_BFER.n_threads; tid++)
-		threads[tid -1] = std::thread(&BFER<B,R,Q>::start_thread_build_comm_chain, this, tid);
-	this->start_thread_build_comm_chain(0);
+	if (params_BFER.alloc_clone)
+	{
+		// build the communication chain in sequential mode
+		for (auto tid = 0; tid < params_BFER.n_threads; tid++)
+			this->start_thread_build_comm_chain(tid);
+	}
+	else
+	{
+		// build the communication chain in multi-threaded mode
+		std::vector<std::thread> threads(params_BFER.n_threads -1);
+		for (auto tid = 1; tid < params_BFER.n_threads; tid++)
+			threads[tid -1] = std::thread(&BFER<B,R,Q>::start_thread_build_comm_chain, this, tid);
+		this->start_thread_build_comm_chain(0);
 
-	// join the slave threads with the master thread
-	for (auto tid = 1; tid < params_BFER.n_threads; tid++)
-		threads[tid -1].join();
+		// join the slave threads with the master thread
+		for (auto tid = 1; tid < params_BFER.n_threads; tid++)
+			threads[tid -1].join();
+	}
 }
 
 template <typename B, typename R, typename Q>

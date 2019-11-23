@@ -14,8 +14,7 @@ template <typename B, typename Q>
 Codec_uncoded<B,Q>
 ::Codec_uncoded(const factory::Encoder_NO &enc_params,
                 const factory::Decoder_NO &dec_params)
-: Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames),
-  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames)
+: Codec_SISO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames)
 {
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
@@ -62,7 +61,7 @@ Codec_uncoded<B,Q>
 	this->set_encoder(enc_params.build<B>());
 	try
 	{
-		this->set_decoder_siso_siho(dec_params.build_siso<B,Q>(&this->get_encoder()));
+		this->set_decoder_siso(dec_params.build_siso<B,Q>(&this->get_encoder()));
 	}
 	catch (const std::exception&)
 	{

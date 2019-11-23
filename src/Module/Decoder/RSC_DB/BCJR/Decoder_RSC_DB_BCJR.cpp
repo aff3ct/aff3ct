@@ -17,21 +17,20 @@ Decoder_RSC_DB_BCJR<B,R>
                       const std::vector<std::vector<int>> &trellis,
                       const bool buffered_encoding,
                       const int n_frames)
-: Decoder               (K, 2 * K, n_frames, 1                   ),
-  Decoder_SISO_SIHO<B,R>(K, 2 * K, n_frames, 1                   ),
-  n_states              ((int)trellis[0].size()/4                ),
-  n_ff                  ((int)std::log2(n_states)                ),
-  buffered_encoding     (buffered_encoding                       ),
-  trellis               (trellis                                 ),
-  sys                   (2*K                                     ),
-  par                   (  K                                     ),
-  ext                   (2*K                                     ),
-  s                     (  K                                     ),
-  alpha_mp              (n_states                                ),
-  beta_mp               (n_states                                ),
-  alpha                 (K/2 + 1, std::vector<R>(n_states    , 0)),
-  beta                  (K/2 + 1, std::vector<R>(n_states    , 0)),
-  gamma                 (K/2    , std::vector<R>(n_states * 4, 0))
+: Decoder_SISO<B,R>(K, 2 * K, n_frames, 1                   ),
+  n_states         ((int)trellis[0].size()/4                ),
+  n_ff             ((int)std::log2(n_states)                ),
+  buffered_encoding(buffered_encoding                       ),
+  trellis          (trellis                                 ),
+  sys              (2*K                                     ),
+  par              (  K                                     ),
+  ext              (2*K                                     ),
+  s                (  K                                     ),
+  alpha_mp         (n_states                                ),
+  beta_mp          (n_states                                ),
+  alpha            (K/2 + 1, std::vector<R>(n_states    , 0)),
+  beta             (K/2 + 1, std::vector<R>(n_states    , 0)),
+  gamma            (K/2    , std::vector<R>(n_states * 4, 0))
 {
 	const std::string name = "Decoder_RSC_DB_BCJR";
 	this->set_name(name);

@@ -16,18 +16,18 @@
 #include "Factory/Module/Decoder/Polar/Decoder_polar.hpp"
 #include "Factory/Module/Puncturer/Polar/Puncturer_polar.hpp"
 #include "Factory/Tools/Code/Polar/Frozenbits_generator.hpp"
-#include "Tools/Codec/Codec_SISO_SIHO.hpp"
+#include "Tools/Codec/Codec_SISO.hpp"
 
 namespace aff3ct
 {
 namespace tools
 {
 template <typename B = int, typename Q = float>
-class Codec_polar : public Codec_SISO_SIHO<B,Q>, public Frozenbits_notifier
+class Codec_polar : public Codec_SISO<B,Q>, public Frozenbits_notifier
 {
 protected:
 	const bool adaptive_fb;
-	std::vector<bool> frozen_bits; // known bits (alias frozen bits) are set to true
+	std::shared_ptr<std::vector<bool>> frozen_bits; // known bits (alias frozen bits) are set to true
 	const bool generated_decoder;
 
 	std::shared_ptr<Frozenbits_generator> fb_generator;

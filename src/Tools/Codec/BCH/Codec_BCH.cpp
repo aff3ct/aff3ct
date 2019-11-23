@@ -13,9 +13,8 @@ template <typename B, typename Q>
 Codec_BCH<B,Q>
 ::Codec_BCH(const factory::Encoder_BCH &enc_params,
             const factory::Decoder_BCH &dec_params)
-: Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames),
-  Codec_SIHO_HIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames),
-  GF_poly(next_power_of_2(dec_params.N_cw) -1, dec_params.t)
+: Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames),
+  GF_poly(new BCH_polynomial_generator<B>(next_power_of_2(dec_params.N_cw) -1, dec_params.t))
 {
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
@@ -53,7 +52,7 @@ Codec_BCH<B,Q>
 	this->set_puncturer(pct_params.build<B,Q>());
 	try
 	{
-		this->set_encoder(enc_params.build<B>(GF_poly));
+		this->set_encoder(enc_params.build<B>(*GF_poly));
 	}
 	catch (cannot_allocate const&)
 	{
@@ -61,7 +60,7 @@ Codec_BCH<B,Q>
 	}
 	if (dec_params.implem == "GENIUS")
 		this->get_encoder().set_memorizing(true);
-	this->set_decoder_siho_hiho(dec_params.build_hiho<B,Q>(GF_poly, &this->get_encoder()));
+	this->set_decoder_siho(dec_params.build<B,Q>(*GF_poly, &this->get_encoder()));
 }
 
 template <typename B, typename Q>
@@ -77,7 +76,7 @@ template <typename B, typename Q>
 const BCH_polynomial_generator<B>& Codec_BCH<B,Q>
 ::get_GF_poly() const
 {
-	return this->GF_poly;
+	return *this->GF_poly;
 }
 
 // ==================================================================================== explicit template instantiation

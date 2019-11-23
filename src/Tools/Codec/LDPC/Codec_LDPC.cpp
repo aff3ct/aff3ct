@@ -18,8 +18,10 @@ Codec_LDPC<B,Q>
 ::Codec_LDPC(const factory::Encoder_LDPC   &enc_params,
              const factory::Decoder_LDPC   &dec_params,
                    factory::Puncturer_LDPC *pct_params)
-: Codec          <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.n_frames),
-  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.n_frames)
+: Codec_SISO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.n_frames),
+  H(new Sparse_matrix()),
+  G(new Sparse_matrix()),
+  info_bits_pos(new LDPC_matrix_handler::Positions_vector())
 {
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
@@ -49,42 +51,42 @@ Codec_LDPC<B,Q>
 	// ---------------------------------------------------------------------------------------------------------- tools
 	if (enc_params.type == "LDPC")
 	{
-		G = LDPC_matrix_handler::read(enc_params.G_path, &info_bits_pos);
+		*G = LDPC_matrix_handler::read(enc_params.G_path, info_bits_pos.get());
 	}
 	else if (enc_params.type == "LDPC_DVBS2")
 	{
 		dvbs2 = build_dvbs2(this->K, this->N);
-		H     = build_H(*dvbs2);
+		*H    = build_H(*dvbs2);
 	}
 
-	if (H.get_n_connections() == 0)
+	if (H->get_n_connections() == 0)
 	{
 		LDPC_matrix_handler::Positions_vector* ibp = nullptr;
 		std::vector<bool>* pct = nullptr;
 
-		if (info_bits_pos.empty())
-			ibp = &info_bits_pos;
+		if (info_bits_pos->empty())
+			ibp = info_bits_pos.get();
 
 		if (pct_params != nullptr && pct_params->pattern.empty())
 			pct = &pct_params->pattern;
 
-		H = LDPC_matrix_handler::read(dec_params.H_path, ibp, pct);
+		*H = LDPC_matrix_handler::read(dec_params.H_path, ibp, pct);
 	}
 
 	if (dec_params.H_reorder != "NONE")
 	{	// reorder the H matrix following the check node degrees
-		H.sort_cols_per_density(dec_params.H_reorder == "ASC" ? Matrix::Sort::ASCENDING :
-		                                                        Matrix::Sort::DESCENDING);
+		H->sort_cols_per_density(dec_params.H_reorder == "ASC" ? Matrix::Sort::ASCENDING :
+		                                                         Matrix::Sort::DESCENDING);
 	}
 
-	if (info_bits_pos.empty())
+	if (info_bits_pos->empty())
 	{
 		if (enc_params.type == "LDPC_H")
-			this->set_encoder(enc_params.build<B>(G, H));
+			this->set_encoder(enc_params.build<B>(*G, *H));
 	}
 	else
 	{
-		LDPC_matrix_handler::check_info_pos(info_bits_pos, enc_params.K, enc_params.N_cw);
+		LDPC_matrix_handler::check_info_pos(*info_bits_pos, enc_params.K, enc_params.N_cw);
 	}
 
 	// ---------------------------------------------------------------------------------------------------- allocations
@@ -119,7 +121,7 @@ Codec_LDPC<B,Q>
 	{ // encoder not set when building encoder LDPC_H
 		try
 		{
-			this->set_encoder(enc_params.build<B>(G, H, *dvbs2));
+			this->set_encoder(enc_params.build<B>(*G, *H, *dvbs2));
 		}
 		catch(cannot_allocate const&)
 		{
@@ -127,32 +129,32 @@ Codec_LDPC<B,Q>
 		}
 	}
 
-	if (info_bits_pos.empty())
+	if (info_bits_pos->empty())
 	{
 		try
 		{
-			info_bits_pos = this->get_encoder().get_info_bits_pos();
+			*info_bits_pos = this->get_encoder().get_info_bits_pos();
 		}
 		catch(unimplemented_error const&)
 		{
 			// generate a default vector [0, 1, 2, 3, ..., K-1]
-			info_bits_pos.resize(enc_params.K);
-			std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
+			info_bits_pos->resize(enc_params.K);
+			std::iota(info_bits_pos->begin(), info_bits_pos->end(), 0);
 		}
 	}
 
 	this->set_extractor(new module::Extractor_LDPC<B,Q>(enc_params.K,
 	                                                    enc_params.N_cw,
-	                                                    info_bits_pos,
+	                                                    *info_bits_pos,
 	                                                    enc_params.n_frames));
 
 	try
 	{
-		this->set_decoder_siso_siho(dec_params.build_siso<B,Q>(H, info_bits_pos, &this->get_encoder()));
+		this->set_decoder_siso(dec_params.build_siso<B,Q>(*H, *info_bits_pos, &this->get_encoder()));
 	}
 	catch (const std::exception&)
 	{
-		this->set_decoder_siho(dec_params.build<B,Q>(H, info_bits_pos, &this->get_encoder()));
+		this->set_decoder_siho(dec_params.build<B,Q>(*H, *info_bits_pos, &this->get_encoder()));
 	}
 }
 
@@ -169,7 +171,7 @@ template <typename B, typename Q>
 void Codec_LDPC<B,Q>
 ::deep_copy(const Codec_LDPC<B,Q> &t)
 {
-	Codec_SISO_SIHO<B,Q>::deep_copy(t);
+	Codec_SISO<B,Q>::deep_copy(t);
 	if (t.dvbs2 != nullptr) this->dvbs2.reset(new dvbs2_values(*t.dvbs2));
 }
 
@@ -177,35 +179,35 @@ template <typename B, typename Q>
 const Sparse_matrix& Codec_LDPC<B,Q>
 ::get_H() const
 {
-	if (this->H.size() == 0)
+	if (this->H->size() == 0)
 	{
 		std::stringstream message;
-		message << "'H.size()' has to be strictly greater than 0 ('H.size()' = " << H.size() << ").";
+		message << "'H->size()' has to be strictly greater than 0 ('H->size()' = " << H->size() << ").";
 		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	return this->H;
+	return *this->H;
 }
 
 template <typename B, typename Q>
 const Sparse_matrix& Codec_LDPC<B,Q>
 ::get_G() const
 {
-	if (this->G.size() == 0)
+	if (this->G->size() == 0)
 	{
 		std::stringstream message;
-		message << "'G.size()' has to be strictly greater than 0 ('G.size()' = " << G.size() << ").";
+		message << "'G->size()' has to be strictly greater than 0 ('G->size()' = " << G->size() << ").";
 		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	return this->G;
+	return *this->G;
 }
 
 template <typename B, typename Q>
 const LDPC_matrix_handler::Positions_vector& Codec_LDPC<B,Q>
 ::get_info_bits_pos() const
 {
-	return info_bits_pos;
+	return *info_bits_pos;
 }
 
 template <typename B, typename Q>

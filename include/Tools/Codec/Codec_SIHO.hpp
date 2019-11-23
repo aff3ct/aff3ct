@@ -8,14 +8,14 @@
 #include <memory>
 
 #include "Module/Decoder/Decoder_SIHO.hpp"
-#include "Tools/Codec/Codec.hpp"
+#include "Tools/Codec/Codec_HIHO.hpp"
 
 namespace aff3ct
 {
 namespace tools
 {
 template <typename B = int, typename Q = float>
-class Codec_SIHO : virtual public Codec<B,Q>
+class Codec_SIHO : public Codec_HIHO<B,Q>
 {
 protected:
 	std::shared_ptr<module::Decoder_SIHO<B,Q>> decoder_siho;
@@ -31,8 +31,8 @@ public:
 
 protected:
 	virtual void deep_copy(const Codec_SIHO<B,Q> &t);
-	virtual void set_decoder_siho(std::shared_ptr<module::Decoder_SIHO<B,Q>> dec);
-	virtual void set_decoder_siho(module::Decoder_SIHO<B,Q>* dec);
+	void set_decoder_siho(module::Decoder_SIHO<B,Q>* dec);
+	void set_decoder_siho(std::shared_ptr<module::Decoder_SIHO<B,Q>> dec);
 };
 }
 }

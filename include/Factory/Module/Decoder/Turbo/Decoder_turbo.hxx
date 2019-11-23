@@ -220,10 +220,10 @@ void Decoder_turbo<D1,D2>
 template <class D1, class D2>
 template <typename B, typename Q>
 module::Decoder_turbo<B,Q>* Decoder_turbo<D1,D2>
-::build(const module::Interleaver<Q>  &itl,
-        const module::Decoder_SISO<Q> &siso_n,
-        const module::Decoder_SISO<Q> &siso_i,
-              module::Encoder<B>      *encoder) const
+::build(const module::Interleaver<Q>    &itl,
+        const module::Decoder_SISO<B,Q> &siso_n,
+        const module::Decoder_SISO<B,Q> &siso_i,
+              module::Encoder<B>        *encoder) const
 {
 	if (this->type == "TURBO")
 	{

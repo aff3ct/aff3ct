@@ -18,8 +18,7 @@ Decoder_LDPC_probabilistic_parallel_bit_flipping<B,R>
                                                    const int syndrome_depth,
                                                    const int seed,
                                                    const int n_frames)
-: Decoder(K, N, n_frames, 1),
-  Decoder_LDPC_bit_flipping_hard<B,R>(K, N, n_ite, H, info_bits_pos, enable_syndrome, syndrome_depth, n_frames),
+: Decoder_LDPC_bit_flipping_hard<B,R>(K, N, n_ite, H, info_bits_pos, enable_syndrome, syndrome_depth, n_frames),
   rd_engine(seed)
 {
 	const std::string name = "Decoder_LDPC_probabilistic_parallel_bit_flipping";

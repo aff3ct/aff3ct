@@ -13,9 +13,9 @@ template <typename B, typename Q>
 Codec_RSC_DB<B,Q>
 ::Codec_RSC_DB(const factory::Encoder_RSC_DB &enc_params,
                const factory::Decoder_RSC_DB &dec_params)
-: Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames),
-  Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames),
-  buffered_encoding(enc_params.buffered)
+: Codec_SISO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames),
+  buffered_encoding(enc_params.buffered),
+  trellis(new std::vector<std::vector<int>>())
 {
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
@@ -47,7 +47,7 @@ Codec_RSC_DB<B,Q>
 	enc_cpy.type = "RSC_DB";
 
 	std::unique_ptr<module::Encoder_RSC_DB<B>> encoder_RSC(enc_cpy.build<B>());
-	trellis = encoder_RSC->get_trellis();
+	*trellis = encoder_RSC->get_trellis();
 
 	// ---------------------------------------------------------------------------------------------------- allocations
 	factory::Puncturer pct_params;
@@ -69,11 +69,11 @@ Codec_RSC_DB<B,Q>
 
 	try
 	{
-		this->set_decoder_siso_siho(dec_params.build_siso<B,Q>(trellis, &this->get_encoder()));
+		this->set_decoder_siso(dec_params.build_siso<B,Q>(*trellis, &this->get_encoder()));
 	}
 	catch (cannot_allocate const&)
 	{
-		this->set_decoder_siho(dec_params.build<B,Q>(trellis, &this->get_encoder()));
+		this->set_decoder_siho(dec_params.build<B,Q>(*trellis, &this->get_encoder()));
 	}
 }
 
@@ -97,7 +97,7 @@ template <typename B, typename Q>
 const std::vector<std::vector<int>>& Codec_RSC_DB<B,Q>
 ::get_trellis() const
 {
-	return this->trellis;
+	return *this->trellis;
 }
 
 // ==================================================================================== explicit template instantiation

@@ -12,7 +12,7 @@
 #include "Tools/Factory/Header.hpp"
 #include "Module/CRC/CRC.hpp"
 #include "Tools/Codec/RS/Codec_RS.hpp"
-#include "Factory/Tools/Codec/Codec_SIHO_HIHO.hpp"
+#include "Factory/Tools/Codec/Codec_SIHO.hpp"
 
 namespace aff3ct
 {
@@ -20,7 +20,7 @@ namespace factory
 {
 extern const std::string Codec_RS_name;
 extern const std::string Codec_RS_prefix;
-class Codec_RS : public Codec_SIHO_HIHO
+class Codec_RS : public Codec_SIHO
 {
 public:
 	explicit Codec_RS(const std::string &p = Codec_RS_prefix);

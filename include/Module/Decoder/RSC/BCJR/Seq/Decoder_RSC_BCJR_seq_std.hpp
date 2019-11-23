@@ -25,11 +25,7 @@ public:
 	                         const int n_frames = 1);
 	virtual ~Decoder_RSC_BCJR_seq_std() = default;
 
-#ifdef _MSC_VER // Windows with MSVC
-	virtual Decoder_RSC_BCJR_seq<B,R>* clone() const;
-#else
 	virtual Decoder_RSC_BCJR_seq_std<B,R,RD,MAX1,MAX2>* clone() const;
-#endif
 
 protected:
 	virtual void _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);

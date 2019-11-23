@@ -51,17 +51,35 @@ void BFER_ite<B,R,Q>
 ::__build_communication_chain(const int tid)
 {
 	// build the objects
-	source          [tid] = build_source     (tid);
-	crc             [tid] = build_crc        (tid);
-	codec           [tid] = build_codec      (tid);
-	modem           [tid] = build_modem      (tid);
-	channel         [tid] = build_channel    (tid);
-	quantizer       [tid] = build_quantizer  (tid);
-	coset_real      [tid] = build_coset_real (tid);
-	coset_bit       [tid] = build_coset_bit  (tid);
-	interleaver_core[tid] = build_interleaver(tid);
-	interleaver_bit [tid].reset(factory::Interleaver::build<B>(*interleaver_core[tid]));
-	interleaver_llr [tid].reset(factory::Interleaver::build<Q>(*interleaver_core[tid]));
+	if (!params_BFER_ite.alloc_clone || tid == 0)
+	{
+		source          [tid] = build_source     (tid);
+		crc             [tid] = build_crc        (tid);
+		codec           [tid] = build_codec      (tid);
+		modem           [tid] = build_modem      (tid);
+		channel         [tid] = build_channel    (tid);
+		quantizer       [tid] = build_quantizer  (tid);
+		coset_real      [tid] = build_coset_real (tid);
+		coset_bit       [tid] = build_coset_bit  (tid);
+		interleaver_core[tid] = build_interleaver(tid);
+		interleaver_bit [tid].reset(factory::Interleaver::build<B>(*interleaver_core[tid]));
+		interleaver_llr [tid].reset(factory::Interleaver::build<Q>(*interleaver_core[tid]));
+	}
+
+	if (params_BFER_ite.alloc_clone)
+	{
+		source          [tid].reset(source          [0]->clone());
+		crc             [tid].reset(crc             [0]->clone());
+		codec           [tid].reset(codec           [0]->clone());
+		modem           [tid].reset(modem           [0]->clone());
+		channel         [tid].reset(channel         [0]->clone());
+		quantizer       [tid].reset(quantizer       [0]->clone());
+		coset_real      [tid].reset(coset_real      [0]->clone());
+		coset_bit       [tid].reset(coset_bit       [0]->clone());
+		interleaver_core[tid].reset(interleaver_core[0]->clone());
+		interleaver_bit [tid].reset(interleaver_bit [0]->clone());
+		interleaver_llr [tid].reset(interleaver_llr [0]->clone());
+	}
 
 	// set the noise
 	codec  [tid]->set_noise(*this->noise);
@@ -78,11 +96,11 @@ void BFER_ite<B,R,Q>
 
 	// set the seeds
 	const auto seed_src = rd_engine_seed[tid]();
-	const auto seed_chn = rd_engine_seed[tid]();
 	const auto seed_enc = rd_engine_seed[tid]();
 	const auto seed_dec = rd_engine_seed[tid]();
-	const auto seed_itl = params_BFER_ite.itl->core->seed +
-	                      (params_BFER_ite.itl->core->uniform ? rd_engine_seed[tid]() : 0);
+	      auto seed_itl = rd_engine_seed[tid]();
+	           seed_itl = params_BFER_ite.itl->core->seed + (params_BFER_ite.itl->core->uniform ? seed_itl : 0);
+	const auto seed_chn = rd_engine_seed[tid]();
 
 	      source          [tid]->                   set_seed(seed_src);
 	      channel         [tid]->                   set_seed(seed_chn);
@@ -184,13 +202,13 @@ std::unique_ptr<module::CRC<B>> BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<tools::Codec_SISO_SIHO<B,Q>> BFER_ite<B,R,Q>
+std::unique_ptr<tools::Codec_SISO<B,Q>> BFER_ite<B,R,Q>
 ::build_codec(const int tid)
 {
 	auto crc = this->params_BFER_ite.crc->type == "NO" ? nullptr : this->crc[tid].get();
 	std::unique_ptr<factory::Codec> params_cdc(params_BFER_ite.cdc->clone());
-	auto param_siso_siho = dynamic_cast<factory::Codec_SISO_SIHO*>(params_cdc.get());
-	return std::unique_ptr<tools::Codec_SISO_SIHO<B,Q>>(param_siso_siho->template build<B,Q>(crc));
+	auto param_siso_siho = dynamic_cast<factory::Codec_SISO*>(params_cdc.get());
+	return std::unique_ptr<tools::Codec_SISO<B,Q>>(param_siso_siho->template build<B,Q>(crc));
 }
 
 template <typename B, typename R, typename Q>

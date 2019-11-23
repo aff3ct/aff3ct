@@ -12,8 +12,7 @@ const std::string aff3ct::factory::Codec_LDPC_prefix = "cdc";
 
 Codec_LDPC
 ::Codec_LDPC(const std::string &prefix)
-: Codec          (Codec_LDPC_name, prefix),
-  Codec_SISO_SIHO(Codec_LDPC_name, prefix)
+: Codec_SISO(Codec_LDPC_name, prefix)
 {
 	Codec::set_enc(new Encoder_LDPC("enc"));
 	Codec::set_dec(new Decoder_LDPC("dec"));
@@ -34,7 +33,7 @@ void Codec_LDPC
 void Codec_LDPC
 ::get_description(cli::Argument_map_info &args) const
 {
-	Codec_SISO_SIHO::get_description(args);
+	Codec_SISO::get_description(args);
 
 	enc->get_description(args);
 	dec->get_description(args);
@@ -68,7 +67,7 @@ void Codec_LDPC
 void Codec_LDPC
 ::store(const cli::Argument_map_value &vals)
 {
-	Codec_SISO_SIHO::store(vals);
+	Codec_SISO::store(vals);
 
 	auto enc_ldpc = dynamic_cast<Encoder_LDPC*>(enc.get());
 	auto dec_ldpc = dynamic_cast<Decoder_LDPC*>(dec.get());
@@ -121,7 +120,7 @@ void Codec_LDPC
 void Codec_LDPC
 ::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
-	Codec_SISO_SIHO::get_headers(headers, full);
+	Codec_SISO::get_headers(headers, full);
 
 	enc->get_headers(headers, full);
 	dec->get_headers(headers, full);

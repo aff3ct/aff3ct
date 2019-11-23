@@ -13,7 +13,7 @@
 #include "Tools/Code/RS/RS_polynomial_generator.hpp"
 #include "Module/Encoder/Encoder.hpp"
 #include "Module/Decoder/Decoder_SIHO.hpp"
-#include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Factory/Module/Decoder/Decoder.hpp"
 
 namespace aff3ct
@@ -46,11 +46,6 @@ public:
 	template <typename B = int, typename Q = float>
 	module::Decoder_SIHO<B,Q>* build(const tools::RS_polynomial_generator &GF,
 	                                 module::Encoder<B> *encoder = nullptr) const;
-
-	template <typename B = int, typename Q = float>
-	module::Decoder_SIHO_HIHO<B,Q>* build_hiho(const tools::RS_polynomial_generator &GF,
-	                                           module::Encoder<B> *encoder = nullptr) const;
-
 };
 }
 }

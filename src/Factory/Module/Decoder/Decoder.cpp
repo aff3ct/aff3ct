@@ -115,22 +115,6 @@ module::Decoder_SIHO<B,Q>* Decoder
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename Q>
-module::Decoder_SIHO_HIHO<B,Q>* Decoder
-::build_hiho(module::Encoder<B> *encoder) const
-{
-	if (encoder)
-	{
-		if (this->type == "ML")
-		{
-			if (this->implem == "STD"  ) return new module::Decoder_ML_std  <B,Q>(this->K, this->N_cw, *encoder, this->hamming, this->n_frames);
-			if (this->implem == "NAIVE") return new module::Decoder_ML_naive<B,Q>(this->K, this->N_cw, *encoder, this->hamming, this->n_frames);
-		}
-	}
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
@@ -138,12 +122,7 @@ template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder::buil
 template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder::build<B_16,Q_16>(module::Encoder<B_16>*) const;
 template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder::build<B_32,Q_32>(module::Encoder<B_32>*) const;
 template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder::build<B_64,Q_64>(module::Encoder<B_64>*) const;
-template aff3ct::module::Decoder_SIHO_HIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder::build_hiho<B_8 ,Q_8 >(module::Encoder<B_8 >*) const;
-template aff3ct::module::Decoder_SIHO_HIHO<B_16,Q_16>* aff3ct::factory::Decoder::build_hiho<B_16,Q_16>(module::Encoder<B_16>*) const;
-template aff3ct::module::Decoder_SIHO_HIHO<B_32,Q_32>* aff3ct::factory::Decoder::build_hiho<B_32,Q_32>(module::Encoder<B_32>*) const;
-template aff3ct::module::Decoder_SIHO_HIHO<B_64,Q_64>* aff3ct::factory::Decoder::build_hiho<B_64,Q_64>(module::Encoder<B_64>*) const;
 #else
 template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder::build<B,Q>(module::Encoder<B>*) const;
-template aff3ct::module::Decoder_SIHO_HIHO<B,Q>* aff3ct::factory::Decoder::build_hiho<B,Q>(module::Encoder<B>*) const;
 #endif
 // ==================================================================================== explicit template instantiation

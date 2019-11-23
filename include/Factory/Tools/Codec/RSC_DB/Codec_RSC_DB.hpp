@@ -14,7 +14,7 @@
 #include "Tools/Codec/RSC_DB/Codec_RSC_DB.hpp"
 #include "Factory/Module/Encoder/RSC_DB/Encoder_RSC_DB.hpp"
 #include "Factory/Module/Decoder/RSC_DB/Decoder_RSC_DB.hpp"
-#include "Factory/Tools/Codec/Codec_SISO_SIHO.hpp"
+#include "Factory/Tools/Codec/Codec_SISO.hpp"
 
 namespace aff3ct
 {
@@ -22,7 +22,7 @@ namespace factory
 {
 extern const std::string Codec_RSC_DB_name;
 extern const std::string Codec_RSC_DB_prefix;
-class Codec_RSC_DB : public Codec_SISO_SIHO
+class Codec_RSC_DB : public Codec_SISO
 {
 public:
 	explicit Codec_RSC_DB(const std::string &p = Codec_RSC_DB_prefix);
