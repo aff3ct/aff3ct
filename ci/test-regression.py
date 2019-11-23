@@ -370,7 +370,7 @@ for fn in fileNames:
 	argsAFFECT = argsAFFECTcommand[:] # hard copy
 	argsAFFECT += simuRef.getSplitCommand()
 	argsAFFECT[len(argsAFFECTcommand)] = args.binaryPath;
-	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-meta", simuRef.getMetadata("title")]
+	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-meta", simuRef.getMetadata("title"), "--sim-clone"]
 	if args.maxFE:
 		argsAFFECT += ["-e", str(args.maxFE)]
 
