@@ -41,9 +41,6 @@ public:
 	const Sparse_matrix& get_G() const;
 	const LDPC_matrix_handler::Positions_vector& get_info_bits_pos() const;
 	const dvbs2_values& get_DVBS2() const;
-
-protected:
-	virtual void deep_copy(const Codec_LDPC<B,Q> &t);
 };
 }
 }
