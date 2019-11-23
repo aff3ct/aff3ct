@@ -10,8 +10,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_BCH<B, R>
-::Decoder_BCH(const int K, const int N, const int t, const int n_frames)
-: Decoder_SIHO<B,R>(K, N, n_frames, 1),
+::Decoder_BCH(const int K, const int N, const int t, const int n_frames, const int simd_inter_frame_level)
+: Decoder_SIHO<B,R>(K, N, n_frames, simd_inter_frame_level),
   t(t), N_p2_1(tools::next_power_of_2(N) -1), last_is_codeword(n_frames)
 {
 	const std::string name = "Decoder_BCH";
@@ -23,6 +23,13 @@ Decoder_BCH<B, R>
 		message << "'K' has to be greater than 3 ('K' = " << K << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+template <typename B, typename R>
+Decoder_BCH<B, R>
+::Decoder_BCH(const int K, const int N, const int t, const int n_frames)
+: Decoder_BCH(K, N, t, n_frames, 1)
+{
 }
 
 template <typename B, typename R>

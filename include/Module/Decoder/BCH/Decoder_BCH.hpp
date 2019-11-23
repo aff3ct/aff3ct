@@ -29,6 +29,10 @@ public:
 	virtual Decoder_BCH<B,R>* clone() const;
 
 	bool get_last_is_codeword(const int frame_id = -1) const;
+
+protected:
+	Decoder_BCH(const int K, const int N, const int t, const int n_frames, const int simd_inter_frame_level);
+
 };
 }
 }
