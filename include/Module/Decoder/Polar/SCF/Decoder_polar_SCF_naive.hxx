@@ -125,7 +125,7 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 
 	// identify the n_flips weakest llrs
 	std::partial_sort(index.begin(), index.begin() + n_flips, index.end(),
-	                  [this, &leaves](const int& a, const int& b)
+	                  [&leaves](const int& a, const int& b)
 	                  {return std::abs(leaves[a]->get_c()->lambda[0]) < std::abs(leaves[b]->get_c()->lambda[0]);}
 	                 );
 
@@ -182,7 +182,7 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 
 	// identify the n_flips weakest llrs
 	std::partial_sort(index.begin(), index.begin() + n_flips, index.end(),
-	                  [this, &leaves](const int& a, const int& b)
+	                  [&leaves](const int& a, const int& b)
 	                  {return std::abs(leaves[a]->get_c()->lambda[0]) < std::abs(leaves[b]->get_c()->lambda[0]);}
 	                 );
 
