@@ -246,16 +246,16 @@ void SC_Module
 
 SC_Module_container
 ::SC_Module_container(Module &module)
-: module(module), sc_modules()
+: module(&module), sc_modules()
 {
 }
 
 void SC_Module_container
 ::create_module(const int id)
 {
-	if (module.tasks_with_nullptr.size() != sc_modules.size())
+	if (module->tasks_with_nullptr.size() != sc_modules.size())
 	{
-		sc_modules.resize(module.tasks_with_nullptr.size());
+		sc_modules.resize(module->tasks_with_nullptr.size());
 		fill(sc_modules.begin(), sc_modules.end(), nullptr);
 	}
 
@@ -264,13 +264,13 @@ void SC_Module_container
 		if (sc_modules[id] != nullptr)
 			erase_module(id);
 
-		const std::string module_name = module.get_custom_name().empty() ? module.get_name() : module.get_custom_name();
-		sc_modules[id] = std::shared_ptr<SC_Module>(new SC_Module(module[id], (module_name + "::" + module[id].get_name()).c_str()));
+		const std::string module_name = module->get_custom_name().empty() ? module->get_name() : module->get_custom_name();
+		sc_modules[id] = std::shared_ptr<SC_Module>(new SC_Module((*module)[id], (module_name + "::" + (*module)[id].get_name()).c_str()));
 	}
 	else
 	{
 		std::stringstream message;
-		message << "'id' does not exist ('id' = " << id << ", 'module.name' = " << module.get_name() << ").";
+		message << "'id' does not exist ('id' = " << id << ", 'module.name' = " << module->get_name() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
@@ -285,7 +285,7 @@ void SC_Module_container
 	else
 	{
 		std::stringstream message;
-		message << "'id' does not exist ('id' = " << id << ", 'module.name' = " << module.get_name() << ").";
+		message << "'id' does not exist ('id' = " << id << ", 'module.name' = " << module->get_name() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }

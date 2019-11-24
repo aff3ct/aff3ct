@@ -39,6 +39,14 @@ void Module
 			this->tasks.push_back(std::move(t_new));
 		}
 	}
+
+#ifdef AFF3CT_SYSTEMC_MODULE
+	this->sc.module = this;
+	this->sc.sc_modules.clear();
+	for (size_t i = 0; i < m.sc.sc_modules.size(); i++)
+		if (m.sc.sc_modules[i] != nullptr)
+			this->sc.create_module(i);
+#endif
 }
 
 Module* Module
