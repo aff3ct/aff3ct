@@ -27,8 +27,12 @@ template <typename B = int, typename R = float>
 class Decoder_SISO : public Decoder_SIHO<B,R>
 {
 public:
-	inline Task&   operator[](const dec::tsk              t);
-	inline Socket& operator[](const dec::sck::decode_siso s);
+	inline Task&   operator[](const dec::tsk                 t);
+	inline Socket& operator[](const dec::sck::decode_hiho    s);
+	inline Socket& operator[](const dec::sck::decode_hiho_cw s);
+	inline Socket& operator[](const dec::sck::decode_siho    s);
+	inline Socket& operator[](const dec::sck::decode_siho_cw s);
+	inline Socket& operator[](const dec::sck::decode_siso    s);
 
 private:
 	std::vector<R> Y_N1;

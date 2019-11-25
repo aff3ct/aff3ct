@@ -20,6 +20,20 @@ Task& Decoder_SIHO<B,R>
 
 template <typename B, typename R>
 Socket& Decoder_SIHO<B,R>
+::operator[](const dec::sck::decode_hiho s)
+{
+	return Module::operator[]((size_t)dec::tsk::decode_hiho)[(size_t)s];
+}
+
+template <typename B, typename R>
+Socket& Decoder_SIHO<B,R>
+::operator[](const dec::sck::decode_hiho_cw s)
+{
+	return Module::operator[]((size_t)dec::tsk::decode_hiho_cw)[(size_t)s];
+}
+
+template <typename B, typename R>
+Socket& Decoder_SIHO<B,R>
 ::operator[](const dec::sck::decode_siho s)
 {
 	return Module::operator[]((size_t)dec::tsk::decode_siho)[(size_t)s];
