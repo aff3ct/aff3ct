@@ -106,6 +106,7 @@ template <typename R>
 void Channel<R>
 ::noise_changed()
 {
+	this->check_noise();
 }
 
 template<typename R>

@@ -201,6 +201,7 @@ template <typename B, typename Q>
 void Codec_polar<B,Q>
 ::noise_changed()
 {
+	Codec<B,Q>::noise_changed();
 	if (this->adaptive_fb && !this->generated_decoder)
 	{
 		this->fb_generator->set_noise(*this->noise);

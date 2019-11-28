@@ -23,7 +23,7 @@ namespace aff3ct
 namespace tools
 {
 template <typename B = int, typename Q = float>
-class Codec_polar : public Codec_SISO<B,Q>, public Frozenbits_notifier
+class Codec_polar : public Codec_SISO<B,Q>
 {
 protected:
 	const bool adaptive_fb;

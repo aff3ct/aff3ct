@@ -102,6 +102,7 @@ template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
 ::noise_changed()
 {
+	Modem<B,R,Q>::noise_changed();
 	if (!no_sig2)
 		this->generate_projection();
 }

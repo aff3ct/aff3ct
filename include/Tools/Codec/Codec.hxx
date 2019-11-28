@@ -150,6 +150,7 @@ template <typename B, typename Q>
 void Codec<B,Q>
 ::noise_changed()
 {
+	this->check_noise();
 }
 
 template <typename B, typename Q>

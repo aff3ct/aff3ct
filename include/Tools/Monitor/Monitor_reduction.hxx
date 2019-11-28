@@ -1,6 +1,7 @@
 #include <sstream>
 #include <numeric>
 
+#include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Monitor/Monitor_reduction.hpp"
 
@@ -11,11 +12,11 @@ namespace tools
 
 template <class M>
 Monitor_reduction_M<M>
-::Monitor_reduction_M(const std::vector<std::unique_ptr<M>>& _monitors)
+::Monitor_reduction_M(const std::vector<M*>& _monitors)
 : Monitor_reduction(),
   M((_monitors.size() && _monitors.front()) ? *_monitors.front() : M(),
 	std::accumulate(_monitors.begin(), _monitors.end(), 0,
-                    [](int tot, const std::unique_ptr<M>& m) { return tot + m->get_n_frames(); })),
+                    [](int tot, const M *m) { return tot + m->get_n_frames(); })),
   monitors(_monitors),
   collecter(*this)
 {
@@ -56,6 +57,20 @@ Monitor_reduction_M<M>
 
 		}
 	}
+}
+
+template <class M>
+Monitor_reduction_M<M>
+::Monitor_reduction_M(const std::vector<std::unique_ptr<M>>& _monitors)
+: Monitor_reduction_M(convert_to_ptr<M>(_monitors))
+{
+}
+
+template <class M>
+Monitor_reduction_M<M>
+::Monitor_reduction_M(const std::vector<std::shared_ptr<M>>& _monitors)
+: Monitor_reduction_M(convert_to_ptr<M>(_monitors))
+{
 }
 
 template <class M>

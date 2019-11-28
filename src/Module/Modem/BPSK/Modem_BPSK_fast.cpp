@@ -45,6 +45,7 @@ template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
 ::noise_changed()
 {
+	Modem<B,R,Q>::noise_changed();
 	this->two_on_square_sigma = (R)2.0 / (this->noise->get_value() * this->noise->get_value());
 }
 

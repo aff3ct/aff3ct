@@ -288,6 +288,7 @@ template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
 ::noise_changed()
 {
+	this->check_noise();
 }
 
 template <typename B, typename R, typename Q>

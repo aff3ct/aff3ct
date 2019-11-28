@@ -14,19 +14,17 @@ template <class C>
 std::vector<C*> Chain
 ::get_modules() const
 {
-	std::vector<Module*> ret;
+	std::vector<C*> ret;
 	for (auto &mm : this->modules)
 		for (auto &m : mm)
-			try
-			{
-				auto c = dynamic_cast<C*>(m.get());
+		{
+			auto c = dynamic_cast<C*>(m.get());
+			if (c != nullptr)
 				ret.push_back(c);
-			}
-			catch (...) {}
+		}
 
 	return ret;
 }
-
 
 }
 }
