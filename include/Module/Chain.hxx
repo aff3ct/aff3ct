@@ -9,5 +9,24 @@ size_t Chain
 {
 	return this->n_threads;
 }
+
+template <class C>
+std::vector<C*> Chain
+::get_modules() const
+{
+	std::vector<Module*> ret;
+	for (auto &mm : this->modules)
+		for (auto &m : mm)
+			try
+			{
+				auto c = dynamic_cast<C*>(m.get());
+				ret.push_back(c);
+			}
+			catch (...) {}
+
+	return ret;
+}
+
+
 }
 }
