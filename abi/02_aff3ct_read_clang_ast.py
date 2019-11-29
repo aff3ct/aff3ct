@@ -855,6 +855,7 @@ def find_task_method(class_entry, module_task_entry):
     module_task_name = module_task_entry['task_name']
     module_task_sockets = module_task_entry['sockets']
     module_task_nb_sockets = len(module_task_sockets)
+    task_methods = []
     # lookup all methods
     for method, method_entry in class_entry['class_all_methods_index'].items():
         # early filter out unlikely candidates
@@ -884,8 +885,8 @@ def find_task_method(class_entry, module_task_entry):
             if j >= module_task_nb_sockets:
                 break
         if method_is_task:
-            return method_entry
-    return None
+            task_methods.append(method_entry)
+    return task_methods
 
 # change a class method into a module task
 def make_task(class_entry, method_entry, module_task_entry):
@@ -897,6 +898,16 @@ def make_task(class_entry, method_entry, module_task_entry):
     if method_entry['method_kind'] != 'method':
         sys.stderr.write("invalid task kind (method_kind = "+method_entry['method_kind']+")" + "\n")
         sys.exit(1)
+
+    # check if number of sockets is ok
+    test_socket_nb = 0
+    for socket in method_entry['method_arguments']:
+        if '=' in socket['arg_signature']:
+            continue
+        test_socket_nb = test_socket_nb + 1
+
+    if test_socket_nb != len(module_task_entry['sockets']):
+        return
 
     # change method kind into 'task'
     method_entry['method_kind'] = 'task'
@@ -931,7 +942,7 @@ def make_task(class_entry, method_entry, module_task_entry):
                 socket_dir = 'output'
 
             if socket['soc_dir'] != '<fixme>' and socket['soc_dir'] != socket_dir:
-                sys.stderr.write("invalid socket direction: " + socket['soc_dir'] + "\n")
+                sys.stderr.write("method "+method+"\ninvalid socket "+str(socket_rank)+" direction: " + socket['soc_dir'] + " vs " + socket_dir + "\n")
                 sys.exit(1)
             socket['soc_dir'] = socket_dir
             socket['soc_fixme'] = False
@@ -966,12 +977,13 @@ def process_modules(json_modules_filename):
             class_entry['class_tasks'] = dict()
             for module_task_name, module_task_entry in module_entry['tasks'].items():
                 # for each module task, find a corresponding method in the class
-                task_method_entry = find_task_method(class_entry, module_task_entry)
-                if task_method_entry is None:
+                task_method_entries = find_task_method(class_entry, module_task_entry)
+                if len(task_method_entries) == 0:
                     sys.stderr.write('warning: no matching method found for task %s in module %s\n' % (module_task_name, class_name))
                     continue
-                # transform the method into a task
-                make_task(class_entry, task_method_entry, module_task_entry)
+                for task_method_entry in task_method_entries:
+                    # transform the method into a task
+                    make_task(class_entry, task_method_entry, module_task_entry)
 
 # process a fixes description .json file
 def process_fixes(json_fixes_filename):
