@@ -8,6 +8,8 @@
 #include <cstdint>
 #include <cstddef>
 
+#include "Tools/Interface/Interface_set_seed.hpp"
+#include "Tools/Interface/Interface_reset.hpp"
 #include "Module/Module.hpp"
 
 namespace aff3ct
@@ -36,7 +38,7 @@ namespace module
 		}
 	}
 
-class Decoder : public Module
+class Decoder : public Module, public tools::Interface_set_seed, public tools::Interface_reset
 {
 protected:
 	const int n_inter_frame_rest;
@@ -73,7 +75,8 @@ public:
 	bool is_auto_reset() const;
 	void set_auto_reset(const bool enable_auto_reset);
 
-	void reset(const int frame_id = -1);
+	void reset(const int frame_id);
+	void reset();
 
 	virtual void set_seed(const int seed);
 

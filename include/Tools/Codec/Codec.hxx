@@ -143,12 +143,12 @@ void Codec<B,Q>
 {
 	this->noise = &noise;
 	if (this->noise->is_set())
-		this->noise_changed();
+		this->notify_noise_update();
 }
 
 template <typename B, typename Q>
 void Codec<B,Q>
-::noise_changed()
+::notify_noise_update()
 {
 	this->check_noise();
 }

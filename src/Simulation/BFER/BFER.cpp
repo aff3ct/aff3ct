@@ -281,7 +281,7 @@ void BFER<B,R,Q>
 			for (auto& mm : m.second)
 				if (mm != nullptr)
 					for (auto &t : mm->tasks)
-						t->reset_stats();
+						t->reset();
 
 		tools::Monitor_reduction::reset_all();
 		tools::Terminal::reset();

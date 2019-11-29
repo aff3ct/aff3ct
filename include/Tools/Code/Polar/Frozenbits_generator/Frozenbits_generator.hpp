@@ -11,6 +11,8 @@
 #include <memory>
 #include <string>
 
+#include "Tools/Interface/Interface_get_set_noise.hpp"
+#include "Tools/Interface/Interface_clone.hpp"
 #include "Tools/Noise/Noise.hpp"
 
 namespace aff3ct
@@ -21,7 +23,7 @@ namespace tools
  * \class Frozenbits_generator
  * \brief Determines the frozen bit positions in a frame.
  */
-class Frozenbits_generator
+class Frozenbits_generator : public Interface_get_set_noise, public Interface_clone
 {
 private:
 	static std::thread::id master_thread_id;

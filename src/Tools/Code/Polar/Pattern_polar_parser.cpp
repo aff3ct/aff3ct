@@ -108,7 +108,7 @@ void Pattern_polar_parser
 }
 
 void Pattern_polar_parser
-::notify_frozenbits_update()
+::notify_noise_update()
 {
 	this->recursive_deallocate_nodes_patterns(this->polar_tree.get_root());
 	this->pattern_types.clear();

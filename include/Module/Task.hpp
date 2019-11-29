@@ -13,6 +13,8 @@
 #include <vector>
 #include <mipp.h>
 
+#include "Tools/Interface/Interface_clone.hpp"
+#include "Tools/Interface/Interface_reset.hpp"
 #include "Module/Chain.hpp"
 
 namespace aff3ct
@@ -24,7 +26,7 @@ class Socket;
 
 enum class socket_t : uint8_t { SIN, SIN_SOUT, SOUT };
 
-class Task
+class Task : public tools::Interface_clone, public tools::Interface_reset
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 	friend Socket;
@@ -75,7 +77,7 @@ public:
 
 	virtual ~Task() = default;
 
-	void reset_stats();
+	void reset();
 
 	void set_autoalloc      (const bool     autoalloc);
 	void set_autoexec       (const bool     autoexec );

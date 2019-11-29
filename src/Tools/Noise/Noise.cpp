@@ -92,14 +92,14 @@ void Noise<R>
 
 template<typename R>
 uint32_t Noise<R>
-::record_callback_changed(std::function<void()> callback)
+::record_callback_update(std::function<void()> callback)
 {
 	return this->callback_changed.record(callback);
 }
 
 template<typename R>
 bool Noise<R>
-::unrecord_callback_changed(const uint32_t id)
+::unrecord_callback_update(const uint32_t id)
 {
 	return this->callback_changed.unrecord(id);
 }

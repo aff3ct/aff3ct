@@ -53,9 +53,9 @@ void Modem_generic<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_generic<B,R,Q,MAX>
-::noise_changed()
+::notify_noise_update()
 {
-	Modem<B,R,Q>::noise_changed();
+	Modem<B,R,Q>::notify_noise_update();
 	if (!this->disable_sig2)
 		this->inv_sigma2 = (R)((R)1.0 / (2 * this->noise->get_value() * this->noise->get_value()));
 }

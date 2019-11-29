@@ -66,7 +66,7 @@ public:
 	static int size_mod(const int N, const int bps, const int L, const int p, const int ups);
 	static int size_fil(const int N, const int bps, const int L, const int p);
 
-	void noise_changed();
+	void notify_noise_update();
 
 protected:
 	void check_noise();

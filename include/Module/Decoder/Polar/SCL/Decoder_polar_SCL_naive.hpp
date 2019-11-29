@@ -11,7 +11,7 @@
 #include "Tools/Algo/Tree/Binary_node.hpp"
 #include "Tools/Algo/Tree/Binary_tree_metric.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
-#include "Tools/Code/Polar/Frozenbits_notifier.hpp"
+#include "Tools/Interface/Interface_notify_noise_update.hpp"
 
 #include "Module/Decoder/Decoder_SIHO.hpp"
 
@@ -32,7 +32,7 @@ public:
 };
 
 template <typename B, typename R, tools::proto_f<R> F = tools::f_LLR, tools::proto_g<B,R> G = tools::g_LLR>
-class Decoder_polar_SCL_naive : public Decoder_SIHO<B,R>, public tools::Frozenbits_notifier
+class Decoder_polar_SCL_naive : public Decoder_SIHO<B,R>, public tools::Interface_notify_noise_update
 {
 protected:
 	const int m;           // graph depth
@@ -53,7 +53,7 @@ public:
 
 	virtual Decoder_polar_SCL_naive<B,R,F,G>* clone() const;
 
-	virtual void notify_frozenbits_update();
+	virtual void notify_noise_update();
 
 protected:
 	virtual void deep_copy          (const Decoder_polar_SCL_naive<B,R,F,G>& m);

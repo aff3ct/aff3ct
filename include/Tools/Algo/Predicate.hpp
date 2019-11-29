@@ -5,6 +5,8 @@
 #ifndef PREDICATE_HPP
 #define PREDICATE_HPP
 
+#include "Tools/Interface/Interface_reset.hpp"
+
 namespace aff3ct
 {
 namespace tools
@@ -14,7 +16,7 @@ namespace tools
  *
  * \brief A predicate.
  */
-class Predicate
+class Predicate : public Interface_reset
 {
 public:
 	/*!

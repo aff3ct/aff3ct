@@ -23,7 +23,7 @@ public:
 
 	virtual Modem_OOK_BSC<B,R,Q>* clone() const;
 
-	void noise_changed();
+	void notify_noise_update();
 
 protected:
 	void check_noise();

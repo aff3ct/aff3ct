@@ -71,9 +71,9 @@ void Modem_SCMA<B,R,Q,PSI>
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 void Modem_SCMA<B,R,Q,PSI>
-::noise_changed()
+::notify_noise_update()
 {
-	Modem<B,R,Q>::noise_changed();
+	Modem<B,R,Q>::notify_noise_update();
 	this->n0 = this->disable_sig2 ? (R)1.0 : ((R)4.0 * this->noise->get_value() * this->noise->get_value());
 }
 

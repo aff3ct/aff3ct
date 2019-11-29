@@ -7,12 +7,14 @@
 
 #include <mipp.h>
 
+#include "Tools/Interface/Interface_clone.hpp"
+
 namespace aff3ct
 {
 namespace tools
 {
 template <typename B = int, typename R = float>
-class Post_processing_SISO
+class Post_processing_SISO : public Interface_clone
 {
 public:
 	virtual ~Post_processing_SISO() = default;

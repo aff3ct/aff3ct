@@ -97,6 +97,12 @@ void Decoder
 }
 
 void Decoder
+::reset()
+{
+	this->reset(-1);
+}
+
+void Decoder
 ::reset(const int frame_id)
 {
 	if (frame_id < 0)

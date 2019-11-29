@@ -95,7 +95,7 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
-::notify_frozenbits_update()
+::notify_noise_update()
 {
 	this->recursive_initialize_frozen_bits(this->polar_tree.get_root(), frozen_bits);
 }

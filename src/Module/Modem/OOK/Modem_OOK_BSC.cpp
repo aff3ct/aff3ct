@@ -27,9 +27,9 @@ Modem_OOK_BSC<B,R,Q>* Modem_OOK_BSC<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_OOK_BSC<B,R,Q>
-::noise_changed()
+::notify_noise_update()
 {
-	Modem<B,R,Q>::noise_changed();
+	Modem<B,R,Q>::notify_noise_update();
 	auto proba = this->noise->get_value(); // trow if noise is not set
 
 	if (proba == (R)0.)

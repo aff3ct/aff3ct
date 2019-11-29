@@ -30,8 +30,9 @@ Modem_OOK_AWGN<B,R,Q>* Modem_OOK_AWGN<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_OOK_AWGN<B,R,Q>
-::noise_changed()
+::notify_noise_update()
 {
+	Modem<B,R,Q>::notify_noise_update();
 	this->sigma_factor = (R)2.0 * this->noise->get_value() * this->noise->get_value();
 }
 

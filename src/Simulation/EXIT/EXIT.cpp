@@ -204,7 +204,7 @@ void EXIT<B,R>
 				for (auto& mm : m.second)
 					if (mm != nullptr)
 						for (auto &t : mm->tasks)
-							t->reset_stats();
+							t->reset();
 
 			if (tools::Terminal::is_over())
 				break;
@@ -359,7 +359,7 @@ std::unique_ptr<tools::Codec_SISO<B,R>> EXIT<B,R>
 	codec->set_noise(this->noise);
 
 	auto ptr = codec.get();
-	this->noise.record_callback_changed([ptr]() { ptr->noise_changed(); });
+	this->noise.record_callback_update([ptr]() { ptr->notify_noise_update(); });
 
 	return codec;
 }
@@ -372,7 +372,7 @@ std::unique_ptr<module::Modem<B,R,R>> EXIT<B,R>
 	modem->set_noise(this->noise);
 
 	auto ptr = modem.get();
-	this->noise.record_callback_changed([ptr]() { ptr->noise_changed(); });
+	this->noise.record_callback_update([ptr]() { ptr->notify_noise_update(); });
 
 	return modem;
 }
@@ -387,7 +387,7 @@ std::unique_ptr<module::Modem<B,R>> EXIT<B,R>
 	modem->set_noise(this->noise_a);
 
 	auto ptr = modem.get();
-	this->noise_a.record_callback_changed([ptr]() { ptr->noise_changed(); });
+	this->noise_a.record_callback_update([ptr]() { ptr->notify_noise_update(); });
 
 	return modem;
 }
@@ -400,7 +400,7 @@ std::unique_ptr<module::Channel<R>> EXIT<B,R>
 	channel->set_noise(this->noise);
 
 	auto ptr = channel.get();
-	this->noise.record_callback_changed([ptr]() { ptr->noise_changed(); });
+	this->noise.record_callback_update([ptr]() { ptr->notify_noise_update(); });
 
 	return channel;
 }
@@ -420,7 +420,7 @@ std::unique_ptr<module::Channel<R>> EXIT<B,R>
 	channel->set_noise(this->noise_a);
 
 	auto ptr = channel.get();
-	this->noise_a.record_callback_changed([ptr]() { ptr->noise_changed(); });
+	this->noise_a.record_callback_update([ptr]() { ptr->notify_noise_update(); });
 
 	return channel;
 }

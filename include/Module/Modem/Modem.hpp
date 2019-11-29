@@ -10,6 +10,8 @@
 #include <memory>
 #include <vector>
 
+#include "Tools/Interface/Interface_get_set_noise.hpp"
+#include "Tools/Interface/Interface_notify_noise_update.hpp"
 #include "Tools/Noise/Noise.hpp"
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
@@ -47,7 +49,9 @@ namespace module
  * Please use Modem for inheritance (instead of Modem)
  */
 template <typename B = int, typename R = float, typename Q = R>
-class Modem : public Module
+class Modem : public Module,
+              public tools::Interface_get_set_noise,
+              public tools::Interface_notify_noise_update
 {
 public:
 	inline Task&   operator[](const mdm::tsk                 t);
@@ -115,7 +119,7 @@ public:
 
 	bool is_demodulator() const;
 
-	const tools::Noise<>* get_noise() const;
+	const tools::Noise<>& get_noise() const;
 
 	void set_noise(const tools::Noise<>& noise);
 
@@ -242,7 +246,7 @@ public:
 	static int get_buffer_size_after_filtering(const int N, const int n_b_per_s, const int tl, const int max_wa_id,
 	                                           const bool complex);
 
-	virtual void noise_changed();
+	virtual void notify_noise_update();
 
 protected:
 	virtual void _modulate(const B *X_N1, R *X_N2, const int frame_id);

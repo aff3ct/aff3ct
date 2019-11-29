@@ -12,6 +12,7 @@
 #include <memory>
 #include <string>
 
+#include "Tools/Interface/Interface_clone.hpp"
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
 #ifdef AFF3CT_SYSTEMC_MODULE
@@ -27,7 +28,7 @@ namespace module
  *
  * \brief A Module is an abstract concept. Basically, all the objects used in a Simulation are a Module.
  */
-class Module
+class Module : public tools::Interface_clone
 {
 protected:
 	int         n_frames;     /*!< Number of frames to process in this Module */

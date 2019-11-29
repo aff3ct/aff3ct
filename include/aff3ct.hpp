@@ -1008,9 +1008,6 @@
 #ifndef FROZENBITS_GENERATOR_TV_HPP_
 #include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_TV.hpp>
 #endif
-#ifndef FROZENBITS_NOTIFIER_HPP
-#include <Tools/Code/Polar/Frozenbits_notifier.hpp>
-#endif
 #ifndef PATTERN_POLAR_PARSER_HPP
 #include <Tools/Code/Polar/Pattern_polar_parser.hpp>
 #endif
@@ -1181,6 +1178,24 @@
 #endif
 #ifndef GENERAL_UTILS_H_
 #include <Tools/general_utils.h>
+#endif
+#ifndef INTERFACE_CLONE_HPP__
+#include <Tools/Interface/Interface_clone.hpp>
+#endif
+#ifndef INTERFACE_GET_SET_NOISE_HPP__
+#include <Tools/Interface/Interface_get_set_noise.hpp>
+#endif
+#ifndef INTERFACE_NOTIFY_FROZENBITS_UPDATE_HPP__
+#include <Tools/Interface/Interface_notify_frozenbits_update.hpp>
+#endif
+#ifndef INTERFACE_NOTIFY_NOISE_UPDATE_HPP__
+#include <Tools/Interface/Interface_notify_noise_update.hpp>
+#endif
+#ifndef INTERFACE_RESET_HPP__
+#include <Tools/Interface/Interface_reset.hpp>
+#endif
+#ifndef INTERFACE_SET_SEED_HPP__
+#include <Tools/Interface/Interface_set_seed.hpp>
 #endif
 #ifndef INTERLEAVER_CORE_ARP_DVB1_HPP
 #include <Tools/Interleaver/ARP/Interleaver_core_ARP_DVB_RCS1.hpp>

@@ -31,9 +31,9 @@ Modem_OOK_optical<B,R,Q>* Modem_OOK_optical<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_OOK_optical<B,R,Q>
-::noise_changed()
+::notify_noise_update()
 {
-	Modem<B,R,Q>::noise_changed();
+	Modem<B,R,Q>::notify_noise_update();
 	this->current_dist = &dist.get_distribution(this->noise->get_value());
 
 	if (this->current_dist == nullptr)

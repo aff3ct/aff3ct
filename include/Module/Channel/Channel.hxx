@@ -99,12 +99,12 @@ void Channel<R>
 {
 	this->noise = &noise;
 	if (this->noise->is_set())
-		this->noise_changed();
+		this->notify_noise_update();
 }
 
 template <typename R>
 void Channel<R>
-::noise_changed()
+::notify_noise_update()
 {
 	this->check_noise();
 }

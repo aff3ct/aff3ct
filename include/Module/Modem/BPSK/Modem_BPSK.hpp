@@ -29,7 +29,7 @@ public:
 	static int size_mod(const int N);
 	static int size_fil(const int N);
 
-	void noise_changed();
+	void notify_noise_update();
 
 protected:
 	void check_noise();

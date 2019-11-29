@@ -12,13 +12,15 @@
 #include <vector>
 #include <map>
 
+#include "Tools/Interface/Interface_reset.hpp"
+
 namespace aff3ct
 {
 namespace tools
 {
 
 template <typename R>
-class Histogram
+class Histogram : public Interface_reset
 {
 protected:
 	size_t n_values = 0;

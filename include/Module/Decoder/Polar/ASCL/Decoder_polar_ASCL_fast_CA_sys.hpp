@@ -45,7 +45,7 @@ public:
 
 	virtual Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>* clone() const;
 
-	virtual void notify_frozenbits_update();
+	virtual void notify_noise_update();
 
 protected:
 	virtual void deep_copy(const Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar> &m);

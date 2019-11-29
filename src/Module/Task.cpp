@@ -503,7 +503,7 @@ void Task
 }
 
 void Task
-::reset_stats()
+::reset()
 {
 	this->n_calls        =                          0;
 	this->duration_total = std::chrono::nanoseconds(0);

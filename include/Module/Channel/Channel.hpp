@@ -10,6 +10,9 @@
 #include <vector>
 #include <memory>
 
+#include "Tools/Interface/Interface_get_set_noise.hpp"
+#include "Tools/Interface/Interface_notify_noise_update.hpp"
+#include "Tools/Interface/Interface_set_seed.hpp"
 #include "Tools/Noise/Noise.hpp"
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
@@ -40,7 +43,10 @@ namespace module
  * Please use Channel for inheritance (instead of Channel).
  */
 template <typename R = float>
-class Channel : public Module
+class Channel : public Module,
+                public tools::Interface_get_set_noise,
+                public tools::Interface_notify_noise_update,
+                public tools::Interface_set_seed
 {
 public:
 	inline Task&   operator[](const chn::tsk               t);
@@ -101,7 +107,7 @@ public:
 
 	virtual void add_noise_wg(const R *X_N, R *Y_N, R *H_N, const int frame_id = -1);
 
-	virtual void noise_changed();
+	virtual void notify_noise_update();
 
 protected:
 	virtual void _add_noise(const R *X_N, R *Y_N, const int frame_id);

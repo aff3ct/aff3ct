@@ -119,7 +119,7 @@ void BFER_ite_threads<B,R,Q>
 
 		mdm[mdm::sck::modulate::X_N1](itb[itl::sck::interleave::itl]);
 		mdm[mdm::tsk::modulate].exec();
-		mdm[mdm::tsk::modulate].reset_stats();
+		mdm[mdm::tsk::modulate].reset();
 	}
 	else
 	{

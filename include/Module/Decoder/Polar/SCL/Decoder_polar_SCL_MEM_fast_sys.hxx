@@ -219,9 +219,9 @@ Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>* Decoder_polar_SCL_MEM_fast_sys<B,
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
-::notify_frozenbits_update()
+::notify_noise_update()
 {
-	polar_patterns.notify_frozenbits_update();
+	polar_patterns.notify_noise_update();
 }
 
 template <typename B, typename R, class API_polar>

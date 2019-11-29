@@ -100,9 +100,9 @@ Modem_CPM<B,R,Q,MAX>* Modem_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
-::noise_changed()
+::notify_noise_update()
 {
-	Modem<B,R,Q>::noise_changed();
+	Modem<B,R,Q>::notify_noise_update();
 	if (!no_sig2)
 		this->generate_projection();
 }

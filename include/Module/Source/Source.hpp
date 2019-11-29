@@ -9,6 +9,7 @@
 #include <memory>
 #include <vector>
 
+#include "Tools/Interface/Interface_set_seed.hpp"
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
 #include "Module/Module.hpp"
@@ -37,7 +38,7 @@ namespace module
  * Please use Source for inheritance (instead of Source).
  */
 template <typename B = int>
-class Source : public Module
+class Source : public Module, public tools::Interface_set_seed
 {
 public:
 	inline Task&   operator[](const src::tsk           t);

@@ -10,6 +10,9 @@
 #include <vector>
 #include <memory>
 
+#include "Tools/Interface/Interface_get_set_noise.hpp"
+#include "Tools/Interface/Interface_notify_noise_update.hpp"
+#include "Tools/Interface/Interface_clone.hpp"
 #include "Tools/Interleaver/Interleaver_core.hpp"
 #include "Tools/Noise/Noise.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
@@ -23,7 +26,9 @@ namespace tools
 {
 
 template <typename B = int, typename Q = float>
-class Codec
+class Codec : public Interface_get_set_noise,
+              public Interface_notify_noise_update,
+              public Interface_clone
 {
 private:
 	std::shared_ptr<Interleaver_core   < >> interleaver_core;
@@ -56,7 +61,7 @@ public:
 
 	virtual void set_noise(const Noise<>& noise);
 
-	virtual void noise_changed();
+	virtual void notify_noise_update();
 
 protected:
 	virtual void deep_copy(const Codec<B,Q> &t);

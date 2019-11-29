@@ -39,7 +39,7 @@ public:
 	static int size_mod(const int N, const tools::Constellation<R>& c);
 	static int size_fil(const int N, const tools::Constellation<R>& c);
 
-	void noise_changed();
+	void notify_noise_update();
 
 protected:
 	void check_noise();

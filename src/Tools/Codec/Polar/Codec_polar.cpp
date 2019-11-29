@@ -96,7 +96,7 @@ Codec_polar<B,Q>
 	try
 	{
 		this->set_encoder(enc_params.build<B>(*frozen_bits));
-		fb_encoder = dynamic_cast<Frozenbits_notifier*>(&this->get_encoder());
+		fb_encoder = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_encoder());
 	}
 	catch (cannot_allocate const&)
 	{
@@ -117,7 +117,7 @@ Codec_polar<B,Q>
 
 	try
 	{
-		this->fb_decoder = dynamic_cast<Frozenbits_notifier*>(&this->get_decoder_siho());
+		this->fb_decoder = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_decoder_siho());
 	}
 	catch(std::exception&) {}
 
@@ -182,9 +182,9 @@ void Codec_polar<B,Q>
 	if (t.puncturer_shortlast != nullptr)
 		this->puncturer_shortlast = dynamic_cast<module::Puncturer_polar_shortlast<B,Q>*>(&this->get_puncturer());
 	if (t.fb_encoder != nullptr)
-		this->fb_encoder = dynamic_cast<Frozenbits_notifier*>(&this->get_encoder());
+		this->fb_encoder = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_encoder());
 	if (t.fb_decoder != nullptr)
-		this->fb_decoder = dynamic_cast<Frozenbits_notifier*>(&this->get_decoder_siho());
+		this->fb_decoder = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_decoder_siho());
 }
 
 template <typename B, typename Q>
@@ -192,16 +192,16 @@ void Codec_polar<B,Q>
 ::notify_frozenbits_update()
 {
 	if (this->fb_decoder)
-		this->fb_decoder->notify_frozenbits_update();
+		this->fb_decoder->notify_noise_update();
 	if (this->fb_encoder)
-		this->fb_encoder->notify_frozenbits_update();
+		this->fb_encoder->notify_noise_update();
 }
 
 template <typename B, typename Q>
 void Codec_polar<B,Q>
-::noise_changed()
+::notify_noise_update()
 {
-	Codec<B,Q>::noise_changed();
+	Codec<B,Q>::notify_noise_update();
 	if (this->adaptive_fb && !this->generated_decoder)
 	{
 		this->fb_generator->set_noise(*this->noise);

@@ -223,9 +223,9 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>* Decoder_polar_SC_fast_sys<B,R,API_pola
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::notify_frozenbits_update()
+::notify_noise_update()
 {
-	polar_patterns.notify_frozenbits_update();
+	polar_patterns.notify_noise_update();
 }
 
 template <typename B, typename R, class API_polar>

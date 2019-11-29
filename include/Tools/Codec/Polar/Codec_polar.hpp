@@ -9,7 +9,7 @@
 #include <memory>
 
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
-#include "Tools/Code/Polar/Frozenbits_notifier.hpp"
+#include "Tools/Interface/Interface_notify_frozenbits_update.hpp"
 #include "Module/CRC/CRC.hpp"
 #include "Module/Puncturer/Polar/Puncturer_polar_shortlast.hpp"
 #include "Factory/Module/Encoder/Polar/Encoder_polar.hpp"
@@ -33,8 +33,8 @@ protected:
 	std::shared_ptr<Frozenbits_generator> fb_generator;
 
 	module::Puncturer_polar_shortlast<B,Q>* puncturer_shortlast;
-	Frozenbits_notifier* fb_decoder;
-	Frozenbits_notifier* fb_encoder;
+	Interface_notify_frozenbits_update* fb_decoder;
+	Interface_notify_frozenbits_update* fb_encoder;
 
 public:
 	Codec_polar(const factory::Frozenbits_generator &fb_par,
@@ -51,8 +51,8 @@ public:
 	bool is_generated_decoder() const;
 	const Frozenbits_generator& get_frozen_bits_generator() const;
 
-	void noise_changed();
-	virtual void notify_frozenbits_update();
+	void notify_frozenbits_update();
+	virtual void notify_noise_update();
 
 protected:
 	virtual void deep_copy(const Codec_polar<B,Q> &t);

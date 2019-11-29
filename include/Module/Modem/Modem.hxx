@@ -281,18 +281,18 @@ void Modem<B,R,Q>
 {
 	this->noise = &noise;
 	if (this->noise->is_set())
-		this->noise_changed();
+		this->notify_noise_update();
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::noise_changed()
+::notify_noise_update()
 {
 	this->check_noise();
 }
 
 template <typename B, typename R, typename Q>
-const tools::Noise<>* Modem<B,R,Q>
+const tools::Noise<>& Modem<B,R,Q>
 ::get_noise() const
 {
 	if (this->noise == nullptr)
@@ -302,7 +302,7 @@ const tools::Noise<>* Modem<B,R,Q>
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	return this->noise;
+	return *this->noise;
 }
 
 template <typename B, typename R, typename Q>

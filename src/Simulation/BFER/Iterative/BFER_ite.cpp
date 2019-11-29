@@ -89,9 +89,9 @@ void BFER_ite<B,R,Q>
 	auto ptr_cdc = codec  [tid].get();
 	auto ptr_mdm = modem  [tid].get();
 	auto ptr_chn = channel[tid].get();
-	this->noise->record_callback_changed([ptr_cdc](){ ptr_cdc->noise_changed(); });
-	this->noise->record_callback_changed([ptr_mdm](){ ptr_mdm->noise_changed(); });
-	this->noise->record_callback_changed([ptr_chn](){ ptr_chn->noise_changed(); });
+	this->noise->record_callback_update([ptr_cdc](){ ptr_cdc->notify_noise_update(); });
+	this->noise->record_callback_update([ptr_mdm](){ ptr_mdm->notify_noise_update(); });
+	this->noise->record_callback_update([ptr_chn](){ ptr_chn->notify_noise_update(); });
 
 	// set the seeds
 	const auto seed_src = rd_engine_seed[tid]();

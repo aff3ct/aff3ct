@@ -34,7 +34,7 @@ Encoder_polar<B>
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	this->notify_frozenbits_update();
+	this->notify_noise_update();
 }
 
 template <typename B>
@@ -106,7 +106,7 @@ bool Encoder_polar<B>
 
 template <typename B>
 void Encoder_polar<B>
-::notify_frozenbits_update()
+::notify_noise_update()
 {
 	auto k = 0;
 	for (auto n = 0; n < this->N; n++)

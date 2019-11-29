@@ -44,8 +44,8 @@ public:
 	bool is_of_type      (Noise_type t) const noexcept;
 	void is_of_type_throw(Noise_type t) const;
 
-	uint32_t record_callback_changed(std::function<void()> callback);
-	bool unrecord_callback_changed(const uint32_t id);
+	uint32_t record_callback_update(std::function<void()> callback);
+	bool unrecord_callback_update(const uint32_t id);
 	void clear_callbacks_changed();
 
 	static inline Noise_type str_to_type(const std::string& str);

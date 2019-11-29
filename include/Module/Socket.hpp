@@ -11,13 +11,14 @@
 #include <cstddef>
 #include <typeindex>
 
+#include "Tools/Interface/Interface_reset.hpp"
 #include "Module/Task.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
-class Socket
+class Socket : public tools::Interface_reset
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 	friend Task;

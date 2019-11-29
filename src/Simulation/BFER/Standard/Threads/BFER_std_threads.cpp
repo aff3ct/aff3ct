@@ -113,7 +113,7 @@ void BFER_std_threads<B,R,Q>
 
 		mdm[mdm::sck::modulate::X_N1](pct[pct::sck::puncture::X_N2]);
 		mdm[mdm::tsk::modulate].exec();
-		mdm[mdm::tsk::modulate].reset_stats();
+		mdm[mdm::tsk::modulate].reset();
 	}
 	else
 	{

@@ -54,10 +54,10 @@ void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
-::notify_frozenbits_update()
+::notify_noise_update()
 {
-	Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>::notify_frozenbits_update();
-	sc_decoder->notify_frozenbits_update();
+	Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>::notify_noise_update();
+	sc_decoder->notify_noise_update();
 }
 
 template <typename B, typename R, class API_polar>
