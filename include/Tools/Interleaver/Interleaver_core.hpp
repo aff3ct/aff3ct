@@ -10,14 +10,20 @@
 #include <vector>
 
 #include "Tools/Interface/Interface_set_seed.hpp"
+#ifndef _MSC_VER
 #include "Tools/Interface/Interface_clone.hpp"
+#endif
 
 namespace aff3ct
 {
 namespace tools
 {
 template <typename T = uint32_t>
+#ifdef _MSC_VER
+class Interleaver_core : public Interface_set_seed
+#else
 class Interleaver_core : public Interface_set_seed, public Interface_clone
+#endif
 {
 protected:
 	const int size;

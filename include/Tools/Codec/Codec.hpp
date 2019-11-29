@@ -12,7 +12,9 @@
 
 #include "Tools/Interface/Interface_get_set_noise.hpp"
 #include "Tools/Interface/Interface_notify_noise_update.hpp"
+#ifndef _MSC_VER
 #include "Tools/Interface/Interface_clone.hpp"
+#endif
 #include "Tools/Interleaver/Interleaver_core.hpp"
 #include "Tools/Noise/Noise.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
@@ -26,9 +28,11 @@ namespace tools
 {
 
 template <typename B = int, typename Q = float>
-class Codec : public Interface_get_set_noise,
-              public Interface_notify_noise_update,
-              public Interface_clone
+#ifdef _MSC_VER
+class Codec : public Interface_get_set_noise, public Interface_notify_noise_update
+#else
+class Codec : public Interface_get_set_noise, public Interface_notify_noise_update, public Interface_clone
+#endif
 {
 private:
 	std::shared_ptr<Interleaver_core   < >> interleaver_core;
