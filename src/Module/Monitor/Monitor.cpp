@@ -23,17 +23,6 @@ Monitor* Monitor
 }
 
 void Monitor
-::clear_callbacks()
-{
-}
-
-void Monitor
 ::reset()
 {
-}
-
-Monitor& Monitor
-::operator=(const Monitor& m)
-{
-	return *this;
 }

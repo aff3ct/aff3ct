@@ -55,8 +55,8 @@ protected:
 	using Monitor_BFER_reduction_type = tools::Monitor_reduction_MPI<Monitor_BFER_type>;
 	using Monitor_MI_reduction_type   = tools::Monitor_reduction_MPI<Monitor_MI_type  >;
 #else
-	using Monitor_BFER_reduction_type = tools::Monitor_reduction_M<Monitor_BFER_type>;
-	using Monitor_MI_reduction_type   = tools::Monitor_reduction_M<Monitor_MI_type  >;
+	using Monitor_BFER_reduction_type = tools::Monitor_reduction<Monitor_BFER_type>;
+	using Monitor_MI_reduction_type   = tools::Monitor_reduction<Monitor_MI_type  >;
 #endif
 
 	std::vector<std::unique_ptr<Monitor_MI_type         >> monitor_mi;

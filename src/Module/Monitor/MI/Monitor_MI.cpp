@@ -301,8 +301,6 @@ template <typename B, typename R>
 void Monitor_MI<B,R>
 ::clear_callbacks()
 {
-	Monitor::clear_callbacks();
-
 	this->callback_check.clear();
 	this->callback_n_trials_limit_achieved.clear();
 }
@@ -311,17 +309,14 @@ template <typename B, typename R>
 void Monitor_MI<B,R>
 ::collect(const Monitor& m, bool fully)
 {
-	collect(dynamic_cast<const Monitor_MI<B,R>&>(m), fully);
+	collect(static_cast<const Monitor_MI<B,R>&>(m), fully);
 }
 
 template <typename B, typename R>
 void Monitor_MI<B,R>
 ::collect(const Monitor_MI<B,R>& m, bool fully)
 {
-	equivalent(m, true);
-
 	collect(m.get_attributes());
-
 	if (fully)
 		this->mutinfo_hist.add_values(m.mutinfo_hist);
 }
@@ -341,23 +336,18 @@ Monitor_MI<B,R>& Monitor_MI<B,R>
 	return *this;
 }
 
-
-
 template <typename B, typename R>
 void Monitor_MI<B,R>
 ::copy(const Monitor& m, bool fully)
 {
-	copy(dynamic_cast<const Monitor_MI<B,R>&>(m), fully);
+	copy(static_cast<const Monitor_MI<B,R>&>(m), fully);
 }
 
 template <typename B, typename R>
 void Monitor_MI<B,R>
 ::copy(const Monitor_MI<B,R>& m, bool fully)
 {
-	equivalent(m, true);
-
 	copy(m.get_attributes());
-
 	if (fully)
 		this->mutinfo_hist = m.mutinfo_hist;
 }
@@ -368,7 +358,6 @@ void Monitor_MI<B,R>
 {
 	vals = v;
 }
-
 
 template <typename B, typename R>
 Monitor_MI<B,R>& Monitor_MI<B,R>

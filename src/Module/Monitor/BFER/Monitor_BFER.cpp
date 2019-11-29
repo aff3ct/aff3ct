@@ -355,10 +355,8 @@ template <typename B>
 void Monitor_BFER<B>
 ::clear_callbacks()
 {
-	Monitor::clear_callbacks();
-
-	this->callback_fe               .clear();
-	this->callback_check            .clear();
+	this->callback_fe.clear();
+	this->callback_check.clear();
 	this->callback_fe_limit_achieved.clear();
 }
 
@@ -366,17 +364,14 @@ template <typename B>
 void Monitor_BFER<B>
 ::collect(const Monitor& m, bool fully)
 {
-	collect(dynamic_cast<const Monitor_BFER<B>&>(m), fully);
+	collect(static_cast<const Monitor_BFER<B>&>(m), fully);
 }
 
 template <typename B>
 void Monitor_BFER<B>
 ::collect(const Monitor_BFER<B>& m, bool fully)
 {
-	equivalent(m, true);
-
 	collect(m.get_attributes());
-
 	if (fully)
 		this->err_hist.add_values(m.err_hist);
 }
@@ -396,23 +391,18 @@ Monitor_BFER<B>& Monitor_BFER<B>
 	return *this;
 }
 
-
-
 template <typename B>
 void Monitor_BFER<B>
 ::copy(const Monitor& m, bool fully)
 {
-	copy(dynamic_cast<const Monitor_BFER<B>&>(m), fully);
+	copy(static_cast<const Monitor_BFER<B>&>(m), fully);
 }
 
 template <typename B>
 void Monitor_BFER<B>
 ::copy(const Monitor_BFER<B>& m, bool fully)
 {
-	equivalent(m, true);
-
 	copy(m.get_attributes());
-
 	if (fully)
 		this->err_hist = m.err_hist;
 }

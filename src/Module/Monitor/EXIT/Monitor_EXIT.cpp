@@ -354,15 +354,13 @@ template <typename B, typename R>
 void Monitor_EXIT<B,R>
 ::collect(const Monitor& m, bool fully)
 {
-	collect(dynamic_cast<const Monitor_EXIT<B,R>&>(m), fully);
+	collect(static_cast<const Monitor_EXIT<B,R>&>(m), fully);
 }
 
 template <typename B, typename R>
 void Monitor_EXIT<B,R>
 ::collect(const Monitor_EXIT<B,R>& m, bool fully)
 {
-	equivalent(m, true);
-
 	collect(m.get_attributes());
 }
 
@@ -385,15 +383,13 @@ template <typename B, typename R>
 void Monitor_EXIT<B,R>
 ::copy(const Monitor& m, bool fully)
 {
-	copy(dynamic_cast<const Monitor_EXIT<B,R>&>(m), fully);
+	copy(static_cast<const Monitor_EXIT<B,R>&>(m), fully);
 }
 
 template <typename B, typename R>
 void Monitor_EXIT<B,R>
 ::copy(const Monitor_EXIT<B,R>& m, bool fully)
 {
-	equivalent(m, true);
-
 	copy(m.get_attributes());
 }
 
@@ -436,7 +432,6 @@ Monitor_EXIT<B,R>::Attributes
 {
 	reset();
 }
-
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"

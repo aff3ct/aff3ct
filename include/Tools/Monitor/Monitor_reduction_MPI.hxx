@@ -16,7 +16,7 @@ namespace tools
 template <class M>
 Monitor_reduction_MPI<M>
 ::Monitor_reduction_MPI(const std::vector<std::unique_ptr<M>> &monitors)
-: Monitor_reduction_M<M>(monitors)
+: Monitor_reduction<M>(monitors)
 {
 	const std::string name = "Monitor_reduction_MPI<" + monitors[0]->get_name() + ">";
 	this->set_name(name);
@@ -49,23 +49,16 @@ Monitor_reduction_MPI<M>
 
 template <class M>
 void Monitor_reduction_MPI<M>
-::_reduce(bool fully)
+::reduce(bool fully)
 {
 	fully = false;
 
-	Monitor_reduction_M<M>::_reduce(fully);
+	Monitor_reduction<M>::reduce(fully);
 
 	Attributes mvals_send = M::get_attributes(), mvals_recv;
 	MPI_Allreduce(&mvals_send, &mvals_recv, 1, MPI_monitor_vals, MPI_Op_reduce_monitors, MPI_COMM_WORLD);
 
 	M::copy(mvals_recv);
-}
-
-template <class M>
-void Monitor_reduction_MPI<M>
-::reset()
-{
-	Monitor_reduction_M<M>::reset();
 }
 
 template <class M>
