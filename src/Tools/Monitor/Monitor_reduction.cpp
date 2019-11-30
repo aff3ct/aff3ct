@@ -45,12 +45,9 @@ bool Monitor_reduction_static
 }
 
 bool Monitor_reduction_static
-::is_done_all(bool fully, bool final)
+::is_done_all(bool fully)
 {
-	if (final)
-		last_reduce_all(fully);
-	else
-		reduce_all(fully, false);
+	reduce_all(fully, false);
 
 	bool is_done = false;
 
@@ -73,7 +70,6 @@ void Monitor_reduction_static
 ::last_reduce_all(bool fully)
 {
 	Monitor_reduction_static::set_stop_loop();
-
 	while(!_reduce(fully, true));
 }
 

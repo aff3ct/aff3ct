@@ -36,12 +36,17 @@ public:
 	 * \param fully call the reduction functions with this parameter
 	 * \return 'get_stop_loop()' result
 	 */
-	static bool is_done_all(bool fully = false, bool final = false);
+	static bool is_done_all(bool fully = false);
 
 	/*
 	 * \brief call _reduce with 'fully' and 'force' arguments
 	 */
 	static void reduce_all(bool fully = false, bool force = false);
+
+	/*
+	 * \brief loop on a forced reduction until '_reduce' call return 'true' after having call 'set_stop_loop()'
+	 */
+	static void last_reduce_all(bool fully = true);
 
 	/*
 	 * \brief throw if all process do not have the same number of monitors to reduce
@@ -81,11 +86,6 @@ protected:
 	virtual bool _is_done() = 0;
 
 private:
-	/*
-	 * \brief loop on a forced reduction until '_reduce' call return 'true' after having call 'set_stop_loop()'
-	 */
-	static void last_reduce_all(bool fully = false);
-
 	/*
 	 * \brief get if the current simulation loop must be stopped or not
 	 * \return true if loop must be stopped

@@ -183,11 +183,11 @@ void BFER<B,R,Q>
 		try
 		{
 			this->_launch();
-			tools::Monitor_reduction_static::is_done_all(true, true); // final reduction
+			tools::Monitor_reduction_static::last_reduce_all(); // final reduction
 		}
 		catch (std::exception const& e)
 		{
-			tools::Monitor_reduction_static::is_done_all(true, true); // final reduction
+			tools::Monitor_reduction_static::last_reduce_all(); // final reduction
 
 			terminal->final_report(std::cout); // display final report to not lost last line overwritten by the error
 			                                   // messages
