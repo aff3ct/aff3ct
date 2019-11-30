@@ -1,5 +1,7 @@
 #ifdef AFF3CT_MPI
 #include <mpi.h>
+#include <sstream>
+#include "Tools/Exception/exception.hpp"
 #endif
 #include <csignal>
 #include <cstdlib>
@@ -115,7 +117,12 @@ bool Terminal
 #ifdef AFF3CT_MPI
 	char over_send = (char)Terminal::over, over_recv;
 
-	MPI_Allreduce(&over_send, &over_recv, 1, MPI_CHAR, MPI_LOR, MPI_COMM_WORLD);
+	if (auto ret = MPI_Allreduce(&over_send, &over_recv, 1, MPI_CHAR, MPI_LOR, MPI_COMM_WORLD))
+	{
+		std::stringstream message;
+		message << "'MPI_Allreduce' returned '" << ret << "' error code.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	return (bool)over_recv;
 #else

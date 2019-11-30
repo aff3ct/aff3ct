@@ -29,9 +29,14 @@ private:
 
 public:
 	explicit Monitor_reduction_MPI(const std::vector<std::unique_ptr<M>> &monitors);
-	virtual ~Monitor_reduction_MPI() = default;
+	virtual ~Monitor_reduction_MPI();
+
+	virtual bool is_done();
 
 	virtual void reduce(bool fully = false);
+
+protected:
+	virtual bool _is_done();
 
 private:
 	static void MPI_reduce_monitors(void *in, void *inout, int *len, MPI_Datatype *datatype);

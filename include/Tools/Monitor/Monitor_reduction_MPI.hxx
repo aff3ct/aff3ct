@@ -48,6 +48,30 @@ Monitor_reduction_MPI<M>
 }
 
 template <class M>
+Monitor_reduction_MPI<M>
+::~Monitor_reduction_MPI()
+{
+	MPI_Type_free(&MPI_monitor_vals);
+	MPI_Op_free(&MPI_Op_reduce_monitors);
+}
+
+template <class M>
+bool Monitor_reduction_MPI<M>
+::is_done()
+{
+	std::stringstream message;
+	message << "'is_done' method is not available in MPI, please use the static 'is_done_all' method instead.";
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__, message.str());
+}
+
+template <class M>
+bool Monitor_reduction_MPI<M>
+::_is_done()
+{
+	return M::is_done();
+}
+
+template <class M>
 void Monitor_reduction_MPI<M>
 ::reduce(bool fully)
 {
@@ -56,7 +80,12 @@ void Monitor_reduction_MPI<M>
 	Monitor_reduction<M>::reduce(fully);
 
 	Attributes mvals_send = M::get_attributes(), mvals_recv;
-	MPI_Allreduce(&mvals_send, &mvals_recv, 1, MPI_monitor_vals, MPI_Op_reduce_monitors, MPI_COMM_WORLD);
+	if (auto ret = MPI_Allreduce(&mvals_send, &mvals_recv, 1, MPI_monitor_vals, MPI_Op_reduce_monitors, MPI_COMM_WORLD))
+	{
+		std::stringstream message;
+		message << "'MPI_Allreduce' returned '" << ret << "' error code.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	M::copy(mvals_recv);
 }

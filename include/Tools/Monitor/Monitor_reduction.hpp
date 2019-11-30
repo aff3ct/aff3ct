@@ -66,7 +66,7 @@ public:
 	 * \brief check if this monitor has done
 	 * \return true if has done
 	 */
-	virtual bool is_done() = 0;
+	virtual bool is_done();
 
 	/*
 	 * \brief do the reduction of this monitor
@@ -77,6 +77,8 @@ protected:
 	Monitor_reduction_static();
 
 	virtual ~Monitor_reduction_static() = default;
+
+	virtual bool _is_done() = 0;
 
 private:
 	/*
@@ -138,9 +140,10 @@ public:
 
 	virtual void reset();
 
-	virtual bool is_done();
-
 	virtual void reduce(bool fully = true);
+
+protected:
+	virtual bool _is_done();
 };
 }
 }

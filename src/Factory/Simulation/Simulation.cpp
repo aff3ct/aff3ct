@@ -130,7 +130,12 @@ void Simulation
 	int max_n_threads_global;
 	int max_n_threads_local = this->n_threads;
 
-	MPI_Allreduce(&max_n_threads_local, &max_n_threads_global, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
+	if (auto ret = MPI_Allreduce(&max_n_threads_local, &max_n_threads_global, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD))
+	{
+		std::stringstream message;
+		message << "'MPI_Allreduce' returned '" << ret << "' error code.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (max_n_threads_global <= 0)
 	{

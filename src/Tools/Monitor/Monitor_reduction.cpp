@@ -39,6 +39,12 @@ void Monitor_reduction_static
 }
 
 bool Monitor_reduction_static
+::is_done()
+{
+	return this->_is_done();
+}
+
+bool Monitor_reduction_static
 ::is_done_all(bool fully, bool final)
 {
 	if (final)
@@ -49,7 +55,7 @@ bool Monitor_reduction_static
 	bool is_done = false;
 
 	for(auto& m : Monitor_reduction_static::monitors)
-		is_done |= m->is_done();
+		is_done |= m->_is_done();
 
 	if (is_done)
 		set_stop_loop();
@@ -76,16 +82,31 @@ void Monitor_reduction_static
 {
 #ifdef AFF3CT_MPI
 	int n_monitor_send = Monitor_reduction_static::monitors.size(), n_monitor_recv;
-	MPI_Allreduce(&n_monitor_send, &n_monitor_recv, 1, MPI_INT, MPI_PROD, MPI_COMM_WORLD);
+	if (auto ret = MPI_Allreduce(&n_monitor_send, &n_monitor_recv, 1, MPI_INT, MPI_PROD, MPI_COMM_WORLD))
+	{
+		std::stringstream message;
+		message << "'MPI_Allreduce' returned '" << ret << "' error code.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	int np;
-	MPI_Comm_size(MPI_COMM_WORLD, &np);
+	if (auto ret = MPI_Comm_size(MPI_COMM_WORLD, &np))
+	{
+		std::stringstream message;
+		message << "'MPI_Comm_size' returned '" << ret << "' error code.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	int pow_np = std::pow(n_monitor_send, np);
 	if (n_monitor_recv != pow_np)
 	{
 		int mpi_rank;
-		MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+		if (auto ret = MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank))
+		{
+			std::stringstream message;
+			message << "'MPI_Comm_rank' returned '" << ret << "' error code.";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
 
 		std::stringstream message;
 		message << "The number of monitors to reduce (" << n_monitor_send << " monitors) with MPI on the process "
@@ -101,13 +122,23 @@ bool Monitor_reduction_static
 {
 #ifdef AFF3CT_MPI
 	int n_stop_recv, stop_send = Monitor_reduction_static::get_stop_loop() ? 1 : 0;
-	MPI_Allreduce(&stop_send, &n_stop_recv, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+	if (auto ret = MPI_Allreduce(&stop_send, &n_stop_recv, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD))
+	{
+		std::stringstream message;
+		message << "'MPI_Allreduce' returned '" << ret << "' error code.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (n_stop_recv > 0)
 		Monitor_reduction_static::set_stop_loop();
 
 	int np;
-	MPI_Comm_size(MPI_COMM_WORLD, &np);
+	if (auto ret = MPI_Comm_size(MPI_COMM_WORLD, &np))
+	{
+		std::stringstream message;
+		message << "'MPI_Comm_size' returned '" << ret << "' error code.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	return n_stop_recv == np;
 #else

@@ -84,7 +84,7 @@ void Monitor_reduction<M>
 
 template <class M>
 bool Monitor_reduction<M>
-::is_done()
+::_is_done()
 {
 	// only the master thread can do this
 	if ((std::this_thread::get_id() == Monitor_reduction_static::master_thread_id &&
