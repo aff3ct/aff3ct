@@ -2,17 +2,17 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-#include "Module/Chain/Chain.hpp"
+#include "Module/Subchain/Subchain.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
 
-Chain
-::Chain(const tools::Chain &chain)
+Subchain
+::Subchain(const tools::Chain &chain)
 : Module(chain.tasks_sequences[0][0]->get_module().get_n_frames()),
   chain(chain.clone())
 {
-	const std::string name = "Chain";
+	const std::string name = "Subchain";
 	this->set_name(name);
 	this->set_short_name(name);
 
@@ -60,7 +60,7 @@ Chain
 				this->template create_socket_in_out<double >(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
 		}
 	}
-	auto &last  = *this->chain->tasks_sequences[0][this->chain->tasks_sequences.size()-1];
+	auto &last  = *this->chain->tasks_sequences[0][this->chain->tasks_sequences[0].size()-1];
 	for (auto &s : last.sockets)
 	{
 		if (last.get_socket_type(*s) == socket_t::SOUT)
@@ -95,45 +95,85 @@ Chain
 		}
 	}
 
+	size_t sid = 0;
+	for (auto &s : last.sockets)
+	{
+		if (last.get_socket_type(*s) == socket_t::SOUT)
+		{
+			while (p.get_socket_type(*p.sockets[sid]) != socket_t::SOUT) sid++;
+			p.sockets[sid++]->bind(*s);
+		}
+	}
+
+	sid = 0;
+	for (auto &s : last.sockets)
+	{
+		if (last.get_socket_type(*s) == socket_t::SIN_SOUT)
+		{
+			while (p.get_socket_type(*p.sockets[sid]) != socket_t::SIN_SOUT) sid++;
+			p.sockets[sid++]->bind(*s);
+		}
+	}
+
 	this->create_codelet(p, [](Module &m, Task &t) -> int
 	{
-		auto &c = static_cast<Chain&>(m);
+		auto &c = static_cast<Subchain&>(m);
 
 		auto &first = *c.chain->tasks_sequences[0][0];
-		size_t sid_in = 0;
+		size_t sid = 0;
 		for (auto &s : first.sockets)
 		{
 			if (first.get_socket_type(*s) == socket_t::SIN || first.get_socket_type(*s) == socket_t::SIN_SOUT)
-				s->bind(t.sockets[sid_in]->get_dataptr());
-			sid_in++;
+				s->bind(t.sockets[sid]->get_dataptr());
+			sid++;
 		}
 
-		auto ret = c.chain->exec();
-
-		auto &last = *c.chain->tasks_sequences[0][c.chain->tasks_sequences.size()-1];
-		size_t sid_out = 0;
-		for (auto &s : last.sockets)
-		{
-			if (last.get_socket_type(*s) == socket_t::SOUT || last.get_socket_type(*s) == socket_t::SIN_SOUT)
-				t.sockets[sid_out]->bind(s->get_dataptr());
-			sid_out++;
-		}
-
-		return ret;
+		return c.chain->exec();
 	});
 }
 
-Chain* Chain
+tools::Chain& Subchain
+::get_chain()
+{
+	return *this->chain;
+}
+
+Subchain* Subchain
 ::clone() const
 {
-	auto m = new Chain(*this);
+	auto m = new Subchain(*this);
 	m->deep_copy(*this);
 	return m;
 }
 
-void Chain
-::deep_copy(const Chain& m)
+void Subchain
+::deep_copy(const Subchain& m)
 {
 	Module::deep_copy(m);
 	if (m.chain != nullptr) this->chain.reset(m.chain->clone());
+
+	auto &last = *this->chain->tasks_sequences[0][this->chain->tasks_sequences[0].size()-1];
+
+	auto &p = (*this)[sch::tsk::exec];
+
+	size_t sid = 0;
+	for (auto &s : last.sockets)
+	{
+		if (last.get_socket_type(*s) == socket_t::SOUT)
+		{
+			while (p.get_socket_type(*p.sockets[sid]) != socket_t::SOUT) sid++;
+			p.sockets[sid++]->bind(*s);
+		}
+	}
+
+	sid = 0;
+	for (auto &s : last.sockets)
+	{
+		if (last.get_socket_type(*s) == socket_t::SIN_SOUT)
+		{
+			while (p.get_socket_type(*p.sockets[sid]) != socket_t::SIN_SOUT) sid++;
+			p.sockets[sid++]->bind(*s);
+		}
+	}
+
 }

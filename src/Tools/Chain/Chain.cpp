@@ -23,7 +23,7 @@ Chain
 	}
 
 	std::vector<const module::Task*> tasks_sequence;
-	this->init_recursive(tasks_sequence, first, &last);
+	this->init_recursive(tasks_sequence, first, first, &last);
 	this->duplicate(tasks_sequence);
 }
 
@@ -39,7 +39,7 @@ Chain
 	}
 
 	std::vector<const module::Task*> tasks_sequence;
-	this->init_recursive(tasks_sequence, first);
+	this->init_recursive(tasks_sequence, first, first);
 	this->duplicate(tasks_sequence);
 }
 
@@ -47,8 +47,6 @@ Chain* Chain
 ::clone() const
 {
 	auto c = new Chain(*this);
-	c->tasks_sequences.clear();
-	c->modules.clear();
 	std::vector<const module::Task*> tasks_sequence;
 	for (size_t t = 0; t < this->tasks_sequences[0].size(); t++)
 		tasks_sequence.push_back(this->tasks_sequences[0][t]);
@@ -86,19 +84,43 @@ std::vector<std::vector<const module::Module*>> Chain
 
 void Chain
 ::init_recursive(std::vector<const module::Task*> &tasks_sequence,
+                 const module::Task& first,
                  const module::Task& current_task,
                  const module::Task *last)
 {
-	if (current_task.can_exec())
+	if (&current_task == &first)
 	{
-		tasks_sequence.push_back(&current_task);
+		for (auto &s : current_task.sockets)
+			if ((current_task.get_socket_type(*s) == module::socket_t::SOUT ||
+				 current_task.get_socket_type(*s) == module::socket_t::SIN_SOUT) && s->get_dataptr() == nullptr)
+			{
+				std::stringstream message;
+				message << "Output sockets of the first task has to be filled.";
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+			}
+	}
+	else if (&current_task == last)
+	{
+		for (auto &s : current_task.sockets)
+			if ((current_task.get_socket_type(*s) == module::socket_t::SIN ||
+				 current_task.get_socket_type(*s) == module::socket_t::SIN_SOUT) && s->get_dataptr() == nullptr)
+			{
+				std::stringstream message;
+				message << "Input sockets of the last task has to be filled.";
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+			}
 	}
 	else
 	{
-		std::stringstream message;
-		message << "'this->can_exec()' has to be true.";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		if (!current_task.can_exec())
+		{
+			std::stringstream message;
+			message << "'this->can_exec()' has to be true.";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
+
+	tasks_sequence.push_back(&current_task);
 
 	if (&current_task != last)
 	{
@@ -114,7 +136,7 @@ void Chain
 					{
 						auto &t = bs->get_task();
 						if (t.is_last_input_socket(*bs))
-							Chain::init_recursive(tasks_sequence, t, last);
+							Chain::init_recursive(tasks_sequence, first, t, last);
 					}
 				}
 			}
@@ -229,7 +251,7 @@ void Chain
 		this->modules[tid].resize(modules_to_tasks.size());
 		size_t m = 0;
 		for (auto &mtt : modules_to_tasks)
-			this->modules[tid][m++] = std::shared_ptr<module::Module>(mtt.first->clone());
+			this->modules[tid][m++].reset(mtt.first->clone());
 	}
 
 	auto get_task_id = [this, &tasks_sequence](const module::Task &ta) -> int
@@ -271,6 +293,7 @@ void Chain
 	for (size_t tid = 0; tid < this->n_threads; tid++)
 	{
 		auto &tasks_chain_cpy = this->tasks_sequences[tid];
+		tasks_chain_cpy.clear();
 		for (size_t taid = 0; taid < tasks_sequence.size(); taid++)
 		{
 			auto &task_cpy = get_task_cpy(tid, taid);

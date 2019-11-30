@@ -2,8 +2,8 @@
  * \file
  * \brief Class tools::Chain.
  */
-#ifndef TOOLS_CHAIN_HPP_
-#define TOOLS_CHAIN_HPP_
+#ifndef CHAIN_HPP_
+#define CHAIN_HPP_
 
 #include <functional>
 #include <memory>
@@ -17,14 +17,14 @@ namespace module
 {
 class Task;
 class Module;
-class Chain;
+class Subchain;
 }
 namespace tools
 {
 
 class Chain : Interface_clone
 {
-	friend module::Chain;
+	friend module::Subchain;
 
 protected:
 	size_t n_threads;
@@ -49,6 +49,7 @@ public:
 
 protected:
 	static void init_recursive(std::vector<const module::Task*> &tasks_sequence,
+	                           const module::Task& first,
 	                           const module::Task& current_task,
 	                           const module::Task *last = nullptr);
 	void _exec(std::function<bool(const std::vector<int>&)> &stop_condition,
@@ -64,4 +65,4 @@ protected:
 #include "Tools/Chain/Chain.hxx"
 #endif
 
-#endif /* TOOLS_CHAIN_HPP_ */
+#endif /* CHAIN_HPP_ */
