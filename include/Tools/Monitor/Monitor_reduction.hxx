@@ -84,6 +84,13 @@ void Monitor_reduction<M>
 
 template <class M>
 bool Monitor_reduction<M>
+::is_done()
+{
+	return this->_is_done();
+}
+
+template <class M>
+bool Monitor_reduction<M>
 ::_is_done()
 {
 	// only the master thread can do this

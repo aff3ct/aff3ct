@@ -142,6 +142,8 @@ public:
 
 	virtual void reduce(bool fully = true);
 
+	virtual bool is_done();
+
 protected:
 	virtual bool _is_done();
 };
