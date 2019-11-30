@@ -207,8 +207,8 @@
 #ifndef FACTORY_NOISE_HPP
 #include <Factory/Tools/Noise/Noise.hpp>
 #endif
-#ifndef CHAIN_HPP_
-#include <Module/Chain.hpp>
+#ifndef MODULE_CHAIN_HPP_
+#include <Module/Chain/Chain.hpp>
 #endif
 #ifndef CHANNEL_AWGN_LLR_HPP_
 #include <Module/Channel/AWGN/Channel_AWGN_LLR.hpp>
@@ -833,6 +833,9 @@
 #endif
 #ifndef AUTO_CLONED_UNIQUE_PTR_HPP__
 #include <Tools/auto_cloned_unique_ptr.hpp>
+#endif
+#ifndef TOOLS_CHAIN_HPP_
+#include <Tools/Chain/Chain.hpp>
 #endif
 #ifndef BCH_POLYNOMIAL_GENERATOR_HPP
 #include <Tools/Code/BCH/BCH_polynomial_generator.hpp>
