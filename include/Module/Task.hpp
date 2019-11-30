@@ -15,7 +15,6 @@
 
 #include "Tools/Interface/Interface_clone.hpp"
 #include "Tools/Interface/Interface_reset.hpp"
-#include "Module/Chain.hpp"
 
 namespace aff3ct
 {

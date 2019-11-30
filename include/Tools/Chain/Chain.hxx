@@ -1,8 +1,8 @@
-#include "Module/Chain.hpp"
+#include "Tools/Chain/Chain.hpp"
 
 namespace aff3ct
 {
-namespace module
+namespace tools
 {
 size_t Chain
 ::get_n_threads() const
