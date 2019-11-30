@@ -10,7 +10,7 @@
 #include "Tools/Algo/Tree/Binary_node.hpp"
 #include "Tools/Algo/Tree/Binary_tree.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
-#include "Tools/Interface/Interface_notify_noise_update.hpp"
+#include "Tools/Interface/Interface_notify_frozenbits_update.hpp"
 #include "Module/Decoder/Decoder_SIHO.hpp"
 
 namespace aff3ct
@@ -32,7 +32,7 @@ public:
 template <typename B = int, typename R = float, tools::proto_f<  R> F = tools::f_LLR,
                                                 tools::proto_g<B,R> G = tools::g_LLR,
                                                 tools::proto_h<B,R> H = tools::h_LLR>
-class Decoder_polar_SC_naive : public Decoder_SIHO<B,R>, public tools::Interface_notify_noise_update
+class Decoder_polar_SC_naive : public Decoder_SIHO<B,R>, public tools::Interface_notify_frozenbits_update
 {
 protected:
 	const int m; // graph depth
