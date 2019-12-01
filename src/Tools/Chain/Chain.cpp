@@ -24,6 +24,16 @@ Chain
 
 	std::vector<const module::Task*> tasks_sequence;
 	this->init_recursive(tasks_sequence, first, first, &last);
+	if (tasks_sequence.back() != &last)
+	{
+		std::stringstream message;
+		message << "'tasks_sequence.back()' has to be equal to '&last' ("
+		        << "'tasks_sequence.back()'"             << " = " << +tasks_sequence.back()            << ", "
+		        << "'&last'"                             << " = " << +&last                            << ", "
+		        << "'tasks_sequence.back()->get_name()'" << " = " << tasks_sequence.back()->get_name() << ", "
+		        << "'last.get_name()'"                   << " = " << last.get_name()                   << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 	this->duplicate(tasks_sequence);
 }
 
@@ -88,38 +98,6 @@ void Chain
                  const module::Task& current_task,
                  const module::Task *last)
 {
-	if (&current_task == &first)
-	{
-		for (auto &s : current_task.sockets)
-			if ((current_task.get_socket_type(*s) == module::socket_t::SOUT ||
-				 current_task.get_socket_type(*s) == module::socket_t::SIN_SOUT) && s->get_dataptr() == nullptr)
-			{
-				std::stringstream message;
-				message << "Output sockets of the first task has to be filled.";
-				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-			}
-	}
-	else if (&current_task == last)
-	{
-		for (auto &s : current_task.sockets)
-			if ((current_task.get_socket_type(*s) == module::socket_t::SIN ||
-				 current_task.get_socket_type(*s) == module::socket_t::SIN_SOUT) && s->get_dataptr() == nullptr)
-			{
-				std::stringstream message;
-				message << "Input sockets of the last task has to be filled.";
-				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-			}
-	}
-	else
-	{
-		if (!current_task.can_exec())
-		{
-			std::stringstream message;
-			message << "'this->can_exec()' has to be true.";
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
-	}
-
 	tasks_sequence.push_back(&current_task);
 
 	if (&current_task != last)

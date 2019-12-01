@@ -9,7 +9,7 @@ using namespace aff3ct::module;
 
 Subchain
 ::Subchain(const tools::Chain &chain)
-: Module(chain.tasks_sequences[0][0]->get_module().get_n_frames()),
+: Module(chain.get_tasks_sequence().front()->get_module().get_n_frames()),
   chain(chain.clone())
 {
 	const std::string name = "Subchain";
@@ -26,7 +26,7 @@ Subchain
 
 	auto &p = this->create_task("exec");
 
-	auto &first = *this->chain->tasks_sequences[0][0];
+	auto &first = *this->chain->get_tasks_sequence().front();
 	for (auto &s : first.sockets)
 	{
 		if (first.get_socket_type(*s) == socket_t::SIN)
@@ -60,7 +60,7 @@ Subchain
 				this->template create_socket_in_out<double >(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
 		}
 	}
-	auto &last  = *this->chain->tasks_sequences[0][this->chain->tasks_sequences[0].size()-1];
+	auto &last  = *this->chain->get_tasks_sequence().back();
 	for (auto &s : last.sockets)
 	{
 		if (last.get_socket_type(*s) == socket_t::SOUT)
@@ -119,7 +119,7 @@ Subchain
 	{
 		auto &c = static_cast<Subchain&>(m);
 
-		auto &first = *c.chain->tasks_sequences[0][0];
+		auto &first = *c.chain->get_tasks_sequence().front();
 		size_t sid = 0;
 		for (auto &s : first.sockets)
 		{
@@ -152,7 +152,7 @@ void Subchain
 	Module::deep_copy(m);
 	if (m.chain != nullptr) this->chain.reset(m.chain->clone());
 
-	auto &last = *this->chain->tasks_sequences[0][this->chain->tasks_sequences[0].size()-1];
+	auto &last = *this->chain->get_tasks_sequence().back();
 
 	auto &p = (*this)[sch::tsk::exec];
 

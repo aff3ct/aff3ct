@@ -26,5 +26,17 @@ std::vector<C*> Chain
 	return ret;
 }
 
+const std::vector<std::vector<module::Task*>>& Chain
+::get_tasks_sequences() const
+{
+	return this->tasks_sequences;
+}
+
+const std::vector<module::Task*>& Chain
+::get_tasks_sequence(const int tid) const
+{
+	return this->tasks_sequences[tid];
+}
+
 }
 }

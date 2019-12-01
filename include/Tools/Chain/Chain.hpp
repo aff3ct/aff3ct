@@ -17,15 +17,12 @@ namespace module
 {
 class Task;
 class Module;
-class Subchain;
 }
 namespace tools
 {
 
 class Chain : Interface_clone
 {
-	friend module::Subchain;
-
 protected:
 	size_t n_threads;
 	std::vector<std::vector<module::Task*>> tasks_sequences;
@@ -46,6 +43,8 @@ public:
 	std::vector<C*> get_modules() const;
 	std::vector<std::vector<const module::Module*>> get_modules_per_threads() const;
 	std::vector<std::vector<const module::Module*>> get_modules_per_types  () const;
+	inline const std::vector<std::vector<module::Task*>>& get_tasks_sequences() const;
+	inline const std::vector<module::Task*>& get_tasks_sequence(const int tid = 0) const;
 
 protected:
 	static void init_recursive(std::vector<const module::Task*> &tasks_sequence,
