@@ -27,7 +27,7 @@ namespace module
 		}
 	}
 
-template <typename IN, typename OUT>
+template <typename I, typename O>
 class Router : public Module, public tools::Interface_reset
 {
 public:
@@ -49,15 +49,15 @@ public:
 
 	size_t get_n_outputs() const;
 
-	template <class A = std::allocator<IN>>
-	size_t route(const std::vector<IN,A>& in, const int frame_id = -1);
+	template <class A = std::allocator<I>>
+	size_t route(const std::vector<I,A>& in, const int frame_id = -1);
 
-	virtual size_t route(const IN *in, const int frame_id = -1);
+	virtual size_t route(const I *in, const int frame_id = -1);
 
 	virtual void reset();
 
 protected:
-	virtual size_t _route(const IN *in, const int frame_id);
+	virtual size_t _route(const I *in, const int frame_id);
 
 	virtual size_t select_route_inter(const size_t a, const size_t b);
 };

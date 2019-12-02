@@ -14,20 +14,20 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename IN = int, typename OUT = int>
-class Router_CRC : public Router<IN,OUT>
+template <typename I = int, typename O = int>
+class Router_CRC : public Router<I,O>
 {
-	std::shared_ptr<CRC<IN>> crc;
+	std::shared_ptr<CRC<I>> crc;
 
 public:
-	Router_CRC(const CRC<IN> &crc, const size_t n_elmts_in, const size_t n_elmts_out);
+	Router_CRC(const CRC<I> &crc, const size_t n_elmts_in, const size_t n_elmts_out);
 	virtual ~Router_CRC() = default;
-	virtual Router_CRC<IN,OUT>* clone() const;
+	virtual Router_CRC<I,O>* clone() const;
 
 protected:
-	virtual void deep_copy(const Router_CRC<IN,OUT> &m);
+	virtual void deep_copy(const Router_CRC<I,O> &m);
 
-	virtual size_t _route(const IN *in, const int frame_id);
+	virtual size_t _route(const I *in, const int frame_id);
 
 	virtual size_t select_route_inter(const size_t a, const size_t b);
 };

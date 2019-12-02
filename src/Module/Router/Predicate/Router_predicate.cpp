@@ -7,10 +7,10 @@ namespace aff3ct
 namespace module
 {
 
-template <typename OUT>
-Router_predicate<OUT>
+template <typename O>
+Router_predicate<O>
 ::Router_predicate(const tools::Predicate &predicate, const size_t n_elmts_out, const int n_frames)
-: Router<OUT,OUT>(1, n_elmts_out, 2, n_frames),
+: Router<O,O>(1, n_elmts_out, 2, n_frames),
   predicate(predicate.clone()),
   hack(1)
 {
@@ -19,8 +19,8 @@ Router_predicate<OUT>
 	(*this)[rtr::tsk::route].sockets[0]->bind(hack.data());
 }
 
-template <typename OUT>
-Router_predicate<OUT>* Router_predicate<OUT>
+template <typename O>
+Router_predicate<O>* Router_predicate<O>
 ::clone() const
 {
 	auto m = new Router_predicate(*this);
@@ -29,37 +29,37 @@ Router_predicate<OUT>* Router_predicate<OUT>
 	return m;
 }
 
-template <typename OUT>
-void Router_predicate<OUT>
-::deep_copy(const Router_predicate<OUT> &m)
+template <typename O>
+void Router_predicate<O>
+::deep_copy(const Router_predicate<O> &m)
 {
 	Module::deep_copy(m);
 	if (m.predicate != nullptr) this->predicate.reset(dynamic_cast<tools::Predicate*>(m.predicate->clone()));
 }
 
-template <typename OUT>
-tools::Predicate& Router_predicate<OUT>
+template <typename O>
+tools::Predicate& Router_predicate<O>
 ::get_predicate()
 {
 	return *this->predicate;
 }
 
-template <typename OUT>
-void Router_predicate<OUT>
+template <typename O>
+void Router_predicate<O>
 ::reset()
 {
 	this->get_predicate().reset();
 }
 
-template <typename OUT>
-size_t Router_predicate<OUT>
-::_route(const OUT *in, const int frame_id)
+template <typename O>
+size_t Router_predicate<O>
+::_route(const O *in, const int frame_id)
 {
 	return (*this->predicate)() ? 1 : 0;
 }
 
-template <typename OUT>
-size_t Router_predicate<OUT>
+template <typename O>
+size_t Router_predicate<O>
 ::select_route_inter(const size_t a, const size_t b)
 {
 	return a;

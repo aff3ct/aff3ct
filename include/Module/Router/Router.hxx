@@ -9,22 +9,22 @@ namespace aff3ct
 namespace module
 {
 
-template <typename IN, typename OUT>
-Task& Router<IN,OUT>
+template <typename I, typename O>
+Task& Router<I,O>
 ::operator[](const rtr::tsk t)
 {
 	return Module::operator[]((size_t)t);
 }
 
-template <typename IN, typename OUT>
-Socket& Router<IN,OUT>
+template <typename I, typename O>
+Socket& Router<I,O>
 ::operator[](const rtr::sck::route s)
 {
 	return Module::operator[]((size_t)rtr::tsk::route)[(size_t)s];
 }
 
-template <typename IN, typename OUT>
-Router<IN,OUT>
+template <typename I, typename O>
+Router<I,O>
 ::Router(const size_t n_elmts_in, const size_t n_elmts_out, const size_t n_outputs, const int n_frames)
 : Module(n_frames),
   n_elmts_in(n_elmts_in),
@@ -57,41 +57,41 @@ Router<IN,OUT>
 	}
 
 	auto &p = this->create_task("route");
-	auto ps_in = this->template create_socket_in<IN>(p, "in", this->n_elmts_in);
+	auto ps_in = this->template create_socket_in<I>(p, "in", this->n_elmts_in);
 	for (size_t o = 0; o < n_outputs; o++)
-		this->template create_socket_in_out<OUT>(p, "in_out" + std::to_string(o), this->n_elmts_out);
+		this->template create_socket_in_out<O>(p, "in_out" + std::to_string(o), this->n_elmts_out);
 
 	this->create_codelet(p, [ps_in](Module &m, Task &t) -> int
 	{
-		return (int)static_cast<Router<IN,OUT>&>(m).route(static_cast<IN*>(t[ps_in].get_dataptr()));
+		return (int)static_cast<Router<I,O>&>(m).route(static_cast<I*>(t[ps_in].get_dataptr()));
 	});
 }
 
-template <typename IN, typename OUT>
-size_t Router<IN,OUT>
+template <typename I, typename O>
+size_t Router<I,O>
 ::get_n_elmts_in() const
 {
 	return this->n_elmts_in;
 }
 
-template <typename IN, typename OUT>
-size_t Router<IN,OUT>
+template <typename I, typename O>
+size_t Router<I,O>
 ::get_n_elmts_out() const
 {
 	return this->n_elmts_out;
 }
 
-template <typename IN, typename OUT>
-size_t Router<IN,OUT>
+template <typename I, typename O>
+size_t Router<I,O>
 ::get_n_outputs() const
 {
 	return this->n_outputs;
 }
 
-template <typename IN, typename OUT>
+template <typename I, typename O>
 template <class A>
-size_t Router<IN,OUT>
-::route(const std::vector<IN,A>& in, const int frame_id)
+size_t Router<I,O>
+::route(const std::vector<I,A>& in, const int frame_id)
 {
 	if (this->n_elmts_in * this->n_frames != (int)in.size())
 	{
@@ -104,9 +104,9 @@ size_t Router<IN,OUT>
 	this->route(in.data(), frame_id);
 }
 
-template <typename IN, typename OUT>
-size_t Router<IN,OUT>
-::route(const IN *in, const int frame_id)
+template <typename I, typename O>
+size_t Router<I,O>
+::route(const I *in, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -117,22 +117,22 @@ size_t Router<IN,OUT>
 	return ret_val;
 }
 
-template <typename IN, typename OUT>
-size_t Router<IN,OUT>
-::_route(const IN *in, const int frame_id)
+template <typename I, typename O>
+size_t Router<I,O>
+::_route(const I *in, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
-template <typename IN, typename OUT>
-size_t Router<IN,OUT>
+template <typename I, typename O>
+size_t Router<I,O>
 ::select_route_inter(const size_t a, const size_t b)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
-template <typename IN, typename OUT>
-void Router<IN,OUT>
+template <typename I, typename O>
+void Router<I,O>
 ::reset()
 {
 }
