@@ -22,7 +22,7 @@ namespace tools
 #ifdef _MSC_VER
 class Predicate : public Interface_reset
 #else
-class Predicate : public Interface_reset, Interface_clone
+class Predicate : public Interface_reset, public Interface_clone
 #endif
 {
 public:

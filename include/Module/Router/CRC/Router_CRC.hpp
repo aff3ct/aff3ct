@@ -20,7 +20,7 @@ class Router_CRC : public Router<IN,OUT>
 	std::shared_ptr<CRC<IN>> crc;
 
 public:
-	Router_CRC(const CRC<IN> &crc, const size_t n_elmts_out);
+	Router_CRC(const CRC<IN> &crc, const size_t n_elmts_in, const size_t n_elmts_out);
 	virtual ~Router_CRC() = default;
 	virtual Router_CRC<IN,OUT>* clone() const;
 

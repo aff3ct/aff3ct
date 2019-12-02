@@ -11,10 +11,12 @@ template <typename OUT>
 Router_predicate<OUT>
 ::Router_predicate(const tools::Predicate &predicate, const size_t n_elmts_out, const int n_frames)
 : Router<OUT,OUT>(1, n_elmts_out, 2, n_frames),
-  predicate(predicate.clone())
+  predicate(predicate.clone()),
+  hack(1)
 {
 	const std::string name = "Router_predicate";
 	this->set_name(name);
+	(*this)[rtr::tsk::route].sockets[0]->bind(hack.data());
 }
 
 template <typename OUT>
@@ -23,6 +25,7 @@ Router_predicate<OUT>* Router_predicate<OUT>
 {
 	auto m = new Router_predicate(*this);
 	m->deep_copy(*this);
+	(*m)[rtr::tsk::route].sockets[0]->bind(m->hack.data());
 	return m;
 }
 
@@ -39,6 +42,13 @@ tools::Predicate& Router_predicate<OUT>
 ::get_predicate()
 {
 	return *this->predicate;
+}
+
+template <typename OUT>
+void Router_predicate<OUT>
+::reset()
+{
+	this->get_predicate().reset();
 }
 
 template <typename OUT>

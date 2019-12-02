@@ -58,16 +58,11 @@ Router<IN,OUT>
 
 	auto &p = this->create_task("route");
 	auto ps_in = this->template create_socket_in<IN>(p, "in", this->n_elmts_in);
-	auto ps_out = this->template create_socket_in<OUT>(p, "out", this->n_elmts_out);
 	for (size_t o = 0; o < n_outputs; o++)
-		this->template create_socket_out<OUT>(p, "out" + std::to_string(o), this->n_elmts_out);
+		this->template create_socket_in_out<OUT>(p, "in_out" + std::to_string(o), this->n_elmts_out);
 
-	this->create_codelet(p, [ps_in, ps_out](Module &m, Task &t) -> int
+	this->create_codelet(p, [ps_in](Module &m, Task &t) -> int
 	{
-		auto sout_dataptr = t.sockets[ps_out]->get_dataptr();
-		for (size_t sout = 2; sout < t.sockets.size(); sout++)
-			t.sockets[sout]->bind(sout_dataptr);
-
 		return (int)static_cast<Router<IN,OUT>&>(m).route(static_cast<IN*>(t[ps_in].get_dataptr()));
 	});
 }
@@ -134,6 +129,12 @@ size_t Router<IN,OUT>
 ::select_route_inter(const size_t a, const size_t b)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename IN, typename OUT>
+void Router<IN,OUT>
+::reset()
+{
 }
 
 }

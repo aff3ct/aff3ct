@@ -7,6 +7,7 @@
 
 #include <memory>
 
+#include "Tools/Interface/Interface_reset.hpp"
 #include "Tools/Algo/Predicate.hpp"
 #include "Module/Router/Router.hpp"
 
@@ -18,6 +19,7 @@ template <typename OUT = float>
 class Router_predicate : public Router<OUT,OUT>
 {
 	std::shared_ptr<tools::Predicate> predicate;
+	std::vector<OUT> hack;
 
 public:
 	Router_predicate(const tools::Predicate &predicate, const size_t n_elmts_out, const int n_frames = 1);
@@ -25,6 +27,8 @@ public:
 	virtual Router_predicate<OUT>* clone() const;
 
 	tools::Predicate& get_predicate();
+
+	virtual void reset();
 
 protected:
 	virtual void deep_copy(const Router_predicate<OUT> &m);

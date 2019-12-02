@@ -6,7 +6,9 @@
 #define ROUTER_HPP_
 
 #include <cstddef>
+#include <memory>
 
+#include "Tools/Interface/Interface_reset.hpp"
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
 #include "Module/Module.hpp"
@@ -21,12 +23,12 @@ namespace module
 
 		namespace sck
 		{
-			enum class route : size_t { in, out, out1, out2, SIZE };
+			enum class route : size_t { in, in_out1, in_out2, SIZE };
 		}
 	}
 
 template <typename IN, typename OUT>
-class Router : public Module
+class Router : public Module, public tools::Interface_reset
 {
 public:
 	inline Task&   operator[](const rtr::tsk        t);
@@ -51,6 +53,8 @@ public:
 	size_t route(const std::vector<IN,A>& in, const int frame_id = -1);
 
 	virtual size_t route(const IN *in, const int frame_id = -1);
+
+	virtual void reset();
 
 protected:
 	virtual size_t _route(const IN *in, const int frame_id);

@@ -81,17 +81,20 @@ template <typename B, typename R, typename Q>
 void BFER_ite_threads<B,R,Q>
 ::sockets_binding(const int tid)
 {
-	auto &src = *this->source         [tid];
-	auto &crc = *this->crc            [tid];
-	auto &cdc = *this->codec          [tid];
-	auto &itb = *this->interleaver_bit[tid];
-	auto &mdm = *this->modem          [tid];
-	auto &chn = *this->channel        [tid];
-	auto &qnt = *this->quantizer      [tid];
-	auto &itl = *this->interleaver_llr[tid];
-	auto &csr = *this->coset_real     [tid];
-	auto &csb = *this->coset_bit      [tid];
-	auto &mnt = *this->monitor_er     [tid];
+	auto &src  = *this->source         [tid];
+	auto &crc  = *this->crc            [tid];
+	auto &cdc  = *this->codec          [tid];
+	auto &itb  = *this->interleaver_bit[tid];
+	auto &mdm  = *this->modem          [tid];
+	auto &chn  = *this->channel        [tid];
+	auto &qnt  = *this->quantizer      [tid];
+	auto &itl  = *this->interleaver_llr[tid];
+	auto &csr  = *this->coset_real     [tid];
+	auto &csb  = *this->coset_bit      [tid];
+	auto &mnt  = *this->monitor_er     [tid];
+	auto &rti  = *this->router_ite     [tid];
+	auto &rtc  = *this->router_crc     [tid];
+	auto &rtic = *this->router_ite_crc [tid];
 
 	auto &enc = cdc.get_encoder();
 	auto &dcs = cdc.get_decoder_siso();
@@ -188,7 +191,9 @@ void BFER_ite_threads<B,R,Q>
 		mdm[mdm::sck::demodulate::Y_N1](qnt[qnt::sck::process  ::Y_N2]);
 	}
 
-	itl[itl::sck::deinterleave::itl](mdm[mdm::sck::demodulate::Y_N2]);
+	itl[itl::sck::deinterleave::itl    ](mdm[mdm::sck::demodulate  ::Y_N2]);
+	rti[rtr::sck::route       ::in_out1](itl[itl::sck::deinterleave::nat ]);
+	rti[rtr::sck::route       ::in_out2](itl[itl::sck::deinterleave::nat ]);
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// ---------------------------------------------------------------------------------------- turbo demodulation loop
@@ -197,22 +202,38 @@ void BFER_ite_threads<B,R,Q>
 	// --------------------------------------------------------------------------------------------------- CRC checking
 	if (this->params_BFER_ite.crc->type != "NO")
 	{
-		ext[ext::sck::get_sys_bit::Y_N](itl[itl::sck::deinterleave::nat]);
-		crc[crc::sck::check      ::V_K](ext[ext::sck::get_sys_bit ::V_K]);
+		rtic[rtr::sck::route     ::in_out1](rti [rtr::sck::route      ::in_out1]);
+		rtic[rtr::sck::route     ::in_out2](rti [rtr::sck::route      ::in_out1]);
+		ext[ext::sck::get_sys_bit::Y_N    ](rtic[rtr::sck::route      ::in_out1]);
+		rtc[rtr::sck::route      ::in     ](ext [ext::sck::get_sys_bit::V_K    ]);
+		rtc[rtr::sck::route      ::in_out1](rtic[rtr::sck::route      ::in_out2]);
+		rtc[rtr::sck::route      ::in_out2](rtic[rtr::sck::route      ::in_out2]);
 	}
 
 	// ------------------------------------------------------------------------------------------------------- decoding
 	if (this->params_BFER_ite.coset)
 	{
-		// output socket binding (trick to avoid runtime re-binding)
-		dcs[dec::sck::decode_siso::Y_N2](itl[itl::sck::deinterleave::nat ]);
-		csr[cst::sck::apply      ::in  ](itl[itl::sck::deinterleave::nat ]);
-		dcs[dec::sck::decode_siso::Y_N1](csr[cst::sck::apply       ::out ]);
-		csr[cst::sck::apply      ::in  ](dcs[dec::sck::decode_siso ::Y_N2]);
+		if (this->params_BFER_ite.crc->type != "NO")
+		{
+			// output socket binding (trick to avoid runtime re-binding)
+			dcs[dec::sck::decode_siso::Y_N2](rtic[rtr::sck::route::in_out1]);
+			csr[cst::sck::apply      ::in  ](rtic[rtr::sck::route::in_out1]);
+		}
+		else
+		{
+			// output socket binding (trick to avoid runtime re-binding)
+			dcs[dec::sck::decode_siso::Y_N2](rti[rtr::sck::route::in_out1]);
+			csr[cst::sck::apply      ::in  ](rti[rtr::sck::route::in_out1]);
+		}
+		dcs[dec::sck::decode_siso::Y_N1](csr[cst::sck::apply      ::out ]);
+		csr[cst::sck::apply      ::in  ](dcs[dec::sck::decode_siso::Y_N2]);
 	}
 	else
 	{
-		dcs[dec::sck::decode_siso::Y_N1](itl[itl::sck::deinterleave::nat]);
+		if (this->params_BFER_ite.crc->type != "NO")
+			dcs[dec::sck::decode_siso::Y_N1](rtic[rtr::sck::route::in_out1]);
+		else
+			dcs[dec::sck::decode_siso::Y_N1](rti [rtr::sck::route::in_out1]);
 	}
 
 	// --------------------------------------------------------------------------------------------------- interleaving
@@ -256,7 +277,10 @@ void BFER_ite_threads<B,R,Q>
 
 	if (this->params_BFER_ite.coset)
 	{
-		csr[cst::sck::apply::in](itl[itl::sck::deinterleave::nat]);
+		if (this->params_BFER_ite.crc->type != "NO")
+			csr[cst::sck::apply::in](rtc[rtr::sck::route::in_out2]);
+		else
+			csr[cst::sck::apply::in](rti[rtr::sck::route::in_out2]);
 
 		if (this->params_BFER_ite.coded_monitoring)
 		{
@@ -277,15 +301,18 @@ void BFER_ite_threads<B,R,Q>
 	{
 		if (this->params_BFER_ite.coded_monitoring)
 		{
-			dch[dec::sck::decode_siho_cw::Y_N](itl[itl::sck::deinterleave::nat]);
+			if (this->params_BFER_ite.crc->type != "NO")
+				dch[dec::sck::decode_siho_cw::Y_N](rtc[rtr::sck::route::in_out2]);
+			else
+				dch[dec::sck::decode_siho_cw::Y_N](rti[rtr::sck::route::in_out2]);
 		}
 		else
 		{
+			dch[dec::sck::decode_siho::Y_N ](rti[rtr::sck::route       ::in_out2]);
+			crc[crc::sck::extract    ::V_K1](dch[dec::sck::decode_siho ::V_K    ]);
+
 			if (this->params_BFER_ite.crc->type == "NO")
 				crc[crc::sck::extract::V_K2](dch[dec::sck::decode_siho::V_K]);
-
-			dch[dec::sck::decode_siho::Y_N ](itl[itl::sck::deinterleave::nat]);
-			crc[crc::sck::extract    ::V_K1](dch[dec::sck::decode_siho ::V_K]);
 		}
 	}
 
@@ -317,6 +344,9 @@ void BFER_ite_threads<B,R,Q>
 	auto &coset_real      = *this->coset_real     [tid];
 	auto &coset_bit       = *this->coset_bit      [tid];
 	auto &monitor         = *this->monitor_er     [tid];
+	auto &router_ite      = *this->router_ite     [tid];
+	auto &router_crc      = *this->router_crc     [tid];
+	auto &router_ite_crc  = *this->router_ite_crc [tid];
 
 	auto &encoder      = codec.get_encoder();
 	auto &decoder_siso = codec.get_decoder_siso();
@@ -379,13 +409,13 @@ void BFER_ite_threads<B,R,Q>
 		// ------------------------------------------------------------------------------------------------------------
 		// ------------------------------------------------------------------------------------ turbo demodulation loop
 		// ------------------------------------------------------------------------------------------------------------
-		for (auto ite = 1; ite <= this->params_BFER_ite.n_ite; ite++)
+		while (!router_ite[rtr::tsk::route].exec())
 		{
 			// ------------------------------------------------------------------------------------------- CRC checking
-			if (this->params_BFER_ite.crc->type != "NO" && ite >= this->params_BFER_ite.crc_start)
+			if (this->params_BFER_ite.crc->type != "NO" && router_ite_crc[rtr::tsk::route].exec())
 			{
 				extractor[ext::tsk::get_sys_bit].exec();
-				if (crc[crc::tsk::check].exec())
+				if (router_crc[rtr::tsk::route].exec())
 					break;
 			}
 

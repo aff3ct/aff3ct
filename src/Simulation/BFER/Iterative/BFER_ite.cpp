@@ -2,6 +2,7 @@
 #include <iomanip>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Algo/Predicate_ite.hpp"
 #include "Factory/Module/Coset/Coset.hpp"
 #include "Simulation/BFER/Iterative/BFER_ite.hpp"
 
@@ -25,6 +26,9 @@ BFER_ite<B,R,Q>
   interleaver_core(params_BFER_ite.n_threads),
   interleaver_bit (params_BFER_ite.n_threads),
   interleaver_llr (params_BFER_ite.n_threads),
+  router_ite      (params_BFER_ite.n_threads),
+  router_crc      (params_BFER_ite.n_threads),
+  router_ite_crc  (params_BFER_ite.n_threads),
 
   rd_engine_seed(params_BFER_ite.n_threads)
 {
@@ -44,6 +48,9 @@ BFER_ite<B,R,Q>
 	this->add_module("coset_bit"      , params_BFER_ite.n_threads);
 	this->add_module("interleaver_bit", params_BFER_ite.n_threads);
 	this->add_module("interleaver_llr", params_BFER_ite.n_threads);
+	this->add_module("router_ite"     , params_BFER_ite.n_threads);
+	this->add_module("router_crc"     , params_BFER_ite.n_threads);
+	this->add_module("router_ite_crc" , params_BFER_ite.n_threads);
 }
 
 template <typename B, typename R, typename Q>
@@ -53,15 +60,18 @@ void BFER_ite<B,R,Q>
 	// build the objects
 	if (!params_BFER_ite.alloc_clone || tid == 0)
 	{
-		source          [tid] = build_source     (tid);
-		crc             [tid] = build_crc        (tid);
-		codec           [tid] = build_codec      (tid);
-		modem           [tid] = build_modem      (tid);
-		channel         [tid] = build_channel    (tid);
-		quantizer       [tid] = build_quantizer  (tid);
-		coset_real      [tid] = build_coset_real (tid);
-		coset_bit       [tid] = build_coset_bit  (tid);
-		interleaver_core[tid] = build_interleaver(tid);
+		source          [tid] = build_source        (tid);
+		crc             [tid] = build_crc           (tid);
+		codec           [tid] = build_codec         (tid);
+		modem           [tid] = build_modem         (tid);
+		channel         [tid] = build_channel       (tid);
+		quantizer       [tid] = build_quantizer     (tid);
+		coset_real      [tid] = build_coset_real    (tid);
+		coset_bit       [tid] = build_coset_bit     (tid);
+		interleaver_core[tid] = build_interleaver   (tid);
+		router_ite      [tid] = build_router_ite    (tid);
+		router_crc      [tid] = build_router_crc    (tid);
+		router_ite_crc  [tid] = build_router_ite_crc(tid);
 	}
 
 	if (params_BFER_ite.alloc_clone)
@@ -75,6 +85,9 @@ void BFER_ite<B,R,Q>
 		coset_real      [tid].reset(coset_real      [0]->clone());
 		coset_bit       [tid].reset(coset_bit       [0]->clone());
 		interleaver_core[tid].reset(interleaver_core[0]->clone());
+		router_ite      [tid].reset(router_ite      [0]->clone());
+		router_crc      [tid].reset(router_crc      [0]->clone());
+		router_ite_crc  [tid].reset(router_ite_crc  [0]->clone());
 	}
 
 	interleaver_bit[tid].reset(factory::Interleaver::build<B>(*interleaver_core[tid]));
@@ -120,6 +133,9 @@ void BFER_ite<B,R,Q>
 	this->set_module("coset_bit"      , tid, *coset_bit      [tid]);
 	this->set_module("interleaver_bit", tid, *interleaver_bit[tid]);
 	this->set_module("interleaver_llr", tid, *interleaver_llr[tid]);
+	this->set_module("router_ite"     , tid, *router_ite     [tid]);
+	this->set_module("router_crc"     , tid, *router_crc     [tid]);
+	this->set_module("router_ite_crc" , tid, *router_ite_crc [tid]);
 
 	if (static_cast<module::Decoder*>(&codec[tid]->get_decoder_siso()) !=
 	    static_cast<module::Decoder*>(&codec[tid]->get_decoder_siho()))
@@ -131,6 +147,8 @@ void BFER_ite<B,R,Q>
 
 	codec[tid]->get_decoder_siso().set_auto_reset(false);
 	this->monitor_er[tid]->record_callback_check([this, tid](){ this->codec[tid]->get_decoder_siso().reset(); });
+	this->monitor_er[tid]->record_callback_check([this, tid](){ this->router_ite[tid]->reset(); });
+	this->monitor_er[tid]->record_callback_check([this, tid](){ this->router_ite_crc[tid]->reset(); });
 
 	if (interleaver_core[tid]->is_uniform())
 		this->monitor_er[tid]->record_callback_check(std::bind(&tools::Interleaver_core<>::refresh,
@@ -269,6 +287,46 @@ std::unique_ptr<module::Coset<B,B>> BFER_ite<B,R,Q>
 	cst_params.size = params_BFER_ite.coded_monitoring ? params_BFER_ite.cdc->N_cw : params_BFER_ite.cdc->K;
 	cst_params.n_frames = params_BFER_ite.src->n_frames;
 	return std::unique_ptr<module::Coset<B,B>>(cst_params.build_bit<B,B>());
+}
+
+template <typename B, typename R, typename Q>
+std::unique_ptr<module::Router_predicate<Q>> BFER_ite<B,R,Q>
+::build_router_ite(const int tid)
+{
+	tools::Predicate_ite p(params_BFER_ite.n_ite);
+	auto router_ite =  std::unique_ptr<module::Router_predicate<Q>>(new module::Router_predicate<Q>(
+		p,
+		params_BFER_ite.cdc->N_cw,
+		params_BFER_ite.src->n_frames));
+	router_ite->set_custom_name("Router_ite");
+	return router_ite;
+}
+
+template <typename B, typename R, typename Q>
+std::unique_ptr<module::Router_CRC<B,Q>> BFER_ite<B,R,Q>
+::build_router_crc(const int tid)
+{
+	auto crc = params_BFER_ite.crc->build<B>();
+	size_t K = (size_t)crc->get_size() + (size_t)crc->get_K();
+	auto router_crc = std::unique_ptr<module::Router_CRC<B,Q>>(new module::Router_CRC<B,Q>(
+		*crc,
+		K,
+		params_BFER_ite.cdc->N_cw));
+	router_crc->set_custom_name("Router_CRC");
+	return router_crc;
+}
+
+template <typename B, typename R, typename Q>
+std::unique_ptr<module::Router_predicate<Q>> BFER_ite<B,R,Q>
+::build_router_ite_crc(const int tid)
+{
+	tools::Predicate_ite p(params_BFER_ite.crc_start);
+	auto router_ite =  std::unique_ptr<module::Router_predicate<Q>>(new module::Router_predicate<Q>(
+		p,
+		params_BFER_ite.cdc->N_cw,
+		params_BFER_ite.src->n_frames));
+	router_ite->set_custom_name("Router_iCRC");
+	return router_ite;
 }
 
 // ==================================================================================== explicit template instantiation
