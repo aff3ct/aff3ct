@@ -699,6 +699,15 @@
 #ifndef QUANTIZER_HPP_
 #include <Module/Quantizer/Quantizer.hpp>
 #endif
+#ifndef ROUTER_CRC_HPP_
+#include <Module/Router/CRC/Router_CRC.hpp>
+#endif
+#ifndef ROUTER_PREDICATE_HPP_
+#include <Module/Router/Predicate/Router_predicate.hpp>
+#endif
+#ifndef ROUTER_HPP_
+#include <Module/Router/Router.hpp>
+#endif
 #ifndef SC_MODULE_HPP_
 #include <Module/SC_Module.hpp>
 #endif
