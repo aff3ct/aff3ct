@@ -18,6 +18,12 @@ Predicate_ite::Predicate_ite(const int n_ite)
 	}
 }
 
+Predicate_ite* Predicate_ite
+::clone() const
+{
+	return new Predicate_ite(*this);
+}
+
 bool Predicate_ite::operator()()
 {
 	const bool predicate = cur_ite >= n_ite;
