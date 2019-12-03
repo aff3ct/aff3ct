@@ -10,7 +10,7 @@ namespace module
 template <typename O>
 Router_predicate<O>
 ::Router_predicate(const tools::Predicate &predicate, const size_t n_elmts_out, const int n_frames)
-: Router<O,O>(1, n_elmts_out, 2, n_frames),
+: Router(8, n_elmts_out * sizeof(O), 2, n_frames),
   predicate(predicate.clone()),
   hack(1)
 {
@@ -53,7 +53,7 @@ void Router_predicate<O>
 
 template <typename O>
 size_t Router_predicate<O>
-::_route(const O *in, const int frame_id)
+::_route(const int8_t *in, const int frame_id)
 {
 	return (*this->predicate)() ? 1 : 0;
 }

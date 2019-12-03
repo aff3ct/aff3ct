@@ -6,6 +6,7 @@
 #define ROUTER_PREDICATE_HPP_
 
 #include <memory>
+#include <cstdint>
 
 #include "Tools/Interface/Interface_reset.hpp"
 #include "Tools/Algo/Predicate.hpp"
@@ -16,10 +17,10 @@ namespace aff3ct
 namespace module
 {
 template <typename O = float>
-class Router_predicate : public Router<O,O>
+class Router_predicate : public Router
 {
 	std::shared_ptr<tools::Predicate> predicate;
-	std::vector<O> hack;
+	std::vector<int8_t> hack;
 
 public:
 	Router_predicate(const tools::Predicate &predicate, const size_t n_elmts_out, const int n_frames = 1);
@@ -33,7 +34,7 @@ public:
 protected:
 	virtual void deep_copy(const Router_predicate<O> &m);
 
-	virtual size_t _route(const O *in, const int frame_id);
+	virtual size_t _route(const int8_t *in, const int frame_id);
 
 	virtual size_t select_route_inter(const size_t a, const size_t b);
 };

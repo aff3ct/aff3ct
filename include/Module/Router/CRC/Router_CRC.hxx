@@ -11,7 +11,7 @@ namespace module
 template <typename I, typename O>
 Router_CRC<I,O>
 ::Router_CRC(const CRC<I> &crc, const size_t n_elmts_in, const size_t n_elmts_out)
-: Router<I,O>(n_elmts_in, n_elmts_out, 2, crc.get_n_frames()),
+: Router(n_elmts_in * sizeof(I), n_elmts_out * sizeof(O), 2, crc.get_n_frames()),
   crc(crc.clone())
 {
 	const std::string name = "Router_CRC";
@@ -46,9 +46,9 @@ void Router_CRC<I,O>
 
 template <typename I, typename O>
 size_t Router_CRC<I,O>
-::_route(const I *in, const int frame_id)
+::_route(const int8_t *in, const int frame_id)
 {
-	return this->crc->check(in) ? 1 : 0;
+	return this->crc->check((const I*)in) ? 1 : 0;
 }
 
 template <typename I, typename O>

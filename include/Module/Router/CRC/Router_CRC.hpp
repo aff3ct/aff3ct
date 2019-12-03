@@ -6,6 +6,7 @@
 #define ROUTER_CRC_HPP_
 
 #include <memory>
+#include <cstdint>
 
 #include "Module/CRC/CRC.hpp"
 #include "Module/Router/Router.hpp"
@@ -15,7 +16,7 @@ namespace aff3ct
 namespace module
 {
 template <typename I = int, typename O = int>
-class Router_CRC : public Router<I,O>
+class Router_CRC : public Router
 {
 	std::shared_ptr<CRC<I>> crc;
 
@@ -27,7 +28,7 @@ public:
 protected:
 	virtual void deep_copy(const Router_CRC<I,O> &m);
 
-	virtual size_t _route(const I *in, const int frame_id);
+	virtual size_t _route(const int8_t *in, const int frame_id);
 
 	virtual size_t select_route_inter(const size_t a, const size_t b);
 };
