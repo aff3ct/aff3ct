@@ -615,6 +615,15 @@
 #ifndef INTERLEAVER_HPP_
 #include <Module/Interleaver/Interleaver.hpp>
 #endif
+#ifndef LOOP_CRC_HPP_
+#include <Module/Loop/CRC/Loop_CRC.hpp>
+#endif
+#ifndef LOOP_HPP_
+#include <Module/Loop/Loop.hpp>
+#endif
+#ifndef LOOP_PREDICATE_HPP_
+#include <Module/Loop/Predicate/Loop_predicate.hpp>
+#endif
 #ifndef MODEM_BPSK_FAST_HPP_
 #include <Module/Modem/BPSK/Modem_BPSK_fast.hpp>
 #endif

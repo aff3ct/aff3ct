@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <typeindex>
 
-#include "Module/Router/CRC/Router_CRC.hpp"
+#include "Module/Loop/CRC/Loop_CRC.hpp"
 
 namespace aff3ct
 {
@@ -10,12 +10,17 @@ namespace module
 {
 
 template <typename I, typename O>
-Router_CRC<I,O>
-::Router_CRC(const CRC<I> &crc, const size_t n_elmts_in, const size_t n_elmts_out)
-: Router(n_elmts_in, typeid(I), n_elmts_out, typeid(O), 2, crc.get_n_frames()),
-  crc(crc.clone())
+Loop_CRC<I,O>
+::Loop_CRC(const tools::Predicate &predicate,
+           const CRC<I> &crc,
+           const size_t n_elmts_in,
+           const size_t n_elmts_out,
+           const size_t crc_ite_start)
+: Loop_predicate<O>(predicate, n_elmts_in, typeid(I), n_elmts_out, crc.get_n_frames()),
+  crc(crc.clone()),
+  crc_ite_start(crc_ite_start)
 {
-	const std::string name = "Router_CRC";
+	const std::string name = "Loop_CRC";
 	this->set_name(name);
 
 	if (this->crc->get_size() + this->crc->get_K() != (int)n_elmts_in)
@@ -29,34 +34,29 @@ Router_CRC<I,O>
 }
 
 template <typename I, typename O>
-Router_CRC<I,O>* Router_CRC<I,O>
+Loop_CRC<I,O>* Loop_CRC<I,O>
 ::clone() const
 {
-	auto m = new Router_CRC(*this);
+	auto m = new Loop_CRC(*this);
 	m->deep_copy(*this);
 	return m;
 }
 
 template <typename I, typename O>
-void Router_CRC<I,O>
-::deep_copy(const Router_CRC<I,O> &m)
+void Loop_CRC<I,O>
+::deep_copy(const Loop_CRC<I,O> &m)
 {
-	Module::deep_copy(m);
+	Loop_predicate<O>::deep_copy(m);
 	if (m.crc != nullptr) this->crc.reset(dynamic_cast<CRC<I>*>(m.crc->clone()));
 }
 
 template <typename I, typename O>
-size_t Router_CRC<I,O>
-::_route(const int8_t *in, const int frame_id)
+bool Loop_CRC<I,O>
+::_stop(const int8_t *in, const int frame_id)
 {
-	return this->crc->check((const I*)in) ? 1 : 0;
-}
-
-template <typename I, typename O>
-size_t Router_CRC<I,O>
-::select_route_inter(const size_t a, const size_t b)
-{
-	return std::min(a, b);
+	if (Loop_predicate<O>::_stop(in, frame_id))
+		return true;
+	return (Loop::get_n_calls() > crc_ite_start) ? this->crc->check((const I*)in) ? true : false : false;
 }
 
 }

@@ -102,14 +102,15 @@ int Socket
 		if (s.datatype != this->datatype)
 		{
 			std::stringstream message;
-			message << "'s.datatype' has to be equal to 'datatype' ('s.datatype' = " << type_to_string[s.datatype]
-			        << ", 'datatype' = " << type_to_string[this->datatype]
-			        << ", 'name' = " << get_name()
-			        << ", 's.name' = " << s.get_name()
-			        << ", 'task.name' = " << task.get_name()
-			        << ", 's.task.name' = " << s.task.get_name()
-//				        << ", 'task.module.name' = " << task.get_module_name()
-//				        << ", 's.task.module.name' = " << s.task.get_module_name()
+			message << "'s.datatype' has to be equal to 'datatype' ("
+			        << "'s.datatype'"         << " = " << type_to_string[s.datatype]     << ", "
+			        << "'s.name'"             << " = " << s.get_name()                   << ", "
+			        << "'s.task.name'"        << " = " << s.task.get_name()              << ", "
+//			        << "'s.task.module.name'" << " = " << s.task.get_module_name()       << ", "
+			        << "'datatype'"           << " = " << type_to_string[this->datatype] << ", "
+			        << "'name'"               << " = " << get_name()                     << ", "
+			        << "'task.name'"          << " = " << task.get_name()                << ", "
+//			        << "'task.module.name'"   << " = " << task.get_module_name()
 			        << ").";
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
@@ -117,15 +118,17 @@ int Socket
 		if (s.databytes != this->databytes)
 		{
 			std::stringstream message;
-			message << "'s.databytes' has to be equal to 'databytes' ('s.databytes' = " << s.databytes
-			        << ", 'databytes' = " << this->databytes
-			        << ", 'name' = " << get_name()
-			        << ", 's.name' = " << s.get_name()
-			        << ", 'task.name' = " << task.get_name()
-			        << ", 's.task.name' = " << s.task.get_name()
-//				        << ", 'task.module.name' = " << task.get_module_name()
-//				        << ", 's.task.module.name' = " << s.task.get_module_name()
+			message << "'s.databytes' has to be equal to 'databytes' ("
+			        << "'s.databytes'"        << " = " << s.databytes              << ", "
+			        << "'s.name'"             << " = " << s.get_name()             << ", "
+			        << "'s.task.name'"        << " = " << s.task.get_name()        << ", "
+//			        << "'s.task.module.name'" << " = " << s.task.get_module_name() << ", "
+			        << "'databytes'"          << " = " << this->databytes          << ", "
+			        << "'name'"               << " = " << get_name()               << ", "
+			        << "'task.name'"          << " = " << task.get_name()          << ", "
+//			        << "'task.module.name'"   << " = " << task.get_module_name()
 			        << ").";
+
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 

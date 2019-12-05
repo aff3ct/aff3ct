@@ -17,40 +17,48 @@ BFER_ite<B,R,Q>
 
   source          (params_BFER_ite.n_threads),
   crc             (params_BFER_ite.n_threads),
-  codec           (params_BFER_ite.n_threads),
-  modem           (params_BFER_ite.n_threads),
+  codec1          (params_BFER_ite.n_threads),
+  codec2          (params_BFER_ite.n_threads),
+  modem1          (params_BFER_ite.n_threads),
+  modem2          (params_BFER_ite.n_threads),
   channel         (params_BFER_ite.n_threads),
   quantizer       (params_BFER_ite.n_threads),
-  coset_real      (params_BFER_ite.n_threads),
+  coset_real1     (params_BFER_ite.n_threads),
+  coset_real2     (params_BFER_ite.n_threads),
+  coset_real3     (params_BFER_ite.n_threads),
   coset_bit       (params_BFER_ite.n_threads),
   interleaver_core(params_BFER_ite.n_threads),
   interleaver_bit (params_BFER_ite.n_threads),
-  interleaver_llr (params_BFER_ite.n_threads),
-  router_ite      (params_BFER_ite.n_threads),
-  router_crc      (params_BFER_ite.n_threads),
-  router_ite_crc  (params_BFER_ite.n_threads),
+  interleaver_llr1(params_BFER_ite.n_threads),
+  interleaver_llr2(params_BFER_ite.n_threads),
+  loop_ite        (params_BFER_ite.n_threads),
+  loop_crc        (params_BFER_ite.n_threads),
 
   rd_engine_seed(params_BFER_ite.n_threads)
 {
 	for (auto tid = 0; tid < params_BFER_ite.n_threads; tid++)
 		rd_engine_seed[tid].seed(params_BFER_ite.local_seed + tid);
 
-	this->add_module("source"         , params_BFER_ite.n_threads);
-	this->add_module("crc"            , params_BFER_ite.n_threads);
-	this->add_module("extractor"      , params_BFER_ite.n_threads);
-	this->add_module("encoder"        , params_BFER_ite.n_threads);
-	this->add_module("modem"          , params_BFER_ite.n_threads);
-	this->add_module("channel"        , params_BFER_ite.n_threads);
-	this->add_module("quantizer"      , params_BFER_ite.n_threads);
-	this->add_module("coset_real"     , params_BFER_ite.n_threads);
-	this->add_module("decoder_siso"   , params_BFER_ite.n_threads);
-	this->add_module("decoder_siho"   , params_BFER_ite.n_threads);
-	this->add_module("coset_bit"      , params_BFER_ite.n_threads);
-	this->add_module("interleaver_bit", params_BFER_ite.n_threads);
-	this->add_module("interleaver_llr", params_BFER_ite.n_threads);
-	this->add_module("router_ite"     , params_BFER_ite.n_threads);
-	this->add_module("router_crc"     , params_BFER_ite.n_threads);
-	this->add_module("router_ite_crc" , params_BFER_ite.n_threads);
+	this->add_module("source"          , params_BFER_ite.n_threads);
+	this->add_module("crc"             , params_BFER_ite.n_threads);
+	this->add_module("extractor1"      , params_BFER_ite.n_threads);
+	this->add_module("extractor2"      , params_BFER_ite.n_threads);
+	this->add_module("encoder"         , params_BFER_ite.n_threads);
+	this->add_module("modem1"          , params_BFER_ite.n_threads);
+	this->add_module("modem2"          , params_BFER_ite.n_threads);
+	this->add_module("channel"         , params_BFER_ite.n_threads);
+	this->add_module("quantizer"       , params_BFER_ite.n_threads);
+	this->add_module("coset_real1"     , params_BFER_ite.n_threads);
+	this->add_module("coset_real2"     , params_BFER_ite.n_threads);
+	this->add_module("coset_real3"     , params_BFER_ite.n_threads);
+	this->add_module("decoder_siso"    , params_BFER_ite.n_threads);
+	this->add_module("decoder_siho"    , params_BFER_ite.n_threads);
+	this->add_module("coset_bit"       , params_BFER_ite.n_threads);
+	this->add_module("interleaver_bit" , params_BFER_ite.n_threads);
+	this->add_module("interleaver_llr1", params_BFER_ite.n_threads);
+	this->add_module("interleaver_llr2", params_BFER_ite.n_threads);
+	this->add_module("loop_ite"        , params_BFER_ite.n_threads);
+	this->add_module("loop_crc"        , params_BFER_ite.n_threads);
 }
 
 template <typename B, typename R, typename Q>
@@ -60,51 +68,64 @@ void BFER_ite<B,R,Q>
 	// build the objects
 	if (!params_BFER_ite.alloc_clone || tid == 0)
 	{
-		source          [tid] = build_source        (tid);
-		crc             [tid] = build_crc           (tid);
-		codec           [tid] = build_codec         (tid);
-		modem           [tid] = build_modem         (tid);
-		channel         [tid] = build_channel       (tid);
-		quantizer       [tid] = build_quantizer     (tid);
-		coset_real      [tid] = build_coset_real    (tid);
-		coset_bit       [tid] = build_coset_bit     (tid);
-		interleaver_core[tid] = build_interleaver   (tid);
-		router_ite      [tid] = build_router_ite    (tid);
-		router_crc      [tid] = build_router_crc    (tid);
-		router_ite_crc  [tid] = build_router_ite_crc(tid);
+		source          [tid] = build_source     (tid);
+		crc             [tid] = build_crc        (tid);
+		codec1          [tid] = build_codec      (tid);
+		codec2          [tid] = build_codec      (tid);
+		modem1          [tid] = build_modem      (tid);
+		modem2          [tid] = build_modem      (tid);
+		channel         [tid] = build_channel    (tid);
+		quantizer       [tid] = build_quantizer  (tid);
+		coset_real1     [tid] = build_coset_real (tid);
+		coset_real2     [tid] = build_coset_real (tid);
+		coset_real3     [tid] = build_coset_real (tid);
+		coset_bit       [tid] = build_coset_bit  (tid);
+		interleaver_core[tid] = build_interleaver(tid);
+		loop_ite        [tid] = build_loop_ite   (tid);
+		loop_crc        [tid] = build_loop_crc   (tid);
 	}
 
 	if (params_BFER_ite.alloc_clone)
 	{
 		source          [tid].reset(source          [0]->clone());
 		crc             [tid].reset(crc             [0]->clone());
-		codec           [tid].reset(codec           [0]->clone());
-		modem           [tid].reset(modem           [0]->clone());
+		codec1          [tid].reset(codec1          [0]->clone());
+		codec2          [tid].reset(codec2          [0]->clone());
+		modem1          [tid].reset(modem1          [0]->clone());
+		modem2          [tid].reset(modem2          [0]->clone());
 		channel         [tid].reset(channel         [0]->clone());
 		quantizer       [tid].reset(quantizer       [0]->clone());
-		coset_real      [tid].reset(coset_real      [0]->clone());
+		coset_real1     [tid].reset(coset_real1     [0]->clone());
+		coset_real2     [tid].reset(coset_real2     [0]->clone());
+		coset_real3     [tid].reset(coset_real3     [0]->clone());
 		coset_bit       [tid].reset(coset_bit       [0]->clone());
 		interleaver_core[tid].reset(interleaver_core[0]->clone());
-		router_ite      [tid].reset(router_ite      [0]->clone());
-		router_crc      [tid].reset(router_crc      [0]->clone());
-		router_ite_crc  [tid].reset(router_ite_crc  [0]->clone());
+		loop_ite        [tid].reset(loop_ite        [0]->clone());
+		loop_crc        [tid].reset(loop_crc        [0]->clone());
 	}
 
-	interleaver_bit[tid].reset(factory::Interleaver::build<B>(*interleaver_core[tid]));
-	interleaver_llr[tid].reset(factory::Interleaver::build<Q>(*interleaver_core[tid]));
+	interleaver_bit [tid].reset(factory::Interleaver::build<B>(*interleaver_core[tid]));
+	interleaver_llr1[tid].reset(factory::Interleaver::build<Q>(*interleaver_core[tid]));
+	interleaver_llr2[tid].reset(factory::Interleaver::build<Q>(*interleaver_core[tid]));
 
 	// set the noise
-	codec  [tid]->set_noise(*this->noise);
-	modem  [tid]->set_noise(*this->noise);
+	codec1 [tid]->set_noise(*this->noise);
+	codec2 [tid]->set_noise(*this->noise);
+	modem1 [tid]->set_noise(*this->noise);
+	modem2 [tid]->set_noise(*this->noise);
 	channel[tid]->set_noise(*this->noise);
 
 	// register modules to "noise changed" callback
-	auto ptr_cdc = codec  [tid].get();
-	auto ptr_mdm = modem  [tid].get();
-	auto ptr_chn = channel[tid].get();
-	this->noise->record_callback_update([ptr_cdc](){ ptr_cdc->notify_noise_update(); });
-	this->noise->record_callback_update([ptr_mdm](){ ptr_mdm->notify_noise_update(); });
-	this->noise->record_callback_update([ptr_chn](){ ptr_chn->notify_noise_update(); });
+	auto ptr_cdc1 = codec1 [tid].get();
+	auto ptr_cdc2 = codec2 [tid].get();
+	auto ptr_mdm1 = modem1 [tid].get();
+	auto ptr_mdm2 = modem2 [tid].get();
+	auto ptr_chn  = channel[tid].get();
+	this->noise->record_callback_update([ptr_cdc1](){ ptr_cdc1->notify_noise_update(); });
+	this->noise->record_callback_update([ptr_cdc2](){ ptr_cdc2->notify_noise_update(); });
+	this->noise->record_callback_update([ptr_mdm1](){ ptr_mdm1->notify_noise_update(); });
+	this->noise->record_callback_update([ptr_mdm2](){ ptr_mdm2->notify_noise_update(); });
+	this->noise->record_callback_update([ptr_chn ](){ ptr_chn ->notify_noise_update(); });
 
 	// set the seeds
 	const auto seed_src = rd_engine_seed[tid]();
@@ -117,38 +138,55 @@ void BFER_ite<B,R,Q>
 	      source          [tid]->                   set_seed(seed_src);
 	      channel         [tid]->                   set_seed(seed_chn);
 	      interleaver_core[tid]->                   set_seed(seed_itl);
-	try { codec           [tid]->get_encoder     ().set_seed(seed_enc); } catch (...) {}
-	try { codec           [tid]->get_decoder_siho().set_seed(seed_dec); } catch (...) {}
-	try { codec           [tid]->get_decoder_siso().set_seed(seed_dec); } catch (...) {}
+	try { codec1          [tid]->get_encoder     ().set_seed(seed_enc); } catch (...) {}
+	try { codec1          [tid]->get_decoder_siho().set_seed(seed_dec); } catch (...) {}
+	try { codec1          [tid]->get_decoder_siso().set_seed(seed_dec); } catch (...) {}
+	try { codec2          [tid]->get_encoder     ().set_seed(seed_enc); } catch (...) {}
+	try { codec2          [tid]->get_decoder_siho().set_seed(seed_dec); } catch (...) {}
+	try { codec2          [tid]->get_decoder_siso().set_seed(seed_dec); } catch (...) {}
 
-	this->set_module("source"         , tid, *source         [tid]);
-	this->set_module("crc"            , tid, *crc            [tid]);
-	this->set_module("extractor"      , tid,  codec          [tid]->get_extractor());
-	this->set_module("encoder"        , tid,  codec          [tid]->get_encoder());
-	this->set_module("modem"          , tid, *modem          [tid]);
-	this->set_module("channel"        , tid, *channel        [tid]);
-	this->set_module("quantizer"      , tid, *quantizer      [tid]);
-	this->set_module("coset_real"     , tid, *coset_real     [tid]);
-	this->set_module("decoder_siso"   , tid,  codec          [tid]->get_decoder_siso());
-	this->set_module("coset_bit"      , tid, *coset_bit      [tid]);
-	this->set_module("interleaver_bit", tid, *interleaver_bit[tid]);
-	this->set_module("interleaver_llr", tid, *interleaver_llr[tid]);
-	this->set_module("router_ite"     , tid, *router_ite     [tid]);
-	this->set_module("router_crc"     , tid, *router_crc     [tid]);
-	this->set_module("router_ite_crc" , tid, *router_ite_crc [tid]);
+	this->set_module("source"          , tid, *source          [tid]);
+	this->set_module("crc"             , tid, *crc             [tid]);
+	this->set_module("extractor1"      , tid,  codec1          [tid]->get_extractor());
+	this->set_module("extractor2"      , tid,  codec2          [tid]->get_extractor());
+	this->set_module("encoder"         , tid,  codec1          [tid]->get_encoder());
+	this->set_module("modem1"          , tid, *modem1          [tid]);
+	this->set_module("modem2"          , tid, *modem2          [tid]);
+	this->set_module("channel"         , tid, *channel         [tid]);
+	this->set_module("quantizer"       , tid, *quantizer       [tid]);
+	this->set_module("coset_real1"     , tid, *coset_real1     [tid]);
+	this->set_module("coset_real2"     , tid, *coset_real2     [tid]);
+	this->set_module("coset_real3"     , tid, *coset_real3     [tid]);
+	this->set_module("decoder_siso"    , tid,  codec1          [tid]->get_decoder_siso());
+	this->set_module("coset_bit"       , tid, *coset_bit       [tid]);
+	this->set_module("interleaver_bit" , tid, *interleaver_bit [tid]);
+	this->set_module("interleaver_llr1", tid, *interleaver_llr1[tid]);
+	this->set_module("interleaver_llr2", tid, *interleaver_llr2[tid]);
+	this->set_module("loop_ite"        , tid, *loop_ite        [tid]);
+	this->set_module("loop_crc"        , tid, *loop_crc        [tid]);
 
-	if (static_cast<module::Decoder*>(&codec[tid]->get_decoder_siso()) !=
-	    static_cast<module::Decoder*>(&codec[tid]->get_decoder_siho()))
+	if (static_cast<module::Decoder*>(&codec1[tid]->get_decoder_siso()) !=
+	    static_cast<module::Decoder*>(&codec1[tid]->get_decoder_siho()))
 	{
-		this->set_module("decoder_siho", tid, codec[tid]->get_decoder_siho());
-		codec[tid]->get_decoder_siho().set_auto_reset(false);
-		this->monitor_er[tid]->record_callback_check([this, tid](){ this->codec[tid]->get_decoder_siho().reset(); });
+		this->set_module("decoder_siho", tid, codec1[tid]->get_decoder_siho());
+		codec1[tid]->get_decoder_siho().set_auto_reset(false);
+		this->monitor_er[tid]->record_callback_check([this, tid](){ this->codec1[tid]->get_decoder_siho().reset(); });
 	}
 
-	codec[tid]->get_decoder_siso().set_auto_reset(false);
-	this->monitor_er[tid]->record_callback_check([this, tid](){ this->codec[tid]->get_decoder_siso().reset(); });
-	this->monitor_er[tid]->record_callback_check([this, tid](){ this->router_ite[tid]->reset(); });
-	this->monitor_er[tid]->record_callback_check([this, tid](){ this->router_ite_crc[tid]->reset(); });
+	if (static_cast<module::Decoder*>(&codec2[tid]->get_decoder_siso()) !=
+	    static_cast<module::Decoder*>(&codec2[tid]->get_decoder_siho()))
+	{
+		this->set_module("decoder_siho", tid, codec2[tid]->get_decoder_siho());
+		codec2[tid]->get_decoder_siho().set_auto_reset(false);
+		this->monitor_er[tid]->record_callback_check([this, tid](){ this->codec2[tid]->get_decoder_siho().reset(); });
+	}
+
+	codec1[tid]->get_decoder_siso().set_auto_reset(false);
+	codec2[tid]->get_decoder_siso().set_auto_reset(false);
+	this->monitor_er[tid]->record_callback_check([this, tid](){ this->codec1  [tid]->get_decoder_siso().reset(); });
+	this->monitor_er[tid]->record_callback_check([this, tid](){ this->codec2  [tid]->get_decoder_siso().reset(); });
+	this->monitor_er[tid]->record_callback_check([this, tid](){ this->loop_ite[tid]                   ->reset(); });
+	this->monitor_er[tid]->record_callback_check([this, tid](){ this->loop_crc[tid]                   ->reset(); });
 
 	if (interleaver_core[tid]->is_uniform())
 		this->monitor_er[tid]->record_callback_check(std::bind(&tools::Interleaver_core<>::refresh,
@@ -159,7 +197,7 @@ void BFER_ite<B,R,Q>
 		using namespace module;
 
 		auto &source      = *this->source    [tid];
-		auto &encoder     =  this->codec     [tid]->get_encoder();
+		auto &encoder     =  this->codec1    [tid]->get_encoder();
 		auto &channel     = *this->channel   [tid];
 		auto &interleaver = *interleaver_core[tid];
 
@@ -259,7 +297,10 @@ std::unique_ptr<module::Channel<R>> BFER_ite<B,R,Q>
 	if (this->distributions != nullptr)
 		return std::unique_ptr<module::Channel<R>>(params_BFER_ite.chn->build<R>(*this->distributions));
 	else
-		return std::unique_ptr<module::Channel<R>>(params_BFER_ite.chn->build<R>());
+	{
+		auto c = std::unique_ptr<module::Channel<R>>(params_BFER_ite.chn->build<R>());
+		return c;
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -290,43 +331,30 @@ std::unique_ptr<module::Coset<B,B>> BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<module::Router_predicate<Q>> BFER_ite<B,R,Q>
-::build_router_ite(const int tid)
+std::unique_ptr<module::Loop_predicate<Q>> BFER_ite<B,R,Q>
+::build_loop_ite(const int tid)
 {
 	tools::Predicate_ite p(params_BFER_ite.n_ite);
-	auto router_ite =  std::unique_ptr<module::Router_predicate<Q>>(new module::Router_predicate<Q>(
+	auto loop_ite =  std::unique_ptr<module::Loop_predicate<Q>>(new module::Loop_predicate<Q>(
 		p,
 		params_BFER_ite.cdc->N_cw,
 		params_BFER_ite.src->n_frames));
-	router_ite->set_custom_name("Router_ite");
-	return router_ite;
+	return loop_ite;
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<module::Router_CRC<B,Q>> BFER_ite<B,R,Q>
-::build_router_crc(const int tid)
+std::unique_ptr<module::Loop_CRC<B,Q>> BFER_ite<B,R,Q>
+::build_loop_crc(const int tid)
 {
+	tools::Predicate_ite p(params_BFER_ite.n_ite);
 	auto crc = params_BFER_ite.crc->build<B>();
-	size_t K = (size_t)crc->get_size() + (size_t)crc->get_K();
-	auto router_crc = std::unique_ptr<module::Router_CRC<B,Q>>(new module::Router_CRC<B,Q>(
-		*crc,
-		K,
-		params_BFER_ite.cdc->N_cw));
-	router_crc->set_custom_name("Router_CRC");
-	return router_crc;
-}
-
-template <typename B, typename R, typename Q>
-std::unique_ptr<module::Router_predicate<Q>> BFER_ite<B,R,Q>
-::build_router_ite_crc(const int tid)
-{
-	tools::Predicate_ite p(params_BFER_ite.crc_start);
-	auto router_ite =  std::unique_ptr<module::Router_predicate<Q>>(new module::Router_predicate<Q>(
+	auto loop_crc = std::unique_ptr<module::Loop_CRC<B,Q>>(new module::Loop_CRC<B,Q>(
 		p,
+		*crc,
+		(size_t)crc->get_size() + (size_t)crc->get_K(),
 		params_BFER_ite.cdc->N_cw,
-		params_BFER_ite.src->n_frames));
-	router_ite->set_custom_name("Router_iCRC");
-	return router_ite;
+		params_BFER_ite.crc_start));
+	return loop_crc;
 }
 
 // ==================================================================================== explicit template instantiation

@@ -8,7 +8,6 @@
 #include <memory>
 #include <cstdint>
 
-#include "Tools/Interface/Interface_reset.hpp"
 #include "Tools/Algo/Predicate.hpp"
 #include "Module/Router/Router.hpp"
 
@@ -41,4 +40,4 @@ protected:
 }
 }
 
-#endif /* ROUTER_CRC_HPP_ */
+#endif /* ROUTER_PREDICATE_HPP_ */

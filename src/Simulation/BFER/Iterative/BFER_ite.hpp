@@ -14,8 +14,8 @@
 #include "Module/Quantizer/Quantizer.hpp"
 #include "Module/Coset/Coset.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
-#include "Module/Router/Predicate/Router_predicate.hpp"
-#include "Module/Router/CRC/Router_CRC.hpp"
+#include "Module/Loop/Predicate/Loop_predicate.hpp"
+#include "Module/Loop/CRC/Loop_CRC.hpp"
 #include "Factory/Simulation/BFER/BFER_ite.hpp"
 #include "Simulation/BFER/BFER.hpp"
 
@@ -32,18 +32,22 @@ protected:
 	// communication chain
 	std::vector<std::unique_ptr<module::Source          <B    >>> source;
 	std::vector<std::unique_ptr<module::CRC             <B    >>> crc;
-	std::vector<std::unique_ptr<tools ::Codec_SISO      <B,  Q>>> codec;
-	std::vector<std::unique_ptr<module::Modem           <B,R,Q>>> modem;
+	std::vector<std::unique_ptr<tools ::Codec_SISO      <B,  Q>>> codec1;
+	std::vector<std::unique_ptr<tools ::Codec_SISO      <B,  Q>>> codec2;
+	std::vector<std::unique_ptr<module::Modem           <B,R,Q>>> modem1;
+	std::vector<std::unique_ptr<module::Modem           <B,R,Q>>> modem2;
 	std::vector<std::unique_ptr<module::Channel         <R    >>> channel;
 	std::vector<std::unique_ptr<module::Quantizer       <R,Q  >>> quantizer;
-	std::vector<std::unique_ptr<module::Coset           <B,Q  >>> coset_real;
+	std::vector<std::unique_ptr<module::Coset           <B,Q  >>> coset_real1;
+	std::vector<std::unique_ptr<module::Coset           <B,Q  >>> coset_real2;
+	std::vector<std::unique_ptr<module::Coset           <B,Q  >>> coset_real3;
 	std::vector<std::unique_ptr<module::Coset           <B,B  >>> coset_bit;
 	std::vector<std::unique_ptr<tools ::Interleaver_core<     >>> interleaver_core;
 	std::vector<std::unique_ptr<module::Interleaver     <B    >>> interleaver_bit;
-	std::vector<std::unique_ptr<module::Interleaver     <Q    >>> interleaver_llr;
-	std::vector<std::shared_ptr<module::Router_predicate<Q    >>> router_ite;
-	std::vector<std::shared_ptr<module::Router_CRC      <B,Q  >>> router_crc;
-	std::vector<std::shared_ptr<module::Router_predicate<Q    >>> router_ite_crc;
+	std::vector<std::unique_ptr<module::Interleaver     <Q    >>> interleaver_llr1;
+	std::vector<std::unique_ptr<module::Interleaver     <Q    >>> interleaver_llr2;
+	std::vector<std::shared_ptr<module::Loop_predicate  <Q    >>> loop_ite;
+	std::vector<std::shared_ptr<module::Loop_CRC        <B,Q  >>> loop_crc;
 
 	// a vector of random generator to generate the seeds
 	std::vector<std::mt19937> rd_engine_seed;
@@ -55,18 +59,17 @@ public:
 protected:
 	virtual void __build_communication_chain(const int tid = 0);
 
-	virtual std::unique_ptr<module::Source          <B    >> build_source        (const int tid = 0);
-	virtual std::unique_ptr<module::CRC             <B    >> build_crc           (const int tid = 0);
-	virtual std::unique_ptr<tools ::Codec_SISO      <B,Q  >> build_codec         (const int tid = 0);
-	virtual std::unique_ptr<module::Modem           <B,R,Q>> build_modem         (const int tid = 0);
-	virtual std::unique_ptr<module::Channel         <R    >> build_channel       (const int tid = 0);
-	virtual std::unique_ptr<module::Quantizer       <R,Q  >> build_quantizer     (const int tid = 0);
-	virtual std::unique_ptr<module::Coset           <B,Q  >> build_coset_real    (const int tid = 0);
-	virtual std::unique_ptr<module::Coset           <B,B  >> build_coset_bit     (const int tid = 0);
-	virtual std::unique_ptr<tools ::Interleaver_core<     >> build_interleaver   (const int tid = 0);
-	virtual std::unique_ptr<module::Router_predicate<Q    >> build_router_ite    (const int tid = 0);
-	virtual std::unique_ptr<module::Router_CRC      <B,Q  >> build_router_crc    (const int tid = 0);
-	virtual std::unique_ptr<module::Router_predicate<Q    >> build_router_ite_crc(const int tid = 0);
+	virtual std::unique_ptr<module::Source          <B    >> build_source     (const int tid = 0);
+	virtual std::unique_ptr<module::CRC             <B    >> build_crc        (const int tid = 0);
+	virtual std::unique_ptr<tools ::Codec_SISO      <B,Q  >> build_codec      (const int tid = 0);
+	virtual std::unique_ptr<module::Modem           <B,R,Q>> build_modem      (const int tid = 0);
+	virtual std::unique_ptr<module::Channel         <R    >> build_channel    (const int tid = 0);
+	virtual std::unique_ptr<module::Quantizer       <R,Q  >> build_quantizer  (const int tid = 0);
+	virtual std::unique_ptr<module::Coset           <B,Q  >> build_coset_real (const int tid = 0);
+	virtual std::unique_ptr<module::Coset           <B,B  >> build_coset_bit  (const int tid = 0);
+	virtual std::unique_ptr<tools ::Interleaver_core<     >> build_interleaver(const int tid = 0);
+	virtual std::unique_ptr<module::Loop_predicate  <Q    >> build_loop_ite   (const int tid = 0);
+	virtual std::unique_ptr<module::Loop_CRC        <B,Q  >> build_loop_crc   (const int tid = 0);
 };
 }
 }
