@@ -24,7 +24,6 @@ class SC_BFER_ite : public BFER_ite<B,R,Q>
 {
 protected:
 	std::vector<std::unique_ptr<tools::SC_Duplicator>> duplicator;
-	            std::unique_ptr<module::Coset<B,Q>>    coset_real_i;
 	            std::unique_ptr<tools::SC_Router>      router;
 	            std::unique_ptr<tools::SC_Funnel>      funnel;
 	            std::unique_ptr<tools::SC_Predicate>   predicate;
@@ -38,8 +37,6 @@ protected:
 
 	virtual void __build_communication_chain(const int tid = 0);
 	virtual void _launch();
-
-	virtual std::unique_ptr<module::Coset<B,Q>> build_coset_real(const int tid = 0);
 
 private:
 	void bind_sockets      ();

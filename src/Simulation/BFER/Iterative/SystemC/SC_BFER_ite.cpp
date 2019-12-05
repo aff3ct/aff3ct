@@ -23,8 +23,6 @@ SC_BFER_ite<B,R,Q>
 	if (params_BFER_ite.coded_monitoring)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC simulation does not support the coded "
 		                                                            "monitoring.");
-
-	this->add_module("coset_real_i", params_BFER_ite.n_threads);
 }
 
 template <typename B, typename R, typename Q>
@@ -33,10 +31,8 @@ void SC_BFER_ite<B,R,Q>
 {
 	BFER_ite<B,R,Q>::__build_communication_chain(tid);
 
-	this->set_module("coset_real_i", tid, *coset_real_i);
-
-	this->interleaver_bit[tid]->set_custom_name(this->interleaver_llr[tid]->get_name() + "_bit");
-	this->interleaver_llr[tid]->set_custom_name(this->interleaver_llr[tid]->get_name() + "_llr");
+	this->interleaver_bit [tid]->set_custom_name(this->interleaver_llr1[tid]->get_name() + "_bit");
+	this->interleaver_llr1[tid]->set_custom_name(this->interleaver_llr1[tid]->get_name() + "_llr");
 
 	this->monitor_er[tid]->record_callback_check([&]() -> void
 	{
@@ -55,34 +51,34 @@ void SC_BFER_ite<B,R,Q>
 	// create the sc_module inside the objects of the communication chain
 	this->source         [tid]               ->sc.create_module(+src::tsk::generate  );
 	this->crc            [tid]               ->sc.create_module(+crc::tsk::build     );
-	this->codec          [tid]->get_encoder() .sc.create_module(+enc::tsk::encode    );
+	this->codec1         [tid]->get_encoder() .sc.create_module(+enc::tsk::encode    );
 	this->interleaver_bit[tid]               ->sc.create_module(+itl::tsk::interleave);
-	this->modem          [tid]               ->sc.create_module(+mdm::tsk::modulate  );
-	this->modem          [tid]               ->sc.create_module(+mdm::tsk::filter    );
+	this->modem1         [tid]               ->sc.create_module(+mdm::tsk::modulate  );
+	this->modem1         [tid]               ->sc.create_module(+mdm::tsk::filter    );
 	if (this->params_BFER_ite.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
 		this->channel[tid]->sc.create_module(+chn::tsk::add_noise_wg  );
-		this->modem  [tid]->sc.create_module(+mdm::tsk::demodulate_wg );
-		this->modem  [tid]->sc.create_module(+mdm::tsk::tdemodulate_wg);
+		this->modem1 [tid]->sc.create_module(+mdm::tsk::demodulate_wg );
+		this->modem1 [tid]->sc.create_module(+mdm::tsk::tdemodulate_wg);
 	}
 	else
 	{
 		this->channel[tid]->sc.create_module(+chn::tsk::add_noise  );
-		this->modem  [tid]->sc.create_module(+mdm::tsk::demodulate );
-		this->modem  [tid]->sc.create_module(+mdm::tsk::tdemodulate);
+		this->modem1 [tid]->sc.create_module(+mdm::tsk::demodulate );
+		this->modem1 [tid]->sc.create_module(+mdm::tsk::tdemodulate);
 	}
-	this->interleaver_llr[tid]                    ->sc.create_module(+itl::tsk::interleave  );
-	this->quantizer      [tid]                    ->sc.create_module(+qnt::tsk::process     );
-	this->interleaver_llr[tid]                    ->sc.create_module(+itl::tsk::deinterleave);
-	this->codec          [tid]->get_decoder_siho() .sc.create_module(+dec::tsk::decode_siho );
-	this->codec          [tid]->get_decoder_siso() .sc.create_module(+dec::tsk::decode_siso );
-	this->monitor_er     [tid]                    ->sc.create_module(+mnt::tsk::check_errors);
+	this->interleaver_llr1[tid]                    ->sc.create_module(+itl::tsk::interleave  );
+	this->quantizer       [tid]                    ->sc.create_module(+qnt::tsk::process     );
+	this->interleaver_llr1[tid]                    ->sc.create_module(+itl::tsk::deinterleave);
+	this->codec1          [tid]->get_decoder_siho() .sc.create_module(+dec::tsk::decode_siho );
+	this->codec1          [tid]->get_decoder_siso() .sc.create_module(+dec::tsk::decode_siso );
+	this->monitor_er      [tid]                    ->sc.create_module(+mnt::tsk::check_errors);
 
 	if (this->params_BFER_ite.coset)
 	{
-		this->coset_real[tid]->sc.create_module(+cst::tsk::apply);
-		this->coset_real_i   ->sc.create_module(+cst::tsk::apply);
-		this->coset_bit [tid]->sc.create_module(+cst::tsk::apply);
+		this->coset_real1[tid]->sc.create_module(+cst::tsk::apply);
+		this->coset_real2[tid]->sc.create_module(+cst::tsk::apply);
+		this->coset_bit  [tid]->sc.create_module(+cst::tsk::apply);
 	}
 	this->crc[tid]->sc.create_module(+crc::tsk::extract);
 }
@@ -108,7 +104,6 @@ void SC_BFER_ite<B,R,Q>
 	{
 		this->duplicator[6].reset( new tools::SC_Duplicator("Duplicator6"));
 	}
-
 
 	this->router   .reset( new tools::SC_Router   (p, "Router"   ));
 	this->funnel   .reset( new tools::SC_Funnel   (   "Funnel"   ));
@@ -138,20 +133,20 @@ void SC_BFER_ite<B,R,Q>
 	auto &fnl = *this->funnel;
 	auto &prd = *this->predicate;
 
-	auto &src = *this->source         [0];
-	auto &crc = *this->crc            [0];
-	auto &enc =  this->codec          [0]->get_encoder();
-	auto &itb = *this->interleaver_bit[0];
-	auto &itl = *this->interleaver_llr[0];
-	auto &mdm = *this->modem          [0];
-	auto &chn = *this->channel        [0];
-	auto &qnt = *this->quantizer      [0];
-	auto &csr = *this->coset_real     [0];
-	auto &csi = *this->coset_real_i;
-	auto &dch =  this->codec          [0]->get_decoder_siho();
-	auto &dcs =  this->codec          [0]->get_decoder_siso();
-	auto &csb = *this->coset_bit      [0];
-	auto &mnt = *this->monitor_er     [0];
+	auto &src = *this->source          [0];
+	auto &crc = *this->crc             [0];
+	auto &enc =  this->codec1          [0]->get_encoder();
+	auto &itb = *this->interleaver_bit [0];
+	auto &itl = *this->interleaver_llr1[0];
+	auto &mdm = *this->modem1          [0];
+	auto &chn = *this->channel         [0];
+	auto &qnt = *this->quantizer       [0];
+	auto &csr = *this->coset_real1     [0];
+	auto &csi = *this->coset_real2     [0];
+	auto &dch =  this->codec1          [0]->get_decoder_siho();
+	auto &dcs =  this->codec1          [0]->get_decoder_siso();
+	auto &csb = *this->coset_bit       [0];
+	auto &mnt = *this->monitor_er      [0];
 
 	using namespace module;
 	if (this->params_BFER_ite.coset)
@@ -259,20 +254,6 @@ void SC_BFER_ite<B,R,Q>
 		dp1                                  .s_out1                                 (mnt.sc[+mnt::tsk::check_errors  ].s_in [+mnt::sck::check_errors  ::V   ]);
 		dp1                                  .s_out2                                 (prd                              .s_in                                  );
 	}
-}
-
-template <typename B, typename R, typename Q>
-std::unique_ptr<module::Coset<B,Q>> SC_BFER_ite<B,R,Q>
-::build_coset_real(const int tid)
-{
-	factory::Coset cst_params;
-	cst_params.size     = this->params_BFER_ite.cdc->N_cw;
-	cst_params.n_frames = this->params_BFER_ite.src->n_frames;
-
-	this->coset_real_i.reset(cst_params.template build_real<B,Q>());
-	this->coset_real_i->set_custom_name("Coset_real_i");
-
-	return std::unique_ptr<module::Coset<B,Q>>(cst_params.template build_real<B,Q>());
 }
 
 // ==================================================================================== explicit template instantiation
