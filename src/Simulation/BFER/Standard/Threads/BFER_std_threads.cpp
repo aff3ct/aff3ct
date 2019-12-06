@@ -16,13 +16,10 @@ BFER_std_threads<B,R,Q>
 ::BFER_std_threads(const factory::BFER_std &params_BFER_std)
 : BFER_std<B,R,Q>(params_BFER_std)
 {
-	if (this->params_BFER_std.err_track_revert)
-	{
-		if (this->params_BFER_std.n_threads != 1)
-			std::clog << rang::tag::warning << "Multi-threading detected with error tracking revert feature! "
-			                                   "Each thread will play the same frames. Please run with one thread."
-			          << std::endl;
-	}
+	if (this->params_BFER_std.err_track_revert && this->params_BFER_std.n_threads != 1)
+		std::clog << rang::tag::warning << "Multi-threading detected with error tracking revert feature! "
+		                                   "Each thread will play the same frames. Please run with one thread."
+		          << std::endl;
 }
 
 template <typename B, typename R, typename Q>
@@ -117,141 +114,323 @@ void BFER_std_threads<B,R,Q>
 	}
 	else
 	{
-		if (this->params_BFER_std.crc->type == "NO")
-			crc[crc::sck::build::U_K2](src[src::sck::generate::U_K]);
-		if (this->params_BFER_std.cdc->enc->type == "NO")
-			enc[enc::sck::encode::X_N](crc[crc::sck::build::U_K2]);
-		if (this->params_BFER_std.cdc->pct == nullptr || this->params_BFER_std.cdc->pct->type == "NO")
-			pct[pct::sck::puncture::X_N2](enc[enc::sck::encode::X_N]);
+		if (this->params_BFER_std.crc->type != "NO")
+			crc[crc::sck::build::U_K1](src[src::sck::generate::U_K ]);
 
-		crc[crc::sck::build   ::U_K1](src[src::sck::generate::U_K ]);
-		enc[enc::sck::encode  ::U_K ](crc[crc::sck::build   ::U_K2]);
-		pct[pct::sck::puncture::X_N1](enc[enc::sck::encode  ::X_N ]);
-		mdm[mdm::sck::modulate::X_N1](pct[pct::sck::puncture::X_N2]);
+		if (this->params_BFER_std.cdc->enc->type != "NO")
+		{
+			if (this->params_BFER_std.crc->type != "NO")
+				enc[enc::sck::encode::U_K](crc[crc::sck::build::U_K2]);
+			else
+				enc[enc::sck::encode::U_K](src[src::sck::generate::U_K]);
+		}
+
+		if (this->params_BFER_std.cdc->pct != nullptr && this->params_BFER_std.cdc->pct->type != "NO")
+		{
+			if (this->params_BFER_std.cdc->enc->type != "NO")
+				pct[pct::sck::puncture::X_N1](enc[enc::sck::encode::X_N]);
+			else if (this->params_BFER_std.crc->type != "NO")
+				pct[pct::sck::puncture::X_N1](crc[crc::sck::build::U_K2]);
+			else
+				pct[pct::sck::puncture::X_N1](src[src::sck::generate::U_K]);
+		}
+
+		if (this->params_BFER_std.cdc->pct != nullptr && this->params_BFER_std.cdc->pct->type != "NO")
+			mdm[mdm::sck::modulate::X_N1](pct[pct::sck::puncture::X_N2]);
+		else if (this->params_BFER_std.cdc->enc->type != "NO")
+			mdm[mdm::sck::modulate::X_N1](enc[enc::sck::encode::X_N]);
+		else if (this->params_BFER_std.crc->type != "NO")
+			mdm[mdm::sck::modulate::X_N1](crc[crc::sck::build::U_K2]);
+		else
+			mdm[mdm::sck::modulate::X_N1](src[src::sck::generate::U_K]);
 	}
 
-	if (this->params_BFER_std.chn->type.find("RAYLEIGH") != std::string::npos)
+	const auto is_rayleigh = this->params_BFER_std.chn->type.find("RAYLEIGH") != std::string::npos;
+	const auto is_optical = this->params_BFER_std.chn->type == "OPTICAL" && this->params_BFER_std.mdm->rop_est_bits > 0;
+	if (is_rayleigh)
 	{
 		if (this->params_BFER_std.chn->type == "NO")
 		{
-			chn[chn::sck::add_noise_wg::Y_N](mdm[mdm::sck::modulate::X_N2]);
 			auto chn_data = (uint8_t*)(chn[chn::sck::add_noise_wg::H_N].get_dataptr());
 			auto chn_bytes = chn[chn::sck::add_noise_wg::H_N].get_databytes();
 			std::fill(chn_data, chn_data + chn_bytes, 0);
 		}
-		if (!mdm.is_filter())
-			mdm[mdm::sck::filter::Y_N2](chn[chn::sck::add_noise_wg::Y_N]);
-		if (!mdm.is_demodulator())
-			mdm[mdm::sck::demodulate_wg::Y_N2](mdm[mdm::sck::filter::Y_N2]);
-		if (this->params_BFER_std.qnt->type == "NO")
-			qnt[qnt::sck::process::Y_N2](mdm[mdm::sck::demodulate_wg::Y_N2]);
 
-		chn[chn::sck::add_noise_wg ::X_N ](mdm[mdm::sck::modulate     ::X_N2]);
-		mdm[mdm::sck::demodulate_wg::H_N ](chn[chn::sck::add_noise_wg ::H_N ]);
-		mdm[mdm::sck::filter       ::Y_N1](chn[chn::sck::add_noise_wg ::Y_N ]);
-		mdm[mdm::sck::demodulate_wg::Y_N1](mdm[mdm::sck::filter       ::Y_N2]);
-		qnt[qnt::sck::process      ::Y_N1](mdm[mdm::sck::demodulate_wg::Y_N2]);
+		if (this->params_BFER_std.chn->type != "NO")
+		{
+			chn[chn::sck::add_noise_wg::X_N](mdm[mdm::sck::modulate::X_N2]);
+		}
+
+		if (mdm.is_filter())
+		{
+			if (this->params_BFER_std.chn->type != "NO")
+				mdm[mdm::sck::filter::Y_N1](chn[chn::sck::add_noise_wg::Y_N]);
+			else
+				mdm[mdm::sck::filter::Y_N1](mdm[mdm::sck::modulate::X_N2]);
+		}
+
+		if (mdm.is_demodulator())
+		{
+			if (this->params_BFER_std.chn->type != "NO")
+				mdm[mdm::sck::demodulate_wg::H_N](chn[chn::sck::add_noise_wg::H_N]);
+			else
+				mdm[mdm::sck::demodulate_wg::H_N]((uint8_t*)(chn[chn::sck::add_noise_wg::H_N].get_dataptr()));
+
+			if (mdm.is_filter())
+				mdm[mdm::sck::demodulate_wg::Y_N1](mdm[mdm::sck::filter::Y_N2]);
+			else if (this->params_BFER_std.chn->type != "NO")
+				mdm[mdm::sck::demodulate_wg::Y_N1](chn[chn::sck::add_noise_wg::Y_N]);
+			else
+				mdm[mdm::sck::demodulate_wg::Y_N1](mdm[mdm::sck::modulate::X_N2]);
+		}
+
+		if (this->params_BFER_std.qnt->type != "NO")
+		{
+			if (mdm.is_demodulator())
+				qnt[qnt::sck::process::Y_N1](mdm[mdm::sck::demodulate_wg::Y_N2]);
+			else if (mdm.is_filter())
+				qnt[qnt::sck::process::Y_N1](mdm[mdm::sck::filter::Y_N2]);
+			else if (this->params_BFER_std.chn->type != "NO")
+				qnt[qnt::sck::process::Y_N1](chn[chn::sck::add_noise_wg::Y_N]);
+			else
+				qnt[qnt::sck::process::Y_N1](mdm[mdm::sck::modulate::X_N2]);
+		}
 	}
-	else if (this->params_BFER_std.chn->type == "OPTICAL" && this->params_BFER_std.mdm->rop_est_bits > 0)
+	else if (is_optical)
 	{
 		chn[chn::sck::add_noise    ::X_N ](mdm[mdm::sck::modulate     ::X_N2]);
 		mdm[mdm::sck::demodulate_wg::H_N ](mdm[mdm::sck::modulate     ::X_N2]);
 		mdm[mdm::sck::demodulate_wg::Y_N1](chn[chn::sck::add_noise    ::Y_N ]);
 		qnt[qnt::sck::process      ::Y_N1](mdm[mdm::sck::demodulate_wg::Y_N2]);
-
-		if (this->params_BFER_std.qnt->type == "NO")
-			qnt[qnt::sck::process::Y_N2](qnt[qnt::sck::process::Y_N1]);
 	}
 	else
 	{
-		if (this->params_BFER_std.chn->type == "NO")
-			chn[chn::sck::add_noise::Y_N](mdm[mdm::sck::modulate::X_N2]);
-		if (!mdm.is_filter())
-			mdm[mdm::sck::filter::Y_N2](chn[chn::sck::add_noise::Y_N]);
-		if (!mdm.is_demodulator())
-			mdm[mdm::sck::demodulate::Y_N2](mdm[mdm::sck::filter::Y_N2]);
-		if (this->params_BFER_std.qnt->type == "NO")
-			qnt[qnt::sck::process::Y_N2](mdm[mdm::sck::demodulate::Y_N2]);
+		if (this->params_BFER_std.chn->type != "NO")
+			chn[chn::sck::add_noise::X_N](mdm[mdm::sck::modulate::X_N2]);
 
-		chn[chn::sck::add_noise ::X_N ](mdm[mdm::sck::modulate  ::X_N2]);
-		mdm[mdm::sck::filter    ::Y_N1](chn[chn::sck::add_noise ::Y_N ]);
-		mdm[mdm::sck::demodulate::Y_N1](mdm[mdm::sck::filter    ::Y_N2]);
-		qnt[qnt::sck::process   ::Y_N1](mdm[mdm::sck::demodulate::Y_N2]);
+		if (mdm.is_filter())
+		{
+			if (this->params_BFER_std.chn->type != "NO")
+				mdm[mdm::sck::filter::Y_N1](chn[chn::sck::add_noise::Y_N]);
+			else
+				mdm[mdm::sck::filter::Y_N1](mdm[mdm::sck::modulate::X_N2]);
+		}
+
+		if (mdm.is_demodulator())
+		{
+			if (mdm.is_filter())
+				mdm[mdm::sck::demodulate::Y_N1](mdm[mdm::sck::filter::Y_N2]);
+			else if (this->params_BFER_std.chn->type != "NO")
+				mdm[mdm::sck::demodulate::Y_N1](chn[chn::sck::add_noise::Y_N]);
+			else
+				mdm[mdm::sck::demodulate::Y_N1](mdm[mdm::sck::modulate::X_N2]);
+		}
+
+		if (this->params_BFER_std.qnt->type != "NO")
+		{
+			if (mdm.is_demodulator())
+				qnt[qnt::sck::process::Y_N1](mdm[mdm::sck::demodulate::Y_N2]);
+			else if (mdm.is_filter())
+				qnt[qnt::sck::process::Y_N1](mdm[mdm::sck::filter::Y_N2]);
+			else if (this->params_BFER_std.chn->type != "NO")
+				qnt[qnt::sck::process::Y_N1](chn[chn::sck::add_noise::Y_N]);
+			else
+				qnt[qnt::sck::process::Y_N1](mdm[mdm::sck::modulate::X_N2]);
+		}
 	}
 
-	if (this->params_BFER_std.cdc->pct == nullptr || this->params_BFER_std.cdc->pct->type == "NO")
-		pct[pct::sck::depuncture::Y_N2](qnt[qnt::sck::process::Y_N2]);
-
-	pct[pct::sck::depuncture::Y_N1](qnt[qnt::sck::process::Y_N2]);
+	if (this->params_BFER_std.cdc->pct != nullptr && this->params_BFER_std.cdc->pct->type != "NO")
+	{
+		if (this->params_BFER_std.qnt->type != "NO")
+			pct[pct::sck::depuncture::Y_N1](qnt[qnt::sck::process::Y_N2]);
+		else if (mdm.is_demodulator())
+		{
+			if (is_rayleigh || is_optical)
+				pct[pct::sck::depuncture::Y_N1](mdm[mdm::sck::demodulate_wg::Y_N2]);
+			else
+				pct[pct::sck::depuncture::Y_N1](mdm[mdm::sck::demodulate::Y_N2]);
+		}
+		else if (mdm.is_filter())
+			pct[pct::sck::depuncture::Y_N1](mdm[mdm::sck::filter::Y_N2]);
+		else if (this->params_BFER_std.chn->type != "NO")
+		{
+			if (is_rayleigh)
+				pct[pct::sck::depuncture::Y_N1](chn[chn::sck::add_noise_wg::Y_N]);
+			else
+				pct[pct::sck::depuncture::Y_N1](chn[chn::sck::add_noise::Y_N]);
+		}
+		else
+			pct[pct::sck::depuncture::Y_N1](mdm[mdm::sck::modulate::X_N2]);
+	}
 
 	if (this->params_BFER_std.coset)
 	{
-		csr[cst::sck::apply::ref](enc[enc::sck::encode    ::X_N ]);
-		csr[cst::sck::apply::in ](pct[pct::sck::depuncture::Y_N2]);
+		if (this->params_BFER_std.cdc->enc->type != "NO")
+			csr[cst::sck::apply::ref](enc[enc::sck::encode::X_N]);
+		else if (this->params_BFER_std.crc->type != "NO")
+			csr[cst::sck::apply::ref](crc[crc::sck::build::U_K2]);
+		else
+			csr[cst::sck::apply::ref](src[src::sck::generate::U_K]);
+
+		if (this->params_BFER_std.cdc->pct != nullptr && this->params_BFER_std.cdc->pct->type != "NO")
+			csr[cst::sck::apply::in](pct[pct::sck::depuncture::Y_N2]);
+		else if (this->params_BFER_std.qnt->type != "NO")
+			csr[cst::sck::apply::in](qnt[qnt::sck::process::Y_N2]);
+		else if (mdm.is_demodulator())
+		{
+			if (is_rayleigh || is_optical)
+				csr[cst::sck::apply::in](mdm[mdm::sck::demodulate_wg::Y_N2]);
+			else
+				csr[cst::sck::apply::in](mdm[mdm::sck::demodulate::Y_N2]);
+		}
+		else if (mdm.is_filter())
+			csr[cst::sck::apply::in](mdm[mdm::sck::filter::Y_N2]);
+		else if (this->params_BFER_std.chn->type != "NO")
+		{
+			if (is_rayleigh)
+				csr[cst::sck::apply::in](chn[chn::sck::add_noise_wg::Y_N]);
+			else
+				csr[cst::sck::apply::in](chn[chn::sck::add_noise::Y_N]);
+		}
+		else
+			csr[cst::sck::apply::in](mdm[mdm::sck::modulate::X_N2]);
 
 		if (this->params_BFER_std.coded_monitoring)
 		{
-			dec[dec::sck::decode_siho_cw::Y_N](csr[cst::sck::apply         ::out]);
-			csb[cst::sck::apply         ::ref](enc[enc::sck::encode        ::X_N]);
-			csb[cst::sck::apply         ::in ](dec[dec::sck::decode_siho_cw::V_N]);
+			dec[dec::sck::decode_siho_cw::Y_N](csr[cst::sck::apply::out]);
+
+			if (this->params_BFER_std.cdc->enc->type != "NO")
+				csb[cst::sck::apply::ref](enc[enc::sck::encode::X_N]);
+			else if (this->params_BFER_std.crc->type != "NO")
+				csb[cst::sck::apply::ref](crc[crc::sck::build::U_K2]);
+			else
+				csb[cst::sck::apply::ref](src[src::sck::generate::U_K]);
+
+			csb[cst::sck::apply::in](dec[dec::sck::decode_siho_cw::V_N]);
 		}
 		else
 		{
-			if (this->params_BFER_std.crc->type == "NO")
-				crc[crc::sck::extract::V_K2](csb[cst::sck::apply::out]);
+			dec[dec::sck::decode_siho::Y_N](csr[cst::sck::apply::out]);
 
-			dec[dec::sck::decode_siho::Y_N ](csr[cst::sck::apply      ::out ]);
-			csb[cst::sck::apply      ::ref ](crc[crc::sck::build      ::U_K2]);
-			csb[cst::sck::apply      ::in  ](dec[dec::sck::decode_siho::V_K ]);
-			crc[crc::sck::extract    ::V_K1](csb[cst::sck::apply      ::out ]);
+			if (this->params_BFER_std.crc->type != "NO")
+				csb[cst::sck::apply::ref](crc[crc::sck::build::U_K2]);
+			else
+				csb[cst::sck::apply::ref](src[src::sck::generate::U_K]);
+
+			csb[cst::sck::apply::in](dec[dec::sck::decode_siho::V_K]);
+
+			if (this->params_BFER_std.crc->type != "NO")
+				crc[crc::sck::extract::V_K1](csb[cst::sck::apply::out]);
 		}
 	}
 	else
 	{
 		if (this->params_BFER_std.coded_monitoring)
 		{
-			dec[dec::sck::decode_siho_cw::Y_N](pct[pct::sck::depuncture::Y_N2]);
+			if (this->params_BFER_std.cdc->pct != nullptr && this->params_BFER_std.cdc->pct->type != "NO")
+				dec[dec::sck::decode_siho_cw::Y_N](pct[pct::sck::depuncture::Y_N2]);
+			else if (this->params_BFER_std.qnt->type != "NO")
+				dec[dec::sck::decode_siho_cw::Y_N](qnt[qnt::sck::process::Y_N2]);
+			else if (mdm.is_demodulator())
+			{
+				if (is_rayleigh || is_optical)
+					dec[dec::sck::decode_siho_cw::Y_N](mdm[mdm::sck::demodulate_wg::Y_N2]);
+				else
+					dec[dec::sck::decode_siho_cw::Y_N](mdm[mdm::sck::demodulate::Y_N2]);
+			}
+			else if (mdm.is_filter())
+				dec[dec::sck::decode_siho_cw::Y_N](mdm[mdm::sck::filter::Y_N2]);
+			else if (this->params_BFER_std.chn->type != "NO")
+			{
+				if (is_rayleigh)
+					dec[dec::sck::decode_siho_cw::Y_N](chn[chn::sck::add_noise_wg::Y_N]);
+				else
+					dec[dec::sck::decode_siho_cw::Y_N](chn[chn::sck::add_noise::Y_N]);
+			}
+			else
+				dec[dec::sck::decode_siho_cw::Y_N](mdm[mdm::sck::modulate::X_N2]);
 		}
 		else
 		{
-			if (this->params_BFER_std.crc->type == "NO")
-				crc[crc::sck::extract::V_K2](dec[dec::sck::decode_siho::V_K]);
+			if (this->params_BFER_std.cdc->pct != nullptr && this->params_BFER_std.cdc->pct->type != "NO")
+				dec[dec::sck::decode_siho::Y_N](pct[pct::sck::depuncture::Y_N2]);
+			else if (this->params_BFER_std.qnt->type != "NO")
+				dec[dec::sck::decode_siho::Y_N](qnt[qnt::sck::process::Y_N2]);
+			else if (mdm.is_demodulator())
+			{
+				if (is_rayleigh || is_optical)
+					dec[dec::sck::decode_siho::Y_N](mdm[mdm::sck::demodulate_wg::Y_N2]);
+				else
+					dec[dec::sck::decode_siho::Y_N](mdm[mdm::sck::demodulate::Y_N2]);
+			}
+			else if (mdm.is_filter())
+				dec[dec::sck::decode_siho::Y_N](mdm[mdm::sck::filter::Y_N2]);
+			else if (this->params_BFER_std.chn->type != "NO")
+			{
+				if (is_rayleigh)
+					dec[dec::sck::decode_siho::Y_N](chn[chn::sck::add_noise_wg::Y_N]);
+				else
+					dec[dec::sck::decode_siho::Y_N](chn[chn::sck::add_noise::Y_N]);
+			}
+			else
+				dec[dec::sck::decode_siho::Y_N](mdm[mdm::sck::modulate::X_N2]);
 
-			dec[dec::sck::decode_siho::Y_N ](pct[pct::sck::depuncture ::Y_N2]);
-			crc[crc::sck::extract    ::V_K1](dec[dec::sck::decode_siho::V_K ]);
+			if (this->params_BFER_std.crc->type != "NO")
+				crc[crc::sck::extract::V_K1](dec[dec::sck::decode_siho::V_K]);
 		}
 	}
 
 	if (this->params_BFER_std.coded_monitoring)
 	{
-		mnt[mnt::sck::check_errors::U](enc[enc::sck::encode::X_N]);
+		if (this->params_BFER_std.cdc->enc->type != "NO")
+			mnt[mnt::sck::check_errors::U](enc[enc::sck::encode::X_N]);
+		else if (this->params_BFER_std.crc->type != "NO")
+			mnt[mnt::sck::check_errors::U](crc[crc::sck::build::U_K2]);
+		else
+			mnt[mnt::sck::check_errors::U](src[src::sck::generate::U_K]);
 
 		if (this->params_BFER_std.coset)
-		{
 			mnt[mnt::sck::check_errors::V](csb[cst::sck::apply::out]);
-		}
 		else
-		{
 			mnt[mnt::sck::check_errors::V](dec[dec::sck::decode_siho_cw::V_N]);
-		}
 	}
 	else
 	{
-		mnt[mnt::sck::check_errors::U](src[src::sck::generate::U_K ]);
-		mnt[mnt::sck::check_errors::V](crc[crc::sck::extract ::V_K2]);
+		mnt[mnt::sck::check_errors::U](src[src::sck::generate::U_K]);
+		if (this->params_BFER_std.crc->type != "NO")
+			mnt[mnt::sck::check_errors::V](crc[crc::sck::extract::V_K2]);
+		else if (this->params_BFER_std.coset)
+			mnt[mnt::sck::check_errors::V](csb[cst::sck::apply::out]);
+		else
+			mnt[mnt::sck::check_errors::V](dec[dec::sck::decode_siho::V_K]);
 	}
 
-	if (this->params_BFER_std.mnt_mutinfo) // this->monitor_mi[tid] != nullptr
+	if (this->params_BFER_std.mnt_mutinfo)
 	{
 		auto &mnt = *this->monitor_mi[tid];
 
-		mnt[mnt::sck::get_mutual_info::X](mdm[mdm::sck::modulate  ::X_N1]);
-
-		if (this->params_BFER_std.chn->type.find("RAYLEIGH") != std::string::npos)
-			mnt[mnt::sck::get_mutual_info::Y](mdm[mdm::sck::demodulate_wg::Y_N2]);
+		if (this->params_BFER_std.cdc->pct != nullptr && this->params_BFER_std.cdc->pct->type != "NO")
+			mnt[mnt::sck::get_mutual_info::X](pct[pct::sck::puncture::X_N2]);
+		else if (this->params_BFER_std.cdc->enc->type != "NO")
+			mnt[mnt::sck::get_mutual_info::X](enc[enc::sck::encode::X_N]);
+		else if (this->params_BFER_std.crc->type != "NO")
+			mnt[mnt::sck::get_mutual_info::X](crc[crc::sck::build::U_K2]);
 		else
-			mnt[mnt::sck::get_mutual_info::Y](mdm[mdm::sck::demodulate::Y_N2]);
+			mnt[mnt::sck::get_mutual_info::X](src[src::sck::generate::U_K]);
 
+		if (mdm.is_demodulator())
+		{
+			if (is_rayleigh || is_optical)
+				mnt[mnt::sck::get_mutual_info::Y](mdm[mdm::sck::demodulate_wg::Y_N2]);
+			else
+				mnt[mnt::sck::get_mutual_info::Y](mdm[mdm::sck::demodulate::Y_N2]);
+		}
+		else if (mdm.is_filter())
+			mnt[mnt::sck::get_mutual_info::Y](mdm[mdm::sck::filter::Y_N2]);
+		else if (this->params_BFER_std.chn->type != "NO")
+			mnt[mnt::sck::get_mutual_info::Y](chn[chn::sck::add_noise_wg::Y_N]);
+		else
+			mnt[mnt::sck::get_mutual_info::Y](mdm[mdm::sck::modulate::X_N2]);
 	}
 }
 

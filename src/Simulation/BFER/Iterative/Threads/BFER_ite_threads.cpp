@@ -249,6 +249,14 @@ void BFER_ite_threads<B,R,Q>
 
 	if (mdm1.is_demodulator())
 	{
+		if (is_rayleigh)
+		{
+			if (this->params_BFER_ite.chn->type != "NO")
+				mdm1[mdm::sck::demodulate_wg::H_N](chn[chn::sck::add_noise_wg::H_N]);
+			else
+				mdm1[mdm::sck::demodulate_wg::H_N]((uint8_t*)(chn[chn::sck::add_noise_wg::H_N].get_dataptr()));
+		}
+
 		if (this->params_BFER_ite.qnt->type != "NO")
 		{
 			if (is_rayleigh)
@@ -266,35 +274,37 @@ void BFER_ite_threads<B,R,Q>
 		else if (this->params_BFER_ite.chn->type != "NO")
 		{
 			if (is_rayleigh)
-			{
-				mdm1[mdm::sck::demodulate_wg::H_N ](chn[chn::sck::add_noise_wg::H_N]);
 				mdm1[mdm::sck::demodulate_wg::Y_N1](chn[chn::sck::add_noise_wg::Y_N]);
-			}
 			else
 				mdm1[mdm::sck::demodulate::Y_N1](chn[chn::sck::add_noise::Y_N]);
 		}
 		else
 		{
 			if (is_rayleigh)
-			{
-				mdm1[mdm::sck::demodulate_wg::H_N ]((uint8_t*)(chn[chn::sck::add_noise_wg::H_N].get_dataptr()));
 				mdm1[mdm::sck::demodulate_wg::Y_N1](mdm1[mdm::sck::modulate::X_N2]);
-			}
 			else
-			{
 				mdm1[mdm::sck::demodulate::Y_N1](mdm1[mdm::sck::modulate::X_N2]);
-			}
 		}
 	}
 
 	if (mdm1.is_demodulator())
-		itl1[itl::sck::deinterleave::itl](mdm1[mdm::sck::demodulate::Y_N2]);
+	{
+		if (is_rayleigh)
+			itl1[itl::sck::deinterleave::itl](mdm1[mdm::sck::demodulate_wg::Y_N2]);
+		else
+			itl1[itl::sck::deinterleave::itl](mdm1[mdm::sck::demodulate::Y_N2]);
+	}
 	else if (this->params_BFER_ite.qnt->type != "NO")
 		itl1[itl::sck::deinterleave::itl](qnt[qnt::sck::process::Y_N2]);
 	else if (mdm1.is_filter())
 		itl1[itl::sck::deinterleave::itl](mdm1[mdm::sck::filter::Y_N2]);
 	else if (this->params_BFER_ite.chn->type != "NO")
-		itl1[itl::sck::deinterleave::itl](chn[chn::sck::add_noise_wg::Y_N]);
+	{
+		if (is_rayleigh)
+			itl1[itl::sck::deinterleave::itl](chn[chn::sck::add_noise_wg::Y_N]);
+		else
+			itl1[itl::sck::deinterleave::itl](chn[chn::sck::add_noise::Y_N]);
+	}
 	else
 		itl1[itl::sck::deinterleave::itl](mdm1[mdm::sck::modulate::X_N2]);
 
@@ -339,8 +349,13 @@ void BFER_ite_threads<B,R,Q>
 	// --------------------------------------------------------------------------------------------------- demodulation
 	if (mdm2.is_demodulator())
 	{
-		if (this->params_BFER_ite.chn->type.find("RAYLEIGH") != std::string::npos)
+		if (is_rayleigh)
 		{
+			if (this->params_BFER_ite.chn->type != "NO")
+				mdm2[mdm::sck::tdemodulate_wg::H_N](chn[chn::sck::add_noise_wg::H_N]);
+			else
+				mdm2[mdm::sck::tdemodulate_wg::H_N]((uint8_t*)(chn[chn::sck::add_noise_wg::H_N].get_dataptr()));
+
 			if (this->params_BFER_ite.qnt->type != "NO")
 				mdm2[mdm::sck::tdemodulate_wg::Y_N1](qnt[qnt::sck::process::Y_N2]);
 			else if (mdm1.is_filter())
@@ -349,11 +364,6 @@ void BFER_ite_threads<B,R,Q>
 				mdm2[mdm::sck::tdemodulate_wg::Y_N1](chn[chn::sck::add_noise_wg::Y_N]);
 			else
 				mdm2[mdm::sck::tdemodulate_wg::Y_N1](mdm1[mdm::sck::modulate::X_N2]);
-
-			if (this->params_BFER_ite.chn->type != "NO")
-				mdm2[mdm::sck::tdemodulate_wg::H_N](chn[chn::sck::add_noise_wg::H_N]);
-			else
-				mdm2[mdm::sck::tdemodulate_wg::H_N]((uint8_t*)(chn[chn::sck::add_noise_wg::H_N].get_dataptr()));
 
 			mdm2[mdm::sck::tdemodulate_wg::Y_N2](itl2[itl::sck::interleave::itl]);
 		}
@@ -364,7 +374,7 @@ void BFER_ite_threads<B,R,Q>
 			else if (mdm1.is_filter())
 				mdm2[mdm::sck::tdemodulate::Y_N1](mdm1[mdm::sck::filter::Y_N2]);
 			else if (this->params_BFER_ite.chn->type != "NO")
-				mdm2[mdm::sck::tdemodulate::Y_N1](chn[chn::sck::add_noise_wg::Y_N]);
+				mdm2[mdm::sck::tdemodulate::Y_N1](chn[chn::sck::add_noise::Y_N]);
 			else
 				mdm2[mdm::sck::tdemodulate::Y_N1](mdm1[mdm::sck::modulate::X_N2]);
 
@@ -373,27 +383,36 @@ void BFER_ite_threads<B,R,Q>
 	}
 
 	// ------------------------------------------------------------------------------------------------- deinterleaving
-	if (!mdm2.is_demodulator())
+	if (mdm2.is_demodulator())
 	{
-		if (this->params_BFER_ite.qnt->type != "NO")
-			itl2[itl::sck::deinterleave::itl](qnt[qnt::sck::process::Y_N2]);
-		else if (mdm1.is_filter())
-			itl2[itl::sck::deinterleave::itl](mdm1[mdm::sck::filter::Y_N2]);
-		else if (this->params_BFER_ite.chn->type != "NO")
+		if (is_rayleigh)
+			itl2[itl::sck::deinterleave::itl](mdm2[mdm::sck::tdemodulate_wg::Y_N3]);
+		else
+			itl2[itl::sck::deinterleave::itl](mdm2[mdm::sck::tdemodulate::Y_N3]);
+	}
+	else if (this->params_BFER_ite.qnt->type != "NO")
+		itl2[itl::sck::deinterleave::itl](qnt[qnt::sck::process::Y_N2]);
+	else if (mdm1.is_filter())
+		itl2[itl::sck::deinterleave::itl](mdm1[mdm::sck::filter::Y_N2]);
+	else if (this->params_BFER_ite.chn->type != "NO")
+	{
+		if (is_rayleigh)
 			itl2[itl::sck::deinterleave::itl](chn[chn::sck::add_noise_wg::Y_N]);
 		else
-			itl2[itl::sck::deinterleave::itl](mdm1[mdm::sck::modulate::X_N2]);
+			itl2[itl::sck::deinterleave::itl](chn[chn::sck::add_noise::Y_N]);
 	}
-	else if (this->params_BFER_ite.chn->type.find("RAYLEIGH") != std::string::npos)
-		itl2[itl::sck::deinterleave::itl](mdm2[mdm::sck::tdemodulate_wg::Y_N3]);
 	else
-		itl2[itl::sck::deinterleave::itl](mdm2[mdm::sck::tdemodulate::Y_N3]);
+		itl2[itl::sck::deinterleave::itl](mdm1[mdm::sck::modulate::X_N2]);
 
 	if (this->params_BFER_ite.crc->type != "NO")
 	{
-		ext2[ext::sck::get_sys_bit::Y_N    ](itl2[itl::sck::deinterleave::nat]);
-		lcrc[lop::sck::stop       ::in2    ](ext2[ext::sck::get_sys_bit ::V_K]);
-		lcrc[lop::sck::stop       ::in_out2](itl2[itl::sck::deinterleave::nat]);
+		if (this->params_BFER_ite.coset)
+			ext2[ext::sck::get_sys_bit::Y_N](dcs[dec::sck::decode_siso::Y_N2]);
+		else
+			ext2[ext::sck::get_sys_bit::Y_N](itl2[itl::sck::deinterleave::nat]);
+
+		lcrc[lop::sck::stop::in2    ](ext2[ext::sck::get_sys_bit ::V_K]);
+		lcrc[lop::sck::stop::in_out2](itl2[itl::sck::deinterleave::nat]);
 	}
 	else
 		lite[lop::sck::stop::in_out2](itl2[itl::sck::deinterleave::nat]);
