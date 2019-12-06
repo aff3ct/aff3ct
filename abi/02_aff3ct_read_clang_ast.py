@@ -492,6 +492,17 @@ def add_class(db, name_path_str, class_short_name, class_inheritence, class_temp
     db[name_path_str] = class_entry
     return class_entry
 
+def add_enum_class(db, name_path_str, enum_class_short_name, enum_class_type):
+    # initialize a class entry
+    enum_class_entry = dict()
+    # enum classes share the same directory as classes, thus we use the 'class_' prefix here
+    enum_class_entry['class_kind'] = 'enum_class'
+    enum_class_entry['class_name'] = name_path_str
+    enum_class_entry['class_short_name'] = enum_class_short_name
+    enum_class_entry['class_enum_type'] = enum_class_type
+    db[name_path_str] = enum_class_entry
+    return enum_class_entry
+
 # initialize a scope entry for the internal database
 def new_scope_entry(name_path_str, scope_short_name, scope_kind):
     scope_entry = dict()
@@ -502,6 +513,7 @@ def new_scope_entry(name_path_str, scope_short_name, scope_kind):
     scope_entry['namespace'] = dict()
     scope_entry['class'] = dict()
     scope_entry['method'] = dict()
+    scope_entry['enum_class'] = dict()
     return scope_entry
 
 # add a scope_entry (namespace, class or method) to the internal_db
@@ -648,40 +660,60 @@ def process_ast(ast_filename):
                             continue
 
                         # ignore 'enum classes' for now
-                        if not filter_out and (scope == 'namespace' or scope == '<toplevel>') and not line.startswith('enum class '):
-                            # try to match a class
-                            m = re.match(r'^(.*)(class|struct) ([_a-zA-Z][_a-zA-Z0-9]*)(?: : ((?:(?:virtual )?public )?(?:[_a-zA-Z][_a-zA-Z0-9]*::)*[_a-zA-Z][_a-zA-Z0-9]*(?:<[^{]+>)?))? {', line)
-                            if m is not None:
-                                # push previous class on the class stack
-                                class_stack.append((class_name, class_access, class_entry))
-                                scopes.append((scope, scope_entry, block_nest_level))
+                        if not filter_out and (scope == 'namespace' or scope == '<toplevel>'):
+                            if line.startswith('enum class '):
+                                m = re.match('enum class ([_a-zA-Z][_a-zA-Z0-9]*) *: *([_a-zA-Z][_a-zA-Z0-9]*) *{', line)
+                                if m is not None:
+                                    scopes.append((scope, scope_entry, block_nest_level))
 
-                                # entering class
-                                class_template_part = m.group(1).strip()
-                                class_kind = m.group(2)
-                                class_short_name = m.group(3)
-                                class_inheritence = m.group(4)
-                                class_access = default_class_access
-                                name_path.append(class_short_name)
-                                name_path_str = '::'.join(name_path)
-                                class_name = name_path_str
-
-                                # if class not already known, add it to 'db'
-                                if name_path_str not in db:
-                                    add_class(db, name_path_str, class_short_name, class_inheritence, class_template_part, class_kind)
-
-                                class_entry = db[name_path_str]
-                                scope = 'class'
-                                scope_entry = add_scope(internal_db, scope_entry, name_path_str, class_short_name, scope)
-                                block_nest_level = 1 # 1 accounts for the class opening '{'
-
-                                if not filter_out:
-                                    if debug_mode:
-                                        print('==> class_name:', class_name)
-                                    if class_template_part != '':
+                                    enum_class_short_name = m.group(1)
+                                    enum_class_type = m.group(2)
+                                    name_path.append(enum_class_short_name)
+                                    name_path_str = '::'.join(name_path)
+                                    enum_class_name = name_path_str
+                                    if not filter_out:
                                         if debug_mode:
-                                            print('=== class template part:', class_template_part)
-                                continue
+                                            print('--> enum class name: '+ enum_class_short_name +', type: '+enum_class_type)
+
+                                    scope = 'enum_class'
+                                    scope_entry =  add_scope(internal_db, scope_entry, name_path_str, enum_class_short_name, scope)
+                                    block_nest_level = 1 # 1 accounts for the class opening '{'
+
+                                    continue
+                            else:
+                                # try to match a class
+                                m = re.match(r'^(.*)(class|struct) ([_a-zA-Z][_a-zA-Z0-9]*)(?: : ((?:(?:virtual )?public )?(?:[_a-zA-Z][_a-zA-Z0-9]*::)*[_a-zA-Z][_a-zA-Z0-9]*(?:<[^{]+>)?))? {', line)
+                                if m is not None:
+                                    # push previous class on the class stack
+                                    class_stack.append((class_name, class_access, class_entry))
+                                    scopes.append((scope, scope_entry, block_nest_level))
+
+                                    # entering class
+                                    class_template_part = m.group(1).strip()
+                                    class_kind = m.group(2)
+                                    class_short_name = m.group(3)
+                                    class_inheritence = m.group(4)
+                                    class_access = default_class_access
+                                    name_path.append(class_short_name)
+                                    name_path_str = '::'.join(name_path)
+                                    class_name = name_path_str
+
+                                    # if class not already known, add it to 'db'
+                                    if name_path_str not in db:
+                                        add_class(db, name_path_str, class_short_name, class_inheritence, class_template_part, class_kind)
+
+                                    class_entry = db[name_path_str]
+                                    scope = 'class'
+                                    scope_entry = add_scope(internal_db, scope_entry, name_path_str, class_short_name, scope)
+                                    block_nest_level = 1 # 1 accounts for the class opening '{'
+
+                                    if not filter_out:
+                                        if debug_mode:
+                                            print('==> class_name:', class_name)
+                                        if class_template_part != '':
+                                            if debug_mode:
+                                                print('=== class template part:', class_template_part)
+                                    continue
 
                         # try to match a method definition (e.g. with associated block of code)
                         m = re.match(r'^(.*\)) *{', line)
@@ -748,6 +780,18 @@ def process_ast(ast_filename):
 
                             # leaving a class scope
                             class_name, class_access, class_entry = class_stack.pop()
+                            name_path.pop()
+                            name_path_str = '::'.join(name_path)
+                            scope, scope_entry, block_nest_level = scopes.pop()
+                            continue
+
+                        elif scope == 'enum_class':
+                            if not filter_out:
+                                add_enum_class(db, name_path_str, enum_class_short_name, enum_class_type)
+                                if debug_mode:
+                                    print('<== enum_class_name:', enum_class_name)
+
+                            # leaving a enum_class scope
                             name_path.pop()
                             name_path_str = '::'.join(name_path)
                             scope, scope_entry, block_nest_level = scopes.pop()
@@ -1060,30 +1104,35 @@ def dump_db(db, output_filename, summary_output_filename):
     with open(summary_output_filename, 'w') as fsummary_output:
         for class_name in sorted(db.keys()):
             class_entry = db[class_name]
-            if class_entry['class_is_abstract']:
-                class_name = '['+class_name+']'
-            if 'inheritence' in class_entry:
-                fsummary_output.write('%s %s - inheritence: %s\n' % (class_entry['class_kind'], class_name, class_entry['class_inheritence']))
+            if class_entry['class_kind'] == 'enum_class':
+                fsummary_output.write('enum class %s: %s\n' % (class_name, class_entry['class_enum_type']))
             else:
-                fsummary_output.write('%s %s\n' % (class_entry['class_kind'], class_name))
+                if class_entry['class_is_abstract']:
+                    class_name = '['+class_name+']'
+                if 'inheritence' in class_entry:
+                    fsummary_output.write('%s %s - inheritence: %s\n' % (class_entry['class_kind'], class_name, class_entry['class_inheritence']))
+                else:
+                    fsummary_output.write('%s %s\n' % (class_entry['class_kind'], class_name))
 
-            # remove name accounting dict to avoid dumping it in the json db
-            del class_entry['class_name_accounting']
+                # remove name accounting dict to avoid dumping it in the json db
+                del class_entry['class_name_accounting']
 
-            for method in sorted(class_entry['class_constructors'].keys()):
-                write_method(fsummary_output, class_entry['class_constructors'][method], True)
-            for method in sorted(class_entry['class_destructors'].keys()):
-                write_method(fsummary_output, class_entry['class_destructors'][method], True)
-            for method in sorted(class_entry['class_methods'].keys()):
-                write_method(fsummary_output, class_entry['class_methods'][method], True)
-            for method in sorted(class_entry['class_static_methods'].keys()):
-                write_method(fsummary_output, class_entry['class_static_methods'][method], True)
-            for method in sorted(class_entry['class_operators'].keys()):
-                write_method(fsummary_output, class_entry['class_operators'][method], True)
+                for method in sorted(class_entry['class_constructors'].keys()):
+                    write_method(fsummary_output, class_entry['class_constructors'][method], True)
+                for method in sorted(class_entry['class_destructors'].keys()):
+                    write_method(fsummary_output, class_entry['class_destructors'][method], True)
+                for method in sorted(class_entry['class_methods'].keys()):
+                    write_method(fsummary_output, class_entry['class_methods'][method], True)
+                for method in sorted(class_entry['class_static_methods'].keys()):
+                    write_method(fsummary_output, class_entry['class_static_methods'][method], True)
+                for method in sorted(class_entry['class_operators'].keys()):
+                    write_method(fsummary_output, class_entry['class_operators'][method], True)
         # list unresolved issues separately
         first = True
         for class_name in sorted(db.keys()):
             class_entry = db[class_name]
+            if class_entry['class_kind'] == 'enum_class':
+                continue
             if class_entry['class_is_abstract']:
                 continue
             if len(class_entry['class_fixme_methods']) == 0:
