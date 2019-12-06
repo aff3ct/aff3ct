@@ -13,6 +13,8 @@ Extractor_polar<B,Q>
 {
 	const std::string name = "Extractor_polar";
 	this->set_name(name);
+
+	this->notify_noise_update();
 }
 
 template <typename B, typename Q>
@@ -25,14 +27,19 @@ Extractor_polar<B,Q>* Extractor_polar<B,Q>
 }
 
 template <typename B, typename Q>
-const std::vector<uint32_t>& Extractor_polar<B,Q>
-::get_info_bits_pos()
+void Extractor_polar<B,Q>
+::notify_noise_update()
 {
 	int j = 0;
 	for (auto i = 0; i < this->N; i++)
 		if (!this->frozen_bits[i])
 			this->info_bits_pos[j++] = i;
+}
 
+template <typename B, typename Q>
+const std::vector<uint32_t>& Extractor_polar<B,Q>
+::get_info_bits_pos()
+{
 	return this->info_bits_pos;
 }
 

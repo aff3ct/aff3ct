@@ -35,6 +35,7 @@ protected:
 	module::Puncturer_polar_shortlast<B,Q>* puncturer_shortlast;
 	Interface_notify_frozenbits_update* fb_decoder;
 	Interface_notify_frozenbits_update* fb_encoder;
+	Interface_notify_frozenbits_update* fb_extractor;
 
 public:
 	Codec_polar(const factory::Frozenbits_generator &fb_par,

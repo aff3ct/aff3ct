@@ -27,7 +27,8 @@ Codec_polar<B,Q>
   generated_decoder((dec_params.implem.find("_SNR") != std::string::npos)),
   puncturer_shortlast(nullptr),
   fb_decoder(nullptr),
-  fb_encoder(nullptr)
+  fb_encoder(nullptr),
+  fb_extractor(nullptr)
 {
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
@@ -125,6 +126,7 @@ Codec_polar<B,Q>
 	                                                     enc_params.N_cw,
 	                                                     *frozen_bits,
 	                                                     enc_params.n_frames));
+	fb_extractor = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_extractor());
 
 	// ------------------------------------------------------------------------------------------------- frozen bit gen
 	if (!generated_decoder)
@@ -185,6 +187,8 @@ void Codec_polar<B,Q>
 		this->fb_encoder = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_encoder());
 	if (t.fb_decoder != nullptr)
 		this->fb_decoder = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_decoder_siho());
+	if (t.fb_extractor != nullptr)
+		this->fb_extractor = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_extractor());
 }
 
 template <typename B, typename Q>
@@ -195,6 +199,8 @@ void Codec_polar<B,Q>
 		this->fb_decoder->notify_noise_update();
 	if (this->fb_encoder)
 		this->fb_encoder->notify_noise_update();
+	if (this->fb_extractor)
+		this->fb_extractor->notify_noise_update();
 }
 
 template <typename B, typename Q>
