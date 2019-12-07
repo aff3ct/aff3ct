@@ -8,11 +8,14 @@
 #include <memory>
 #include <cstddef>
 
-#include "Tools/Chain/Chain.hpp"
 #include "Module/Module.hpp"
 
 namespace aff3ct
 {
+namespace tools
+{
+class Chain;
+}
 namespace module
 {
 	namespace sch

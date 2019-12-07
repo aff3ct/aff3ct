@@ -40,7 +40,7 @@ public:
 	inline size_t get_n_threads() const;
 
 	template <class C = module::Module>
-	std::vector<C*> get_modules() const;
+	std::vector<C*> get_modules(const bool subchain_modules = true) const;
 	std::vector<std::vector<const module::Module*>> get_modules_per_threads() const;
 	std::vector<std::vector<const module::Module*>> get_modules_per_types  () const;
 	inline const std::vector<std::vector<module::Task*>>& get_tasks_sequences() const;

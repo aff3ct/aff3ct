@@ -2,6 +2,7 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Chain/Chain.hpp"
 #include "Module/Subchain/Subchain.hpp"
 
 using namespace aff3ct;
@@ -25,6 +26,7 @@ Subchain
 	}
 
 	auto &p = this->create_task("exec");
+	p.set_autoalloc(true);
 
 	auto &first = *this->chain->get_tasks_sequence().front();
 	for (auto &s : first.sockets)
@@ -105,6 +107,7 @@ Subchain
 		}
 	}
 
+	// /!\ there is probably a bug with SIN_OUT sockets here
 	sid = 0;
 	for (auto &s : last.sockets)
 	{
@@ -123,9 +126,21 @@ Subchain
 		size_t sid = 0;
 		for (auto &s : first.sockets)
 		{
-			if (first.get_socket_type(*s) == socket_t::SIN || first.get_socket_type(*s) == socket_t::SIN_SOUT)
-				s->bind(t.sockets[sid]->get_dataptr());
-			sid++;
+			if (first.get_socket_type(*s) == socket_t::SIN)
+			{
+				while (t.get_socket_type(*t.sockets[sid]) != socket_t::SIN) sid++;
+				s->bind(t.sockets[sid++]->get_dataptr());
+			}
+		}
+
+		sid = 0;
+		for (auto &s : first.sockets)
+		{
+			if (first.get_socket_type(*s) == socket_t::SIN_SOUT)
+			{
+				while (t.get_socket_type(*t.sockets[sid]) != socket_t::SIN_SOUT) sid++;
+				s->bind(t.sockets[sid++]->get_dataptr());
+			}
 		}
 
 		return c.chain->exec();
@@ -166,6 +181,7 @@ void Subchain
 		}
 	}
 
+	// /!\ there is probably a bug with SIN_OUT sockets here
 	sid = 0;
 	for (auto &s : last.sockets)
 	{
