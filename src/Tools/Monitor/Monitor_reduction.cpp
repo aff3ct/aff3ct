@@ -22,10 +22,27 @@ Monitor_reduction_static
 	Monitor_reduction_static::add_monitor(this);
 }
 
+Monitor_reduction_static
+::~Monitor_reduction_static()
+{
+	Monitor_reduction_static::remove_monitor(this);
+}
+
 void Monitor_reduction_static
 ::add_monitor(Monitor_reduction_static* m)
 {
 	Monitor_reduction_static::monitors.push_back(m);
+}
+
+void Monitor_reduction_static
+::remove_monitor(Monitor_reduction_static* m)
+{
+	for (size_t i = 0; i < Monitor_reduction_static::monitors.size(); i++)
+		if (m == Monitor_reduction_static::monitors[i])
+		{
+			 Monitor_reduction_static::monitors.erase(Monitor_reduction_static::monitors.begin() +i);
+			 break;
+		}
 }
 
 void Monitor_reduction_static

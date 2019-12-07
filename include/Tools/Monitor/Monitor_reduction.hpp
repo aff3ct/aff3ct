@@ -81,7 +81,7 @@ public:
 protected:
 	Monitor_reduction_static();
 
-	virtual ~Monitor_reduction_static() = default;
+	virtual ~Monitor_reduction_static();
 
 	virtual bool _is_done() = 0;
 
@@ -101,6 +101,8 @@ private:
 	 * \brief add the monitor in the 'monitors' list
 	 */
 	static void add_monitor(Monitor_reduction_static*);
+
+	static void remove_monitor(Monitor_reduction_static*);
 
 	/*
 	 * \brief do a reduction of the number of process that are at the final reduce step
