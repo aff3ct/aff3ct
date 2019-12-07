@@ -51,25 +51,25 @@ public:
 
 	inline void set_fast(const bool fast);
 
-	inline int bind(Socket &s);
+	inline void bind(Socket &s, const bool copy_dataptr = true);
 
-	inline int operator()(Socket &s);
-
-	template <typename T, class A = std::allocator<T>>
-	inline int bind(std::vector<T,A> &vector);
+	inline void operator()(Socket &s, const bool copy_dataptr = true);
 
 	template <typename T, class A = std::allocator<T>>
-	inline int operator()(std::vector<T,A> &vector);
+	inline void bind(std::vector<T,A> &vector);
+
+	template <typename T, class A = std::allocator<T>>
+	inline void operator()(std::vector<T,A> &vector);
 
 	template <typename T>
-	inline int bind(T *array);
+	inline void bind(T *array);
 
 	template <typename T>
-	inline int operator()(T *array);
+	inline void operator()(T *array);
 
-	inline int bind(void* dataptr);
+	inline void bind(void* dataptr);
 
-	inline int operator()(void* dataptr);
+	inline void operator()(void* dataptr);
 
 	inline void reset();
 };

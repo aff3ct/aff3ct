@@ -106,8 +106,8 @@ void Module
 Task& Module
 ::create_task(const std::string &name, const int id)
 {
-	bool autoalloc = false, autoexec = false, stats = false, fast = false, debug = false;
-	auto t = std::make_shared<Task>(*this, name, autoalloc, autoexec, stats, fast, debug);
+	bool autoalloc = false, stats = false, fast = false, debug = false;
+	auto t = std::make_shared<Task>(*this, name, autoalloc, stats, fast, debug);
 
 	if (id < 0)
 	{

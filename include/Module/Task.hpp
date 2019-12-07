@@ -36,7 +36,6 @@ protected:
 	Module *module;
 	const std::string name;
 	bool autoalloc;
-	bool autoexec;
 	bool stats;
 	bool fast;
 	bool debug;
@@ -69,7 +68,6 @@ public:
 	Task(      Module &module,
 	     const std::string &name,
 	     const bool autoalloc = false,
-	     const bool autoexec  = false,
 	     const bool stats     = false,
 	     const bool fast      = false,
 	     const bool debug     = false);
@@ -79,7 +77,6 @@ public:
 	void reset();
 
 	void set_autoalloc      (const bool     autoalloc);
-	void set_autoexec       (const bool     autoexec );
 	void set_stats          (const bool     stats    );
 	void set_fast           (const bool     fast     );
 	void set_debug          (const bool     debug    );
@@ -89,7 +86,6 @@ public:
 	void set_debug_frame_max(const uint32_t limit    );
 
 	inline bool is_autoalloc        (                  ) const;
-	inline bool is_autoexec         (                  ) const;
 	inline bool is_stats            (                  ) const;
 	inline bool is_fast             (                  ) const;
 	inline bool is_debug            (                  ) const;

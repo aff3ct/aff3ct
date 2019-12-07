@@ -94,8 +94,8 @@ void Socket
 	this->fast = fast;
 }
 
-int Socket
-::bind(Socket &s)
+void Socket
+::bind(Socket &s, const bool copy_dataptr)
 {
 	if (!is_fast())
 	{
@@ -132,7 +132,7 @@ int Socket
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (s.dataptr == nullptr)
+		if (copy_dataptr && s.dataptr == nullptr)
 		{
 			std::stringstream message;
 			message << "'s.dataptr' can't be NULL.";
@@ -142,22 +142,18 @@ int Socket
 
 	this->bound_sockets.push_back(&s);
 	s.bound_sockets.push_back(this);
-	this->dataptr = s.dataptr;
-
-	if (this->task.is_autoexec() && this->task.is_last_input_socket(*this))
-		return this->task.exec();
-	else
-		return 0;
+	if (copy_dataptr)
+		this->dataptr = s.dataptr;
 }
 
-int Socket
-::operator()(Socket &s)
+void Socket
+::operator()(Socket &s, const bool copy_dataptr)
 {
-	return bind(s);
+	bind(s, copy_dataptr);
 }
 
 template <typename T, class A>
-int Socket
+void Socket
 ::bind(std::vector<T,A> &vector)
 {
 	if (is_fast())
@@ -173,30 +169,27 @@ int Socket
 		        << ", 'get_n_elmts()' = " << get_n_elmts()
 		        << ", 'name' = " << get_name()
 		        << ", 'task.name' = " << task.get_name()
-//			        << ", 'task.module.name' = " << task.get_module_name()
+//		        << ", 'task.module.name' = " << task.get_module_name()
 		        << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	return bind(vector.data());
+	bind(vector.data());
 }
 
 template <typename T, class A>
-int Socket
+void Socket
 ::operator()(std::vector<T,A> &vector)
 {
-	return bind(vector);
+	bind(vector);
 }
 
 template <typename T>
-int Socket
+void Socket
 ::bind(T *array)
 {
 	if (is_fast())
-	{
 		this->dataptr = static_cast<void*>(array);
-		return 0;
-	}
 
 	if (type_to_string[typeid(T)] != type_to_string[this->datatype])
 	{
@@ -205,22 +198,22 @@ int Socket
 		        << ", 'datatype' = " << type_to_string[this->datatype]
 		        << ", 'socket.name' = " << get_name()
 		        << ", 'task.name' = " << task.get_name()
-//			        << ", 'module.name' = " << task.get_module_name()
+//		        << ", 'module.name' = " << task.get_module_name()
 		        << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	return bind(static_cast<void*>(array));
+	bind(static_cast<void*>(array));
 }
 
 template <typename T>
-int Socket
+void Socket
 ::operator()(T *array)
 {
-	return bind(array);
+	bind(array);
 }
 
-int Socket
+void Socket
 ::bind(void* dataptr)
 {
 	if (!is_fast())
@@ -234,17 +227,15 @@ int Socket
 	}
 
 	this->dataptr = dataptr;
-
-	return 0;
 }
 
-int Socket
+void Socket
 ::operator()(void* dataptr)
 {
-	return bind(dataptr);
+	bind(dataptr);
 }
 
-inline void Socket
+void Socket
 ::reset()
 {
 	this->dataptr = nullptr;

@@ -15,12 +15,6 @@ bool Task
 }
 
 bool Task
-::is_autoexec() const
-{
-	return this->autoexec;
-}
-
-bool Task
 ::is_stats() const
 {
 	return this->stats;

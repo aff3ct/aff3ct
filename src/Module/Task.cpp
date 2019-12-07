@@ -15,12 +15,11 @@ using namespace aff3ct;
 using namespace aff3ct::module;
 
 Task
-::Task(Module &module, const std::string &name, const bool autoalloc, const bool autoexec,
-       const bool stats, const bool fast, const bool debug)
+::Task(Module &module, const std::string &name, const bool autoalloc, const bool stats, const bool fast,
+       const bool debug)
 : module(&module),
   name(name),
   autoalloc(autoalloc),
-  autoexec(autoexec),
   stats(stats),
   fast(fast),
   debug(debug),
@@ -61,12 +60,6 @@ void Task
 				}
 		}
 	}
-}
-
-void Task
-::set_autoexec(const bool autoexec)
-{
-	this->autoexec = autoexec;
 }
 
 void Task
