@@ -7,7 +7,7 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
-#include "Simulation/BFER/Iterative/Threads/BFER_ite_threads.hpp"
+#include "Simulation/Legacy/BFER/Iterative/Threads/BFER_ite_threads.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::simulation;

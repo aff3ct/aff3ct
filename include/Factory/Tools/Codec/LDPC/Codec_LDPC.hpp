@@ -35,7 +35,7 @@ public:
 
 	// builder
 	template <typename B = int, typename Q = float>
-	tools::Codec_LDPC<B,Q>* build(module::CRC<B>* crc = nullptr) const;
+	tools::Codec_LDPC<B,Q>* build(const module::CRC<B>* crc = nullptr) const;
 };
 }
 }

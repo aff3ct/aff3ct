@@ -42,7 +42,7 @@ public:
 	            const factory::Encoder_polar        &enc_par,
 	            const factory::Decoder_polar        &dec_par,
 	            const factory::Puncturer_polar      *pct_par = nullptr,
-	            module::CRC<B>* crc = nullptr);
+	            const module::CRC<B>                *crc     = nullptr);
 	virtual ~Codec_polar() = default;
 
 	virtual Codec_polar<B,Q>* clone() const;

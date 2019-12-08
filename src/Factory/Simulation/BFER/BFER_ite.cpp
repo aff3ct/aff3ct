@@ -2,8 +2,8 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-#include "Simulation/BFER/Iterative/SystemC/SC_BFER_ite.hpp"
-#include "Simulation/BFER/Iterative/Threads/BFER_ite_threads.hpp"
+#include "Simulation/Legacy/BFER/Iterative/SystemC/SC_BFER_ite.hpp"
+#include "Simulation/Legacy/BFER/Iterative/Threads/BFER_ite_threads.hpp"
 #include "Factory/Simulation/BFER/BFER_ite.hpp"
 
 using namespace aff3ct;
@@ -148,7 +148,7 @@ const Codec_SISO* BFER_ite
 }
 
 template <typename B, typename R, typename Q>
-simulation::BFER_ite<B,R,Q>* BFER_ite
+simulation::Simulation* BFER_ite
 ::build() const
 {
 #if defined(AFF3CT_SYSTEMC_SIMU)
@@ -161,12 +161,12 @@ simulation::BFER_ite<B,R,Q>* BFER_ite
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::simulation::BFER_ite<B_8 ,R_8 ,Q_8 >* aff3ct::factory::BFER_ite::build<B_8 ,R_8 ,Q_8 >() const;
-template aff3ct::simulation::BFER_ite<B_16,R_16,Q_16>* aff3ct::factory::BFER_ite::build<B_16,R_16,Q_16>() const;
-template aff3ct::simulation::BFER_ite<B_32,R_32,Q_32>* aff3ct::factory::BFER_ite::build<B_32,R_32,Q_32>() const;
-template aff3ct::simulation::BFER_ite<B_64,R_64,Q_64>* aff3ct::factory::BFER_ite::build<B_64,R_64,Q_64>() const;
+template aff3ct::simulation::Simulation* aff3ct::factory::BFER_ite::build<B_8 ,R_8 ,Q_8 >() const;
+template aff3ct::simulation::Simulation* aff3ct::factory::BFER_ite::build<B_16,R_16,Q_16>() const;
+template aff3ct::simulation::Simulation* aff3ct::factory::BFER_ite::build<B_32,R_32,Q_32>() const;
+template aff3ct::simulation::Simulation* aff3ct::factory::BFER_ite::build<B_64,R_64,Q_64>() const;
 #else
-template aff3ct::simulation::BFER_ite<B,R,Q>* aff3ct::factory::BFER_ite::build<B,R,Q>() const;
+template aff3ct::simulation::Simulation* aff3ct::factory::BFER_ite::build<B,R,Q>() const;
 #endif
 // ==================================================================================== explicit template instantiation
 

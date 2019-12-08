@@ -13,7 +13,7 @@
 #include "Tools/Display/Terminal/Terminal.hpp"
 #include "Factory/Simulation/BFER/BFER_ite.hpp"
 #include "Module/Coset/Coset.hpp"
-#include "Simulation/BFER/Iterative/BFER_ite.hpp"
+#include "Simulation/Legacy/BFER/Iterative/BFER_ite.hpp"
 
 namespace aff3ct
 {

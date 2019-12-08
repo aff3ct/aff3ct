@@ -34,7 +34,7 @@ public:
 
 	// builder
 	template <typename B = int, typename Q = float>
-	tools::Codec_RSC<B,Q>* build(module::CRC<B>* crc = nullptr) const;
+	tools::Codec_RSC<B,Q>* build(const module::CRC<B>* crc = nullptr) const;
 };
 }
 }

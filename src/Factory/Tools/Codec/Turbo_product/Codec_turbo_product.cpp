@@ -110,7 +110,7 @@ void Codec_turbo_product
 
 template <typename B, typename Q>
 tools::Codec_turbo_product<B,Q>* Codec_turbo_product
-::build(module::CRC<B> *crc) const
+::build(const module::CRC<B> *crc) const
 {
 	return new tools::Codec_turbo_product<B,Q>(dynamic_cast<const Encoder_turbo_product&>(*enc),
 	                                           dynamic_cast<const Decoder_turbo_product&>(*dec),
@@ -120,12 +120,12 @@ tools::Codec_turbo_product<B,Q>* Codec_turbo_product
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::tools::Codec_turbo_product<B_8 ,Q_8 >* aff3ct::factory::Codec_turbo_product::build<B_8 ,Q_8 >(module::CRC<B_8 > *) const;
-template aff3ct::tools::Codec_turbo_product<B_16,Q_16>* aff3ct::factory::Codec_turbo_product::build<B_16,Q_16>(module::CRC<B_16> *) const;
-template aff3ct::tools::Codec_turbo_product<B_32,Q_32>* aff3ct::factory::Codec_turbo_product::build<B_32,Q_32>(module::CRC<B_32> *) const;
-template aff3ct::tools::Codec_turbo_product<B_64,Q_64>* aff3ct::factory::Codec_turbo_product::build<B_64,Q_64>(module::CRC<B_64> *) const;
+template aff3ct::tools::Codec_turbo_product<B_8 ,Q_8 >* aff3ct::factory::Codec_turbo_product::build<B_8 ,Q_8 >(const module::CRC<B_8 > *) const;
+template aff3ct::tools::Codec_turbo_product<B_16,Q_16>* aff3ct::factory::Codec_turbo_product::build<B_16,Q_16>(const module::CRC<B_16> *) const;
+template aff3ct::tools::Codec_turbo_product<B_32,Q_32>* aff3ct::factory::Codec_turbo_product::build<B_32,Q_32>(const module::CRC<B_32> *) const;
+template aff3ct::tools::Codec_turbo_product<B_64,Q_64>* aff3ct::factory::Codec_turbo_product::build<B_64,Q_64>(const module::CRC<B_64> *) const;
 #else
-template aff3ct::tools::Codec_turbo_product<B,Q>* aff3ct::factory::Codec_turbo_product::build<B,Q>(module::CRC<B> *) const;
+template aff3ct::tools::Codec_turbo_product<B,Q>* aff3ct::factory::Codec_turbo_product::build<B,Q>(const module::CRC<B> *) const;
 #endif
 // ==================================================================================== explicit template instantiation
 

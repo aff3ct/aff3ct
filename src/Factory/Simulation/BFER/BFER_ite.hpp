@@ -15,8 +15,7 @@ namespace aff3ct
 {
 namespace simulation
 {
-template <typename B, typename R, typename Q>
-class BFER_ite;
+class Simulation;
 }
 }
 
@@ -60,7 +59,7 @@ public:
 
 	// builder
 	template <typename B = int, typename R = float, typename Q = R>
-	simulation::BFER_ite<B,R,Q>* build() const;
+	simulation::Simulation* build() const;
 };
 }
 }

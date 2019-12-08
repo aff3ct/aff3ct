@@ -23,7 +23,7 @@ Codec_turbo_DB<B,Q>
                  const factory::Decoder_turbo_DB   &dec_params,
                  const factory::Interleaver        &itl_params,
                  const factory::Puncturer_turbo_DB *pct_params,
-                 module::CRC<B>* crc)
+                 const module::CRC<B>              *crc)
 : Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.n_frames),
   trellis(new std::vector<std::vector<int>>())
 {
@@ -117,12 +117,12 @@ Codec_turbo_DB<B,Q>
 
 		if (dec_params.fnc->enable)
 		{
-			if (crc == nullptr || crc->get_size() == 0)
+			if (crc == nullptr || std::unique_ptr<module::CRC<B>>(crc->clone())->get_size() == 0)
 				throw runtime_error(__FILE__, __LINE__, __func__, "The Flip aNd Check requires a CRC.");
 
 			post_pros.push_back(std::unique_ptr<Post_processing_SISO<B,Q>>(dec_params.fnc->build<B,Q>(*crc)));
 		}
-		else if (crc != nullptr && crc->get_size() > 0)
+		else if (crc != nullptr && std::unique_ptr<module::CRC<B>>(crc->clone())->get_size() > 0)
 			post_pros.push_back(std::unique_ptr<Post_processing_SISO<B,Q>>(new CRC_checker_DB<B,Q>(
 				*crc,
 				dec_params.crc_start_ite,

@@ -18,14 +18,14 @@
 
 #include "Factory/Simulation/EXIT/EXIT.hpp"
 
-#include "Simulation/Simulation.hpp"
+#include "Simulation/Legacy/Simulation_legacy.hpp"
 
 namespace aff3ct
 {
 namespace simulation
 {
 template <typename B = int, typename R = float>
-class EXIT : public Simulation
+class EXIT : public Simulation_legacy
 {
 protected:
 	const factory::EXIT &params_EXIT; // simulation parameters

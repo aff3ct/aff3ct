@@ -4,7 +4,7 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Factory/Module/Coset/Coset.hpp"
-#include "Simulation/BFER/Standard/BFER_std.hpp"
+#include "Simulation/Legacy/BFER/Standard/BFER_std.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::simulation;
@@ -123,7 +123,7 @@ void BFER_std<B,R,Q>
 			                                 this->params_BFER_std.src->n_frames,
 			                                 {});
 	}
-	catch (const std::exception&) { /* do nothing if there is no interleaver */ }
+	catch (...) { /* do nothing if there is no interleaver */ }
 
 	if (this->params_BFER_std.err_track_enable)
 	{

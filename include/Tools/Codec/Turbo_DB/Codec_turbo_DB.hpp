@@ -30,7 +30,7 @@ public:
 	               const factory::Decoder_turbo_DB   &dec_params,
 	               const factory::Interleaver        &itl_params,
 	               const factory::Puncturer_turbo_DB *pct_params = nullptr,
-	               module::CRC<B>* crc = nullptr);
+	               const module::CRC<B>              *crc        = nullptr);
 	virtual ~Codec_turbo_DB() = default;
 
 	virtual Codec_turbo_DB<B,Q>* clone() const;

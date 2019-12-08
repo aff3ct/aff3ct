@@ -2,7 +2,7 @@
 #define SIMULATION_BFER_ITE_THREADS_HPP_
 
 #include "Factory/Simulation/BFER/BFER_ite.hpp"
-#include "Simulation/BFER/Iterative/BFER_ite.hpp"
+#include "Simulation/Legacy/BFER/Iterative/BFER_ite.hpp"
 
 namespace aff3ct
 {

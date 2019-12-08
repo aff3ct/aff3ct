@@ -2,9 +2,6 @@
 
 #include "Factory/Module/Monitor/BFER/Monitor_BFER.hpp"
 #include "Factory/Module/Interleaver/Interleaver.hpp"
-
-#include "Simulation/EXIT/EXIT.hpp"
-
 #include "Launcher/Simulation/EXIT.hpp"
 
 using namespace aff3ct;

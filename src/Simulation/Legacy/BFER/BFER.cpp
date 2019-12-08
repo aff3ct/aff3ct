@@ -19,7 +19,7 @@
 #include "Tools/Display/Reporter/Throughput/Reporter_throughput.hpp"
 #include "Factory/Module/Monitor/Monitor.hpp"
 #include "Factory/Tools/Display/Terminal/Terminal.hpp"
-#include "Simulation/BFER/BFER.hpp"
+#include "Simulation/Legacy/BFER/BFER.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::simulation;
@@ -27,8 +27,8 @@ using namespace aff3ct::simulation;
 template <typename B, typename R, typename Q>
 BFER<B,R,Q>
 ::BFER(const factory::BFER& params_BFER)
-: Simulation(params_BFER),
-  params_BFER(params_BFER),
+: Simulation_legacy(params_BFER),
+  params_BFER      (params_BFER),
 
   bit_rate((float)params_BFER.src->K / (float)params_BFER.cdc->N),
 

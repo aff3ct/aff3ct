@@ -8,7 +8,7 @@
 
 #include "Tools/SystemC/SC_Duplicator.hpp"
 #include "Factory/Simulation/BFER/BFER_std.hpp"
-#include "Simulation/BFER/Standard/BFER_std.hpp"
+#include "Simulation/Legacy/BFER/Standard/BFER_std.hpp"
 
 namespace aff3ct
 {

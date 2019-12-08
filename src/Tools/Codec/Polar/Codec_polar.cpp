@@ -20,7 +20,7 @@ Codec_polar<B,Q>
               const factory::Encoder_polar        &enc_params,
               const factory::Decoder_polar        &dec_params,
               const factory::Puncturer_polar      *pct_params,
-              module::CRC<B>* crc)
+              const module::CRC<B>                *crc)
 : Codec_SISO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.n_frames),
   adaptive_fb(fb_params.noise == -1.f),
   frozen_bits(new std::vector<bool>(fb_params.N_cw, true)),

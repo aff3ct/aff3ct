@@ -173,7 +173,7 @@ void Codec_polar
 
 template <typename B, typename Q>
 tools::Codec_polar<B,Q>* Codec_polar
-::build(module::CRC<B> *crc) const
+::build(const module::CRC<B> *crc) const
 {
 	return new tools::Codec_polar<B,Q>(*fbg,
 	                                   dynamic_cast<const Encoder_polar  &>(*enc),
@@ -185,11 +185,11 @@ tools::Codec_polar<B,Q>* Codec_polar
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::tools::Codec_polar<B_8 ,Q_8 >* aff3ct::factory::Codec_polar::build<B_8 ,Q_8 >(aff3ct::module::CRC<B_8 >*) const;
-template aff3ct::tools::Codec_polar<B_16,Q_16>* aff3ct::factory::Codec_polar::build<B_16,Q_16>(aff3ct::module::CRC<B_16>*) const;
-template aff3ct::tools::Codec_polar<B_32,Q_32>* aff3ct::factory::Codec_polar::build<B_32,Q_32>(aff3ct::module::CRC<B_32>*) const;
-template aff3ct::tools::Codec_polar<B_64,Q_64>* aff3ct::factory::Codec_polar::build<B_64,Q_64>(aff3ct::module::CRC<B_64>*) const;
+template aff3ct::tools::Codec_polar<B_8 ,Q_8 >* aff3ct::factory::Codec_polar::build<B_8 ,Q_8 >(const aff3ct::module::CRC<B_8 >*) const;
+template aff3ct::tools::Codec_polar<B_16,Q_16>* aff3ct::factory::Codec_polar::build<B_16,Q_16>(const aff3ct::module::CRC<B_16>*) const;
+template aff3ct::tools::Codec_polar<B_32,Q_32>* aff3ct::factory::Codec_polar::build<B_32,Q_32>(const aff3ct::module::CRC<B_32>*) const;
+template aff3ct::tools::Codec_polar<B_64,Q_64>* aff3ct::factory::Codec_polar::build<B_64,Q_64>(const aff3ct::module::CRC<B_64>*) const;
 #else
-template aff3ct::tools::Codec_polar<B,Q>* aff3ct::factory::Codec_polar::build<B,Q>(aff3ct::module::CRC<B>*) const;
+template aff3ct::tools::Codec_polar<B,Q>* aff3ct::factory::Codec_polar::build<B,Q>(const aff3ct::module::CRC<B>*) const;
 #endif
 // ==================================================================================== explicit template instantiation

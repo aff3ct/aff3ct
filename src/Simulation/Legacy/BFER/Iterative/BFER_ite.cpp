@@ -4,7 +4,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Algo/Predicate_ite.hpp"
 #include "Factory/Module/Coset/Coset.hpp"
-#include "Simulation/BFER/Iterative/BFER_ite.hpp"
+#include "Simulation/Legacy/BFER/Iterative/BFER_ite.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::simulation;

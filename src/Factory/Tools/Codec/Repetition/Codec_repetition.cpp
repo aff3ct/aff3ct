@@ -71,7 +71,7 @@ void Codec_repetition
 
 template <typename B, typename Q>
 tools::Codec_repetition<B,Q>* Codec_repetition
-::build(module::CRC<B> *crc) const
+::build(const module::CRC<B> *crc) const
 {
 	return new tools::Codec_repetition<B,Q>(dynamic_cast<const Encoder_repetition&>(*enc),
 	                                        dynamic_cast<const Decoder_repetition&>(*dec));
@@ -80,11 +80,11 @@ tools::Codec_repetition<B,Q>* Codec_repetition
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::tools::Codec_repetition<B_8 ,Q_8 >* aff3ct::factory::Codec_repetition::build<B_8 ,Q_8 >(aff3ct::module::CRC<B_8 >*) const;
-template aff3ct::tools::Codec_repetition<B_16,Q_16>* aff3ct::factory::Codec_repetition::build<B_16,Q_16>(aff3ct::module::CRC<B_16>*) const;
-template aff3ct::tools::Codec_repetition<B_32,Q_32>* aff3ct::factory::Codec_repetition::build<B_32,Q_32>(aff3ct::module::CRC<B_32>*) const;
-template aff3ct::tools::Codec_repetition<B_64,Q_64>* aff3ct::factory::Codec_repetition::build<B_64,Q_64>(aff3ct::module::CRC<B_64>*) const;
+template aff3ct::tools::Codec_repetition<B_8 ,Q_8 >* aff3ct::factory::Codec_repetition::build<B_8 ,Q_8 >(const aff3ct::module::CRC<B_8 >*) const;
+template aff3ct::tools::Codec_repetition<B_16,Q_16>* aff3ct::factory::Codec_repetition::build<B_16,Q_16>(const aff3ct::module::CRC<B_16>*) const;
+template aff3ct::tools::Codec_repetition<B_32,Q_32>* aff3ct::factory::Codec_repetition::build<B_32,Q_32>(const aff3ct::module::CRC<B_32>*) const;
+template aff3ct::tools::Codec_repetition<B_64,Q_64>* aff3ct::factory::Codec_repetition::build<B_64,Q_64>(const aff3ct::module::CRC<B_64>*) const;
 #else
-template aff3ct::tools::Codec_repetition<B,Q>* aff3ct::factory::Codec_repetition::build<B,Q>(aff3ct::module::CRC<B>*) const;
+template aff3ct::tools::Codec_repetition<B,Q>* aff3ct::factory::Codec_repetition::build<B,Q>(const aff3ct::module::CRC<B>*) const;
 #endif
 // ==================================================================================== explicit template instantiation

@@ -640,6 +640,13 @@ parameter is enabled, it becomes the codeword size (:math:`N`).
 .. note:: Available only for ``BFERI`` simulation type (c.f. the
    :ref:`sim-sim-type` parameter).
 
+.. _sim-sim-chain:
+
+``--sim-chain`` |image_advanced_argument|
+"""""""""""""""""""""""""""""""""""""""""
+
+|factory::BFER::p+chain|
+
 .. _sim-sim-clone:
 
 ``--sim-clone`` |image_advanced_argument|

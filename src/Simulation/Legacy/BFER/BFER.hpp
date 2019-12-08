@@ -11,7 +11,6 @@
 #include "Factory/Simulation/BFER/BFER.hpp"
 #include "Tools/Constellation/Constellation.hpp"
 #include "Tools/Display/Reporter/Reporter.hpp"
-#include "Tools/Display/Reporter/Reporter.hpp"
 #include "Tools/Display/Terminal/Terminal.hpp"
 #include "Tools/Display/Dumper/Dumper.hpp"
 #include "Tools/Display/Dumper/Dumper_reduction.hpp"
@@ -23,21 +22,20 @@
 #include "Tools/Noise/Noise.hpp"
 #include "Module/Monitor/MI/Monitor_MI.hpp"
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
-#include "Simulation/Simulation.hpp"
+#include "Simulation/Legacy/Simulation_legacy.hpp"
 
 namespace aff3ct
 {
 namespace simulation
 {
 template <typename B = int, typename R = float, typename Q = R>
-class BFER : public Simulation
+class BFER : public Simulation_legacy
 {
 private:
 	// parameters
 	const factory::BFER &params_BFER;
 
 protected:
-	std::mutex               mutex_noise;
 	std::mutex               mutex_exception;
 	std::vector<std::string> prev_err_messages;
 	std::vector<std::string> prev_err_messages_to_display;

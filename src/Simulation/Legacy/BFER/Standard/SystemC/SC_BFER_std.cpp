@@ -3,7 +3,7 @@
 #include <string>
 
 #include "Tools/Exception/exception.hpp"
-#include "Simulation/BFER/Standard/SystemC/SC_BFER_std.hpp"
+#include "Simulation/Legacy/BFER/Standard/SystemC/SC_BFER_std.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::simulation;

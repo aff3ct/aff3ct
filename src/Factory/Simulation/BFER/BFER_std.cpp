@@ -1,5 +1,6 @@
-#include "Simulation/BFER/Standard/SystemC/SC_BFER_std.hpp"
-#include "Simulation/BFER/Standard/Threads/BFER_std_threads.hpp"
+#include "Simulation/Legacy/BFER/Standard/SystemC/SC_BFER_std.hpp"
+#include "Simulation/Legacy/BFER/Standard/Threads/BFER_std_threads.hpp"
+#include "Simulation/Chain/Simulation_chain_BFER_std.hpp"
 #include "Factory/Simulation/BFER/BFER_std.hpp"
 
 using namespace aff3ct;
@@ -59,24 +60,27 @@ const Codec_SIHO* BFER_std
 }
 
 template <typename B, typename R, typename Q>
-simulation::BFER_std<B,R,Q>* BFER_std
+simulation::Simulation* BFER_std
 ::build() const
 {
 #if defined(AFF3CT_SYSTEMC_SIMU)
 	return new simulation::SC_BFER_std<B,R,Q>(*this);
 #else
-	return new simulation::BFER_std_threads<B,R,Q>(*this);
+	if (this->chain_threads)
+		return new simulation::Simulation_chain_BFER_std<B,R,Q>(*this);
+	else
+		return new simulation::BFER_std_threads<B,R,Q>(*this);
 #endif
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::simulation::BFER_std<B_8 ,R_8 ,Q_8 >* aff3ct::factory::BFER_std::build<B_8 ,R_8 ,Q_8 >() const;
-template aff3ct::simulation::BFER_std<B_16,R_16,Q_16>* aff3ct::factory::BFER_std::build<B_16,R_16,Q_16>() const;
-template aff3ct::simulation::BFER_std<B_32,R_32,Q_32>* aff3ct::factory::BFER_std::build<B_32,R_32,Q_32>() const;
-template aff3ct::simulation::BFER_std<B_64,R_64,Q_64>* aff3ct::factory::BFER_std::build<B_64,R_64,Q_64>() const;
+template aff3ct::simulation::Simulation* aff3ct::factory::BFER_std::build<B_8 ,R_8 ,Q_8 >() const;
+template aff3ct::simulation::Simulation* aff3ct::factory::BFER_std::build<B_16,R_16,Q_16>() const;
+template aff3ct::simulation::Simulation* aff3ct::factory::BFER_std::build<B_32,R_32,Q_32>() const;
+template aff3ct::simulation::Simulation* aff3ct::factory::BFER_std::build<B_64,R_64,Q_64>() const;
 #else
-template aff3ct::simulation::BFER_std<B,R,Q>* aff3ct::factory::BFER_std::build<B,R,Q>() const;
+template aff3ct::simulation::Simulation* aff3ct::factory::BFER_std::build<B,R,Q>() const;
 #endif
 // ==================================================================================== explicit template instantiation

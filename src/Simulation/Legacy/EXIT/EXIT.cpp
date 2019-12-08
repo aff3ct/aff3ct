@@ -18,7 +18,7 @@
 #include "Tools/Display/Reporter/EXIT/Reporter_EXIT.hpp"
 #include "Tools/Display/Reporter/Noise/Reporter_noise.hpp"
 #include "Tools/Display/Reporter/Throughput/Reporter_throughput.hpp"
-#include "Simulation/EXIT/EXIT.hpp"
+#include "Simulation/Legacy/EXIT/EXIT.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::simulation;
@@ -26,9 +26,9 @@ using namespace aff3ct::simulation;
 template <typename B, typename R>
 EXIT<B,R>
 ::EXIT(const factory::EXIT& params_EXIT)
-: Simulation (params_EXIT),
-  params_EXIT(params_EXIT),
-  sig_a      ((R)0       )
+: Simulation_legacy(params_EXIT),
+  params_EXIT      (params_EXIT),
+  sig_a            ((R)0       )
 {
 #ifdef AFF3CT_MPI
 	std::clog << rang::tag::warning << "This simulation is not MPI ready, the same computations will be launched "

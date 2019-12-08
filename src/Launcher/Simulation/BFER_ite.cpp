@@ -3,7 +3,6 @@
 
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Factory/Module/Monitor/BFER/Monitor_BFER.hpp"
-#include "Simulation/BFER/Iterative/BFER_ite.hpp"
 #include "Launcher/Simulation/BFER_ite.hpp"
 
 using namespace aff3ct;

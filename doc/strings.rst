@@ -102,6 +102,10 @@
 .. |factory::BFER::p+coset,c| replace::
    Enable the *coset* approach.
 
+.. |factory::BFER::p+chain| replace::
+   Enable the new simulator engine based on a chain (should be faster than the
+   legacy simulator engine).
+
 .. |factory::BFER::p+clone| replace::
    Enable the *clone* method to allocate the module objects.
 

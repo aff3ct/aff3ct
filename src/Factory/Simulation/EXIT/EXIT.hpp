@@ -22,8 +22,7 @@ namespace aff3ct
 {
 namespace simulation
 {
-template <typename B, typename R>
-class EXIT;
+class Simulation;
 }
 }
 
@@ -77,7 +76,7 @@ public:
 
 	// builder
 	template <typename B = int, typename R = float>
-	simulation::EXIT<B,R>* build() const;
+	simulation::Simulation* build() const;
 };
 }
 }

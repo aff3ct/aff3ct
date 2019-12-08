@@ -36,7 +36,7 @@ public:
 
 	// builder
 	template <typename B = int, typename Q = float>
-	tools::Codec_HIHO<B,Q>* build(module::CRC<B>* crc = nullptr) const;
+	tools::Codec_HIHO<B,Q>* build(const module::CRC<B>* crc = nullptr) const;
 
 protected:
 	Codec_HIHO(const std::string &n, const std::string &p);

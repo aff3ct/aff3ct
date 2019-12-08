@@ -38,7 +38,7 @@ public:
 
 	// builder
 	template <typename B = int, typename Q = float>
-	tools::Flip_and_check_DB<B,Q>* build(module::CRC<B> &crc) const;
+	tools::Flip_and_check_DB<B,Q>* build(const module::CRC<B> &crc) const;
 };
 }
 }

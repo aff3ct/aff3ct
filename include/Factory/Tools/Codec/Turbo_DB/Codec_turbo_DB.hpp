@@ -38,7 +38,7 @@ public:
 
 	// builder
 	template <typename B = int, typename Q = float>
-	tools::Codec_turbo_DB<B,Q>* build(module::CRC<B>* crc = nullptr) const;
+	tools::Codec_turbo_DB<B,Q>* build(const module::CRC<B>* crc = nullptr) const;
 };
 }
 }

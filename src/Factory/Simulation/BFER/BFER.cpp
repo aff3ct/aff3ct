@@ -138,6 +138,10 @@ void BFER
 	tools::add_arg(args, p, class_name+"p+clone",
 		cli::None(),
 		cli::arg_rank::ADV);
+
+	tools::add_arg(args, p, class_name+"p+chain",
+		cli::None(),
+		cli::arg_rank::ADV);
 }
 
 void BFER
@@ -160,6 +164,10 @@ void BFER
 	if(vals.exist({p+"-coset",    "c"})) this->coset               = true;
 	if(vals.exist({p+"-coded",       })) this->coded_monitoring    = true;
 	if(vals.exist({p+"-clone",       })) this->alloc_clone         = true;
+	if(vals.exist({p+"-chain",       })) this->chain_threads       = true;
+
+	if (this->chain_threads)
+		this->alloc_clone = true;
 
 	if (this->err_track_revert)
 	{
@@ -222,6 +230,9 @@ void BFER
 	std::string enable_alloc_clone = (this->alloc_clone) ? "on" : "off";
 	headers[p].push_back(std::make_pair("Clone allocations", enable_alloc_clone));
 
+	std::string enable_chain_threads = (this->chain_threads) ? "on" : "off";
+	headers[p].push_back(std::make_pair("Chain multithreading", enable_chain_threads));
+
 	if (this->err_track_threshold)
 		headers[p].push_back(std::make_pair("Bad frames threshold", std::to_string(this->err_track_threshold)));
 
@@ -261,7 +272,6 @@ void BFER
 
 	if (this->ter != nullptr) { this->ter->get_headers(headers, full); }
 }
-
 
 void BFER
 ::set_src(Source *src)

@@ -17,7 +17,7 @@
 #include "Module/Loop/Predicate/Loop_predicate.hpp"
 #include "Module/Loop/CRC/Loop_CRC.hpp"
 #include "Factory/Simulation/BFER/BFER_ite.hpp"
-#include "Simulation/BFER/BFER.hpp"
+#include "Simulation/Legacy/BFER/BFER.hpp"
 
 namespace aff3ct
 {
