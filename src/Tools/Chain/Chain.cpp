@@ -1,7 +1,10 @@
 #include <thread>
 #include <utility>
 #include <sstream>
+#include <cstring>
+#include <exception>
 
+#include "Tools/Display/Terminal/Terminal.hpp"
 #include "Tools/Exception/exception.hpp"
 #include "Module/Module.hpp"
 #include "Module/Task.hpp"
@@ -13,7 +16,7 @@ using namespace aff3ct::tools;
 
 Chain
 ::Chain(const module::Task &first, const module::Task &last, const size_t n_threads)
-: n_threads(n_threads), tasks_sequences(n_threads), modules(n_threads)
+: n_threads(n_threads), tasks_sequences(n_threads), modules(n_threads), mtx_exception(new std::mutex())
 {
 	if (n_threads == 0)
 	{
@@ -39,7 +42,7 @@ Chain
 
 Chain
 ::Chain(const module::Task &first, const size_t n_threads)
-: n_threads(n_threads), tasks_sequences(n_threads), modules(n_threads)
+: n_threads(n_threads), tasks_sequences(n_threads), modules(n_threads), mtx_exception(new std::mutex())
 {
 	if (n_threads == 0)
 	{
@@ -61,6 +64,7 @@ Chain* Chain
 	for (size_t t = 0; t < this->tasks_sequences[0].size(); t++)
 		tasks_sequence.push_back(this->tasks_sequences[0][t]);
 	c->duplicate(tasks_sequence);
+	c->mtx_exception.reset(new std::mutex());
 	return c;
 }
 
@@ -140,18 +144,68 @@ void Chain
 void Chain
 ::_exec(std::function<bool(const std::vector<int>&)> &stop_condition, std::vector<module::Task*> &tasks_sequence)
 {
-	std::vector<int> statuses(tasks_sequence.size(), 0);
-	while (!stop_condition(statuses))
-		for (size_t ta = 0; ta < tasks_sequence.size(); ta++)
-			statuses[ta] = tasks_sequence[ta]->exec();
+	try
+	{
+		std::vector<int> statuses(tasks_sequence.size(), 0);
+		while (!stop_condition(statuses))
+			for (size_t ta = 0; ta < tasks_sequence.size(); ta++)
+				statuses[ta] = tasks_sequence[ta]->exec();
+	}
+	catch (std::exception const& e)
+	{
+		tools::Terminal::stop();
+
+		this->mtx_exception->lock();
+
+		auto save = tools::exception::no_backtrace;
+		tools::exception::no_backtrace = true;
+		std::string msg = e.what(); // get only the function signature
+		tools::exception::no_backtrace = save;
+
+		if (std::find(this->prev_exception_messages.begin(), this->prev_exception_messages.end(), msg) ==
+			this->prev_exception_messages.end())
+		{
+			this->prev_exception_messages.push_back(msg); // save only the function signature
+			this->prev_exception_messages_to_display.push_back(e.what()); // with backtrace if debug mode
+		}
+		else if (std::strlen(e.what()) > this->prev_exception_messages_to_display.back().size())
+			this->prev_exception_messages_to_display[prev_exception_messages_to_display.size() -1] = e.what();
+
+		this->mtx_exception->unlock();
+	}
 }
 
 void Chain
 ::_exec_without_statuses(std::function<bool()> &stop_condition, std::vector<module::Task*> &tasks_sequence)
 {
-	while (!stop_condition())
-		for (size_t ta = 0; ta < tasks_sequence.size(); ta++)
-			tasks_sequence[ta]->exec();
+	try
+	{
+		while (!stop_condition())
+			for (size_t ta = 0; ta < tasks_sequence.size(); ta++)
+				tasks_sequence[ta]->exec();
+	}
+	catch (std::exception const& e)
+	{
+		tools::Terminal::stop();
+
+		this->mtx_exception->lock();
+
+		auto save = tools::exception::no_backtrace;
+		tools::exception::no_backtrace = true;
+		std::string msg = e.what(); // get only the function signature
+		tools::exception::no_backtrace = save;
+
+		if (std::find(this->prev_exception_messages.begin(), this->prev_exception_messages.end(), msg) ==
+			this->prev_exception_messages.end())
+		{
+			this->prev_exception_messages.push_back(msg); // save only the function signature
+			this->prev_exception_messages_to_display.push_back(e.what()); // with backtrace if debug mode
+		}
+		else if (std::strlen(e.what()) > this->prev_exception_messages_to_display.back().size())
+			this->prev_exception_messages_to_display[prev_exception_messages_to_display.size() -1] = e.what();
+
+		this->mtx_exception->unlock();
+	}
 }
 
 void Chain
@@ -165,6 +219,9 @@ void Chain
 
 	for (size_t tid = 1; tid < n_threads; tid++)
 		threads[tid].join();
+
+	if (!this->prev_exception_messages_to_display.empty())
+		throw std::runtime_error(this->prev_exception_messages_to_display.back());
 }
 
 void Chain
@@ -179,6 +236,9 @@ void Chain
 
 	for (size_t tid = 1; tid < n_threads; tid++)
 		threads[tid].join();
+
+	if (!this->prev_exception_messages_to_display.empty())
+		throw std::runtime_error(this->prev_exception_messages_to_display.back());
 }
 
 int Chain

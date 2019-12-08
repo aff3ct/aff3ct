@@ -8,6 +8,8 @@
 #include <functional>
 #include <memory>
 #include <vector>
+#include <string>
+#include <mutex>
 
 #include "Tools/Interface/Interface_clone.hpp"
 
@@ -27,6 +29,10 @@ protected:
 	size_t n_threads;
 	std::vector<std::vector<module::Task*>> tasks_sequences;
 	std::vector<std::vector<std::shared_ptr<module::Module>>> modules;
+
+	std::shared_ptr<std::mutex> mtx_exception;
+	std::vector<std::string> prev_exception_messages;
+	std::vector<std::string> prev_exception_messages_to_display;
 
 public:
 	Chain(const module::Task &first,                           const size_t n_threads = 1);
