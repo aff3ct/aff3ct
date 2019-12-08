@@ -28,7 +28,9 @@ private:
 	MPI_Op       MPI_Op_reduce_monitors;
 
 public:
+	explicit Monitor_reduction_MPI(const std::vector<M*> &monitors);
 	explicit Monitor_reduction_MPI(const std::vector<std::unique_ptr<M>> &monitors);
+	explicit Monitor_reduction_MPI(const std::vector<std::shared_ptr<M>> &monitors);
 	virtual ~Monitor_reduction_MPI();
 
 	virtual bool is_done();

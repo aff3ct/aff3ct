@@ -707,7 +707,6 @@ template <typename B, typename R, typename Q>
 void Simulation_chain_BFER_std<B,R,Q>
 ::create_monitors_reduction()
 {
-	// create and configure the monitors reduction --------------------------------------------------------------------
 	auto monitors_bfer = chain->get_modules<module::Monitor_BFER<B>>();
 #ifdef AFF3CT_MPI
 	this->monitor_er_red.reset(new tools::Monitor_reduction_MPI<module::Monitor_BFER<B>>(monitors_bfer));
@@ -764,7 +763,6 @@ void Simulation_chain_BFER_std<B,R,Q>
 			return;
 	}
 
-	// SNR loop -------------------------------------------------------------------------------------------------------
 	int noise_begin = 0;
 	int noise_end   = (int)params_BFER.noise->range.size();
 	int noise_step  = 1;

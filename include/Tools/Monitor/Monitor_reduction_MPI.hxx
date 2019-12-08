@@ -15,7 +15,7 @@ namespace tools
 
 template <class M>
 Monitor_reduction_MPI<M>
-::Monitor_reduction_MPI(const std::vector<std::unique_ptr<M>> &monitors)
+::Monitor_reduction_MPI(const std::vector<M*> &monitors)
 : Monitor_reduction<M>(monitors)
 {
 	const std::string name = "Monitor_reduction_MPI<" + monitors[0]->get_name() + ">";
@@ -45,6 +45,20 @@ Monitor_reduction_MPI<M>
 		message << "'MPI_Op_create' returned '" << ret << "' error code.";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+template <class M>
+Monitor_reduction_MPI<M>
+::Monitor_reduction_MPI(const std::vector<std::unique_ptr<M>> &monitors)
+: Monitor_reduction_MPI(convert_to_ptr<M>(monitors))
+{
+}
+
+template <class M>
+Monitor_reduction_MPI<M>
+::Monitor_reduction_MPI(const std::vector<std::shared_ptr<M>> &monitors)
+: Monitor_reduction_MPI(convert_to_ptr<M>(monitors))
+{
 }
 
 template <class M>

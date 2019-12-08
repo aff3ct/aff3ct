@@ -19,8 +19,7 @@ SC_Module
   s_in (sockets_in,  task, indirect_sockets_in),
   s_out(sockets_out, task, indirect_sockets_out)
 {
-	task.set_autoexec (false);
-	task.set_autoalloc(true );
+	task.set_autoalloc(true);
 
 	auto is_inputs = false;
 	for (auto& s : task.sockets)

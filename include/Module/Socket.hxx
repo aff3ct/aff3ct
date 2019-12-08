@@ -157,10 +157,7 @@ void Socket
 ::bind(std::vector<T,A> &vector)
 {
 	if (is_fast())
-	{
 		this->dataptr = static_cast<void*>(vector.data());
-		return 0;
-	}
 
 	if (vector.size() != this->get_n_elmts())
 	{
