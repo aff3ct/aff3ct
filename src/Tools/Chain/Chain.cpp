@@ -4,7 +4,6 @@
 #include <cstring>
 #include <exception>
 
-#include "Tools/Display/Terminal/Terminal.hpp"
 #include "Tools/Exception/exception.hpp"
 #include "Module/Module.hpp"
 #include "Module/Task.hpp"
@@ -16,7 +15,11 @@ using namespace aff3ct::tools;
 
 Chain
 ::Chain(const module::Task &first, const module::Task &last, const size_t n_threads)
-: n_threads(n_threads), tasks_sequences(n_threads), modules(n_threads), mtx_exception(new std::mutex())
+: n_threads(n_threads),
+  tasks_sequences(n_threads),
+  modules(n_threads),
+  mtx_exception(new std::mutex()),
+  force_exit_loop(new std::atomic<bool>(false))
 {
 	if (n_threads == 0)
 	{
@@ -42,7 +45,11 @@ Chain
 
 Chain
 ::Chain(const module::Task &first, const size_t n_threads)
-: n_threads(n_threads), tasks_sequences(n_threads), modules(n_threads), mtx_exception(new std::mutex())
+: n_threads(n_threads),
+  tasks_sequences(n_threads),
+  modules(n_threads),
+  mtx_exception(new std::mutex()),
+  force_exit_loop(new std::atomic<bool>(false))
 {
 	if (n_threads == 0)
 	{
@@ -65,6 +72,7 @@ Chain* Chain
 		tasks_sequence.push_back(this->tasks_sequences[0][t]);
 	c->duplicate(tasks_sequence);
 	c->mtx_exception.reset(new std::mutex());
+	c->force_exit_loop.reset(new std::atomic<bool>(false));
 	return c;
 }
 
@@ -147,13 +155,13 @@ void Chain
 	try
 	{
 		std::vector<int> statuses(tasks_sequence.size(), 0);
-		while (!stop_condition(statuses))
+		while (!*force_exit_loop && !stop_condition(statuses))
 			for (size_t ta = 0; ta < tasks_sequence.size(); ta++)
 				statuses[ta] = tasks_sequence[ta]->exec();
 	}
 	catch (std::exception const& e)
 	{
-		tools::Terminal::stop();
+		*force_exit_loop = true;
 
 		this->mtx_exception->lock();
 
@@ -180,13 +188,13 @@ void Chain
 {
 	try
 	{
-		while (!stop_condition())
+		while (!*force_exit_loop && !stop_condition())
 			for (size_t ta = 0; ta < tasks_sequence.size(); ta++)
 				tasks_sequence[ta]->exec();
 	}
 	catch (std::exception const& e)
 	{
-		tools::Terminal::stop();
+		*force_exit_loop = true;
 
 		this->mtx_exception->lock();
 
@@ -221,7 +229,10 @@ void Chain
 		threads[tid].join();
 
 	if (!this->prev_exception_messages_to_display.empty())
+	{
+		*force_exit_loop = false;
 		throw std::runtime_error(this->prev_exception_messages_to_display.back());
+	}
 }
 
 void Chain
@@ -238,7 +249,10 @@ void Chain
 		threads[tid].join();
 
 	if (!this->prev_exception_messages_to_display.empty())
+	{
+		*force_exit_loop = false;
 		throw std::runtime_error(this->prev_exception_messages_to_display.back());
+	}
 }
 
 int Chain

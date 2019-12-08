@@ -9,6 +9,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <atomic>
 #include <mutex>
 
 #include "Tools/Interface/Interface_clone.hpp"
@@ -33,6 +34,7 @@ protected:
 	std::shared_ptr<std::mutex> mtx_exception;
 	std::vector<std::string> prev_exception_messages;
 	std::vector<std::string> prev_exception_messages_to_display;
+	std::shared_ptr<std::atomic<bool>> force_exit_loop;
 
 public:
 	Chain(const module::Task &first,                           const size_t n_threads = 1);
