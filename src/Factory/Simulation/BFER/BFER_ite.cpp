@@ -4,6 +4,7 @@
 #include "Tools/Documentation/documentation.h"
 #include "Simulation/Legacy/BFER/Iterative/SystemC/SC_BFER_ite.hpp"
 #include "Simulation/Legacy/BFER/Iterative/Threads/BFER_ite_threads.hpp"
+#include "Simulation/Chain/BFER/Iterative/Simulation_chain_BFER_ite.hpp"
 #include "Factory/Simulation/BFER/BFER_ite.hpp"
 
 using namespace aff3ct;
@@ -154,7 +155,10 @@ simulation::Simulation* BFER_ite
 #if defined(AFF3CT_SYSTEMC_SIMU)
 	return new simulation::SC_BFER_ite<B,R,Q>(*this);
 #else
-	return new simulation::BFER_ite_threads<B,R,Q>(*this);
+	if (this->chain_threads)
+		return new simulation::Simulation_chain_BFER_ite<B,R,Q>(*this);
+	else
+		return new simulation::BFER_ite_threads<B,R,Q>(*this);
 #endif
 }
 

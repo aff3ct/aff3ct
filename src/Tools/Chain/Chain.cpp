@@ -199,8 +199,6 @@ void Chain
 					if (bs != nullptr)
 					{
 						auto &t = bs->get_task();
-						std::cout << "[in]: sname = " << s->get_name() << ", tname = " << s->get_task().get_name() << " - ";
-						std::cout << "[out]: sname = " << bs->get_name() << ", tname = " << t.get_name() << std::endl;;
 						if (t.is_last_input_socket(*bs))
 							Chain::init_recursive(tasks_sequence, first, t, last);
 					}
