@@ -175,49 +175,44 @@ module::Decoder_SIHO<B,Q>* Decoder_polar
 	{
 		if (this->implem == "NAIVE")
 		{
-			if (crc == nullptr || std::unique_ptr<module::CRC<B>>(crc->clone())->get_size() == 0)
-			{
-				if (this->type == "SC"  ) return new module::Decoder_polar_SC_naive        <B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>,tools::h_LLR<B,Q>>(this->K, this->N_cw,              frozen_bits,       this->n_frames);
-				if (this->type == "SCAN") return new module::Decoder_polar_SCAN_naive      <B,Q,tools::f_LLR<Q>,tools::v_LLR<  Q>,tools::h_LLR<B,Q>>(this->K, this->N_cw, this->n_ite, frozen_bits,       this->n_frames);
-				if (this->type == "SCL" ) return new module::Decoder_polar_SCL_naive       <B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>                  >(this->K, this->N_cw, this->L,     frozen_bits,       this->n_frames);
-			}
-			else
+			if (crc != nullptr && std::unique_ptr<module::CRC<B>>(crc->clone())->get_size() > 0)
 			{
 				if (this->type == "SCF" ) return new module::Decoder_polar_SCF_naive       <B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>,tools::h_LLR<B,Q>>(this->K, this->N_cw, frozen_bits, *crc, this->flips, this->n_frames);
 				if (this->type == "SCL" ) return new module::Decoder_polar_SCL_naive_CA    <B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>                  >(this->K, this->N_cw, this->L,     frozen_bits, *crc, this->n_frames);
 			}
+
+			if (this->type == "SC"  ) return new module::Decoder_polar_SC_naive        <B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>,tools::h_LLR<B,Q>>(this->K, this->N_cw,              frozen_bits,       this->n_frames);
+			if (this->type == "SCAN") return new module::Decoder_polar_SCAN_naive      <B,Q,tools::f_LLR<Q>,tools::v_LLR<  Q>,tools::h_LLR<B,Q>>(this->K, this->N_cw, this->n_ite, frozen_bits,       this->n_frames);
+			if (this->type == "SCL" ) return new module::Decoder_polar_SCL_naive       <B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>                  >(this->K, this->N_cw, this->L,     frozen_bits,       this->n_frames);
+
 		}
 	}
 	else // systematic encoding
 	{
 		if (this->implem == "NAIVE")
 		{
-			if (crc == nullptr || std::unique_ptr<module::CRC<B>>(crc->clone())->get_size() == 0)
-			{
-				if (this->type == "SC"  ) return new module::Decoder_polar_SC_naive_sys    <B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>,tools::h_LLR<B,Q>>(this->K, this->N_cw,              frozen_bits,       this->n_frames);
-				if (this->type == "SCAN") return new module::Decoder_polar_SCAN_naive_sys  <B,Q,tools::f_LLR<Q>,tools::v_LLR<  Q>,tools::h_LLR<B,Q>>(this->K, this->N_cw, this->n_ite, frozen_bits,       this->n_frames);
-				if (this->type == "SCL" ) return new module::Decoder_polar_SCL_naive_sys   <B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>                  >(this->K, this->N_cw, this->L,     frozen_bits,       this->n_frames);
-			}
-			else
+			if (crc != nullptr && std::unique_ptr<module::CRC<B>>(crc->clone())->get_size() > 0)
 			{
 				if (this->type == "SCF" ) return new module::Decoder_polar_SCF_naive_sys   <B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>,tools::h_LLR<B,Q>>(this->K, this->N_cw, frozen_bits, *crc, this->flips, this->n_frames);
 				if (this->type == "SCL" ) return new module::Decoder_polar_SCL_naive_CA_sys<B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>                  >(this->K, this->N_cw, this->L,     frozen_bits, *crc, this->n_frames);
 			}
+
+			if (this->type == "SC"  ) return new module::Decoder_polar_SC_naive_sys    <B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>,tools::h_LLR<B,Q>>(this->K, this->N_cw,              frozen_bits,       this->n_frames);
+			if (this->type == "SCAN") return new module::Decoder_polar_SCAN_naive_sys  <B,Q,tools::f_LLR<Q>,tools::v_LLR<  Q>,tools::h_LLR<B,Q>>(this->K, this->N_cw, this->n_ite, frozen_bits,       this->n_frames);
+			if (this->type == "SCL" ) return new module::Decoder_polar_SCL_naive_sys   <B,Q,tools::f_LLR<Q>,tools::g_LLR<B,Q>                  >(this->K, this->N_cw, this->L,     frozen_bits,       this->n_frames);
+
 		}
 		else if (this->implem == "FAST")
 		{
-			if (crc == nullptr || std::unique_ptr<module::CRC<B>>(crc->clone())->get_size() == 0)
-			{
-				int idx_r0, idx_r1;
-				auto polar_patterns = tools::Nodes_parser<>::parse_ptr(this->polar_nodes, idx_r0, idx_r1);
-				module::Decoder_SIHO<B,Q>* decoder = nullptr;
-				if (this->type == "SC"  ) decoder = new module::Decoder_polar_SC_fast_sys<B, Q, API_polar>(this->K, this->N_cw, frozen_bits, polar_patterns, idx_r0, idx_r1, this->n_frames);
+			int idx_r0, idx_r1;
+			auto polar_patterns = tools::Nodes_parser<>::parse_ptr(this->polar_nodes, idx_r0, idx_r1);
+			module::Decoder_SIHO<B,Q>* decoder = nullptr;
+			if (this->type == "SC"  ) decoder = new module::Decoder_polar_SC_fast_sys<B, Q, API_polar>(this->K, this->N_cw, frozen_bits, polar_patterns, idx_r0, idx_r1, this->n_frames);
 
-				for (auto p : polar_patterns)
-					delete p;
-				if (decoder != nullptr)
-					return decoder;
-			}
+			for (auto p : polar_patterns)
+				delete p;
+			if (decoder != nullptr)
+				return decoder;
 		}
 	}
 
