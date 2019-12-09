@@ -35,7 +35,7 @@ bool Loop
 
 	auto ret_val = this->_stop(in + f_start * this->n_bytes_in, f_start);
 	for (auto f = f_start+1; f < f_stop; f++)
-		ret_val &= ret_val, this->_stop(in + f * this->n_bytes_in, f);
+		ret_val &= this->_stop(in + f * this->n_bytes_in, f);
 	return ret_val;
 }
 

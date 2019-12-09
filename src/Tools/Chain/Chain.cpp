@@ -306,7 +306,7 @@ void Chain
 			this->modules[tid][m++].reset(mtt.first->clone());
 	}
 
-	auto get_task_id = [this, &tasks_sequence](const module::Task &ta) -> int
+	auto get_task_id = [&tasks_sequence](const module::Task &ta) -> int
 	{
 		for (size_t t = 0; t < tasks_sequence.size(); t++)
 			if (&ta == tasks_sequence[t])

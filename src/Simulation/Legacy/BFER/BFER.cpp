@@ -155,7 +155,7 @@ void BFER<B,R,Q>
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
 
-			this->noise->clear_callbacks_changed();
+			this->noise->clear_callbacks_update();
 			this->build_communication_chain();
 
 			if (tools::Terminal::is_over())

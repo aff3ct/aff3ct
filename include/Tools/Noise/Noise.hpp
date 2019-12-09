@@ -23,7 +23,7 @@ class Noise
 {
 protected:
 	R value;
-	Callback<> callback_changed;
+	Callback<> callback_update;
 
 public:
 	Noise();
@@ -46,7 +46,7 @@ public:
 
 	uint32_t record_callback_update(std::function<void()> callback);
 	bool unrecord_callback_update(const uint32_t id);
-	void clear_callbacks_changed();
+	void clear_callbacks_update();
 
 	static inline Noise_type str_to_type(const std::string& str);
 	static inline std::string type_to_str(Noise_type t);

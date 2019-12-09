@@ -1,6 +1,6 @@
 #include "Simulation/Legacy/BFER/Standard/SystemC/SC_BFER_std.hpp"
 #include "Simulation/Legacy/BFER/Standard/Threads/BFER_std_threads.hpp"
-#include "Simulation/Chain/Simulation_chain_BFER_std.hpp"
+#include "Simulation/Chain/BFER/Standard/Simulation_chain_BFER_std.hpp"
 #include "Factory/Simulation/BFER/BFER_std.hpp"
 
 using namespace aff3ct;

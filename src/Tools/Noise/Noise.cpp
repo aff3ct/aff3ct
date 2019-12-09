@@ -27,7 +27,7 @@ void Noise<R>
 ::copy(const Noise<R>& other)
 {
 	this->value = other.value;
-	this->callback_changed.notify();
+	this->callback_update.notify();
 }
 
 template <typename R>
@@ -46,7 +46,7 @@ void Noise<R>
 {
 	this->value = value;
 	this->check();
-	this->callback_changed.notify();
+	this->callback_update.notify();
 }
 
 template <typename R>
@@ -94,21 +94,21 @@ template<typename R>
 uint32_t Noise<R>
 ::record_callback_update(std::function<void()> callback)
 {
-	return this->callback_changed.record(callback);
+	return this->callback_update.record(callback);
 }
 
 template<typename R>
 bool Noise<R>
 ::unrecord_callback_update(const uint32_t id)
 {
-	return this->callback_changed.unrecord(id);
+	return this->callback_update.unrecord(id);
 }
 
 template<typename R>
 void Noise<R>
-::clear_callbacks_changed()
+::clear_callbacks_update()
 {
-	this->callback_changed.clear();
+	this->callback_update.clear();
 }
 
 // ==================================================================================== explicit template instantiation

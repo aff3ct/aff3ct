@@ -1,59 +1,35 @@
+#include <functional>
+#include <algorithm>
+#include <iostream>
+#include <vector>
 #include <random>
+#include <string>
 
-#include "Tools/Display/Reporter/MI/Reporter_MI.hpp"
-#include "Tools/Display/Reporter/BFER/Reporter_BFER.hpp"
-#include "Tools/Display/Reporter/Noise/Reporter_noise.hpp"
-#include "Tools/Display/Reporter/Throughput/Reporter_throughput.hpp"
+#include "Tools/Chain/Chain.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
-#include "Tools/Display/Statistics/Statistics.hpp"
 #include "Tools/Interface/Interface_set_seed.hpp"
 #include "Tools/Interface/Interface_get_set_noise.hpp"
 #include "Tools/Interface/Interface_notify_noise_update.hpp"
+#include "Tools/Display/Dumper/Dumper.hpp"
+#include "Tools/Exception/exception.hpp"
 #include "Factory/Module/Coset/Coset.hpp"
-#include "Simulation/Chain/Simulation_chain_BFER_std.hpp"
+#include "Factory/Tools/Codec/Codec.hpp"
+#include "Factory/Tools/Codec/Codec_SIHO.hpp"
+#include "Simulation/Chain/BFER/Standard/Simulation_chain_BFER_std.hpp"
 
-namespace aff3ct
-{
-namespace simulation
-{
+using namespace aff3ct;
+using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
 Simulation_chain_BFER_std<B,R,Q>
 ::Simulation_chain_BFER_std(const factory::BFER_std &params_BFER_std)
-: Simulation(),
-  params(params_BFER_std),
-  params_BFER(params_BFER_std),
-  params_BFER_std(params_BFER_std),
-  noise(params_BFER.noise->build<>()),
-  dumper(params_BFER.n_threads)
+: Simulation_chain_BFER<B,R>(params_BFER_std),
+  params_BFER_std(params_BFER_std)
 {
-	if (params_BFER.n_threads < 1)
-	{
-		std::stringstream message;
-		message << "'n_threads' has to be greater than 0 ('n_threads' = " << params_BFER.n_threads << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	if (this->params_BFER_std.err_track_revert && this->params_BFER_std.n_threads != 1)
 		std::clog << rang::tag::warning << "Multi-threading detected with error tracking revert feature! "
 		                                   "Each thread will play the same frames. Please run with one thread."
 		          << std::endl;
-
-	if (params_BFER.err_track_enable)
-	{
-		for (auto tid = 0; tid < params_BFER.n_threads; tid++)
-			dumper[tid].reset(new tools::Dumper());
-		dumper_red.reset(new tools::Dumper_reduction(dumper));
-	}
-
-	if (!params_BFER.noise->pdf_path.empty())
-		this->distributions.reset(new tools::Distributions<R>(params_BFER.noise->pdf_path,
-		                                                      tools::Distribution_mode::SUMMATION));
-	try
-	{
-		this->constellation.reset(params_BFER.mdm->build_constellation<R>());
-	}
-	catch (tools::cannot_allocate&) {}
 }
 
 template <typename B, typename R, typename Q>
@@ -128,60 +104,11 @@ std::unique_ptr<module::Coset<B,B>> Simulation_chain_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<module::Monitor_MI<B,R>> Simulation_chain_BFER_std<B,R,Q>
-::build_monitor_mi()
-{
-	return std::unique_ptr<module::Monitor_MI<B,R>>(params_BFER.mnt_mi->build<B,R>());
-}
-
-template <typename B, typename R, typename Q>
-std::unique_ptr<module::Monitor_BFER<B>> Simulation_chain_BFER_std<B,R,Q>
-::build_monitor_er()
-{
-	bool count_unknown_values = params_BFER.noise->type == "EP";
-
-	auto mnt_tmp = params_BFER.mnt_er->build<B>(count_unknown_values);
-	auto mnt = std::unique_ptr<module::Monitor_BFER<B>>(mnt_tmp);
-	mnt->activate_err_histogram(params_BFER.mnt_er->err_hist != -1);
-
-	return mnt;
-}
-
-template <typename B, typename R, typename Q>
-std::vector<std::unique_ptr<tools::Reporter>> Simulation_chain_BFER_std<B,R,Q>
-::build_reporters(const tools ::Noise       < > *noise,
-	              const module::Monitor_BFER<B> *monitor_er,
-	              const module::Monitor_MI<B,R> *monitor_mi)
-{
-	std::vector<std::unique_ptr<tools::Reporter>> reporters;
-	auto reporter_noise = new tools::Reporter_noise<>(*noise, this->params_BFER.ter_sigma);
-	reporters.push_back(std::unique_ptr<tools::Reporter_noise<>>(reporter_noise));
-
-	if (params_BFER.mnt_mutinfo)
-	{
-		auto reporter_MI = new tools::Reporter_MI<B,R>(*monitor_mi);
-		reporters.push_back(std::unique_ptr<tools::Reporter_MI<B,R>>(reporter_MI));
-	}
-
-	auto reporter_BFER = new tools::Reporter_BFER<B>(*monitor_er);
-	reporters.push_back(std::unique_ptr<tools::Reporter_BFER<B>>(reporter_BFER));
-	auto reporter_thr = new tools::Reporter_throughput<uint64_t>(*monitor_er);
-	reporters.push_back(std::unique_ptr<tools::Reporter_throughput<uint64_t>>(reporter_thr));
-
-	return reporters;
-}
-
-template <typename B, typename R, typename Q>
-std::unique_ptr<tools::Terminal> Simulation_chain_BFER_std<B,R,Q>
-::build_terminal(const std::vector<std::unique_ptr<tools::Reporter>> &reporters)
-{
-	return std::unique_ptr<tools::Terminal>(params_BFER.ter->build(reporters));
-}
-
-template <typename B, typename R, typename Q>
 void Simulation_chain_BFER_std<B,R,Q>
 ::create_modules()
 {
+	Simulation_chain_BFER<B,R>::create_modules();
+
 	this->source     = this->build_source    (                                                    );
 	this->crc        = this->build_crc       (                                                    );
 	this->codec      = this->build_codec     (this->crc.get()                                     );
@@ -190,8 +117,6 @@ void Simulation_chain_BFER_std<B,R,Q>
 	this->quantizer  = this->build_quantizer (                                                    );
 	this->coset_real = this->build_coset_real(                                                    );
 	this->coset_bit  = this->build_coset_bit (                                                    );
-	this->monitor_er = this->build_monitor_er(                                                    );
-	this->monitor_mi = this->build_monitor_mi(                                                    );
 }
 
 template <typename B, typename R, typename Q>
@@ -325,10 +250,11 @@ void Simulation_chain_BFER_std<B,R,Q>
 	}
 	else if (is_optical)
 	{
-		chn[chn::sck::add_noise    ::X_N ].bind(mdm[mdm::sck::modulate     ::X_N2]);
-		mdm[mdm::sck::demodulate_wg::H_N ].bind(mdm[mdm::sck::modulate     ::X_N2]);
-		mdm[mdm::sck::demodulate_wg::Y_N1].bind(chn[chn::sck::add_noise    ::Y_N ]);
-		qnt[qnt::sck::process      ::Y_N1].bind(mdm[mdm::sck::demodulate_wg::Y_N2]);
+		chn[chn::sck::add_noise    ::X_N ].bind(mdm[mdm::sck::modulate ::X_N2]);
+		mdm[mdm::sck::demodulate_wg::H_N ].bind(mdm[mdm::sck::modulate ::X_N2]);
+		mdm[mdm::sck::demodulate_wg::Y_N1].bind(chn[chn::sck::add_noise::Y_N ]);
+		if (this->params_BFER_std.qnt->type != "NO")
+			qnt[qnt::sck::process::Y_N1].bind(mdm[mdm::sck::demodulate_wg::Y_N2]);
 	}
 	else
 	{
@@ -370,7 +296,7 @@ void Simulation_chain_BFER_std<B,R,Q>
 	{
 		if (this->params_BFER_std.qnt->type != "NO")
 			pct[pct::sck::depuncture::Y_N1].bind(qnt[qnt::sck::process::Y_N2]);
-		else if (mdm.is_demodulator())
+		else if (mdm.is_demodulator() || is_optical)
 		{
 			if (is_rayleigh || is_optical)
 				pct[pct::sck::depuncture::Y_N1].bind(mdm[mdm::sck::demodulate_wg::Y_N2]);
@@ -403,7 +329,7 @@ void Simulation_chain_BFER_std<B,R,Q>
 			csr[cst::sck::apply::in].bind(pct[pct::sck::depuncture::Y_N2]);
 		else if (this->params_BFER_std.qnt->type != "NO")
 			csr[cst::sck::apply::in].bind(qnt[qnt::sck::process::Y_N2]);
-		else if (mdm.is_demodulator())
+		else if (mdm.is_demodulator() || is_optical)
 		{
 			if (is_rayleigh || is_optical)
 				csr[cst::sck::apply::in].bind(mdm[mdm::sck::demodulate_wg::Y_N2]);
@@ -458,7 +384,7 @@ void Simulation_chain_BFER_std<B,R,Q>
 				dec[dec::sck::decode_siho_cw::Y_N].bind(pct[pct::sck::depuncture::Y_N2]);
 			else if (this->params_BFER_std.qnt->type != "NO")
 				dec[dec::sck::decode_siho_cw::Y_N].bind(qnt[qnt::sck::process::Y_N2]);
-			else if (mdm.is_demodulator())
+			else if (mdm.is_demodulator() || is_optical)
 			{
 				if (is_rayleigh || is_optical)
 					dec[dec::sck::decode_siho_cw::Y_N].bind(mdm[mdm::sck::demodulate_wg::Y_N2]);
@@ -483,7 +409,7 @@ void Simulation_chain_BFER_std<B,R,Q>
 				dec[dec::sck::decode_siho::Y_N].bind(pct[pct::sck::depuncture::Y_N2]);
 			else if (this->params_BFER_std.qnt->type != "NO")
 				dec[dec::sck::decode_siho::Y_N].bind(qnt[qnt::sck::process::Y_N2]);
-			else if (mdm.is_demodulator())
+			else if (mdm.is_demodulator() || is_optical)
 			{
 				if (is_rayleigh || is_optical)
 					dec[dec::sck::decode_siho::Y_N].bind(mdm[mdm::sck::demodulate_wg::Y_N2]);
@@ -595,23 +521,28 @@ void Simulation_chain_BFER_std<B,R,Q>
 
 	// set the noise
 	this->codec->set_noise(*this->noise);
-	for (auto &m : chain->get_modules<tools::Interface_get_set_noise>())
+	for (auto &m : this->chain->template get_modules<tools::Interface_get_set_noise>())
 		m->set_noise(*this->noise);
 
 	// registering to noise updates
 	this->noise->record_callback_update([this](){ this->codec->notify_noise_update(); });
-	for (auto &m : chain->get_modules<tools::Interface_notify_noise_update>())
+	for (auto &m : this->chain->template get_modules<tools::Interface_notify_noise_update>())
 		this->noise->record_callback_update([m](){ m->notify_noise_update(); });
 
 	// set different seeds in the modules that uses PRNG
 	std::mt19937 prng(params_BFER_std.local_seed);
-	for (auto &m : chain->get_modules<tools::Interface_set_seed>())
+	for (auto &m : this->chain->template get_modules<tools::Interface_set_seed>())
 		m->set_seed(prng());
 
-	const auto seed_itl = params_BFER_std.cdc->itl != nullptr ? params_BFER_std.cdc->itl->core->seed +
-	                      (params_BFER_std.cdc->itl->core->uniform ? prng() : 0) : 0;
 	bool is_interleaver = true;
-	try { codec->get_interleaver().set_seed(seed_itl); } catch (...) { is_interleaver = false; }
+	try
+	{
+		codec->get_interleaver().set_seed(params_BFER_std.cdc->itl->core->seed);
+	}
+	catch (...)
+	{
+		is_interleaver = false;
+	}
 	if (is_interleaver && codec->get_interleaver().is_uniform())
 	{
 		std::stringstream message;
@@ -622,8 +553,8 @@ void Simulation_chain_BFER_std<B,R,Q>
 
 	if (this->params_BFER_std.err_track_enable)
 	{
-		auto sources = chain->get_modules<module::Source<B>>();
-		for (size_t tid = 0; tid < (size_t)params_BFER.n_threads; tid++)
+		auto sources = this->chain->template get_modules<module::Source<B>>();
+		for (size_t tid = 0; tid < (size_t)this->params_BFER.n_threads; tid++)
 		{
 			auto &source  = sources.size() ? *sources[tid] : *this->source;
 			auto src_data = (B*)(source[module::src::sck::generate::U_K].get_dataptr());
@@ -638,8 +569,8 @@ void Simulation_chain_BFER_std<B,R,Q>
 			                                 {});
 		}
 
-		auto encoders = chain->get_modules<module::Encoder<B>>();
-		for (size_t tid = 0; tid < (size_t)params_BFER.n_threads; tid++)
+		auto encoders = this->chain->template get_modules<module::Encoder<B>>();
+		for (size_t tid = 0; tid < (size_t)this->params_BFER.n_threads; tid++)
 		{
 			auto &encoder = encoders.size() ? *encoders[tid] : this->codec->get_encoder();
 			auto enc_data = (B*)(encoder[module::enc::sck::encode::X_N].get_dataptr());
@@ -654,8 +585,8 @@ void Simulation_chain_BFER_std<B,R,Q>
 			                                 {(unsigned)this->params_BFER_std.cdc->enc->K});
 		}
 
-		auto channels = chain->get_modules<module::Channel<R>>();
-		for (size_t tid = 0; tid < (size_t)params_BFER.n_threads; tid++)
+		auto channels = this->chain->template get_modules<module::Channel<R>>();
+		for (size_t tid = 0; tid < (size_t)this->params_BFER.n_threads; tid++)
 		{
 			auto &channel = channels.size() ? *channels[tid] : *this->channel;
 			this->dumper[tid]->register_data(channel.get_noised_data(),
@@ -666,8 +597,8 @@ void Simulation_chain_BFER_std<B,R,Q>
 			                                 {});
 		}
 
-		auto monitors_er = chain->get_modules<module::Monitor_BFER<B>>();
-		for (size_t tid = 0; tid < (size_t)params_BFER.n_threads; tid++)
+		auto monitors_er = this->chain->template get_modules<module::Monitor_BFER<B>>();
+		for (size_t tid = 0; tid < (size_t)this->params_BFER.n_threads; tid++)
 		{
 			monitors_er[tid]->record_callback_fe(std::bind(&tools::Dumper::add,
 			                                               this->dumper[tid].get(),
@@ -677,285 +608,14 @@ void Simulation_chain_BFER_std<B,R,Q>
 	}
 }
 
-template <typename B, typename R, typename Q>
-void Simulation_chain_BFER_std<B,R,Q>
-::configure_chain_tasks()
-{
-	for (auto &mod : chain->get_modules<module::Module>())
-		for (auto &tsk : mod->tasks)
-		{
-			if (this->params.statistics)
-				tsk->set_stats(true);
-			// enable the debug mode in the modules
-			if (this->params.debug)
-			{
-				tsk->set_debug(true);
-				tsk->set_debug_hex(this->params.debug_hex);
-				if (this->params.debug_limit)
-					tsk->set_debug_limit((uint32_t)this->params.debug_limit);
-				if (this->params.debug_precision)
-					tsk->set_debug_precision((uint8_t)this->params.debug_precision);
-				if (params.debug_frame_max)
-					tsk->set_debug_frame_max((uint32_t)this->params.debug_frame_max);
-			}
-			if (!tsk->is_stats() && !tsk->is_debug())
-				tsk->set_fast(true);
-		}
-}
-
-template <typename B, typename R, typename Q>
-void Simulation_chain_BFER_std<B,R,Q>
-::create_monitors_reduction()
-{
-	auto monitors_bfer = chain->get_modules<module::Monitor_BFER<B>>();
-#ifdef AFF3CT_MPI
-	this->monitor_er_red.reset(new tools::Monitor_reduction_MPI<module::Monitor_BFER<B>>(monitors_bfer));
+// ==================================================================================== explicit template instantiation
+#include "Tools/types.h"
+#ifdef AFF3CT_MULTI_PREC
+template class aff3ct::simulation::Simulation_chain_BFER_std<B_8,R_8,Q_8>;
+template class aff3ct::simulation::Simulation_chain_BFER_std<B_16,R_16,Q_16>;
+template class aff3ct::simulation::Simulation_chain_BFER_std<B_32,R_32,Q_32>;
+template class aff3ct::simulation::Simulation_chain_BFER_std<B_64,R_64,Q_64>;
 #else
-	this->monitor_er_red.reset(new tools::Monitor_reduction<module::Monitor_BFER<B>>(monitors_bfer));
+template class aff3ct::simulation::Simulation_chain_BFER_std<B,R,Q>;
 #endif
-
-	if (params_BFER.mnt_mutinfo)
-	{
-		auto monitors_mi = chain->get_modules<module::Monitor_MI<B,R>>();
-#ifdef AFF3CT_MPI
-		this->monitor_mi_red.reset(new tools::Monitor_reduction_MPI<module::Monitor_MI<B,R>>(monitors_mi));
-#else
-		this->monitor_mi_red.reset(new tools::Monitor_reduction<module::Monitor_MI<B,R>>(monitors_mi));
-#endif
-	}
-
-	tools::Monitor_reduction_static::set_master_thread_id(std::this_thread::get_id());
-#ifdef AFF3CT_MPI
-	tools::Monitor_reduction_static::set_reduce_frequency(params_BFER.mnt_mpi_comm_freq);
-#else
-	auto freq = std::chrono::milliseconds(0);
-	if (params_BFER.mnt_red_lazy)
-	{
-		if (params_BFER.mnt_red_lazy_freq.count())
-			freq = params_BFER.mnt_red_lazy_freq;
-		else
-			freq = std::chrono::milliseconds(1000); // default value when lazy reduction and no terminal refresh
-	}
-	tools::Monitor_reduction_static::set_reduce_frequency(freq);
-#endif
-	tools::Monitor_reduction_static::reset_all();
-	tools::Monitor_reduction_static::check_reducible();
-}
-
-template <typename B, typename R, typename Q>
-void Simulation_chain_BFER_std<B,R,Q>
-::launch()
-{
-	if (!params_BFER.err_track_revert)
-	{
-		this->create_modules();
-		this->bind_sockets();
-		this->create_chain();
-		this->configure_chain_tasks();
-		this->create_monitors_reduction();
-
-		this->reporters = this->build_reporters(this->noise.get(),
-		                                        this->monitor_er_red.get(),
-		                                        this->monitor_mi_red.get());
-		this->terminal = this->build_terminal(this->reporters);
-
-		if (tools::Terminal::is_over())
-			return;
-	}
-
-	int noise_begin = 0;
-	int noise_end   = (int)params_BFER.noise->range.size();
-	int noise_step  = 1;
-	if (params_BFER.noise->type == "EP")
-	{
-		noise_begin = (int)params_BFER.noise->range.size()-1;
-		noise_end   = -1;
-		noise_step  = -1;
-	}
-
-	// for each NOISE to be simulated
-	for (auto noise_idx = noise_begin; noise_idx != noise_end; noise_idx += noise_step)
-	{
-		auto bit_rate = (float)params_BFER.src->K / (float)params_BFER.cdc->N;
-		params_BFER.noise->template update<>(*this->noise,
-		                                     params_BFER.noise->range[noise_idx],
-		                                     bit_rate,
-		                                     params_BFER.mdm->bps,
-		                                     params_BFER.mdm->cpm_upf);
-
-		if (params_BFER.err_track_revert)
-		{
-			// dirty hack to override simulation params_BFER
-			auto &params_BFER_writable = const_cast<factory::BFER&>(params_BFER);
-
-			std::stringstream s_noise;
-			s_noise << std::setprecision(2) << std::fixed << this->noise->get_value();
-
-			params_BFER_writable.src     ->path = params_BFER.err_track_path + "_" + s_noise.str() + ".src";
-			params_BFER_writable.cdc->enc->path = params_BFER.err_track_path + "_" + s_noise.str() + ".enc";
-			params_BFER_writable.chn     ->path = params_BFER.err_track_path + "_" + s_noise.str() + ".chn";
-
-			std::ifstream file(params_BFER.chn->path, std::ios::binary);
-			if (file.is_open())
-			{
-				unsigned max_fra;
-				file.read((char*)&max_fra, sizeof(max_fra));
-				file.close();
-
-				*const_cast<unsigned*>(&params_BFER.max_frame) = max_fra;
-			}
-			else
-			{
-				std::stringstream message;
-				message << "Impossible to read the 'chn' file ('chn' = " << params_BFER.chn->path << ").";
-				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-			}
-
-			this->noise->clear_callbacks_changed();
-
-			this->create_modules();
-			this->bind_sockets();
-			this->create_chain();
-			this->configure_chain_tasks();
-			this->create_monitors_reduction();
-
-			this->reporters = this->build_reporters(this->noise.get(),
-			                                        this->monitor_er_red.get(),
-			                                        this->monitor_mi_red.get());
-			this->terminal = this->build_terminal(this->reporters);
-
-			if (tools::Terminal::is_over())
-				return;
-		}
-
-#ifdef AFF3CT_MPI
-		if (params_BFER.mpi_rank == 0)
-#endif
-		if (params_BFER.display_legend)
-			if ((!params_BFER.ter->disabled && noise_idx == noise_begin && !params_BFER.debug)
-				|| (params_BFER.statistics && !params_BFER.debug))
-				terminal->legend(std::cout);
-
-#ifdef AFF3CT_MPI
-		if (params_BFER.mpi_rank == 0)
-#endif
-		// start the terminal to display BER/FER results
-		if (!params_BFER.ter->disabled && params_BFER.ter->frequency != std::chrono::nanoseconds(0) &&
-		    !params_BFER.debug)
-			terminal->start_temp_report(params_BFER.ter->frequency);
-
-		this->t_start_noise_point = std::chrono::steady_clock::now();
-
-		try
-		{
-			this->chain->exec([this]() { return this->stop_condition(); } );
-			tools::Monitor_reduction_static::last_reduce_all(); // final reduction
-		}
-		catch (std::exception const& e)
-		{
-			tools::Monitor_reduction_static::last_reduce_all(); // final reduction
-
-			terminal->final_report(std::cout); // display final report to not lost last line overwritten by the error
-			                                   // messages
-			rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::tag::error);
-			this->simu_error = true;
-
-			tools::Terminal::stop();
-		}
-
-#ifdef AFF3CT_MPI
-		if (params_BFER.mpi_rank == 0)
-#endif
-		if (!params_BFER.ter->disabled && terminal != nullptr && !this->simu_error)
-		{
-			if (params_BFER.debug)
-				terminal->legend(std::cout);
-
-			terminal->final_report(std::cout);
-
-			if (params_BFER.statistics)
-			{
-				std::cout << "#" << std::endl;
-				tools::Stats::show(this->chain->get_modules_per_types(), true, std::cout);
-				std::cout << "#" << std::endl;
-			}
-		}
-
-		if (!params_BFER.crit_nostop && !params_BFER.err_track_revert && !tools::Terminal::is_interrupt() &&
-		    !this->monitor_er_red->fe_limit_achieved() &&
-		    (this->monitor_er_red->frame_limit_achieved() || this->stop_time_reached()))
-			tools::Terminal::stop();
-
-		if (params_BFER.mnt_er->err_hist != -1)
-		{
-			auto err_hist = monitor_er_red->get_err_hist();
-
-			if (err_hist.get_n_values() != 0)
-			{
-				std::string noise_value;
-				switch (this->noise->get_type())
-				{
-					case tools::Noise_type::SIGMA:
-						if (params_BFER.noise->type == "EBN0")
-							noise_value = std::to_string(dynamic_cast<tools::Sigma<>*>(this->noise.get())->get_ebn0());
-						else //(params_BFER.noise_type == "ESN0")
-							noise_value = std::to_string(dynamic_cast<tools::Sigma<>*>(this->noise.get())->get_esn0());
-						break;
-					case tools::Noise_type::ROP:
-					case tools::Noise_type::EP:
-						noise_value = std::to_string(this->noise->get_value());
-						break;
-				}
-
-				std::ofstream file_err_hist(params_BFER.mnt_er->err_hist_path + "_" + noise_value + ".txt");
-				file_err_hist << "\"Number of error bits per wrong frame\"; \"Histogram (noise: " << noise_value
-				              << this->noise->get_unity() << ", on " << err_hist.get_n_values() << " frames)\""
-				              << std::endl;
-
-				int max;
-				if (params_BFER.mnt_er->err_hist == 0)
-					max = err_hist.get_hist_max();
-				else
-					max = params_BFER.mnt_er->err_hist;
-				err_hist.dump(file_err_hist, 0, max);
-			}
-		}
-
-		if (this->dumper_red != nullptr && !this->simu_error)
-		{
-			std::stringstream s_noise;
-			s_noise << std::setprecision(2) << std::fixed << this->noise->get_value();
-
-			this->dumper_red->dump(params_BFER.err_track_path + "_" + s_noise.str());
-			this->dumper_red->clear();
-		}
-
-		if (tools::Terminal::is_over())
-			break;
-
-		for (auto &mod : chain->get_modules<module::Module>())
-			for (auto &tsk : mod->tasks)
-				tsk->reset();
-
-		tools::Monitor_reduction_static::reset_all();
-		tools::Terminal::reset();
-	}
-}
-
-template <typename B, typename R, typename Q>
-bool Simulation_chain_BFER_std<B,R,Q>
-::stop_time_reached()
-{
-	return this->params_BFER.stop_time != std::chrono::seconds(0) &&
-	       (std::chrono::steady_clock::now() - this->t_start_noise_point) >= this->params_BFER.stop_time;
-}
-
-template <typename B, typename R, typename Q>
-bool Simulation_chain_BFER_std<B,R,Q>
-::stop_condition()
-{
-	return tools::Terminal::is_interrupt() || tools::Monitor_reduction_static::is_done_all() || stop_time_reached();
-}
-
-}
-}
+// ==================================================================================== explicit template instantiation
