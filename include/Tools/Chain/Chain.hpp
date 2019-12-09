@@ -6,6 +6,7 @@
 #define CHAIN_HPP_
 
 #include <functional>
+#include <iostream>
 #include <memory>
 #include <vector>
 #include <string>
@@ -44,7 +45,7 @@ public:
 
 	void exec(std::function<bool(const std::vector<int>&)> stop_condition);
 	void exec(std::function<bool(                       )> stop_condition);
-	int  exec(const int tid = 0                                          );
+	int  exec(const size_t tid = 0                                       );
 	inline size_t get_n_threads() const;
 
 	template <class C = module::Module>
@@ -54,7 +55,13 @@ public:
 	inline const std::vector<std::vector<module::Task*>>& get_tasks_sequences() const;
 	inline const std::vector<module::Task*>& get_tasks_sequence(const int tid = 0) const;
 
+	void export_dot(std::ostream &stream = std::cout) const;
+
 protected:
+	void export_dot_subsequence(const std::vector<module::Task*> &subseq,
+	                            const std::string &subseq_name,
+	                            const std::string &tab,
+	                            std::ostream &stream) const;
 	static void init_recursive(std::vector<const module::Task*> &tasks_sequence,
 	                           const module::Task& first,
 	                           const module::Task& current_task,

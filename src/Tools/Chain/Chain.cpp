@@ -76,6 +76,80 @@ Chain* Chain
 	return c;
 }
 
+void Chain
+::export_dot_subsequence(const std::vector<module::Task*> &subseq,
+                         const std::string &subseq_name,
+                         const std::string &tab,
+                               std::ostream &stream) const
+{
+	if (!subseq_name.empty())
+	{
+		stream << tab << "subgraph \"cluster_" << subseq_name << "\" {" << std::endl;
+		stream << tab << tab << "node [style=filled];" << std::endl;
+	}
+	for (auto &t : subseq)
+	{
+		stream << tab << tab << "subgraph \"cluster_" << +&t->get_module() << "_" << +&t << "\" {" << std::endl;
+		stream << tab << tab << tab << "node [style=filled];" << std::endl;
+		stream << tab << tab << tab << "subgraph \"cluster_" << +&t << "\" {" << std::endl;
+		stream << tab << tab << tab << tab << "node [style=filled];" << std::endl;
+		for (auto &s : t->sockets)
+		{
+			std::string stype;
+			switch (t->get_socket_type(*s))
+			{
+				case module::socket_t::SIN:      stype = "in";     break;
+				case module::socket_t::SOUT:     stype = "out";    break;
+				case module::socket_t::SIN_SOUT: stype = "in_out"; break;
+				default:                         stype = "unkn";   break;
+			}
+			stream << tab << tab << tab << tab << "\"" << +s.get() << "\""
+			                                   << "[label=\"" << stype << ":" << s->get_name() << "\"];" << std::endl;
+		}
+		stream << tab << tab << tab << tab << "label=\"" << t->get_name() << "\";" << std::endl;
+		stream << tab << tab << tab << tab << "color=blue;" << std::endl;
+		stream << tab << tab << tab << "}" << std::endl;
+		stream << tab << tab << tab << "label=\"" << t->get_module().get_name() << "\n" << +&t->get_module() << "\";"
+		                            << std::endl;
+		stream << tab << tab << tab << "color=blue;" << std::endl;
+		stream << tab << tab << "}" << std::endl;
+	}
+	if (!subseq_name.empty())
+	{
+		stream << tab << tab << "label=\"" << subseq_name << "\";" << std::endl;
+		stream << tab << tab << "color=blue;" << std::endl;
+		stream << tab << "}" << std::endl;
+	}
+}
+
+void Chain
+::export_dot(std::ostream &stream) const
+{
+	std::string tab = "\t";
+	stream << "digraph Chain {" << std::endl;
+
+	std::string subseq_name = ""; // "Sub-sequence1"
+	this->export_dot_subsequence(this->tasks_sequences[0], subseq_name, tab, stream);
+
+	auto &tasks_sequence = this->tasks_sequences[0];
+	for (auto &t : tasks_sequence)
+	{
+		for (auto &s : t->sockets)
+		{
+			if (t->get_socket_type(*s) == module::socket_t::SOUT ||
+				t->get_socket_type(*s) == module::socket_t::SIN_SOUT)
+			{
+				for (auto &bs : s->get_bound_sockets())
+				{
+					stream << tab << "\"" << +s.get() << "\" -> \"" << +bs << "\"" << std::endl;
+				}
+			}
+		}
+	}
+
+	stream << "}" << std::endl;
+}
+
 std::vector<std::vector<const module::Module*>> Chain
 ::get_modules_per_threads() const
 {
@@ -125,6 +199,8 @@ void Chain
 					if (bs != nullptr)
 					{
 						auto &t = bs->get_task();
+						std::cout << "[in]: sname = " << s->get_name() << ", tname = " << s->get_task().get_name() << " - ";
+						std::cout << "[out]: sname = " << bs->get_name() << ", tname = " << t.get_name() << std::endl;;
 						if (t.is_last_input_socket(*bs))
 							Chain::init_recursive(tasks_sequence, first, t, last);
 					}
@@ -256,8 +332,16 @@ void Chain
 }
 
 int Chain
-::exec(const int tid)
+::exec(const size_t tid)
 {
+	if (tid >= this->tasks_sequences.size())
+	{
+		std::stringstream message;
+		message << "'tid' has to be smaller than 'tasks_sequences.size()' ('tid' = " << tid
+		        << ", 'tasks_sequences.size()' = " << this->tasks_sequences.size() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	int ret = 0;
 	for (size_t ta = 0; ta < this->tasks_sequences[tid].size(); ta++)
 		ret += this->tasks_sequences[tid][ta]->exec();

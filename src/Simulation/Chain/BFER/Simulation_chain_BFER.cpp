@@ -109,13 +109,20 @@ void Simulation_chain_BFER<B,R>
 ::create_modules()
 {
 	this->monitor_er = this->build_monitor_er();
-	this->monitor_mi = this->build_monitor_mi();
+	if (params_BFER.mnt_mi != nullptr)
+		this->monitor_mi = this->build_monitor_mi();
 }
 
 template <typename B, typename R>
 void Simulation_chain_BFER<B,R>
 ::configure_chain_tasks()
 {
+	if (!params_BFER.chain_path.empty())
+	{
+		std::ofstream dot_file(params_BFER.chain_path);
+		this->chain->export_dot(dot_file);
+	}
+
 	for (auto &mod : chain->get_modules<module::Module>())
 		for (auto &tsk : mod->tasks)
 		{

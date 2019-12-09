@@ -142,6 +142,10 @@ void BFER
 	tools::add_arg(args, p, class_name+"p+chain",
 		cli::None(),
 		cli::arg_rank::ADV);
+
+	tools::add_arg(args, p, class_name+"p+chain-path",
+		cli::File(cli::openmode::write),
+		cli::arg_rank::ADV);
 }
 
 void BFER
@@ -165,6 +169,12 @@ void BFER
 	if(vals.exist({p+"-coded",       })) this->coded_monitoring    = true;
 	if(vals.exist({p+"-clone",       })) this->alloc_clone         = true;
 	if(vals.exist({p+"-chain",       })) this->chain_threads       = true;
+
+	if (vals.exist({p+"-chain-path"}))
+	{
+		this->chain_threads = true;
+		this->chain_path = vals.at({p+"-chain-path"});
+	}
 
 	if (this->chain_threads)
 		this->alloc_clone = true;
@@ -232,6 +242,9 @@ void BFER
 
 	std::string enable_chain_threads = (this->chain_threads) ? "on" : "off";
 	headers[p].push_back(std::make_pair("Chain multithreading", enable_chain_threads));
+
+	if (!this->chain_path.empty())
+		headers[p].push_back(std::make_pair("Path export chain (dot)", this->chain_path));
 
 	if (this->err_track_threshold)
 		headers[p].push_back(std::make_pair("Bad frames threshold", std::to_string(this->err_track_threshold)));

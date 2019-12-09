@@ -106,6 +106,10 @@
    Enable the new simulator engine based on a chain (should be faster than the
    legacy simulator engine).
 
+.. |factory::BFER::p+chain-path| replace::
+   Enable the new simulator engine based on a chain and export the simulated
+   chain in Graphviz format at the given path.
+
 .. |factory::BFER::p+clone| replace::
    Enable the *clone* method to allocate the module objects.
 

@@ -647,6 +647,18 @@ parameter is enabled, it becomes the codeword size (:math:`N`).
 
 |factory::BFER::p+chain|
 
+.. _sim-sim-chain-path:
+
+``--sim-chain-path`` |image_advanced_argument|
+""""""""""""""""""""""""""""""""""""""""""""""
+
+   :Type: file
+   :Rights: write
+   :Default: :file:`chain.dot`
+   :Examples: ``--sim-chain-path chain.dot``
+
+|factory::BFER::p+chain-path|
+
 .. _sim-sim-clone:
 
 ``--sim-clone`` |image_advanced_argument|

@@ -138,7 +138,7 @@ void Simulation_chain_BFER_std<B,R,Q>
 	auto &mnt = *this->monitor_er;
 	auto &mni = *this->monitor_mi;
 
-	std::vector<module::Module*> modules = {&src, &crc, &enc, &pct, &mdm, &chn, &qnt, &csr, &dec, &csb, &mnt, &mni};
+	std::vector<Module*> modules = {&src, &crc, &enc, &pct, &mdm, &chn, &qnt, &csr, &dec, &csb, &mnt, &mni};
 	for (auto& mod : modules)
 		for (auto& tsk : mod->tasks)
 			tsk->set_autoalloc(true);
