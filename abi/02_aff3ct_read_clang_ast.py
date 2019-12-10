@@ -902,12 +902,20 @@ def find_task_method(class_entry, module_task_entry):
     task_methods = []
     # lookup all methods
     for method, method_entry in class_entry['class_all_methods_index'].items():
+        if debug_mode:
+            print("task?: "+method)
         # early filter out unlikely candidates
         if method_entry['method_kind'] == 'task':
+            if debug_mode:
+                print("already a task")
             continue
-        if 'method_output' in method_entry and method_entry['method_output'] is not None:
-            continue
+        # tasks appear to be allowed to have a non-void return type
+        #if 'method_output' in method_entry and method_entry['method_output'] is not None:
+        #    print("expect an output")
+        #    continue
         if method_entry['method_short_name'] != module_task_name:
+            if debug_mode:
+                print("name mismatch")
             continue
         method_args = method_entry['method_arguments']
         method_is_task = True
@@ -916,17 +924,25 @@ def find_task_method(class_entry, module_task_entry):
         for i in range(method_entry['method_nb_arguments']):
             method_arg = method_args[i]
             if '=' in method_arg:
+                if debug_mode:
+                    print(". arg with default value")
                 continue
             method_task_socket = module_task_sockets[j]
             method_arg_type = method_arg['arg_type']
             if method_arg_type.endswith(']') and method_task_socket['soc_type']+' []' != method_arg_type:
+                if debug_mode:
+                    print("unexpected array arg")
                 method_is_task = False
                 break
             elif  method_arg_type.endswith(('*','&')) and method_task_socket['soc_type'] != method_arg_type:
+                if debug_mode:
+                    print("unexpected ptr/ref arg")
                 method_is_task = False
                 break
             j = j+1
             if j >= module_task_nb_sockets:
+                if debug_mode:
+                    print("socket number mismatch")
                 break
         if method_is_task:
             task_methods.append(method_entry)
