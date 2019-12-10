@@ -25,17 +25,23 @@ class Module;
 namespace tools
 {
 
+enum class subseq_t : size_t { STD, LOOP, ROUTER };
+
 class Chain : Interface_clone
 {
 protected:
 	size_t n_threads;
-	std::vector<std::vector<module::Task*>> tasks_sequences;
+	std::vector<std::vector<std::vector<module::Task*>>> tasks_sequences;
 	std::vector<std::vector<std::shared_ptr<module::Module>>> modules;
+	std::vector<subseq_t> subseq_types;
 
 	std::shared_ptr<std::mutex> mtx_exception;
 	std::vector<std::string> prev_exception_messages;
 	std::vector<std::string> prev_exception_messages_to_display;
 	std::shared_ptr<std::atomic<bool>> force_exit_loop;
+
+	size_t n_tasks;
+	std::vector<std::vector<size_t>> task_id;
 
 public:
 	Chain(const module::Task &first,                           const size_t n_threads = 1);
@@ -52,25 +58,29 @@ public:
 	std::vector<C*> get_modules(const bool subchain_modules = true) const;
 	std::vector<std::vector<const module::Module*>> get_modules_per_threads() const;
 	std::vector<std::vector<const module::Module*>> get_modules_per_types  () const;
-	inline const std::vector<std::vector<module::Task*>>& get_tasks_sequences() const;
-	inline const std::vector<module::Task*>& get_tasks_sequence(const int tid = 0) const;
+	inline const std::vector<std::vector<std::vector<module::Task*>>>& get_tasks_sequences() const;
+	inline const std::vector<std::vector<module::Task*>>& get_tasks_sequence(const int tid = 0) const;
 
 	void export_dot(std::ostream &stream = std::cout) const;
 
 protected:
 	void export_dot_subsequence(const std::vector<module::Task*> &subseq,
+	                            const subseq_t &subseq_type,
 	                            const std::string &subseq_name,
 	                            const std::string &tab,
 	                            std::ostream &stream) const;
-	static void init_recursive(std::vector<const module::Task*> &tasks_sequence,
+	static void init_recursive(std::vector<std::vector<const module::Task*>> &tasks_sequence,
+	                           const size_t ssid,
+	                           std::vector<subseq_t> &subseq_type,
+	                           std::vector<const module::Task*> &loops,
 	                           const module::Task& first,
 	                           const module::Task& current_task,
 	                           const module::Task *last = nullptr);
 	void _exec(std::function<bool(const std::vector<int>&)> &stop_condition,
-	                                    std::vector<module::Task*> &tasks_sequence);
+	                                    std::vector<std::vector<module::Task*>> &tasks_sequence);
 	void _exec_without_statuses(std::function<bool()> &stop_condition,
-	                            std::vector<module::Task*> &tasks_sequence);
-	void duplicate(const std::vector<const module::Task*> &tasks_sequence);
+	                            std::vector<std::vector<module::Task*>> &tasks_sequence);
+	void duplicate(const std::vector<std::vector<const module::Task*>> &tasks_sequence);
 };
 }
 }

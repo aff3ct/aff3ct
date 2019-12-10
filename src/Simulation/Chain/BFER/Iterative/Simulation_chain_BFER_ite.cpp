@@ -530,9 +530,10 @@ void Simulation_chain_BFER_ite<B,R,Q>
 		}
 		else
 		{
-			dch[dec::sck::decode_siho::Y_N ].bind(csr3[cst::sck::apply      ::out]);
-			csb[cst::sck::apply      ::in  ].bind(dch [dec::sck::decode_siho::V_K]);
-			crc[crc::sck::extract    ::V_K1].bind(csb [cst::sck::apply      ::out]);
+			dch[dec::sck::decode_siho::Y_N].bind(csr3[cst::sck::apply      ::out]);
+			csb[cst::sck::apply      ::in ].bind(dch [dec::sck::decode_siho::V_K]);
+			if (this->params_BFER_ite.crc->type != "NO")
+				crc[crc::sck::extract::V_K1].bind(csb[cst::sck::apply::out]);
 		}
 	}
 	else
@@ -551,7 +552,8 @@ void Simulation_chain_BFER_ite<B,R,Q>
 			else
 				dch[dec::sck::decode_siho::Y_N].bind(lite[lop::sck::stop::in_out2]);
 
-			crc[crc::sck::extract::V_K1].bind(dch[dec::sck::decode_siho::V_K]);
+			if (this->params_BFER_ite.crc->type != "NO")
+				crc[crc::sck::extract::V_K1].bind(dch[dec::sck::decode_siho::V_K]);
 		}
 	}
 

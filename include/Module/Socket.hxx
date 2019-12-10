@@ -140,7 +140,7 @@ void Socket
 		}
 	}
 
-	this->bound_sockets.push_back(&s);
+	// this->bound_sockets.push_back(&s);
 	s.bound_sockets.push_back(this);
 	if (copy_dataptr)
 		this->dataptr = s.dataptr;
