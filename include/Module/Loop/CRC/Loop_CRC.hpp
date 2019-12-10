@@ -26,9 +26,12 @@ public:
 	         const CRC<I> &crc,
 	         const size_t n_elmts_in,
 	         const size_t n_elmts_out,
-	         const size_t crc_ite_start = 0);
+	         const size_t crc_ite_start = 0,
+	         const int n_frames = 1);
 	virtual ~Loop_CRC() = default;
 	virtual Loop_CRC<I,O>* clone() const;
+
+	virtual bool stop(const int8_t *in, const int frame_id = -1);
 
 protected:
 	virtual void deep_copy(const Loop_CRC<I,O> &m);

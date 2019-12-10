@@ -31,6 +31,8 @@ public:
 
 	virtual void reset();
 
+	virtual bool stop(const int8_t *in, const int frame_id = -1);
+
 protected:
 	Loop_predicate(const tools::Predicate &predicate,
 	               const size_t n_elmts_in,
@@ -39,8 +41,6 @@ protected:
 	               const int n_frames = 1);
 
 	virtual void deep_copy(const Loop_predicate<O> &m);
-
-	virtual bool _stop(const int8_t *in, const int frame_id);
 };
 }
 }

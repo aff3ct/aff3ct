@@ -138,7 +138,8 @@ std::unique_ptr<module::Loop_CRC<B,Q>> Simulation_chain_BFER_ite<B,R,Q>
 		*crc,
 		(size_t)crc->get_size() + (size_t)crc->get_K(),
 		params_BFER_ite.cdc->N_cw,
-		params_BFER_ite.crc_start));
+		params_BFER_ite.crc_start,
+		params_BFER_ite.src->n_frames));
 	return loop_crc;
 }
 

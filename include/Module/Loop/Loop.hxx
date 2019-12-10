@@ -100,12 +100,13 @@ Loop
 		// I have to find a trick to avoid those copies
 		if (stop && n_calls == 0)
 			std::copy((int8_t*)t[2].get_dataptr(),
-			          (int8_t*)t[2].get_dataptr() + l.get_n_bytes_out(),
+			          (int8_t*)t[2].get_dataptr() + t[2].get_databytes(),
 			          (int8_t*)t[3].get_dataptr());
 		if (!stop && n_calls > 0)
 			std::copy((int8_t*)t[3].get_dataptr(),
-			          (int8_t*)t[3].get_dataptr() + l.get_n_bytes_out(),
+			          (int8_t*)t[3].get_dataptr() + t[3].get_databytes(),
 			          (int8_t*)t[2].get_dataptr());
+
 		return stop;
 	});
 }
