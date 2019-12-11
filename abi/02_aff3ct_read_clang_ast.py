@@ -866,6 +866,28 @@ def process_ast(ast_filename):
                         # only consider class members, and only public ones
                         if debug_mode:
                             print(line)
+
+    enum_classes = dict()
+    for class_name in sorted(db.keys()):
+        class_entry = db[class_name]
+        if class_entry['class_kind'] == 'enum_class':
+            enum_classes[class_name] = class_entry
+    for class_name in sorted(db.keys()):
+        class_entry = db[class_name]
+        if class_entry['class_kind'] == 'enum_class':
+            continue
+        for method, method_entry in class_entry['class_all_methods_index'].items():
+            method_args = method_entry['method_arguments']
+            for i in range(method_entry['method_nb_arguments']):
+                method_arg = method_args[i]
+                if method_arg['arg_type'] in enum_classes:
+                    method_arg['arg_realtype'] = enum_classes[method_arg['arg_type']]['class_enum_type']
+            if 'method_output' in method_entry:
+                method_output = method_entry['method_output']
+                if method_output is not None and method_output['out_type'] in enum_classes:
+                    method_output['out_realtype'] = enum_classes[method_output['out_type']]['class_enum_type']
+            
+
     if debug_mode:
         # if debug_mode, dump internal_db
         internal_db_filename = 'internal_db.json'
