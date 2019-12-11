@@ -925,11 +925,11 @@ def find_task_method(class_entry, module_task_entry):
     # lookup all methods
     for method, method_entry in class_entry['class_all_methods_index'].items():
         if debug_mode:
-            print("task?: "+method)
+            print("checking if method '"+method+"' can be elected as a task")
         # early filter out unlikely candidates
         if method_entry['method_kind'] == 'task':
             if debug_mode:
-                print("already a task")
+                print("- no: already a task")
             continue
         # tasks appear to be allowed to have a non-void return type
         #if 'method_output' in method_entry and method_entry['method_output'] is not None:
@@ -937,7 +937,7 @@ def find_task_method(class_entry, module_task_entry):
         #    continue
         if method_entry['method_short_name'] != module_task_name:
             if debug_mode:
-                print("name mismatch")
+                print("- no: name mismatch")
             continue
         method_args = method_entry['method_arguments']
         method_is_task = True
@@ -945,26 +945,28 @@ def find_task_method(class_entry, module_task_entry):
         j = 0
         for i in range(method_entry['method_nb_arguments']):
             method_arg = method_args[i]
+            if debug_mode:
+                print(". checking arg %2d: '%s'" % (i, method_arg['arg_name']))
             if '=' in method_arg:
                 if debug_mode:
-                    print(". arg with default value")
+                    print("  . skip arg with default value")
                 continue
             method_task_socket = module_task_sockets[j]
             method_arg_type = method_arg['arg_type']
             if method_arg_type.endswith(']') and method_task_socket['soc_type']+' []' != method_arg_type:
                 if debug_mode:
-                    print("unexpected array arg")
+                    print("  - no: unexpected array arg")
                 method_is_task = False
                 break
             elif  method_arg_type.endswith(('*','&')) and method_task_socket['soc_type'] != method_arg_type:
                 if debug_mode:
-                    print("unexpected ptr/ref arg")
+                    print("  - no: unexpected ptr/ref arg")
                 method_is_task = False
                 break
             j = j+1
             if j >= module_task_nb_sockets:
                 if debug_mode:
-                    print("socket number mismatch")
+                    print("  - no: socket number mismatch")
                 break
         if method_is_task:
             task_methods.append(method_entry)
@@ -992,6 +994,8 @@ def make_task(class_entry, method_entry, module_task_entry):
         return
 
     # change method kind into 'task'
+    if debug_mode:
+        print("electing '"+method+"' as task")
     method_entry['method_kind'] = 'task'
     socket_nb = 0
     for socket in method_entry['method_arguments']:
