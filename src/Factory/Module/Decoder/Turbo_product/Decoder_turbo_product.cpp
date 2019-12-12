@@ -13,44 +13,44 @@ const std::string aff3ct::factory::Decoder_turbo_product_prefix = "dec";
 using namespace aff3ct;
 using namespace aff3ct::factory;
 
-Decoder_turbo_product::parameters
-::parameters(const std::string &prefix)
-: Decoder::parameters(Decoder_turbo_product_name, prefix),
-  sub(new Decoder_BCH::parameters(prefix+"-sub")),
-  itl(new Interleaver::parameters("itl"))
+Decoder_turbo_product
+::Decoder_turbo_product(const std::string &prefix)
+: Decoder(Decoder_turbo_product_name, prefix),
+  sub(new Decoder_BCH(prefix+"-sub")),
+  itl(new Interleaver("itl"))
 {
 	this->type   = "CP";
 	this->implem = "STD";
 }
 
-Decoder_turbo_product::parameters* Decoder_turbo_product::parameters
+Decoder_turbo_product* Decoder_turbo_product
 ::clone() const
 {
-	return new Decoder_turbo_product::parameters(*this);
+	return new Decoder_turbo_product(*this);
 }
 
-std::vector<std::string> Decoder_turbo_product::parameters
+std::vector<std::string> Decoder_turbo_product
 ::get_names() const
 {
-	auto n = Decoder::parameters::get_names();
+	auto n = Decoder::get_names();
 	if (sub != nullptr) { auto nn = sub->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (itl != nullptr) { auto nn = itl->get_names(); for (auto &x : nn) n.push_back(x); }
 	return n;
 }
 
-std::vector<std::string> Decoder_turbo_product::parameters
+std::vector<std::string> Decoder_turbo_product
 ::get_short_names() const
 {
-	auto sn = Decoder::parameters::get_short_names();
+	auto sn = Decoder::get_short_names();
 	if (sub != nullptr) { auto nn = sub->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (itl != nullptr) { auto nn = itl->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	return sn;
 }
 
-std::vector<std::string> Decoder_turbo_product::parameters
+std::vector<std::string> Decoder_turbo_product
 ::get_prefixes() const
 {
-	auto p = Decoder::parameters::get_prefixes();
+	auto p = Decoder::get_prefixes();
 	if (sub != nullptr) { auto nn = sub->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (itl != nullptr) { auto nn = itl->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	return p;
@@ -68,13 +68,13 @@ struct Real_splitter
 	}
 };
 
-void Decoder_turbo_product::parameters
+void Decoder_turbo_product
 ::get_description(cli::Argument_map_info &args) const
 {
-	Decoder::parameters::get_description(args);
+	Decoder::get_description(args);
 
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Decoder_turbo_product::parameters::";
+	const std::string class_name = "factory::Decoder_turbo_product::";
 
 	args.erase({p+"-info-bits", "K"});
 	args.erase({p+"-cw-size",   "N"});
@@ -123,10 +123,10 @@ void Decoder_turbo_product::parameters
 	args.erase({ps+"-fra", "F"});
 }
 
-void Decoder_turbo_product::parameters
+void Decoder_turbo_product
 ::store(const cli::Argument_map_value &vals)
 {
-	Decoder::parameters::store(vals);
+	Decoder::store(vals);
 
 	auto p = this->get_prefix();
 
@@ -167,7 +167,6 @@ void Decoder_turbo_product::parameters
 		this->beta.clear();
 	}
 
-
 	if(vals.exist({p+"-cp-coef"}))
 		this->cp_coef = vals.to_list<float>({p+"-cp-coef"});
 	else
@@ -176,7 +175,6 @@ void Decoder_turbo_product::parameters
 		this->cp_coef.resize(5, 1.f);
 		this->cp_coef[4] = 0;
 	}
-
 
 	// this->sub->n_frames = this->n_frames;
 
@@ -203,10 +201,10 @@ void Decoder_turbo_product::parameters
 	}
 }
 
-void Decoder_turbo_product::parameters
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+void Decoder_turbo_product
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
-	Decoder::parameters::get_headers(headers, full);
+	Decoder::get_headers(headers, full);
 
 	if (this->type != "ML")
 	{
@@ -257,7 +255,7 @@ void Decoder_turbo_product::parameters
 }
 
 template <typename B, typename Q>
-module::Decoder_SIHO<B,Q>* Decoder_turbo_product::parameters
+module::Decoder_SIHO<B,Q>* Decoder_turbo_product
 ::build(const module::Interleaver <Q> &itl,
               module::Decoder_chase_pyndiah<B,Q> &cp_r,
               module::Decoder_chase_pyndiah<B,Q> &cp_c,
@@ -265,7 +263,7 @@ module::Decoder_SIHO<B,Q>* Decoder_turbo_product::parameters
 {
 	try
 	{
-		return Decoder::parameters::build<B,Q>(encoder);
+		return Decoder::build<B,Q>(encoder);
 	}
 	catch (tools::cannot_allocate const&)
 	{
@@ -280,7 +278,7 @@ module::Decoder_SIHO<B,Q>* Decoder_turbo_product::parameters
 }
 
 template <typename B, typename Q>
-module::Decoder_SISO_SIHO<B,Q>* Decoder_turbo_product::parameters
+module::Decoder_SISO_SIHO<B,Q>* Decoder_turbo_product
 ::build_siso(const module::Interleaver <Q> &itl,
                    module::Decoder_chase_pyndiah<B,Q> &cp_r,
                    module::Decoder_chase_pyndiah<B,Q> &cp_c) const
@@ -288,54 +286,23 @@ module::Decoder_SISO_SIHO<B,Q>* Decoder_turbo_product::parameters
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename Q>
-module::Decoder_SIHO<B,Q>* Decoder_turbo_product
-::build(const parameters              &params,
-        const module::Interleaver <Q> &itl,
-              module::Decoder_chase_pyndiah<B,Q> &cp_r,
-              module::Decoder_chase_pyndiah<B,Q> &cp_c,
-              const std::unique_ptr<module::Encoder<B>>& encoder)
-{
-	return params.template build<B,Q>(itl, cp_r, cp_c, encoder);
-}
-
-template <typename B, typename Q>
-module::Decoder_SISO_SIHO<B,Q>* Decoder_turbo_product
-::build_siso(const parameters              &params,
-             const module::Interleaver <Q> &itl,
-                   module::Decoder_chase_pyndiah<B,Q> &cp_r,
-                   module::Decoder_chase_pyndiah<B,Q> &cp_c)
-{
-	return params.template build_siso<B,Q>(itl, cp_r, cp_c);
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_turbo_product::parameters::build<B_8 ,Q_8 >(const aff3ct::module::Interleaver<Q_8 >&, aff3ct::module::Decoder_chase_pyndiah<B_8 ,Q_8 > &, aff3ct::module::Decoder_chase_pyndiah<B_8 ,Q_8 > &, const std::unique_ptr<module::Encoder<B_8 >>&) const;
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_turbo_product::parameters::build<B_16,Q_16>(const aff3ct::module::Interleaver<Q_16>&, aff3ct::module::Decoder_chase_pyndiah<B_16,Q_16> &, aff3ct::module::Decoder_chase_pyndiah<B_16,Q_16> &, const std::unique_ptr<module::Encoder<B_16>>&) const;
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_turbo_product::parameters::build<B_32,Q_32>(const aff3ct::module::Interleaver<Q_32>&, aff3ct::module::Decoder_chase_pyndiah<B_32,Q_32> &, aff3ct::module::Decoder_chase_pyndiah<B_32,Q_32> &, const std::unique_ptr<module::Encoder<B_32>>&) const;
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_turbo_product::parameters::build<B_64,Q_64>(const aff3ct::module::Interleaver<Q_64>&, aff3ct::module::Decoder_chase_pyndiah<B_64,Q_64> &, aff3ct::module::Decoder_chase_pyndiah<B_64,Q_64> &, const std::unique_ptr<module::Encoder<B_64>>&) const;
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_turbo_product::build<B_8 ,Q_8 >(const aff3ct::factory::Decoder_turbo_product::parameters&, const aff3ct::module::Interleaver<Q_8 >&, aff3ct::module::Decoder_chase_pyndiah<B_8 ,Q_8 > &, aff3ct::module::Decoder_chase_pyndiah<B_8 ,Q_8 > &, const std::unique_ptr<module::Encoder<B_8 >>&);
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_turbo_product::build<B_16,Q_16>(const aff3ct::factory::Decoder_turbo_product::parameters&, const aff3ct::module::Interleaver<Q_16>&, aff3ct::module::Decoder_chase_pyndiah<B_16,Q_16> &, aff3ct::module::Decoder_chase_pyndiah<B_16,Q_16> &, const std::unique_ptr<module::Encoder<B_16>>&);
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_turbo_product::build<B_32,Q_32>(const aff3ct::factory::Decoder_turbo_product::parameters&, const aff3ct::module::Interleaver<Q_32>&, aff3ct::module::Decoder_chase_pyndiah<B_32,Q_32> &, aff3ct::module::Decoder_chase_pyndiah<B_32,Q_32> &, const std::unique_ptr<module::Encoder<B_32>>&);
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_turbo_product::build<B_64,Q_64>(const aff3ct::factory::Decoder_turbo_product::parameters&, const aff3ct::module::Interleaver<Q_64>&, aff3ct::module::Decoder_chase_pyndiah<B_64,Q_64> &, aff3ct::module::Decoder_chase_pyndiah<B_64,Q_64> &, const std::unique_ptr<module::Encoder<B_64>>&);
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_turbo_product::build<B_8 ,Q_8 >(const aff3ct::module::Interleaver<Q_8 >&, aff3ct::module::Decoder_chase_pyndiah<B_8 ,Q_8 > &, aff3ct::module::Decoder_chase_pyndiah<B_8 ,Q_8 > &, const std::unique_ptr<module::Encoder<B_8 >>&) const;
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_turbo_product::build<B_16,Q_16>(const aff3ct::module::Interleaver<Q_16>&, aff3ct::module::Decoder_chase_pyndiah<B_16,Q_16> &, aff3ct::module::Decoder_chase_pyndiah<B_16,Q_16> &, const std::unique_ptr<module::Encoder<B_16>>&) const;
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_turbo_product::build<B_32,Q_32>(const aff3ct::module::Interleaver<Q_32>&, aff3ct::module::Decoder_chase_pyndiah<B_32,Q_32> &, aff3ct::module::Decoder_chase_pyndiah<B_32,Q_32> &, const std::unique_ptr<module::Encoder<B_32>>&) const;
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_turbo_product::build<B_64,Q_64>(const aff3ct::module::Interleaver<Q_64>&, aff3ct::module::Decoder_chase_pyndiah<B_64,Q_64> &, aff3ct::module::Decoder_chase_pyndiah<B_64,Q_64> &, const std::unique_ptr<module::Encoder<B_64>>&) const;
 #else
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_turbo_product::parameters::build<B,Q>(const aff3ct::module::Interleaver<Q>&, aff3ct::module::Decoder_chase_pyndiah<B,Q> &, aff3ct::module::Decoder_chase_pyndiah<B,Q> &, const std::unique_ptr<module::Encoder<B>>& ) const;
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_turbo_product::build<B,Q>(const aff3ct::factory::Decoder_turbo_product::parameters&, const aff3ct::module::Interleaver<Q>&, aff3ct::module::Decoder_chase_pyndiah<B,Q> &, aff3ct::module::Decoder_chase_pyndiah<B,Q> &, const std::unique_ptr<module::Encoder<B>>& );
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_turbo_product::build<B,Q>(const aff3ct::module::Interleaver<Q>&, aff3ct::module::Decoder_chase_pyndiah<B,Q> &, aff3ct::module::Decoder_chase_pyndiah<B,Q> &, const std::unique_ptr<module::Encoder<B>>& ) const;
 #endif
 
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Decoder_SISO_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_turbo_product::parameters::build_siso<B_8 ,Q_8 >(const aff3ct::module::Interleaver<Q_8 >&, aff3ct::module::Decoder_chase_pyndiah<B_8 ,Q_8 > &, aff3ct::module::Decoder_chase_pyndiah<B_8 ,Q_8 > &) const;
-template aff3ct::module::Decoder_SISO_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_turbo_product::parameters::build_siso<B_16,Q_16>(const aff3ct::module::Interleaver<Q_16>&, aff3ct::module::Decoder_chase_pyndiah<B_16,Q_16> &, aff3ct::module::Decoder_chase_pyndiah<B_16,Q_16> &) const;
-template aff3ct::module::Decoder_SISO_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_turbo_product::parameters::build_siso<B_32,Q_32>(const aff3ct::module::Interleaver<Q_32>&, aff3ct::module::Decoder_chase_pyndiah<B_32,Q_32> &, aff3ct::module::Decoder_chase_pyndiah<B_32,Q_32> &) const;
-template aff3ct::module::Decoder_SISO_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_turbo_product::parameters::build_siso<B_64,Q_64>(const aff3ct::module::Interleaver<Q_64>&, aff3ct::module::Decoder_chase_pyndiah<B_64,Q_64> &, aff3ct::module::Decoder_chase_pyndiah<B_64,Q_64> &) const;
-template aff3ct::module::Decoder_SISO_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_turbo_product::build_siso<B_8 ,Q_8 >(const aff3ct::factory::Decoder_turbo_product::parameters&, const aff3ct::module::Interleaver<Q_8 >&, aff3ct::module::Decoder_chase_pyndiah<B_8 ,Q_8 > &, aff3ct::module::Decoder_chase_pyndiah<B_8 ,Q_8 > &);
-template aff3ct::module::Decoder_SISO_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_turbo_product::build_siso<B_16,Q_16>(const aff3ct::factory::Decoder_turbo_product::parameters&, const aff3ct::module::Interleaver<Q_16>&, aff3ct::module::Decoder_chase_pyndiah<B_16,Q_16> &, aff3ct::module::Decoder_chase_pyndiah<B_16,Q_16> &);
-template aff3ct::module::Decoder_SISO_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_turbo_product::build_siso<B_32,Q_32>(const aff3ct::factory::Decoder_turbo_product::parameters&, const aff3ct::module::Interleaver<Q_32>&, aff3ct::module::Decoder_chase_pyndiah<B_32,Q_32> &, aff3ct::module::Decoder_chase_pyndiah<B_32,Q_32> &);
-template aff3ct::module::Decoder_SISO_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_turbo_product::build_siso<B_64,Q_64>(const aff3ct::factory::Decoder_turbo_product::parameters&, const aff3ct::module::Interleaver<Q_64>&, aff3ct::module::Decoder_chase_pyndiah<B_64,Q_64> &, aff3ct::module::Decoder_chase_pyndiah<B_64,Q_64> &);
+template aff3ct::module::Decoder_SISO_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_turbo_product::build_siso<B_8 ,Q_8 >(const aff3ct::module::Interleaver<Q_8 >&, aff3ct::module::Decoder_chase_pyndiah<B_8 ,Q_8 > &, aff3ct::module::Decoder_chase_pyndiah<B_8 ,Q_8 > &) const;
+template aff3ct::module::Decoder_SISO_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_turbo_product::build_siso<B_16,Q_16>(const aff3ct::module::Interleaver<Q_16>&, aff3ct::module::Decoder_chase_pyndiah<B_16,Q_16> &, aff3ct::module::Decoder_chase_pyndiah<B_16,Q_16> &) const;
+template aff3ct::module::Decoder_SISO_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_turbo_product::build_siso<B_32,Q_32>(const aff3ct::module::Interleaver<Q_32>&, aff3ct::module::Decoder_chase_pyndiah<B_32,Q_32> &, aff3ct::module::Decoder_chase_pyndiah<B_32,Q_32> &) const;
+template aff3ct::module::Decoder_SISO_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_turbo_product::build_siso<B_64,Q_64>(const aff3ct::module::Interleaver<Q_64>&, aff3ct::module::Decoder_chase_pyndiah<B_64,Q_64> &, aff3ct::module::Decoder_chase_pyndiah<B_64,Q_64> &) const;
 #else
-template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_turbo_product::parameters::build_siso<B,Q>(const aff3ct::module::Interleaver<Q>&, aff3ct::module::Decoder_chase_pyndiah<B,Q> &, aff3ct::module::Decoder_chase_pyndiah<B,Q> &) const;
-template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_turbo_product::build_siso<B,Q>(const aff3ct::factory::Decoder_turbo_product::parameters&, const aff3ct::module::Interleaver<Q>&, aff3ct::module::Decoder_chase_pyndiah<B,Q> &, aff3ct::module::Decoder_chase_pyndiah<B,Q> &);
+template aff3ct::module::Decoder_SISO_SIHO<B,Q>* aff3ct::factory::Decoder_turbo_product::build_siso<B,Q>(const aff3ct::module::Interleaver<Q>&, aff3ct::module::Decoder_chase_pyndiah<B,Q> &, aff3ct::module::Decoder_chase_pyndiah<B,Q> &) const;
 #endif
 // ==================================================================================== explicit template instantiation

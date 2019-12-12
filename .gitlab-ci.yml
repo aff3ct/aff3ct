@@ -69,7 +69,7 @@ analysis-headers:
     - linux
   script:
     - ./scripts/generate_aff3ct_header.sh aff3ct.hpp
-    - diff aff3ct.hpp src/aff3ct.hpp
+    - diff aff3ct.hpp include/aff3ct.hpp
 
 analysis-git-submodules:
   stage: analysis
@@ -86,23 +86,25 @@ analysis-git-submodules:
     - source ./ci/tools/git-branch.sh
     - ./ci/analysis-git-submodule.sh
 
-documentation-sphinx:
+analysis-documentation:
   stage: analysis
   except:
     - schedules
   artifacts:
-    name: documentation-sphinx
+    name: analysis-documentation
     when: always
     paths:
-      - doc/sphinx/build/html
-      - doc/sphinx/build/latex
+      - doc/build/html
+      - doc/build/latex
+      - doc/build/doxygen
   tags:
-    - sphinx
+    - pip3
+    - doxygen
     - latex
+    - powerful
   script:
-    - cd doc/sphinx
-    - make html
-    - make latexpdf
+    - export THREADS="1"
+    - ./ci/analysis-documentation.sh
 
 build-linux-gcc-nointr:
   stage: build
@@ -136,7 +138,8 @@ build-linux-gcc-x64-sse4.2:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies: []
+  dependencies:
+    - analysis-documentation
   tags:
     - linux
     - gcc
@@ -161,7 +164,8 @@ build-linux-gcc-x64-avx2:
   stage: build
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
-  dependencies: []
+  dependencies:
+    - analysis-documentation
   tags:
     - linux
     - gcc
@@ -345,7 +349,8 @@ build-windows-gcc-x86-sse4.2:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies: []
+  dependencies:
+    - analysis-documentation
   tags:
     - windows
     - gcc
@@ -370,7 +375,8 @@ build-windows-gcc-x64-avx2:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies: []
+  dependencies:
+    - analysis-documentation
   tags:
     - windows
     - 64-bit
@@ -418,7 +424,8 @@ build-macos-clang-x64-sse4.2:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies: []
+  dependencies:
+    - analysis-documentation
   tags:
     - macos
     - apple-clang
@@ -1305,7 +1312,7 @@ deploy-upload-ppa:
   except:
     - schedules
   dependencies:
-    - documentation-sphinx
+    - analysis-documentation
   allow_failure: true
   tags:
     - linux

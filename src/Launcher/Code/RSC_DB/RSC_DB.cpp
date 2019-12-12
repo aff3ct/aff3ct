@@ -9,7 +9,7 @@ using namespace aff3ct::launcher;
 template <class L, typename B, typename R, typename Q>
 RSC_DB<L,B,R,Q>
 ::RSC_DB(const int argc, const char **argv, std::ostream &stream)
-: L(argc, argv, stream), params_cdc(new factory::Codec_RSC_DB::parameters("cdc"))
+: L(argc, argv, stream), params_cdc(new factory::Codec_RSC_DB("cdc"))
 {
 	this->params.set_cdc(params_cdc);
 }

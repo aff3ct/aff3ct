@@ -12,34 +12,34 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Codec_name   = "Codec";
 const std::string aff3ct::factory::Codec_prefix = "cdc";
 
-Codec::parameters
-::parameters(const std::string &prefix)
-: Factory::parameters(Codec_name, Codec_name, prefix)
+Codec
+::Codec(const std::string &prefix)
+: Factory(Codec_name, Codec_name, prefix)
 {
 }
 
-Codec::parameters
-::parameters(const std::string &name, const std::string &prefix)
-: Factory::parameters(name, Codec_name, prefix)
+Codec
+::Codec(const std::string &name, const std::string &prefix)
+: Factory(name, Codec_name, prefix)
 {
 }
 
-Codec::parameters* Codec::parameters
+Codec* Codec
 ::clone() const
 {
-	return new Codec::parameters(*this);
+	return new Codec(*this);
 }
 
-void Codec::parameters
+void Codec
 ::enable_puncturer()
 {
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, "This codec does not support to be punctured.");
 }
 
-std::vector<std::string> Codec::parameters
+std::vector<std::string> Codec
 ::get_names() const
 {
-	auto n = Factory::parameters::get_names();
+	auto n = Factory::get_names();
 	if (enc != nullptr) { auto nn = enc->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (dec != nullptr) { auto nn = dec->get_names(); for (auto &x : nn) n.push_back(x); }
 	if (pct != nullptr) { auto nn = pct->get_names(); for (auto &x : nn) n.push_back(x); }
@@ -47,10 +47,10 @@ std::vector<std::string> Codec::parameters
 	return n;
 }
 
-std::vector<std::string> Codec::parameters
+std::vector<std::string> Codec
 ::get_short_names() const
 {
-	auto sn = Factory::parameters::get_short_names();
+	auto sn = Factory::get_short_names();
 	if (enc != nullptr) { auto nn = enc->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (dec != nullptr) { auto nn = dec->get_short_names(); for (auto &x : nn) sn.push_back(x); }
 	if (pct != nullptr) { auto nn = pct->get_short_names(); for (auto &x : nn) sn.push_back(x); }
@@ -58,10 +58,10 @@ std::vector<std::string> Codec::parameters
 	return sn;
 }
 
-std::vector<std::string> Codec::parameters
+std::vector<std::string> Codec
 ::get_prefixes() const
 {
-	auto p = Factory::parameters::get_prefixes();
+	auto p = Factory::get_prefixes();
 	if (enc != nullptr) { auto nn = enc->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (dec != nullptr) { auto nn = dec->get_prefixes(); for (auto &x : nn) p.push_back(x); }
 	if (pct != nullptr) { auto nn = pct->get_prefixes(); for (auto &x : nn) p.push_back(x); }
@@ -69,18 +69,18 @@ std::vector<std::string> Codec::parameters
 	return p;
 }
 
-void Codec::parameters
+void Codec
 ::get_description(cli::Argument_map_info &args) const
 {
 }
 
-void Codec::parameters
+void Codec
 ::store(const cli::Argument_map_value &vals)
 {
 }
 
-void Codec::parameters
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+void Codec
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
 	auto p = this->get_prefix();
 	auto v = tools::split(this->get_name(), ' ');
@@ -104,51 +104,51 @@ void Codec::parameters
 	headers[p].push_back(std::make_pair("Code rate", cr_str.str()));
 }
 
-void Codec::parameters
-::set_enc(Encoder::parameters *enc)
+void Codec
+::set_enc(Encoder *enc)
 {
 	this->enc.reset(enc);
 }
 
-void Codec::parameters
-::set_dec(Decoder::parameters *dec)
+void Codec
+::set_dec(Decoder *dec)
 {
 	this->dec.reset(dec);
 }
 
-void Codec::parameters
-::set_pct(Puncturer::parameters *pct)
+void Codec
+::set_pct(Puncturer *pct)
 {
 	this->pct.reset(pct);
 }
 
-void Codec::parameters
-::set_itl(Interleaver::parameters *itl)
+void Codec
+::set_itl(Interleaver *itl)
 {
 	this->itl.reset(itl);
 }
 
 
-void Codec::parameters
-::set_enc(tools::auto_cloned_unique_ptr<Encoder::parameters>&& enc)
+void Codec
+::set_enc(tools::auto_cloned_unique_ptr<Encoder>&& enc)
 {
 	this->enc = std::move(enc);
 }
 
-void Codec::parameters
-::set_dec(tools::auto_cloned_unique_ptr<Decoder::parameters>&& dec)
+void Codec
+::set_dec(tools::auto_cloned_unique_ptr<Decoder>&& dec)
 {
 	this->dec = std::move(dec);
 }
 
-void Codec::parameters
-::set_pct(tools::auto_cloned_unique_ptr<Puncturer::parameters>&& pct)
+void Codec
+::set_pct(tools::auto_cloned_unique_ptr<Puncturer>&& pct)
 {
 	this->pct = std::move(pct);
 }
 
-void Codec::parameters
-::set_itl(tools::auto_cloned_unique_ptr<Interleaver::parameters>&& itl)
+void Codec
+::set_itl(tools::auto_cloned_unique_ptr<Interleaver>&& itl)
 {
 	this->itl = std::move(itl);
 }

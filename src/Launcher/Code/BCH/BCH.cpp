@@ -7,7 +7,7 @@ using namespace aff3ct::launcher;
 template <class L, typename B, typename R, typename Q>
 BCH<L,B,R,Q>
 ::BCH(const int argc, const char **argv, std::ostream &stream)
-: L(argc, argv, stream), params_cdc(new factory::Codec_BCH::parameters("cdc"))
+: L(argc, argv, stream), params_cdc(new factory::Codec_BCH("cdc"))
 {
 	this->params.set_cdc(params_cdc);
 }

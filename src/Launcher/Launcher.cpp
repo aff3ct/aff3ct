@@ -11,6 +11,7 @@
 #include "Tools/system_functions.h"
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Factory/Header.hpp"
 #include "Factory/Module/Source/Source.hpp"
 #include "Factory/Module/CRC/CRC.hpp"
 #include "Factory/Module/Encoder/Encoder.hpp"
@@ -28,7 +29,7 @@
 using namespace aff3ct;
 using namespace aff3ct::launcher;
 
-Launcher::Launcher(const int argc, const char **argv, factory::Simulation::parameters &params_common,
+Launcher::Launcher(const int argc, const char **argv, factory::Simulation &params_common,
                    std::ostream &stream)
 : simu(nullptr), ah(argc, argv), params_common(params_common), stream(stream)
 {
@@ -116,7 +117,7 @@ void Launcher::print_header()
 	stream << rang::tag::comment << rang::style::bold << "---- A FAST FORWARD ERROR CORRECTION TOOLBOX >> ----" << std::endl;
 	stream << rang::tag::comment << rang::style::bold << "----------------------------------------------------" << std::endl;
 	stream << rang::tag::comment << rang::style::bold << rang::style::underline << "Parameters:"<< rang::style::reset << std::endl;
-	factory::Header::print_parameters({&params_common}, this->params_common.full_legend, this->stream);
+	tools::Header::print_parameters({&params_common}, this->params_common.full_legend, this->stream);
 	this->stream << rang::tag::comment << std::endl;
 }
 

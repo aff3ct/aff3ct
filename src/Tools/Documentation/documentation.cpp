@@ -129,8 +129,8 @@ std::string extract_documentation(const std::string &key)
 				aff3ct_version.erase(0, 1); // rm the 'v'
 
 			std::vector<std::string> paths = {
-				"../../doc/sphinx/",
-				"../../../doc/sphinx/",
+				"../../doc/",
+				"../../../doc/",
 				"../share/aff3ct-" + aff3ct_version + "/doc/strings/",
 				"../../share/aff3ct-" + aff3ct_version + "/doc/strings/",
 				"/usr/share/aff3ct-" + aff3ct_version + "/doc/strings/",

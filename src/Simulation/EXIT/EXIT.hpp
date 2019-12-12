@@ -28,7 +28,7 @@ template <typename B = int, typename R = float>
 class EXIT : public Simulation
 {
 protected:
-	const factory::EXIT::parameters &params_EXIT; // simulation parameters
+	const factory::EXIT &params_EXIT; // simulation parameters
 
 	// code specifications
 	tools::Sigma<R>  noise;   // current noise simulated
@@ -50,7 +50,7 @@ protected:
 	std::unique_ptr<tools::Terminal>              terminal;
 
 public:
-	explicit EXIT(const factory::EXIT::parameters &params_EXIT);
+	explicit EXIT(const factory::EXIT &params_EXIT);
 	virtual ~EXIT() = default;
 
 	void launch();

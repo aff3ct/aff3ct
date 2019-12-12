@@ -15,10 +15,10 @@ using namespace aff3ct::module;
 
 template <typename B, typename Q>
 Codec_polar<B,Q>
-::Codec_polar(const factory::Frozenbits_generator::parameters &fb_params,
-              const factory::Encoder_polar       ::parameters &enc_params,
-              const factory::Decoder_polar       ::parameters &dec_params,
-              const factory::Puncturer_polar     ::parameters *pct_params,
+::Codec_polar(const factory::Frozenbits_generator &fb_params,
+              const factory::Encoder_polar        &enc_params,
+              const factory::Decoder_polar        &dec_params,
+              const factory::Puncturer_polar      *pct_params,
               CRC<B>* crc)
 : Codec          <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
@@ -60,7 +60,7 @@ Codec_polar<B,Q>
 	// ---------------------------------------------------------------------------------------------------------- tools
 	if (!generated_decoder)
 		// build the frozen bits generator
-		fb_generator.reset(factory::Frozenbits_generator::build(fb_params));
+		fb_generator.reset(fb_params.build());
 	else if (this->N_cw != this->N)
 	{
 		std::stringstream message;
@@ -74,48 +74,48 @@ Codec_polar<B,Q>
 
 	if (generated_decoder || !pct_params)
 	{
-		factory::Puncturer::parameters pctno_params;
+		factory::Puncturer pctno_params;
 		pctno_params.type     = "NO";
 		pctno_params.K        = enc_params.K;
 		pctno_params.N        = enc_params.N_cw;
 		pctno_params.N_cw     = enc_params.N_cw;
 		pctno_params.n_frames = enc_params.n_frames;
 
-		this->set_puncturer(factory::Puncturer::build<B,Q>(pctno_params));
+		this->set_puncturer(pctno_params.build<B,Q>());
 	}
 	else
 	{
 		try
 		{
-			this->set_puncturer(factory::Puncturer_polar::build<B,Q>(*pct_params, *fb_generator));
+			this->set_puncturer(pct_params->build<B,Q>(*fb_generator));
 			puncturer_shortlast = dynamic_cast<Puncturer_polar_shortlast<B,Q>*>(this->get_puncturer().get());
 		}
 		catch(tools::cannot_allocate const&)
 		{
-			this->set_puncturer(factory::Puncturer::build<B,Q>(*pct_params));
+			this->set_puncturer(static_cast<const factory::Puncturer*>(pct_params)->build<B,Q>());
 		}
 	}
 
 	try
 	{
-		this->set_encoder(factory::Encoder_polar::build<B>(enc_params, frozen_bits));
+		this->set_encoder(enc_params.build<B>(frozen_bits));
 		fb_encoder = dynamic_cast<tools::Frozenbits_notifier*>(this->get_encoder().get());
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_encoder(factory::Encoder::build<B>(enc_params));
+		this->set_encoder(static_cast<const factory::Encoder*>(&enc_params)->build<B>());
 	}
 
 	try
 	{
-		this->set_decoder_siso_siho(factory::Decoder_polar::build_siso<B,Q>(dec_params, frozen_bits, this->get_encoder()));
+		this->set_decoder_siso_siho(dec_params.build_siso<B,Q>(frozen_bits, this->get_encoder()));
 	}
 	catch (const std::exception&)
 	{
 		if (generated_decoder)
-			this->set_decoder_siho(factory::Decoder_polar::build_gen<B,Q>(dec_params,              crc, this->get_encoder()));
+			this->set_decoder_siho(dec_params.build_gen<B,Q>(crc, this->get_encoder()));
 		else
-			this->set_decoder_siho(factory::Decoder_polar::build    <B,Q>(dec_params, frozen_bits, crc, this->get_encoder()));
+			this->set_decoder_siho(dec_params.build<B,Q>(frozen_bits, crc, this->get_encoder()));
 	}
 
 	try
@@ -203,10 +203,38 @@ void Codec_polar<B,Q>
 }
 
 template <typename B, typename Q>
-std::vector<bool>& Codec_polar<B,Q>
-::get_frozen_bits()
+const std::vector<bool>& Codec_polar<B,Q>
+::get_frozen_bits() const
 {
 	return this->frozen_bits;
+}
+
+template <typename B, typename Q>
+bool Codec_polar<B,Q>
+::is_adaptive_frozen_bits() const
+{
+	return this->adaptive_fb;
+}
+
+template <typename B, typename Q>
+bool Codec_polar<B,Q>
+::is_generated_decoder() const
+{
+	return this->generated_decoder;
+}
+
+template <typename B, typename Q>
+const tools::Frozenbits_generator& Codec_polar<B,Q>
+::get_frozen_bits_generator() const
+{
+	if (this->fb_generator == nullptr)
+	{
+		std::stringstream message;
+		message << "'fb_generator' can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->fb_generator.get();
 }
 
 template <typename B, typename Q>

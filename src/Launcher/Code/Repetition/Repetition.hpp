@@ -13,7 +13,7 @@ template <class L, typename B = int, typename R = float, typename Q = R>
 class Repetition : public L
 {
 protected:
-	factory::Codec_repetition::parameters *params_cdc;
+	factory::Codec_repetition *params_cdc;
 
 public:
 	Repetition(const int argc, const char **argv, std::ostream &stream = std::cout);

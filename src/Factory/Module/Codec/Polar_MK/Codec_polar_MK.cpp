@@ -8,28 +8,28 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Codec_polar_MK_name   = "Codec Polar MK";
 const std::string aff3ct::factory::Codec_polar_MK_prefix = "cdc";
 
-Codec_polar_MK::parameters
-::parameters(const std::string &prefix)
-: Codec     ::parameters(Codec_polar_MK_name, prefix),
-  Codec_SIHO::parameters(Codec_polar_MK_name, prefix)
+Codec_polar_MK
+::Codec_polar_MK(const std::string &prefix)
+: Codec     (Codec_polar_MK_name, prefix),
+  Codec_SIHO(Codec_polar_MK_name, prefix)
 {
-	Codec::parameters::set_enc(new Encoder_polar_MK::parameters("enc"));
-	Codec::parameters::set_dec(new Decoder_polar_MK::parameters("dec"));
+	Codec::set_enc(new Encoder_polar_MK("enc"));
+	Codec::set_dec(new Decoder_polar_MK("dec"));
 
-	pc  = new Polar_code::parameters(enc->get_prefix()+"-pc");
-	fbg = new Frozenbits_generator_MK::parameters(enc->get_prefix()+"-fb");
+	pc  = new Polar_code(enc->get_prefix()+"-pc");
+	fbg = new Frozenbits_generator_MK(enc->get_prefix()+"-fb");
 }
 
-Codec_polar_MK::parameters* Codec_polar_MK::parameters
+Codec_polar_MK* Codec_polar_MK
 ::clone() const
 {
-	return new Codec_polar_MK::parameters(*this);
+	return new Codec_polar_MK(*this);
 }
 
-std::vector<std::string> Codec_polar_MK::parameters
+std::vector<std::string> Codec_polar_MK
 ::get_names() const
 {
-	auto n = Codec::parameters::get_names();
+	auto n = Codec::get_names();
 	std::vector<std::string> n2;
 
 	for (size_t i = 0; i < n.size(); i++)
@@ -51,10 +51,10 @@ std::vector<std::string> Codec_polar_MK::parameters
 	return n2;
 }
 
-std::vector<std::string> Codec_polar_MK::parameters
+std::vector<std::string> Codec_polar_MK
 ::get_short_names() const
 {
-	auto sn = Codec::parameters::get_short_names();
+	auto sn = Codec::get_short_names();
 	std::vector<std::string> sn2;
 
 	for (size_t i = 0; i < sn.size(); i++)
@@ -76,10 +76,10 @@ std::vector<std::string> Codec_polar_MK::parameters
 	return sn2;
 }
 
-std::vector<std::string> Codec_polar_MK::parameters
+std::vector<std::string> Codec_polar_MK
 ::get_prefixes() const
 {
-	auto p = Codec::parameters::get_prefixes();
+	auto p = Codec::get_prefixes();
 	std::vector<std::string> p2;
 
 	for (size_t i = 0; i < p.size(); i++)
@@ -101,10 +101,10 @@ std::vector<std::string> Codec_polar_MK::parameters
 	return p2;
 }
 
-void Codec_polar_MK::parameters
+void Codec_polar_MK
 ::get_description(cli::Argument_map_info &args) const
 {
-	Codec_SIHO::parameters::get_description(args);
+	Codec_SIHO::get_description(args);
 
 	enc->get_description(args);
 	pc ->get_description(args);
@@ -124,10 +124,10 @@ void Codec_polar_MK::parameters
 	args.erase({pfbg+"-info-bits", "K"});
 }
 
-void Codec_polar_MK::parameters
+void Codec_polar_MK
 ::store(const cli::Argument_map_value &vals)
 {
-	Codec_SIHO::parameters::store(vals);
+	Codec_SIHO::store(vals);
 
 	enc->store(vals);
 
@@ -151,10 +151,10 @@ void Codec_polar_MK::parameters
 	N    = enc->N_cw;
 }
 
-void Codec_polar_MK::parameters
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+void Codec_polar_MK
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
-	Codec_SIHO::parameters::get_headers(headers, full);
+	Codec_SIHO::get_headers(headers, full);
 
 	enc->get_headers(headers, full);
 	pc ->get_headers(headers, full);
@@ -163,35 +163,23 @@ void Codec_polar_MK::parameters
 }
 
 template <typename B, typename Q>
-module::Codec_polar_MK<B,Q>* Codec_polar_MK::parameters
+module::Codec_polar_MK<B,Q>* Codec_polar_MK
 ::build(module::CRC<B> *crc) const
 {
 	return new module::Codec_polar_MK<B,Q>(*pc, *fbg,
-	                                       dynamic_cast<const Encoder_polar_MK::parameters&>(*enc),
-	                                       dynamic_cast<const Decoder_polar_MK::parameters&>(*dec),
+	                                       dynamic_cast<const Encoder_polar_MK&>(*enc),
+	                                       dynamic_cast<const Decoder_polar_MK&>(*dec),
 	                                       crc);
-}
-
-template <typename B, typename Q>
-module::Codec_polar_MK<B,Q>* Codec_polar_MK
-::build(const parameters &params, module::CRC<B> *crc)
-{
-	return params.template build<B,Q>(crc);
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Codec_polar_MK<B_8 ,Q_8 >* aff3ct::factory::Codec_polar_MK::parameters::build<B_8 ,Q_8 >(aff3ct::module::CRC<B_8 >*) const;
-template aff3ct::module::Codec_polar_MK<B_16,Q_16>* aff3ct::factory::Codec_polar_MK::parameters::build<B_16,Q_16>(aff3ct::module::CRC<B_16>*) const;
-template aff3ct::module::Codec_polar_MK<B_32,Q_32>* aff3ct::factory::Codec_polar_MK::parameters::build<B_32,Q_32>(aff3ct::module::CRC<B_32>*) const;
-template aff3ct::module::Codec_polar_MK<B_64,Q_64>* aff3ct::factory::Codec_polar_MK::parameters::build<B_64,Q_64>(aff3ct::module::CRC<B_64>*) const;
-template aff3ct::module::Codec_polar_MK<B_8 ,Q_8 >* aff3ct::factory::Codec_polar_MK::build<B_8 ,Q_8 >(const aff3ct::factory::Codec_polar_MK::parameters&, aff3ct::module::CRC<B_8 >*);
-template aff3ct::module::Codec_polar_MK<B_16,Q_16>* aff3ct::factory::Codec_polar_MK::build<B_16,Q_16>(const aff3ct::factory::Codec_polar_MK::parameters&, aff3ct::module::CRC<B_16>*);
-template aff3ct::module::Codec_polar_MK<B_32,Q_32>* aff3ct::factory::Codec_polar_MK::build<B_32,Q_32>(const aff3ct::factory::Codec_polar_MK::parameters&, aff3ct::module::CRC<B_32>*);
-template aff3ct::module::Codec_polar_MK<B_64,Q_64>* aff3ct::factory::Codec_polar_MK::build<B_64,Q_64>(const aff3ct::factory::Codec_polar_MK::parameters&, aff3ct::module::CRC<B_64>*);
+template aff3ct::module::Codec_polar_MK<B_8 ,Q_8 >* aff3ct::factory::Codec_polar_MK::build<B_8 ,Q_8 >(aff3ct::module::CRC<B_8 >*) const;
+template aff3ct::module::Codec_polar_MK<B_16,Q_16>* aff3ct::factory::Codec_polar_MK::build<B_16,Q_16>(aff3ct::module::CRC<B_16>*) const;
+template aff3ct::module::Codec_polar_MK<B_32,Q_32>* aff3ct::factory::Codec_polar_MK::build<B_32,Q_32>(aff3ct::module::CRC<B_32>*) const;
+template aff3ct::module::Codec_polar_MK<B_64,Q_64>* aff3ct::factory::Codec_polar_MK::build<B_64,Q_64>(aff3ct::module::CRC<B_64>*) const;
 #else
-template aff3ct::module::Codec_polar_MK<B,Q>* aff3ct::factory::Codec_polar_MK::parameters::build<B,Q>(aff3ct::module::CRC<B>*) const;
-template aff3ct::module::Codec_polar_MK<B,Q>* aff3ct::factory::Codec_polar_MK::build<B,Q>(const aff3ct::factory::Codec_polar_MK::parameters&, aff3ct::module::CRC<B>*);
+template aff3ct::module::Codec_polar_MK<B,Q>* aff3ct::factory::Codec_polar_MK::build<B,Q>(aff3ct::module::CRC<B>*) const;
 #endif
 // ==================================================================================== explicit template instantiation

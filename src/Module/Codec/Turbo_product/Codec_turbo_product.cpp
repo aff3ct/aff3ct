@@ -14,9 +14,9 @@ using namespace aff3ct::module;
 
 template <typename B, typename Q>
 Codec_turbo_product<B,Q>
-::Codec_turbo_product(const factory::Encoder_turbo_product::parameters &enc_params,
-                      const factory::Decoder_turbo_product::parameters &dec_params,
-                      const factory::Interleaver          ::parameters &itl_params)
+::Codec_turbo_product(const factory::Encoder_turbo_product &enc_params,
+                      const factory::Decoder_turbo_product &dec_params,
+                      const factory::Interleaver           &itl_params)
 : Codec          <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, 0, enc_params.n_frames),
   Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, 0, enc_params.n_frames),
   GF_poly(dec_params.sub->N_cw, dec_params.sub->t)
@@ -65,84 +65,173 @@ Codec_turbo_product<B,Q>
 	}
 
 	// ---------------------------------------------------------------------------------------------------- allocations
-	factory::Puncturer::parameters pctno_params;
+	factory::Puncturer pctno_params;
 	pctno_params.type     = "NO";
 	pctno_params.K        = enc_params.K;
 	pctno_params.N        = enc_params.N_cw;
 	pctno_params.N_cw     = enc_params.N_cw;
 	pctno_params.n_frames = enc_params.n_frames;
 
-	this->set_puncturer  (factory::Puncturer::build<B,Q>(pctno_params));
-	this->set_interleaver(factory::Interleaver_core::build<>(*itl_params.core));
+	this->set_puncturer  (pctno_params.build<B,Q>());
+	this->set_interleaver(itl_params.core->build<>());
 
 	int N_cw_p = enc_params.sub->N_cw + (dec_params.parity_extended ? 1 : 0);
 	enc_params.sub->n_frames = N_cw_p;
 
-	enc_bch_rows.reset(factory::Encoder_BCH::build<B>(*enc_params.sub, GF_poly));
+	enc_bch_rows.reset(enc_params.sub->build<B>(GF_poly));
 	// enc_bch_rows->set_memorizing(dec_params.sub->implem == "GENIUS");
 
-	enc_bch_cols.reset(factory::Encoder_BCH::build<B>(*enc_params.sub, GF_poly));
+	enc_bch_cols.reset(enc_params.sub->build<B>(GF_poly));
 	// enc_bch_cols->set_memorizing(dec_params.sub->implem == "GENIUS");
-
 
 	dec_params.sub->n_frames = N_cw_p;
 
-	dec_bch_rows.reset(dynamic_cast<Decoder_BCH<B,Q>*>(factory::Decoder_BCH::build_hiho<B,Q>(*dec_params.sub, GF_poly)));
-	dec_bch_cols.reset(dynamic_cast<Decoder_BCH<B,Q>*>(factory::Decoder_BCH::build_hiho<B,Q>(*dec_params.sub, GF_poly)));
-
+	dec_bch_rows.reset(dynamic_cast<Decoder_BCH<B,Q>*>(dec_params.sub->build_hiho<B,Q>(GF_poly)));
+	dec_bch_cols.reset(dynamic_cast<Decoder_BCH<B,Q>*>(dec_params.sub->build_hiho<B,Q>(GF_poly)));
 
 	if (dec_params.implem == "FAST")
 	{
-		cp_rows.reset(new Decoder_chase_pyndiah_fast<B,Q>(dec_bch_rows->get_K(), N_cw_p, N_cw_p,
-		                                                  *dec_bch_rows, *enc_bch_rows,
-		                                                  dec_params.n_least_reliable_positions,
-		                                                  dec_params.n_test_vectors,
-		                                                  dec_params.n_competitors,
-		                                                  dec_params.cp_coef));
+		dec_cp_rows.reset(new Decoder_chase_pyndiah_fast<B,Q>(dec_bch_rows->get_K(), N_cw_p, N_cw_p,
+		                                                      *dec_bch_rows, *enc_bch_rows,
+		                                                      dec_params.n_least_reliable_positions,
+		                                                      dec_params.n_test_vectors,
+		                                                      dec_params.n_competitors,
+		                                                      dec_params.cp_coef));
 
-		cp_cols.reset(new Decoder_chase_pyndiah_fast<B,Q>(dec_bch_cols->get_K(), N_cw_p, N_cw_p,
-		                                                  *dec_bch_cols, *enc_bch_cols,
-		                                                  dec_params.n_least_reliable_positions,
-		                                                  dec_params.n_test_vectors,
-		                                                  dec_params.n_competitors,
-		                                                  dec_params.cp_coef));
+		dec_cp_cols.reset(new Decoder_chase_pyndiah_fast<B,Q>(dec_bch_cols->get_K(), N_cw_p, N_cw_p,
+		                                                      *dec_bch_cols, *enc_bch_cols,
+		                                                      dec_params.n_least_reliable_positions,
+		                                                      dec_params.n_test_vectors,
+		                                                      dec_params.n_competitors,
+		                                                      dec_params.cp_coef));
 	}
 	else
 	{
-		cp_rows.reset(new Decoder_chase_pyndiah<B,Q>(dec_bch_rows->get_K(), N_cw_p, N_cw_p,
-		                                                  *dec_bch_rows, *enc_bch_rows,
-		                                                  dec_params.n_least_reliable_positions,
-		                                                  dec_params.n_test_vectors,
-		                                                  dec_params.n_competitors,
-		                                                  dec_params.cp_coef));
+		dec_cp_rows.reset(new Decoder_chase_pyndiah<B,Q>(dec_bch_rows->get_K(), N_cw_p, N_cw_p,
+		                                                 *dec_bch_rows, *enc_bch_rows,
+		                                                 dec_params.n_least_reliable_positions,
+		                                                 dec_params.n_test_vectors,
+		                                                 dec_params.n_competitors,
+		                                                 dec_params.cp_coef));
 
-		cp_cols.reset(new Decoder_chase_pyndiah<B,Q>(dec_bch_cols->get_K(), N_cw_p, N_cw_p,
-		                                                  *dec_bch_cols, *enc_bch_cols,
-		                                                  dec_params.n_least_reliable_positions,
-		                                                  dec_params.n_test_vectors,
-		                                                  dec_params.n_competitors,
-		                                                  dec_params.cp_coef));
+		dec_cp_cols.reset(new Decoder_chase_pyndiah<B,Q>(dec_bch_cols->get_K(), N_cw_p, N_cw_p,
+		                                                 *dec_bch_cols, *enc_bch_cols,
+		                                                 dec_params.n_least_reliable_positions,
+		                                                 dec_params.n_test_vectors,
+		                                                 dec_params.n_competitors,
+		                                                 dec_params.cp_coef));
 	}
 
 	(*const_cast<std::string*>(&dec_params.implem)) = "STD";
 
 	try
 	{
-		this->set_encoder(factory::Encoder_turbo_product::build<B>(enc_params, this->get_interleaver_bit(), *enc_bch_rows, *enc_bch_cols));
+		this->set_encoder(enc_params.build<B>(this->get_interleaver_bit(), *enc_bch_rows, *enc_bch_cols));
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_encoder(factory::Encoder::build<B>(enc_params));
+		this->set_encoder(static_cast<const factory::Encoder*>(&enc_params)->build<B>());
 	}
 
 	try
 	{
-		this->set_decoder_siso_siho(factory::Decoder_turbo_product::build_siso<B,Q>(dec_params, this->get_interleaver_llr(), *cp_rows, *cp_cols));
+		this->set_decoder_siso_siho(dec_params.build_siso<B,Q>(this->get_interleaver_llr(), *dec_cp_rows, *dec_cp_cols));
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_decoder_siho(factory::Decoder_turbo_product::build<B,Q>(dec_params, this->get_interleaver_llr(), *cp_rows, *cp_cols));
+		this->set_decoder_siho(dec_params.build<B,Q>(this->get_interleaver_llr(), *dec_cp_rows, *dec_cp_cols));
 	}
+}
+
+template <typename B, typename Q>
+const tools::BCH_polynomial_generator<B>& Codec_turbo_product<B,Q>
+::get_GF_poly() const
+{
+	return this->GF_poly;
+}
+
+template <typename B, typename Q>
+const Encoder_BCH<B>& Codec_turbo_product<B,Q>
+::get_encoder_BCH_rows() const
+{
+	if (this->enc_bch_rows == nullptr)
+	{
+		std::stringstream message;
+		message << "'enc_bch_rows' can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->enc_bch_rows.get();
+}
+
+template <typename B, typename Q>
+const Encoder_BCH<B>& Codec_turbo_product<B,Q>
+::get_encoder_BCH_cols() const
+{
+	if (this->enc_bch_cols == nullptr)
+	{
+		std::stringstream message;
+		message << "'enc_bch_cols' can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->enc_bch_cols.get();
+}
+
+template <typename B, typename Q>
+const Decoder_BCH<B,Q>& Codec_turbo_product<B,Q>
+::get_decoder_BCH_rows() const
+{
+	if (this->dec_bch_rows == nullptr)
+	{
+		std::stringstream message;
+		message << "'dec_bch_rows' can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->dec_bch_rows.get();
+}
+
+template <typename B, typename Q>
+const Decoder_BCH<B,Q>& Codec_turbo_product<B,Q>
+::get_decoder_BCH_cols() const
+{
+	if (this->dec_bch_cols == nullptr)
+	{
+		std::stringstream message;
+		message << "'dec_bch_cols' can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->dec_bch_cols.get();
+}
+
+template <typename B, typename Q>
+const Decoder_chase_pyndiah<B,Q>& Codec_turbo_product<B,Q>
+::get_decoder_chase_pyndiah_rows() const
+{
+	if (this->dec_cp_rows == nullptr)
+	{
+		std::stringstream message;
+		message << "'dec_cp_rows' can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->dec_cp_rows.get();
+}
+
+template <typename B, typename Q>
+const Decoder_chase_pyndiah<B,Q>& Codec_turbo_product<B,Q>
+::get_decoder_chase_pyndiah_cols() const
+{
+	if (this->dec_cp_cols == nullptr)
+	{
+		std::stringstream message;
+		message << "'dec_cp_cols' can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->dec_cp_cols.get();
 }
 
 // ==================================================================================== explicit template instantiation

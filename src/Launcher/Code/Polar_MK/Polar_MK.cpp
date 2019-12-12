@@ -1,5 +1,4 @@
 #include <type_traits>
-#include <mipp.h>
 
 #include "Launcher/Simulation/BFER_std.hpp"
 #include "Factory/Module/Codec/Polar_MK/Codec_polar_MK.hpp"
@@ -11,7 +10,7 @@ using namespace aff3ct::launcher;
 template <class L, typename B, typename R, typename Q>
 Polar_MK<L,B,R,Q>
 ::Polar_MK(const int argc, const char **argv, std::ostream &stream)
-: L(argc, argv, stream), params_cdc(new factory::Codec_polar_MK::parameters("cdc"))
+: L(argc, argv, stream), params_cdc(new factory::Codec_polar_MK("cdc"))
 {
 	this->params.set_cdc(params_cdc);
 }

@@ -137,8 +137,8 @@ def check_keys(keys_file, aff3ct_path, doc_path):
 			not_in_doc_keys.append(k)
 
 	# manages special key exceptions
-	exceptions_not_in_doc_keys = ["factory::Frozenbits_generator::parameters::p+pb-path"]
-	exceptions_doc_keys = ["factory::BFER::parameters::p+mpi-comm-freq", "factory::Launcher::parameters::except-a2l"]
+	exceptions_not_in_doc_keys = ["factory::Frozenbits_generator::p+pb-path"]
+	exceptions_doc_keys = ["factory::BFER::p+mpi-comm-freq", "factory::Launcher::except-a2l"]
 	for e in exceptions_not_in_doc_keys:
 		if e in not_in_doc_keys: not_in_doc_keys.remove(e)
 	for e in exceptions_doc_keys:
@@ -163,9 +163,9 @@ def check_keys(keys_file, aff3ct_path, doc_path):
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
-	parser.add_argument('--keys',   action='store', dest='keys_file',   type=str, default='doc/sphinx/strings.rst')
+	parser.add_argument('--keys',   action='store', dest='keys_file',   type=str, default='doc/strings.rst')
 	parser.add_argument('--aff3ct', action='store', dest='aff3ct_path', type=str, default='build/bin/aff3ct')
-	parser.add_argument('--doc',    action='store', dest='doc_path',    type=str, default='doc/sphinx/source/user/simulation/parameters/')
+	parser.add_argument('--doc',    action='store', dest='doc_path',    type=str, default='doc/source/user/simulation/parameters/')
 
 	args = parser.parse_args()
 

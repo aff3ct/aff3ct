@@ -9,7 +9,7 @@ using namespace aff3ct::launcher;
 template <class L, typename B, typename R, typename Q>
 Repetition<L,B,R,Q>
 ::Repetition(const int argc, const char **argv, std::ostream &stream)
-: L(argc, argv, stream), params_cdc(new factory::Codec_repetition::parameters("cdc"))
+: L(argc, argv, stream), params_cdc(new factory::Codec_repetition("cdc"))
 {
 	this->params.set_cdc(params_cdc);
 }

@@ -14,10 +14,10 @@ using namespace aff3ct::module;
 
 template <typename B, typename Q>
 Codec_polar_MK<B,Q>
-::Codec_polar_MK(const factory::Polar_code             ::parameters &pc_params,
-                 const factory::Frozenbits_generator_MK::parameters &fb_params,
-                 const factory::Encoder_polar_MK       ::parameters &enc_params,
-                 const factory::Decoder_polar_MK       ::parameters &dec_params,
+::Codec_polar_MK(const factory::Polar_code              &pc_params,
+                 const factory::Frozenbits_generator_MK &fb_params,
+                 const factory::Encoder_polar_MK        &enc_params,
+                 const factory::Decoder_polar_MK        &dec_params,
                  CRC<B>* crc)
 : Codec     <B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
@@ -56,35 +56,34 @@ Codec_polar_MK<B,Q>
 
 	// ---------------------------------------------------------------------------------------------------------- tools
 	// build the polar code
-	code.reset(factory::Polar_code::build(pc_params));
+	code.reset(pc_params.build());
 
 	// build the frozen bits generator
-	fb_generator.reset(factory::Frozenbits_generator_MK::build(fb_params, *code.get()));
+	fb_generator.reset(fb_params.build(*code.get()));
 
 	// ---------------------------------------------------------------------------------------------------- allocations
-	factory::Puncturer::parameters pct_params;
+	factory::Puncturer pct_params;
 	pct_params.type     = "NO";
 	pct_params.K        = enc_params.K;
 	pct_params.N        = enc_params.N_cw;
 	pct_params.N_cw     = enc_params.N_cw;
 	pct_params.n_frames = enc_params.n_frames;
 
-	this->set_puncturer(factory::Puncturer::build<B,Q>(pct_params));
+	this->set_puncturer(pct_params.build<B,Q>());
 
 	std::fill(frozen_bits.begin(), frozen_bits.begin() + this->K, false);
 
 	try
 	{
-		this->set_encoder(factory::Encoder_polar_MK::build<B>(enc_params, *code.get(), frozen_bits));
+		this->set_encoder(enc_params.build<B>(*code.get(), frozen_bits));
 		fb_encoder = dynamic_cast<tools::Frozenbits_notifier*>(this->get_encoder().get());
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		this->set_encoder(factory::Encoder::build<B>(enc_params));
+		this->set_encoder(static_cast<const factory::Encoder*>(&enc_params)->build<B>());
 	}
 
-	this->set_decoder_siho(factory::Decoder_polar_MK::build<B,Q>(dec_params, *code.get(), frozen_bits, crc,
-	                                                             this->get_encoder()));
+	this->set_decoder_siho(dec_params.build<B,Q>(*code.get(), frozen_bits, crc, this->get_encoder()));
 	this->fb_decoder = dynamic_cast<tools::Frozenbits_notifier*>(this->get_decoder_siho().get());
 
 	// ------------------------------------------------------------------------------------------------- frozen bit gen

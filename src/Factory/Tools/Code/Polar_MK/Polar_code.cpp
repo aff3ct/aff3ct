@@ -14,16 +14,16 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Polar_code_name   = "Polar code";
 const std::string aff3ct::factory::Polar_code_prefix = "pc";
 
-Polar_code::parameters
-::parameters(const std::string &prefix)
-: Factory::parameters(Polar_code_name, Polar_code_name, prefix)
+Polar_code
+::Polar_code(const std::string &prefix)
+: Factory(Polar_code_name, Polar_code_name, prefix)
 {
 }
 
-Polar_code::parameters* Polar_code::parameters
+Polar_code* Polar_code
 ::clone() const
 {
-	return new Polar_code::parameters(*this);
+	return new Polar_code(*this);
 }
 
 struct sub_same_length
@@ -37,11 +37,11 @@ struct sub_same_length
 	}
 };
 
-void Polar_code::parameters
+void Polar_code
 ::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Polar_code::parameters::";
+	const std::string class_name = "factory::Polar_code::";
 
 	tools::add_arg(args, p, class_name+"p+cw-size,N",
 		cli::Integer(cli::Positive(), cli::Non_zero()),
@@ -56,7 +56,7 @@ void Polar_code::parameters
 		cli::File(cli::openmode::read));
 }
 
-void Polar_code::parameters
+void Polar_code
 ::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
@@ -66,8 +66,8 @@ void Polar_code::parameters
 	if(vals.exist({p+"-path"        })) this->code_path     = vals.to_file                   ({p+"-path"        });
 }
 
-void Polar_code::parameters
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+void Polar_code
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
 	auto p = this->get_prefix();
 
@@ -100,17 +100,11 @@ void Polar_code::parameters
 	}
 }
 
-tools::Polar_code* Polar_code::parameters
+tools::Polar_code* Polar_code
 ::build() const
 {
 	if (this->code_path.empty()) return new tools::Polar_code(this->N_cw, this->kernel_matrix);
 	else                         return new tools::Polar_code(this->code_path);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
-}
-
-tools::Polar_code* Polar_code
-::build(const parameters &params)
-{
-	return params.build();
 }

@@ -1,8 +1,10 @@
 #include <string>
 #include <sstream>
+#include <numeric>
 
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Math/utils.h"
 #include "Module/Decoder/LDPC/BP/Flooding/Gallager/Decoder_LDPC_BP_flooding_Gallager_A.hpp"
 
 using namespace aff3ct;
@@ -11,11 +13,12 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::Decoder_LDPC_BP_flooding_Gallager_A(const int K, const int N, const int n_ite, const tools::Sparse_matrix &_H,
-                                      const std::vector<unsigned> &info_bits_pos, const bool enable_syndrome,
-                                      const int syndrome_depth, const int n_frames)
+                                      const std::vector<unsigned> &info_bits_pos, const bool transform_HY_N,
+                                      const bool enable_syndrome, const int syndrome_depth, const int n_frames)
 : Decoder               (K, N, n_frames, 1                               ),
   Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1                               ),
   Decoder_LDPC_BP       (K, N, n_ite, _H, enable_syndrome, syndrome_depth),
+  transform_HY_N        (transform_HY_N                                  ),
   info_bits_pos         (info_bits_pos                                   ),
   HY_N                  (N                                               ),
   V_N                   (N                                               ),
@@ -60,11 +63,32 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 }
 
 template <typename B, typename R>
+Decoder_LDPC_BP_flooding_Gallager_A<B,R>
+::Decoder_LDPC_BP_flooding_Gallager_A(const int K, const int N, const int n_ite, const tools::Sparse_matrix &_H,
+                                      const std::vector<unsigned> &info_bits_pos, const bool enable_syndrome,
+                                      const int syndrome_depth, const int n_frames)
+: Decoder_LDPC_BP_flooding_Gallager_A<B,R>(K, N, n_ite, _H, info_bits_pos, false, enable_syndrome, syndrome_depth, n_frames)
+{
+}
+
+template <typename B, typename R>
 void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 {
+//	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
+	if (this->transform_HY_N)
+		// useful for the Gallager E
+		std::transform(Y_N, Y_N + this->N, HY_N.begin(), [&](const B& in)
+		{
+			return B(1) - (in + in);
+		});
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
+
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_decode(Y_N);
+	if (this->transform_HY_N)
+		this->_decode(HY_N.data());
+	else
+		this->_decode(Y_N);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -72,6 +96,7 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 		V_K[i] = (B)this->V_N[this->info_bits_pos[i]];
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
+//	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
 //	(*this)[dec::tsk::decode_hiho].update_timer(dec::tm::decode_hiho::decode, d_decod);
 //	(*this)[dec::tsk::decode_hiho].update_timer(dec::tm::decode_hiho::store,  d_store);
 }
@@ -80,14 +105,27 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
 {
+//	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
+	if (this->transform_HY_N)
+		// useful for the Gallager E
+		std::transform(Y_N, Y_N + this->N, HY_N.begin(), [&](const B& in)
+		{
+			return B(1) - (in + in);
+		});
+//	auto d_load = std::chrono::steady_clock::now() - t_load;
+
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_decode(Y_N);
+	if (this->transform_HY_N)
+		this->_decode(HY_N.data());
+	else
+		this->_decode(Y_N);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	std::copy(this->V_N.begin(), this->V_N.begin() + this->N, V_N);
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
+//	(*this)[dec::tsk::decode_siho   ].update_timer(dec::tm::decode_siho::load,      d_load);
 //	(*this)[dec::tsk::decode_hiho_cw].update_timer(dec::tm::decode_hiho_cw::decode, d_decod);
 //	(*this)[dec::tsk::decode_hiho_cw].update_timer(dec::tm::decode_hiho_cw::store,  d_store);
 }
@@ -98,6 +136,12 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 {
 //	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
 	tools::hard_decide(Y_N, HY_N.data(), this->N);
+	if (this->transform_HY_N)
+		// useful for the Gallager E
+		std::transform(HY_N.begin(), HY_N.end(), HY_N.begin(), [&](const B& in)
+		{
+			return B(1) - (in + in);
+		});
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
@@ -120,6 +164,12 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 {
 //	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
 	tools::hard_decide(Y_N, HY_N.data(), this->N);
+	if (this->transform_HY_N)
+		// useful for the Gallager E
+		std::transform(HY_N.begin(), HY_N.end(), HY_N.begin(), [&](const B& in)
+		{
+			return B(1) - (in + in);
+		});
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
@@ -142,7 +192,7 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 	auto ite = 0;
 	for (; ite < this->n_ite; ite++)
 	{
-		this->_initialize_var_to_chk(Y_N, chk_to_var, var_to_chk, ite == 0);
+		this->_initialize_var_to_chk(Y_N, chk_to_var, var_to_chk, ite);
 		this->_decode_single_ite(this->var_to_chk, this->chk_to_var);
 
 		if (this->enable_syndrome && ite != this->n_ite -1)
@@ -160,31 +210,36 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 template <typename B, typename R>
 void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::_initialize_var_to_chk(const B *Y_N, const std::vector<int8_t> &chk_to_var, std::vector<int8_t> &var_to_chk,
-                         const bool first_ite)
+                         const int ite)
 {
 	auto chk_to_var_ptr = chk_to_var.data();
 	auto var_to_chk_ptr = var_to_chk.data();
+
+	const bool first_ite = ite == 0;
 
 	// for each variable nodes
 	const auto n_var_nodes = (int)this->H.get_n_rows();
 	for (auto v = 0; v < n_var_nodes; v++)
 	{
 		const auto var_degree = (int)this->H.get_row_to_cols()[v].size();
+		const auto cur_state = (int8_t)Y_N[v];
 
-		for (auto c = 0; c < var_degree; c++)
+		if (first_ite)
 		{
-			auto cur_state = Y_N[v];
-			if (!first_ite)
+			std::fill(var_to_chk_ptr, var_to_chk_ptr + var_degree, cur_state);
+		}
+		else
+		{
+			// algorithm from the Ryan & Lin book, "Channel codes: Classical and modern", sec. 5.7.3
+			const auto n_ones = std::accumulate(chk_to_var_ptr, chk_to_var_ptr + var_degree, 0);
+			const auto n_zeros = var_degree - n_ones;
+			for (auto c = 0; c < var_degree; c++)
 			{
-				auto count = 0;
-				for (auto cc = 0; cc < var_degree; cc++)
-					if (cc != c && chk_to_var_ptr[cc] != cur_state)
-						count++;
-
-				cur_state = count == (var_degree -1) ? !cur_state : cur_state;
+				auto diff = cur_state ? n_zeros : n_ones;
+				diff = cur_state != chk_to_var_ptr[c] ? diff -1 : diff;
+				const auto new_state = diff == var_degree -1 && var_degree != 1 ? !cur_state : cur_state;
+				var_to_chk_ptr[c] = new_state;
 			}
-
-			var_to_chk_ptr[c] = (int8_t)cur_state;
 		}
 
 		chk_to_var_ptr += var_degree;
@@ -226,18 +281,22 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 	for (auto v = 0; v < n_var_nodes; v++)
 	{
 		const auto var_degree = (int)this->H.get_row_to_cols()[v].size();
-		auto count = 0;
-
-		for (auto c = 0; c < var_degree; c++)
-			count += chk_to_var_ptr[c] ? 1 : -1;
-
-		if (var_degree % 2 == 0)
-			count += Y_N[v] ? 1 : -1;
-
-		// take the hard decision
-		V_N[v] = count > 0 ? 1 : 0;
-
+		const auto cur_state = Y_N[v];
+		const auto n_ones = std::accumulate(chk_to_var_ptr, chk_to_var_ptr + var_degree, (int)0);
+		const auto n_zero = var_degree - n_ones;
+		const auto n_z_m_o = n_zero - n_ones;
+		V_N[v] = n_z_m_o == 0 ? (int8_t)cur_state : (int8_t)tools::signbit(n_z_m_o);
 		chk_to_var_ptr += var_degree;
+
+		// // naive version of the majority vote
+		// const auto var_degree = (int)this->H.get_row_to_cols()[v].size();
+		// auto count = 0;
+		// for (auto c = 0; c < var_degree; c++)
+		// 	count += chk_to_var_ptr[c] ? 1 : -1;
+		// if (var_degree % 2 == 0)
+		// 	count += Y_N[v] ? 1 : -1;
+		// V_N[v] = count > 0 ? 1 : 0;
+		// chk_to_var_ptr += var_degree;
 	}
 }
 

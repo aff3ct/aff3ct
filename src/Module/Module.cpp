@@ -70,12 +70,6 @@ void Module
 }
 
 Task& Module
-::operator[](const int id)
-{
-	return *tasks_with_nullptr[id];
-}
-
-Task& Module
 ::create_task(const std::string &name, const int id)
 {
 	bool autoalloc = false, autoexec = false, stats = false, fast = false, debug = false;
@@ -104,7 +98,7 @@ Task& Module
 }
 
 void Module
-::create_codelet(Task& task, std::function<int(void)> codelet)
+::create_codelet(Task& task, std::function<int(Task &t)> codelet)
 {
 	task.create_codelet(codelet);
 }

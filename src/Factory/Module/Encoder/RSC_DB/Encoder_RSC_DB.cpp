@@ -10,26 +10,26 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Encoder_RSC_DB_name   = "Encoder RSC DB";
 const std::string aff3ct::factory::Encoder_RSC_DB_prefix = "enc";
 
-Encoder_RSC_DB::parameters
-::parameters(const std::string &prefix)
-: Encoder::parameters(Encoder_RSC_DB_name, prefix)
+Encoder_RSC_DB
+::Encoder_RSC_DB(const std::string &prefix)
+: Encoder(Encoder_RSC_DB_name, prefix)
 {
 	this->type = "RSC_DB";
 }
 
-Encoder_RSC_DB::parameters* Encoder_RSC_DB::parameters
+Encoder_RSC_DB* Encoder_RSC_DB
 ::clone() const
 {
-	return new Encoder_RSC_DB::parameters(*this);
+	return new Encoder_RSC_DB(*this);
 }
 
-void Encoder_RSC_DB::parameters
+void Encoder_RSC_DB
 ::get_description(cli::Argument_map_info &args) const
 {
-	Encoder::parameters::get_description(args);
+	Encoder::get_description(args);
 
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Encoder_RSC_DB::parameters::";
+	const std::string class_name = "factory::Encoder_RSC_DB::";
 
 	args.erase({p+"-cw-size", "N"});
 
@@ -42,10 +42,10 @@ void Encoder_RSC_DB::parameters
 		cli::None());
 }
 
-void Encoder_RSC_DB::parameters
+void Encoder_RSC_DB
 ::store(const cli::Argument_map_value &vals)
 {
-	Encoder::parameters::store(vals);
+	Encoder::store(vals);
 
 	auto p = this->get_prefix();
 
@@ -56,10 +56,10 @@ void Encoder_RSC_DB::parameters
 	this->R    = (float)this->K / (float)this->N_cw;
 }
 
-void Encoder_RSC_DB::parameters
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+void Encoder_RSC_DB
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
-	Encoder::parameters::get_headers(headers, full);
+	Encoder::get_headers(headers, full);
 
 	auto p = this->get_prefix();
 
@@ -70,7 +70,7 @@ void Encoder_RSC_DB::parameters
 }
 
 template <typename B>
-module::Encoder_RSC_DB<B>* Encoder_RSC_DB::parameters
+module::Encoder_RSC_DB<B>* Encoder_RSC_DB
 ::build() const
 {
 	if (this->type == "RSC_DB") return new module::Encoder_RSC_DB<B>(this->K, this->N_cw, this->standard, this->buffered, this->n_frames);
@@ -78,26 +78,14 @@ module::Encoder_RSC_DB<B>* Encoder_RSC_DB::parameters
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B>
-module::Encoder_RSC_DB<B>* Encoder_RSC_DB
-::build(const parameters &params)
-{
-	return params.template build<B>();
-}
-
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Encoder_RSC_DB<B_8 >* aff3ct::factory::Encoder_RSC_DB::parameters::build<B_8 >() const;
-template aff3ct::module::Encoder_RSC_DB<B_16>* aff3ct::factory::Encoder_RSC_DB::parameters::build<B_16>() const;
-template aff3ct::module::Encoder_RSC_DB<B_32>* aff3ct::factory::Encoder_RSC_DB::parameters::build<B_32>() const;
-template aff3ct::module::Encoder_RSC_DB<B_64>* aff3ct::factory::Encoder_RSC_DB::parameters::build<B_64>() const;
-template aff3ct::module::Encoder_RSC_DB<B_8 >* aff3ct::factory::Encoder_RSC_DB::build<B_8 >(const aff3ct::factory::Encoder_RSC_DB::parameters&);
-template aff3ct::module::Encoder_RSC_DB<B_16>* aff3ct::factory::Encoder_RSC_DB::build<B_16>(const aff3ct::factory::Encoder_RSC_DB::parameters&);
-template aff3ct::module::Encoder_RSC_DB<B_32>* aff3ct::factory::Encoder_RSC_DB::build<B_32>(const aff3ct::factory::Encoder_RSC_DB::parameters&);
-template aff3ct::module::Encoder_RSC_DB<B_64>* aff3ct::factory::Encoder_RSC_DB::build<B_64>(const aff3ct::factory::Encoder_RSC_DB::parameters&);
+template aff3ct::module::Encoder_RSC_DB<B_8 >* aff3ct::factory::Encoder_RSC_DB::build<B_8 >() const;
+template aff3ct::module::Encoder_RSC_DB<B_16>* aff3ct::factory::Encoder_RSC_DB::build<B_16>() const;
+template aff3ct::module::Encoder_RSC_DB<B_32>* aff3ct::factory::Encoder_RSC_DB::build<B_32>() const;
+template aff3ct::module::Encoder_RSC_DB<B_64>* aff3ct::factory::Encoder_RSC_DB::build<B_64>() const;
 #else
-template aff3ct::module::Encoder_RSC_DB<B>* aff3ct::factory::Encoder_RSC_DB::parameters::build<B>() const;
-template aff3ct::module::Encoder_RSC_DB<B>* aff3ct::factory::Encoder_RSC_DB::build<B>(const aff3ct::factory::Encoder_RSC_DB::parameters&);
+template aff3ct::module::Encoder_RSC_DB<B>* aff3ct::factory::Encoder_RSC_DB::build<B>() const;
 #endif
 // ==================================================================================== explicit template instantiation

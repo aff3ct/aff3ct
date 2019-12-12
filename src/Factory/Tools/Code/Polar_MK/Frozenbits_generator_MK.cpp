@@ -13,23 +13,23 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Frozenbits_generator_MK_name   = "Frozen bits generator MK";
 const std::string aff3ct::factory::Frozenbits_generator_MK_prefix = "fbg";
 
-Frozenbits_generator_MK::parameters
-::parameters(const std::string &prefix)
-: Factory::parameters(Frozenbits_generator_MK_name, Frozenbits_generator_MK_name, prefix)
+Frozenbits_generator_MK
+::Frozenbits_generator_MK(const std::string &prefix)
+: Factory(Frozenbits_generator_MK_name, Frozenbits_generator_MK_name, prefix)
 {
 }
 
-Frozenbits_generator_MK::parameters* Frozenbits_generator_MK::parameters
+Frozenbits_generator_MK* Frozenbits_generator_MK
 ::clone() const
 {
-	return new Frozenbits_generator_MK::parameters(*this);
+	return new Frozenbits_generator_MK(*this);
 }
 
-void Frozenbits_generator_MK::parameters
+void Frozenbits_generator_MK
 ::get_description(cli::Argument_map_info &args) const
 {
 	auto p = this->get_prefix();
-	const std::string class_name = "factory::Frozenbits_generator_MK::parameters::";
+	const std::string class_name = "factory::Frozenbits_generator_MK::";
 
 	tools::add_arg(args, p, class_name+"p+info-bits,K",
 		cli::Integer(cli::Positive(), cli::Non_zero()),
@@ -52,7 +52,7 @@ void Frozenbits_generator_MK::parameters
 		cli::Folder(cli::openmode::write));
 }
 
-void Frozenbits_generator_MK::parameters
+void Frozenbits_generator_MK
 ::store(const cli::Argument_map_value &vals)
 {
 	auto p = this->get_prefix();
@@ -65,8 +65,8 @@ void Frozenbits_generator_MK::parameters
 	if(vals.exist({p+"-dump-path"     })) this->dump_channels_path = vals.to_folder({p+"-dump-path"     });
 }
 
-void Frozenbits_generator_MK::parameters
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+void Frozenbits_generator_MK
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
 	auto p = this->get_prefix();
 
@@ -80,7 +80,7 @@ void Frozenbits_generator_MK::parameters
 		headers[p].push_back(std::make_pair("Dump channels path", this->dump_channels_path));
 }
 
-tools::Frozenbits_generator* Frozenbits_generator_MK::parameters
+tools::Frozenbits_generator* Frozenbits_generator_MK
 ::build(const tools::Polar_code &pc) const
 {
 	if (this->type == "GAA" && pc.is_mono_kernel() == 2) return new tools::Frozenbits_generator_GA_Arikan(this->K, this->N_cw,     this->dump_channels_path);
@@ -88,10 +88,4 @@ tools::Frozenbits_generator* Frozenbits_generator_MK::parameters
 	if (this->type == "FILE"                           ) return new tools::Frozenbits_generator_file     (this->K, this->N_cw,     this->path_fb           );
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
-}
-
-tools::Frozenbits_generator* Frozenbits_generator_MK
-::build(const parameters &params, const tools::Polar_code &pc)
-{
-	return params.build(pc);
 }

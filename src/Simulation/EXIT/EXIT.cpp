@@ -25,7 +25,7 @@ using namespace aff3ct::simulation;
 
 template <typename B, typename R>
 EXIT<B,R>
-::EXIT(const factory::EXIT::parameters& params_EXIT)
+::EXIT(const factory::EXIT& params_EXIT)
 : Simulation (params_EXIT),
   params_EXIT(params_EXIT),
   sig_a      ((R)0       )
@@ -373,7 +373,7 @@ template <typename B, typename R>
 std::unique_ptr<module::Modem<B,R>> EXIT<B,R>
 ::build_modem_a()
 {
-	std::unique_ptr<factory::Modem::parameters> mdm_params(params_EXIT.mdm->clone());
+	std::unique_ptr<factory::Modem> mdm_params(params_EXIT.mdm->clone());
 	mdm_params->N = params_EXIT.cdc->K;
 	return std::unique_ptr<module::Modem<B,R>>(mdm_params->template build<B,R>());
 }
@@ -389,7 +389,7 @@ template <typename B, typename R>
 std::unique_ptr<module::Channel<R>> EXIT<B,R>
 ::build_channel_a(const int size)
 {
-	std::unique_ptr<factory::Channel::parameters> chn_params(params_EXIT.chn->clone());
+	std::unique_ptr<factory::Channel> chn_params(params_EXIT.chn->clone());
 	chn_params->N   = factory::Modem::get_buffer_size_after_modulation(params_EXIT.mdm->type,
 	                                                                   params_EXIT.cdc->K,
 	                                                                   params_EXIT.mdm->bps,

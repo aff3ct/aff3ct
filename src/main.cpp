@@ -154,7 +154,7 @@ void print_version()
 	exit(EXIT_SUCCESS);
 }
 
-int read_arguments(const int argc, const char** argv, factory::Launcher::parameters &params)
+int read_arguments(const int argc, const char** argv, factory::Launcher &params)
 {
 	cli::Argument_handler ah(argc, argv);
 
@@ -208,7 +208,7 @@ int sc_main(int argc, char **argv)
 	MPI_Init(nullptr, nullptr);
 #endif
 
-	factory::Launcher::parameters params("sim");
+	factory::Launcher params("sim");
 	if (read_arguments(argc, (const char**)argv, params) == EXIT_FAILURE)
 		return EXIT_FAILURE;
 
@@ -218,14 +218,14 @@ int sc_main(int argc, char **argv)
 #ifdef AFF3CT_MULTI_PREC
 		switch (params.sim_prec)
 		{
-			case  8: launcher = factory::Launcher::build<B_8, R_8, Q_8 >(params, argc, (const char**)argv); break;
-			case 16: launcher = factory::Launcher::build<B_16,R_16,Q_16>(params, argc, (const char**)argv); break;
-			case 32: launcher = factory::Launcher::build<B_32,R_32,Q_32>(params, argc, (const char**)argv); break;
-			case 64: launcher = factory::Launcher::build<B_64,R_64,Q_64>(params, argc, (const char**)argv); break;
+			case  8: launcher = params.build<B_8, R_8, Q_8 >(argc, (const char**)argv); break;
+			case 16: launcher = params.build<B_16,R_16,Q_16>(argc, (const char**)argv); break;
+			case 32: launcher = params.build<B_32,R_32,Q_32>(argc, (const char**)argv); break;
+			case 64: launcher = params.build<B_64,R_64,Q_64>(argc, (const char**)argv); break;
 			default: launcher = nullptr; break;
 		}
 #else
-		launcher = factory::Launcher::build<B,R,Q>(params, argc, (const char**)argv);
+		launcher = params.build<B,R,Q>(argc, (const char**)argv);
 #endif
 		if (launcher != nullptr)
 		{

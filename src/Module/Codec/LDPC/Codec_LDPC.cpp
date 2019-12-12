@@ -14,9 +14,9 @@ using namespace aff3ct::module;
 
 template <typename B, typename Q>
 Codec_LDPC<B,Q>
-::Codec_LDPC(const factory::Encoder_LDPC  ::parameters &enc_params,
-             const factory::Decoder_LDPC  ::parameters &dec_params,
-                   factory::Puncturer_LDPC::parameters *pct_params)
+::Codec_LDPC(const factory::Encoder_LDPC   &enc_params,
+             const factory::Decoder_LDPC   &dec_params,
+                   factory::Puncturer_LDPC *pct_params)
 : Codec          <B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames),
   Codec_SISO_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.tail_length, enc_params.n_frames)
 {
@@ -82,7 +82,7 @@ Codec_LDPC<B,Q>
 	if (info_bits_pos.empty())
 	{
 		if (enc_params.type == "LDPC_H")
-			this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H));
+			this->set_encoder(enc_params.build<B>(G, H));
 	}
 	else
 	{
@@ -92,24 +92,24 @@ Codec_LDPC<B,Q>
 	// ---------------------------------------------------------------------------------------------------- allocations
 	if (pct_params == nullptr)
 	{
-		factory::Puncturer::parameters pctno_params;
+		factory::Puncturer pctno_params;
 		pctno_params.type     = "NO";
 		pctno_params.K        = enc_params.K;
 		pctno_params.N        = enc_params.N_cw;
 		pctno_params.N_cw     = enc_params.N_cw;
 		pctno_params.n_frames = enc_params.n_frames;
 
-		this->set_puncturer(factory::Puncturer::build<B,Q>(pctno_params));
+		this->set_puncturer(pctno_params.build<B,Q>());
 	}
 	else
 	{
 		try
 		{
-			this->set_puncturer(factory::Puncturer_LDPC::build<B,Q>(*pct_params));
+			this->set_puncturer(pct_params->build<B,Q>());
 		}
 		catch (tools::cannot_allocate const&)
 		{
-			this->set_puncturer(factory::Puncturer::build<B,Q>(*pct_params));
+			this->set_puncturer(static_cast<const factory::Puncturer*>(pct_params)->build<B,Q>());
 		}
 	}
 
@@ -121,11 +121,11 @@ Codec_LDPC<B,Q>
 	{ // encoder not set when building encoder LDPC_H
 		try
 		{
-			this->set_encoder(factory::Encoder_LDPC::build<B>(enc_params, G, H, *dvbs2));
+			this->set_encoder(enc_params.build<B>(G, H, *dvbs2));
 		}
 		catch(tools::cannot_allocate const&)
 		{
-			this->set_encoder(factory::Encoder::build<B>(enc_params));
+			this->set_encoder(static_cast<const factory::Encoder*>(&enc_params)->build<B>());
 		}
 	}
 
@@ -145,12 +145,61 @@ Codec_LDPC<B,Q>
 
 	try
 	{
-		this->set_decoder_siso_siho(factory::Decoder_LDPC::build_siso<B,Q>(dec_params, H, info_bits_pos, this->get_encoder()));
+		this->set_decoder_siso_siho(dec_params.build_siso<B,Q>(H, info_bits_pos, this->get_encoder()));
 	}
 	catch (const std::exception&)
 	{
-		this->set_decoder_siho(factory::Decoder_LDPC::build<B,Q>(dec_params, H, info_bits_pos, this->get_encoder()));
+		this->set_decoder_siho(dec_params.build<B,Q>(H, info_bits_pos, this->get_encoder()));
 	}
+}
+
+template <typename B, typename Q>
+const tools::Sparse_matrix& Codec_LDPC<B,Q>
+::get_H() const
+{
+	if (this->H.size() == 0)
+	{
+		std::stringstream message;
+		message << "'H.size()' has to be strictly greater than 0 ('H.size()' = " << H.size() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return this->H;
+}
+
+template <typename B, typename Q>
+const tools::Sparse_matrix& Codec_LDPC<B,Q>
+::get_G() const
+{
+	if (this->G.size() == 0)
+	{
+		std::stringstream message;
+		message << "'G.size()' has to be strictly greater than 0 ('G.size()' = " << G.size() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return this->G;
+}
+
+template <typename B, typename Q>
+const tools::LDPC_matrix_handler::Positions_vector& Codec_LDPC<B,Q>
+::get_info_bits_pos() const
+{
+	return info_bits_pos;
+}
+
+template <typename B, typename Q>
+const tools::dvbs2_values& Codec_LDPC<B,Q>
+::get_DVBS2() const
+{
+	if (this->dvbs2 == nullptr)
+	{
+		std::stringstream message;
+		message << "'dvbs2' can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->dvbs2.get();
 }
 
 template <typename B, typename Q>

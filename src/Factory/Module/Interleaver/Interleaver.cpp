@@ -7,42 +7,35 @@ using namespace aff3ct::factory;
 const std::string aff3ct::factory::Interleaver_name   = "Interleaver";
 const std::string aff3ct::factory::Interleaver_prefix = "itl";
 
-Interleaver::parameters
-::parameters(const std::string &prefix)
-: Factory::parameters(Interleaver_name, Interleaver_name, prefix),
-  core(new factory::Interleaver_core::parameters(prefix))
+Interleaver
+::Interleaver(const std::string &prefix)
+: Factory(Interleaver_name, Interleaver_name, prefix),
+  core(new factory::Interleaver_core(prefix))
 {
 }
 
-Interleaver::parameters* Interleaver::parameters
+Interleaver* Interleaver
 ::clone() const
 {
-	return new Interleaver::parameters(*this);
+	return new Interleaver(*this);
 }
 
-void Interleaver::parameters
+void Interleaver
 ::get_description(cli::Argument_map_info &args) const
 {
 	core->get_description(args);
 }
 
-void Interleaver::parameters
+void Interleaver
 ::store(const cli::Argument_map_value &vals)
 {
 	core->store(vals);
 }
 
-void Interleaver::parameters
-::get_headers(std::map<std::string,header_list>& headers, const bool full) const
+void Interleaver
+::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
 	core->get_headers(headers, full);
-}
-
-template <typename D>
-module::Interleaver<D>* Interleaver::parameters
-::build(const tools::Interleaver_core<>& itl_core) const
-{
-	return new module::Interleaver<D>(itl_core);
 }
 
 template <typename D>
@@ -53,12 +46,6 @@ module::Interleaver<D>* Interleaver
 }
 
 // ==================================================================================== explicit template instantiation
-template aff3ct::module::Interleaver<int8_t >* aff3ct::factory::Interleaver::parameters::build<int8_t >(const aff3ct::tools::Interleaver_core<>&) const;
-template aff3ct::module::Interleaver<int16_t>* aff3ct::factory::Interleaver::parameters::build<int16_t>(const aff3ct::tools::Interleaver_core<>&) const;
-template aff3ct::module::Interleaver<int32_t>* aff3ct::factory::Interleaver::parameters::build<int32_t>(const aff3ct::tools::Interleaver_core<>&) const;
-template aff3ct::module::Interleaver<int64_t>* aff3ct::factory::Interleaver::parameters::build<int64_t>(const aff3ct::tools::Interleaver_core<>&) const;
-template aff3ct::module::Interleaver<float  >* aff3ct::factory::Interleaver::parameters::build<float  >(const aff3ct::tools::Interleaver_core<>&) const;
-template aff3ct::module::Interleaver<double >* aff3ct::factory::Interleaver::parameters::build<double >(const aff3ct::tools::Interleaver_core<>&) const;
 template aff3ct::module::Interleaver<int8_t >* aff3ct::factory::Interleaver::build<int8_t >(const aff3ct::tools::Interleaver_core<>&);
 template aff3ct::module::Interleaver<int16_t>* aff3ct::factory::Interleaver::build<int16_t>(const aff3ct::tools::Interleaver_core<>&);
 template aff3ct::module::Interleaver<int32_t>* aff3ct::factory::Interleaver::build<int32_t>(const aff3ct::tools::Interleaver_core<>&);
