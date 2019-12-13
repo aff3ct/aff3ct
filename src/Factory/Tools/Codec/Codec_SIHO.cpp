@@ -1,6 +1,7 @@
 #include "Factory/Tools/Codec/BCH/Codec_BCH.hpp"
 #include "Factory/Tools/Codec/LDPC/Codec_LDPC.hpp"
 #include "Factory/Tools/Codec/Polar/Codec_polar.hpp"
+#include "Factory/Tools/Codec/Polar_MK/Codec_polar_MK.hpp"
 #include "Factory/Tools/Codec/RA/Codec_RA.hpp"
 #include "Factory/Tools/Codec/Repetition/Codec_repetition.hpp"
 #include "Factory/Tools/Codec/RS/Codec_RS.hpp"
@@ -37,6 +38,7 @@ tools::Codec_SIHO<B,Q>* Codec_SIHO
 	if (get_name() == Codec_BCH_name          ) return dynamic_cast<const Codec_BCH          &>(*this).template build<B,Q>(crc);
 	if (get_name() == Codec_LDPC_name         ) return dynamic_cast<const Codec_LDPC         &>(*this).template build<B,Q>(crc);
 	if (get_name() == Codec_polar_name        ) return dynamic_cast<const Codec_polar        &>(*this).template build<B,Q>(crc);
+	if (get_name() == Codec_polar_MK_name     ) return dynamic_cast<const Codec_polar_MK     &>(*this).template build<B,Q>(crc);
 	if (get_name() == Codec_RA_name           ) return dynamic_cast<const Codec_RA           &>(*this).template build<B,Q>(crc);
 	if (get_name() == Codec_repetition_name   ) return dynamic_cast<const Codec_repetition   &>(*this).template build<B,Q>(crc);
 	if (get_name() == Codec_RS_name           ) return dynamic_cast<const Codec_RS           &>(*this).template build<B,Q>(crc);

@@ -5,7 +5,7 @@
 #ifndef BINARY_TREE_METRIC_HPP_
 #define BINARY_TREE_METRIC_HPP_
 
-#include "Tools/Algo/Tree/Binary_tree.hpp"
+#include "Tools/Algo/Tree/Binary/Binary_tree.hpp"
 
 namespace aff3ct
 {
@@ -61,7 +61,7 @@ public:
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#include "Tools/Algo/Tree/Binary_tree_metric.hxx"
+#include "Tools/Algo/Tree/Binary/Binary_tree_metric.hxx"
 #endif
 
 #endif /* BINARY_TREE_METRIC_HPP_ */

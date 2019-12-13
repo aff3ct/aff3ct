@@ -29,7 +29,7 @@ parser.add_argument('--build-path',     action='store', dest='buildPath',     ty
 parser.add_argument('--binary-path',    action='store', dest='binaryPath',    type=str,   default="bin/aff3ct",              help='Path to the AFF3CT binary.')
 parser.add_argument('--start-id',       action='store', dest='startId',       type=int,   default=1,                         help='Starting id to avoid computing results one again.')                                       # choices=xrange(1,   +inf)
 parser.add_argument('--sensibility',    action='store', dest='sensibility',   type=float, default=1.0,                       help='Sensibility on the difference between new vs ref to verify a noise point.')               # choices=xrange(1.0, +inf)
-parser.add_argument('--n-threads',      action='store', dest='nThreads',      type=int,   default=0,                         help='Number of threads to use in the simulation (0 = all available).')                         # choices=xrange(0,   +ing)
+parser.add_argument('--n-threads',      action='store', dest='nThreads',      type=int,   default=0,                         help='Max number of threads to use in the simulation (0 = all available).')                     # choices=xrange(0,   +ing)
 parser.add_argument('--recursive-scan', action='store', dest='recursiveScan', type=bool,  default=True,                      help='If enabled, scan the path of refs recursively.')
 parser.add_argument('--max-fe',         action='store', dest='maxFE',         type=int,   default=100,                       help='Maximum number of frames errors to simulate per noise point.')                            # choices=xrange(0,   +inf)
 parser.add_argument('--min-fe',         action='store', dest='minFE',         type=int,   default=50,                        help='Minimum number of frames errors to take into account the simulated noise point.')         # choices=xrange(0,   +inf)
@@ -370,6 +370,17 @@ for fn in fileNames:
 	argsAFFECT = argsAFFECTcommand[:] # hard copy
 	argsAFFECT += simuRef.getSplitCommand()
 	argsAFFECT[len(argsAFFECTcommand)] = args.binaryPath;
+
+	# overrides nThreads if the ref specifies an inferior number
+	if "-t" in argsAFFECT and argsAFFECT.index("-t") +1 < len(argsAFFECT):
+		try:
+			refsNThreads = int(argsAFFECT[argsAFFECT.index("-t") + 1])
+		except (ValueError, TypeError):
+			refsNThreads = args.nThreads
+
+		if args.nThreads == 0 or refsNThreads < args.nThreads:
+			args.nThreads = refsNThreads
+
 	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-meta", simuRef.getMetadata("title"), "--sim-chain"]
 	if args.maxFE:
 		argsAFFECT += ["-e", str(args.maxFE)]

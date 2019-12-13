@@ -7,7 +7,7 @@
 
 #include <string>
 
-#include "Tools/Algo/Tree/Binary_node.hpp"
+#include "Tools/Algo/Tree/Binary/Binary_node.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
 
 namespace aff3ct

@@ -53,6 +53,23 @@ constexpr inline bool is_power_of_2(T x);
 template <typename T>
 inline T next_power_of_2(T x);
 
+/* Returns 'true' if 'y' is a power of 'x' */
+template <typename T>
+bool is_power(T x, T y)
+{
+    // The only power of 1 is 1 itself
+    if (x == 1)
+        return (y == 1);
+
+    // Repeatedly comput power of x
+    T pow = 1;
+    while (pow < y)
+        pow *= x;
+
+    // Check if power of x becomes y
+    return (pow == y);
+}
+
 template <typename T>
 inline T greatest_common_divisor(T a, T b);
 

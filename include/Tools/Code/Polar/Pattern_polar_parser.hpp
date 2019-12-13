@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "Tools/Interface/Interface_notify_frozenbits_update.hpp"
-#include "Tools/Algo/Tree/Binary_tree.hpp"
+#include "Tools/Algo/Tree/Binary/Binary_tree.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
 
 namespace aff3ct

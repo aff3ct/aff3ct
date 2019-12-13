@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include "Tools/Algo/Tree/Binary_tree.hpp"
+#include "Tools/Algo/Tree/Binary/Binary_tree.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 #include "Module/CRC/CRC.hpp"
 #include "Module/Decoder/Polar/SCF/Decoder_polar_SCF_naive.hpp"

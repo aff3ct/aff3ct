@@ -8,7 +8,7 @@
 #include <memory>
 #include <vector>
 
-#include "Tools/Algo/Tree/Binary_node.hpp"
+#include "Tools/Algo/Tree/Binary/Binary_node.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 #include "Module/CRC/CRC.hpp"
 #include "Module/Decoder/Polar/SC/Decoder_polar_SC_naive.hpp"

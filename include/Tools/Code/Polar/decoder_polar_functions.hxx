@@ -304,5 +304,419 @@ inline int compute_depth(int index, int tree_depth)
 		return res;
 	}
 }
+
+template <typename B, typename R>
+std::map<std::vector<std::vector<bool>>,
+         std::vector<std::function<R(const std::vector<R> &LLRs, const std::vector<B> &bits)>>>
+Polar_lambdas_legacy<B,R>::functions = {
+{
+	{{1}},
+	{
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+		{
+			return LLRs[0];
+		}
+	}
+},
+{
+	{{1,0},
+	 {1,1}},
+	{
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+		{
+			auto sign = std::signbit((float)LLRs[0]) ^ std::signbit((float)LLRs[1]);
+			auto abs0 = (R)std::abs(LLRs[0]);
+			auto abs1 = (R)std::abs(LLRs[1]);
+			auto min = std::min(abs0, abs1);
+
+			return sign ? -min : min;
+		},
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+		{
+			return ((bits[0] == 0) ? LLRs[0] : -LLRs[0]) + LLRs[1];
+		}
+	}
+},
+{
+	{{1,1,1},
+	 {1,0,1},
+	 {0,1,1}},
+	{
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+		{
+			auto sign = std::signbit((float)LLRs[0]) ^ std::signbit((float)LLRs[1]) ^ std::signbit((float)LLRs[2]);
+			auto abs0 = (R)std::abs(LLRs[0]);
+			auto abs1 = (R)std::abs(LLRs[1]);
+			auto abs2 = (R)std::abs(LLRs[2]);
+			auto min = std::min(std::min(abs0, abs1), abs2);
+
+			return sign ? -min : min;
+		},
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+		{
+			auto sign = std::signbit((float)LLRs[1]) ^ std::signbit((float)LLRs[2]);
+			auto abs1 = (R)std::abs(LLRs[1]);
+			auto abs2 = (R)std::abs(LLRs[2]);
+			auto min = std::min(abs1, abs2);
+
+			auto l1_x_l2 = sign ? -min : min;
+
+			return ((bits[0] == 0) ? LLRs[0] : -LLRs[0]) + l1_x_l2;
+		},
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+		{
+			return (( bits[0]            == 0) ? LLRs[1] : -LLRs[1]) +
+			       (((bits[0] ^ bits[1]) == 0) ? LLRs[2] : -LLRs[2]);
+		}
+	}
+},
+{
+	{{1,0,0},
+	 {1,1,0},
+	 {1,0,1}},
+	{
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+		{
+			auto sign = std::signbit((float)LLRs[0]) ^ std::signbit((float)LLRs[1]) ^ std::signbit((float)LLRs[2]);
+			auto abs0 = (R)std::abs(LLRs[0]);
+			auto abs1 = (R)std::abs(LLRs[1]);
+			auto abs2 = (R)std::abs(LLRs[2]);
+			auto min = std::min(std::min(abs0, abs1), abs2);
+
+			return sign ? -min : min;
+		},
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+		{
+			auto hl0 = (bits[0] == 0) ? LLRs[0] : -LLRs[0];
+
+			auto sign = std::signbit((float)hl0) ^ std::signbit((float)LLRs[2]);
+			auto abs0 = (R)std::abs(hl0);
+			auto abs2 = (R)std::abs(LLRs[2]);
+			auto min = std::min(abs0, abs2);
+			auto hl0_x_l2 = sign ? -min : min;
+
+			return hl0_x_l2 + LLRs[1];
+		},
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+		{
+			auto hl0 = ((bits[0] ^ bits[1]) == 0) ? LLRs[0] : -LLRs[0];
+
+			return hl0 + LLRs[2];
+		}
+	}
+},
+{
+	{{1,0,0,0},
+	 {1,1,0,0},
+	 {1,0,1,0},
+	 {1,1,1,1}},
+	{
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+		{
+			auto sign = std::signbit((float)LLRs[0]) ^
+			            std::signbit((float)LLRs[1]) ^
+			            std::signbit((float)LLRs[2]) ^
+			            std::signbit((float)LLRs[3]);
+			auto abs0 = (R)std::abs(LLRs[0]);
+			auto abs1 = (R)std::abs(LLRs[1]);
+			auto abs2 = (R)std::abs(LLRs[2]);
+			auto abs3 = (R)std::abs(LLRs[3]);
+			auto min = std::min(std::min(std::min(abs0, abs1), abs2), abs3);
+
+			return sign ? -min : min;
+		},
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+		{
+			auto hl0 = (bits[0] == 0) ? LLRs[0] : -LLRs[0];
+
+			auto sign = std::signbit((float)hl0) ^ std::signbit((float)LLRs[2]);
+			auto abs0 = (R)std::abs(hl0);
+			auto abs2 = (R)std::abs(LLRs[2]);
+			auto min = std::min(abs0, abs2);
+			auto hl0_x_l2 = sign ? -min : min;
+
+			sign = std::signbit((float)LLRs[1]) ^ std::signbit((float)LLRs[3]);
+			auto abs1 = (R)std::abs(LLRs[1]);
+			auto abs3 = (R)std::abs(LLRs[3]);
+			min = std::min(abs1, abs3);
+			auto l1_x_l3 = sign ? -min : min;
+
+			return hl0_x_l2 + l1_x_l3;
+		},
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+		{
+			auto hl0 = ((bits[0] ^ bits[1]) == 0) ? LLRs[0] : -LLRs[0];
+			auto hl1 = ((          bits[1]) == 0) ? LLRs[1] : -LLRs[1];
+
+			auto hl0_p_l2 = hl0 + LLRs[2];
+			auto hl1_p_l3 = hl1 + LLRs[3];
+
+			auto sign = std::signbit((float)hl0_p_l2) ^ std::signbit((float)hl1_p_l3);
+			auto abs02 = (R)std::abs(hl0_p_l2);
+			auto abs13 = (R)std::abs(hl1_p_l3);
+			auto min = std::min(abs02, abs13);
+
+			return sign ? -min : min;
+		},
+		[](const std::vector<R> &LLRs, const std::vector<B> &bits) -> R
+		{
+			auto hl0 = ((bits[0] ^ bits[1] ^ bits[2]) == 0) ? LLRs[0] : -LLRs[0];
+			auto hl1 = ((          bits[1]          ) == 0) ? LLRs[1] : -LLRs[1];
+			auto hl2 = ((                    bits[2]) == 0) ? LLRs[2] : -LLRs[2];
+
+			return hl0 + hl1 + hl2 + LLRs[3];
+		}
+	}
+}};
+
+template <typename R>
+R square_plus_SPA(const R& ll, const R& lr)
+{
+	auto absl = (R)std::abs(ll);
+	auto absr = (R)std::abs(lr);
+
+	if(absl > (R)17. || absr > (R)17.)
+	{
+		auto sign = std::signbit((float)ll) ^ std::signbit((float)lr);
+		auto min = std::min(absl, absr);
+		return sign ? -min : min;
+	}
+	else
+		return (R)2. * std::atanh(std::tanh(ll * (R)0.5) * std::tanh(lr * (R)0.5));
+}
+
+template <typename R>
+R square_plus_MS(const R& ll, const R& lr)
+{
+	auto sign = std::signbit((float)ll) ^ std::signbit((float)lr);
+	auto absl = (R)std::abs(ll);
+	auto absr = (R)std::abs(lr);
+	auto min = std::min(absl, absr);
+
+	return sign ? -min : min;
+}
+
+template <typename R>
+R plus(const R& ll, const R& lr)
+{
+	return ll + lr;
+}
+
+template <typename B, typename R, proto_xor<R> X, proto_plus<R> P>
+R Polar_lambdas<B,R,X,P>
+::h(const R &L, const std::vector<B> &u, const std::vector<bool> &m)
+{
+	bool switch_sign = false;
+	for (size_t i = 0; i < m.size(); i++)
+		switch_sign ^= m[i] & (bool)u[i];
+
+	return switch_sign ? -L : L;
+}
+
+template <typename B, typename R, proto_xor<R> X, proto_plus<R> P>
+std::map<std::vector<std::vector<bool>>,
+         std::vector<std::function<R(const std::vector<R> &LLRs, const std::vector<B> &bits)>>>
+Polar_lambdas<B,R,X,P>::functions = {
+{
+	{{1}},
+	{
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return L[0];
+		}
+	}
+},
+{
+	{{1,0},
+	 {1,1}},
+	{
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return X(L[0], L[1]);
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL0 = h(L[0], u, {1});
+
+			return P(hL0, L[1]);
+		}
+	}
+},
+{
+	{{1,1,1},
+	 {1,0,1},
+	 {0,1,1}},
+	{
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return X(X(L[0], L[1]), L[2]);
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL0 = h(L[0], u, {1});
+
+			return P(hL0, X(L[1], L[2]));
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL1 = h(L[1], u, {1,0});
+			auto hL2 = h(L[2], u, {1,1});
+
+			return P(hL1, hL2);
+		}
+	}
+},
+{
+	{{1,0,0},
+	 {1,1,0},
+	 {1,0,1}},
+	{
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return X(X(L[0], L[1]), L[2]);
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL0 = h(L[0], u, {1});
+
+			return P(X(hL0, L[2]), L[1]);
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL0 = h(L[0], u, {1,1});
+
+			return P(hL0, L[2]);
+		}
+	}
+},
+{
+	{{1,0,0,0},
+	 {1,1,0,0},
+	 {1,0,1,0},
+	 {1,1,1,1}},
+	{
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return X(X(X(L[0], L[1]), L[2]), L[3]);
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL0 = h(L[0], u, {1});
+
+			return P(X(hL0, L[2]), X(L[1], L[3]));
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL0 = h(L[0], u, {1,1});
+			auto hL1 = h(L[1], u, {0,1});
+
+			return X(P(hL0, L[2]), P(hL1, L[3]));
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL0 = h(L[0], u, {1,1,1});
+			auto hL1 = h(L[1], u, {0,1,0});
+			auto hL2 = h(L[2], u, {0,0,1});
+
+			return P(P(P(hL0, hL1), hL2), L[3]);
+		}
+	}
+},
+{
+	{{1,0,0,0,0},
+	 {1,1,0,0,0},
+	 {1,0,1,0,0},
+	 {1,0,0,1,0},
+	 {1,1,1,0,1}},
+	{
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return X(X(X(X(L[0], L[1]), L[2]), L[3]), L[4]);
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL0 = h(L[0], u, {1});
+
+			return P(X(X(hL0, L[2]), L[3]), X(L[1], L[4]));
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL0 = h(L[0], u, {1,1});
+			auto hL1 = h(L[1], u, {0,1});
+
+			return X(P(hL1, L[4]), P(L[2], X(hL0, L[3])));
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL0 = h(L[0], u, {1,1,1});
+			auto hL1 = h(L[1], u, {0,1,0});
+			auto hL2 = h(L[2], u, {0,0,1});
+
+			return P(L[3], (X(hL0, P(P(hL1, hL2), L[4]))));
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL0 = h(L[0], u, {1,1,1,1});
+			auto hL1 = h(L[1], u, {0,1,0,0});
+			auto hL2 = h(L[2], u, {0,0,1,0});
+
+			return P(P(P(hL0, hL1), hL2), L[4]);
+		}
+	}
+},
+{
+	{{1,0,0,0,0,0},
+	 {1,1,0,0,0,0},
+	 {1,0,1,0,0,0},
+	 {1,0,0,1,0,0},
+	 {1,1,1,0,1,0},
+	 {1,1,0,1,0,1}},
+	{
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			return X(X(X(X(X(L[0], L[1]), L[2]), L[3]), L[4]), L[5]);
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL0 = h(L[0], u, {1});
+
+			return P(X(X(hL0, L[2]), L[3]), X(X(L[1], L[4]), L[5]));
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL0 = h(L[0], u, {1,1});
+			auto hL1 = h(L[1], u, {0,1});
+
+			return X(P(L[2], X(hL0, L[3])), P(L[4], X(hL1, L[5])));
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL0 = h(L[0], u, {1,1,1});
+			auto hL1 = h(L[1], u, {0,1,0});
+			auto hL2 = h(L[2], u, {0,0,1});
+
+			// need LSE :-(
+			return P(X(hL0, P(hL1, X(L[5], P(hL2, L[4])))), X(L[3], P(X(hL1, L[4]), L[5])));
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL0 = h(L[0], u, {1,1,1,1});
+			auto hL1 = h(L[1], u, {0,1,0,0});
+			auto hL2 = h(L[2], u, {0,0,1,0});
+			auto hL3 = h(L[3], u, {0,0,0,1});
+
+			return P(P(X(P(hL3, L[5]), P(hL0, hL1)), hL2), L[4]);
+		},
+		[](const std::vector<R> &L, const std::vector<B> &u) -> R
+		{
+			auto hL0 = h(L[0], u, {1,1,1,1,1});
+			auto hL1 = h(L[1], u, {0,1,0,0,1});
+			auto hL3 = h(L[3], u, {0,0,0,1,0});
+
+			return P(P(P(hL0, hL1), hL3), L[5]);
+		}
+	}
+}};
+
 }
 }

@@ -25,7 +25,7 @@ point.
 """"""""""""""
 
    :Type: text
-   :Allowed values: ``AZCW`` ``RAND`` ``USER``
+   :Allowed values: ``AZCW`` ``RAND`` ``USER`` ``USER_BIN``
    :Default: ``RAND``
    :Examples: ``--src-type AZCW``
 
@@ -33,21 +33,28 @@ point.
 
 Description of the allowed values:
 
-+----------+-------------------------------------------------------------------+
-| Value    | Description                                                       |
-+==========+===================================================================+
-| ``AZCW`` | Set all the information bits to 0.                                |
-+----------+-------------------------------------------------------------------+
-| ``RAND`` | Generate randomly the information bits based on the |MT 19937|    |
-|          | |PRNG| :cite:`Matsumoto1998`.                                     |
-+----------+-------------------------------------------------------------------+
-| ``USER`` | Read the information bits from a given file, the path can be set  |
-|          | with the :ref:`src-src-path` parameter.                           |
-+----------+-------------------------------------------------------------------+
++--------------+---------------------------------------------------------------+
+| Value        | Description                                                   |
++==============+===============================================================+
+| ``AZCW``     | Set all the information bits to 0.                            |
++--------------+---------------------------------------------------------------+
+| ``RAND``     | Generate randomly the information bits based on the |MT 19937||
+|              | |PRNG| :cite:`Matsumoto1998`.                                 |
++--------------+---------------------------------------------------------------+
+| ``USER``     | Read the information bits from a given file, the path can be  |
+|              | set with the :ref:`src-src-path` parameter.                   |
++--------------+---------------------------------------------------------------+
+| ``USER_BIN`` | Read the information bits from a given file in binary mode    |
+|              | , the path can be set with the :ref:`src-src-path` parameter. |
++--------------+---------------------------------------------------------------+
 
 .. note:: For the ``USER`` type, when the number of simulated frames exceeds the
    number of frames contained in the files, the frames are replayed from the
    beginning of the file and this is repeated until the end of the simulation.
+
+.. note:: For the ``USER_BIN`` type, raw data is read from the file that is open
+   in binary mode. When the end of the file is reached, the source goes back to
+   the beginning of the file and continues to generate bits from there.
 
 .. _src-src-implem:
 
@@ -133,7 +140,10 @@ modulation (see the :ref:`mdm-mdm-type` ``SCMA`` parameter).
 
 |factory::Source::p+path|
 
-An |ASCII| file is expected:
+With the ``USER_BIN`` source type, raw binary data is directly read from the
+file.
+
+With the ``USER`` source type, an |ASCII| file is expected:
 
 .. code-block:: bash
 

@@ -219,6 +219,8 @@
 
 .. --------------------------------------------- factory Codec_polar parameters
 
+.. ------------------------------------------ factory Codec_polar_MK parameters
+
 .. ------------------------------------------------ factory Codec_RA parameters
 
 .. ---------------------------------------- factory Codec_repetition parameters
@@ -367,6 +369,14 @@
 
 .. |factory::Decoder_polar::p+no-sys| replace::
    Enable non-systematic encoding.
+
+.. ---------------------------------------- factory Decoder_polar_MK parameters
+
+.. |factory::Decoder_polar_MK::p+lists,L| replace::
+   Set the number of lists to maintain in the |SCL| decoder.
+
+.. |factory::Decoder_polar_MK::p+node-type| replace::
+   Select the type of computations to make in the decoding functions.
 
 .. ---------------------------------------------- factory Decoder_RA parameters
 
@@ -529,6 +539,12 @@
 .. |factory::Encoder_polar::p+no-sys| replace::
    Enable non-systematic encoding. By default the encoding process is
    systematic.
+
+.. ---------------------------------------- factory Encoder_polar_MK parameters
+
+.. |factory::Encoder_polar_MK::p+sys| replace::
+   Enable systematic encoding. By default the encoding process is
+   non-systematic.
 
 .. ---------------------------------------------- factory Encoder_RA parameters
 
@@ -764,7 +780,7 @@
 
 .. |factory::Source::p+path| replace::
    Set the path to a file containing one or more frames (informations bits), to
-   use with the ``USER`` source type.
+   use with the ``USER`` or ``USER_BIN`` source type.
 
 .. |factory::Source::p+start-idx| replace::
    Give the start index to use in the ``USER`` source type. It is the index of
@@ -797,6 +813,36 @@
 .. |factory::Frozenbits_generator::p+pb-path| replace::
    Set the path of the polar bounds code generator (generates best channels to
    use).
+
+.. --------------------------------- factory Frozenbits_generator_MK parameters
+
+.. |factory::Frozenbits_generator_MK::p+info-bits,K| replace::
+   Select the number of information bits :math:`K`.
+
+.. |factory::Frozenbits_generator_MK::p+cw-size,N| replace::
+   Select the codeword size :math:`N`.
+
+.. |factory::Frozenbits_generator_MK::p+noise| replace::
+   Select the noise for which the frozen bits will be optimized.
+
+.. |factory::Frozenbits_generator_MK::p+gen-method| replace::
+   Select the frozen bits generation method.
+
+.. |factory::Frozenbits_generator_MK::p+awgn-path| replace::
+   Set the path to a file or a directory containing the best channels to select
+   the frozen bits.
+
+.. |factory::Frozenbits_generator_MK::p+dump-path| replace::
+   Set the path to store the best channels.
+
+.. ---------------------------------------------- factory Polar_code parameters
+
+.. |factory::Polar_code::p+kernel| replace::
+   Set the polar code kernel (squared matrix only).
+
+.. |factory::Polar_code::p+path| replace::
+   Set the path to a file containing the polar code description (kernels
+   definition and stages).
 
 .. ------------------------------------------ factory Flip_and_check parameters
 

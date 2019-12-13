@@ -7,8 +7,8 @@
 
 #include <vector>
 
-#include "Tools/Algo/Tree/Binary_node.hpp"
-#include "Tools/Algo/Tree/Binary_tree.hpp"
+#include "Tools/Algo/Tree/Binary/Binary_node.hpp"
+#include "Tools/Algo/Tree/Binary/Binary_tree.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 #include "Tools/Interface/Interface_notify_frozenbits_update.hpp"
 #include "Module/Decoder/Decoder_SIHO.hpp"

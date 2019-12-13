@@ -6,6 +6,7 @@
 #define DECODER_POLAR_FUNCTIONS_H
 
 #include <mipp.h>
+#include <functional>
 
 namespace aff3ct
 {
@@ -114,6 +115,39 @@ template <typename B, typename R>
 inline R phi(const R& mu, const R& lambda, const B& u);
 
 inline int compute_depth(int index, int tree_depth);
+
+template <typename B, typename R>
+struct Polar_lambdas_legacy
+{
+	static std::map<std::vector<std::vector<bool>>,
+	                std::vector<std::function<R(const std::vector<R> &LLRs, const std::vector<B> &bits)>>> functions;
+};
+
+template <typename R>
+using proto_xor = R (*)(const R& ll, const R& lr);
+
+template <typename R>
+using proto_plus = R (*)(const R& ll, const R& lr);
+
+template <typename R>
+inline R square_plus_SPA(const R& ll, const R& lr);
+
+template <typename R>
+inline R square_plus_MS(const R& ll, const R& lr);
+
+template <typename R>
+inline R plus(const R& ll, const R& lr);
+
+template <typename B, typename R, proto_xor <R> X = square_plus_MS<R>,
+                                  proto_plus<R> P = plus<R>>
+struct Polar_lambdas
+{
+public:
+	static std::map<std::vector<std::vector<bool>>,
+	                std::vector<std::function<R(const std::vector<R> &LLRs, const std::vector<B> &bits)>>> functions;
+	static R h(const R &L, const std::vector<B> &u, const std::vector<bool> &m);
+};
+
 }
 }
 

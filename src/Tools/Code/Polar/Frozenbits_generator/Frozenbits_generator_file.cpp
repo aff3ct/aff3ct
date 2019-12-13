@@ -42,6 +42,17 @@ bool Frozenbits_generator_file
 		std::string trash;
 		in_code >> trash; // N
 
+		try
+		{
+			std::stoi(trash);
+		}
+		catch(std::exception&)
+		{
+			std::stringstream message;
+			message << "'std::stoi' did not work, something went wrong when reading the file.";
+			throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		if ((size_t)std::stoi(trash) != best_channels.size())
 		{
 			std::stringstream message;

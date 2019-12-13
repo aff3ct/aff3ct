@@ -8,8 +8,8 @@
 #include <set>
 #include <vector>
 
-#include "Tools/Algo/Tree/Binary_node.hpp"
-#include "Tools/Algo/Tree/Binary_tree_metric.hpp"
+#include "Tools/Algo/Tree/Binary/Binary_node.hpp"
+#include "Tools/Algo/Tree/Binary/Binary_tree_metric.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 #include "Tools/Interface/Interface_notify_frozenbits_update.hpp"
 

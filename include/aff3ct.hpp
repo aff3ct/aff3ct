@@ -36,6 +36,9 @@
 #ifndef FACTORY_DECODER_POLAR_HPP
 #include <Factory/Module/Decoder/Polar/Decoder_polar.hpp>
 #endif
+#ifndef FACTORY_DECODER_POLAR_MK_HPP
+#include <Factory/Module/Decoder/Polar_MK/Decoder_polar_MK.hpp>
+#endif
 #ifndef FACTORY_DECODER_RA_HPP
 #include <Factory/Module/Decoder/RA/Decoder_RA.hpp>
 #endif
@@ -74,6 +77,9 @@
 #endif
 #ifndef FACTORY_ENCODER_POLAR_HPP
 #include <Factory/Module/Encoder/Polar/Encoder_polar.hpp>
+#endif
+#ifndef FACTORY_ENCODER_POLAR_MK_HPP
+#include <Factory/Module/Encoder/Polar_MK/Encoder_polar_MK.hpp>
 #endif
 #ifndef FACTORY_ENCODER_RA_HPP
 #include <Factory/Module/Encoder/RA/Encoder_RA.hpp>
@@ -159,6 +165,9 @@
 #ifndef FACTORY_CODEC_POLAR_HPP
 #include <Factory/Tools/Codec/Polar/Codec_polar.hpp>
 #endif
+#ifndef FACTORY_CODEC_POLAR_MK_HPP
+#include <Factory/Tools/Codec/Polar_MK/Codec_polar_MK.hpp>
+#endif
 #ifndef FACTORY_CODEC_RA_HPP
 #include <Factory/Tools/Codec/RA/Codec_RA.hpp>
 #endif
@@ -188,6 +197,12 @@
 #endif
 #ifndef FACTORY_FROZENBITS_GENERATOR_HPP
 #include <Factory/Tools/Code/Polar/Frozenbits_generator.hpp>
+#endif
+#ifndef FACTORY_FROZENBITS_GENERATOR_MK_HPP
+#include <Factory/Tools/Code/Polar_MK/Frozenbits_generator_MK.hpp>
+#endif
+#ifndef FACTORY_POLAR_CODE_HPP
+#include <Factory/Tools/Code/Polar_MK/Polar_code.hpp>
 #endif
 #ifndef FACTORY_FLIP_AND_CHECK_DB_HPP
 #include <Factory/Tools/Code/Turbo/Flip_and_check_DB.hpp>
@@ -362,6 +377,30 @@
 #endif
 #ifndef DECODER_POLAR_ASCL_MEM_FAST_SYS_CA
 #include <Module/Decoder/Polar/ASCL/Decoder_polar_ASCL_MEM_fast_CA_sys.hpp>
+#endif
+#ifndef DECODER_POLAR_MK_ASCL_NAIVE_CA
+#include <Module/Decoder/Polar_MK/ASCL/Decoder_polar_MK_ASCL_naive_CA.hpp>
+#endif
+#ifndef DECODER_POLAR_MK_ASCL_NAIVE_CA_SYS
+#include <Module/Decoder/Polar_MK/ASCL/Decoder_polar_MK_ASCL_naive_CA_sys.hpp>
+#endif
+#ifndef DECODER_POLAR_MK_SC_NAIVE_
+#include <Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive.hpp>
+#endif
+#ifndef DECODER_POLAR_MK_SC_NAIVE_SYS_
+#include <Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive_sys.hpp>
+#endif
+#ifndef DECODER_POLAR_MK_SCL_NAIVE_CA_
+#include <Module/Decoder/Polar_MK/SCL/CRC/Decoder_polar_MK_SCL_naive_CA.hpp>
+#endif
+#ifndef DECODER_POLAR_MK_SCL_NAIVE_CA_SYS_
+#include <Module/Decoder/Polar_MK/SCL/CRC/Decoder_polar_MK_SCL_naive_CA_sys.hpp>
+#endif
+#ifndef DECODER_POLAR_MK_SCL_NAIVE
+#include <Module/Decoder/Polar_MK/SCL/Decoder_polar_MK_SCL_naive.hpp>
+#endif
+#ifndef DECODER_POLAR_MK_SCL_NAIVE_SYS
+#include <Module/Decoder/Polar_MK/SCL/Decoder_polar_MK_SCL_naive_sys.hpp>
 #endif
 #ifndef DECODER_POLAR_SCAN_NAIVE_H_
 #include <Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive.hpp>
@@ -558,6 +597,12 @@
 #ifndef ENCODER_POLAR_SYS_HPP_
 #include <Module/Encoder/Polar/Encoder_polar_sys.hpp>
 #endif
+#ifndef ENCODER_POLAR_MK_HPP_
+#include <Module/Encoder/Polar_MK/Encoder_polar_MK.hpp>
+#endif
+#ifndef ENCODER_POLAR_MK_SYS_HPP_
+#include <Module/Encoder/Polar_MK/Encoder_polar_MK_sys.hpp>
+#endif
 #ifndef ENCODER_RA_HPP_
 #include <Module/Encoder/RA/Encoder_RA.hpp>
 #endif
@@ -735,6 +780,9 @@
 #ifndef SOURCE_HPP_
 #include <Module/Source/Source.hpp>
 #endif
+#ifndef SOURCE_USER_BINARY_HPP_
+#include <Module/Source/User/Source_user_binary.hpp>
+#endif
 #ifndef SOURCE_USER_HPP_
 #include <Module/Source/User/Source_user.hpp>
 #endif
@@ -841,13 +889,22 @@
 #include <Tools/Algo/Sort/LC_sorter_simd.hpp>
 #endif
 #ifndef BINARY_NODE_HPP_
-#include <Tools/Algo/Tree/Binary_node.hpp>
+#include <Tools/Algo/Tree/Binary/Binary_node.hpp>
 #endif
 #ifndef BINARY_TREE_HPP_
-#include <Tools/Algo/Tree/Binary_tree.hpp>
+#include <Tools/Algo/Tree/Binary/Binary_tree.hpp>
 #endif
 #ifndef BINARY_TREE_METRIC_HPP_
-#include <Tools/Algo/Tree/Binary_tree_metric.hpp>
+#include <Tools/Algo/Tree/Binary/Binary_tree_metric.hpp>
+#endif
+#ifndef GENERIC_NODE_HPP_
+#include <Tools/Algo/Tree/Generic/Generic_node.hpp>
+#endif
+#ifndef GENERIC_TREE_HPP_
+#include <Tools/Algo/Tree/Generic/Generic_tree.hpp>
+#endif
+#ifndef GENERIC_TREE_METRIC_HPP_
+#include <Tools/Algo/Tree/Generic/Generic_tree_metric.hpp>
 #endif
 #ifndef AUTO_CLONED_UNIQUE_PTR_HPP__
 #include <Tools/auto_cloned_unique_ptr.hpp>
@@ -890,6 +947,9 @@
 #endif
 #ifndef CODEC_POLAR_HPP_
 #include <Tools/Codec/Polar/Codec_polar.hpp>
+#endif
+#ifndef CODEC_POLAR_MK_HPP_
+#include <Tools/Codec/Polar_MK/Codec_polar_MK.hpp>
 #endif
 #ifndef CODEC_RA_HPP_
 #include <Tools/Codec/RA/Codec_RA.hpp>
@@ -1020,6 +1080,9 @@
 #ifndef FROZENBITS_GENERATOR_FILE_HPP_
 #include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_file.hpp>
 #endif
+#ifndef FROZENBITS_GENERATOR_GA_ARIKAN_HPP_
+#include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_GA_Arikan.hpp>
+#endif
 #ifndef FROZENBITS_GENERATOR_GA_HPP_
 #include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_GA.hpp>
 #endif
@@ -1055,6 +1118,9 @@
 #endif
 #ifndef PATTERN_POLAR_STANDARD_HPP_
 #include <Tools/Code/Polar/Patterns/Pattern_polar_std.hpp>
+#endif
+#ifndef POLAR_CODE_HPP_
+#include <Tools/Code/Polar/Polar_code.hpp>
 #endif
 #ifndef RS_POLYNOMIAL_GENERATOR_HPP
 #include <Tools/Code/RS/RS_polynomial_generator.hpp>
@@ -1124,6 +1190,9 @@
 #endif
 #ifndef FRAME_TRACE_HPP
 #include <Tools/Display/Frame_trace/Frame_trace.hpp>
+#endif
+#ifndef RANG_FORMAT_H_
+#include <Tools/Display/rang_format/rang_format.h>
 #endif
 #ifndef Reporter_BFER_HPP_
 #include <Tools/Display/Reporter/BFER/Reporter_BFER.hpp>
