@@ -73,7 +73,7 @@ of possible applications for the library:
 3. enable various modules to be used in SDR contexts.
 
 If you seek for using **AFF3CT** as a library, please refer to the
-[dedicated documentation page](https://aff3ct.readthedocs.io/en/latest/user/library/library.html).
+[dedicated documentation page](https://aff3ct.readthedocs.io/en/latest/user/library/examples.html).
 
 ## Installation
 
