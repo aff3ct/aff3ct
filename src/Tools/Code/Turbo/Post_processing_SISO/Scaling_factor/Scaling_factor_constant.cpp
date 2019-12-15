@@ -26,6 +26,15 @@ bool Scaling_factor_constant<B,R>
 }
 
 template <typename B, typename R>
+Scaling_factor_constant<B,R>* Scaling_factor_constant<B,R>
+::clone() const
+{
+	auto t = new Scaling_factor_constant(*this);
+	t->deep_copy(*this);
+	return t;
+}
+
+template <typename B, typename R>
 bool Scaling_factor_constant<B,R>
 ::siso_i(const int ite,
          const mipp::vector<R>& sys,

@@ -11,6 +11,7 @@ Codec parameters
    bch/codec
    ldpc/codec
    polar/codec
+   polar_mk/codec
    ra/codec
    rep/codec
    rs/codec

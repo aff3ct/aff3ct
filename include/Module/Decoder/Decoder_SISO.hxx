@@ -11,26 +11,54 @@ namespace aff3ct
 namespace module
 {
 
-template <typename R>
-Task& Decoder_SISO<R>
+template <typename B, typename R>
+Task& Decoder_SISO<B,R>
 ::operator[](const dec::tsk t)
 {
 	return Module::operator[]((size_t)t);
 }
 
-template <typename R>
-Socket& Decoder_SISO<R>
+template <typename B, typename R>
+Socket& Decoder_SISO<B,R>
+::operator[](const dec::sck::decode_hiho s)
+{
+	return Module::operator[]((size_t)dec::tsk::decode_hiho)[(size_t)s];
+}
+
+template <typename B, typename R>
+Socket& Decoder_SISO<B,R>
+::operator[](const dec::sck::decode_hiho_cw s)
+{
+	return Module::operator[]((size_t)dec::tsk::decode_hiho_cw)[(size_t)s];
+}
+
+template <typename B, typename R>
+Socket& Decoder_SISO<B,R>
+::operator[](const dec::sck::decode_siho s)
+{
+	return Module::operator[]((size_t)dec::tsk::decode_siho)[(size_t)s];
+}
+
+template <typename B, typename R>
+Socket& Decoder_SISO<B,R>
+::operator[](const dec::sck::decode_siho_cw s)
+{
+	return Module::operator[]((size_t)dec::tsk::decode_siho_cw)[(size_t)s];
+}
+
+template <typename B, typename R>
+Socket& Decoder_SISO<B,R>
 ::operator[](const dec::sck::decode_siso s)
 {
 	return Module::operator[]((size_t)dec::tsk::decode_siso)[(size_t)s];
 }
 
-template <typename R>
-Decoder_SISO<R>
+template <typename B, typename R>
+Decoder_SISO<B,R>
 ::Decoder_SISO(const int K, const int N, const int n_frames, const int simd_inter_frame_level)
-: Decoder(K, N, n_frames, simd_inter_frame_level),
-  Y_N1   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0),
-  Y_N2   (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0)
+: Decoder_SIHO<B,R>(K, N, n_frames, simd_inter_frame_level),
+  Y_N1             (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0),
+  Y_N2             (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0)
 {
 	const std::string name = "Decoder_SISO";
 	this->set_name(name);
@@ -38,18 +66,25 @@ Decoder_SISO<R>
 	auto &p = this->create_task("decode_siso", (int)dec::tsk::decode_siso);
 	auto ps_Y_N1 = this->template create_socket_in <R>(p, "Y_N1", this->N);
 	auto ps_Y_N2 = this->template create_socket_out<R>(p, "Y_N2", this->N);
-	this->create_codelet(p, [this, ps_Y_N1, ps_Y_N2](Task &t) -> int
+	this->create_codelet(p, [ps_Y_N1, ps_Y_N2](Module &m, Task &t) -> int
 	{
-		this->decode_siso(static_cast<R*>(t[ps_Y_N1].get_dataptr()),
-		                  static_cast<R*>(t[ps_Y_N2].get_dataptr()));
+		static_cast<Decoder_SISO<B,R>&>(m).decode_siso(static_cast<R*>(t[ps_Y_N1].get_dataptr()),
+		                                               static_cast<R*>(t[ps_Y_N2].get_dataptr()));
 
 		return 0;
 	});
 }
 
-template <typename R>
+template <typename B, typename R>
+Decoder_SISO<B,R>* Decoder_SISO<B,R>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename R>
 template <class A>
-void Decoder_SISO<R>
+void Decoder_SISO<B,R>
 ::decode_siso(const std::vector<R,A> &sys, const std::vector<R,A> &par, std::vector<R,A> &ext,
               const int n_frames, const int frame_id)
 {
@@ -104,8 +139,8 @@ void Decoder_SISO<R>
 	this->decode_siso(sys.data(), par.data(), ext.data(), real_n_frames, frame_id);
 }
 
-template <typename R>
-void Decoder_SISO<R>
+template <typename B, typename R>
+void Decoder_SISO<B,R>
 ::decode_siso(const R *sys, const R *par, R *ext, const int n_frames, const int frame_id)
 {
 	const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
@@ -116,15 +151,20 @@ void Decoder_SISO<R>
 	const auto w_stop  = (frame_id < 0) ? n_dec_waves_siso : w_start +1;
 
 	for (auto w = w_start; w < w_stop; w++)
+	{
 		this->_decode_siso(sys + w * (          this->K) * this->simd_inter_frame_level,
 		                   par + w * (this->N - this->K) * this->simd_inter_frame_level,
 		                   ext + w * (          this->K) * this->simd_inter_frame_level,
 		                   w * this->simd_inter_frame_level);
+
+		if (this->is_auto_reset())
+			this->_reset(w * this->simd_inter_frame_level);
+	}
 }
 
-template <typename R>
+template <typename B, typename R>
 template <class A>
-void Decoder_SISO<R>
+void Decoder_SISO<B,R>
 ::decode_siso(const std::vector<R,A> &Y_N1, std::vector<R,A> &Y_N2, const int frame_id)
 {
 	if (this->N * this->n_frames != (int)Y_N1.size())
@@ -154,8 +194,8 @@ void Decoder_SISO<R>
 	this->decode_siso(Y_N1.data(), Y_N2.data(), frame_id);
 }
 
-template <typename R>
-void Decoder_SISO<R>
+template <typename B, typename R>
+void Decoder_SISO<B,R>
 ::decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	if (frame_id < 0 || this->simd_inter_frame_level == 1)
@@ -165,14 +205,24 @@ void Decoder_SISO<R>
 
 		auto w = 0;
 		for (w = w_start; w < w_stop -1; w++)
+		{
 			this->_decode_siso(Y_N1 + w * this->N * this->simd_inter_frame_level,
 			                   Y_N2 + w * this->N * this->simd_inter_frame_level,
 			                   w * this->simd_inter_frame_level);
 
+			if (this->is_auto_reset())
+				this->_reset(w * this->simd_inter_frame_level);
+		}
+
 		if (this->n_inter_frame_rest == 0)
+		{
 			this->_decode_siso(Y_N1 + w * this->N * this->simd_inter_frame_level,
 			                   Y_N2 + w * this->N * this->simd_inter_frame_level,
 			                   w * this->simd_inter_frame_level);
+
+			if (this->is_auto_reset())
+				this->_reset(w * this->simd_inter_frame_level);
+		}
 		else
 		{
 			const auto waves_off1 = w * this->simd_inter_frame_level * this->N;
@@ -180,7 +230,10 @@ void Decoder_SISO<R>
 			          Y_N1 + waves_off1 + this->n_inter_frame_rest * this->N,
 			          this->Y_N1.begin());
 
-			this->_decode_siso(this->Y_N1.data(), this->Y_N2.data(), w * simd_inter_frame_level);
+			this->_decode_siso(this->Y_N1.data(), this->Y_N2.data(), w * this->simd_inter_frame_level);
+
+			if (this->is_auto_reset())
+				this->_reset(w * this->simd_inter_frame_level);
 
 			const auto waves_off2 = w * this->simd_inter_frame_level * this->N;
 			std::copy(this->Y_N2.begin(),
@@ -200,28 +253,31 @@ void Decoder_SISO<R>
 
 		this->_decode_siso(this->Y_N1.data(), this->Y_N2.data(), w * this->simd_inter_frame_level);
 
+		if (this->is_auto_reset())
+			this->_reset(w * this->simd_inter_frame_level);
+
 		std::copy(this->Y_N2.begin() + (w_pos +0) * this->N,
 		          this->Y_N2.begin() + (w_pos +1) * this->N,
 		          Y_N2 + (frame_id % this->n_frames) * this->N);
 	}
 }
 
-template <typename R>
-int Decoder_SISO<R>
+template <typename B, typename R>
+int Decoder_SISO<B,R>
 ::tail_length() const
 {
 	return 0;
 }
 
-template <typename R>
-void Decoder_SISO<R>
+template <typename B, typename R>
+void Decoder_SISO<B,R>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
-template <typename R>
-void Decoder_SISO<R>
+template <typename B, typename R>
+void Decoder_SISO<B,R>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);

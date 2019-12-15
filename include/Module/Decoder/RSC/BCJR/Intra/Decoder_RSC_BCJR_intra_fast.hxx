@@ -19,8 +19,7 @@ Decoder_RSC_BCJR_intra_fast<B,R,MAX>
                               const std::vector<std::vector<int>> &trellis,
                               const bool buffered_encoding,
                               const int n_frames)
-: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, 1),
-  Decoder_RSC_BCJR_intra<B,R>(K, trellis, buffered_encoding, n_frames)
+: Decoder_RSC_BCJR_intra<B,R>(K, trellis, buffered_encoding, n_frames)
 {
 	const std::string name = "Decoder_RSC_BCJR_intra_fast";
 	this->set_name(name);
@@ -38,6 +37,15 @@ Decoder_RSC_BCJR_intra_fast<B,R,MAX>
 		message << "'K' has to be divisible by 8 ('K' = " << K << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+template <typename B, typename R, tools::proto_max_i<R> MAX>
+Decoder_RSC_BCJR_intra_fast<B,R,MAX>* Decoder_RSC_BCJR_intra_fast<B,R,MAX>
+::clone() const
+{
+	auto m = new Decoder_RSC_BCJR_intra_fast(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>

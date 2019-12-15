@@ -15,6 +15,15 @@ CRC_NO<B>
 }
 
 template <typename B>
+CRC_NO<B>* CRC_NO<B>
+::clone() const
+{
+	auto m = new CRC_NO(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B>
 int CRC_NO<B>
 ::get_size() const
 {

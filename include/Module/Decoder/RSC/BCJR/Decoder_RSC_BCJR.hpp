@@ -8,14 +8,14 @@
 #include <vector>
 #include <mipp.h>
 
-#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_RSC_BCJR : public Decoder_SISO_SIHO<B,R>
+class Decoder_RSC_BCJR : public Decoder_SISO<B,R>
 {
 protected:
 	const int  n_states;
@@ -34,6 +34,7 @@ protected:
 	                 const int n_frames = 1,
 	                 const int simd_inter_frame_level = 1);
 	virtual ~Decoder_RSC_BCJR() = default;
+	virtual Decoder_RSC_BCJR<B,R>* clone() const;
 
 public:
 	virtual int tail_length() const;

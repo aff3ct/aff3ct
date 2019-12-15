@@ -25,6 +25,8 @@ public:
 	                          const int n_frames = 1);
 	virtual ~Puncturer_polar_shortlast() = default;
 
+	virtual Puncturer_polar_shortlast<B,Q>* clone() const;
+
 	void gen_frozen_bits(std::vector<bool> &frozen_bits);
 
 protected:

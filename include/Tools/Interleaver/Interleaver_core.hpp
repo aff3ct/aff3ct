@@ -9,12 +9,21 @@
 #include <string>
 #include <vector>
 
+#include "Tools/Interface/Interface_set_seed.hpp"
+#ifndef _MSC_VER
+#include "Tools/Interface/Interface_clone.hpp"
+#endif
+
 namespace aff3ct
 {
 namespace tools
 {
 template <typename T = uint32_t>
-class Interleaver_core
+#ifdef _MSC_VER
+class Interleaver_core : public Interface_set_seed
+#else
+class Interleaver_core : public Interface_set_seed, public Interface_clone
+#endif
 {
 protected:
 	const int size;
@@ -38,6 +47,8 @@ public:
 
 	virtual ~Interleaver_core() = default;
 
+	virtual Interleaver_core<T>* clone() const = 0;
+
 	const std::vector<T>& get_lut() const;
 
 	const std::vector<T>& get_lut_inv() const;
@@ -51,6 +62,8 @@ public:
 	std::string get_name() const;
 
 	void refresh();
+
+	virtual void set_seed(const int seed);
 
 protected:
 	bool is_initialized() const;

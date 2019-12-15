@@ -17,10 +17,13 @@ Pattern_polar_r1
 {
 }
 
-Pattern_polar_i* Pattern_polar_r1
+Pattern_polar_r1* Pattern_polar_r1
 ::alloc(const int &N, const Binary_node<Pattern_polar_i>* node) const
 {
-	return new Pattern_polar_r1(N, node, min_level, max_level);
+	if (node == nullptr)
+		return new Pattern_polar_r1(min_level, max_level);
+	else
+		return new Pattern_polar_r1(N, node, min_level, max_level);
 }
 
 polar_node_t Pattern_polar_r1

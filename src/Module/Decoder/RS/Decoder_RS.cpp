@@ -13,8 +13,7 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_RS<B, R>
 ::Decoder_RS(const int K, const int N, const tools::RS_polynomial_generator &GF, const int n_frames)
-: Decoder               (K * GF.get_m(), N * GF.get_m(), n_frames, 1),
-  Decoder_SIHO_HIHO<B,R>(K * GF.get_m(), N * GF.get_m(), n_frames, 1),
+: Decoder_SIHO<B,R>(K * GF.get_m(), N * GF.get_m(), n_frames, 1),
   K_rs        (K                              ),
   N_rs        (N                              ),
   m           (GF.get_m()                     ),
@@ -37,6 +36,13 @@ Decoder_RS<B, R>
 		        << ", 'n_rdncy' = " << n_rdncy << ", 'N_rs - K_rs' = " << (this->N_rs - this->K_rs) << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+template <typename B, typename R>
+Decoder_RS<B,R>* Decoder_RS<B,R>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R>

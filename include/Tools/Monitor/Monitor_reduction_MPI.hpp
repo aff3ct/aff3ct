@@ -18,7 +18,7 @@ namespace aff3ct
 namespace tools
 {
 template <class M> // M is the monitor on which must be applied the reduction
-class Monitor_reduction_MPI : public Monitor_reduction_M<M>
+class Monitor_reduction_MPI : public Monitor_reduction<M>
 {
 protected:
 	using Attributes = typename M::Attributes;
@@ -28,13 +28,17 @@ private:
 	MPI_Op       MPI_Op_reduce_monitors;
 
 public:
+	explicit Monitor_reduction_MPI(const std::vector<M*> &monitors);
 	explicit Monitor_reduction_MPI(const std::vector<std::unique_ptr<M>> &monitors);
-	virtual ~Monitor_reduction_MPI() = default;
+	explicit Monitor_reduction_MPI(const std::vector<std::shared_ptr<M>> &monitors);
+	virtual ~Monitor_reduction_MPI();
 
-	virtual void reset();
+	virtual bool is_done();
+
+	virtual void reduce(bool fully = false);
 
 protected:
-	virtual void _reduce(bool fully = false);
+	virtual bool _is_done();
 
 private:
 	static void MPI_reduce_monitors(void *in, void *inout, int *len, MPI_Datatype *datatype);

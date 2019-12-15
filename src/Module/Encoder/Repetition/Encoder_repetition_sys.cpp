@@ -29,6 +29,15 @@ Encoder_repetition_sys<B>
 }
 
 template <typename B>
+Encoder_repetition_sys<B>* Encoder_repetition_sys<B>
+::clone() const
+{
+	auto m = new Encoder_repetition_sys(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B>
 void Encoder_repetition_sys<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {

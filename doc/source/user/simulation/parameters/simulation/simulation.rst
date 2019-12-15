@@ -58,8 +58,9 @@ Description of the allowed values:
 """"""""""""""""""""""""""""""""""""""""""""""""
 
    :Type: text
-   :Allowed values: ``BCH`` ``LDPC`` ``POLAR`` ``RA`` ``REP`` ``RS`` ``RSC``
-                    ``RSC_DB`` ``TURBO`` ``TURBO_DB`` ``TURBO_PROD`` ``UNCODED``
+   :Allowed values: ``BCH`` ``LDPC`` ``POLAR`` ``POLAR_MK`` ``RA`` ``REP``
+                    ``RS`` ``RSC`` ``RSC_DB`` ``TURBO`` ``TURBO_DB``
+                    ``TURBO_PROD`` ``UNCODED``
    :Examples: ``-C BCH``
 
 |factory::Launcher::p+cde-type,C|
@@ -85,6 +86,8 @@ Description of the allowed values:
 |                | :cite:`Gallager1963,MacKay1995`.                            |
 +----------------+-------------------------------------------------------------+
 | ``POLAR``      | The `Polar`_ codes :cite:`Arikan2009`.                      |
++----------------+-------------------------------------------------------------+
+| ``POLAR_MK``   | The Polar mono- or multi-kernel codes :cite:`Benammar2017`. |
 +----------------+-------------------------------------------------------------+
 | ``RA``         | The `Repeat Accumulate`_ codes :cite:`Divsalar1998`.        |
 +----------------+-------------------------------------------------------------+
@@ -639,6 +642,32 @@ parameter is enabled, it becomes the codeword size (:math:`N`).
 
 .. note:: Available only for ``BFERI`` simulation type (c.f. the
    :ref:`sim-sim-type` parameter).
+
+.. _sim-sim-chain:
+
+``--sim-chain`` |image_advanced_argument|
+"""""""""""""""""""""""""""""""""""""""""
+
+|factory::BFER::p+chain|
+
+.. _sim-sim-chain-path:
+
+``--sim-chain-path`` |image_advanced_argument|
+""""""""""""""""""""""""""""""""""""""""""""""
+
+   :Type: file
+   :Rights: write
+   :Default: :file:`chain.dot`
+   :Examples: ``--sim-chain-path chain.dot``
+
+|factory::BFER::p+chain-path|
+
+.. _sim-sim-clone:
+
+``--sim-clone`` |image_advanced_argument|
+"""""""""""""""""""""""""""""""""""""""""
+
+|factory::BFER::p+clone|
 
 .. _sim-sim-max-fra:
 

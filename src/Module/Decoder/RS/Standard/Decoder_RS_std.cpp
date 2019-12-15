@@ -10,8 +10,7 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_RS_std<B,R>
 ::Decoder_RS_std(const int& K, const int& N, const tools::RS_polynomial_generator &GF, const int n_frames)
-: Decoder        (K * GF.get_m(), N * GF.get_m(), n_frames, 1   ),
-  Decoder_RS<B,R>(K, N, GF, n_frames                            ),
+: Decoder_RS<B,R>(K, N, GF, n_frames                            ),
   t2             (2 * this->t                                   ),
   elp            (this->N_p2_1+2, std::vector<int>(this->N_p2_1)),
   discrepancy    (this->N_p2_1+2                                ),
@@ -26,6 +25,15 @@ Decoder_RS_std<B,R>
 {
 	const std::string name = "Decoder_RS_std";
 	this->set_name(name);
+}
+
+template <typename B, typename R>
+Decoder_RS_std<B,R>* Decoder_RS_std<B,R>
+::clone() const
+{
+	auto m = new Decoder_RS_std(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B, typename R>

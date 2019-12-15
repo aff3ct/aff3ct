@@ -13,6 +13,9 @@
 #include <vector>
 #include <mipp.h>
 
+#include "Tools/Interface/Interface_clone.hpp"
+#include "Tools/Interface/Interface_reset.hpp"
+
 namespace aff3ct
 {
 namespace module
@@ -22,7 +25,7 @@ class Socket;
 
 enum class socket_t : uint8_t { SIN, SIN_SOUT, SOUT };
 
-class Task
+class Task : public tools::Interface_clone, public tools::Interface_reset
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 	friend Socket;
@@ -30,10 +33,9 @@ class Task
 #endif
 
 protected:
-	const Module &module;
+	Module *module;
 	const std::string name;
 	bool autoalloc;
-	bool autoexec;
 	bool stats;
 	bool fast;
 	bool debug;
@@ -41,7 +43,7 @@ protected:
 	int32_t debug_limit;
 	uint8_t debug_precision;
 	int32_t debug_frame_max;
-	std::function<int(Task& t)> codelet;
+	std::function<int(Module &m, Task& t)> codelet;
 
 	std::vector<mipp::vector<uint8_t>> out_buffers;
 
@@ -63,20 +65,18 @@ protected:
 public:
 	std::vector<std::shared_ptr<Socket>> sockets;
 
-	Task(const Module &module,
+	Task(      Module &module,
 	     const std::string &name,
 	     const bool autoalloc = false,
-	     const bool autoexec  = false,
 	     const bool stats     = false,
 	     const bool fast      = false,
 	     const bool debug     = false);
 
 	virtual ~Task() = default;
 
-	void reset_stats();
+	void reset();
 
 	void set_autoalloc      (const bool     autoalloc);
-	void set_autoexec       (const bool     autoexec );
 	void set_stats          (const bool     stats    );
 	void set_fast           (const bool     fast     );
 	void set_debug          (const bool     debug    );
@@ -86,13 +86,12 @@ public:
 	void set_debug_frame_max(const uint32_t limit    );
 
 	inline bool is_autoalloc        (                  ) const;
-	inline bool is_autoexec         (                  ) const;
 	inline bool is_stats            (                  ) const;
 	inline bool is_fast             (                  ) const;
 	inline bool is_debug            (                  ) const;
 	inline bool is_debug_hex        (                  ) const;
 	inline bool is_last_input_socket(const Socket &s_in) const;
-	inline bool can_exec            (                  ) const;
+	       bool can_exec            (                  ) const;
 
 	inline const Module& get_module     (               ) const;
 	inline std::string   get_name       (               ) const;
@@ -110,13 +109,13 @@ public:
 	const std::vector<std::chrono::nanoseconds>& get_timers_min    () const;
 	const std::vector<std::chrono::nanoseconds>& get_timers_max    () const;
 
-	inline int exec_fast();
-
 	int exec();
 
 	inline Socket& operator[](const size_t id);
 
 	inline void update_timer(const size_t id, const std::chrono::nanoseconds &duration);
+
+	Task* clone() const;
 
 protected:
 	void register_timer(const std::string &key);
@@ -130,7 +129,7 @@ protected:
 	template <typename T>
 	size_t create_socket_out(const std::string &name, const size_t n_elmts);
 
-	void create_codelet(std::function<int(Task& t)> &codelet);
+	void create_codelet(std::function<int(Module &m, Task& t)> &codelet);
 
 private:
 	template <typename T>

@@ -18,6 +18,15 @@ Channel_user_bs<R>
 }
 
 template <typename R>
+Channel_user_bs<R>* Channel_user_bs<R>
+::clone() const
+{
+	auto m = new Channel_user_bs(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename R>
 void Channel_user_bs<R>
 ::add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
@@ -34,8 +43,7 @@ void Channel_user_bs<R>
 
 	this->set_noise(frame_id);
 
-
-	auto event_draw = (E*)(this->noise.data() + this->N * frame_id);
+	auto event_draw = (E*)(this->noised_data.data() + this->N * frame_id);
 
 	const auto vec_loop_size = (this->N / mipp::nElReg<R>()) * mipp::nElReg<R>();
 

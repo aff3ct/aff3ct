@@ -54,9 +54,9 @@ public:
 
 	// builder
 	template <typename B = int>
-	module::Encoder_turbo<B>* build(const module::Interleaver<B>              &itl,
-	                                      std::shared_ptr<module::Encoder<B>>  enc_n,
-	                                      std::shared_ptr<module::Encoder<B>>  enc_i = nullptr) const;
+	module::Encoder_turbo<B>* build(const module::Interleaver<B> &itl,
+	                                const module::Encoder<B>     &enc_n,
+	                                const module::Encoder<B>     &enc_i) const;
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

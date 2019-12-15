@@ -102,6 +102,17 @@
 .. |factory::BFER::p+coset,c| replace::
    Enable the *coset* approach.
 
+.. |factory::BFER::p+chain| replace::
+   Enable the new simulator engine based on a chain (should be faster than the
+   legacy simulator engine).
+
+.. |factory::BFER::p+chain-path| replace::
+   Enable the new simulator engine based on a chain and export the simulated
+   chain in Graphviz format at the given path.
+
+.. |factory::BFER::p+clone| replace::
+   Enable the *clone* method to allocate the module objects.
+
 .. |factory::BFER::p+err-trk| replace::
    Track the erroneous frames. When an error is found, the information bits from
    the source, the codeword from the encoder and the applied noise from the
@@ -187,9 +198,6 @@
 .. |factory::Channel::p+blk-fad| replace::
    Set the block fading policy for the Rayleigh channel.
 
-.. |factory::Channel::p+noise| replace::
-   Set the noise value (for ``SIGMA``, ``ROP`` or ``EP`` noise type).
-
 .. |factory::Channel::p+seed,S| replace::
    Set the seed used to initialize the |PRNG|.
 
@@ -210,6 +218,8 @@
 .. ---------------------------------------------- factory Codec_LDPC parameters
 
 .. --------------------------------------------- factory Codec_polar parameters
+
+.. ------------------------------------------ factory Codec_polar_MK parameters
 
 .. ------------------------------------------------ factory Codec_RA parameters
 
@@ -359,6 +369,14 @@
 
 .. |factory::Decoder_polar::p+no-sys| replace::
    Enable non-systematic encoding.
+
+.. ---------------------------------------- factory Decoder_polar_MK parameters
+
+.. |factory::Decoder_polar_MK::p+lists,L| replace::
+   Set the number of lists to maintain in the |SCL| decoder.
+
+.. |factory::Decoder_polar_MK::p+node-type| replace::
+   Select the type of computations to make in the decoding functions.
 
 .. ---------------------------------------------- factory Decoder_RA parameters
 
@@ -522,6 +540,12 @@
    Enable non-systematic encoding. By default the encoding process is
    systematic.
 
+.. ---------------------------------------- factory Encoder_polar_MK parameters
+
+.. |factory::Encoder_polar_MK::p+sys| replace::
+   Enable systematic encoding. By default the encoding process is
+   non-systematic.
+
 .. ---------------------------------------------- factory Encoder_RA parameters
 
 .. -------------------------------------- factory Encoder_repetition parameters
@@ -590,7 +614,7 @@
    Give the path to the ordered modulation symbols (constellation), to use with
    the ``USER`` |modem|.
 
-.. |factory::Modem::p+codebook| replace::
+.. |factory::Modem::p+cb-path| replace::
    Give the path to the codebook, to use with the ``SCMA`` |modem|.
 
 .. |factory::Modem::p+cpm-std| replace::
@@ -617,9 +641,6 @@
 .. |factory::Modem::p+max| replace::
    Select the approximation of the :math:`\max^*` operator used in the |PAM|,
    |QAM|, |PSK|, |CPM| and user demodulators.
-
-.. |factory::Modem::p+noise| replace::
-   Set the noise variance value for the demodulator.
 
 .. |factory::Modem::p+no-sig2| replace::
    Turn off the division by :math:`\sigma^2` in the demodulator where
@@ -792,6 +813,36 @@
 .. |factory::Frozenbits_generator::p+pb-path| replace::
    Set the path of the polar bounds code generator (generates best channels to
    use).
+
+.. --------------------------------- factory Frozenbits_generator_MK parameters
+
+.. |factory::Frozenbits_generator_MK::p+info-bits,K| replace::
+   Select the number of information bits :math:`K`.
+
+.. |factory::Frozenbits_generator_MK::p+cw-size,N| replace::
+   Select the codeword size :math:`N`.
+
+.. |factory::Frozenbits_generator_MK::p+noise| replace::
+   Select the noise for which the frozen bits will be optimized.
+
+.. |factory::Frozenbits_generator_MK::p+gen-method| replace::
+   Select the frozen bits generation method.
+
+.. |factory::Frozenbits_generator_MK::p+awgn-path| replace::
+   Set the path to a file or a directory containing the best channels to select
+   the frozen bits.
+
+.. |factory::Frozenbits_generator_MK::p+dump-path| replace::
+   Set the path to store the best channels.
+
+.. ---------------------------------------------- factory Polar_code parameters
+
+.. |factory::Polar_code::p+kernel| replace::
+   Set the polar code kernel (squared matrix only).
+
+.. |factory::Polar_code::p+path| replace::
+   Set the path to a file containing the polar code description (kernels
+   definition and stages).
 
 .. ------------------------------------------ factory Flip_and_check parameters
 

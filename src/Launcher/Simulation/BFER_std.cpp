@@ -5,9 +5,6 @@
 #include "Factory/Module/Monitor/BFER/Monitor_BFER.hpp"
 #include "Factory/Module/Monitor/MI/Monitor_MI.hpp"
 #include "Factory/Module/Interleaver/Interleaver.hpp"
-
-#include "Simulation/BFER/Standard/BFER_std.hpp"
-
 #include "Launcher/Simulation/BFER_std.hpp"
 
 using namespace aff3ct;
@@ -62,10 +59,8 @@ void BFER_std<B,R,Q>
 	this->args.erase({pcrc+"-fra",       "F"});
 	this->args.erase({pmdm+"-fra-size",  "N"});
 	this->args.erase({pmdm+"-fra",       "F"});
-	this->args.erase({pmdm+"-noise"         });
 	this->args.erase({pchn+"-fra-size",  "N"});
 	this->args.erase({pchn+"-fra",       "F"});
-	this->args.erase({pchn+"-noise"         });
 	this->args.erase({pchn+"-seed",      "S"});
 	this->args.erase({pchn+"-add-users"     });
 	this->args.erase({pchn+"-complex"       });

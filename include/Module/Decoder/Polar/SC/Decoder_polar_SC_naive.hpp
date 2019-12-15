@@ -7,10 +7,10 @@
 
 #include <vector>
 
-#include "Tools/Algo/Tree/Binary_node.hpp"
-#include "Tools/Algo/Tree/Binary_tree.hpp"
+#include "Tools/Algo/Tree/Binary/Binary_node.hpp"
+#include "Tools/Algo/Tree/Binary/Binary_tree.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
-#include "Tools/Code/Polar/Frozenbits_notifier.hpp"
+#include "Tools/Interface/Interface_notify_frozenbits_update.hpp"
 #include "Module/Decoder/Decoder_SIHO.hpp"
 
 namespace aff3ct
@@ -32,7 +32,7 @@ public:
 template <typename B = int, typename R = float, tools::proto_f<  R> F = tools::f_LLR,
                                                 tools::proto_g<B,R> G = tools::g_LLR,
                                                 tools::proto_h<B,R> H = tools::h_LLR>
-class Decoder_polar_SC_naive : public Decoder_SIHO<B,R>, public tools::Frozenbits_notifier
+class Decoder_polar_SC_naive : public Decoder_SIHO<B,R>, public tools::Interface_notify_frozenbits_update
 {
 protected:
 	const int m; // graph depth
@@ -44,14 +44,19 @@ public:
 	Decoder_polar_SC_naive(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int n_frames = 1);
 	virtual ~Decoder_polar_SC_naive();
 
-	virtual void notify_frozenbits_update();
+	virtual Decoder_polar_SC_naive<B,R,F,G,H>* clone() const;
+
+	virtual void notify_noise_update();
 
 protected:
-	        void _load           (const R *Y_N                                         );
-	virtual void _decode_siho    (const R *Y_N, B *V_K, const int frame_id             );
-	virtual void _decode_siho_cw (const R *Y_N, B *V_N, const int frame_id             );
-	virtual void _store          (              B *V,   bool coded = false             ) const;
-	virtual void recursive_decode(const tools::Binary_node<Contents_SC<B,R>>* node_curr);
+	virtual void deep_copy          (const Decoder_polar_SC_naive<B,R,F,G,H>& m);
+	        void recursive_deep_copy(const tools::Binary_node<Contents_SC<B,R>> *nref,
+	                                       tools::Binary_node<Contents_SC<B,R>> *nclone);
+	        void _load              (const R *Y_N                                         );
+	virtual void _decode_siho       (const R *Y_N, B *V_K, const int frame_id             );
+	virtual void _decode_siho_cw    (const R *Y_N, B *V_N, const int frame_id             );
+	virtual void _store             (              B *V,   bool coded = false             ) const;
+	virtual void recursive_decode   (const tools::Binary_node<Contents_SC<B,R>>* node_curr);
 
 private:
 	void recursive_allocate_nodes_contents  (      tools::Binary_node<Contents_SC<B,R>>* node_curr, const int vector_size               );

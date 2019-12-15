@@ -12,6 +12,7 @@
 #include <memory>
 #include <string>
 
+#include "Tools/Interface/Interface_clone.hpp"
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
 #ifdef AFF3CT_SYSTEMC_MODULE
@@ -27,7 +28,7 @@ namespace module
  *
  * \brief A Module is an abstract concept. Basically, all the objects used in a Simulation are a Module.
  */
-class Module
+class Module : public tools::Interface_clone
 {
 protected:
 	int         n_frames;     /*!< Number of frames to process in this Module */
@@ -57,6 +58,8 @@ public:
 	 */
 	virtual ~Module() = default;
 
+	virtual Module* clone() const;
+
 	/*!
 	 * \brief Get the number of frames.
 	 *
@@ -77,6 +80,8 @@ public:
 	inline Task& operator[](const size_t id);
 
 protected:
+	virtual void deep_copy(const Module &m);
+
 	void set_name(const std::string &name);
 
 	void set_short_name(const std::string &short_name);
@@ -92,7 +97,7 @@ protected:
 	template <typename T>
 	size_t create_socket_out(Task& task, const std::string &name, const size_t n_elmts);
 
-	void create_codelet(Task& task, std::function<int(Task &t)> codelet);
+	void create_codelet(Task& task, std::function<int(Module &m, Task &t)> codelet);
 
 	void register_timer(Task& task, const std::string &key);
 };

@@ -12,8 +12,7 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_BCH_std<B, R>
 ::Decoder_BCH_std(const int& K, const int& N, const tools::BCH_polynomial_generator<B> &GF_poly, const int n_frames)
-: Decoder         (K, N,                  n_frames, 1),
-  Decoder_BCH<B,R>(K, N, GF_poly.get_t(), n_frames),
+: Decoder_BCH<B,R>(K, N, GF_poly.get_t(), n_frames),
   t2(2 * this->t), YH_N(N),
   elp(this->N_p2_1+2, std::vector<int>(this->N_p2_1)), discrepancy(this->N_p2_1+2), l(this->N_p2_1+2), u_lu(this->N_p2_1+2), s(t2+1), loc(this->t +1), reg(this->t +1),
   m(GF_poly.get_m()), d(GF_poly.get_d()), alpha_to(GF_poly.get_alpha_to()), index_of(GF_poly.get_index_of())
@@ -28,6 +27,15 @@ Decoder_BCH_std<B, R>
 		        << ", 'GF_poly.get_n_rdncy()' = " << GF_poly.get_n_rdncy() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+template <typename B, typename R>
+Decoder_BCH_std<B,R>* Decoder_BCH_std<B,R>
+::clone() const
+{
+	auto m = new Decoder_BCH_std(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B, typename R>

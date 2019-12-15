@@ -7,7 +7,7 @@
 
 #include <string>
 
-#include "Tools/Algo/Tree/Binary_node.hpp"
+#include "Tools/Algo/Tree/Binary/Binary_node.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
 
 namespace aff3ct
@@ -23,7 +23,7 @@ protected:
 public:
 	inline Pattern_polar_spc(const int min_level = 2, const int max_level = -1);
 
-	virtual inline Pattern_polar_i* alloc(const int &N, const Binary_node<Pattern_polar_i>* node) const;
+	virtual inline Pattern_polar_spc* alloc(const int &N, const Binary_node<Pattern_polar_i>* node) const;
 
 	virtual ~Pattern_polar_spc() = default;
 

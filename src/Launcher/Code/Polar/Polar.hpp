@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "Factory/Module/Codec/Polar/Codec_polar.hpp"
+#include "Factory/Tools/Codec/Polar/Codec_polar.hpp"
 
 namespace aff3ct
 {

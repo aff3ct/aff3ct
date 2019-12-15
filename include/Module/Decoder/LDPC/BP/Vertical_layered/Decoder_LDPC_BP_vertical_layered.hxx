@@ -21,16 +21,14 @@ Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>
                                    const bool enable_syndrome,
                                    const int syndrome_depth,
                                    const int n_frames)
-: Decoder               (K, N, n_frames, 1                                    ),
-  Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1                                    ),
-  Decoder_LDPC_BP       (K, N, n_ite, _H, enable_syndrome, syndrome_depth     ),
-  info_bits_pos         (info_bits_pos                                        ),
-  up_rule               (up_rule                                              ),
-  var_nodes             (n_frames, std::vector<R>(N                          )),
-  messages              (n_frames, std::vector<R>(this->H.get_n_connections())),
-  contributions         (this->H.get_cols_max_degree()                        ),
-  messages_offsets      (this->H.get_n_cols()                                 ),
-  init_flag             (true                                                 )
+: Decoder_SISO<B,R>(K, N, n_frames, 1                                    ),
+  Decoder_LDPC_BP  (K, N, n_ite, _H, enable_syndrome, syndrome_depth     ),
+  info_bits_pos    (info_bits_pos                                        ),
+  up_rule          (up_rule                                              ),
+  var_nodes        (n_frames, std::vector<R>(N                          )),
+  messages         (n_frames, std::vector<R>(this->H.get_n_connections())),
+  contributions    (this->H.get_cols_max_degree()                        ),
+  messages_offsets (this->H.get_n_cols()                                 )
 {
 	const std::string name = "Decoder_LDPC_BP_vertical_layered<" + this->up_rule.get_name() + ">";
 	this->set_name(name);
@@ -42,29 +40,31 @@ Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>
 		messages_offsets[c] = (uint32_t)cur_off_msg;
 		cur_off_msg += this->H[c].size();
 	}
+
+	this->reset();
+}
+
+template <typename B, typename R, class Update_rule>
+Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>* Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>
+::clone() const
+{
+	auto m = new Decoder_LDPC_BP_vertical_layered(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>
-::reset()
+::_reset(const int frame_id)
 {
-	this->init_flag = true;
+	std::fill(this->messages [frame_id].begin(), this->messages [frame_id].end(), (R)0);
+	std::fill(this->var_nodes[frame_id].begin(), this->var_nodes[frame_id].end(), (R)0);
 }
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>
 ::_load(const R *Y_N, const int frame_id)
 {
-	// memory zones initialization
-	if (this->init_flag)
-	{
-		std::fill(this->messages [frame_id].begin(), this->messages [frame_id].end(), (R)0);
-		std::fill(this->var_nodes[frame_id].begin(), this->var_nodes[frame_id].end(), (R)0);
-
-		if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
-			this->init_flag = false;
-	}
-
 	for (auto v = 0; v < (int)var_nodes[frame_id].size(); v++)
 		this->var_nodes[frame_id][v] += Y_N[v]; // var_nodes contain previous extrinsic information
 }

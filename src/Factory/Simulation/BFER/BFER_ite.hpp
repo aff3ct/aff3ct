@@ -8,15 +8,14 @@
 
 #include "Tools/auto_cloned_unique_ptr.hpp"
 #include "Factory/Module/Interleaver/Interleaver.hpp"
-#include "Factory/Module/Codec/Codec_SISO_SIHO.hpp"
+#include "Factory/Tools/Codec/Codec_SISO.hpp"
 #include "Factory/Simulation/BFER/BFER.hpp"
 
 namespace aff3ct
 {
 namespace simulation
 {
-template <typename B, typename R, typename Q>
-class BFER_ite;
+class Simulation;
 }
 }
 
@@ -50,7 +49,7 @@ public:
 	// void set_cdc(Codec_SISO_SIHO *cdc) { this->cdc = cdc; BFER::set_cdc(cdc); }
 	void set_itl(Interleaver *itl) { this->itl.reset(itl); }
 
-	const Codec_SISO_SIHO* get_cdc() const;
+	const Codec_SISO* get_cdc() const;
 
 
 	// parameters construction
@@ -60,7 +59,7 @@ public:
 
 	// builder
 	template <typename B = int, typename R = float, typename Q = R>
-	simulation::BFER_ite<B,R,Q>* build() const;
+	simulation::Simulation* build() const;
 };
 }
 }

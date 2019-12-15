@@ -7,15 +7,19 @@
 
 #include <mipp.h>
 
+#include "Tools/Interface/Interface_clone.hpp"
+
 namespace aff3ct
 {
 namespace tools
 {
 template <typename B = int, typename R = float>
-class Post_processing_SISO
+class Post_processing_SISO : public Interface_clone
 {
 public:
 	virtual ~Post_processing_SISO() = default;
+
+	virtual Post_processing_SISO<B,R>* clone() const;
 
 	virtual bool siso_n(const int ite,
 	                    const mipp::vector<R>& sys,
@@ -27,6 +31,9 @@ public:
 	                          mipp::vector<R>& ext);
 
 	virtual void end(const int n_ite);
+
+protected:
+	void deep_copy(const Post_processing_SISO<B,R>& t);
 };
 }
 }

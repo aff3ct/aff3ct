@@ -23,11 +23,10 @@ protected:
 
 public:
 	explicit Event_generator_std(const int seed = 0);
-
 	virtual ~Event_generator_std() = default;
+	virtual Event_generator_std<R,E>* clone() const;
 
 	virtual void set_seed(const int seed);
-
 	virtual void generate(E *draw, const unsigned length, const R event_probability);
 };
 

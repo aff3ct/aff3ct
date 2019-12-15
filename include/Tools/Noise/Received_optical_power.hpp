@@ -17,15 +17,11 @@ class Received_optical_power : public Noise<R>
 {
 public:
 	Received_optical_power() = default;
-	explicit Received_optical_power(R noise);
-	template<typename T>
-	explicit Received_optical_power(const Received_optical_power<T>& other);
+	explicit Received_optical_power(R value);
 	virtual ~Received_optical_power() = default;
 
 	virtual std::string get_unity() const;
 	virtual Noise_type get_type() const;
-
-	virtual Received_optical_power<R>* clone() const;
 };
 
 template <typename R = float>

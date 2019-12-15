@@ -28,19 +28,19 @@ Socket
 {
 }
 
-std::string Socket
+const std::string& Socket
 ::get_name() const
 {
 	return name;
 }
 
-std::type_index Socket
+const std::type_index& Socket
 ::get_datatype() const
 {
 	return datatype;
 }
 
-std::string Socket
+const std::string& Socket
 ::get_datatype_string() const
 {
 	return type_to_string[datatype];
@@ -76,28 +76,41 @@ bool Socket
 	return fast;
 }
 
+Task& Socket
+::get_task() const
+{
+	return this->task;
+}
+
+const std::vector<Socket*> Socket
+::get_bound_sockets() const
+{
+	return this->bound_sockets;
+}
+
 void Socket
 ::set_fast(const bool fast)
 {
 	this->fast = fast;
 }
 
-int Socket
-::bind(Socket &s)
+void Socket
+::bind(Socket &s, const bool copy_dataptr)
 {
 	if (!is_fast())
 	{
 		if (s.datatype != this->datatype)
 		{
 			std::stringstream message;
-			message << "'s.datatype' has to be equal to 'datatype' ('s.datatype' = " << type_to_string[s.datatype]
-			        << ", 'datatype' = " << type_to_string[this->datatype]
-			        << ", 'name' = " << get_name()
-			        << ", 's.name' = " << s.get_name()
-			        << ", 'task.name' = " << task.get_name()
-			        << ", 's.task.name' = " << s.task.get_name()
-//				        << ", 'task.module.name' = " << task.get_module_name()
-//				        << ", 's.task.module.name' = " << s.task.get_module_name()
+			message << "'s.datatype' has to be equal to 'datatype' ("
+			        << "'s.datatype'"         << " = " << type_to_string[s.datatype]     << ", "
+			        << "'s.name'"             << " = " << s.get_name()                   << ", "
+			        << "'s.task.name'"        << " = " << s.task.get_name()              << ", "
+//			        << "'s.task.module.name'" << " = " << s.task.get_module_name()       << ", "
+			        << "'datatype'"           << " = " << type_to_string[this->datatype] << ", "
+			        << "'name'"               << " = " << get_name()                     << ", "
+			        << "'task.name'"          << " = " << task.get_name()                << ", "
+//			        << "'task.module.name'"   << " = " << task.get_module_name()
 			        << ").";
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
@@ -105,19 +118,21 @@ int Socket
 		if (s.databytes != this->databytes)
 		{
 			std::stringstream message;
-			message << "'s.databytes' has to be equal to 'databytes' ('s.databytes' = " << s.databytes
-			        << ", 'databytes' = " << this->databytes
-			        << ", 'name' = " << get_name()
-			        << ", 's.name' = " << s.get_name()
-			        << ", 'task.name' = " << task.get_name()
-			        << ", 's.task.name' = " << s.task.get_name()
-//				        << ", 'task.module.name' = " << task.get_module_name()
-//				        << ", 's.task.module.name' = " << s.task.get_module_name()
+			message << "'s.databytes' has to be equal to 'databytes' ("
+			        << "'s.databytes'"        << " = " << s.databytes              << ", "
+			        << "'s.name'"             << " = " << s.get_name()             << ", "
+			        << "'s.task.name'"        << " = " << s.task.get_name()        << ", "
+//			        << "'s.task.module.name'" << " = " << s.task.get_module_name() << ", "
+			        << "'databytes'"          << " = " << this->databytes          << ", "
+			        << "'name'"               << " = " << get_name()               << ", "
+			        << "'task.name'"          << " = " << task.get_name()          << ", "
+//			        << "'task.module.name'"   << " = " << task.get_module_name()
 			        << ").";
+
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (s.dataptr == nullptr)
+		if (copy_dataptr && s.dataptr == nullptr)
 		{
 			std::stringstream message;
 			message << "'s.dataptr' can't be NULL.";
@@ -125,29 +140,24 @@ int Socket
 		}
 	}
 
-	this->dataptr = s.dataptr;
-
-	if (this->task.is_autoexec() && this->task.is_last_input_socket(*this))
-		return this->task.exec();
-	else
-		return 0;
+	// this->bound_sockets.push_back(&s);
+	s.bound_sockets.push_back(this);
+	if (copy_dataptr)
+		this->dataptr = s.dataptr;
 }
 
-int Socket
-::operator()(Socket &s)
+void Socket
+::operator()(Socket &s, const bool copy_dataptr)
 {
-	return bind(s);
+	bind(s, copy_dataptr);
 }
 
 template <typename T, class A>
-int Socket
+void Socket
 ::bind(std::vector<T,A> &vector)
 {
 	if (is_fast())
-	{
 		this->dataptr = static_cast<void*>(vector.data());
-		return 0;
-	}
 
 	if (vector.size() != this->get_n_elmts())
 	{
@@ -156,30 +166,27 @@ int Socket
 		        << ", 'get_n_elmts()' = " << get_n_elmts()
 		        << ", 'name' = " << get_name()
 		        << ", 'task.name' = " << task.get_name()
-//			        << ", 'task.module.name' = " << task.get_module_name()
+//		        << ", 'task.module.name' = " << task.get_module_name()
 		        << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	return bind(vector.data());
+	bind(vector.data());
 }
 
 template <typename T, class A>
-int Socket
+void Socket
 ::operator()(std::vector<T,A> &vector)
 {
-	return bind(vector);
+	bind(vector);
 }
 
 template <typename T>
-int Socket
+void Socket
 ::bind(T *array)
 {
 	if (is_fast())
-	{
 		this->dataptr = static_cast<void*>(array);
-		return 0;
-	}
 
 	if (type_to_string[typeid(T)] != type_to_string[this->datatype])
 	{
@@ -188,22 +195,22 @@ int Socket
 		        << ", 'datatype' = " << type_to_string[this->datatype]
 		        << ", 'socket.name' = " << get_name()
 		        << ", 'task.name' = " << task.get_name()
-//			        << ", 'module.name' = " << task.get_module_name()
+//		        << ", 'module.name' = " << task.get_module_name()
 		        << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	return bind(static_cast<void*>(array));
+	bind(static_cast<void*>(array));
 }
 
 template <typename T>
-int Socket
+void Socket
 ::operator()(T *array)
 {
-	return bind(array);
+	bind(array);
 }
 
-int Socket
+void Socket
 ::bind(void* dataptr)
 {
 	if (!is_fast())
@@ -217,14 +224,20 @@ int Socket
 	}
 
 	this->dataptr = dataptr;
-
-	return 0;
 }
 
-int Socket
+void Socket
 ::operator()(void* dataptr)
 {
-	return bind(dataptr);
+	bind(dataptr);
 }
+
+void Socket
+::reset()
+{
+	this->dataptr = nullptr;
+	this->bound_sockets.clear();
+}
+
 }
 }

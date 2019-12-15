@@ -8,6 +8,7 @@
 #include <type_traits>
 #include <sstream>
 
+#include "Tools/Noise/Noise.hpp"
 #include "Tools/Exception/exception.hpp"
 #include "Module/Modem/SCMA/Modem_SCMA.hpp"
 
@@ -17,15 +18,13 @@ namespace module
 {
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 Modem_SCMA<B,R,Q,PSI>
-::Modem_SCMA(const int N, std::unique_ptr<const tools::Codebook<R>>&& _CB, const tools::Noise<R>& noise,
-             const bool disable_sig2, const int n_ite, const int n_frames)
+::Modem_SCMA(const int N, const std::string &codebook_path, const bool disable_sig2, const int n_ite,
+             const int n_frames)
 : Modem<B,R,Q>(N,
-               Modem_SCMA<B,R,Q,PSI>::size_mod(N, (int)_CB->get_system_bps()),
-               Modem_SCMA<B,R,Q,PSI>::size_fil(N, (int)_CB->get_system_bps()),
-               noise,
+               Modem_SCMA<B,R,Q,PSI>::size_mod(N, codebook_path),
+               Modem_SCMA<B,R,Q,PSI>::size_fil(N, codebook_path),
                n_frames),
-  CB_ptr               (std::move(_CB)),
-  CB                   (*CB_ptr),
+  CB                   (codebook_path),
   arr_phi              (CB.get_number_of_resources(), CB.get_codebook_size(),       CB.get_codebook_size(), CB.get_codebook_size(), (Q)0),
   msg_user_to_resources(CB.get_number_of_users(),     CB.get_number_of_resources(), CB.get_codebook_size(),                         (Q)0),
   msg_resource_to_users(CB.get_number_of_resources(), CB.get_number_of_users(),     CB.get_codebook_size(),                         (Q)0),
@@ -53,16 +52,29 @@ Modem_SCMA<B,R,Q,PSI>
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
-void Modem_SCMA<B,R,Q,PSI>
-::set_noise(const tools::Noise<R>& noise)
+Modem_SCMA<B,R,Q,PSI>* Modem_SCMA<B,R,Q,PSI>
+::clone() const
 {
-	Modem<B,R,Q>::set_noise(noise);
+	auto m = new Modem_SCMA(*this);
+	m->deep_copy(*this);
+	return m;
+}
 
-	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
+template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
+void Modem_SCMA<B,R,Q,PSI>
+::check_noise()
+{
+	Modem<B,R,Q>::check_noise();
+	this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
+}
 
-	this->n0 = this->disable_sig2 ?
-	            (R)1.0 :
-	            ((R)4.0 * this->n->get_noise() * this->n->get_noise());
+
+template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
+void Modem_SCMA<B,R,Q,PSI>
+::notify_noise_update()
+{
+	Modem<B,R,Q>::notify_noise_update();
+	this->n0 = this->disable_sig2 ? (R)1.0 : ((R)4.0 * this->noise->get_value() * this->noise->get_value());
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
@@ -127,8 +139,10 @@ void Modem_SCMA<B,R,Q,PSI>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (!this->n->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+	if (this->noise == nullptr)
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
+	else if (!this->noise->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	for (auto batch = 0 ; batch < (this->N +1) / 2 ; batch++)
 	{
@@ -160,8 +174,10 @@ void Modem_SCMA<B,R,Q,PSI>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (!this->n->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+	if (this->noise == nullptr)
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
+	else if (!this->noise->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	for (auto batch = 0 ; batch < (this->N +1) / 2 ; batch++)
 	{
@@ -186,8 +202,10 @@ void Modem_SCMA<B,R,Q,PSI>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (!this->n->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+	if (this->noise == nullptr)
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
+	else if (!this->noise->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	// initial probability of each codeword/user
 	auto init_proba = (Q)1. / (Q)CB.get_codebook_size();
@@ -383,6 +401,24 @@ template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 int Modem_SCMA<B,R,Q,PSI>
 ::size_fil(const int N, const int bps)
 {
+	return size_mod(N, bps);
+}
+
+template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
+int Modem_SCMA<B,R,Q,PSI>
+::size_mod(const int N, const std::string &codebook_path)
+{
+	const tools::Codebook<R> CB(codebook_path);
+	int bps = (int)CB.get_system_bps();
+	return ((int)std::pow(2, bps) * ((N + 1) / 2));
+}
+
+template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
+int Modem_SCMA<B,R,Q,PSI>
+::size_fil(const int N, const std::string &codebook_path)
+{
+	const tools::Codebook<R> CB(codebook_path);
+	int bps = (int)CB.get_system_bps();
 	return size_mod(N, bps);
 }
 

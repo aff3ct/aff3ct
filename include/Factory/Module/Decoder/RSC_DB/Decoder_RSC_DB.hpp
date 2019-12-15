@@ -8,7 +8,6 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <memory>
 #include <map>
 #include <cli.hpp>
 
@@ -45,17 +44,17 @@ public:
 
 	// builder
 	template <typename B = int, typename Q = float>
-	module::Decoder_RSC_DB_BCJR<B,Q>* build_siso(const std::vector<std::vector<int>>       &trellis,
-	                                             const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
+	module::Decoder_RSC_DB_BCJR<B,Q>* build_siso(const std::vector<std::vector<int>> &trellis,
+	                                             module::Encoder<B> *encoder = nullptr) const;
 
 	template <typename B = int, typename Q = float>
-	module::Decoder_SIHO<B,Q>* build(const std::vector<std::vector<int>>       &trellis,
-	                                 const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
+	module::Decoder_SIHO<B,Q>* build(const std::vector<std::vector<int>> &trellis,
+	                                 module::Encoder<B> *encoder = nullptr) const;
 
 private:
 	template <typename B = int, typename Q = float, tools::proto_max<Q> MAX>
-	module::Decoder_RSC_DB_BCJR<B,Q>* _build_siso(const std::vector<std::vector<int>>       &trellis,
-	                                              const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
+	module::Decoder_RSC_DB_BCJR<B,Q>* _build_siso(const std::vector<std::vector<int>> &trellis,
+	                                              module::Encoder<B> *encoder = nullptr) const;
 };
 }
 }

@@ -9,10 +9,19 @@ using namespace aff3ct::module;
 template <typename B>
 Encoder_coset<B>
 ::Encoder_coset(const int K, const int N, const int seed, const int n_frames)
-: Encoder<B>(K, N, n_frames), rd_engine(seed + 1024), uniform_dist(0, 1)
+: Encoder<B>(K, N, n_frames), rd_engine(seed), uniform_dist(0, 1)
 {
 	const std::string name = "Encoder_coset";
 	this->set_name(name);
+}
+
+template <typename B>
+Encoder_coset<B>* Encoder_coset<B>
+::clone() const
+{
+	auto m = new Encoder_coset(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B>
@@ -37,6 +46,13 @@ bool Encoder_coset<B>
 ::is_sys() const
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B>
+void Encoder_coset<B>
+::set_seed(const int seed)
+{
+	rd_engine.seed(seed);
 }
 
 // ==================================================================================== explicit template instantiation

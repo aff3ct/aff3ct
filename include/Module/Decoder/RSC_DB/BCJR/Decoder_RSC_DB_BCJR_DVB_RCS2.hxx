@@ -14,8 +14,7 @@ Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>
                                const std::vector<std::vector<int>> &trellis,
                                const bool buffered_encoding,
                                const int n_frames)
-: Decoder(K, 2 * K, n_frames, 1),
-  Decoder_RSC_DB_BCJR<B,R>(K, trellis, buffered_encoding, n_frames)
+: Decoder_RSC_DB_BCJR<B,R>(K, trellis, buffered_encoding, n_frames)
 {
 	const std::string name = "Decoder_RSC_DB_BCJR_DVB_RCS2";
 	this->set_name(name);
@@ -26,6 +25,15 @@ Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>
 		message << "'n_states' has to be equal to 16 ('n_states' = " << this->n_states << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+template <typename B, typename R, tools::proto_max<R> MAX>
+Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>* Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>
+::clone() const
+{
+	auto m = new Decoder_RSC_DB_BCJR_DVB_RCS2(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B, typename R, tools::proto_max<R> MAX>

@@ -40,18 +40,16 @@ Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
                                            const bool enable_syndrome,
                                            const int syndrome_depth,
                                            const int n_frames)
-: Decoder               (K, N, n_frames, mipp::N<R>()                                                       ),
-  Decoder_SISO_SIHO<B,R>(K, N, n_frames, mipp::N<R>()                                                       ),
-  Decoder_LDPC_BP       (K, N, n_ite, _H, enable_syndrome, syndrome_depth                                   ),
-  info_bits_pos         (info_bits_pos                                                                      ),
-  up_rule               (up_rule                                                                            ),
-  sat_val               ((R)((1 << ((sizeof(R) * 8 -2) - (int)std::log2(this->H.get_rows_max_degree()))) -1)),
-  var_nodes             (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(N)                                   ),
-  messages              (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(this->H.get_n_connections())         ),
-  contributions         (this->H.get_cols_max_degree()                                                      ),
-  Y_N_reorderered       (N                                                                                  ),
-  V_reorderered         (N                                                                                  ),
-  init_flag             (true                                                                               )
+: Decoder_SISO<B,R>(K, N, n_frames, mipp::N<R>()                                                       ),
+  Decoder_LDPC_BP  (K, N, n_ite, _H, enable_syndrome, syndrome_depth                                   ),
+  info_bits_pos    (info_bits_pos                                                                      ),
+  up_rule          (up_rule                                                                            ),
+  sat_val          ((R)((1 << ((sizeof(R) * 8 -2) - (int)std::log2(this->H.get_rows_max_degree()))) -1)),
+  var_nodes        (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(N)                                   ),
+  messages         (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(this->H.get_n_connections())         ),
+  contributions    (this->H.get_cols_max_degree()                                                      ),
+  Y_N_reorderered  (N                                                                                  ),
+  V_reorderered    (N                                                                                  )
 {
 	const std::string name = "Decoder_LDPC_BP_horizontal_layered_inter<" + this->up_rule.get_name() + ">";
 	this->set_name(name);
@@ -62,13 +60,27 @@ Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 		message << "'sat_val' has to be greater than 0 ('sat_val' = " << this->sat_val << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	this->reset();
+}
+
+template <typename B, typename R, class Update_rule>
+Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>* Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
+::clone() const
+{
+	auto m = new Decoder_LDPC_BP_horizontal_layered_inter(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
-::reset()
+::_reset(const int frame_id)
 {
-	this->init_flag = true;
+	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+	const auto zero = mipp::Reg<R>((R)0);
+	std::fill(this->messages [cur_wave].begin(), this->messages [cur_wave].end(), zero);
+	std::fill(this->var_nodes[cur_wave].begin(), this->var_nodes[cur_wave].end(), zero);
 }
 
 template <typename B, typename R, class Update_rule>
@@ -76,16 +88,6 @@ void Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 ::_load(const R *Y_N, const int frame_id)
 {
 	const auto cur_wave = frame_id / this->simd_inter_frame_level;
-
-	// memory zones initialization
-	if (this->init_flag)
-	{
-		const auto zero = mipp::Reg<R>((R)0);
-		std::fill(this->messages [cur_wave].begin(), this->messages [cur_wave].end(), zero);
-		std::fill(this->var_nodes[cur_wave].begin(), this->var_nodes[cur_wave].end(), zero);
-
-		if (cur_wave == this->n_dec_waves -1) this->init_flag = false;
-	}
 
 	std::vector<const R*> frames(mipp::N<R>());
 	for (auto f = 0; f < mipp::N<R>(); f++) frames[f] = Y_N + f * this->N;

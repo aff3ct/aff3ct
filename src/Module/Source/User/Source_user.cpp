@@ -9,7 +9,7 @@ using namespace aff3ct::module;
 
 template <typename B>
 Source_user<B>
-::Source_user(const int K, const std::string filename, const int n_frames, const int start_idx)
+::Source_user(const int K, const std::string &filename, const int n_frames, const int start_idx)
 : Source<B>(K, n_frames), source(), src_counter(start_idx)
 {
 	const std::string name = "Source_user";
@@ -65,6 +65,15 @@ Source_user<B>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Can't open '" + filename + "' file.");
 
 	src_counter %= (int)source.size();
+}
+
+template <typename B>
+Source_user<B>* Source_user<B>
+::clone() const
+{
+	auto m = new Source_user(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B>

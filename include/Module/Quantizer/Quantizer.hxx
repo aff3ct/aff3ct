@@ -42,14 +42,20 @@ Quantizer<R,Q>
 	auto &p = this->create_task("process");
 	auto ps_Y_N1 = this->template create_socket_in <R>(p, "Y_N1", this->N);
 	auto ps_Y_N2 = this->template create_socket_out<Q>(p, "Y_N2", this->N);
-	this->create_codelet(p, [this, ps_Y_N1, ps_Y_N2](Task &t) -> int
+	this->create_codelet(p, [ps_Y_N1, ps_Y_N2](Module &m, Task &t) -> int
 	{
-		this->process(static_cast<R*>(t[ps_Y_N1].get_dataptr()),
-		              static_cast<Q*>(t[ps_Y_N2].get_dataptr()));
+		static_cast<Quantizer<R,Q>&>(m).process(static_cast<R*>(t[ps_Y_N1].get_dataptr()),
+		                                        static_cast<Q*>(t[ps_Y_N2].get_dataptr()));
 
 		return 0;
 	});
+}
 
+template <typename R, typename Q>
+Quantizer<R,Q>* Quantizer<R,Q>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename R, typename Q>

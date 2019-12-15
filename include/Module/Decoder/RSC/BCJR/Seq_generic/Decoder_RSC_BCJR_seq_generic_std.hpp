@@ -30,6 +30,8 @@ public:
 	                                 const int n_frames = 1);
 	virtual ~Decoder_RSC_BCJR_seq_generic_std() = default;
 
+	virtual Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>* clone() const;
+
 protected:
 	virtual void _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);
 	virtual void _decode_siso(const R *Y_N1, R *Y_N2, const int frame_id);

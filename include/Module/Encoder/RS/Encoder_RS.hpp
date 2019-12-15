@@ -39,6 +39,8 @@ public:
 
 	virtual ~Encoder_RS() = default;
 
+	virtual Encoder_RS<B>* clone() const;
+
 	bool is_codeword(const B *X_N);
 
 protected:

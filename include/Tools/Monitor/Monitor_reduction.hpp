@@ -18,13 +18,13 @@ namespace aff3ct
 namespace tools
 {
 
-class Monitor_reduction
+class Monitor_reduction_static
 {
-private:
-	static bool                            stop_loop;
-	static std::vector<Monitor_reduction*> monitors;
-	static std::thread::id                 master_thread_id;
-	static std::chrono::nanoseconds        d_reduce_frequency;
+protected:
+	static bool                                   stop_loop;
+	static std::vector<Monitor_reduction_static*> monitors;
+	static std::thread::id                        master_thread_id;
+	static std::chrono::nanoseconds               d_reduce_frequency;
 
 	static std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> t_last_reduction;
 
@@ -36,17 +36,22 @@ public:
 	 * \param fully call the reduction functions with this parameter
 	 * \return 'get_stop_loop()' result
 	 */
-	static bool is_done_all(bool fully = false, bool final = false);
+	static bool is_done_all(bool fully = false);
 
 	/*
-	 * \brief call __reduce__ with 'fully' and 'force' arguments
+	 * \brief call _reduce with 'fully' and 'force' arguments
 	 */
 	static void reduce_all(bool fully = false, bool force = false);
 
 	/*
-	 * \brief loop on a forced reduction until '__reduce__' call return 'true' after having call 'set_stop_loop()'
+	 * \brief loop on a forced reduction until '_reduce' call return 'true' after having call 'set_stop_loop()'
 	 */
-	static void last_reduce_all(bool fully = false);
+	static void last_reduce_all(bool fully = true);
+
+	/*
+	 * \brief throw if all process do not have the same number of monitors to reduce
+	 */
+	static void check_reducible();
 
 	/*
 	 * reset 't_last_mpi_comm', clear 'stop_loop' and call 'reset_mr' on each monitor
@@ -57,6 +62,30 @@ public:
 
 	static void set_reduce_frequency(std::chrono::nanoseconds d);
 
+	/*
+	 * \brief reset this monitor
+	 */
+	virtual void reset() = 0;
+
+	/*
+	 * \brief check if this monitor has done
+	 * \return true if has done
+	 */
+	virtual bool is_done();
+
+	/*
+	 * \brief do the reduction of this monitor
+	 */
+	virtual void reduce(bool fully = true) = 0;
+
+protected:
+	Monitor_reduction_static();
+
+	virtual ~Monitor_reduction_static();
+
+	virtual bool _is_done() = 0;
+
+private:
 	/*
 	 * \brief get if the current simulation loop must be stopped or not
 	 * \return true if loop must be stopped
@@ -69,36 +98,11 @@ public:
 	static void set_stop_loop();
 
 	/*
-	 * \brief throw if all process do not have the same number of monitors to reduce
-	 */
-	static void check_reducible();
-
-protected:
-	Monitor_reduction();
-
-	virtual ~Monitor_reduction() = default;
-
-	/*
-	 * \brief do the reduction of this monitor
-	 */
-	virtual void _reduce(bool fully = false) = 0;
-
-	/*
-	 * \brief reset this monitor
-	 */
-	virtual void reset_mr() = 0;
-
-	/*
-	 * \brief check if this monitor has done
-	 * \return true if has done
-	 */
-	virtual bool is_done_mr() = 0;
-
-private:
-	/*
 	 * \brief add the monitor in the 'monitors' list
 	 */
-	static void add_monitor(Monitor_reduction*);
+	static void add_monitor(Monitor_reduction_static*);
+
+	static void remove_monitor(Monitor_reduction_static*);
 
 	/*
 	 * \brief do a reduction of the number of process that are at the final reduce step
@@ -113,17 +117,17 @@ private:
 	 * \param fully if set, do a full reduction of all attributes
 	 * \return the result of the 'reduce_stop_loop()' call after the reductions. If there were not, then return false.
 	 */
-	static bool __reduce__(bool fully, bool force);
+	static bool _reduce(bool fully, bool force);
 };
 
 
 template <class M> // M is the monitor on which must be applied the reduction
-class Monitor_reduction_M : public Monitor_reduction, public M
+class Monitor_reduction : public Monitor_reduction_static, public M
 {
 	static_assert(std::is_base_of<module::Monitor, M>::value, "M have to be based on a module::Monitor class.");
 
 private:
-	const std::vector<std::unique_ptr<M>>& monitors;
+	const std::vector<M*> monitors;
 	M collecter;
 
 public:
@@ -131,24 +135,19 @@ public:
 	 * \brief do reductions upon a monitor list to merge data in this monitor
 	 * \param monitors is the list of monitors on which the reductions are done
 	 */
-	explicit Monitor_reduction_M(const std::vector<std::unique_ptr<M>> &monitors);
-	virtual ~Monitor_reduction_M() = default;
+	explicit Monitor_reduction(const std::vector<M*> &monitors);
+	explicit Monitor_reduction(const std::vector<std::unique_ptr<M>> &monitors);
+	explicit Monitor_reduction(const std::vector<std::shared_ptr<M>> &monitors);
+	virtual ~Monitor_reduction() = default;
 
 	virtual void reset();
-	virtual void clear_callbacks();
+
+	virtual void reduce(bool fully = true);
+
+	virtual bool is_done();
 
 protected:
-	virtual void _reduce(bool fully = false);
-
-	/*
-	 * \brief call reset()
-	 */
-	virtual void reset_mr();
-
-	/*
-	 * \brief call is_done()
-	 */
-	virtual bool is_done_mr();
+	virtual bool _is_done();
 };
 }
 }

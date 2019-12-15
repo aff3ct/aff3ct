@@ -7,7 +7,9 @@
 
 #include <cstddef>
 #include <vector>
+#include <memory>
 
+#include "Tools/Noise/Received_optical_power.hpp"
 #include "Tools/Math/Distribution/Distributions.hpp"
 #include "Module/Modem/OOK/Modem_OOK.hpp"
 
@@ -21,6 +23,7 @@ class Modem_OOK_optical_rop_estimate : public Modem_OOK<B,R,Q>
 protected:
 	std::vector<size_t> ROP_known_bits;
 	const tools::Distributions<R>& dist;
+	tools::Received_optical_power<> rop_noise;
 
 	std::vector<R> dist_ROP_range;
 	std::vector<R> dist_meanvoltage_p0;
@@ -30,15 +33,19 @@ public:
 	/*
 	 * The 'ROP_known_bits' positions of the original frame are used for the ROP estimation
 	 */
-	Modem_OOK_optical_rop_estimate(const int N, std::vector<size_t> ROP_known_bits,
-	                               const tools::Distributions<R>& dist, const int n_frames);
+	Modem_OOK_optical_rop_estimate(const int N, const std::vector<size_t> &ROP_known_bits,
+	                               const tools::Distributions<R>& dist,
+	                               const int n_frames = 1);
 
 	/*
 	 * The 'n_known_bits' first bits are supposed known for the ROP estimation
 	 */
 	Modem_OOK_optical_rop_estimate(const int N, int n_known_bits,
-	                               const tools::Distributions<R>& dist, const int n_frames);
+	                               const tools::Distributions<R>& dist,
+	                               const int n_frames = 1);
 	virtual ~Modem_OOK_optical_rop_estimate() = default;
+
+	virtual Modem_OOK_optical_rop_estimate<B,R,Q>* clone() const;
 
 protected:
 	// H_N is replaced by X_N, that is the output of the modulation in order to estimate values

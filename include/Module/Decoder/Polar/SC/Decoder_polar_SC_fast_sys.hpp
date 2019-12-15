@@ -5,7 +5,6 @@
 #ifndef DECODER_POLAR_SC_FAST_SYS_
 #define DECODER_POLAR_SC_FAST_SYS_
 
-#include <memory>
 #include <vector>
 #include <mipp.h>
 
@@ -13,7 +12,7 @@
 #include "Tools/Code/Polar/Pattern_polar_parser.hpp"
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
-#include "Tools/Code/Polar/Frozenbits_notifier.hpp"
+#include "Tools/Interface/Interface_notify_frozenbits_update.hpp"
 #include "Module/Decoder/Decoder_SIHO.hpp"
 
 namespace aff3ct
@@ -32,7 +31,7 @@ template <typename B = int, typename R = float,
                                                                tools::g0_LLR<  R>,
                                                                tools::h_LLR <B,R>,
                                                                tools::xo_STD<B  >>>
-class Decoder_polar_SC_fast_sys : public Decoder_SIHO<B,R>, public tools::Frozenbits_notifier
+class Decoder_polar_SC_fast_sys : public Decoder_SIHO<B,R>, public tools::Interface_notify_frozenbits_update
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 	friend Decoder_polar_ASCL_fast_CA_sys    <B,R,API_polar>;
@@ -52,12 +51,14 @@ public:
 	Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int n_frames = 1);
 
 	Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits,
-	                          std::vector<std::unique_ptr<tools::Pattern_polar_i>>&& polar_patterns,
+	                          const std::vector<tools::Pattern_polar_i*> &polar_patterns,
 	                          const int idx_r0, const int idx_r1, const int n_frames = 1);
 
 	virtual ~Decoder_polar_SC_fast_sys() = default;
 
-	virtual void notify_frozenbits_update();
+	virtual Decoder_polar_SC_fast_sys<B,R,API_polar>* clone() const;
+
+	virtual void notify_noise_update();
 
 protected:
 	        void _load          (const R *Y_N                            );

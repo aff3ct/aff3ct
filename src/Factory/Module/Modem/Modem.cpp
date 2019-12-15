@@ -5,7 +5,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
 #include "Tools/Code/SCMA/modem_SCMA_functions.hpp"
-#include "Tools/Noise/Sigma.hpp"
+#include "Tools/Code/SCMA/Codebook.hpp"
 #include "Module/Modem/OOK/Modem_OOK_BSC.hpp"
 #include "Module/Modem/OOK/Modem_OOK_BEC.hpp"
 #include "Module/Modem/OOK/Modem_OOK_AWGN.hpp"
@@ -66,7 +66,7 @@ void Modem
 	tools::add_arg(args, p, class_name+"p+const-path",
 		cli::File(cli::openmode::read_write));
 
-	tools::add_arg(args, p, class_name+"p+codebook",
+	tools::add_arg(args, p, class_name+"p+cb-path",
 		cli::File(cli::openmode::read));
 
 	tools::add_arg(args, p, class_name+"p+cpm-std",
@@ -90,13 +90,9 @@ void Modem
 	tools::add_arg(args, p, class_name+"p+cpm-ws",
 		cli::Text(cli::Including_set("GMSK", "REC", "RCOS")));
 
-
 	// --------------------------------------------------------------------------------------------------- demodulator
 	tools::add_arg(args, p, class_name+"p+max",
 		cli::Text(cli::Including_set("MAX", "MAXL", "MAXS", "MAXSS")));
-
-	tools::add_arg(args, p, class_name+"p+noise",
-		cli::Real(cli::Positive(), cli::Non_zero()));
 
 	tools::add_arg(args, p, class_name+"p+no-sig2",
 		cli::None());
@@ -117,10 +113,10 @@ void Modem
 	auto p = this->get_prefix();
 
 	// ----------------------------------------------------------------------------------------------------- modulator
-	if(vals.exist({p+"-type"    })) this->type     = vals.at     ({p+"-type"    });
-	if(vals.exist({p+"-implem"  })) this->implem   = vals.at     ({p+"-implem"  });
-	if(vals.exist({p+"-cpm-std" })) this->cpm_std  = vals.at     ({p+"-cpm-std" });
-	if(vals.exist({p+"-codebook"})) this->codebook = vals.to_file({p+"-codebook"});
+	if(vals.exist({p+"-type"    })) this->type          = vals.at     ({p+"-type"    });
+	if(vals.exist({p+"-implem"  })) this->implem        = vals.at     ({p+"-implem"  });
+	if(vals.exist({p+"-cpm-std" })) this->cpm_std       = vals.at     ({p+"-cpm-std" });
+	if(vals.exist({p+"-cb-path" })) this->codebook_path = vals.to_file({p+"-cb-path"});
 
 	if (this->type == "CPM")
 	{
@@ -147,7 +143,7 @@ void Modem
 
 	if (this->type == "SCMA")
 	{
-		tools::Codebook<float> cb(this->codebook);
+		tools::Codebook<float> cb(this->codebook_path);
 
 		this->bps      = (int)cb.get_system_bps(); // codebook bps is float so here bps is stocked rounded
 		this->n_frames = cb.get_number_of_users();
@@ -169,9 +165,12 @@ void Modem
 	if (this->type == "BPSK" || this->type == "OOK")
 		this->bps = 1;
 
-
-
-	std::unique_ptr<tools::Constellation<float>> cstl(this->build_constellation<float>());
+	std::unique_ptr<tools::Constellation<float>> cstl;
+	try
+	{
+		cstl.reset(this->build_constellation<float>());
+	}
+	catch(tools::cannot_allocate &) {}
 
 	if (cstl != nullptr && this->type == "USER")
 		this->bps = cstl->get_n_bits_per_symbol();
@@ -195,7 +194,6 @@ void Modem
 
 	// --------------------------------------------------------------------------------------------------- demodulator
 	if(vals.exist({p+"-no-sig2"})) this->no_sig2 = true;
-	if(vals.exist({p+"-noise"  })) this->noise   = vals.to_float({p+"-noise"});
 	if(vals.exist({p+"-ite"    })) this->n_ite   = vals.to_int  ({p+"-ite"  });
 	if(vals.exist({p+"-max"    })) this->max     = vals.at      ({p+"-max"  });
 	if(vals.exist({p+"-psi"    })) this->psi     = vals.at      ({p+"-psi"  });
@@ -235,16 +233,14 @@ void Modem
 	std::string demod_ite  = std::to_string(this->n_ite);
 	std::string demod_psi  = this->psi;
 
-	if (this->noise != -1.f && full)
-		headers[p].push_back(std::make_pair("Sigma value", std::to_string(this->noise)));
 	headers[p].push_back(std::make_pair("Sigma square", demod_sig2));
 	if (demod_max != "unused")
 		headers[p].push_back(std::make_pair("Max type", demod_max));
 	if (this->type == "SCMA")
 	{
-		headers[p].push_back(std::make_pair("Number of iterations", demod_ite));
-		headers[p].push_back(std::make_pair("Psi function",         demod_psi));
-		headers[p].push_back(std::make_pair("Codebook",             codebook ));
+		headers[p].push_back(std::make_pair("Number of iterations", demod_ite    ));
+		headers[p].push_back(std::make_pair("Psi function",         demod_psi    ));
+		headers[p].push_back(std::make_pair("Codebook",             codebook_path));
 	}
 
 	if (full) headers[p].push_back(std::make_pair("Channel type", channel_type));
@@ -267,19 +263,19 @@ tools::Constellation<R>* Modem
 	if (this->type == "PSK" ) return new tools::Constellation_PSK <R>(this->bps);
 	if (this->type == "USER") return new tools::Constellation_user<R>(this->const_path);
 
-	return nullptr;
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 module::Modem<B,R,Q>* Modem
-::_build() const
+::_build(const tools::Constellation<R>* cstl) const
 {
-	if (this->type == "BPSK" && this->implem == "STD" ) return new module::Modem_BPSK     <B,R,Q    >(this->N, tools::Sigma<R>((R)this->noise),                                                                                                           this->no_sig2, this->n_frames);
-	if (this->type == "BPSK" && this->implem == "FAST") return new module::Modem_BPSK_fast<B,R,Q    >(this->N, tools::Sigma<R>((R)this->noise),                                                                                                           this->no_sig2, this->n_frames);
-	if (this->type == "CPM"  && this->implem == "STD" ) return new module::Modem_CPM      <B,R,Q,MAX>(this->N, tools::Sigma<R>((R)this->noise), this->bps, this->cpm_upf, this->cpm_L, this->cpm_k, this->cpm_p, this->cpm_mapping, this->cpm_wave_shape, this->no_sig2, this->n_frames);
+	if (this->type == "BPSK" && this->implem == "STD" ) return new module::Modem_BPSK     <B,R,Q    >(this->N,                                                                                                           this->no_sig2, this->n_frames);
+	if (this->type == "BPSK" && this->implem == "FAST") return new module::Modem_BPSK_fast<B,R,Q    >(this->N,                                                                                                           this->no_sig2, this->n_frames);
+	if (this->type == "CPM"  && this->implem == "STD" ) return new module::Modem_CPM      <B,R,Q,MAX>(this->N, this->bps, this->cpm_upf, this->cpm_L, this->cpm_k, this->cpm_p, this->cpm_mapping, this->cpm_wave_shape, this->no_sig2, this->n_frames);
 
-	std::unique_ptr<tools::Constellation<R>> cstl(this->build_constellation<R>());
-	if (cstl != nullptr) return new module::Modem_generic<B,R,Q,MAX>(N, std::move(cstl), tools::Sigma<R>((R)this->noise), this->no_sig2, this->n_frames);
+	if (cstl != nullptr)
+		return new module::Modem_generic<B,R,Q,MAX>(N, *cstl, this->no_sig2, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -288,18 +284,17 @@ template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem
 ::_build_scma() const
 {
-	std::unique_ptr<tools::Codebook<R>> CB(new tools::Codebook<R>(this->codebook));
-	if (this->psi == "PSI0") return new module::Modem_SCMA <B,R,Q,tools::psi_0<Q>>(this->N, std::move(CB), tools::Sigma<R>((R)this->noise), this->no_sig2, this->n_ite, this->n_frames);
-	if (this->psi == "PSI1") return new module::Modem_SCMA <B,R,Q,tools::psi_1<Q>>(this->N, std::move(CB), tools::Sigma<R>((R)this->noise), this->no_sig2, this->n_ite, this->n_frames);
-	if (this->psi == "PSI2") return new module::Modem_SCMA <B,R,Q,tools::psi_2<Q>>(this->N, std::move(CB), tools::Sigma<R>((R)this->noise), this->no_sig2, this->n_ite, this->n_frames);
-	if (this->psi == "PSI3") return new module::Modem_SCMA <B,R,Q,tools::psi_3<Q>>(this->N, std::move(CB), tools::Sigma<R>((R)this->noise), this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI0") return new module::Modem_SCMA<B,R,Q,tools::psi_0<Q>>(this->N, this->codebook_path, this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI1") return new module::Modem_SCMA<B,R,Q,tools::psi_1<Q>>(this->N, this->codebook_path, this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI2") return new module::Modem_SCMA<B,R,Q,tools::psi_2<Q>>(this->N, this->codebook_path, this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI3") return new module::Modem_SCMA<B,R,Q,tools::psi_3<Q>>(this->N, this->codebook_path, this->no_sig2, this->n_ite, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem
-::build() const
+::build(const tools::Constellation<R>* cstl) const
 {
 	if (this->type == "SCMA" && this->implem == "STD")
 	{
@@ -307,16 +302,16 @@ module::Modem<B,R,Q>* Modem
 	}
 	else if (this->type == "OOK" && this->implem == "STD")
 	{
-		if (channel_type == "AWGN") return new module::Modem_OOK_AWGN<B,R,Q>(this->N, tools::Sigma<R>((R)this->noise), this->no_sig2, this->n_frames);
-		if (channel_type == "BEC" ) return new module::Modem_OOK_BEC <B,R,Q>(this->N, tools::EP   <R>((R)this->noise),                this->n_frames);
-		if (channel_type == "BSC" ) return new module::Modem_OOK_BSC <B,R,Q>(this->N, tools::EP   <R>((R)this->noise),                this->n_frames);
+		if (channel_type == "AWGN") return new module::Modem_OOK_AWGN<B,R,Q>(this->N, this->no_sig2, this->n_frames);
+		if (channel_type == "BEC" ) return new module::Modem_OOK_BEC <B,R,Q>(this->N,                this->n_frames);
+		if (channel_type == "BSC" ) return new module::Modem_OOK_BSC <B,R,Q>(this->N,                this->n_frames);
 	}
 	else
 	{
-		if (this->max == "MAX"  ) return _build<B,R,Q,tools::max          <Q>>();
-		if (this->max == "MAXL" ) return _build<B,R,Q,tools::max_linear   <Q>>();
-		if (this->max == "MAXS" ) return _build<B,R,Q,tools::max_star     <Q>>();
-		if (this->max == "MAXSS") return _build<B,R,Q,tools::max_star_safe<Q>>();
+		if (this->max == "MAX"  ) return _build<B,R,Q,tools::max          <Q>>(cstl);
+		if (this->max == "MAXL" ) return _build<B,R,Q,tools::max_linear   <Q>>(cstl);
+		if (this->max == "MAXS" ) return _build<B,R,Q,tools::max_star     <Q>>(cstl);
+		if (this->max == "MAXSS") return _build<B,R,Q,tools::max_star_safe<Q>>(cstl);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
@@ -329,7 +324,7 @@ module::Modem<B,R,Q>* Modem
 	if (this->type == "OOK" && this->implem == "STD" && channel_type == "OPTICAL")
 	{
 		if (this->rop_est_bits == 0)
-			return new module::Modem_OOK_optical<B,R,Q>(this->N, dist, tools::ROP<R>((R)this->noise), this->n_frames);
+			return new module::Modem_OOK_optical<B,R,Q>(this->N, dist, this->n_frames);
 		else
 			return new module::Modem_OOK_optical_rop_estimate<B,R,Q>(this->N, rop_est_bits, dist, this->n_frames);
 	}
@@ -412,12 +407,12 @@ bool Modem
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,Q_8 >() const;
-template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,R_8 >() const;
-template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::build<B_16,R_16,Q_16>() const;
-template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::build<B_16,R_16,R_16>() const;
-template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::build<B_32,R_32,Q_32>() const;
-template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::build<B_64,R_64,Q_64>() const;
+template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,Q_8 >(const tools::Constellation<R_8 >*) const;
+template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,R_8 >(const tools::Constellation<R_8 >*) const;
+template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::build<B_16,R_16,Q_16>(const tools::Constellation<R_16>*) const;
+template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::build<B_16,R_16,R_16>(const tools::Constellation<R_16>*) const;
+template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::build<B_32,R_32,Q_32>(const tools::Constellation<R_32>*) const;
+template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::build<B_64,R_64,Q_64>(const tools::Constellation<R_64>*) const;
 
 template aff3ct::module::Modem<B_8 ,R_8 ,Q_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,Q_8 >(const tools::Distributions<R_8 >&) const;
 template aff3ct::module::Modem<B_8 ,R_8 ,R_8 >* aff3ct::factory::Modem::build<B_8 ,R_8 ,R_8 >(const tools::Distributions<R_8 >&) const;
@@ -425,15 +420,19 @@ template aff3ct::module::Modem<B_16,R_16,Q_16>* aff3ct::factory::Modem::build<B_
 template aff3ct::module::Modem<B_16,R_16,R_16>* aff3ct::factory::Modem::build<B_16,R_16,R_16>(const tools::Distributions<R_16>&) const;
 template aff3ct::module::Modem<B_32,R_32,Q_32>* aff3ct::factory::Modem::build<B_32,R_32,Q_32>(const tools::Distributions<R_32>&) const;
 template aff3ct::module::Modem<B_64,R_64,Q_64>* aff3ct::factory::Modem::build<B_64,R_64,Q_64>(const tools::Distributions<R_64>&) const;
+
+template tools::Constellation<R_32>* aff3ct::factory::Modem::build_constellation<R_32>() const;
+template tools::Constellation<R_64>* aff3ct::factory::Modem::build_constellation<R_64>() const;
 #else
-template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::build<B,R,Q>() const;
+template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::build<B,R,Q>(const tools::Constellation<R>*) const;
 
 template aff3ct::module::Modem<B,R,Q>* aff3ct::factory::Modem::build<B,R,Q>(const tools::Distributions<R>&) const;
 #if !defined(AFF3CT_32BIT_PREC) && !defined(AFF3CT_64BIT_PREC)
-template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::build<B,R,R>() const;
+template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::build<B,R,R>(const tools::Constellation<R>*) const;
 
 template aff3ct::module::Modem<B,R,R>* aff3ct::factory::Modem::build<B,R,R>(const tools::Distributions<R>&) const;
 #endif
+template tools::Constellation<R>* aff3ct::factory::Modem::build_constellation<R>() const;
 #endif
 
 // ==================================================================================== explicit template instantiation

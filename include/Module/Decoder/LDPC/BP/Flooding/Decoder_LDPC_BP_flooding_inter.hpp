@@ -12,7 +12,7 @@
 
 #include "Tools/Code/LDPC/Update_rule/NMS/Update_rule_NMS_simd.hpp"
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
-#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 #include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp"
 
 namespace aff3ct
@@ -20,7 +20,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename R = float, class Update_rule = tools::Update_rule_NMS_simd<R>>
-class Decoder_LDPC_BP_flooding_inter : public Decoder_SISO_SIHO<B,R>, public Decoder_LDPC_BP
+class Decoder_LDPC_BP_flooding_inter : public Decoder_SISO<B,R>, public Decoder_LDPC_BP
 {
 protected:
 	const std::vector<unsigned> &info_bits_pos;
@@ -38,8 +38,6 @@ protected:
 	mipp::vector<mipp::Reg<R>> Y_N_reorderered;
 	mipp::vector<mipp::Reg<B>> V_reorderered;
 
-	bool init_flag;
-
 public:
 	Decoder_LDPC_BP_flooding_inter(const int K, const int N, const int n_ite,
 	                               const tools::Sparse_matrix &H,
@@ -49,9 +47,12 @@ public:
 	                               const int syndrome_depth = 1,
 	                               const int n_frames = 1);
 	virtual ~Decoder_LDPC_BP_flooding_inter() = default;
-	void reset();
+
+	virtual Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>* clone() const;
 
 protected:
+	void _reset(const int frame_id);
+
 	void _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);
 	void _decode_siho   (const R *Y_N,  B *V_K,  const int frame_id);
 	void _decode_siho_cw(const R *Y_N,  B *V_N,  const int frame_id);

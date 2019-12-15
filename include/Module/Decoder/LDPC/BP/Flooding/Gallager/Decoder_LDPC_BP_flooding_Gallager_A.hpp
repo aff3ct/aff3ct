@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
-#include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp"
 
 namespace aff3ct
@@ -17,7 +17,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_LDPC_BP_flooding_Gallager_A : public Decoder_SIHO_HIHO<B,R>, public Decoder_LDPC_BP
+class Decoder_LDPC_BP_flooding_Gallager_A : public Decoder_SIHO<B,R>, public Decoder_LDPC_BP
 {
 protected:
 	const bool transform_HY_N;
@@ -44,6 +44,7 @@ public:
 	                                    const int syndrome_depth = 1,
 	                                    const int n_frames = 1);
 	virtual ~Decoder_LDPC_BP_flooding_Gallager_A() = default;
+	virtual Decoder_LDPC_BP_flooding_Gallager_A<B,R>* clone() const;
 
 protected:
 	void _decode_hiho   (const B *Y_N, B *V_K, const int frame_id);

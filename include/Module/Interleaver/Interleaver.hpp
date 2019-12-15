@@ -46,6 +46,8 @@ public:
 
 	virtual ~Interleaver() = default;
 
+	virtual Interleaver<D,T>* clone() const;
+
 	const tools::Interleaver_core<T>& get_core() const;
 
 	template <class A = std::allocator<D>>

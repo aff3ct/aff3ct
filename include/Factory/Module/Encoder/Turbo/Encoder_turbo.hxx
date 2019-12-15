@@ -180,18 +180,16 @@ template <class E1, class E2>
 template <typename B>
 module::Encoder_turbo<B>* Encoder_turbo<E1,E2>
 ::build(const module::Interleaver<B> &itl,
-              std::shared_ptr<module::Encoder<B>> enc_n,
-              std::shared_ptr<module::Encoder<B>> enc_i) const
+        const module::Encoder<B> &enc_n,
+        const module::Encoder<B> &enc_i) const
 {
-	enc_i = (enc_i == nullptr) ? enc_n : enc_i;
-
 	if (this->sub1->buffered)
 	{
-		if (this->type == "TURBO") return new module::Encoder_turbo       <B>(this->K, this->N_cw, itl, *enc_n, *enc_i);
+		if (this->type == "TURBO") return new module::Encoder_turbo       <B>(this->K, this->N_cw, itl, enc_n, enc_i);
 	}
-	else if (enc_n == enc_i)
+	else if (&enc_n == &enc_i)
 	{
-		if (this->type == "TURBO") return new module::Encoder_turbo_legacy<B>(this->K, this->N_cw, itl, *enc_n);
+		if (this->type == "TURBO") return new module::Encoder_turbo_legacy<B>(this->K, this->N_cw, itl, enc_n);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

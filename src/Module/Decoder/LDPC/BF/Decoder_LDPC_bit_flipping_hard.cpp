@@ -20,16 +20,15 @@ Decoder_LDPC_bit_flipping_hard<B,R>
                            const bool enable_syndrome,
                            const int syndrome_depth,
                            const int n_frames)
-: Decoder               (K, N, n_frames, 1   ),
-  Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1   ),
-  n_ite                 (n_ite               ),
-  enable_syndrome       (enable_syndrome     ),
-  syndrome_depth        (syndrome_depth      ),
-  H                     (_H.turn(tools::Sparse_matrix::Way::VERTICAL)),
-  var_nodes             (N                   ),
-  check_nodes           (this->H.get_n_cols()),
-  YH_N                  (N                   ),
-  info_bits_pos         (info_bits_pos       )
+: Decoder_SIHO<B,R>(K, N, n_frames, 1   ),
+  n_ite            (n_ite               ),
+  enable_syndrome  (enable_syndrome     ),
+  syndrome_depth   (syndrome_depth      ),
+  H                (_H                  ),
+  var_nodes        (N                   ),
+  check_nodes      (this->H.get_n_cols()),
+  YH_N             (N                   ),
+  info_bits_pos    (info_bits_pos       )
 {
 	const std::string name = "Decoder_LDPC_bit_flipping_hard";
 	this->set_name(name);
@@ -55,6 +54,13 @@ Decoder_LDPC_bit_flipping_hard<B,R>
 		        << H.get_n_rows() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+template <typename B, typename R>
+Decoder_LDPC_bit_flipping_hard<B,R>* Decoder_LDPC_bit_flipping_hard<B,R>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R>

@@ -14,7 +14,7 @@
 #include "Factory/Module/Channel/Channel.hpp"
 #include "Factory/Module/Quantizer/Quantizer.hpp"
 #include "Factory/Module/Monitor/EXIT/Monitor_EXIT.hpp"
-#include "Factory/Module/Codec/Codec_SISO.hpp"
+#include "Factory/Tools/Codec/Codec_SISO.hpp"
 #include "Factory/Tools/Display/Terminal/Terminal.hpp"
 #include "Factory/Simulation/Simulation.hpp"
 
@@ -22,8 +22,7 @@ namespace aff3ct
 {
 namespace simulation
 {
-template <typename B, typename R>
-class EXIT;
+class Simulation;
 }
 }
 
@@ -77,7 +76,7 @@ public:
 
 	// builder
 	template <typename B = int, typename R = float>
-	simulation::EXIT<B,R>* build() const;
+	simulation::Simulation* build() const;
 };
 }
 }

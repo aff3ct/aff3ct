@@ -22,6 +22,7 @@ private:
 public:
 	explicit Gaussian_noise_generator_GSL(const int seed = 0);
 	virtual ~Gaussian_noise_generator_GSL();
+	virtual Gaussian_noise_generator_GSL<R>* clone() const;
 
 	virtual void set_seed(const int seed);
 	virtual void generate(R *noise, const unsigned length, const R sigma, const R mu = 0.0);

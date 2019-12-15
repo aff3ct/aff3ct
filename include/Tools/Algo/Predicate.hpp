@@ -5,6 +5,11 @@
 #ifndef PREDICATE_HPP
 #define PREDICATE_HPP
 
+#include "Tools/Interface/Interface_reset.hpp"
+#ifndef _MSC_VER
+#include "Tools/Interface/Interface_clone.hpp"
+#endif
+
 namespace aff3ct
 {
 namespace tools
@@ -14,13 +19,19 @@ namespace tools
  *
  * \brief A predicate.
  */
-class Predicate
+#ifdef _MSC_VER
+class Predicate : public Interface_reset
+#else
+class Predicate : public Interface_reset, public Interface_clone
+#endif
 {
 public:
 	/*!
 	 * \brief virtual Destructor.
 	 */
 	virtual ~Predicate() = default;
+
+	virtual Predicate* clone() const = 0;
 
 	/*!
 	 * \brief Evaluates the predicate.

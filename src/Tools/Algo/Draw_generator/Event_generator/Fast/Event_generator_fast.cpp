@@ -16,6 +16,13 @@ Event_generator_fast<R,E>
 }
 
 template <typename R, typename E>
+Event_generator_fast<R,E>* Event_generator_fast<R,E>
+::clone() const
+{
+	return new Event_generator_fast(*this);
+}
+
+template <typename R, typename E>
 void Event_generator_fast<R,E>
 ::set_seed(const int seed)
 {

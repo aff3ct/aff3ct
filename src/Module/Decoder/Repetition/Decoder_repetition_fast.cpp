@@ -11,8 +11,7 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_repetition_fast<B,R>
 ::Decoder_repetition_fast(const int& K, const int& N, const bool buffered_encoding, const int n_frames)
-: Decoder(K, N, n_frames, 1),
-  Decoder_repetition<B,R>(K, N, buffered_encoding, n_frames)
+: Decoder_repetition<B,R>(K, N, buffered_encoding, n_frames)
 {
 	const std::string name = "Decoder_repetition_fast";
 	this->set_name(name);
@@ -24,6 +23,15 @@ Decoder_repetition_fast<B,R>
 		        << ", 'mipp::nElReg<R>()' = " << mipp::nElReg<R>() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+template <typename B, typename R>
+Decoder_repetition_fast<B,R>* Decoder_repetition_fast<B,R>
+::clone() const
+{
+	auto m = new Decoder_repetition_fast(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B, typename R>

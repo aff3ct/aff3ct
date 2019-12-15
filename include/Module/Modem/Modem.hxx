@@ -67,8 +67,8 @@ Socket& Modem<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>
-::Modem(const int N, const int N_mod, const int N_fil, const tools::Noise<R>& noise, const int n_frames)
-: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_fil), n(nullptr), enable_filter(false), enable_demodulator(true)
+::Modem(const int N, const int N_mod, const int N_fil, const int n_frames)
+: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_fil), noise(nullptr), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
 	this->set_name(name);
@@ -95,15 +95,13 @@ Modem<B,R,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (noise.has_noise()) this->set_noise(noise);
-
 	this->init_processes();
 }
 
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>
-::Modem(const int N, const int N_mod, const tools::Noise<R>& noise, const int n_frames)
-: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_mod), n(nullptr), enable_filter(false), enable_demodulator(true)
+::Modem(const int N, const int N_mod, const int n_frames)
+: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_mod), noise(nullptr), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
 	this->set_name(name);
@@ -123,15 +121,13 @@ Modem<B,R,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (noise.has_noise()) this->set_noise(noise);
-
 	this->init_processes();
 }
 
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>
-::Modem(const int N, const tools::Noise<R>& noise, const int n_frames)
-: Module(n_frames), N(N), N_mod(N), N_fil(N), n(nullptr), enable_filter(false), enable_demodulator(true)
+::Modem(const int N, const int n_frames)
+: Module(n_frames), N(N), N_mod(N), N_fil(N), noise(nullptr), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
 	this->set_name(name);
@@ -144,9 +140,14 @@ Modem<B,R,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (noise.has_noise()) this->set_noise(noise);
-
 	this->init_processes();
+}
+
+template <typename B, typename R, typename Q>
+Modem<B,R,Q>* Modem<B,R,Q>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
@@ -156,10 +157,10 @@ void Modem<B,R,Q>
 	auto &p1 = this->create_task("modulate");
 	auto p1s_X_N1 = this->template create_socket_in <B>(p1, "X_N1", this->N    );
 	auto p1s_X_N2 = this->template create_socket_out<R>(p1, "X_N2", this->N_mod);
-	this->create_codelet(p1, [this, p1s_X_N1, p1s_X_N2](Task &t) -> int
+	this->create_codelet(p1, [p1s_X_N1, p1s_X_N2](Module &m, Task &t) -> int
 	{
-		this->modulate(static_cast<B*>(t[p1s_X_N1].get_dataptr()),
-		               static_cast<R*>(t[p1s_X_N2].get_dataptr()));
+		static_cast<Modem<B,R,Q>&>(m).modulate(static_cast<B*>(t[p1s_X_N1].get_dataptr()),
+		                                       static_cast<R*>(t[p1s_X_N2].get_dataptr()));
 
 		return 0;
 	});
@@ -167,10 +168,10 @@ void Modem<B,R,Q>
 	auto &p7 = this->create_task("tmodulate");
 	auto p7s_X_N1 = this->template create_socket_in <Q>(p7, "X_N1", this->N    );
 	auto p7s_X_N2 = this->template create_socket_out<R>(p7, "X_N2", this->N_mod);
-	this->create_codelet(p7, [this, p7s_X_N1, p7s_X_N2](Task &t) -> int
+	this->create_codelet(p7, [p7s_X_N1, p7s_X_N2](Module &m, Task &t) -> int
 	{
-		this->tmodulate(static_cast<Q*>(t[p7s_X_N1].get_dataptr()),
-		                static_cast<R*>(t[p7s_X_N2].get_dataptr()));
+		static_cast<Modem<B,R,Q>&>(m).tmodulate(static_cast<Q*>(t[p7s_X_N1].get_dataptr()),
+		                                        static_cast<R*>(t[p7s_X_N2].get_dataptr()));
 
 		return 0;
 	});
@@ -178,10 +179,10 @@ void Modem<B,R,Q>
 	auto &p2 = this->create_task("filter");
 	auto p2s_Y_N1 = this->template create_socket_in <R>(p2, "Y_N1", this->N_mod);
 	auto p2s_Y_N2 = this->template create_socket_out<R>(p2, "Y_N2", this->N_fil);
-	this->create_codelet(p2, [this, p2s_Y_N1, p2s_Y_N2](Task &t) -> int
+	this->create_codelet(p2, [p2s_Y_N1, p2s_Y_N2](Module &m, Task &t) -> int
 	{
-		this->filter(static_cast<R*>(t[p2s_Y_N1].get_dataptr()),
-		             static_cast<R*>(t[p2s_Y_N2].get_dataptr()));
+		static_cast<Modem<B,R,Q>&>(m).filter(static_cast<R*>(t[p2s_Y_N1].get_dataptr()),
+		                                     static_cast<R*>(t[p2s_Y_N2].get_dataptr()));
 
 		return 0;
 	});
@@ -189,10 +190,10 @@ void Modem<B,R,Q>
 	auto &p3 = this->create_task("demodulate");
 	auto p3s_Y_N1 = this->template create_socket_in <Q>(p3, "Y_N1", this->N_fil);
 	auto p3s_Y_N2 = this->template create_socket_out<Q>(p3, "Y_N2", this->N    );
-	this->create_codelet(p3, [this, p3s_Y_N1, p3s_Y_N2](Task &t) -> int
+	this->create_codelet(p3, [p3s_Y_N1, p3s_Y_N2](Module &m, Task &t) -> int
 	{
-		this->demodulate(static_cast<Q*>(t[p3s_Y_N1].get_dataptr()),
-		                 static_cast<Q*>(t[p3s_Y_N2].get_dataptr()));
+		static_cast<Modem<B,R,Q>&>(m).demodulate(static_cast<Q*>(t[p3s_Y_N1].get_dataptr()),
+		                                         static_cast<Q*>(t[p3s_Y_N2].get_dataptr()));
 
 		return 0;
 	});
@@ -201,11 +202,11 @@ void Modem<B,R,Q>
 	auto p4s_Y_N1 = this->template create_socket_in <Q>(p4, "Y_N1", this->N_fil);
 	auto p4s_Y_N2 = this->template create_socket_in <Q>(p4, "Y_N2", this->N    );
 	auto p4s_Y_N3 = this->template create_socket_out<Q>(p4, "Y_N3", this->N    );
-	this->create_codelet(p4, [this, p4s_Y_N1, p4s_Y_N2, p4s_Y_N3](Task &t) -> int
+	this->create_codelet(p4, [p4s_Y_N1, p4s_Y_N2, p4s_Y_N3](Module &m, Task &t) -> int
 	{
-		this->tdemodulate(static_cast<Q*>(t[p4s_Y_N1].get_dataptr()),
-		                  static_cast<Q*>(t[p4s_Y_N2].get_dataptr()),
-		                  static_cast<Q*>(t[p4s_Y_N3].get_dataptr()));
+		static_cast<Modem<B,R,Q>&>(m).tdemodulate(static_cast<Q*>(t[p4s_Y_N1].get_dataptr()),
+		                                          static_cast<Q*>(t[p4s_Y_N2].get_dataptr()),
+		                                          static_cast<Q*>(t[p4s_Y_N3].get_dataptr()));
 
 		return 0;
 	});
@@ -214,11 +215,11 @@ void Modem<B,R,Q>
 	auto p5s_H_N  = this->template create_socket_in <R>(p5, "H_N",  this->N_fil);
 	auto p5s_Y_N1 = this->template create_socket_in <Q>(p5, "Y_N1", this->N_fil);
 	auto p5s_Y_N2 = this->template create_socket_out<Q>(p5, "Y_N2", this->N    );
-	this->create_codelet(p5, [this, p5s_H_N, p5s_Y_N1, p5s_Y_N2](Task &t) -> int
+	this->create_codelet(p5, [p5s_H_N, p5s_Y_N1, p5s_Y_N2](Module &m, Task &t) -> int
 	{
-		this->demodulate_wg(static_cast<R*>(t[p5s_H_N ].get_dataptr()),
-		                    static_cast<Q*>(t[p5s_Y_N1].get_dataptr()),
-		                    static_cast<Q*>(t[p5s_Y_N2].get_dataptr()));
+		static_cast<Modem<B,R,Q>&>(m).demodulate_wg(static_cast<R*>(t[p5s_H_N ].get_dataptr()),
+		                                            static_cast<Q*>(t[p5s_Y_N1].get_dataptr()),
+		                                            static_cast<Q*>(t[p5s_Y_N2].get_dataptr()));
 
 		return 0;
 	});
@@ -228,12 +229,12 @@ void Modem<B,R,Q>
 	auto p6s_Y_N1 = this->template create_socket_in <Q>(p6, "Y_N1", this->N_fil);
 	auto p6s_Y_N2 = this->template create_socket_in <Q>(p6, "Y_N2", this->N    );
 	auto p6s_Y_N3 = this->template create_socket_out<Q>(p6, "Y_N3", this->N    );
-	this->create_codelet(p6, [this, p6s_H_N, p6s_Y_N1, p6s_Y_N2, p6s_Y_N3](Task &t) -> int
+	this->create_codelet(p6, [p6s_H_N, p6s_Y_N1, p6s_Y_N2, p6s_Y_N3](Module &m, Task &t) -> int
 	{
-		this->tdemodulate_wg(static_cast<R*>(t[p6s_H_N ].get_dataptr()),
-		                     static_cast<Q*>(t[p6s_Y_N1].get_dataptr()),
-		                     static_cast<Q*>(t[p6s_Y_N2].get_dataptr()),
-		                     static_cast<Q*>(t[p6s_Y_N3].get_dataptr()));
+		static_cast<Modem<B,R,Q>&>(m).tdemodulate_wg(static_cast<R*>(t[p6s_H_N ].get_dataptr()),
+		                                             static_cast<Q*>(t[p6s_Y_N1].get_dataptr()),
+		                                             static_cast<Q*>(t[p6s_Y_N2].get_dataptr()),
+		                                             static_cast<Q*>(t[p6s_Y_N3].get_dataptr()));
 
 		return 0;
 	});
@@ -261,13 +262,6 @@ int Modem<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-const tools::Noise<R>* Modem<B,R,Q>
-::current_noise() const
-{
-	return this->n;
-}
-
-template <typename B, typename R, typename Q>
 bool Modem<B,R,Q>
 ::is_filter() const
 {
@@ -283,10 +277,32 @@ bool Modem<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::set_noise(const tools::Noise<R>& noise)
+::set_noise(const tools::Noise<>& noise)
 {
-	this->n.reset(noise.clone());
+	this->noise = &noise;
+	if (this->noise->is_set())
+		this->notify_noise_update();
+}
+
+template <typename B, typename R, typename Q>
+void Modem<B,R,Q>
+::notify_noise_update()
+{
 	this->check_noise();
+}
+
+template <typename B, typename R, typename Q>
+const tools::Noise<>& Modem<B,R,Q>
+::get_noise() const
+{
+	if (this->noise == nullptr)
+	{
+		std::stringstream message;
+		message << "'noise' should not be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->noise;
 }
 
 template <typename B, typename R, typename Q>
@@ -667,10 +683,10 @@ template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
 ::check_noise()
 {
-	if (this->n == nullptr)
+	if (this->noise == nullptr)
 	{
 		std::stringstream message;
-		message << "No noise has been set.";
+		message << "'noise' should not be nullptr.";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 }

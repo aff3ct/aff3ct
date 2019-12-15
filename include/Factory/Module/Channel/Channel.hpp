@@ -37,7 +37,6 @@ public:
 	int         n_frames     = 1;
 	int         seed         = 0;
 	int         gain_occur   = 1;
-	float       noise        = -1.f;
 
 	// -------------------------------------------------------------------------------------------------------- METHODS
 	explicit Channel(const std::string &p = Channel_prefix);

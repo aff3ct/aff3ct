@@ -20,7 +20,6 @@ class Flip_and_check_DB : public CRC_checker_DB<B,R>
 {
 private:
 	const int K;
-
 	const int q;
 	mipp::vector<R> metric;
 	mipp::vector<B> s_tmp;
@@ -32,7 +31,7 @@ private:
 public:
 	Flip_and_check_DB(const int             K,
 	                  const int             n_ite,
-	                        module::CRC<B>  &crc,
+	                  const module::CRC<B> &crc,
 	                  const int             start_crc_check_ite,
 	                  const int             q,
 	                  const int             m                      =  1,
@@ -41,6 +40,8 @@ public:
 	                  const int             simd_inter_frame_level =  1);
 
 	virtual ~Flip_and_check_DB() = default;
+
+	virtual Flip_and_check_DB<B,R>* clone() const;
 
 	bool siso_n(const int ite,
 	            const mipp::vector<R>& sys,

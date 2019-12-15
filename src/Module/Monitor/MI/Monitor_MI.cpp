@@ -28,10 +28,10 @@ Monitor_MI<B,R>
 	auto &p = this->create_task("get_mutual_info", (int)mnt::tsk::get_mutual_info);
 	auto ps_X = this->template create_socket_in<B>(p, "X", get_N());
 	auto ps_Y = this->template create_socket_in<R>(p, "Y", get_N());
-	this->create_codelet(p, [this, ps_X, ps_Y](Task &t) -> int
+	this->create_codelet(p, [ps_X, ps_Y](Module &m, Task &t) -> int
 	{
-		return (int)this->get_mutual_info(static_cast<B*>(t[ps_X].get_dataptr()),
-		                                  static_cast<R*>(t[ps_Y].get_dataptr()));
+		return (int)static_cast<Monitor_MI<B,R>&>(m).get_mutual_info(static_cast<B*>(t[ps_X].get_dataptr()),
+		                                                             static_cast<R*>(t[ps_Y].get_dataptr()));
 	});
 
 	reset();
@@ -51,6 +51,31 @@ Monitor_MI<B,R>
 {
 }
 
+template <typename B, typename R>
+Monitor_MI<B,R>* Monitor_MI<B,R>
+::clone() const
+{
+	if (this->callback_check.size())
+	{
+		std::stringstream message;
+		message << "'callback_check.size()' has to be equal to 0 ('callback_check.size()' = "
+		        << this->callback_check.size() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (this->callback_n_trials_limit_achieved.size())
+	{
+		std::stringstream message;
+		message << "'callback_n_trials_limit_achieved.size()' has to be equal to 0 "
+		        << "('callback_n_trials_limit_achieved.size()' = "
+		        << this->callback_n_trials_limit_achieved.size() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	auto m = new Monitor_MI(*this);
+	m->deep_copy(*this);
+	return m;
+}
 
 template <typename B, typename R>
 bool Monitor_MI<B,R>
@@ -92,12 +117,10 @@ R Monitor_MI<B,R>
 	for (auto f = f_start; f < f_stop; f++)
 		loc_MI_sum += this->_get_mutual_info(X + f * get_N(), Y + f * get_N(), f);
 
-	for (auto& c : this->callbacks_check)
-		c();
+	this->callback_check.notify();
 
 	if (this->n_trials_limit_achieved())
-		for (auto& c : this->callbacks_n_trials_limit_achieved)
-			c();
+		this->callback_n_trials_limit_achieved.notify();
 
 	return loc_MI_sum / (R)(f_stop - f_start) * 10000; // return the mut info computed now %10000 instead of %100
 }
@@ -237,17 +260,31 @@ void  Monitor_MI<B,R>
 
 
 template <typename B, typename R>
-void Monitor_MI<B,R>
-::add_handler_check(std::function<void(void)> callback)
+uint32_t Monitor_MI<B,R>
+::record_callback_check(std::function<void(void)> callback)
 {
-	this->callbacks_check.push_back(callback);
+	return this->callback_check.record(callback);
 }
 
 template <typename B, typename R>
-void Monitor_MI<B,R>
-::add_handler_n_trials_limit_achieved(std::function<void(void)> callback)
+uint32_t Monitor_MI<B,R>
+::record_callback_n_trials_limit_achieved(std::function<void(void)> callback)
 {
-	this->callbacks_n_trials_limit_achieved.push_back(callback);
+	return this->callback_n_trials_limit_achieved.record(callback);
+}
+
+template <typename B, typename R>
+bool Monitor_MI<B,R>
+::unrecord_callback_check(const uint32_t id)
+{
+	return this->callback_check.unrecord(id);
+}
+
+template <typename B, typename R>
+bool Monitor_MI<B,R>
+::unrecord_callback_n_trials_limit_achieved(const uint32_t id)
+{
+	return this->callback_n_trials_limit_achieved.unrecord(id);
 }
 
 template <typename B, typename R>
@@ -264,27 +301,22 @@ template <typename B, typename R>
 void Monitor_MI<B,R>
 ::clear_callbacks()
 {
-	Monitor::clear_callbacks();
-
-	this->callbacks_check.clear();
-	this->callbacks_n_trials_limit_achieved.clear();
+	this->callback_check.clear();
+	this->callback_n_trials_limit_achieved.clear();
 }
 
 template <typename B, typename R>
 void Monitor_MI<B,R>
 ::collect(const Monitor& m, bool fully)
 {
-	collect(dynamic_cast<const Monitor_MI<B,R>&>(m), fully);
+	collect(static_cast<const Monitor_MI<B,R>&>(m), fully);
 }
 
 template <typename B, typename R>
 void Monitor_MI<B,R>
 ::collect(const Monitor_MI<B,R>& m, bool fully)
 {
-	equivalent(m, true);
-
 	collect(m.get_attributes());
-
 	if (fully)
 		this->mutinfo_hist.add_values(m.mutinfo_hist);
 }
@@ -304,23 +336,18 @@ Monitor_MI<B,R>& Monitor_MI<B,R>
 	return *this;
 }
 
-
-
 template <typename B, typename R>
 void Monitor_MI<B,R>
 ::copy(const Monitor& m, bool fully)
 {
-	copy(dynamic_cast<const Monitor_MI<B,R>&>(m), fully);
+	copy(static_cast<const Monitor_MI<B,R>&>(m), fully);
 }
 
 template <typename B, typename R>
 void Monitor_MI<B,R>
 ::copy(const Monitor_MI<B,R>& m, bool fully)
 {
-	equivalent(m, true);
-
 	copy(m.get_attributes());
-
 	if (fully)
 		this->mutinfo_hist = m.mutinfo_hist;
 }
@@ -331,7 +358,6 @@ void Monitor_MI<B,R>
 {
 	vals = v;
 }
-
 
 template <typename B, typename R>
 Monitor_MI<B,R>& Monitor_MI<B,R>

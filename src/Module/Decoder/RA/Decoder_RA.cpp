@@ -12,8 +12,7 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_RA<B, R>
 ::Decoder_RA(const int& K, const int& N, const Interleaver<R>& interleaver, int max_iter, const int n_frames)
-: Decoder          (K, N, n_frames, 1),
-  Decoder_SIHO<B,R>(K, N, n_frames, 1),
+: Decoder_SIHO<B,R>(K, N, n_frames, 1),
   rep_count(N/K),
   max_iter(max_iter),
   Fw(N),
@@ -56,6 +55,15 @@ Decoder_RA<B, R>
 	Xd[1].resize(N);
 	Xu[0].resize(N);
 	Xu[1].resize(N);
+}
+
+template <typename B, typename R>
+Decoder_RA<B,R>* Decoder_RA<B,R>
+::clone() const
+{
+	auto m = new Decoder_RA(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B, typename R>

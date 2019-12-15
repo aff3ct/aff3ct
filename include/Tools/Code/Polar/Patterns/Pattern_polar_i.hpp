@@ -7,7 +7,7 @@
 
 #include <string>
 
-#include "Tools/Algo/Tree/Binary_node.hpp"
+#include "Tools/Algo/Tree/Binary/Binary_node.hpp"
 
 namespace aff3ct
 {
@@ -67,7 +67,7 @@ public:
 	inline int get_min_lvl();
 	inline int get_max_lvl();
 
-	virtual Pattern_polar_i* alloc(const int &n, const Binary_node<Pattern_polar_i>* node) const = 0;
+	virtual Pattern_polar_i* alloc(const int &N, const Binary_node<Pattern_polar_i>* node) const = 0;
 
 	virtual polar_node_t type()       const = 0;
 	virtual std::string  name()       const = 0;

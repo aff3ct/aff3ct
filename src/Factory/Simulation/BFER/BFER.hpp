@@ -10,7 +10,7 @@
 #include "Tools/auto_cloned_unique_ptr.hpp"
 #include "Factory/Module/Channel/Channel.hpp"
 #include "Factory/Module/CRC/CRC.hpp"
-#include "Factory/Module/Codec/Codec.hpp"
+#include "Factory/Tools/Codec/Codec.hpp"
 #include "Factory/Module/Modem/Modem.hpp"
 #include "Factory/Module/Quantizer/Quantizer.hpp"
 #include "Factory/Module/Source/Source.hpp"
@@ -31,6 +31,7 @@ public:
 	// ----------------------------------------------------------------------------------------------------- PARAMETERS
 	// optional parameters
 	std::string err_track_path      = "error_tracker";
+	std::string chain_path          = "";
 	int         err_track_threshold = 0;
 	bool        err_track_revert    = false;
 	bool        err_track_enable    = false;
@@ -38,6 +39,8 @@ public:
 	bool        coded_monitoring    = false;
 	bool        ter_sigma           = false;
 	bool        mnt_mutinfo         = false;
+	bool        alloc_clone         = false;
+	bool        chain_threads       = false;
 
 #ifdef AFF3CT_MPI
 	std::chrono::milliseconds mnt_mpi_comm_freq = std::chrono::milliseconds(1000);

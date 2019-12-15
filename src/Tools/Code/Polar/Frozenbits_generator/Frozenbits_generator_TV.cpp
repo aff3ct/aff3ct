@@ -26,13 +26,20 @@ Frozenbits_generator_TV
 {
 }
 
+Frozenbits_generator_TV* Frozenbits_generator_TV
+::clone() const
+{
+	auto t = new Frozenbits_generator_TV(*this);
+	return t;
+}
+
 void Frozenbits_generator_TV
 ::evaluate()
 {
-	this-> check_noise();
+	this->check_noise();
 
 	std::ostringstream s_stream;
-	s_stream << std::setiosflags(std::ios::fixed) << std::setprecision(3) << this->n->get_noise();
+	s_stream << std::setiosflags(std::ios::fixed) << std::setprecision(3) << this->noise->get_value();
 	auto str_sigma = s_stream.str();
 	auto str_N = std::to_string(this->N);
 	auto str_m = std::to_string(m);
@@ -87,15 +94,12 @@ void Frozenbits_generator_TV
 			if (!this->load_channels_file(filename, this->best_channels))
 			{
 				auto cmd = bin_pb_path;
-				cmd += " --no-print";                                      // do not display anything
-				cmd += " -q " + std::to_string(Mu);                        // quality
-				cmd += " --awgn";                                          // type
-				cmd += " --sigma=" + std::to_string(this->n->get_noise()); // sigma value
-				cmd += " --log-length=" + str_m;                           // m
-				cmd += " -f=" + filename;                                  // filename
-
-				// std::clog << rang::tag::info << "Generating best channels positions file (\"" << filename << "\")...\r";
-				// fflush(stdout); fflush(stderr);
+				cmd += " --no-print";                                          // do not display anything
+				cmd += " -q " + std::to_string(Mu);                            // quality
+				cmd += " --awgn";                                              // type
+				cmd += " --sigma=" + std::to_string(this->noise->get_value()); // sigma value
+				cmd += " --log-length=" + str_m;                               // m
+				cmd += " -f=" + filename;                                      // filename
 
 				if (system(cmd.c_str()) == 0)
 				{
@@ -130,5 +134,5 @@ void Frozenbits_generator_TV
 {
 	Frozenbits_generator::check_noise();
 
-	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
+	this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
 }

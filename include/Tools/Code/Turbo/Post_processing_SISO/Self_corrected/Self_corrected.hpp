@@ -20,7 +20,6 @@ class Self_corrected : public Post_processing_SISO<B,R>
 private:
 	const int K;
 	const int simd_inter_frame_level;
-
 	const int m;
 	const int M;
 
@@ -45,6 +44,8 @@ public:
 	bool siso_i(const int ite,
 	            const mipp::vector<R>& sys,
 	                  mipp::vector<R>& ext);
+
+	virtual Self_corrected<B,R>* clone() const;
 
 private:
 	void collect (const int ite, const mipp::vector<R> &cur_ext, std::vector<mipp::vector<R>> &ext_hist);

@@ -39,6 +39,15 @@ Puncturer_polar_shortlast<B,Q>
 	}
 }
 
+template<typename B, typename Q>
+Puncturer_polar_shortlast<B,Q>* Puncturer_polar_shortlast<B,Q>
+::clone() const
+{
+	auto m = new Puncturer_polar_shortlast(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
 template <typename B, typename Q>
 void Puncturer_polar_shortlast<B,Q>
 ::gen_frozen_bits(std::vector<bool> &frozen_bits)

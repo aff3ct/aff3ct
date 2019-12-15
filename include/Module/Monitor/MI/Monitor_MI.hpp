@@ -7,8 +7,10 @@
 
 #include <vector>
 #include <memory>
+#include <cstdint>
 #include <functional>
 
+#include "Tools/Algo/Callback/Callback.hpp"
 #include "Tools/Algo/Histogram.hpp"
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
@@ -47,8 +49,8 @@ private:
 	tools::Histogram<R> mutinfo_hist; // the MI histogram record
 	bool mutinfo_hist_activated;
 
-	std::vector<std::function<void(void)>> callbacks_check;
-	std::vector<std::function<void(void)>> callbacks_n_trials_limit_achieved;
+	tools::Callback<> callback_check;
+	tools::Callback<> callback_n_trials_limit_achieved;
 
 public:
 	/*
@@ -60,6 +62,8 @@ public:
 	Monitor_MI(); // construct with null and default parameters.
 
 	virtual ~Monitor_MI() = default;
+
+	virtual Monitor_MI<B,R>* clone() const;
 
 	bool equivalent(const Monitor_MI<B,R>& m, bool do_throw = false) const; // check if this monitor and "m" have equivalent construction arguments
 	                                                                        // and then can be merged by "collect" or "copy" methods
@@ -83,8 +87,11 @@ public:
 	tools::Histogram<R> get_mutinfo_hist() const;
 	void activate_mutinfo_histogram(bool val);
 
-	virtual void add_handler_check                  (std::function<void(void)> callback);
-	virtual void add_handler_n_trials_limit_achieved(std::function<void(void)> callback);
+	virtual uint32_t record_callback_check                  (std::function<void(void)> callback);
+	virtual uint32_t record_callback_n_trials_limit_achieved(std::function<void(void)> callback);
+
+	virtual bool unrecord_callback_check                  (const uint32_t id);
+	virtual bool unrecord_callback_n_trials_limit_achieved(const uint32_t id);
 
 	virtual void reset();
 	virtual void clear_callbacks();

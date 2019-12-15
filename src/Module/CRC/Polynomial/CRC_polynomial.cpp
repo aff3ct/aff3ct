@@ -12,7 +12,7 @@ using namespace aff3ct::module;
 
 template <typename B>
 CRC_polynomial<B>
-::CRC_polynomial(const int K, std::string poly_key, const int size, const int n_frames)
+::CRC_polynomial(const int K, const std::string &poly_key, const int size, const int n_frames)
 : CRC<B>(K, size ? size : CRC_polynomial<B>::get_size(CRC_polynomial<B>::get_name(poly_key)), n_frames),
   polynomial       (0                                     ),
   polynomial_packed(CRC_polynomial<B>::get_value(poly_key)),
@@ -45,8 +45,17 @@ CRC_polynomial<B>
 }
 
 template <typename B>
+CRC_polynomial<B>* CRC_polynomial<B>
+::clone() const
+{
+	auto m = new CRC_polynomial(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B>
 int CRC_polynomial<B>
-::get_size(std::string poly_key)
+::get_size(const std::string &poly_key)
 {
 	if (known_polynomials.find(poly_key) != known_polynomials.end())
 		return std::get<1>(known_polynomials.at(poly_key));
@@ -64,7 +73,7 @@ int CRC_polynomial<B>
 
 template <typename B>
 std::string CRC_polynomial<B>
-::get_name(std::string poly_key)
+::get_name(const std::string &poly_key)
 {
 	if (known_polynomials.find(poly_key) != known_polynomials.end())
 		return poly_key;
@@ -86,7 +95,7 @@ std::string CRC_polynomial<B>
 
 template <typename B>
 unsigned CRC_polynomial<B>
-::get_value(std::string poly_key)
+::get_value(const std::string &poly_key)
 {
 	if (known_polynomials.find(poly_key) != known_polynomials.end())
 		return std::get<0>(known_polynomials.at(poly_key));

@@ -8,7 +8,7 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Flip_and_check<B,R>
-::Flip_and_check(const int K, const int n_ite, module::CRC<B> &crc, const int start_crc_check_ite,
+::Flip_and_check(const int K, const int n_ite, const module::CRC<B> &crc, const int start_crc_check_ite,
                  const int q, const int m, const int M, const int s,
                  const int simd_inter_frame_level)
 : CRC_checker<B,R>(crc, start_crc_check_ite, simd_inter_frame_level),
@@ -40,6 +40,15 @@ Flip_and_check<B,R>
 		ite += s;
 	}
 	while (ite <= ((M == -1) ? n_ite : M));
+}
+
+template <typename B, typename R>
+Flip_and_check<B,R>* Flip_and_check<B,R>
+::clone() const
+{
+	auto t = new Flip_and_check(*this);
+	t->deep_copy(*this);
+	return t;
 }
 
 template <typename B, typename R>
@@ -89,7 +98,7 @@ bool Flip_and_check<B,R>
 		std::copy(s.begin(), s.end(), s_tmp.begin());
 		for (auto depth = 0; depth < q; depth++)
 			s_tmp[positions[depth]] ^= tab_flips[pattern][depth];
-		check_crc = this->crc.check(s_tmp, this->simd_inter_frame_level);
+		check_crc = this->crc->check(s_tmp, this->simd_inter_frame_level);
 		pattern++;
 	}
 	while ((pattern < (int)tab_flips.size()) && !check_crc);

@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "Factory/Module/Codec/RS/Codec_RS.hpp"
+#include "Factory/Tools/Codec/RS/Codec_RS.hpp"
 
 namespace aff3ct
 {

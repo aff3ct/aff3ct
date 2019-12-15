@@ -67,6 +67,8 @@ public:
 	 */
 	virtual ~Puncturer() = default;
 
+	virtual Puncturer<B,Q>* clone() const;
+
 	int get_K() const;
 
 	int get_N() const;

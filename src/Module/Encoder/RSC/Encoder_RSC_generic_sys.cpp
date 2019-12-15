@@ -56,6 +56,15 @@ Encoder_RSC_generic_sys<B>
 }
 
 template <typename B>
+Encoder_RSC_generic_sys<B>* Encoder_RSC_generic_sys<B>
+::clone() const
+{
+	auto m = new Encoder_RSC_generic_sys(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B>
 int Encoder_RSC_generic_sys<B>
 ::inner_encode(const int bit_sys, int &state)
 {

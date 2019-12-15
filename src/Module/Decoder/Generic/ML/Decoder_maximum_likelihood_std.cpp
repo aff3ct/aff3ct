@@ -13,9 +13,9 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_maximum_likelihood_std<B,R>
-::Decoder_maximum_likelihood_std(const int K, const int N, Encoder<B> &encoder, const bool hamming, const int n_frames)
-: Decoder                        (K, N,          n_frames, 1),
-  Decoder_maximum_likelihood<B,R>(K, N, encoder, n_frames   ),
+::Decoder_maximum_likelihood_std(const int K, const int N, const Encoder<B> &encoder, const bool hamming,
+                                 const int n_frames)
+: Decoder_maximum_likelihood<B,R>(K, N, encoder, n_frames),
   hamming(hamming),
   u_max(0),
   min_euclidean_dist(std::numeric_limits<float>::max()),
@@ -36,6 +36,15 @@ Decoder_maximum_likelihood_std<B,R>
 		this->u_max = std::numeric_limits<uint64_t>::max();
 	else
 		this->u_max = ((uint64_t)1 << (uint64_t)(K)) -1;
+}
+
+template <typename B, typename R>
+Decoder_maximum_likelihood_std<B,R>* Decoder_maximum_likelihood_std<B,R>
+::clone() const
+{
+	auto m = new Decoder_maximum_likelihood_std(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B, typename R>
@@ -68,7 +77,7 @@ void Decoder_maximum_likelihood_std<B,R>
 			auto data = (uint64_t*)this->U_K.data();
 			data[0] = u;
 			tools::Bit_packer::unpack(this->U_K.data(), this->K);
-			this->encoder.encode(this->U_K.data(), this->X_N.data(), 0);
+			this->encoder->encode(this->U_K.data(), this->X_N.data(), 0);
 
 			// compute the Euclidean distance between the input LLR and the current codeword
 			auto cur_euclidean_dist = this->compute_euclidean_dist(this->X_N.data(), Y_N);
@@ -110,7 +119,7 @@ void Decoder_maximum_likelihood_std<B,R>
 		auto data = (uint64_t*)this->U_K.data();
 		data[0] = u;
 		tools::Bit_packer::unpack(this->U_K.data(), this->K);
-		this->encoder.encode(this->U_K.data(), this->X_N.data(), 0);
+		this->encoder->encode(this->U_K.data(), this->X_N.data(), 0);
 
 		// compute the Hamming distance between the input bits and the current codeword
 		auto cur_hamming_dist = this->compute_hamming_dist(this->X_N.data(), Y_N);

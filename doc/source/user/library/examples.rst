@@ -71,7 +71,7 @@ is a module (green boxes in :numref:`fig_simple_chain_code`).
 			const auto esn0  = tools::ebn0_to_esn0 (ebn0, p.R);
 			const auto sigma = tools::esn0_to_sigma(esn0     );
 
-			u.noise->set_noise(sigma, ebn0, esn0);
+			u.noise->set_values(sigma, ebn0, esn0);
 
 			// update the sigma of the modem and the channel
 			m.modem  ->set_noise(*u.noise);
@@ -325,7 +325,7 @@ objects.
 			const auto esn0  = tools::ebn0_to_esn0 (ebn0, p.R);
 			const auto sigma = tools::esn0_to_sigma(esn0     );
 
-			u.noise->set_noise(sigma, ebn0, esn0);
+			u.noise->set_values(sigma, ebn0, esn0);
 
 			// update the sigma of the modem and the channel
 			m.modem  ->set_noise(*u.noise);
@@ -382,7 +382,7 @@ for more informations about the statistics output).
 	:linenos:
 	:caption: Tasks: modules
 	:name: lst_tasks_modules
-	:emphasize-lines: 10-24
+	:emphasize-lines: 10-23
 
 	void init_modules2(const params1 &p, modules1 &m)
 	{
@@ -399,7 +399,6 @@ for more informations about the statistics output).
 			for (auto& tsk : mod->tasks)
 			{
 				tsk->set_autoalloc  (true ); // enable the automatic allocation of data buffers in the tasks
-				tsk->set_autoexec   (false); // disable the auto execution mode of the tasks
 				tsk->set_debug      (false); // disable the debug mode
 				tsk->set_debug_limit(16   ); // display only the 16 first bits if the debug mode is enabled
 				tsk->set_stats      (true ); // enable statistics collection
@@ -412,7 +411,7 @@ for more informations about the statistics output).
 
 The beginning of the ``init_modules2`` function (:numref:`lst_tasks_modules`) is
 the same as the ``init_module1`` function (:numref:`lst_bootstrap_modules`). At
-lines ``10-24``, each ``Module`` is parsed to get its tasks, each ``Task`` is
+lines ``10-23``, each ``Module`` is parsed to get its tasks, each ``Task`` is
 configured to automatically allocate its outputs ``Socket`` memory (line ``15``)
 and collect statistics on the ``Task`` execution (line ``19``). It is also
 possible to print debug information by toggling boolean to ``true`` at line
@@ -462,7 +461,7 @@ to use standard TLM interfaces.
 			const auto esn0  = tools::ebn0_to_esn0 (ebn0, p.R);
 			const auto sigma = tools::esn0_to_sigma(esn0     );
 
-			u.noise->set_noise(sigma, ebn0, esn0);
+			u.noise->set_values(sigma, ebn0, esn0);
 
 			// update the sigma of the modem and the channel
 			m.modem  ->set_noise(*u.noise);
@@ -628,7 +627,7 @@ and line ``19`` by ``polar`` to work with polar code.
 	struct modules3
 	{
 		std::unique_ptr<module::Source<>>       source;
-		std::unique_ptr<module::Codec_SIHO<>>   codec;
+		std::unique_ptr<tools ::Codec_SIHO<>>   codec;
 		std::unique_ptr<module::Modem<>>        modem;
 		std::unique_ptr<module::Channel<>>      channel;
 		std::unique_ptr<module::Monitor_BFER<>> monitor;
@@ -639,7 +638,7 @@ and line ``19`` by ``polar`` to work with polar code.
 	void init_modules3(const params3 &p, modules3 &m)
 	{
 		m.source  = std::unique_ptr<module::Source      <>>(p.source ->build());
-		m.codec   = std::unique_ptr<module::Codec_SIHO  <>>(p.codec  ->build());
+		m.codec   = std::unique_ptr<tools ::Codec_SIHO  <>>(p.codec  ->build());
 		m.modem   = std::unique_ptr<module::Modem       <>>(p.modem  ->build());
 		m.channel = std::unique_ptr<module::Channel     <>>(p.channel->build());
 		m.monitor = std::unique_ptr<module::Monitor_BFER<>>(p.monitor->build());
@@ -652,7 +651,6 @@ and line ``19`` by ``polar`` to work with polar code.
 			for (auto& tsk : mod->tasks)
 			{
 				tsk->set_autoalloc  (true ); // enable the automatic allocation of the data in the tasks
-				tsk->set_autoexec   (false); // disable the auto execution mode of the tasks
 				tsk->set_debug      (false); // disable the debug mode
 				tsk->set_debug_limit(16   ); // display only the 16 first bits if the debug mode is enabled
 				tsk->set_stats      (true ); // enable the statistics
@@ -707,7 +705,7 @@ parameters list can be seen using ``-h`` as shown in
 :numref:`lst_factory_binary_help`.
 
 .. code-block:: bash
-	:caption: Factory: execute the binary
+	:caption: Factory: display the command line parameters
 	:name: lst_factory_binary_help
 
 	./bin/my_project -h
@@ -779,7 +777,7 @@ multi-threaded architectures using `pragma` directives of the well-known
 			const auto sigma = tools::esn0_to_sigma(esn0     );
 
 	#pragma omp single
-			u.noise->set_noise(sigma, ebn0, esn0);
+			u.noise->set_values(sigma, ebn0, esn0);
 
 			// update the sigma of the modem and the channel
 			m.modem  ->set_noise(*u.noise);
@@ -790,7 +788,7 @@ multi-threaded architectures using `pragma` directives of the well-known
 			u.terminal->start_temp_report();
 
 			// run the simulation chain
-			while (!u.monitor_red->is_done_all())
+			while (!u.monitor_red->is_done())
 			{
 				(*m.source )[src::tsk::generate    ].exec();
 				(*m.encoder)[enc::tsk::encode      ].exec();
@@ -806,13 +804,13 @@ multi-threaded architectures using `pragma` directives of the well-known
 	#pragma omp single
 	{
 			// final reduction
-			u.monitor_red->is_done_all(true, true);
+			u.monitor_red->reduce();
 
 			// display the performance (BER and FER) in the terminal
 			u.terminal->final_report();
 
 			// reset the monitor and the terminal for the next SNR
-			u.monitor_red->reset_all();
+			u.monitor_red->reset();
 			u.terminal->reset();
 	}
 		}
@@ -844,13 +842,13 @@ each threads gets its own local ``m``.
 .. code-block:: cpp
 	:caption: OpenMP: modules and utils
 	:name: lst_openmp_modules_utils
-	:emphasize-lines: 7,17-20,25-30,36-37,57
+	:emphasize-lines: 7,17-20,25-30,36-37,56
 	:linenos:
 
 	struct modules4
 	{
 		std::unique_ptr<module::Source<>>       source;
-		std::unique_ptr<module::Codec_SIHO<>>   codec;
+		std::unique_ptr<tools ::Codec_SIHO<>>   codec;
 		std::unique_ptr<module::Modem<>>        modem;
 		std::unique_ptr<module::Channel<>>      channel;
 		                module::Monitor_BFER<>* monitor;
@@ -879,7 +877,7 @@ each threads gets its own local ``m``.
 		p.channel->seed += tid;
 
 		m.source        = std::unique_ptr<module::Source      <>>(p.source ->build());
-		m.codec         = std::unique_ptr<module::Codec_SIHO  <>>(p.codec  ->build());
+		m.codec         = std::unique_ptr<tools ::Codec_SIHO  <>>(p.codec  ->build());
 		m.modem         = std::unique_ptr<module::Modem       <>>(p.modem  ->build());
 		m.channel       = std::unique_ptr<module::Channel     <>>(p.channel->build());
 		u.monitors[tid] = std::unique_ptr<module::Monitor_BFER<>>(p.monitor->build());
@@ -893,7 +891,6 @@ each threads gets its own local ``m``.
 			for (auto& tsk : mod->tasks)
 			{
 				tsk->set_autoalloc  (true ); // enable the automatic allocation of the data in the tasks
-				tsk->set_autoexec   (false); // disable the auto execution mode of the tasks
 				tsk->set_debug      (false); // disable the debug mode
 				tsk->set_debug_limit(16   ); // display only the 16 first bits if the debug mode is enabled
 				tsk->set_stats      (true ); // enable the statistics
@@ -924,7 +921,7 @@ seed to each thread. If the seed is the same for all threads, they all simulate
 the same frame contents and apply the same noise over it.
 
 Lines ``36-37``, the ``monitors`` are allocated in ``u`` and the resulting
-pointer is assigned to ``m``. At line ``57`` a list of the modules is stored in
+pointer is assigned to ``m``. At line ``56`` a list of the modules is stored in
 ``u``.
 
 .. code-block:: cpp

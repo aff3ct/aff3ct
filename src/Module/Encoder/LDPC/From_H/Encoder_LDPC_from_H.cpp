@@ -56,6 +56,15 @@ Encoder_LDPC_from_H<B>
 	this->check_H_dimensions();
 }
 
+template <typename B>
+Encoder_LDPC_from_H<B>* Encoder_LDPC_from_H<B>
+::clone() const
+{
+	auto m = new Encoder_LDPC_from_H(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC

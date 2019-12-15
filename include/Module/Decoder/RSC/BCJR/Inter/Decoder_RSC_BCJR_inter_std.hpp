@@ -24,6 +24,8 @@ public:
 	                           const int n_frames = 1);
 	virtual ~Decoder_RSC_BCJR_inter_std() = default;
 
+	virtual Decoder_RSC_BCJR_inter_std<B,R,MAX>* clone() const;
+
 protected:
 	void _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);
 

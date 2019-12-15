@@ -15,16 +15,15 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::Decoder_LDPC_BP_flooding_Gallager_A(const int K, const int N, const int n_ite, const tools::Sparse_matrix &_H,
                                       const std::vector<unsigned> &info_bits_pos, const bool transform_HY_N,
                                       const bool enable_syndrome, const int syndrome_depth, const int n_frames)
-: Decoder               (K, N, n_frames, 1                               ),
-  Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1                               ),
-  Decoder_LDPC_BP       (K, N, n_ite, _H, enable_syndrome, syndrome_depth),
-  transform_HY_N        (transform_HY_N                                  ),
-  info_bits_pos         (info_bits_pos                                   ),
-  HY_N                  (N                                               ),
-  V_N                   (N                                               ),
-  chk_to_var            (this->H.get_n_connections(), 0                  ),
-  var_to_chk            (this->H.get_n_connections(), 0                  ),
-  transpose             (this->H.get_n_connections()                     )
+: Decoder_SIHO<B,R>(K, N, n_frames, 1                               ),
+  Decoder_LDPC_BP  (K, N, n_ite, _H, enable_syndrome, syndrome_depth),
+  transform_HY_N   (transform_HY_N                                  ),
+  info_bits_pos    (info_bits_pos                                   ),
+  HY_N             (N                                               ),
+  V_N              (N                                               ),
+  chk_to_var       (this->H.get_n_connections(), 0                  ),
+  var_to_chk       (this->H.get_n_connections(), 0                  ),
+  transpose        (this->H.get_n_connections()                     )
 {
 	const std::string name = "Decoder_LDPC_BP_flooding_Gallager_A";
 	this->set_name(name);
@@ -69,6 +68,15 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
                                       const int syndrome_depth, const int n_frames)
 : Decoder_LDPC_BP_flooding_Gallager_A<B,R>(K, N, n_ite, _H, info_bits_pos, false, enable_syndrome, syndrome_depth, n_frames)
 {
+}
+
+template <typename B, typename R>
+Decoder_LDPC_BP_flooding_Gallager_A<B,R>* Decoder_LDPC_BP_flooding_Gallager_A<B,R>
+::clone() const
+{
+	auto m = new Decoder_LDPC_BP_flooding_Gallager_A(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B, typename R>

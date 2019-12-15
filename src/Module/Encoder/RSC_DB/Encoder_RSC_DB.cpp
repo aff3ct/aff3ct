@@ -159,6 +159,15 @@ Encoder_RSC_DB<B>
 }
 
 template <typename B>
+Encoder_RSC_DB<B>* Encoder_RSC_DB<B>
+::clone() const
+{
+	auto m = new Encoder_RSC_DB(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B>
 int Encoder_RSC_DB<B>
 ::calc_state_trans(const int in_state, const int in, int& par)
 {

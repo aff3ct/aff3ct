@@ -19,15 +19,11 @@ class Event_probability : public Noise<R>
 {
 public:
 	Event_probability() = default;
-	explicit Event_probability(R noise);
-	template<typename T>
-	explicit Event_probability(const Event_probability<T>& other);
+	explicit Event_probability(R value);
 	virtual ~Event_probability() = default;
 
 	virtual std::string get_unity() const;
 	virtual Noise_type get_type() const;
-
-	virtual Event_probability<R>* clone() const;
 
 protected:
 	virtual void check();

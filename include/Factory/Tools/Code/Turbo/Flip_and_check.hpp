@@ -49,7 +49,7 @@ public:
 
 	// builder
 	template <typename B = int, typename Q = float>
-	tools::Flip_and_check<B,Q>* build(module::CRC<B> &crc) const;
+	tools::Flip_and_check<B,Q>* build(const module::CRC<B> &crc) const;
 
 protected:
 	Flip_and_check(const std::string &n, const std::string &p);

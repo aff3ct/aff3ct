@@ -7,14 +7,14 @@
 
 #include <vector>
 
-#include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_BCH : public Decoder_SIHO_HIHO<B,R>
+class Decoder_BCH : public Decoder_SIHO<B,R>
 {
 protected:
 	const int t; // correction power
@@ -26,7 +26,13 @@ public:
 
 	virtual ~Decoder_BCH() = default;
 
+	virtual Decoder_BCH<B,R>* clone() const;
+
 	bool get_last_is_codeword(const int frame_id = -1) const;
+
+protected:
+	Decoder_BCH(const int K, const int N, const int t, const int n_frames, const int simd_inter_frame_level);
+
 };
 }
 }

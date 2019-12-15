@@ -10,7 +10,7 @@
 
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
-#include "Module/Decoder/Decoder.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
 
 namespace aff3ct
 {
@@ -22,15 +22,17 @@ namespace module
  * \brief A Decoder_SISO (Soft Input Soft Output) is a type of decoder which takes a soft input and return a soft output.
  *
  * \tparam R: type of the reals (floating-point or fixed-point representation) in the Decoder_SISO.
- *
- * Please use Decoder_SISO for inheritance (instead of Decoder_SISO).
  */
-template <typename R = float>
-class Decoder_SISO : virtual public Decoder
+template <typename B = int, typename R = float>
+class Decoder_SISO : public Decoder_SIHO<B,R>
 {
 public:
-	inline Task&   operator[](const dec::tsk              t);
-	inline Socket& operator[](const dec::sck::decode_siso s);
+	inline Task&   operator[](const dec::tsk                 t);
+	inline Socket& operator[](const dec::sck::decode_hiho    s);
+	inline Socket& operator[](const dec::sck::decode_hiho_cw s);
+	inline Socket& operator[](const dec::sck::decode_siho    s);
+	inline Socket& operator[](const dec::sck::decode_siho_cw s);
+	inline Socket& operator[](const dec::sck::decode_siso    s);
 
 private:
 	std::vector<R> Y_N1;
@@ -51,6 +53,8 @@ public:
 	 * \brief Destructor.
 	 */
 	virtual ~Decoder_SISO() = default;
+
+	virtual Decoder_SISO<B,R>* clone() const;
 
 	/*!
 	 * \brief Decodes a given noisy codeword. This prototype supposes that the encoded frame is systematic, can't be

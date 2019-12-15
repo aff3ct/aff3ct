@@ -16,10 +16,9 @@ namespace module
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 Decoder_polar_SCF_naive<B,R,F,G,H>
 ::Decoder_polar_SCF_naive(const int& K, const int& N, const std::vector<bool>& frozen_bits,
-                          CRC<B>& crc, const int n_flips, const int n_frames)
-: Decoder(K, N, n_frames, 1),
-  Decoder_polar_SC_naive<B,R,F,G,H>(K, N, frozen_bits, n_frames),
-  crc(crc),
+                          const CRC<B>& crc, const int n_flips, const int n_frames)
+: Decoder_polar_SC_naive<B,R,F,G,H>(K, N, frozen_bits, n_frames),
+  crc(crc.clone()),
   n_flips(n_flips),
   index(K),
   current_flip_index(-1)
@@ -27,19 +26,31 @@ Decoder_polar_SCF_naive<B,R,F,G,H>
 	const std::string name = "Decoder_polar_SCF_naive";
 	this->set_name(name);
 
-	if (crc.get_size() > K)
+	if (this->crc->get_size() > K)
 	{
 		std::stringstream message;
-		message << "'crc.get_size()' has to be equal or smaller than 'K' ('crc.get_size()' = " << crc.get_size()
+		message << "'crc->get_size()' has to be equal or smaller than 'K' ('crc->get_size()' = " << this->crc->get_size()
 		        << ", 'K' = " << K << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-
-	// get tree leaves
-	leaves = this->polar_tree.get_leaves();
 }
 
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
+Decoder_polar_SCF_naive<B,R,F,G,H>* Decoder_polar_SCF_naive<B,R,F,G,H>
+::clone() const
+{
+	auto m = new Decoder_polar_SCF_naive(*this);
+	m->deep_copy(*this);
+	return m;
+}
 
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
+void Decoder_polar_SCF_naive<B,R,F,G,H>
+::deep_copy(const Decoder_polar_SCF_naive<B,R,F,G,H> &m)
+{
+	Decoder_polar_SC_naive<B,R,F,G,H>::deep_copy(m);
+	if (m.crc != nullptr) this->crc.reset(m.crc->clone());
+}
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 void Decoder_polar_SCF_naive<B,R,F,G,H>
@@ -99,9 +110,6 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 		if (!this->frozen_bits[i])
 			index[j++] = i;
 
-	// get tree leaves
-	auto leaves = this->polar_tree.get_leaves();
-
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
@@ -112,10 +120,13 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 
 	this->recursive_decode(this->polar_tree.get_root());
 
+	// get tree leaves
+	auto &leaves = this->polar_tree.get_leaves();
+
 	// identify the n_flips weakest llrs
 	std::partial_sort(index.begin(), index.begin() + n_flips, index.end(),
-	                  [this](const int& a, const int& b)
-	                  {return std::abs(this->leaves[a]->get_c()->lambda[0]) < std::abs(this->leaves[b]->get_c()->lambda[0]);}
+	                  [&leaves](const int& a, const int& b)
+	                  {return std::abs(leaves[a]->get_c()->lambda[0]) < std::abs(leaves[b]->get_c()->lambda[0]);}
 	                 );
 
 	decode_result = this->check_crc();
@@ -166,10 +177,13 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 
 	this->recursive_decode(this->polar_tree.get_root());
 
+	// get tree leaves
+	auto &leaves = this->polar_tree.get_leaves();
+
 	// identify the n_flips weakest llrs
 	std::partial_sort(index.begin(), index.begin() + n_flips, index.end(),
-	                  [this](const int& a, const int& b)
-	                  {return std::abs(this->leaves[a]->get_c()->lambda[0]) < std::abs(this->leaves[b]->get_c()->lambda[0]);}
+	                  [&leaves](const int& a, const int& b)
+	                  {return std::abs(leaves[a]->get_c()->lambda[0]) < std::abs(leaves[b]->get_c()->lambda[0]);}
 	                 );
 
 	decode_result = check_crc();
@@ -199,12 +213,14 @@ template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, to
 bool Decoder_polar_SCF_naive<B,R,F,G,H>
 ::check_crc()
 {
+	auto &leaves = this->polar_tree.get_leaves();
+
 	std::vector<B> U_test;
 	U_test.clear();
 	for (auto leaf = 0 ; leaf < this->N ; leaf++)
 		if (!this->frozen_bits[leaf])
 			U_test.push_back(leaves[leaf]->get_c()->s[0]);
-	return this->crc.check(U_test, this->get_simd_inter_frame_level());
+	return this->crc->check(U_test, this->get_simd_inter_frame_level());
 }
 }
 }

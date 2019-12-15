@@ -10,7 +10,7 @@ using namespace aff3ct::module;
 
 template <typename B>
 CRC_polynomial_fast<B>
-::CRC_polynomial_fast(const int K, std::string poly_key, const int size, const int n_frames)
+::CRC_polynomial_fast(const int K, const std::string &poly_key, const int size, const int n_frames)
 : CRC_polynomial<B>(K, poly_key, size, n_frames), lut_crc32(256), polynomial_packed_rev(0)
 {
 	const std::string name = "CRC_polynomial_fast";
@@ -39,6 +39,15 @@ CRC_polynomial_fast<B>
 			crc = (crc >> 1) ^ (-int(crc & 1) & polynomial_packed_rev);
 		lut_crc32[i] = crc;
 	}
+}
+
+template <typename B>
+CRC_polynomial_fast<B>* CRC_polynomial_fast<B>
+::clone() const
+{
+	auto m = new CRC_polynomial_fast(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B>

@@ -3,8 +3,16 @@
 #include <string>
 #include <cmath>
 
-#include "Tools/Exception/exception.hpp"
+#include "Tools/Noise/Noise.hpp"
 #include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Standard/Gaussian_noise_generator_std.hpp"
+#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/Fast/Gaussian_noise_generator_fast.hpp"
+#ifdef AFF3CT_CHANNEL_GSL
+#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/GSL/Gaussian_noise_generator_GSL.hpp"
+#endif
+#ifdef AFF3CT_CHANNEL_MKL
+#include "Tools/Algo/Draw_generator/Gaussian_noise_generator/MKL/Gaussian_noise_generator_MKL.hpp"
+#endif
+#include "Tools/Exception/exception.hpp"
 #include "Module/Channel/Rayleigh/Channel_Rayleigh_LLR.hpp"
 
 using namespace aff3ct;
@@ -12,47 +20,103 @@ using namespace aff3ct::module;
 
 template <typename R>
 Channel_Rayleigh_LLR<R>
-::Channel_Rayleigh_LLR(const int N, const bool complex, std::unique_ptr<tools::Gaussian_gen<R>>&& _ng, const bool add_users,
-                       const tools::Noise<R>& noise, const int n_frames)
-: Channel<R>(N, noise, n_frames),
+::Channel_Rayleigh_LLR(const int N,
+                       const bool complex,
+                       const tools::Gaussian_gen<R> &gaussian_generator,
+                       const bool add_users,
+                       const int n_frames)
+: Channel<R>(N, n_frames),
   complex(complex),
   add_users(add_users),
   gains(complex ? N * n_frames : 2 * N * n_frames),
-  noise_generator(std::move(_ng))
+  gaussian_generator(gaussian_generator.clone())
 {
 	const std::string name = "Channel_Rayleigh_LLR";
 	this->set_name(name);
 
-	if (complex && N % 2)
+	if (complex && (N % 2))
 	{
 		std::stringstream message;
 		message << "'N' has to be divisible by 2 ('N' = " << N << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+}
 
-	if (noise_generator == nullptr)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'noise_generator' can't be NULL.");
+template <typename R>
+tools::Gaussian_gen<R>* create_gaussian_generator(const tools::Gaussian_noise_generator_implem implem, const int seed)
+{
+	switch (implem)
+	{
+		case tools::Gaussian_noise_generator_implem::STD:
+			return new tools::Gaussian_noise_generator_std<R>(seed);
+			break;
+		case tools::Gaussian_noise_generator_implem::FAST:
+			return new tools::Gaussian_noise_generator_fast<R>(seed);
+			break;
+#ifdef AFF3CT_CHANNEL_GSL
+		case tools::Gaussian_noise_generator_implem::GSL:
+			return new tools::Gaussian_noise_generator_GSL<R>(seed);
+			break;
+#endif
+#ifdef AFF3CT_CHANNEL_MKL
+		case tools::Gaussian_noise_generator_implem::MKL:
+			return new tools::Gaussian_noise_generator_MKL<R>(seed);
+			break;
+#endif
+		default:
+			std::stringstream message;
+			message << "Unsupported 'implem' ('implem' = " << (int)implem << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	};
 }
 
 template <typename R>
 Channel_Rayleigh_LLR<R>
-::Channel_Rayleigh_LLR(const int N, const bool complex, const int seed, const bool add_users,
-                       const tools::Noise<R>& noise, const int n_frames)
-: Channel<R>(N, noise, n_frames),
+::Channel_Rayleigh_LLR(const int N,
+                       const bool complex,
+                       const tools::Gaussian_noise_generator_implem implem,
+                       const int seed,
+                       const bool add_users,
+                       const int n_frames)
+: Channel<R>(N, n_frames),
   complex(complex),
   add_users(add_users),
   gains(complex ? N * n_frames : 2 * N * n_frames),
-  noise_generator(new tools::Gaussian_noise_generator_std<R>(seed))
+  gaussian_generator(create_gaussian_generator<R>(implem, seed))
 {
 	const std::string name = "Channel_Rayleigh_LLR";
 	this->set_name(name);
 
-	if (complex && N % 2)
+	if (complex && (N % 2))
 	{
 		std::stringstream message;
 		message << "'N' has to be divisible by 2 ('N' = " << N << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+template <typename R>
+Channel_Rayleigh_LLR<R>* Channel_Rayleigh_LLR<R>
+::clone() const
+{
+	auto m = new Channel_Rayleigh_LLR(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename R>
+void Channel_Rayleigh_LLR<R>
+::deep_copy(const Channel_Rayleigh_LLR<R> &m)
+{
+	Module::deep_copy(m);
+	if (m.gaussian_generator != nullptr) this->gaussian_generator.reset(m.gaussian_generator->clone());
+}
+
+template <typename R>
+void Channel_Rayleigh_LLR<R>
+::set_seed(const int seed)
+{
+	this->gaussian_generator->set_seed(seed);
 }
 
 template <typename R>
@@ -70,8 +134,8 @@ void Channel_Rayleigh_LLR<R>
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		noise_generator->generate(this->gains, (R)1 / (R)std::sqrt((R)2));
-		noise_generator->generate(this->noise.data(), this->N, this->n->get_noise());
+		gaussian_generator->generate(this->gains, (R)1 / (R)std::sqrt((R)2));
+		gaussian_generator->generate(this->noised_data.data(), this->N, (R)this->noise->get_value());
 
 		std::fill(Y_N, Y_N + this->N, (R)0);
 
@@ -104,7 +168,7 @@ void Channel_Rayleigh_LLR<R>
 			}
 		}
 		for (auto i = 0; i < this->N; i++)
-			Y_N[i] += this->noise[i];
+			Y_N[i] += this->noised_data[i];
 	}
 	else
 	{
@@ -113,13 +177,13 @@ void Channel_Rayleigh_LLR<R>
 
 		if (frame_id < 0)
 		{
-			noise_generator->generate(this->gains, (R)1 / (R)std::sqrt((R)2));
-			noise_generator->generate(this->noise, this->n->get_noise());
+			gaussian_generator->generate(this->gains, (R)1 / (R)std::sqrt((R)2));
+			gaussian_generator->generate(this->noised_data, (R)this->noise->get_value());
 		}
 		else
 		{
-			noise_generator->generate(this->gains.data() + f_start * this->N, this->N, (R)1 / (R)std::sqrt((R)2));
-			noise_generator->generate(this->noise.data() + f_start * this->N, this->N, this->n->get_noise());
+			gaussian_generator->generate(this->gains      .data() + f_start * this->N, this->N, (R)1 / (R)std::sqrt((R)2));
+			gaussian_generator->generate(this->noised_data.data() + f_start * this->N, this->N, (R)this->noise->get_value());
 		}
 
 		if (this->complex)
@@ -131,8 +195,8 @@ void Channel_Rayleigh_LLR<R>
 					const auto h_re = H_N[f * this->N + n   ] = this->gains[f * this->N + n   ];
 					const auto h_im = H_N[f * this->N + n +1] = this->gains[f * this->N + n +1];
 
-					const auto n_re = this->noise[f * this->N + n   ];
-					const auto n_im = this->noise[f * this->N + n +1];
+					const auto n_re = this->noised_data[f * this->N + n   ];
+					const auto n_im = this->noised_data[f * this->N + n +1];
 
 					Y_N[f * this->N + n   ] = (X_N[f * this->N + n   ] * h_re - X_N[f * this->N + n +1] * h_im) + n_re;
 					Y_N[f * this->N + n +1] = (X_N[f * this->N + n +1] * h_re + X_N[f * this->N + n   ] * h_im) + n_im;
@@ -149,7 +213,7 @@ void Channel_Rayleigh_LLR<R>
 					const auto h_im = this->gains[f * this->N + 2*n +1];
 
 					H_N[f * this->N + n] = std::sqrt(h_re * h_re + h_im * h_im);
-					Y_N[f * this->N + n] = X_N[f * this->N + n] * H_N[f * this->N + n] + this->noise[f * this->N + n];
+					Y_N[f * this->N + n] = X_N[f * this->N + n] * H_N[f * this->N + n] + this->noised_data[f * this->N + n];
 				}
 			}
 		}
@@ -161,7 +225,7 @@ void Channel_Rayleigh_LLR<R>::check_noise()
 {
 	Channel<R>::check_noise();
 
-	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
+	this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
 }
 
 // ==================================================================================== explicit template instantiation

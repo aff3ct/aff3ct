@@ -11,11 +11,11 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_turbo_product<B>
-::Encoder_turbo_product(const Interleaver<B> &pi, Encoder<B> &enc_r, Encoder<B> &enc_c, const int n_frames)
+::Encoder_turbo_product(const Interleaver<B> &pi, const Encoder<B> &enc_r, const Encoder<B> &enc_c, const int n_frames)
 : Encoder<B>(enc_r.get_K() * enc_c.get_K(), pi.get_core().get_size(), n_frames),
   pi   (pi   ),
-  enc_r(enc_r),
-  enc_c(enc_c),
+  enc_r(enc_r.clone()),
+  enc_c(enc_c.clone()),
 
   parity_extended(this->N == (enc_r.get_N() +1) * (enc_c.get_N() +1)),
 
@@ -73,15 +73,32 @@ Encoder_turbo_product<B>
 	}
 }
 
+template <typename B>
+Encoder_turbo_product<B>* Encoder_turbo_product<B>
+::clone() const
+{
+	auto m = new Encoder_turbo_product(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B>
+void Encoder_turbo_product<B>
+::deep_copy(const Encoder_turbo_product<B> &m)
+{
+	Module::deep_copy(m);
+	if (m.enc_r != nullptr) this->enc_r.reset(m.enc_r->clone());
+	if (m.enc_c != nullptr) this->enc_c.reset(m.enc_c->clone());
+}
 
 template <typename B>
 void Encoder_turbo_product<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
-	// const int n_cols_K = this->enc_r.get_K();
-	const int n_cols_N = this->enc_r.get_N() + (this->parity_extended ? 1 : 0);
-	const int n_rows_K = this->enc_c.get_K();
-	const int n_rows_N = this->enc_c.get_N() + (this->parity_extended ? 1 : 0);
+	// const int n_cols_K = this->enc_r->get_K();
+	const int n_cols_N = this->enc_r->get_N() + (this->parity_extended ? 1 : 0);
+	const int n_rows_K = this->enc_c->get_K();
+	const int n_rows_N = this->enc_c->get_N() + (this->parity_extended ? 1 : 0);
 
 	// encode each row
 	int X_row_par_off = 0; // hack because the encoder enc_r jumps along X_N N_cw bits by N_cw bits
@@ -89,7 +106,7 @@ void Encoder_turbo_product<B>
 	                       // by the encoder. X_row_par_off shifts X_N_i start pointer parity bit by parity bit.
 	for (int j = 0; j < n_rows_K; j++)
 	{
-		this->enc_r.encode(U_K, this->X_N_i.data() + X_row_par_off, j); // encode the j-th row
+		this->enc_r->encode(U_K, this->X_N_i.data() + X_row_par_off, j); // encode the j-th row
 
 		if (this->parity_extended)
 		{
@@ -111,7 +128,7 @@ void Encoder_turbo_product<B>
 
 	for (int j = 0; j < n_cols_N; j++)
 	{
-		this->enc_c.encode(X_N + U_col_M_off, this->X_N_i.data() + X_col_par_off, j); // encode the j-th col
+		this->enc_c->encode(X_N + U_col_M_off, this->X_N_i.data() + X_col_par_off, j); // encode the j-th col
 
 		if (this->parity_extended)
 		{
@@ -126,14 +143,14 @@ void Encoder_turbo_product<B>
 
 
 	/*
-	if (this->enc_r.is_memorizing())
+	if (this->enc_r->is_memorizing())
 	{
 		// TODO : hack to access to a private member not really really nice
-		auto& X_N_mem = (this->enc_r.*result<Enc_X_N_mem>::ptr);
+		auto& X_N_mem = (this->enc_r->*result<Enc_X_N_mem>::ptr);
 
 		for (int j = n_rows_K; j < n_rows_N; j++)
 			std::copy(X_N + j * n_cols_N,
-			          X_N + j * n_cols_N + this->enc_r.get_N(), // ignore last parity bit
+			          X_N + j * n_cols_N + this->enc_r->get_N(), // ignore last parity bit
 			          X_N_mem[j].begin());
 	}
 	*/

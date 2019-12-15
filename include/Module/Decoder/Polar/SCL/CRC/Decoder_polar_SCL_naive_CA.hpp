@@ -5,6 +5,8 @@
 #ifndef DECODER_POLAR_SCL_NAIVE_CA_
 #define DECODER_POLAR_SCL_NAIVE_CA_
 
+#include <memory>
+
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 #include "Module/CRC/CRC.hpp"
 #include "Module/Decoder/Polar/SCL/Decoder_polar_SCL_naive.hpp"
@@ -17,15 +19,18 @@ template <typename B, typename R, tools::proto_f<R> F = tools::f_LLR, tools::pro
 class Decoder_polar_SCL_naive_CA : public Decoder_polar_SCL_naive<B,R,F,G>
 {
 protected:
-	CRC<B>& crc;
+	std::shared_ptr<CRC<B>> crc;
 
 public:
 	Decoder_polar_SCL_naive_CA(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-	                           CRC<B>& crc, const int n_frames = 1);
+	                           const CRC<B>& crc, const int n_frames = 1);
 
 	virtual ~Decoder_polar_SCL_naive_CA() = default;
 
+	virtual Decoder_polar_SCL_naive_CA<B,R,F,G>* clone() const;
+
 protected:
+	virtual void deep_copy(const Decoder_polar_SCL_naive_CA<B,R,F,G>& m);
 	virtual void select_best_path();
 };
 }

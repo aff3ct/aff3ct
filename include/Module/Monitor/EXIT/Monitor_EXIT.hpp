@@ -7,8 +7,10 @@
 
 #include <vector>
 #include <memory>
+#include <cstdint>
 #include <functional>
 
+#include "Tools/Algo/Callback/Callback.hpp"
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
 #include "Module/Monitor/Monitor.hpp"
@@ -41,7 +43,7 @@ private:
 
 	Attributes vals;
 
-	std::vector<std::function<void(void)>> callbacks_measure;
+	tools::Callback<> callback_measure;
 
 	std::vector<B> bits_buff;
 	std::vector<R> llrs_e_buff;
@@ -53,6 +55,8 @@ public:
 	Monitor_EXIT(); // construct with null and default parameters.
 
 	virtual ~Monitor_EXIT() = default;
+
+	virtual Monitor_EXIT<B,R>* clone() const;
 
 	bool equivalent(const Monitor_EXIT<B,R>& m, bool do_throw = false) const; // check if this monitor and "m" have equivalent construction arguments
 	                                                                          // and then can be merged by "collect" or "copy" methods
@@ -79,7 +83,8 @@ public:
 	R                  get_I_A         () const;
 	R                  get_I_E         () const;
 
-	virtual void add_handler_measure(std::function<void(void)> callback);
+	virtual uint32_t record_callback_measure(std::function<void(void)> callback);
+	virtual bool unrecord_callback_measure(const uint32_t id);
 
 	virtual void reset();
 	virtual void clear_callbacks();

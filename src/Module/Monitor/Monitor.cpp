@@ -16,18 +16,13 @@ Monitor
 	this->tasks_with_nullptr.resize((size_t)mnt::tsk::SIZE);
 }
 
-void Monitor
-::clear_callbacks()
+Monitor* Monitor
+::clone() const
 {
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 void Monitor
 ::reset()
 {
-}
-
-Monitor& Monitor
-::operator=(const Monitor& m)
-{
-	return *this;
 }

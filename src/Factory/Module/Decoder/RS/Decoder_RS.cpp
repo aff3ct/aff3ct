@@ -89,7 +89,7 @@ void Decoder_RS
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_RS
-::build(const tools::RS_polynomial_generator &GF, const std::unique_ptr<module::Encoder<B>>& encoder) const
+::build(const tools::RS_polynomial_generator &GF, module::Encoder<B> *encoder) const
 {
 	try
 	{
@@ -97,24 +97,16 @@ module::Decoder_SIHO<B,Q>* Decoder_RS
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		return build_hiho<B,Q>(GF, encoder);
-	}
-}
-
-template <typename B, typename Q>
-module::Decoder_SIHO_HIHO<B,Q>* Decoder_RS
-::build_hiho(const tools::RS_polynomial_generator &GF, const std::unique_ptr<module::Encoder<B>>& encoder) const
-{
-	if (this->type == "ALGEBRAIC")
-	{
-		if (this->implem == "STD") return new module::Decoder_RS_std<B,Q>(this->K, this->N_cw, GF, this->n_frames);
-
-		if (encoder)
+		if (this->type == "ALGEBRAIC")
 		{
-			if (this->implem == "GENIUS") return new module::Decoder_RS_genius<B,Q>(this->K, this->N_cw, GF, *encoder, this->n_frames);
+			if (this->implem == "STD") return new module::Decoder_RS_std<B,Q>(this->K, this->N_cw, GF, this->n_frames);
+
+			if (encoder)
+			{
+				if (this->implem == "GENIUS") return new module::Decoder_RS_genius<B,Q>(this->K, this->N_cw, GF, *encoder, this->n_frames);
+			}
 		}
 	}
-
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -122,25 +114,11 @@ module::Decoder_SIHO_HIHO<B,Q>* Decoder_RS
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RS::build<B_8 ,Q_8 >(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_8 >>&) const;
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RS::build<B_16,Q_16>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_16>>&) const;
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RS::build<B_32,Q_32>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_32>>&) const;
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RS::build<B_64,Q_64>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_64>>&) const;
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RS::build<B_8 ,Q_8 >(const aff3ct::tools::RS_polynomial_generator&, module::Encoder<B_8 >*) const;
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RS::build<B_16,Q_16>(const aff3ct::tools::RS_polynomial_generator&, module::Encoder<B_16>*) const;
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RS::build<B_32,Q_32>(const aff3ct::tools::RS_polynomial_generator&, module::Encoder<B_32>*) const;
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RS::build<B_64,Q_64>(const aff3ct::tools::RS_polynomial_generator&, module::Encoder<B_64>*) const;
 #else
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_RS::build<B,Q>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B>>& ) const;
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_RS::build<B,Q>(const aff3ct::tools::RS_polynomial_generator&, module::Encoder<B>*) const;
 #endif
 // ==================================================================================== explicit template instantiation
-
-
-// ==================================================================================== explicit template instantiation
-#include "Tools/types.h"
-#ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Decoder_SIHO_HIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RS::build_hiho<B_8 ,Q_8 >(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_8 >>&) const;
-template aff3ct::module::Decoder_SIHO_HIHO<B_16,Q_16>* aff3ct::factory::Decoder_RS::build_hiho<B_16,Q_16>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_16>>&) const;
-template aff3ct::module::Decoder_SIHO_HIHO<B_32,Q_32>* aff3ct::factory::Decoder_RS::build_hiho<B_32,Q_32>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_32>>&) const;
-template aff3ct::module::Decoder_SIHO_HIHO<B_64,Q_64>* aff3ct::factory::Decoder_RS::build_hiho<B_64,Q_64>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B_64>>&) const;
-#else
-template aff3ct::module::Decoder_SIHO_HIHO<B,Q>* aff3ct::factory::Decoder_RS::build_hiho<B>(const aff3ct::tools::RS_polynomial_generator&, const std::unique_ptr<module::Encoder<B>>& ) const;
-#endif
-// ==================================================================================== explicit template instantiation
-

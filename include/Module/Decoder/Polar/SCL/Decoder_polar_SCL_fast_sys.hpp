@@ -5,14 +5,13 @@
 #ifndef DECODER_POLAR_SCL_FAST_SYS
 #define DECODER_POLAR_SCL_FAST_SYS
 
-#include <memory>
 #include <vector>
 #include <mipp.h>
 
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
 #include "Tools/Algo/Sort/LC_sorter.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
-#include "Tools/Code/Polar/Frozenbits_notifier.hpp"
+#include "Tools/Interface/Interface_notify_frozenbits_update.hpp"
 #include "Tools/Code/Polar/Pattern_polar_parser.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
 
@@ -28,7 +27,7 @@ template <typename B = int, typename R = float,
                                                                tools::g0_LLR<  R>,
                                                                tools::h_LLR <B,R>,
                                                                tools::xo_STD<B  >>>
-class Decoder_polar_SCL_fast_sys : public Decoder_SIHO<B,R>, public tools::Frozenbits_notifier
+class Decoder_polar_SCL_fast_sys : public Decoder_SIHO<B,R>, public tools::Interface_notify_frozenbits_update
 {
 protected:
 	const int                         m;              // graph depth
@@ -62,12 +61,14 @@ public:
 	                           const int n_frames = 1);
 
 	Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-	                           std::vector<std::unique_ptr<tools::Pattern_polar_i>> &&polar_patterns,
+	                           const std::vector<tools::Pattern_polar_i*> &polar_patterns,
 	                           const int idx_r0, const int idx_r1, const int n_frames = 1);
 
 	virtual ~Decoder_polar_SCL_fast_sys();
 
-	virtual void notify_frozenbits_update();
+	virtual Decoder_polar_SCL_fast_sys<B,R,API_polar>* clone() const;
+
+	virtual void notify_noise_update();
 
 protected:
 	virtual void _decode        (const R *Y_N                            );

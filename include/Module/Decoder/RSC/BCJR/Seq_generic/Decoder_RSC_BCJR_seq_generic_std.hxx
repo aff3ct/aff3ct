@@ -18,12 +18,20 @@ Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
                                    const std::vector<std::vector<int>> &trellis,
                                    const bool buffered_encoding,
                                    const int n_frames)
-: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, 1),
-  Decoder_RSC_BCJR_seq_generic<B,R>(K, trellis, buffered_encoding, n_frames),
+: Decoder_RSC_BCJR_seq_generic<B,R>(K, trellis, buffered_encoding, n_frames),
   beta_prev(trellis[0].size()), beta_cur(trellis[0].size())
 {
 	const std::string name = "Decoder_RSC_BCJR_seq_generic_std";
 	this->set_name(name);
+}
+
+template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
+Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>* Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
+::clone() const
+{
+	auto m = new Decoder_RSC_BCJR_seq_generic_std(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>

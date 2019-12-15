@@ -24,6 +24,8 @@ public:
 	                            const int n_frames = 1);
 	virtual ~Decoder_RSC_BCJR_intra_fast() = default;
 
+	virtual Decoder_RSC_BCJR_intra_fast<B,R,MAX>* clone() const;
+
 protected:
 	void compute_gamma   (const R *sys, const R *par);
 	void compute_alpha   (                          );

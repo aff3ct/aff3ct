@@ -15,7 +15,7 @@
 #include "Tools/auto_cloned_unique_ptr.hpp"
 #include "Module/Encoder/Encoder.hpp"
 #include "Module/Decoder/Decoder_SIHO.hpp"
-#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 #include "Module/Decoder/Turbo_product/Chase_pyndiah/Decoder_chase_pyndiah.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
 #include "Factory/Module/Interleaver/Interleaver.hpp"
@@ -62,15 +62,16 @@ public:
 
 	// builder
 	template <typename B = int, typename Q = float>
-	module::Decoder_SIHO<B,Q>* build(const module::Interleaver<Q>              &itl,
-	                                       module::Decoder_chase_pyndiah<B,Q>  &cp_r,
-	                                       module::Decoder_chase_pyndiah<B,Q>  &cp_c,
-	                                 const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
+	module::Decoder_SIHO<B,Q>* build(const module::Interleaver<Q>             &itl,
+	                                 const module::Decoder_chase_pyndiah<B,Q> &cp_r,
+	                                 const module::Decoder_chase_pyndiah<B,Q> &cp_c,
+	                                       module::Encoder<B>                 *encoder = nullptr) const;
 
 	template <typename B = int, typename Q = float>
-	module::Decoder_SISO_SIHO<B,Q>* build_siso(const module::Interleaver<Q>             &itl,
-	                                                 module::Decoder_chase_pyndiah<B,Q> &cp_r,
-	                                                 module::Decoder_chase_pyndiah<B,Q> &cp_c) const;
+	module::Decoder_SISO<B,Q>* build_siso(const module::Interleaver<Q>             &itl,
+	                                      const module::Decoder_chase_pyndiah<B,Q> &cp_r,
+	                                      const module::Decoder_chase_pyndiah<B,Q> &cp_c,
+	                                            module::Encoder<B>                 *encoder = nullptr) const;
 
 };
 }

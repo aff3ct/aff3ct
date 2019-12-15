@@ -97,7 +97,7 @@ void Flip_and_check
 
 template<typename B, typename Q>
 tools::Flip_and_check<B,Q>* Flip_and_check
-::build(module::CRC<B> &crc) const
+::build(const module::CRC<B> &crc) const
 {
 	if (!this->enable)
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
@@ -108,11 +108,11 @@ tools::Flip_and_check<B,Q>* Flip_and_check
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::tools::Flip_and_check<B_8 ,Q_8 >* aff3ct::factory::Flip_and_check::build<B_8 ,Q_8 >(module::CRC<B_8 >&) const;
-template aff3ct::tools::Flip_and_check<B_16,Q_16>* aff3ct::factory::Flip_and_check::build<B_16,Q_16>(module::CRC<B_16>&) const;
-template aff3ct::tools::Flip_and_check<B_32,Q_32>* aff3ct::factory::Flip_and_check::build<B_32,Q_32>(module::CRC<B_32>&) const;
-template aff3ct::tools::Flip_and_check<B_64,Q_64>* aff3ct::factory::Flip_and_check::build<B_64,Q_64>(module::CRC<B_64>&) const;
+template aff3ct::tools::Flip_and_check<B_8 ,Q_8 >* aff3ct::factory::Flip_and_check::build<B_8 ,Q_8 >(const module::CRC<B_8 >&) const;
+template aff3ct::tools::Flip_and_check<B_16,Q_16>* aff3ct::factory::Flip_and_check::build<B_16,Q_16>(const module::CRC<B_16>&) const;
+template aff3ct::tools::Flip_and_check<B_32,Q_32>* aff3ct::factory::Flip_and_check::build<B_32,Q_32>(const module::CRC<B_32>&) const;
+template aff3ct::tools::Flip_and_check<B_64,Q_64>* aff3ct::factory::Flip_and_check::build<B_64,Q_64>(const module::CRC<B_64>&) const;
 #else
-template aff3ct::tools::Flip_and_check<B,Q>* aff3ct::factory::Flip_and_check::build<B,Q>(module::CRC<B>&) const;
+template aff3ct::tools::Flip_and_check<B,Q>* aff3ct::factory::Flip_and_check::build<B,Q>(const module::CRC<B>&) const;
 #endif
 // ==================================================================================== explicit template instantiation

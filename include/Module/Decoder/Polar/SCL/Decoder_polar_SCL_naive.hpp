@@ -8,10 +8,10 @@
 #include <set>
 #include <vector>
 
-#include "Tools/Algo/Tree/Binary_node.hpp"
-#include "Tools/Algo/Tree/Binary_tree_metric.hpp"
+#include "Tools/Algo/Tree/Binary/Binary_node.hpp"
+#include "Tools/Algo/Tree/Binary/Binary_tree_metric.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
-#include "Tools/Code/Polar/Frozenbits_notifier.hpp"
+#include "Tools/Interface/Interface_notify_frozenbits_update.hpp"
 
 #include "Module/Decoder/Decoder_SIHO.hpp"
 
@@ -32,7 +32,7 @@ public:
 };
 
 template <typename B, typename R, tools::proto_f<R> F = tools::f_LLR, tools::proto_g<B,R> G = tools::g_LLR>
-class Decoder_polar_SCL_naive : public Decoder_SIHO<B,R>, public tools::Frozenbits_notifier
+class Decoder_polar_SCL_naive : public Decoder_SIHO<B,R>, public tools::Interface_notify_frozenbits_update
 {
 protected:
 	const int m;           // graph depth
@@ -43,7 +43,7 @@ protected:
 	const int     L; // maximum paths number
 	std::set<int> active_paths;
 
-	std::vector<tools::Binary_tree_metric<Contents_SCL<B,R>,R>*> polar_trees;
+	std::vector<tools::Binary_tree_metric<Contents_SCL<B,R>,R>> polar_trees;
 	std::vector<std::vector<tools::Binary_node<Contents_SCL<B,R>>*>> leaves_array;
 
 public:
@@ -51,9 +51,15 @@ public:
 	                        const int n_frames = 1);
 	virtual ~Decoder_polar_SCL_naive();
 
-	virtual void notify_frozenbits_update();
+	virtual Decoder_polar_SCL_naive<B,R,F,G>* clone() const;
+
+	virtual void notify_noise_update();
 
 protected:
+	virtual void deep_copy          (const Decoder_polar_SCL_naive<B,R,F,G>& m);
+	        void recursive_deep_copy(const tools::Binary_node<Contents_SCL<B,R>> *nref,
+	                                       tools::Binary_node<Contents_SCL<B,R>> *nclone);
+
 	        void _load          (const R *Y_N                            );
 	        void _decode        (                                        );
 	        void _decode_siho   (const R *Y_N, B *V_K, const int frame_id);
@@ -69,8 +75,7 @@ private:
 	                                         tools::Binary_node<Contents_SCL<B,R>>* node_b,
 	                                         tools::Binary_node<Contents_SCL<B,R>>* node_caller        );
 
-	void duplicate_path(int path, int leaf_index,
-	                    std::vector<std::vector<tools::Binary_node<Contents_SCL<B,R>>*>> leaves_array);
+	void duplicate_path(int path, int leaf_index);
 
 protected:
 	virtual void select_best_path();

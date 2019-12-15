@@ -6,9 +6,10 @@
 #define DECODER_TURBO_HPP_
 
 #include <vector>
-#include <functional>
+#include <memory>
 #include <mipp.h>
 
+#include "Tools/Code/Turbo/Post_processing_SISO/Post_processing_SISO.hpp"
 #include "Module/Interleaver/Interleaver.hpp"
 #include "Module/Decoder/Decoder_SIHO.hpp"
 #include "Module/Decoder/Decoder_SISO.hpp"
@@ -25,8 +26,8 @@ protected:
 	const bool buffered_encoding;
 
 	const Interleaver<R> &pi;
-	Decoder_SISO<R> &siso_n;
-	Decoder_SISO<R> &siso_i;
+	std::shared_ptr<Decoder_SISO<B,R>> siso_n;
+	std::shared_ptr<Decoder_SISO<B,R>> siso_i;
 
 	mipp::vector<R> l_sn;  // systematic LLRs                  in the natural     domain
 	mipp::vector<R> l_si;  // systematic LLRs                  in the interleaved domain
@@ -40,36 +41,25 @@ protected:
 	mipp::vector<R> l_e2i; // extrinsic  LLRs                  in the interleaved domain
 	mipp::vector<B> s;     // bit decision
 
-	std::vector<std::function<bool(const int ite,
-	                               const mipp::vector<R>& sys,
-	                                     mipp::vector<R>& ext,
-	                                     mipp::vector<B>& s)>> callbacks_siso_n;
-	std::vector<std::function<bool(const int ite,
-	                               const mipp::vector<R>& sys,
-	                                     mipp::vector<R>& ext)>> callbacks_siso_i;
-	std::vector<std::function<void(const int n_ite)>> callbacks_end;
+	std::vector<std::shared_ptr<tools::Post_processing_SISO<B,R>>> post_processings;
 
 public:
 	Decoder_turbo(const int& K,
 	              const int& N,
 	              const int& n_ite,
 	              const Interleaver<R> &pi,
-	              Decoder_SISO<R> &siso_n,
-	              Decoder_SISO<R> &siso_i,
+	              const Decoder_SISO<B,R> &siso_n,
+	              const Decoder_SISO<B,R> &siso_i,
 	              const bool buffered_encoding = true);
 
 	virtual ~Decoder_turbo() = default;
 
-	void add_handler_siso_n(std::function<bool(const int,
-	                                           const mipp::vector<R>&,
-	                                                 mipp::vector<R>&,
-	                                                 mipp::vector<B>&)> callback);
-	void add_handler_siso_i(std::function<bool(const int,
-	                                           const mipp::vector<R>&,
-	                                                 mipp::vector<R>&)> callback);
-	void add_handler_end(std::function<void(const int)> callback);
+	virtual Decoder_turbo<B,R>* clone() const;
+
+	void add_post_processing(const tools::Post_processing_SISO<B,R> &post_processing);
 
 protected:
+	virtual void deep_copy(const Decoder_turbo<B,R> &m);
 	virtual void _load (const R *Y_N, const int frame_id);
 	virtual void _store(      B *V_K                    ) const;
 

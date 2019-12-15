@@ -7,9 +7,9 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "Tools/Math/max.h"
-#include "Tools/Noise/Noise.hpp"
 #include "Tools/Code/CPM/CPM_parameters.hpp"
 #include "Tools/Code/CPM/CPE/Encoder_CPE_Rimoldi.hpp"
 #include "Tools/Code/CPM/BCJR/CPM_BCJR.hpp"
@@ -32,23 +32,22 @@ private:
 
 protected:
 	// inputs:
-	const bool                           no_sig2;    // no computation of sigma^2
+	const bool                                       no_sig2;    // no computation of sigma^2
 
 	// modulation data:
-	tools::CPM_parameters<SIN,SOUT>      cpm;        // all CPM parameters
-	R                                    cpm_h;      // modulation index = k/p
-	R                                    T_samp;     // sample duration  = 1/s_factor
-	std::vector<R>                       baseband;   // translation of base band vectors
-	std::vector<R>                       projection; // translation of filtering generator family
-	const int                            n_sy;       // number of symbols for one frame after encoding without tail symbols
-	const int                            n_sy_tl;    // number of symbols to send for one frame after encoding with tail symbols
-	tools::Encoder_CPE_Rimoldi<SIN,SOUT> cpe;        // the continuous phase encoder
+	std::shared_ptr<tools::CPM_parameters<SIN,SOUT>> cpm;        // all CPM parameters
+	R                                                cpm_h;      // modulation index = k/p
+	R                                                T_samp;     // sample duration  = 1/s_factor
+	std::vector<R>                                   baseband;   // translation of base band vectors
+	std::vector<R>                                   projection; // translation of filtering generator family
+	const int                                        n_sy;       // number of symbols for one frame after encoding without tail symbols
+	const int                                        n_sy_tl;    // number of symbols to send for one frame after encoding with tail symbols
+	tools::Encoder_CPE_Rimoldi<SIN,SOUT>             cpe;        // the continuous phase encoder
 
-	tools::CPM_BCJR<SIN,SOUT,Q,MAX>      bcjr;       // demodulator
+	tools::CPM_BCJR<SIN,SOUT,Q,MAX>                  bcjr;       // demodulator
 
 public:
 	Modem_CPM(const int  N,
-	          const tools::Noise<R>& noise  = tools::Sigma<R>(),
 	          const int  bits_per_symbol    = 1,
 	          const int  sampling_factor    = 5,
 	          const int  cpm_L              = 3,
@@ -60,14 +59,18 @@ public:
 	          const int  n_frames           = 1);
 	virtual ~Modem_CPM() = default;
 
-	virtual void set_noise(const tools::Noise<R>& noise);
+	virtual Modem_CPM<B,R,Q,MAX>* clone() const;
 
 	static bool is_complex_mod();
 	static bool is_complex_fil();
 	static int size_mod(const int N, const int bps, const int L, const int p, const int ups);
 	static int size_fil(const int N, const int bps, const int L, const int p);
 
+	void notify_noise_update();
+
 protected:
+	void check_noise();
+
 	void   _modulate (const B *X_N1,                R *X_N2, const int frame_id);
 	void     _filter (const R *Y_N1,                R *Y_N2, const int frame_id);
 	void _demodulate (const Q *Y_N1,                Q *Y_N2, const int frame_id);

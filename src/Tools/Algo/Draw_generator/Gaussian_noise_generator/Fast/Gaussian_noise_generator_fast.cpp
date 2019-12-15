@@ -17,9 +17,10 @@ Gaussian_noise_generator_fast<R>
 }
 
 template <typename R>
-Gaussian_noise_generator_fast<R>
-::~Gaussian_noise_generator_fast()
+Gaussian_noise_generator_fast<R>* Gaussian_noise_generator_fast<R>
+::clone() const
 {
+	return new Gaussian_noise_generator_fast(*this);
 }
 
 template <typename R>

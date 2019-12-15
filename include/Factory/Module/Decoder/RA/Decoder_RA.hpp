@@ -7,7 +7,6 @@
 
 #include <vector>
 #include <string>
-#include <memory>
 #include <map>
 #include <cli.hpp>
 
@@ -51,7 +50,7 @@ public:
 	// builder
 	template <typename B = int, typename Q = float>
 	module::Decoder_SIHO<B,Q>* build(const module::Interleaver<Q> &itl,
-	                                 const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
+	                                 module::Encoder<B> *encoder = nullptr) const;
 };
 }
 }

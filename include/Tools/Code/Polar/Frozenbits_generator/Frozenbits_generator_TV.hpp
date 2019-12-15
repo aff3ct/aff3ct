@@ -29,6 +29,8 @@ public:
 
 	virtual ~Frozenbits_generator_TV() = default;
 
+	virtual Frozenbits_generator_TV* clone() const;
+
 protected:
 	void evaluate();
 	virtual void check_noise();

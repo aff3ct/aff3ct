@@ -19,6 +19,8 @@ public:
 
 	virtual ~Coset_real() = default;
 
+	virtual Coset_real<B,D>* clone() const;
+
 protected:
 	void _apply(const B *ref, const D *in, D *out, const int frame_id);
 };

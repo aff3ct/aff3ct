@@ -11,13 +11,14 @@
 #include <cstddef>
 #include <typeindex>
 
+#include "Tools/Interface/Interface_reset.hpp"
 #include "Module/Task.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
-class Socket
+class Socket : public tools::Interface_reset
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 	friend Task;
@@ -25,46 +26,52 @@ class Socket
 protected:
 	Task &task;
 
-	const std::string     name;
-	const std::type_index datatype;
-	const size_t          databytes;
-	      bool            fast;
-	      void*           dataptr;
+	const std::string           name;
+	const std::type_index       datatype;
+	const size_t                databytes;
+	      bool                  fast;
+	      void*                 dataptr;
+	      std::vector<Socket*>  bound_sockets;
 
 public:
 	inline Socket(Task &task, const std::string &name, const std::type_index datatype, const size_t databytes,
 	              const bool fast = false, void *dataptr = nullptr);
+	virtual ~Socket() = default;
 
-	inline std::string     get_name           () const;
-	inline std::type_index get_datatype       () const;
-	inline std::string     get_datatype_string() const;
-	inline uint8_t         get_datatype_size  () const;
-	inline size_t          get_databytes      () const;
-	inline size_t          get_n_elmts        () const;
-	inline void*           get_dataptr        () const;
-	inline bool            is_fast            () const;
+	inline const std::string&         get_name           () const;
+	inline const std::type_index&     get_datatype       () const;
+	inline const std::string&         get_datatype_string() const;
+	inline uint8_t                    get_datatype_size  () const;
+	inline size_t                     get_databytes      () const;
+	inline size_t                     get_n_elmts        () const;
+	inline void*                      get_dataptr        () const;
+	inline bool                       is_fast            () const;
+	inline Task&                      get_task           () const;
+	inline const std::vector<Socket*> get_bound_sockets  () const;
 
 	inline void set_fast(const bool fast);
 
-	inline int bind(Socket &s);
+	inline void bind(Socket &s, const bool copy_dataptr = true);
 
-	inline int operator()(Socket &s);
-
-	template <typename T, class A = std::allocator<T>>
-	inline int bind(std::vector<T,A> &vector);
+	inline void operator()(Socket &s, const bool copy_dataptr = true);
 
 	template <typename T, class A = std::allocator<T>>
-	inline int operator()(std::vector<T,A> &vector);
+	inline void bind(std::vector<T,A> &vector);
+
+	template <typename T, class A = std::allocator<T>>
+	inline void operator()(std::vector<T,A> &vector);
 
 	template <typename T>
-	inline int bind(T *array);
+	inline void bind(T *array);
 
 	template <typename T>
-	inline int operator()(T *array);
+	inline void operator()(T *array);
 
-	inline int bind(void* dataptr);
+	inline void bind(void* dataptr);
 
-	inline int operator()(void* dataptr);
+	inline void operator()(void* dataptr);
+
+	inline void reset();
 };
 }
 }

@@ -19,6 +19,8 @@ public:
 
 	virtual ~Source_AZCW() = default;
 
+	virtual Source_AZCW<B>* clone() const;
+
 protected:
 	void _generate(B *U_K, const int frame_id);
 };

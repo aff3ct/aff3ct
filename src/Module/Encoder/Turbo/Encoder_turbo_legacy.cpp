@@ -10,10 +10,10 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_turbo_legacy<B>
-::Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<B> &pi, Encoder<B> &sub_enc)
+::Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<B> &pi, const Encoder<B> &sub_enc)
 : Encoder_turbo<B>(K, N, pi, sub_enc, sub_enc),
   pi(pi),
-  sub_enc(sub_enc),
+  sub_enc(sub_enc.clone()),
   X_N_n((2 * (K + sub_enc.tail_length()/2))*sub_enc.get_n_frames()),
   X_N_i((2 * (K + sub_enc.tail_length()/2))*sub_enc.get_n_frames())
 {
@@ -41,15 +41,32 @@ Encoder_turbo_legacy<B>
 }
 
 template <typename B>
+Encoder_turbo_legacy<B>* Encoder_turbo_legacy<B>
+::clone() const
+{
+	auto m = new Encoder_turbo_legacy(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B>
+void Encoder_turbo_legacy<B>
+::deep_copy(const Encoder_turbo_legacy<B> &m)
+{
+	Encoder_turbo<B>::deep_copy(m);
+	if (m.sub_enc != nullptr) this->sub_enc.reset(m.sub_enc->clone());
+}
+
+template <typename B>
 void Encoder_turbo_legacy<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
-	pi.interleave (U_K - frame_id * this->K, this->U_K_i.data(), frame_id);
-	sub_enc.encode(U_K - frame_id * this->K,       X_N_n.data(), frame_id);
-	sub_enc.encode(this->U_K_i.data(),             X_N_i.data(), frame_id);
+	pi.interleave  (U_K - frame_id * this->K, this->U_K_i.data(), frame_id);
+	sub_enc->encode(U_K - frame_id * this->K,       X_N_n.data(), frame_id);
+	sub_enc->encode(this->U_K_i.data(),             X_N_i.data(), frame_id);
 
-	const auto off1 = ((3*this->K + (2 * sub_enc.tail_length())) * frame_id) - (frame_id * this->N);
-	const auto off2 =  (2*this->K + (1 * sub_enc.tail_length())) * frame_id;
+	const auto off1 = ((3*this->K + (2 * sub_enc->tail_length())) * frame_id) - (frame_id * this->N);
+	const auto off2 =  (2*this->K + (1 * sub_enc->tail_length())) * frame_id;
 	for (auto i = 0; i < this->K; i++)
 	{
 		X_N[off1 + 3*i +0] = X_N_n[off2 + 2*i +0];
@@ -59,15 +76,15 @@ void Encoder_turbo_legacy<B>
 
 	const auto off1_tails_n = off1 + 3*this->K;
 	const auto off2_tails_n = off2 + 2*this->K;
-	for (auto i = 0; i < sub_enc.tail_length() / 2; i++)
+	for (auto i = 0; i < sub_enc->tail_length() / 2; i++)
 	{
 		X_N[off1_tails_n + 2*i +0] = X_N_n[off2_tails_n + 2*i +0];
 		X_N[off1_tails_n + 2*i +1] = X_N_n[off2_tails_n + 2*i +1];
 	}
 
-	const auto off1_tails_i = off1_tails_n + sub_enc.tail_length();
+	const auto off1_tails_i = off1_tails_n + sub_enc->tail_length();
 	const auto off2_tails_i = off2_tails_n;
-	for (auto i = 0; i < sub_enc.tail_length() / 2; i++)
+	for (auto i = 0; i < sub_enc->tail_length() / 2; i++)
 	{
 		X_N[off1_tails_i + 2*i +0] = X_N_i[off2_tails_i + 2*i +0];
 		X_N[off1_tails_i + 2*i +1] = X_N_i[off2_tails_i + 2*i +1];
@@ -89,21 +106,21 @@ bool Encoder_turbo_legacy<B>
 
 	const auto off1_tails_n = 3*this->K;
 	const auto off2_tails_n = 2*this->K;
-	for (auto i = 0; i < sub_enc.tail_length() / 2; i++)
+	for (auto i = 0; i < sub_enc->tail_length() / 2; i++)
 	{
 		X_N_n[off2_tails_n + 2*i +0] = X_N[off1_tails_n + 2*i +0];
 		X_N_n[off2_tails_n + 2*i +1] = X_N[off1_tails_n + 2*i +1];
 	}
 
-	const auto off1_tails_i = off1_tails_n + sub_enc.tail_length();
+	const auto off1_tails_i = off1_tails_n + sub_enc->tail_length();
 	const auto off2_tails_i = off2_tails_n;
-	for (auto i = 0; i < sub_enc.tail_length() / 2; i++)
+	for (auto i = 0; i < sub_enc->tail_length() / 2; i++)
 	{
 		X_N_i[off2_tails_i + 2*i +0] = X_N[off1_tails_i + 2*i +0];
 		X_N_i[off2_tails_i + 2*i +1] = X_N[off1_tails_i + 2*i +1];
 	}
 
-	if (!sub_enc.is_codeword(X_N_n.data()))
+	if (!sub_enc->is_codeword(X_N_n.data()))
 		return false;
 
 	pi.interleave(U_K_n.data(), this->U_K_i.data());
@@ -111,7 +128,7 @@ bool Encoder_turbo_legacy<B>
 	for (auto i = 0; i < this->K; i++)
 		X_N_i[2*i +0] = this->U_K_i[i];
 
-	if (!sub_enc.is_codeword(X_N_i.data()))
+	if (!sub_enc->is_codeword(X_N_i.data()))
 		return false;
 
 	return true;

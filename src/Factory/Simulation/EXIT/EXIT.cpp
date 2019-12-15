@@ -4,7 +4,7 @@
 #include <tuple>
 
 #include "Tools/Documentation/documentation.h"
-#include "Simulation/EXIT/EXIT.hpp"
+#include "Simulation/Legacy/EXIT/EXIT.hpp"
 #include "Tools/general_utils.h"
 #include "Factory/Simulation/EXIT/EXIT.hpp"
 
@@ -198,7 +198,7 @@ void EXIT
 
 
 template <typename B, typename R>
-simulation::EXIT<B,R>* EXIT
+simulation::Simulation* EXIT
 ::build() const
 {
 #if defined(AFF3CT_SYSTEMC_SIMU)
@@ -213,10 +213,10 @@ simulation::EXIT<B,R>* EXIT
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::simulation::EXIT<B_32,R_32>* aff3ct::factory::EXIT::build<B_32,R_32>() const;
-template aff3ct::simulation::EXIT<B_64,R_64>* aff3ct::factory::EXIT::build<B_64,R_64>() const;
+template aff3ct::simulation::Simulation* aff3ct::factory::EXIT::build<B_32,R_32>() const;
+template aff3ct::simulation::Simulation* aff3ct::factory::EXIT::build<B_64,R_64>() const;
 #else
-template aff3ct::simulation::EXIT<B,R>* aff3ct::factory::EXIT::build<B,R>() const;
+template aff3ct::simulation::Simulation* aff3ct::factory::EXIT::build<B,R>() const;
 #endif
 // ==================================================================================== explicit template instantiation
 

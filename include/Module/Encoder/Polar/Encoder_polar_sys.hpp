@@ -20,6 +20,8 @@ public:
 	Encoder_polar_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int& n_frames = 1);
 	virtual ~Encoder_polar_sys() = default;
 
+	virtual Encoder_polar_sys<B>* clone() const;
+
 protected:
 	void _encode(const B *U_K, B *X_N, const int frame_id);
 };

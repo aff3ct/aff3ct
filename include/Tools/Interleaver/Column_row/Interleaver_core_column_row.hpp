@@ -39,6 +39,8 @@ public:
 	Interleaver_core_column_row(const int size, const int n_cols, const READ_ORDER   read_order, const int n_frames = 1);
 	virtual ~Interleaver_core_column_row() = default;
 
+	virtual Interleaver_core_column_row<T>* clone() const;
+
 protected:
 	void gen_lut(T *lut, const int frame_id);
 };

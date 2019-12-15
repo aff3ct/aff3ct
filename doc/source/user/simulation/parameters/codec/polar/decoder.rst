@@ -154,6 +154,7 @@ Corresponds to the ``T`` parameter of the |SCF| decoding alogorithm
 """""""""""""""""""
 
    :Type: integer
+   :Default: ``8``
    :Examples: ``--dec-lists 1``
 
 |factory::Decoder_polar::p+lists,L|

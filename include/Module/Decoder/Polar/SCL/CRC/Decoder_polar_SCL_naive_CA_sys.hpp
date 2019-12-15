@@ -21,9 +21,11 @@ class Decoder_polar_SCL_naive_CA_sys : public Decoder_polar_SCL_naive_CA<B,R,F,G
 
 public:
 	Decoder_polar_SCL_naive_CA_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-	                               CRC<B>& crc, const int n_frames = 1);
+	                               const CRC<B>& crc, const int n_frames = 1);
 
 	virtual ~Decoder_polar_SCL_naive_CA_sys() = default;
+
+	virtual Decoder_polar_SCL_naive_CA_sys<B,R,F,G>* clone() const;
 
 protected:
 	virtual void select_best_path();

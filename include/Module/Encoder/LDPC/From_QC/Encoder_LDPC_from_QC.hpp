@@ -24,6 +24,8 @@ public:
 	Encoder_LDPC_from_QC(const int K, const int N, const tools::Sparse_matrix &H, const int n_frames = 1);
 	virtual ~Encoder_LDPC_from_QC() = default;
 
+	virtual Encoder_LDPC_from_QC<B>* clone() const;
+
 protected:
 	void _encode(const B *U_K, B *X_N, const int frame_id);
 	void _check_H_dimensions();

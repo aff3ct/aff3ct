@@ -5,18 +5,19 @@
 #ifndef DECODER_NO_HPP_
 #define DECODER_NO_HPP_
 
-#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_NO : public Decoder_SISO_SIHO<B,R>
+class Decoder_NO : public Decoder_SISO<B,R>
 {
 public:
 	Decoder_NO(const int K, const int n_frames = 1);
 	virtual ~Decoder_NO() = default;
+	virtual Decoder_NO<B,R>* clone() const;
 
 protected:
 	void _decode_siso   (const R *sys, const R *par, R *ext, const int frame_id);

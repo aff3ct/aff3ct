@@ -11,10 +11,9 @@ namespace module
 {
 template <typename B, typename R>
 Decoder_maximum_likelihood<B,R>
-::Decoder_maximum_likelihood(const int K, const int N, Encoder<B> &encoder, const int n_frames)
-: Decoder               (K, N, n_frames, 1),
-  Decoder_SIHO_HIHO<B,R>(K, N, n_frames, 1),
-  encoder(encoder),
+::Decoder_maximum_likelihood(const int K, const int N, const Encoder<B> &encoder, const int n_frames)
+: Decoder_SIHO<B,R>(K, N, n_frames, 1),
+  encoder(encoder.clone()),
   U_K(K+7), // +7 to avoid segmentation fault when casting B to uint64_t
   X_N(N+7), // +7 to avoid segmentation fault when casting B to uint64_t
   best_U_K(K),
@@ -39,6 +38,21 @@ Decoder_maximum_likelihood<B,R>
 		        << ", 'N' = " << N << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+template <typename B, typename R>
+Decoder_maximum_likelihood<B,R>* Decoder_maximum_likelihood<B,R>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename R>
+void Decoder_maximum_likelihood<B,R>
+::deep_copy(const Decoder_maximum_likelihood<B,R> &m)
+{
+	Module::deep_copy(m);
+	if (m.encoder != nullptr) this->encoder.reset(m.encoder->clone());
 }
 
 template <typename B, typename R>

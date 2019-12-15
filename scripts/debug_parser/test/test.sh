@@ -22,13 +22,13 @@ $AFF3CT_PATH -p "8" --sim-type "BFER" -C "POLAR" -K "32" -N "64" -m "2.81"     \
 $AFF3CT_PATH --sim-type "BFER" -p "8" --sim-cde-type "UNCODED" -K "12" -m "5"  \
 -M "5" -s "0.5" --chn-type "RAYLEIGH" -t "1" --mdm-type "SCMA" --mdm-ite "4"   \
 --mnt-max-fe "100" -F "6" --sim-dbg --sim-meta "Dump Test"                     \
---mdm-codebook "conf/mod/SCMA/CS1.cb"                                          \
+--mdm-cb-path "conf/mod/SCMA/CS1.cb"                                           \
 > dump_debug_gold2.txt
 
 $AFF3CT_PATH --sim-type "BFER" -p "8" --sim-cde-type "UNCODED" -K "12" -m "5"  \
 -M "5" -s "0.5" --chn-type "USER" --chn-path "./refs/error_tracker_0.23.chn"   \
 -t "1" --mdm-type "SCMA" --mdm-ite "4" --mnt-max-fe "100" -F "6" --sim-dbg-hex \
---sim-meta "Dump Test" --mdm-codebook "conf/mod/SCMA/CS1.cb"                   \
+--sim-meta "Dump Test" --mdm-cb-path "conf/mod/SCMA/CS1.cb"                    \
 > dump_debug_gold4.txt
 
 rc=0

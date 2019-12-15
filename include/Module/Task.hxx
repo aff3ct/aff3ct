@@ -15,12 +15,6 @@ bool Task
 }
 
 bool Task
-::is_autoexec() const
-{
-	return this->autoexec;
-}
-
-bool Task
 ::is_stats() const
 {
 	return this->stats;
@@ -53,7 +47,7 @@ bool Task
 const Module& Task
 ::get_module() const
 {
-	return this->module;
+	return *this->module;
 }
 
 std::string Task
@@ -66,14 +60,6 @@ uint32_t Task
 ::get_n_calls() const
 {
 	return this->n_calls;
-}
-
-int Task
-::exec_fast()
-{
-	auto exec_status = this->codelet(*this);
-	this->n_calls++;
-	return exec_status;
 }
 
 Socket& Task

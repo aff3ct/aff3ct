@@ -7,14 +7,14 @@
 
 #include <mipp.h>
 
-#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_repetition : public Decoder_SISO_SIHO<B,R>
+class Decoder_repetition : public Decoder_SISO<B,R>
 {
 protected:
 	const int rep_count; // number of repetitions
@@ -27,6 +27,7 @@ protected:
 
 	Decoder_repetition(const int& K, const int& N, const bool buffered_encoding = true, const int n_frames = 1);
 	virtual ~Decoder_repetition() = default;
+	virtual Decoder_repetition<B,R>* clone() const;
 
 	void _load       (const R *Y_N                            );
 	void _decode_siho(const R *Y_N, B *V_K, const int frame_id);

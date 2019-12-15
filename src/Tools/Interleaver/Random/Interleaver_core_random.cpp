@@ -12,8 +12,15 @@ Interleaver_core_random<T>
 : Interleaver_core<T>(size, "random", uniform, n_frames), rd_engine()
 {
 	rd_engine.seed(seed);
-
 	this->init();
+}
+
+template <typename T>
+Interleaver_core_random<T>* Interleaver_core_random<T>
+::clone() const
+{
+	auto t = new Interleaver_core_random(*this);
+	return t;
 }
 
 template <typename T>
@@ -22,6 +29,14 @@ void Interleaver_core_random<T>
 {
 	std::iota   (lut, lut + this->get_size(), 0);
 	std::shuffle(lut, lut + this->get_size(), rd_engine);
+}
+
+template <typename T>
+void Interleaver_core_random<T>
+::set_seed(const int seed)
+{
+	rd_engine.seed(seed);
+	this->init();
 }
 
 // ==================================================================================== explicit template instantiation

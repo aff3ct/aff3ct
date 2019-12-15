@@ -22,11 +22,11 @@ Monitor_EXIT<B,R>
 	auto ps_bits   = this->template create_socket_in<B>(p, "bits",   get_N());
 	auto ps_llrs_a = this->template create_socket_in<R>(p, "llrs_a", get_N());
 	auto ps_llrs_e = this->template create_socket_in<R>(p, "llrs_e", get_N());
-	this->create_codelet(p, [this, ps_bits, ps_llrs_a, ps_llrs_e](Task &t) -> int
+	this->create_codelet(p, [ps_bits, ps_llrs_a, ps_llrs_e](Module &m, Task &t) -> int
 	{
-		this->check_mutual_info(static_cast<B*>(t[ps_bits  ].get_dataptr()),
-		                        static_cast<R*>(t[ps_llrs_a].get_dataptr()),
-		                        static_cast<R*>(t[ps_llrs_e].get_dataptr()));
+		static_cast<Monitor_EXIT<B,R>&>(m).check_mutual_info(static_cast<B*>(t[ps_bits  ].get_dataptr()),
+		                                                     static_cast<R*>(t[ps_llrs_a].get_dataptr()),
+		                                                     static_cast<R*>(t[ps_llrs_e].get_dataptr()));
 
 		return 0;
 	});
@@ -48,6 +48,22 @@ Monitor_EXIT<B,R>
 {
 }
 
+template <typename B, typename R>
+Monitor_EXIT<B,R>* Monitor_EXIT<B,R>
+::clone() const
+{
+	if (this->callback_measure.size())
+	{
+		std::stringstream message;
+		message << "'callback_measure.size()' has to be equal to 0 ('callback_measure.size()' = "
+		        << this->callback_measure.size() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	auto m = new Monitor_EXIT(*this);
+	m->deep_copy(*this);
+	return m;
+}
 
 template <typename B, typename R>
 bool Monitor_EXIT<B,R>
@@ -97,8 +113,7 @@ void Monitor_EXIT<B,R>
 		vals.n_trials++;
 	}
 
-	for (auto c : this->callbacks_measure)
-		c();
+	this->callback_measure.notify();
 }
 
 template <typename B, typename R>
@@ -247,7 +262,6 @@ R Monitor_EXIT<B,R>
 	}
 }
 
-
 template <typename B, typename R>
 bool Monitor_EXIT<B,R>
 ::n_trials_achieved() const
@@ -261,9 +275,6 @@ bool Monitor_EXIT<B,R>
 {
 	return n_trials_achieved();
 }
-
-
-
 
 template <typename B, typename R>
 const typename Monitor_EXIT<B,R>::Attributes& Monitor_EXIT<B,R>
@@ -308,10 +319,17 @@ unsigned long long Monitor_EXIT<B,R>
 }
 
 template <typename B, typename R>
-void Monitor_EXIT<B,R>
-::add_handler_measure(std::function<void(void)> callback)
+uint32_t Monitor_EXIT<B,R>
+::record_callback_measure(std::function<void(void)> callback)
 {
-	this->callbacks_measure.push_back(callback);
+	return this->callback_measure.record(callback);
+}
+
+template <typename B, typename R>
+bool Monitor_EXIT<B,R>
+::unrecord_callback_measure(const uint32_t id)
+{
+	return this->callback_measure.unrecord(id);
 }
 
 template <typename B, typename R>
@@ -329,22 +347,20 @@ template <typename B, typename R>
 void Monitor_EXIT<B,R>
 ::clear_callbacks()
 {
-	this->callbacks_measure.clear();
+	this->callback_measure.clear();
 }
 
 template <typename B, typename R>
 void Monitor_EXIT<B,R>
 ::collect(const Monitor& m, bool fully)
 {
-	collect(dynamic_cast<const Monitor_EXIT<B,R>&>(m), fully);
+	collect(static_cast<const Monitor_EXIT<B,R>&>(m), fully);
 }
 
 template <typename B, typename R>
 void Monitor_EXIT<B,R>
 ::collect(const Monitor_EXIT<B,R>& m, bool fully)
 {
-	equivalent(m, true);
-
 	collect(m.get_attributes());
 }
 
@@ -367,15 +383,13 @@ template <typename B, typename R>
 void Monitor_EXIT<B,R>
 ::copy(const Monitor& m, bool fully)
 {
-	copy(dynamic_cast<const Monitor_EXIT<B,R>&>(m), fully);
+	copy(static_cast<const Monitor_EXIT<B,R>&>(m), fully);
 }
 
 template <typename B, typename R>
 void Monitor_EXIT<B,R>
 ::copy(const Monitor_EXIT<B,R>& m, bool fully)
 {
-	equivalent(m, true);
-
 	copy(m.get_attributes());
 }
 
@@ -418,7 +432,6 @@ Monitor_EXIT<B,R>::Attributes
 {
 	reset();
 }
-
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"

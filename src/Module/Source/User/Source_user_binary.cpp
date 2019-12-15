@@ -11,7 +11,7 @@ std::thread::id aff3ct::module::Source_user_binary<B>::master_thread_id = std::t
 template <typename B>
 Source_user_binary<B>
 ::Source_user_binary(const int K, const std::string filename, const int n_frames)
-: Source<B>(K, n_frames), source_file(filename.c_str(), std::ios::in | std::ios::binary)
+: Source<B>(K, n_frames), source_file(new std::ifstream(filename.c_str(), std::ios::in | std::ios::binary))
 {
 	const std::string name = "Source_user_binary";
 	this->set_name(name);
@@ -23,12 +23,21 @@ Source_user_binary<B>
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (source_file.fail())
+	if (source_file->fail())
 	{
 		std::stringstream message;
 		message << "'filename' file name is not valid: sink file failbit is set.";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+template <typename B>
+Source_user_binary<B>* Source_user_binary<B>
+::clone() const
+{
+	auto m = new Source_user_binary(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B>
@@ -48,20 +57,20 @@ void Source_user_binary<B>
 
 	while (n_bytes_read < n_bytes_needed)
 	{
-		source_file.read(memblk.data() + n_bytes_read, n_bytes_needed - n_bytes_read);
-		n_bytes_read += source_file.gcount();
+		source_file->read(memblk.data() + n_bytes_read, n_bytes_needed - n_bytes_read);
+		n_bytes_read += source_file->gcount();
 
-		if (source_file.fail())
+		if (source_file->fail())
 		{
-			if (source_file.eof())
+			if (source_file->eof())
 			{
-				source_file.clear();
-				source_file.seekg (0, std::ios::beg);
-				if (source_file.fail())
+				source_file->clear();
+				source_file->seekg (0, std::ios::beg);
+				if (source_file->fail())
 					throw tools::runtime_error(__FILE__, __LINE__, __func__, "Could not go back to the beginning of the file.");
 			}
 
-			if (source_file.fail())
+			if (source_file->fail())
 				throw tools::runtime_error(__FILE__, __LINE__, __func__, "Unknown error during file reading.");
 		}
 	}

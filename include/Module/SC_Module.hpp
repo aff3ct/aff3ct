@@ -106,9 +106,12 @@ protected:
 
 class SC_Module_container
 {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+	friend Module;
+#endif
 protected:
-	Module &module;
-	std::vector<std::unique_ptr<SC_Module>> sc_modules;
+	Module *module;
+	std::vector<std::shared_ptr<SC_Module>> sc_modules;
 
 public:
 	explicit SC_Module_container(Module &module);

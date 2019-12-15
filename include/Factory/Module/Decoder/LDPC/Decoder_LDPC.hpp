@@ -7,7 +7,6 @@
 
 #include <vector>
 #include <string>
-#include <memory>
 #include <map>
 #include <cli.hpp>
 
@@ -15,7 +14,7 @@
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
 #include "Module/Encoder/Encoder.hpp"
 #include "Module/Decoder/Decoder_SIHO.hpp"
-#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 #include "Factory/Module/Decoder/Decoder.hpp"
 
 namespace aff3ct
@@ -58,12 +57,12 @@ public:
 	template <typename B = int, typename Q = float>
 	module::Decoder_SIHO<B,Q>* build(const tools::Sparse_matrix &H,
 	                                 const std::vector<unsigned> &info_bits_pos,
-	                                 const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
+	                                 module::Encoder<B> *encoder = nullptr) const;
 
 	template <typename B = int, typename Q = float>
-	module::Decoder_SISO_SIHO<B,Q>* build_siso(const tools::Sparse_matrix &H,
-	                                           const std::vector<unsigned> &info_bits_pos,
-	                                           const std::unique_ptr<module::Encoder<B>>& encoder = nullptr) const;
+	module::Decoder_SISO<B,Q>* build_siso(const tools::Sparse_matrix &H,
+	                                      const std::vector<unsigned> &info_bits_pos,
+	                                      module::Encoder<B> *encoder = nullptr) const;
 };
 }
 }

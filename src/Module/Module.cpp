@@ -21,6 +21,40 @@ Module
 	}
 }
 
+void Module
+::deep_copy(const Module &m)
+{
+	this->tasks_with_nullptr.clear();
+	this->tasks.clear();
+
+	for (auto &t : m.tasks_with_nullptr)
+	{
+		if (t == nullptr)
+			this->tasks_with_nullptr.push_back(nullptr);
+		else
+		{
+			auto t_new = std::shared_ptr<Task>(t->clone());
+			t_new->module = this;
+			this->tasks_with_nullptr.push_back(t_new);
+			this->tasks.push_back(std::move(t_new));
+		}
+	}
+
+#ifdef AFF3CT_SYSTEMC_MODULE
+	this->sc.module = this;
+	this->sc.sc_modules.clear();
+	for (size_t i = 0; i < m.sc.sc_modules.size(); i++)
+		if (m.sc.sc_modules[i] != nullptr)
+			this->sc.create_module(i);
+#endif
+}
+
+Module* Module
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
 int Module
 ::get_n_frames() const
 {
@@ -72,8 +106,8 @@ void Module
 Task& Module
 ::create_task(const std::string &name, const int id)
 {
-	bool autoalloc = false, autoexec = false, stats = false, fast = false, debug = false;
-	auto t = std::make_shared<Task>(*this, name, autoalloc, autoexec, stats, fast, debug);
+	bool autoalloc = false, stats = false, fast = false, debug = false;
+	auto t = std::make_shared<Task>(*this, name, autoalloc, stats, fast, debug);
 
 	if (id < 0)
 	{
@@ -98,7 +132,7 @@ Task& Module
 }
 
 void Module
-::create_codelet(Task& task, std::function<int(Task &t)> codelet)
+::create_codelet(Task& task, std::function<int(Module &m, Task &t)> codelet)
 {
 	task.create_codelet(codelet);
 }

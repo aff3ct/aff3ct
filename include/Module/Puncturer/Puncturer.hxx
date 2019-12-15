@@ -77,10 +77,10 @@ Puncturer<B,Q>
 	auto &p1 = this->create_task("puncture");
 	auto p1s_X_N1 = this->template create_socket_in <B>(p1, "X_N1", this->N_cw);
 	auto p1s_X_N2 = this->template create_socket_out<B>(p1, "X_N2", this->N   );
-	this->create_codelet(p1, [this, p1s_X_N1, p1s_X_N2](Task &t) -> int
+	this->create_codelet(p1, [p1s_X_N1, p1s_X_N2](Module &m, Task &t) -> int
 	{
-		this->puncture(static_cast<B*>(t[p1s_X_N1].get_dataptr()),
-		               static_cast<B*>(t[p1s_X_N2].get_dataptr()));
+		static_cast<Puncturer<B,Q>&>(m).puncture(static_cast<B*>(t[p1s_X_N1].get_dataptr()),
+		                                         static_cast<B*>(t[p1s_X_N2].get_dataptr()));
 
 		return 0;
 	});
@@ -88,13 +88,20 @@ Puncturer<B,Q>
 	auto &p2 = this->create_task("depuncture");
 	auto p2s_Y_N1 = this->template create_socket_in <Q>(p2, "Y_N1", this->N   );
 	auto p2s_Y_N2 = this->template create_socket_out<Q>(p2, "Y_N2", this->N_cw);
-	this->create_codelet(p2, [this, p2s_Y_N1, p2s_Y_N2](Task &t) -> int
+	this->create_codelet(p2, [p2s_Y_N1, p2s_Y_N2](Module &m, Task &t) -> int
 	{
-		this->depuncture(static_cast<Q*>(t[p2s_Y_N1].get_dataptr()),
-		                 static_cast<Q*>(t[p2s_Y_N2].get_dataptr()));
+		static_cast<Puncturer<B,Q>&>(m).depuncture(static_cast<Q*>(t[p2s_Y_N1].get_dataptr()),
+		                                           static_cast<Q*>(t[p2s_Y_N2].get_dataptr()));
 
 		return 0;
 	});
+}
+
+template <typename B, typename Q>
+Puncturer<B,Q>* Puncturer<B,Q>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q>

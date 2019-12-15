@@ -8,6 +8,8 @@
 #include <cstdint>
 #include <cstddef>
 
+#include "Tools/Interface/Interface_set_seed.hpp"
+#include "Tools/Interface/Interface_reset.hpp"
 #include "Module/Module.hpp"
 
 namespace aff3ct
@@ -36,15 +38,16 @@ namespace module
 		}
 	}
 
-class Decoder : public Module
+class Decoder : public Module, public tools::Interface_set_seed, public tools::Interface_reset
 {
 protected:
 	const int n_inter_frame_rest;
 
-	const int K; /*!< Number of information bits in one frame */
-	const int N; /*!< Size of one frame (= number of bits in one frame) */
-	const int simd_inter_frame_level; /*!< Number of frames absorbed by the SIMD instructions. */
-	const int n_dec_waves;
+	const int  K;                      /*!< Number of information bits in one frame */
+	const int  N;                      /*!< Size of one frame (= number of bits in one frame) */
+	const int  simd_inter_frame_level; /*!< Number of frames absorbed by the SIMD instructions. */
+	const int  n_dec_waves;
+	      bool auto_reset;
 
 public:
 	Decoder(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1);
@@ -53,6 +56,8 @@ public:
 	 * \brief Destructor.
 	 */
 	virtual ~Decoder() = default;
+
+	virtual Decoder* clone() const;
 
 	int get_K() const;
 
@@ -67,7 +72,16 @@ public:
 
 	int get_n_dec_waves() const;
 
-	virtual void reset();
+	bool is_auto_reset() const;
+	void set_auto_reset(const bool enable_auto_reset);
+
+	void reset(const int frame_id);
+	void reset();
+
+	virtual void set_seed(const int seed);
+
+protected:
+	virtual void _reset(const int frame_id);
 };
 }
 }

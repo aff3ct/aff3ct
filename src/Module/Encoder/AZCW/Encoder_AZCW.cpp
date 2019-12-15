@@ -16,6 +16,15 @@ Encoder_AZCW<B>
 }
 
 template <typename B>
+Encoder_AZCW<B>* Encoder_AZCW<B>
+::clone() const
+{
+	auto m = new Encoder_AZCW(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B>
 void Encoder_AZCW<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {

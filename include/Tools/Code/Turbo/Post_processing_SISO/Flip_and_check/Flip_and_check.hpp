@@ -27,10 +27,9 @@ private:
 	mipp::vector<B> fnc_ite;
 
 public:
-
 	Flip_and_check(const int             K,
 	               const int             n_ite,
-	                     module::CRC<B> &crc,
+	               const module::CRC<B> &crc,
 	               const int             start_crc_check_ite,
 	               const int             q,
 	               const int             m                      =  1,
@@ -39,6 +38,8 @@ public:
 	               const int             simd_inter_frame_level =  1);
 
 	virtual ~Flip_and_check() = default;
+
+	virtual Flip_and_check<B,R>* clone() const;
 
 	bool siso_n(const int ite,
 	            const mipp::vector<R>& sys,

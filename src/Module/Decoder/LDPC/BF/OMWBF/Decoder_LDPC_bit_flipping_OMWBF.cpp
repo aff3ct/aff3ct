@@ -19,8 +19,7 @@ Decoder_LDPC_bit_flipping_OMWBF<B,R>
                                 const bool enable_syndrome,
                                 const int syndrome_depth,
                                 const int n_frames)
-: Decoder(K, N, n_frames, 1),
-  Decoder_LDPC_bit_flipping<B,R>(K, N, n_ite, H, info_bits_pos,mwbf_factor , enable_syndrome, syndrome_depth, n_frames),
+: Decoder_LDPC_bit_flipping<B,R>(K, N, n_ite, H, info_bits_pos,mwbf_factor , enable_syndrome, syndrome_depth, n_frames),
   synd  (this->n_C_nodes),
   energy(this->n_V_nodes)
 {
@@ -33,6 +32,15 @@ Decoder_LDPC_bit_flipping_OMWBF<B,R>
 		message << "This decoder does not work in 8-bit fixed-point (try in 16-bit).";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+template <typename B, typename R>
+Decoder_LDPC_bit_flipping_OMWBF<B,R>* Decoder_LDPC_bit_flipping_OMWBF<B,R>
+::clone() const
+{
+	auto m = new Decoder_LDPC_bit_flipping_OMWBF(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B, typename R>

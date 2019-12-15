@@ -30,6 +30,8 @@ public:
 	                const int n_frames = 1);
 	virtual ~Puncturer_turbo() = default;
 
+	virtual Puncturer_turbo<B,Q>* clone() const;
+
 	static unsigned    get_period     (const std::vector<std::vector<bool>>& pattern_bits);
 	static unsigned    get_bit_count  (const std::vector<std::vector<bool>>& pattern_bits);
 	static std::string display_pattern(const std::vector<std::vector<bool>>& pattern_bits);

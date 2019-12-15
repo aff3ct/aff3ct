@@ -5,6 +5,7 @@
 #ifndef ENCODER_TURBO_LEGACY_HPP_
 #define ENCODER_TURBO_LEGACY_HPP_
 
+#include <memory>
 #include <vector>
 
 #include "Module/Interleaver/Interleaver.hpp"
@@ -18,18 +19,20 @@ template <typename B = int>
 class Encoder_turbo_legacy : public Encoder_turbo<B>
 {
 protected:
-	const Interleaver<B> &pi;      // the interleaver
-	Encoder    <B>       &sub_enc; // sub encoder
-	std::vector<B>        X_N_n;   // internal buffer for the encoded    bits in the natural     domain
-	std::vector<B>        X_N_i;   // internal buffer for the encoded    bits in the interleaved domain
+	const Interleaver<B>        &pi;      // the interleaver
+	std::shared_ptr<Encoder<B>>  sub_enc; // sub encoder
+	std::vector<B>               X_N_n;   // internal buffer for the encoded bits in the natural     domain
+	std::vector<B>               X_N_i;   // internal buffer for the encoded bits in the interleaved domain
 
 public:
-	Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<B> &pi, Encoder<B> &sub_enc);
+	Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<B> &pi, const Encoder<B> &sub_enc);
 	virtual ~Encoder_turbo_legacy() = default;
+	virtual Encoder_turbo_legacy<B>* clone() const;
 
 	bool is_codeword(const B *X_N);
 
 protected:
+	virtual void deep_copy(const Encoder_turbo_legacy<B> &m);
 	void _encode(const B *U_K, B *X_N, const int frame_id);
 };
 }

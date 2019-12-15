@@ -15,60 +15,6 @@
 #ifndef FACTORY_CHANNEL_HPP
 #include <Factory/Module/Channel/Channel.hpp>
 #endif
-#ifndef FACTORY_CODEC_BCH_HPP
-#include <Factory/Module/Codec/BCH/Codec_BCH.hpp>
-#endif
-#ifndef FACTORY_CODEC_HIHO_HPP_
-#include <Factory/Module/Codec/Codec_HIHO.hpp>
-#endif
-#ifndef FACTORY_CODEC_HPP_
-#include <Factory/Module/Codec/Codec.hpp>
-#endif
-#ifndef FACTORY_CODEC_SIHO_HIHO_HPP_
-#include <Factory/Module/Codec/Codec_SIHO_HIHO.hpp>
-#endif
-#ifndef FACTORY_CODEC_SIHO_HPP_
-#include <Factory/Module/Codec/Codec_SIHO.hpp>
-#endif
-#ifndef FACTORY_CODEC_SISO_HPP_
-#include <Factory/Module/Codec/Codec_SISO.hpp>
-#endif
-#ifndef FACTORY_CODEC_SISO_SIHO_HPP_
-#include <Factory/Module/Codec/Codec_SISO_SIHO.hpp>
-#endif
-#ifndef FACTORY_CODEC_LDPC_HPP
-#include <Factory/Module/Codec/LDPC/Codec_LDPC.hpp>
-#endif
-#ifndef FACTORY_CODEC_POLAR_HPP
-#include <Factory/Module/Codec/Polar/Codec_polar.hpp>
-#endif
-#ifndef FACTORY_CODEC_RA_HPP
-#include <Factory/Module/Codec/RA/Codec_RA.hpp>
-#endif
-#ifndef FACTORY_CODEC_REPETITION_HPP
-#include <Factory/Module/Codec/Repetition/Codec_repetition.hpp>
-#endif
-#ifndef FACTORY_CODEC_RSC_HPP
-#include <Factory/Module/Codec/RSC/Codec_RSC.hpp>
-#endif
-#ifndef FACTORY_CODEC_RSC_DB_HPP
-#include <Factory/Module/Codec/RSC_DB/Codec_RSC_DB.hpp>
-#endif
-#ifndef FACTORY_CODEC_RS_HPP
-#include <Factory/Module/Codec/RS/Codec_RS.hpp>
-#endif
-#ifndef FACTORY_CODEC_TURBO_HPP
-#include <Factory/Module/Codec/Turbo/Codec_turbo.hpp>
-#endif
-#ifndef FACTORY_CODEC_TURBO_DB_HPP
-#include <Factory/Module/Codec/Turbo_DB/Codec_turbo_DB.hpp>
-#endif
-#ifndef FACTORY_CODEC_TURBO_PRODUCT_HPP
-#include <Factory/Module/Codec/Turbo_product/Codec_turbo_product.hpp>
-#endif
-#ifndef FACTORY_CODEC_UNCODED_HPP
-#include <Factory/Module/Codec/Uncoded/Codec_uncoded.hpp>
-#endif
 #ifndef FACTORY_COSET_HPP
 #include <Factory/Module/Coset/Coset.hpp>
 #endif
@@ -89,6 +35,9 @@
 #endif
 #ifndef FACTORY_DECODER_POLAR_HPP
 #include <Factory/Module/Decoder/Polar/Decoder_polar.hpp>
+#endif
+#ifndef FACTORY_DECODER_POLAR_MK_HPP
+#include <Factory/Module/Decoder/Polar_MK/Decoder_polar_MK.hpp>
 #endif
 #ifndef FACTORY_DECODER_RA_HPP
 #include <Factory/Module/Decoder/RA/Decoder_RA.hpp>
@@ -128,6 +77,9 @@
 #endif
 #ifndef FACTORY_ENCODER_POLAR_HPP
 #include <Factory/Module/Encoder/Polar/Encoder_polar.hpp>
+#endif
+#ifndef FACTORY_ENCODER_POLAR_MK_HPP
+#include <Factory/Module/Encoder/Polar_MK/Encoder_polar_MK.hpp>
 #endif
 #ifndef FACTORY_ENCODER_RA_HPP
 #include <Factory/Module/Encoder/RA/Encoder_RA.hpp>
@@ -192,8 +144,65 @@
 #ifndef FACTORY_SOURCE_HPP
 #include <Factory/Module/Source/Source.hpp>
 #endif
+#ifndef FACTORY_CODEC_BCH_HPP
+#include <Factory/Tools/Codec/BCH/Codec_BCH.hpp>
+#endif
+#ifndef FACTORY_CODEC_HIHO_HPP_
+#include <Factory/Tools/Codec/Codec_HIHO.hpp>
+#endif
+#ifndef FACTORY_CODEC_HPP_
+#include <Factory/Tools/Codec/Codec.hpp>
+#endif
+#ifndef FACTORY_CODEC_SIHO_HPP_
+#include <Factory/Tools/Codec/Codec_SIHO.hpp>
+#endif
+#ifndef FACTORY_CODEC_SISO_HPP_
+#include <Factory/Tools/Codec/Codec_SISO.hpp>
+#endif
+#ifndef FACTORY_CODEC_LDPC_HPP
+#include <Factory/Tools/Codec/LDPC/Codec_LDPC.hpp>
+#endif
+#ifndef FACTORY_CODEC_POLAR_HPP
+#include <Factory/Tools/Codec/Polar/Codec_polar.hpp>
+#endif
+#ifndef FACTORY_CODEC_POLAR_MK_HPP
+#include <Factory/Tools/Codec/Polar_MK/Codec_polar_MK.hpp>
+#endif
+#ifndef FACTORY_CODEC_RA_HPP
+#include <Factory/Tools/Codec/RA/Codec_RA.hpp>
+#endif
+#ifndef FACTORY_CODEC_REPETITION_HPP
+#include <Factory/Tools/Codec/Repetition/Codec_repetition.hpp>
+#endif
+#ifndef FACTORY_CODEC_RSC_HPP
+#include <Factory/Tools/Codec/RSC/Codec_RSC.hpp>
+#endif
+#ifndef FACTORY_CODEC_RSC_DB_HPP
+#include <Factory/Tools/Codec/RSC_DB/Codec_RSC_DB.hpp>
+#endif
+#ifndef FACTORY_CODEC_RS_HPP
+#include <Factory/Tools/Codec/RS/Codec_RS.hpp>
+#endif
+#ifndef FACTORY_CODEC_TURBO_HPP
+#include <Factory/Tools/Codec/Turbo/Codec_turbo.hpp>
+#endif
+#ifndef FACTORY_CODEC_TURBO_DB_HPP
+#include <Factory/Tools/Codec/Turbo_DB/Codec_turbo_DB.hpp>
+#endif
+#ifndef FACTORY_CODEC_TURBO_PRODUCT_HPP
+#include <Factory/Tools/Codec/Turbo_product/Codec_turbo_product.hpp>
+#endif
+#ifndef FACTORY_CODEC_UNCODED_HPP
+#include <Factory/Tools/Codec/Uncoded/Codec_uncoded.hpp>
+#endif
 #ifndef FACTORY_FROZENBITS_GENERATOR_HPP
 #include <Factory/Tools/Code/Polar/Frozenbits_generator.hpp>
+#endif
+#ifndef FACTORY_FROZENBITS_GENERATOR_MK_HPP
+#include <Factory/Tools/Code/Polar_MK/Frozenbits_generator_MK.hpp>
+#endif
+#ifndef FACTORY_POLAR_CODE_HPP
+#include <Factory/Tools/Code/Polar_MK/Polar_code.hpp>
 #endif
 #ifndef FACTORY_FLIP_AND_CHECK_DB_HPP
 #include <Factory/Tools/Code/Turbo/Flip_and_check_DB.hpp>
@@ -249,60 +258,6 @@
 #ifndef CHANNEL_USER_HPP_
 #include <Module/Channel/User/Channel_user.hpp>
 #endif
-#ifndef CODEC_BCH_HPP_
-#include <Module/Codec/BCH/Codec_BCH.hpp>
-#endif
-#ifndef CODEC_HIHO_HPP_
-#include <Module/Codec/Codec_HIHO.hpp>
-#endif
-#ifndef CODEC_HPP_
-#include <Module/Codec/Codec.hpp>
-#endif
-#ifndef CODEC_SIHO_HIHO_HPP_
-#include <Module/Codec/Codec_SIHO_HIHO.hpp>
-#endif
-#ifndef CODEC_SIHO_HPP_
-#include <Module/Codec/Codec_SIHO.hpp>
-#endif
-#ifndef CODEC_SISO_HPP_
-#include <Module/Codec/Codec_SISO.hpp>
-#endif
-#ifndef CODEC_SISO_SIHO_HPP_
-#include <Module/Codec/Codec_SISO_SIHO.hpp>
-#endif
-#ifndef CODEC_LDPC_HPP_
-#include <Module/Codec/LDPC/Codec_LDPC.hpp>
-#endif
-#ifndef CODEC_POLAR_HPP_
-#include <Module/Codec/Polar/Codec_polar.hpp>
-#endif
-#ifndef CODEC_RA_HPP_
-#include <Module/Codec/RA/Codec_RA.hpp>
-#endif
-#ifndef CODEC_REPETITION_HPP_
-#include <Module/Codec/Repetition/Codec_repetition.hpp>
-#endif
-#ifndef CODEC_RSC_HPP_
-#include <Module/Codec/RSC/Codec_RSC.hpp>
-#endif
-#ifndef CODEC_RSC_DB_HPP_
-#include <Module/Codec/RSC_DB/Codec_RSC_DB.hpp>
-#endif
-#ifndef CODEC_RS_HPP_
-#include <Module/Codec/RS/Codec_RS.hpp>
-#endif
-#ifndef CODEC_TURBO_HPP_
-#include <Module/Codec/Turbo/Codec_turbo.hpp>
-#endif
-#ifndef CODEC_TURBO_DB_HPP_
-#include <Module/Codec/Turbo_DB/Codec_turbo_DB.hpp>
-#endif
-#ifndef CODEC_TURBO_PRODUCT_HPP_
-#include <Module/Codec/Turbo_product/Codec_turbo_product.hpp>
-#endif
-#ifndef CODEC_UNCODED_HPP_
-#include <Module/Codec/Uncoded/Codec_uncoded.hpp>
-#endif
 #ifndef COSET_BIT_HPP_
 #include <Module/Coset/Bit/Coset_bit.hpp>
 #endif
@@ -345,17 +300,11 @@
 #ifndef DECODER_HPP_
 #include <Module/Decoder/Decoder.hpp>
 #endif
-#ifndef DECODER_SIHO_HIHO_HPP_
-#include <Module/Decoder/Decoder_SIHO_HIHO.hpp>
-#endif
 #ifndef DECODER_SIHO_HPP_
 #include <Module/Decoder/Decoder_SIHO.hpp>
 #endif
 #ifndef DECODER_SISO_HPP_
 #include <Module/Decoder/Decoder_SISO.hpp>
-#endif
-#ifndef DECODER_SISO_SIHO_HPP_
-#include <Module/Decoder/Decoder_SISO_SIHO.hpp>
 #endif
 #ifndef DECODER_CHASE_STD_HPP_
 #include <Module/Decoder/Generic/Chase/Decoder_chase_std.hpp>
@@ -428,6 +377,30 @@
 #endif
 #ifndef DECODER_POLAR_ASCL_MEM_FAST_SYS_CA
 #include <Module/Decoder/Polar/ASCL/Decoder_polar_ASCL_MEM_fast_CA_sys.hpp>
+#endif
+#ifndef DECODER_POLAR_MK_ASCL_NAIVE_CA
+#include <Module/Decoder/Polar_MK/ASCL/Decoder_polar_MK_ASCL_naive_CA.hpp>
+#endif
+#ifndef DECODER_POLAR_MK_ASCL_NAIVE_CA_SYS
+#include <Module/Decoder/Polar_MK/ASCL/Decoder_polar_MK_ASCL_naive_CA_sys.hpp>
+#endif
+#ifndef DECODER_POLAR_MK_SC_NAIVE_
+#include <Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive.hpp>
+#endif
+#ifndef DECODER_POLAR_MK_SC_NAIVE_SYS_
+#include <Module/Decoder/Polar_MK/SC/Decoder_polar_MK_SC_naive_sys.hpp>
+#endif
+#ifndef DECODER_POLAR_MK_SCL_NAIVE_CA_
+#include <Module/Decoder/Polar_MK/SCL/CRC/Decoder_polar_MK_SCL_naive_CA.hpp>
+#endif
+#ifndef DECODER_POLAR_MK_SCL_NAIVE_CA_SYS_
+#include <Module/Decoder/Polar_MK/SCL/CRC/Decoder_polar_MK_SCL_naive_CA_sys.hpp>
+#endif
+#ifndef DECODER_POLAR_MK_SCL_NAIVE
+#include <Module/Decoder/Polar_MK/SCL/Decoder_polar_MK_SCL_naive.hpp>
+#endif
+#ifndef DECODER_POLAR_MK_SCL_NAIVE_SYS
+#include <Module/Decoder/Polar_MK/SCL/Decoder_polar_MK_SCL_naive_sys.hpp>
 #endif
 #ifndef DECODER_POLAR_SCAN_NAIVE_H_
 #include <Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive.hpp>
@@ -624,6 +597,12 @@
 #ifndef ENCODER_POLAR_SYS_HPP_
 #include <Module/Encoder/Polar/Encoder_polar_sys.hpp>
 #endif
+#ifndef ENCODER_POLAR_MK_HPP_
+#include <Module/Encoder/Polar_MK/Encoder_polar_MK.hpp>
+#endif
+#ifndef ENCODER_POLAR_MK_SYS_HPP_
+#include <Module/Encoder/Polar_MK/Encoder_polar_MK_sys.hpp>
+#endif
 #ifndef ENCODER_RA_HPP_
 #include <Module/Encoder/RA/Encoder_RA.hpp>
 #endif
@@ -663,8 +642,32 @@
 #ifndef ENCODER_USER_HPP_
 #include <Module/Encoder/User/Encoder_user.hpp>
 #endif
+#ifndef EXTRACTOR_HPP_
+#include <Module/Extractor/Extractor.hpp>
+#endif
+#ifndef EXTRACTOR_LDPC_HPP_
+#include <Module/Extractor/LDPC/Extractor_LDPC.hpp>
+#endif
+#ifndef EXTRACTOR_POLAR_HPP_
+#include <Module/Extractor/Polar/Extractor_polar.hpp>
+#endif
+#ifndef EXTRACTOR_RSC_HPP_
+#include <Module/Extractor/RSC/Extractor_RSC.hpp>
+#endif
+#ifndef EXTRACTOR_UNCODED_HPP_
+#include <Module/Extractor/Uncoded/Extractor_uncoded.hpp>
+#endif
 #ifndef INTERLEAVER_HPP_
 #include <Module/Interleaver/Interleaver.hpp>
+#endif
+#ifndef LOOP_CRC_HPP_
+#include <Module/Loop/CRC/Loop_CRC.hpp>
+#endif
+#ifndef LOOP_HPP_
+#include <Module/Loop/Loop.hpp>
+#endif
+#ifndef LOOP_PREDICATE_HPP_
+#include <Module/Loop/Predicate/Loop_predicate.hpp>
 #endif
 #ifndef MODEM_BPSK_FAST_HPP_
 #include <Module/Modem/BPSK/Modem_BPSK_fast.hpp>
@@ -750,6 +753,15 @@
 #ifndef QUANTIZER_HPP_
 #include <Module/Quantizer/Quantizer.hpp>
 #endif
+#ifndef ROUTER_CRC_HPP_
+#include <Module/Router/CRC/Router_CRC.hpp>
+#endif
+#ifndef ROUTER_PREDICATE_HPP_
+#include <Module/Router/Predicate/Router_predicate.hpp>
+#endif
+#ifndef ROUTER_HPP_
+#include <Module/Router/Router.hpp>
+#endif
 #ifndef SC_MODULE_HPP_
 #include <Module/SC_Module.hpp>
 #endif
@@ -774,11 +786,17 @@
 #ifndef SOURCE_USER_HPP_
 #include <Module/Source/User/Source_user.hpp>
 #endif
+#ifndef SUBCHAIN_HPP_
+#include <Module/Subchain/Subchain.hpp>
+#endif
 #ifndef TASK_HPP_
 #include <Module/Task.hpp>
 #endif
 #ifndef BIT_PACKER_HPP_
 #include <Tools/Algo/Bit_packer.hpp>
+#endif
+#ifndef CALLBACK_HPP__
+#include <Tools/Algo/Callback/Callback.hpp>
 #endif
 #ifndef DRAW_GENERATOR_HPP_
 #include <Tools/Algo/Draw_generator/Draw_generator.hpp>
@@ -871,19 +889,49 @@
 #include <Tools/Algo/Sort/LC_sorter_simd.hpp>
 #endif
 #ifndef BINARY_NODE_HPP_
-#include <Tools/Algo/Tree/Binary_node.hpp>
+#include <Tools/Algo/Tree/Binary/Binary_node.hpp>
 #endif
 #ifndef BINARY_TREE_HPP_
-#include <Tools/Algo/Tree/Binary_tree.hpp>
+#include <Tools/Algo/Tree/Binary/Binary_tree.hpp>
 #endif
 #ifndef BINARY_TREE_METRIC_HPP_
-#include <Tools/Algo/Tree/Binary_tree_metric.hpp>
+#include <Tools/Algo/Tree/Binary/Binary_tree_metric.hpp>
+#endif
+#ifndef GENERIC_NODE_HPP_
+#include <Tools/Algo/Tree/Generic/Generic_node.hpp>
+#endif
+#ifndef GENERIC_TREE_HPP_
+#include <Tools/Algo/Tree/Generic/Generic_tree.hpp>
+#endif
+#ifndef GENERIC_TREE_METRIC_HPP_
+#include <Tools/Algo/Tree/Generic/Generic_tree_metric.hpp>
 #endif
 #ifndef AUTO_CLONED_UNIQUE_PTR_HPP__
 #include <Tools/auto_cloned_unique_ptr.hpp>
 #endif
+#ifndef CHAIN_HPP_
+#include <Tools/Chain/Chain.hpp>
+#endif
 #ifndef BCH_POLYNOMIAL_GENERATOR_HPP
 #include <Tools/Code/BCH/BCH_polynomial_generator.hpp>
+#endif
+#ifndef CODEC_BCH_HPP_
+#include <Tools/Codec/BCH/Codec_BCH.hpp>
+#endif
+#ifndef CODEC_HIHO_HPP_
+#include <Tools/Codec/Codec_HIHO.hpp>
+#endif
+#ifndef CODEC_HPP_
+#include <Tools/Codec/Codec.hpp>
+#endif
+#ifndef CODEC_SIHO_HPP_
+#include <Tools/Codec/Codec_SIHO.hpp>
+#endif
+#ifndef CODEC_SISO_HPP_
+#include <Tools/Codec/Codec_SISO.hpp>
+#endif
+#ifndef CODEC_LDPC_HPP_
+#include <Tools/Codec/LDPC/Codec_LDPC.hpp>
 #endif
 #ifndef CPM_BCJR_HPP_
 #include <Tools/Code/CPM/BCJR/CPM_BCJR.hpp>
@@ -896,6 +944,39 @@
 #endif
 #ifndef CPM_PARAMETERS_HPP_
 #include <Tools/Code/CPM/CPM_parameters.hpp>
+#endif
+#ifndef CODEC_POLAR_HPP_
+#include <Tools/Codec/Polar/Codec_polar.hpp>
+#endif
+#ifndef CODEC_POLAR_MK_HPP_
+#include <Tools/Codec/Polar_MK/Codec_polar_MK.hpp>
+#endif
+#ifndef CODEC_RA_HPP_
+#include <Tools/Codec/RA/Codec_RA.hpp>
+#endif
+#ifndef CODEC_REPETITION_HPP_
+#include <Tools/Codec/Repetition/Codec_repetition.hpp>
+#endif
+#ifndef CODEC_RSC_HPP_
+#include <Tools/Codec/RSC/Codec_RSC.hpp>
+#endif
+#ifndef CODEC_RSC_DB_HPP_
+#include <Tools/Codec/RSC_DB/Codec_RSC_DB.hpp>
+#endif
+#ifndef CODEC_RS_HPP_
+#include <Tools/Codec/RS/Codec_RS.hpp>
+#endif
+#ifndef CODEC_TURBO_HPP_
+#include <Tools/Codec/Turbo/Codec_turbo.hpp>
+#endif
+#ifndef CODEC_TURBO_DB_HPP_
+#include <Tools/Codec/Turbo_DB/Codec_turbo_DB.hpp>
+#endif
+#ifndef CODEC_TURBO_PRODUCT_HPP_
+#include <Tools/Codec/Turbo_product/Codec_turbo_product.hpp>
+#endif
+#ifndef CODEC_UNCODED_HPP_
+#include <Tools/Codec/Uncoded/Codec_uncoded.hpp>
 #endif
 #ifndef ALIST_HPP_
 #include <Tools/Code/LDPC/AList/AList.hpp>
@@ -999,6 +1080,9 @@
 #ifndef FROZENBITS_GENERATOR_FILE_HPP_
 #include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_file.hpp>
 #endif
+#ifndef FROZENBITS_GENERATOR_GA_ARIKAN_HPP_
+#include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_GA_Arikan.hpp>
+#endif
 #ifndef FROZENBITS_GENERATOR_GA_HPP_
 #include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_GA.hpp>
 #endif
@@ -1007,9 +1091,6 @@
 #endif
 #ifndef FROZENBITS_GENERATOR_TV_HPP_
 #include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_TV.hpp>
-#endif
-#ifndef FROZENBITS_NOTIFIER_HPP
-#include <Tools/Code/Polar/Frozenbits_notifier.hpp>
 #endif
 #ifndef PATTERN_POLAR_PARSER_HPP
 #include <Tools/Code/Polar/Pattern_polar_parser.hpp>
@@ -1037,6 +1118,9 @@
 #endif
 #ifndef PATTERN_POLAR_STANDARD_HPP_
 #include <Tools/Code/Polar/Patterns/Pattern_polar_std.hpp>
+#endif
+#ifndef POLAR_CODE_HPP_
+#include <Tools/Code/Polar/Polar_code.hpp>
 #endif
 #ifndef RS_POLYNOMIAL_GENERATOR_HPP
 #include <Tools/Code/RS/RS_polynomial_generator.hpp>
@@ -1184,6 +1268,24 @@
 #endif
 #ifndef GENERAL_UTILS_H_
 #include <Tools/general_utils.h>
+#endif
+#ifndef INTERFACE_CLONE_HPP__
+#include <Tools/Interface/Interface_clone.hpp>
+#endif
+#ifndef INTERFACE_GET_SET_NOISE_HPP__
+#include <Tools/Interface/Interface_get_set_noise.hpp>
+#endif
+#ifndef INTERFACE_NOTIFY_FROZENBITS_UPDATE_HPP__
+#include <Tools/Interface/Interface_notify_frozenbits_update.hpp>
+#endif
+#ifndef INTERFACE_NOTIFY_NOISE_UPDATE_HPP__
+#include <Tools/Interface/Interface_notify_noise_update.hpp>
+#endif
+#ifndef INTERFACE_RESET_HPP__
+#include <Tools/Interface/Interface_reset.hpp>
+#endif
+#ifndef INTERFACE_SET_SEED_HPP__
+#include <Tools/Interface/Interface_set_seed.hpp>
 #endif
 #ifndef INTERLEAVER_CORE_ARP_DVB1_HPP
 #include <Tools/Interleaver/ARP/Interleaver_core_ARP_DVB_RCS1.hpp>

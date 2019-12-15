@@ -6,6 +6,11 @@
 #define NOISE_HPP__
 
 #include <string>
+#include <vector>
+#include <cstdint>
+#include <functional>
+
+#include "Tools/Algo/Callback/Callback.hpp"
 
 namespace aff3ct
 {
@@ -13,28 +18,24 @@ namespace tools
 {
 enum class Noise_type {SIGMA, ROP, EP};
 
-inline Noise_type str_to_type(const std::string& str);
-
-inline std::string type_to_str(Noise_type t);
-
 template <typename R = float>
 class Noise
 {
+protected:
+	R value;
+	Callback<> callback_update;
+
 public:
 	Noise();
-	explicit Noise(R noise);
-	template<typename T>
-	explicit Noise(const Noise<T>& other);
+	explicit Noise(R value);
 	virtual ~Noise() = default;
 
-	virtual bool is_set() const noexcept; // return true if the Noise object has been correctly initialized
-	bool has_noise() const noexcept; // return true if a noise value has been set
+	R get_value() const; // return the stocked noise, throw if not set
 
-	R get_noise() const; // return the stocked noise, throw if not set
+	bool is_set() const;
 
-	virtual void set_noise(R noise); // set the noise val and call 'check' to check that it respects the rules
+	void set_value(const R value); // set the noise val and call 'check' to check that it respects the rules
 
-	Noise& operator= (const Noise<R>& other); // set this noise as the 'other' one
 	virtual void copy(const Noise<R>& other); // set this noise as the 'other' one
 
 	virtual std::string get_unity() const = 0; // return a string with the unity of the noise type
@@ -43,12 +44,15 @@ public:
 	bool is_of_type      (Noise_type t) const noexcept;
 	void is_of_type_throw(Noise_type t) const;
 
-	virtual Noise<R>* clone() const = 0;
+	uint32_t record_callback_update(std::function<void()> callback);
+	bool unrecord_callback_update(const uint32_t id);
+	void clear_callbacks_update();
+
+	static inline Noise_type str_to_type(const std::string& str);
+	static inline std::string type_to_str(Noise_type t);
 
 protected:
-	std::pair<R, bool> _n;
-
-	virtual void check();
+	virtual void check() const;
 };
 }
 }

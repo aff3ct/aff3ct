@@ -51,6 +51,15 @@ Encoder_RS<B>
 }
 
 template <typename B>
+Encoder_RS<B>* Encoder_RS<B>
+::clone() const
+{
+	auto m = new Encoder_RS(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B>
 void Encoder_RS<B>
 ::__encode(const S *U_K, S *par)
 {

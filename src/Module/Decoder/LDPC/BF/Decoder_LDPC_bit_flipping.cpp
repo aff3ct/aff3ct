@@ -22,23 +22,21 @@ Decoder_LDPC_bit_flipping<B,R>
                            const bool enable_syndrome,
                            const int syndrome_depth,
                            const int n_frames)
-: Decoder               (K, N, n_frames, 1                        ),
-  Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1                        ),
-  n_ite                 (n_ite                                    ),
-  n_V_nodes             (N                                        ), // same as N but more explicit
-  n_C_nodes             ((int)H.get_n_cols()                      ),
-  n_branches            ((int)H.get_n_connections()               ),
-  mwbf_factor			(mwbf_factor							  ),
-  enable_syndrome       (enable_syndrome                          ),
-  syndrome_depth        (syndrome_depth                           ),
-  H                     (H                                        ),
-  init_flag             (true                                     ),
-  info_bits_pos         (info_bits_pos                            ),
-  Lp_N                  (N,                                      -1), // -1 in order to fail when AZCW
-  C_to_V                (n_frames, std::vector<R>(this->n_branches)),
-  V_to_C                (n_frames, std::vector<R>(this->n_branches)),
-  Y_min                 (this->n_C_nodes                           ),
-  decis                 (this->n_V_nodes                           )
+: Decoder_SISO<B,R>(K, N, n_frames, 1                         ),
+  n_ite            (n_ite                                     ),
+  n_V_nodes        (N                                         ), // same as N but more explicit
+  n_C_nodes        ((int)H.get_n_cols()                       ),
+  n_branches       ((int)H.get_n_connections()                ),
+  mwbf_factor      (mwbf_factor                               ),
+  enable_syndrome  (enable_syndrome                           ),
+  syndrome_depth   (syndrome_depth                            ),
+  H                (H                                         ),
+  info_bits_pos    (info_bits_pos                             ),
+  Lp_N             (N,                                      -1), // -1 in order to fail when AZCW
+  C_to_V           (n_frames, std::vector<R>(this->n_branches)),
+  V_to_C           (n_frames, std::vector<R>(this->n_branches)),
+  Y_min            (this->n_C_nodes                           ),
+  decis            (this->n_V_nodes                           )
 {
 	const std::string name = "Decoder_LDPC_bit_flipping";
 	this->set_name(name);
@@ -105,29 +103,28 @@ Decoder_LDPC_bit_flipping<B,R>
 	n_parities_per_variable.resize(H.get_n_rows());
 	for (auto i = 0; i < (int)H.get_n_rows(); i++)
 		n_parities_per_variable[i] = (unsigned char)VN_to_CN[i].size();
+
+	this->reset();
+}
+
+template <typename B, typename R>
+Decoder_LDPC_bit_flipping<B,R>* Decoder_LDPC_bit_flipping<B,R>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R>
 void Decoder_LDPC_bit_flipping<B,R>
-::reset()
+::_reset(const int frame_id)
 {
-	this->init_flag = true;
+	std::fill(this->C_to_V[frame_id].begin(), this->C_to_V[frame_id].end(), (R)0);
 }
 
 template <typename B, typename R>
 void Decoder_LDPC_bit_flipping<B,R>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
-	printf("Je suis dans decode_siso\n");
-	// memory zones initialization
-	if (this->init_flag)
-	{
-		std::fill(this->C_to_V[frame_id].begin(), this->C_to_V[frame_id].end(), (R)0);
-
-		if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
-			this->init_flag = false;
-	}
-
 	// actual decoding
 	this->BF_decode(Y_N1,frame_id);
 
@@ -142,16 +139,7 @@ template <typename B, typename R>
 void Decoder_LDPC_bit_flipping<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	//printf("Je suis dans decode_siho\n");
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
-	// memory zones initialization
-	if (this->init_flag)
-	{
-		std::fill(this->C_to_V[frame_id].begin(), this->C_to_V[frame_id].end(), (R)0);
-
-		if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
-			this->init_flag = false;
-	}
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
@@ -177,16 +165,7 @@ template <typename B, typename R>
 void Decoder_LDPC_bit_flipping<B,R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
-	// printf("Je suis dans decode_siho_cw\n");
 	//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
-	// memory zones initialization
-	if (this->init_flag)
-	{
-		std::fill(this->C_to_V[frame_id].begin(), this->C_to_V[frame_id].end(), (R)0);
-
-		if (frame_id == Decoder_SIHO<B,R>::n_frames -1)
-			this->init_flag = false;
-	}
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
@@ -208,7 +187,6 @@ template <typename B, typename R>
 void Decoder_LDPC_bit_flipping<B,R>
 ::BF_decode(const R *Y_N, const int frame_id)
 {
-
 	//compute y_min,m for n in N(m)
 	for (auto imin = 0; imin < this->n_C_nodes; imin++)
 	{

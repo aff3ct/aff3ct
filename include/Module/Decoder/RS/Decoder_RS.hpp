@@ -8,14 +8,14 @@
 #include <vector>
 
 #include "Tools/Code/RS/RS_polynomial_generator.hpp"
-#include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_RS : public Decoder_SIHO_HIHO<B,R>
+class Decoder_RS : public Decoder_SIHO<B,R>
 {
 public:
 	using S = B; // symbol to represent data
@@ -37,6 +37,8 @@ public:
 	Decoder_RS(const int K, const int N, const tools::RS_polynomial_generator &GF, const int n_frames = 1);
 
 	virtual ~Decoder_RS() = default;
+
+	virtual Decoder_RS<B,R>* clone() const;
 
 protected:
 	virtual void _decode        (      S *Y_N,         const int frame_id) = 0;

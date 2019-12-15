@@ -40,7 +40,7 @@ void Channel_user<R>
 
 		this->set_noise(0);
 
-		std::copy(this->noise.data(), this->noise.data() + this->N, Y_N);
+		std::copy(this->noised_data.data(), this->noised_data.data() + this->N, Y_N);
 	}
 	else
 	{
@@ -51,11 +51,20 @@ void Channel_user<R>
 		{
 			this->set_noise(f);
 
-			std::copy(this->noise.data() +  f      * this->N,
-			          this->noise.data() + (f + 1) * this->N,
+			std::copy(this->noised_data.data() +  f      * this->N,
+			          this->noised_data.data() + (f + 1) * this->N,
 			          Y_N + f * this->N);
 		}
 	}
+}
+
+template <typename R>
+Channel_user<R>* Channel_user<R>
+::clone() const
+{
+	auto m = new Channel_user(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename R>
@@ -64,7 +73,7 @@ void Channel_user<R>
 {
 	std::copy(this->noise_buff[this->noise_counter].begin(),
 	          this->noise_buff[this->noise_counter].end(),
-	          this->noise.data() + frame_id * this->N);
+	          this->noised_data.data() + frame_id * this->N);
 
 	this->noise_counter = (this->noise_counter +1) % (int)this->noise_buff.size();
 }

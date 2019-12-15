@@ -13,18 +13,17 @@ namespace module
 template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
 ::Decoder_polar_SCL_fast_CA_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-                                CRC<B>& crc, const int n_frames)
-: Decoder(K, N, n_frames, API_polar::get_n_frames()),
-  Decoder_polar_SCL_fast_sys<B,R,API_polar>(K, N, L, frozen_bits, n_frames),
-  fast_store(false), crc(crc), U_test(K)
+                                const CRC<B>& crc, const int n_frames)
+: Decoder_polar_SCL_fast_sys<B,R,API_polar>(K, N, L, frozen_bits, n_frames),
+  fast_store(false), crc(crc.clone()), U_test(K)
 {
 	const std::string name = "Decoder_polar_SCL_fast_CA_sys";
 	this->set_name(name);
 
-	if (crc.get_size() > K)
+	if (this->crc->get_size() > K)
 	{
 		std::stringstream message;
-		message << "'crc.get_size()' has to be equal or smaller than 'K' ('crc.get_size()' = " << crc.get_size()
+		message << "'crc->get_size()' has to be equal or smaller than 'K' ('crc->get_size()' = " << this->crc->get_size()
 		        << ", 'K' = " << K << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
@@ -33,22 +32,38 @@ Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
 template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
 ::Decoder_polar_SCL_fast_CA_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-                                std::vector<std::unique_ptr<tools::Pattern_polar_i>> &&polar_patterns,
-                                const int idx_r0, const int idx_r1, CRC<B>& crc, const int n_frames)
-: Decoder(K, N, n_frames, API_polar::get_n_frames()),
-  Decoder_polar_SCL_fast_sys<B,R,API_polar>(K, N, L, frozen_bits, std::move(polar_patterns), idx_r0, idx_r1, n_frames),
-  fast_store(false), crc(crc), U_test(K)
+                                const std::vector<tools::Pattern_polar_i*> &polar_patterns,
+                                const int idx_r0, const int idx_r1, const CRC<B>& crc, const int n_frames)
+: Decoder_polar_SCL_fast_sys<B,R,API_polar>(K, N, L, frozen_bits, polar_patterns, idx_r0, idx_r1, n_frames),
+  fast_store(false), crc(crc.clone()), U_test(K)
 {
 	const std::string name = "Decoder_polar_SCL_fast_CA_sys";
 	this->set_name(name);
 
-	if (crc.get_size() > K)
+	if (this->crc->get_size() > K)
 	{
 		std::stringstream message;
-		message << "'crc.get_size()' has to be equal or smaller than 'K' ('crc.get_size()' = " << crc.get_size()
+		message << "'crc->get_size()' has to be equal or smaller than 'K' ('crc->get_size()' = " << this->crc->get_size()
 		        << ", 'K' = " << K << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+template <typename B, typename R, class API_polar>
+Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>* Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
+::clone() const
+{
+	auto m = new Decoder_polar_SCL_fast_CA_sys(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B, typename R, class API_polar>
+void Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
+::deep_copy(const Decoder_polar_SCL_fast_CA_sys<B,R,API_polar> &m)
+{
+	Decoder_polar_SCL_fast_sys<B,R,API_polar>::deep_copy(m);
+	if (m.crc != nullptr) this->crc.reset(m.crc->clone());
 }
 
 template <typename B, typename R, class API_polar>
@@ -58,7 +73,7 @@ bool Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
 	tools::fb_extract(this->polar_patterns.get_leaves_pattern_types(), s.data(), U_test.data());
 
 	// check the CRC
-	return crc.check(U_test, this->get_simd_inter_frame_level());
+	return crc->check(U_test, this->get_simd_inter_frame_level());
 }
 
 template <typename B, typename R, class API_polar>

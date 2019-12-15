@@ -59,13 +59,11 @@ template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
                              const int n_frames)
-: Decoder          (K, N, n_frames, API_polar::get_n_frames()),
-  Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames()),
+: Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames()),
   m                ((int)std::log2(N)),
   L                (L),
   frozen_bits      (frozen_bits),
-  polar_patterns   (N,
-                    frozen_bits,
+  polar_patterns   (frozen_bits,
                     {new tools::Pattern_polar_std,
                      new tools::Pattern_polar_r0,
                      new tools::Pattern_polar_r1,
@@ -74,7 +72,8 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
                      new tools::Pattern_polar_rep,       // /!\ perf. degradation with REP nodes in fixed-point
                      new tools::Pattern_polar_spc(2,2)}, // /!\ perf. degradation with SPC nodes length > 4 (when L is big)
                     1,
-                    2),
+                    2,
+                    true),
   paths            (L),
   metrics          (L),
   l                (L, mipp::vector<R>(N + mipp::nElReg<R>())),
@@ -148,14 +147,13 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
 template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-                             std::vector<std::unique_ptr<tools::Pattern_polar_i>> &&polar_patterns,
+                             const std::vector<tools::Pattern_polar_i*> &polar_patterns,
                              const int idx_r0, const int idx_r1, const int n_frames)
-: Decoder          (K, N, n_frames, API_polar::get_n_frames()),
-  Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames()),
+: Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames()),
   m                ((int)std::log2(N)),
   L                (L),
   frozen_bits      (frozen_bits),
-  polar_patterns   (N, frozen_bits, std::move(polar_patterns), idx_r0, idx_r1),
+  polar_patterns   (frozen_bits, polar_patterns, idx_r0, idx_r1),
   paths            (L),
   metrics          (L),
   l                (L, mipp::vector<R>(N + mipp::nElReg<R>())),
@@ -233,10 +231,19 @@ Decoder_polar_SCL_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::notify_frozenbits_update()
+Decoder_polar_SCL_fast_sys<B,R,API_polar>* Decoder_polar_SCL_fast_sys<B,R,API_polar>
+::clone() const
 {
-	polar_patterns.notify_frozenbits_update();
+	auto m = new Decoder_polar_SCL_fast_sys(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B, typename R, class API_polar>
+void Decoder_polar_SCL_fast_sys<B,R,API_polar>
+::notify_noise_update()
+{
+	polar_patterns.notify_noise_update();
 }
 
 template <typename B, typename R, class API_polar>

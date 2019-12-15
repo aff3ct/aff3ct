@@ -1,6 +1,7 @@
 #include <sstream>
 #include <numeric>
 
+#include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Monitor/Monitor_reduction.hpp"
 
@@ -10,12 +11,12 @@ namespace tools
 {
 
 template <class M>
-Monitor_reduction_M<M>
-::Monitor_reduction_M(const std::vector<std::unique_ptr<M>>& _monitors)
-: Monitor_reduction(),
+Monitor_reduction<M>
+::Monitor_reduction(const std::vector<M*>& _monitors)
+: Monitor_reduction_static(),
   M((_monitors.size() && _monitors.front()) ? *_monitors.front() : M(),
 	std::accumulate(_monitors.begin(), _monitors.end(), 0,
-                    [](int tot, const std::unique_ptr<M>& m) { return tot + m->get_n_frames(); })),
+                    [](int tot, const M *m) { return tot + m->get_n_frames(); })),
   monitors(_monitors),
   collecter(*this)
 {
@@ -26,7 +27,7 @@ Monitor_reduction_M<M>
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	const std::string name = "Monitor_reduction_M<" + monitors[0]->get_name() + ">";
+	const std::string name = "Monitor_reduction<" + monitors[0]->get_name() + ">";
 	this->set_name(name);
 
 	for (size_t m = 0; m < this->monitors.size(); m++)
@@ -59,57 +60,58 @@ Monitor_reduction_M<M>
 }
 
 template <class M>
-void Monitor_reduction_M<M>
+Monitor_reduction<M>
+::Monitor_reduction(const std::vector<std::unique_ptr<M>>& _monitors)
+: Monitor_reduction(convert_to_ptr<M>(_monitors))
+{
+}
+
+template <class M>
+Monitor_reduction<M>
+::Monitor_reduction(const std::vector<std::shared_ptr<M>>& _monitors)
+: Monitor_reduction(convert_to_ptr<M>(_monitors))
+{
+}
+
+template <class M>
+void Monitor_reduction<M>
 ::reset()
 {
 	M::reset();
-
 	for (auto& m : this->monitors)
 		m->reset();
 }
 
 template <class M>
-void Monitor_reduction_M<M>
-::reset_mr()
+bool Monitor_reduction<M>
+::is_done()
 {
-	this->reset();
+	return this->_is_done();
 }
 
 template <class M>
-bool Monitor_reduction_M<M>
-::is_done_mr()
+bool Monitor_reduction<M>
+::_is_done()
 {
+	// only the master thread can do this
+	if ((std::this_thread::get_id() == Monitor_reduction_static::master_thread_id &&
+	    (std::chrono::steady_clock::now() - Monitor_reduction_static::t_last_reduction) >=
+	     Monitor_reduction_static::d_reduce_frequency))
+	{
+		this->reduce(false);
+		Monitor_reduction_static::t_last_reduction = std::chrono::steady_clock::now();
+	}
+
 	return M::is_done();
 }
 
 template <class M>
-void Monitor_reduction_M<M>
-::clear_callbacks()
+void Monitor_reduction<M>
+::reduce(bool fully)
 {
-	M::clear_callbacks();
-
-	for (auto& m : monitors)
-		m->clear_callbacks();
-}
-
-template <class M>
-void Monitor_reduction_M<M>
-::_reduce(bool fully)
-{
-	// Old slow way to collect data (with object allocation)
-	// M collecter(*this);
-
-	// for (auto& m : this->monitors)
-	// 	collecter.collect(*m, fully);
-
-	// M::copy(collecter, fully);
-
-	// New way to collect data (without object allocation)
 	collecter.reset();
-
 	for (auto& m : this->monitors)
 		collecter.collect(*m, fully);
-
 	M::copy(collecter, fully);
 }
 

@@ -47,6 +47,14 @@ Interleaver_core_column_row<T>
 }
 
 template <typename T>
+Interleaver_core_column_row<T>* Interleaver_core_column_row<T>
+::clone() const
+{
+	auto t = new Interleaver_core_column_row(*this);
+	return t;
+}
+
+template <typename T>
 void Interleaver_core_column_row<T>
 ::gen_lut(T *lut, const int frame_id)
 {

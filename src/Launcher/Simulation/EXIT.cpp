@@ -2,9 +2,6 @@
 
 #include "Factory/Module/Monitor/BFER/Monitor_BFER.hpp"
 #include "Factory/Module/Interleaver/Interleaver.hpp"
-
-#include "Simulation/EXIT/EXIT.hpp"
-
 #include "Launcher/Simulation/EXIT.hpp"
 
 using namespace aff3ct;
@@ -48,10 +45,8 @@ void EXIT<B,R>
 	this->args.erase({psrc+"-seed",     "S"});
 	this->args.erase({pmdm+"-fra-size", "N"});
 	this->args.erase({pmdm+"-fra",      "F"});
-	this->args.erase({pmdm+"-noise"       });
 	this->args.erase({pchn+"-fra-size", "N"});
 	this->args.erase({pchn+"-fra",      "F"});
-	this->args.erase({pchn+"-noise"        });
 	this->args.erase({pchn+"-seed",     "S"});
 	this->args.erase({pchn+"-add-users"    });
 	this->args.erase({pchn+"-complex"      });

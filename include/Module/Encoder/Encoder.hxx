@@ -65,15 +65,22 @@ Encoder<B>
 	auto &p = this->create_task("encode");
 	auto ps_U_K = this->template create_socket_in <B>(p, "U_K", this->K);
 	auto ps_X_N = this->template create_socket_out<B>(p, "X_N", this->N);
-	this->create_codelet(p, [this, ps_U_K, ps_X_N](Task &t) -> int
+	this->create_codelet(p, [ps_U_K, ps_X_N](Module &m, Task &t) -> int
 	{
-		this->encode(static_cast<B*>(t[ps_U_K].get_dataptr()),
-		             static_cast<B*>(t[ps_X_N].get_dataptr()));
+		static_cast<Encoder<B>&>(m).encode(static_cast<B*>(t[ps_U_K].get_dataptr()),
+		                                   static_cast<B*>(t[ps_X_N].get_dataptr()));
 
 		return 0;
 	});
 
 	std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);
+}
+
+template <typename B>
+Encoder<B>* Encoder<B>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B>
@@ -252,6 +259,13 @@ void Encoder<B>
 ::set_sys(const bool sys)
 {
 	this->sys = sys;
+}
+
+template <typename B>
+void Encoder<B>
+::set_seed(const int seed)
+{
+	// do nothing in the general case, this method has to be overrided
 }
 
 }

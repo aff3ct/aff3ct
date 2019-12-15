@@ -25,6 +25,7 @@ public:
 	                                    const int syndrome_depth = 1,
 	                                    const int n_frames = 1);
 	virtual ~Decoder_LDPC_BP_flooding_Gallager_B() = default;
+	virtual Decoder_LDPC_BP_flooding_Gallager_B<B,R>* clone() const;
 
 protected:
 	void _initialize_var_to_chk(const B *Y_N, const std::vector<int8_t> &chk_to_var,

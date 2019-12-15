@@ -86,8 +86,7 @@ Decoder_RSC_BCJR_seq_generic<B,R>
                                const std::vector<std::vector<int>> &trellis,
                                const bool buffered_encoding,
                                const int n_frames)
-: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, 1),
-  Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, n_frames, 1),
+: Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, n_frames, 1),
   alpha(this->n_states), beta(this->n_states), gamma(2)
 {
 	const std::string name = "Decoder_RSC_BCJR_seq_generic";
@@ -98,6 +97,13 @@ Decoder_RSC_BCJR_seq_generic<B,R>
 	for (unsigned i = 0; i < gamma.size(); i++) gamma[i].resize(K + this->n_ff +0);
 
 	RSC_BCJR_seq_generic_init<R>::apply(alpha, beta, K, this->n_states, this->n_ff);
+}
+
+template <typename B, typename R>
+Decoder_RSC_BCJR_seq_generic<B,R>* Decoder_RSC_BCJR_seq_generic<B,R>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 // =================================================================================================== sys/par division

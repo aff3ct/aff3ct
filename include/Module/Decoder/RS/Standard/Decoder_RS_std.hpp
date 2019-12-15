@@ -39,6 +39,7 @@ private:
 public:
 	Decoder_RS_std(const int& K, const int& N, const tools::RS_polynomial_generator &GF, const int n_frames = 1);
 	virtual ~Decoder_RS_std() = default;
+	virtual Decoder_RS_std<B,R>* clone() const;
 
 protected:
 	virtual void _decode(S *Y_N, const int frame_id);

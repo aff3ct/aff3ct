@@ -9,8 +9,6 @@
 
 #include "Tools/Math/max.h"
 #include "Tools/Constellation/Constellation.hpp"
-#include "Tools/Noise/Noise.hpp"
-#include "Tools/Noise/Sigma.hpp"
 #include "Module/Modem/Modem.hpp"
 
 namespace aff3ct
@@ -21,7 +19,7 @@ template <typename B = int, typename R = float, typename Q = R, tools::proto_max
 class Modem_generic : public Modem<B,R,Q>
 {
 private:
-	std::unique_ptr<const tools::Constellation<R>> cstl;
+	const tools::Constellation<R> &cstl;
 
 	const int bits_per_symbol;
 	const int nbr_symbols;
@@ -29,19 +27,23 @@ private:
 	R inv_sigma2;
 
 public:
-	Modem_generic(const int N, std::unique_ptr<const tools::Constellation<R>>&& cstl, const tools::Noise<R>& noise = tools::Sigma<R>(),
-	              const bool disable_sig2 = false, const int n_frames = 1);
+	Modem_generic(const int N, const tools::Constellation<R> &cstl, const bool disable_sig2 = false,
+	              const int n_frames = 1);
 
 	virtual ~Modem_generic() = default;
 
-	virtual void set_noise(const tools::Noise<R>& noise);
+	virtual Modem_generic<B,R,Q,MAX>* clone() const;
 
 	static bool is_complex_mod(const tools::Constellation<R>& c);
 	static bool is_complex_fil(const tools::Constellation<R>& c);
 	static int size_mod(const int N, const tools::Constellation<R>& c);
 	static int size_fil(const int N, const tools::Constellation<R>& c);
 
+	void notify_noise_update();
+
 protected:
+	void check_noise();
+
 	void   _tmodulate   (              const Q *X_N1,                 R *X_N2, const int frame_id);
 	void   _modulate    (              const B *X_N1,                 R *X_N2, const int frame_id);
 	void     _filter    (              const R *Y_N1,                 R *Y_N2, const int frame_id);

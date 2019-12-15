@@ -10,7 +10,7 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Reporter_EXIT<B,R>
-::Reporter_EXIT(const M &monitor, const Noise<R>& noise_a)
+::Reporter_EXIT(const M &monitor, const Noise<>& noise_a)
 : Rm(monitor),
   noise_a(noise_a)
 {
@@ -43,16 +43,16 @@ typename Reporter_EXIT<B,R>::report_t Reporter_EXIT<B,R>
 
 	auto& EXIT_report = the_report[0];
 
-	const auto fra   = this->monitor.get_n_trials();
-	const auto I_A   = this->monitor.get_I_A();
-	const auto I_E   = this->monitor.get_I_E();
+	const auto fra = this->monitor.get_n_trials();
+	const auto I_A = this->monitor.get_I_A();
+	const auto I_E = this->monitor.get_I_E();
 
 	std::stringstream str_sig_a, str_fra, str_I_A, str_I_E;
 
 	str_sig_a << std::setprecision(2) << std::fixed;
 	try
 	{
-		str_sig_a << noise_a.get_noise();
+		str_sig_a << noise_a.get_value();
 	}
 	catch(tools::runtime_error&)
 	{

@@ -17,8 +17,7 @@ Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
                                         const bool buffered_encoding,
                                         std::ostream &stream,
                                         const int n_frames)
-: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, 1),
-  Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>(K, trellis, buffered_encoding, n_frames),
+: Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>(K, trellis, buffered_encoding, n_frames),
   n_ite(n_ite), ite_counter(0), stream(stream)
 {
 	const std::string name = "Decoder_RSC_BCJR_seq_generic_std_json";

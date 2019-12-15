@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <sstream>
 #include <utility>
+#include <memory>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/Distribution/Distributions.hpp"
@@ -146,6 +147,14 @@ void Noise
 }
 
 template <typename R>
+void Noise
+::update(tools::Noise<R> &noise, R noise_val, R bit_rate, int bps, int upf) const
+{
+	auto new_noise = std::unique_ptr<tools::Noise<R>>(this->build(noise_val, bit_rate, bps, upf));
+	noise.copy(*new_noise);
+}
+
+template <typename R>
 tools::Noise<R>* Noise
 ::build(R noise_val, R bit_rate, int bps, int upf) const
 {
@@ -176,7 +185,24 @@ tools::Noise<R>* Noise
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__, message.str());
 }
 
+template <typename R>
+tools::Noise<R>* Noise
+::build() const
+{
+	if (this->type == "EBN0" || this->type == "ESN0") return new tools::Sigma                 <R>();
+	if (this->type == "ROP"                         ) return new tools::Received_optical_power<R>();
+	if (this->type == "EP"                          ) return new tools::Event_probability     <R>();
+
+	std::stringstream message;
+	message << "Unknown noise type ('noise_type' = " << this->type << ").";
+	throw tools::cannot_allocate(__FILE__, __LINE__, __func__, message.str());
+}
+
 // ==================================================================================== explicit template instantiation
 template aff3ct::tools::Noise<float >* aff3ct::factory::Noise::build<float >(float,  float,  int, int) const;
 template aff3ct::tools::Noise<double>* aff3ct::factory::Noise::build<double>(double, double, int, int) const;
+template aff3ct::tools::Noise<float >* aff3ct::factory::Noise::build<float >() const;
+template aff3ct::tools::Noise<double>* aff3ct::factory::Noise::build<double>() const;
+template void aff3ct::factory::Noise::update<float >(tools::Noise<float >&, float,  float,  int, int) const;
+template void aff3ct::factory::Noise::update<double>(tools::Noise<double>&, double, double, int, int) const;
 // ==================================================================================== explicit template instantiation

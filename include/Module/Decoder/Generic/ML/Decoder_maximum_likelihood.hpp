@@ -6,19 +6,20 @@
 #define DECODER_MAXIMUM_LIKELIHOO_HPP_
 
 #include <vector>
+#include <memory>
 
 #include "Module/Encoder/Encoder.hpp"
-#include "Module/Decoder/Decoder_SIHO_HIHO.hpp"
+#include "Module/Decoder/Decoder_SIHO.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_maximum_likelihood : public Decoder_SIHO_HIHO<B,R>
+class Decoder_maximum_likelihood : public Decoder_SIHO<B,R>
 {
 protected:
-	Encoder<B> &encoder;
+	std::shared_ptr<Encoder<B>> encoder;
 	std::vector<B> U_K;
 	std::vector<B> X_N;
 	std::vector<B> best_U_K;
@@ -27,9 +28,12 @@ protected:
 
 public:
 	virtual ~Decoder_maximum_likelihood() = default;
+	virtual Decoder_maximum_likelihood<B,R>* clone() const;
 
 protected:
-	Decoder_maximum_likelihood(const int K, const int N, Encoder<B> &encoder, const int n_frames = 1);
+	Decoder_maximum_likelihood(const int K, const int N, const Encoder<B> &encoder, const int n_frames = 1);
+
+	virtual void deep_copy(const Decoder_maximum_likelihood<B,R> &m);
 
 	inline float    compute_euclidean_dist(const B *X_N, const R *Y_N) const;
 	inline uint32_t compute_hamming_dist  (const B *X_N, const B *Y_N) const;

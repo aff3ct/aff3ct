@@ -38,6 +38,15 @@ Encoder_RA<B>
 }
 
 template <typename B>
+Encoder_RA<B>* Encoder_RA<B>
+::clone() const
+{
+	auto m = new Encoder_RA(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B>
 void Encoder_RA<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {

@@ -14,7 +14,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B>
+template <typename B = int>
 class Source_user : public Source<B>
 {
 private:
@@ -22,8 +22,10 @@ private:
 	int src_counter;
 
 public:
-	Source_user(const int K, std::string filename, const int n_frames = 1, const int start_idx = 0);
+	Source_user(const int K, const std::string &filename, const int n_frames = 1, const int start_idx = 0);
 	virtual ~Source_user() = default;
+
+	virtual Source_user<B>* clone() const;
 
 protected:
 	void _generate(B *U_K, const int frame_id);

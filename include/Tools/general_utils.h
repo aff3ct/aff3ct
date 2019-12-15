@@ -9,6 +9,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <memory>
 
 namespace aff3ct
 {
@@ -95,6 +96,13 @@ std::string get_time_format(T secondes);
  */
 template<typename T, typename U>
 constexpr size_t offsetOf(U T::*member);
+
+template<typename T>
+std::vector<T*> convert_to_ptr(const std::vector<std::unique_ptr<T>> &v);
+
+template<typename T>
+std::vector<T*> convert_to_ptr(const std::vector<std::shared_ptr<T>> &v);
+
 }
 }
 

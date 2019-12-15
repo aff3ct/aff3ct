@@ -12,8 +12,7 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_repetition<B,R>
 ::Decoder_repetition(const int& K, const int& N, const bool buffered_encoding, const int n_frames)
-: Decoder               (K, N, n_frames, 1),
-  Decoder_SISO_SIHO<B,R>(K, N, n_frames, 1),
+: Decoder_SISO<B,R>(K, N, n_frames, 1),
   rep_count((N/K) -1), buffered_encoding(buffered_encoding), sys(K), par(K * rep_count), ext(K)
 {
 	const std::string name = "Decoder_repetition";
@@ -25,6 +24,13 @@ Decoder_repetition<B,R>
 		message << "'K' has to be a multiple of 'N' ('K' = " << K << ", 'N' = " << N << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+template <typename B, typename R>
+Decoder_repetition<B,R>* Decoder_repetition<B,R>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R>

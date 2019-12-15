@@ -11,20 +11,36 @@ namespace module
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 Decoder_polar_SCL_naive_CA<B,R,F,G>
 ::Decoder_polar_SCL_naive_CA(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-                             CRC<B>& crc, const int n_frames)
-: Decoder(K, N, n_frames, 1),
-  Decoder_polar_SCL_naive<B,R,F,G>(K, N, L, frozen_bits, n_frames), crc(crc)
+                             const CRC<B>& crc, const int n_frames)
+: Decoder_polar_SCL_naive<B,R,F,G>(K, N, L, frozen_bits, n_frames), crc(crc.clone())
 {
 	const std::string name = "Decoder_polar_SCL_naive_CA";
 	this->set_name(name);
 
-	if (crc.get_size() > K)
+	if (this->crc->get_size() > K)
 	{
 		std::stringstream message;
-		message << "'crc.get_size()' has to be equal or smaller than 'K' ('crc.get_size()' = " << crc.get_size()
+		message << "'crc->get_size()' has to be equal or smaller than 'K' ('crc->get_size()' = " << this->crc->get_size()
 		        << ", 'K' = " << K << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
+Decoder_polar_SCL_naive_CA<B,R,F,G>* Decoder_polar_SCL_naive_CA<B,R,F,G>
+::clone() const
+{
+	auto m = new Decoder_polar_SCL_naive_CA(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
+void Decoder_polar_SCL_naive_CA<B,R,F,G>
+::deep_copy(const Decoder_polar_SCL_naive_CA<B,R,F,G> &m)
+{
+	Decoder_polar_SCL_naive<B,R,F,G>::deep_copy(m);
+	if (m.crc != nullptr) this->crc.reset(m.crc->clone());
 }
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
@@ -41,7 +57,7 @@ void Decoder_polar_SCL_naive_CA<B,R,F,G>
 			if (!this->frozen_bits[leaf])
 				U_test.push_back(this->leaves_array[path][leaf]->get_c()->s[0]);
 
-		bool decode_result = crc.check(U_test, this->get_simd_inter_frame_level());
+		bool decode_result = crc->check(U_test, this->get_simd_inter_frame_level());
 		if (!decode_result)
 			this->active_paths.erase(path);
 	}

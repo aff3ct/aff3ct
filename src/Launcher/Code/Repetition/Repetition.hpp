@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "Factory/Module/Codec/Repetition/Codec_repetition.hpp"
+#include "Factory/Tools/Codec/Repetition/Codec_repetition.hpp"
 
 namespace aff3ct
 {

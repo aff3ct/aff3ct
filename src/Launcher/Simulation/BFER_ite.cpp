@@ -3,7 +3,6 @@
 
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Factory/Module/Monitor/BFER/Monitor_BFER.hpp"
-#include "Simulation/BFER/Iterative/BFER_ite.hpp"
 #include "Launcher/Simulation/BFER_ite.hpp"
 
 using namespace aff3ct;
@@ -63,10 +62,8 @@ void BFER_ite<B,R,Q>
 	this->args.erase({pitl+"-fra",       "F"});
 	this->args.erase({pmdm+"-fra-size",  "N"});
 	this->args.erase({pmdm+"-fra",       "F"});
-	this->args.erase({pmdm+"-noise"         });
 	this->args.erase({pchn+"-fra-size",  "N"});
 	this->args.erase({pchn+"-fra",       "F"});
-	this->args.erase({pchn+"-noise"         });
 	this->args.erase({pchn+"-seed",      "S"});
 	this->args.erase({pchn+"-add-users"     });
 	this->args.erase({pchn+"-complex"       });

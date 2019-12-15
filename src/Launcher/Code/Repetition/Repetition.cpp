@@ -1,6 +1,5 @@
 #include <type_traits>
 
-#include "Factory/Module/Codec/Repetition/Codec_repetition.hpp"
 #include "Launcher/Code/Repetition/Repetition.hpp"
 
 using namespace aff3ct;

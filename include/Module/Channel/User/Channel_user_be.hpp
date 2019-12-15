@@ -30,6 +30,7 @@ public:
 
 	Channel_user_be(const int N, const std::string &filename, const int n_frames = 1);
 	virtual ~Channel_user_be() = default;
+	virtual Channel_user_be<R>* clone() const;
 
 	virtual void  add_noise(const R *X_N, R *Y_N, const int frame_id = -1);
 

@@ -27,6 +27,7 @@ protected:
 	                       const bool buffered_encoding = true,
 	                       const int n_frames = 1);
 	virtual ~Decoder_RSC_BCJR_inter() = default;
+	virtual Decoder_RSC_BCJR_inter<B,R>* clone() const;
 
 	void _load (const R *Y_N);
 	void _store(      B *V_K) const;

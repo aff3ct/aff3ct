@@ -24,6 +24,13 @@ User_pdf_noise_generator_fast<R>
 }
 
 template <typename R>
+User_pdf_noise_generator_fast<R>* User_pdf_noise_generator_fast<R>
+::clone() const
+{
+	return new User_pdf_noise_generator_fast(*this);
+}
+
+template <typename R>
 void User_pdf_noise_generator_fast<R>
 ::set_seed(const int seed)
 {

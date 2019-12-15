@@ -22,6 +22,8 @@ public:
 	Encoder_LDPC_DVBS2(const tools::dvbs2_values& dvbs2, const int n_frames = 1);
 	virtual ~Encoder_LDPC_DVBS2() = default;
 
+	virtual Encoder_LDPC_DVBS2<B>* clone() const;
+
 protected:
 	void _encode(const B *U_K, B *X_N, const int frame_id);
 };

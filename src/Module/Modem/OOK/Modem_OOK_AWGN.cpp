@@ -1,6 +1,7 @@
 #include <string>
 #include <type_traits>
 
+#include "Tools/Noise/Noise.hpp"
 #include "Tools/Exception/exception.hpp"
 #include "Module/Modem/OOK/Modem_OOK_AWGN.hpp"
 
@@ -9,22 +10,30 @@ using namespace aff3ct::module;
 
 template <typename B, typename R, typename Q>
 Modem_OOK_AWGN<B,R,Q>
-::Modem_OOK_AWGN(const int N, const tools::Noise<R>& noise, const bool disable_sig2, const int n_frames)
-: Modem_OOK<B,R,Q>(N, noise, n_frames),
+::Modem_OOK_AWGN(const int N, const bool disable_sig2, const int n_frames)
+: Modem_OOK<B,R,Q>(N, n_frames),
   disable_sig2(disable_sig2),
-  sigma_factor((R)0)
+  sigma_factor((R)1.0)
 {
 	const std::string name = "Modem_OOK_AWGN";
 	this->set_name(name);
 }
 
 template <typename B, typename R, typename Q>
-void Modem_OOK_AWGN<B,R,Q>
-::set_noise(const tools::Noise<R>& noise)
+Modem_OOK_AWGN<B,R,Q>* Modem_OOK_AWGN<B,R,Q>
+::clone() const
 {
-	Modem_OOK<B,R,Q>::set_noise(noise);
+	auto m = new Modem_OOK_AWGN(*this);
+	m->deep_copy(*this);
+	return m;
+}
 
-	this->sigma_factor = (R)2.0 * this->n->get_noise() * this->n->get_noise(); // trow if noise is not set
+template <typename B, typename R, typename Q>
+void Modem_OOK_AWGN<B,R,Q>
+::notify_noise_update()
+{
+	Modem<B,R,Q>::notify_noise_update();
+	this->sigma_factor = (R)2.0 * this->noise->get_value() * this->noise->get_value();
 }
 
 template <typename B, typename R, typename Q>
@@ -32,10 +41,8 @@ void Modem_OOK_AWGN<B,R,Q>
 ::check_noise()
 {
 	Modem_OOK<B,R,Q>::check_noise();
-
-	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
+	this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
 }
-
 
 template <typename B, typename R, typename Q>
 void Modem_OOK_AWGN<B,R,Q>
@@ -72,8 +79,10 @@ void Modem_OOK_AWGN<B,R,Q>
 		if (!std::is_floating_point<Q>::value)
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-		if (!this->n->is_set())
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+		if (this->noise == nullptr)
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
+		else if (!this->noise->is_set())
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 		for (auto i = 0; i < this->N_fil; i++)
 			Y_N2[i] = -((Q)2.0 * Y_N1[i] - (Q)1) * (Q)sigma_factor * (Q)H_N[i];

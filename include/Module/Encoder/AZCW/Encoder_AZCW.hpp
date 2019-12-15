@@ -21,6 +21,8 @@ public:
 	Encoder_AZCW(const int K, const int N, const int n_frames = 1);
 	virtual ~Encoder_AZCW() = default;
 
+	virtual Encoder_AZCW<B>* clone() const;
+
 	const std::vector<uint32_t>& get_info_bits_pos() const;
 
 	bool is_sys() const;

@@ -9,7 +9,7 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Flip_and_check_DB<B,R>
-::Flip_and_check_DB(const int K, const int n_ite, module::CRC<B> &crc, const int start_crc_check_ite,
+::Flip_and_check_DB(const int K, const int n_ite, const module::CRC<B> &crc, const int start_crc_check_ite,
                     const int q, const int m, const int M, const int s,
                     const int simd_inter_frame_level)
 : CRC_checker_DB<B,R>(crc, start_crc_check_ite, simd_inter_frame_level),
@@ -50,6 +50,15 @@ Flip_and_check_DB<B,R>
 		ite += s;
 	}
 	while (ite <= ((M == -1) ? n_ite : M));
+}
+
+template <typename B, typename R>
+Flip_and_check_DB<B,R>* Flip_and_check_DB<B,R>
+::clone() const
+{
+	auto t = new Flip_and_check_DB(*this);
+	t->deep_copy(*this);
+	return t;
 }
 
 template <typename B, typename R>
@@ -129,7 +138,7 @@ bool Flip_and_check_DB<B,R>
 			s_tmp[2*positions[depth]   ] = ((symb_sorted[4*positions[depth] + tab_flips[pattern][depth]]) >> 1) & 0x1;
 			s_tmp[2*positions[depth] +1] = ((symb_sorted[4*positions[depth] + tab_flips[pattern][depth]])     ) & 0x1;
 		}
-		check_crc = this->crc.check(s_tmp, this->simd_inter_frame_level);
+		check_crc = this->crc->check(s_tmp, this->simd_inter_frame_level);
 		pattern++;
 	}
 	while ((pattern < (int)tab_flips.size()) && !check_crc);

@@ -16,6 +16,14 @@ Interleaver_core_LTE<T>
 }
 
 template <typename T>
+Interleaver_core_LTE<T>* Interleaver_core_LTE<T>
+::clone() const
+{
+	auto t = new Interleaver_core_LTE(*this);
+	return t;
+}
+
+template <typename T>
 void Interleaver_core_LTE<T>
 ::gen_lut(T *lut, const int frame_id)
 {

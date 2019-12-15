@@ -22,6 +22,8 @@ public:
 
 	~Frozenbits_generator_5G();
 
+	virtual Frozenbits_generator_5G* clone() const;
+
 private:
 	void evaluate();
 

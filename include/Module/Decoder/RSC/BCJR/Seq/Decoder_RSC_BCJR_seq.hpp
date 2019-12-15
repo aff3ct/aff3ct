@@ -27,6 +27,7 @@ protected:
 	                     const bool buffered_encoding = true,
 	                     const int n_frames = 1);
 	virtual ~Decoder_RSC_BCJR_seq() = default;
+	virtual Decoder_RSC_BCJR_seq<B,R>* clone() const;
 };
 }
 }

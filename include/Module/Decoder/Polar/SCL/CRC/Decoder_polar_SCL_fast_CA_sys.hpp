@@ -30,20 +30,24 @@ private:
 	bool fast_store;
 
 protected:
-	CRC<B>& crc;
+	std::shared_ptr<CRC<B>> crc;
 	mipp::vector<B> U_test;
 
 public:
 	Decoder_polar_SCL_fast_CA_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-	                              CRC<B>& crc, const int n_frames = 1);
+	                              const CRC<B>& crc, const int n_frames = 1);
 
 	Decoder_polar_SCL_fast_CA_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-	                              std::vector<std::unique_ptr<tools::Pattern_polar_i>> &&polar_patterns,
-	                              const int idx_r0, const int idx_r1, CRC<B>& crc, const int n_frames = 1);
+	                              const std::vector<tools::Pattern_polar_i*> &polar_patterns,
+	                              const int idx_r0, const int idx_r1, const CRC<B>& crc, const int n_frames = 1);
 
 	virtual ~Decoder_polar_SCL_fast_CA_sys() = default;
 
+	virtual Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>* clone() const;
+
 protected:
+	virtual void deep_copy(const Decoder_polar_SCL_fast_CA_sys<B,R,API_polar> &m);
+
 	        bool crc_check       (mipp::vector<B> &s  );
 	virtual int  select_best_path(                    );
 

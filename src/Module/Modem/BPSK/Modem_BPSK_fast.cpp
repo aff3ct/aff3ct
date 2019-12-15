@@ -3,8 +3,8 @@
 #include <type_traits>
 #include <mipp.h>
 
+#include "Tools/Noise/Noise.hpp"
 #include "Tools/Exception/exception.hpp"
-
 #include "Module/Modem/BPSK/Modem_BPSK_fast.hpp"
 
 using namespace aff3ct;
@@ -12,10 +12,10 @@ using namespace aff3ct::module;
 
 template <typename B, typename R, typename Q>
 Modem_BPSK_fast<B,R,Q>
-::Modem_BPSK_fast(const int N, const tools::Noise<R>& noise, const bool disable_sig2, const int n_frames)
-: Modem<B,R,Q>(N, noise, n_frames),
+::Modem_BPSK_fast(const int N, const bool disable_sig2, const int n_frames)
+: Modem<B,R,Q>(N, n_frames),
   disable_sig2(disable_sig2),
-  two_on_square_sigma((R)0)
+  two_on_square_sigma((R)1.0)
 {
 	const std::string name = "Modem_BPSK_fast";
 	this->set_name(name);
@@ -25,14 +25,28 @@ Modem_BPSK_fast<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Modem_BPSK_fast<B,R,Q>
-::set_noise(const tools::Noise<R>& noise)
+Modem_BPSK_fast<B,R,Q>* Modem_BPSK_fast<B,R,Q>
+::clone() const
 {
-	Modem<B,R,Q>::set_noise(noise);
+	auto m = new Modem_BPSK_fast(*this);
+	m->deep_copy(*this);
+	return m;
+}
 
-	this->n->is_of_type_throw(tools::Noise_type::SIGMA);
+template <typename B, typename R, typename Q>
+void Modem_BPSK_fast<B,R,Q>
+::check_noise()
+{
+	Modem<B,R,Q>::check_noise();
+	this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
+}
 
-	two_on_square_sigma = (R)2.0 / (this->n->get_noise() * this->n->get_noise());
+template <typename B, typename R, typename Q>
+void Modem_BPSK_fast<B,R,Q>
+::notify_noise_update()
+{
+	Modem<B,R,Q>::notify_noise_update();
+	this->two_on_square_sigma = (R)2.0 / (this->noise->get_value() * this->noise->get_value());
 }
 
 template <typename B, typename R, typename Q>
@@ -168,8 +182,10 @@ void Modem_BPSK_fast<B,R,Q>
 		if (!std::is_floating_point<Q>::value)
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-		if (!this->n->is_set())
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+		if (this->noise == nullptr)
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
+		else if (!this->noise->is_set())
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 		auto size = (unsigned int)(this->N);
 		auto vec_loop_size = (size / mipp::nElReg<Q>()) * mipp::nElReg<Q>();

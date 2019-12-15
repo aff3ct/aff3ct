@@ -10,7 +10,7 @@ namespace tools
 Predicate_ite::Predicate_ite(const int n_ite)
 : n_ite(n_ite), cur_ite(0)
 {
-	if (n_ite <= 0)
+	if (n_ite < 0)
 	{
 		std::stringstream message;
 		message << "'n_ite' has to be equal or greater than 0 ('n_ite' = " << n_ite << ").";

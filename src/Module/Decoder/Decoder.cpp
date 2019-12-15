@@ -15,7 +15,8 @@ Decoder
   K(K),
   N(N),
   simd_inter_frame_level(simd_inter_frame_level),
-  n_dec_waves((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level))
+  n_dec_waves((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level)),
+  auto_reset(true)
 {
 	const std::string name = "Decoder";
 	this->set_name(name);
@@ -53,6 +54,12 @@ Decoder
 	this->tasks_with_nullptr.resize((size_t)dec::tsk::SIZE);
 }
 
+Decoder* Decoder
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
 int Decoder
 ::get_K() const
 {
@@ -77,8 +84,55 @@ int Decoder
 	return this->n_dec_waves;
 }
 
+bool Decoder
+::is_auto_reset() const
+{
+	return this->auto_reset;
+}
+
+void Decoder
+::set_auto_reset(const bool auto_reset)
+{
+	this->auto_reset = auto_reset;
+}
+
 void Decoder
 ::reset()
 {
+	this->reset(-1);
+}
 
+void Decoder
+::reset(const int frame_id)
+{
+	if (frame_id < 0)
+	{
+		for (auto w = 0; w < this->get_n_dec_waves(); w++)
+		{
+			auto fid = w * this->get_simd_inter_frame_level();
+			this->_reset(fid);
+		}
+	}
+	else if (frame_id < this->get_n_frames())
+	{
+		this->_reset(frame_id);
+	}
+	else
+	{
+		std::stringstream message;
+		message << "'frame_id' has to be smaller than 'get_n_frames()' ('frame_id' = " << frame_id
+		        << ", 'get_n_frames()' = " << this->get_n_frames() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+}
+
+void Decoder
+::_reset(const int frame_id)
+{
+}
+
+void Decoder
+::set_seed(const int seed)
+{
+	// do nothing in the general case, this method has to be overrided
 }

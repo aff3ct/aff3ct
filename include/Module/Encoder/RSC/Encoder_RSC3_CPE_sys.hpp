@@ -18,6 +18,8 @@ public:
 	Encoder_RSC3_CPE_sys(const int& K, const int& N, const int& n_frames = 1, const bool buffered_encoding = true);
 	virtual ~Encoder_RSC3_CPE_sys() = default;
 
+	virtual Encoder_RSC3_CPE_sys<B>* clone() const;
+
 protected:
 	int inner_encode(const int bit_sys, int &state);
 	int tail_bit_sys(const int &state             );

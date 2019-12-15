@@ -2,8 +2,9 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-#include "Simulation/BFER/Iterative/SystemC/SC_BFER_ite.hpp"
-#include "Simulation/BFER/Iterative/Threads/BFER_ite_threads.hpp"
+#include "Simulation/Legacy/BFER/Iterative/SystemC/SC_BFER_ite.hpp"
+#include "Simulation/Legacy/BFER/Iterative/Threads/BFER_ite_threads.hpp"
+#include "Simulation/Chain/BFER/Iterative/Simulation_chain_BFER_ite.hpp"
 #include "Factory/Simulation/BFER/BFER_ite.hpp"
 
 using namespace aff3ct;
@@ -141,32 +142,35 @@ void BFER_ite
 	if (this->ter    != nullptr) { this->ter   ->get_headers(headers, full); }
 }
 
-const Codec_SISO_SIHO* BFER_ite
+const Codec_SISO* BFER_ite
 ::get_cdc() const
 {
-	return dynamic_cast<Codec_SISO_SIHO*>(this->cdc.get());
+	return dynamic_cast<Codec_SISO*>(this->cdc.get());
 }
 
 template <typename B, typename R, typename Q>
-simulation::BFER_ite<B,R,Q>* BFER_ite
+simulation::Simulation* BFER_ite
 ::build() const
 {
 #if defined(AFF3CT_SYSTEMC_SIMU)
 	return new simulation::SC_BFER_ite<B,R,Q>(*this);
 #else
-	return new simulation::BFER_ite_threads<B,R,Q>(*this);
+	if (this->chain_threads)
+		return new simulation::Simulation_chain_BFER_ite<B,R,Q>(*this);
+	else
+		return new simulation::BFER_ite_threads<B,R,Q>(*this);
 #endif
 }
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::simulation::BFER_ite<B_8 ,R_8 ,Q_8 >* aff3ct::factory::BFER_ite::build<B_8 ,R_8 ,Q_8 >() const;
-template aff3ct::simulation::BFER_ite<B_16,R_16,Q_16>* aff3ct::factory::BFER_ite::build<B_16,R_16,Q_16>() const;
-template aff3ct::simulation::BFER_ite<B_32,R_32,Q_32>* aff3ct::factory::BFER_ite::build<B_32,R_32,Q_32>() const;
-template aff3ct::simulation::BFER_ite<B_64,R_64,Q_64>* aff3ct::factory::BFER_ite::build<B_64,R_64,Q_64>() const;
+template aff3ct::simulation::Simulation* aff3ct::factory::BFER_ite::build<B_8 ,R_8 ,Q_8 >() const;
+template aff3ct::simulation::Simulation* aff3ct::factory::BFER_ite::build<B_16,R_16,Q_16>() const;
+template aff3ct::simulation::Simulation* aff3ct::factory::BFER_ite::build<B_32,R_32,Q_32>() const;
+template aff3ct::simulation::Simulation* aff3ct::factory::BFER_ite::build<B_64,R_64,Q_64>() const;
 #else
-template aff3ct::simulation::BFER_ite<B,R,Q>* aff3ct::factory::BFER_ite::build<B,R,Q>() const;
+template aff3ct::simulation::Simulation* aff3ct::factory::BFER_ite::build<B,R,Q>() const;
 #endif
 // ==================================================================================== explicit template instantiation
 

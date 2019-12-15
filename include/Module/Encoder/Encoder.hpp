@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "Tools/Interface/Interface_set_seed.hpp"
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
 #include "Module/Module.hpp"
@@ -38,7 +39,7 @@ namespace module
  * Please use Encoder for inheritance (instead of Encoder)
  */
 template <typename B = int>
-class Encoder : public Module
+class Encoder : public Module, public tools::Interface_set_seed
 {
 public:
 	inline Task&   operator[](const enc::tsk         t);
@@ -68,6 +69,8 @@ public:
 	 * \brief Destructor.
 	 */
 	virtual ~Encoder() = default;
+
+	virtual Encoder<B>* clone() const;
 
 	int get_K() const;
 
@@ -110,6 +113,8 @@ public:
 	 * \return the number of tail bits.
 	 */
 	virtual int tail_length() const;
+
+	virtual void set_seed(const int seed);
 
 protected:
 	virtual void _encode(const B *U_K, B *X_N, const int frame_id);

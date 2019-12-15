@@ -9,6 +9,7 @@
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/matrix.h"
 #include "Tools/Math/numerical_integration.h"
+#include "Tools/Noise/Noise.hpp"
 #include "Module/Modem/CPM/Modem_CPM.hpp"
 
 #ifndef M_PI
@@ -27,7 +28,6 @@ const std::string Modem_CPM<B,R,Q,MAX>::wave_shape_default = "GMSK";
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 Modem_CPM<B,R,Q,MAX>
 ::Modem_CPM(const int  N,
-            const tools::Noise<R>& noise,
             const int  bits_per_symbol,
             const int  sampling_factor,
             const int  cpm_L,
@@ -40,24 +40,23 @@ Modem_CPM<B,R,Q,MAX>
 : Modem<B,R,Q>(N,
                Modem_CPM<B,R,Q,MAX>::size_mod(N, bits_per_symbol, cpm_L, cpm_p, sampling_factor),
                Modem_CPM<B,R,Q,MAX>::size_fil(N, bits_per_symbol, cpm_L, cpm_p),
-               noise,
                n_frames),
-  no_sig2   (no_sig2                            ),
-  cpm       (cpm_L,
-             cpm_k,
-             cpm_p,
-             bits_per_symbol,
-             sampling_factor,
-             "TOTAL",
-             wave_shape                         ),
-  cpm_h     ((R)cpm.k/(R)cpm.p                  ),
-  T_samp    ((R)1.0  /(R)cpm.s_factor           ),
-  baseband  (cpm.max_wa_id * cpm.s_factor *2,  0),
-  projection(cpm.max_wa_id * cpm.s_factor *2,  0),
-  n_sy      (N/cpm.n_b_per_s                    ),
-  n_sy_tl   (n_sy+cpm.tl                        ),
-  cpe       (n_sy, cpm                          ),
-  bcjr      (cpm, n_sy_tl                       )
+  no_sig2   (no_sig2                             ),
+  cpm       (new tools::CPM_parameters<SIN,SOUT>(cpm_L,
+                                                 cpm_k,
+                                                 cpm_p,
+                                                 bits_per_symbol,
+                                                 sampling_factor,
+                                                 "TOTAL",
+                                                 wave_shape)),
+  cpm_h     ((R)cpm->k/(R)cpm->p                 ),
+  T_samp    ((R)1.0  /(R)cpm->s_factor           ),
+  baseband  (cpm->max_wa_id * cpm->s_factor *2, 0),
+  projection(cpm->max_wa_id * cpm->s_factor *2, 0),
+  n_sy      (N/cpm->n_b_per_s                    ),
+  n_sy_tl   (n_sy+cpm->tl                        ),
+  cpe       (n_sy, *cpm                          ),
+  bcjr      (*cpm, n_sy_tl                       )
 {
 	const std::string name = "Modem_CPM";
 	this->set_name(name);
@@ -73,33 +72,47 @@ Modem_CPM<B,R,Q,MAX>
 	}
 
 	// initialize CPM
-	cpe.generate_allowed_states    (cpm.allowed_states               );
-	cpe.generate_allowed_wave_forms(cpm.allowed_wave_forms           );
+	cpe.generate_allowed_states    (cpm->allowed_states               );
+	cpe.generate_allowed_wave_forms(cpm->allowed_wave_forms           );
 
-	cpe.generate_mapper            (cpm.transition_to_binary,
-	                                cpm.binary_to_transition,
-	                                mapping                          );
+	cpe.generate_mapper            (cpm->transition_to_binary,
+	                                cpm->binary_to_transition,
+	                                mapping                           );
 
-	cpe.generate_trellis           (cpm.trellis_next_state,
-	                                cpm.trellis_related_wave_form    );
-	cpe.generate_anti_trellis      (cpm.anti_trellis_original_state,
-	                                cpm.anti_trellis_input_transition);
+	cpe.generate_trellis           (cpm->trellis_next_state,
+	                                cpm->trellis_related_wave_form    );
+	cpe.generate_anti_trellis      (cpm->anti_trellis_original_state,
+	                                cpm->anti_trellis_input_transition);
 
 	cpe.generate_tail_symb_transition();
 
 	generate_baseband();
+}
 
-	if (no_sig2 || (this->n != nullptr && this->n->is_set()))
-		generate_projection();
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+Modem_CPM<B,R,Q,MAX>* Modem_CPM<B,R,Q,MAX>
+::clone() const
+{
+	auto m = new Modem_CPM(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
-::set_noise(const tools::Noise<R>& noise)
+::notify_noise_update()
 {
-	Modem<B,R,Q>::set_noise(noise);
+	Modem<B,R,Q>::notify_noise_update();
+	if (!no_sig2)
+		this->generate_projection();
+}
 
-	if (!no_sig2) this->generate_projection();
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+void Modem_CPM<B,R,Q,MAX>
+::check_noise()
+{
+	Modem<B,R,Q>::check_noise();
+	// this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
@@ -111,7 +124,7 @@ bool Modem_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 bool Modem_CPM<B,R,Q,MAX>
-:: is_complex_fil()
+::is_complex_fil()
 {
 	return false;
 }
@@ -147,7 +160,7 @@ void Modem_CPM<B,R,Q,MAX>
 	std::vector<SIN> mapped_frame(n_sy);
 
 	for (int i=0; i < n_sy; i++)
-		mapped_frame[i] = cpm.binary_to_transition[cpe.merge_bits(X_N1+i*cpm.n_b_per_s, cpm.n_b_per_s, true)];
+		mapped_frame[i] = cpm->binary_to_transition[cpe.merge_bits(X_N1+i*cpm->n_b_per_s, cpm->n_b_per_s, true)];
 
 	// continuous phase encoder
 	std::vector<SIN> encoded_frame(n_sy_tl);
@@ -160,10 +173,10 @@ void Modem_CPM<B,R,Q,MAX>
 	const auto off_BB_i = (int)baseband.size() / 2;
 
 	for (auto i = 0; i < n_sy_tl; i++)
-		for (auto s = 0; s < cpm.s_factor; s++)
+		for (auto s = 0; s < cpm->s_factor; s++)
 		{
-			X_N2[off_X_r + i * cpm.s_factor + s] = baseband[off_BB_r + encoded_frame[i] * cpm.s_factor + s];
-			X_N2[off_X_i + i * cpm.s_factor + s] = baseband[off_BB_i + encoded_frame[i] * cpm.s_factor + s];
+			X_N2[off_X_r + i * cpm->s_factor + s] = baseband[off_BB_r + encoded_frame[i] * cpm->s_factor + s];
+			X_N2[off_X_i + i * cpm->s_factor + s] = baseband[off_BB_i + encoded_frame[i] * cpm->s_factor + s];
 		}
 }
 
@@ -171,8 +184,10 @@ template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
 ::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
 {
-	if (!this->n->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No noise has been set");
+	if (this->noise == nullptr)
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
+	else if (!this->noise->is_set())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	const auto Y_real = Y_N1;
 	const auto Y_imag = Y_N1 + this->N_mod / 2;
@@ -180,14 +195,14 @@ void Modem_CPM<B,R,Q,MAX>
 	const auto p_imag = projection.data() + (projection.size() >> 1);
 
 	for (auto i = 0; i < n_sy_tl; i++)
-		for (auto wa = 0; wa < cpm.n_wa; wa++)
+		for (auto wa = 0; wa < cpm->n_wa; wa++)
 		{
 			R sum_r = (R)0;
-			for (auto s = 0; s < cpm.s_factor; s++)
-				sum_r += Y_real[i * cpm.s_factor + s] * p_real[s * cpm.max_wa_id + cpm.allowed_wave_forms[wa]]
-				       - Y_imag[i * cpm.s_factor + s] * p_imag[s * cpm.max_wa_id + cpm.allowed_wave_forms[wa]];
+			for (auto s = 0; s < cpm->s_factor; s++)
+				sum_r += Y_real[i * cpm->s_factor + s] * p_real[s * cpm->max_wa_id + cpm->allowed_wave_forms[wa]]
+				       - Y_imag[i * cpm->s_factor + s] * p_imag[s * cpm->max_wa_id + cpm->allowed_wave_forms[wa]];
 
-			Y_N2[i * cpm.max_wa_id + cpm.allowed_wave_forms[wa]] = sum_r;
+			Y_N2[i * cpm->max_wa_id + cpm->allowed_wave_forms[wa]] = sum_r;
 		}
 }
 
@@ -209,50 +224,50 @@ template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
 ::generate_baseband()
 {
-	if ((int)baseband.size() != (cpm.max_wa_id * cpm.s_factor * 2))
+	if ((int)baseband.size() != (cpm->max_wa_id * cpm->s_factor * 2))
 	{
 		std::stringstream message;
-		message << "'baseband.size()' has to be equal to 'cpm.max_wa_id' * 'cpm.s_factor' * 2 ('baseband.size()' = "
-		        << baseband.size() << ", 'cpm.max_wa_id' = " << cpm.max_wa_id
-		        << ", 'cpm.s_factor' = " << cpm.s_factor << ").";
+		message << "'baseband.size()' has to be equal to 'cpm->max_wa_id' * 'cpm->s_factor' * 2 ('baseband.size()' = "
+		        << baseband.size() << ", 'cpm->max_wa_id' = " << cpm->max_wa_id
+		        << ", 'cpm->s_factor' = " << cpm->s_factor << ").";
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	std::vector<R> phase_response(cpm.L*cpm.s_factor);
+	std::vector<R> phase_response(cpm->L*cpm->s_factor);
 
 	// calculate the different phase responses
-	for (auto s = 0; s < cpm.L * cpm.s_factor; s++)
+	for (auto s = 0; s < cpm->L * cpm->s_factor; s++)
 		phase_response[s] = calculate_phase_response(s * T_samp);
 
-	auto p_mask = (1 << cpm.n_bits_p ) -1;
-	auto L_mask = (1 << cpm.n_b_per_s) -1;
+	auto p_mask = (1 << cpm->n_bits_p ) -1;
+	auto L_mask = (1 << cpm->n_b_per_s) -1;
 
-	for (auto wa = 0; wa < cpm.n_wa; wa++)
+	for (auto wa = 0; wa < cpm->n_wa; wa++)
 	{
-		auto allowed_wa         = cpm.allowed_wave_forms[wa];
+		auto allowed_wa         = cpm->allowed_wave_forms[wa];
 		auto tilted_phase_part1 = (R)(2 * (R)M_PI * cpm_h * (allowed_wa & p_mask));
 
-		std::vector<R> tilted_phase_part2(cpm.s_factor, (R)0);
-		std::vector<R> tilted_phase_part3(cpm.s_factor, (R)0);
+		std::vector<R> tilted_phase_part2(cpm->s_factor, (R)0);
+		std::vector<R> tilted_phase_part3(cpm->s_factor, (R)0);
 
-		for (auto l = 0; l < cpm.L; l++)
+		for (auto l = 0; l < cpm->L; l++)
 		{
-			auto U_n = (allowed_wa >> ((cpm.L -l -1) * cpm.n_b_per_s + cpm.n_bits_p)) & L_mask;
+			auto U_n = (allowed_wa >> ((cpm->L -l -1) * cpm->n_b_per_s + cpm->n_bits_p)) & L_mask;
 
-			for (auto s = 0; s < cpm.s_factor; s++)
+			for (auto s = 0; s < cpm->s_factor; s++)
 			{
-				tilted_phase_part2[s] += phase_response[l * cpm.s_factor +s] * U_n;
-				tilted_phase_part3[s] += phase_response[l * cpm.s_factor +s];
+				tilted_phase_part2[s] += phase_response[l * cpm->s_factor +s] * U_n;
+				tilted_phase_part3[s] += phase_response[l * cpm->s_factor +s];
 			}
 		}
 
-		for (auto s = 0; s < cpm.s_factor; s++)
+		for (auto s = 0; s < cpm->s_factor; s++)
 		{
 			R tilted_phase = tilted_phase_part1 + (R)M_PI * cpm_h * (4 * tilted_phase_part2[s] +
-			                 (cpm.m_order -1) * (s * T_samp + (cpm.L -1) - 2 * tilted_phase_part3[s]));
+			                 (cpm->m_order -1) * (s * T_samp + (cpm->L -1) - 2 * tilted_phase_part3[s]));
 
-			baseband[allowed_wa * cpm.s_factor + s                      ] = std::cos(tilted_phase);
-			baseband[allowed_wa * cpm.s_factor + s + baseband.size() / 2] = std::sin(tilted_phase);
+			baseband[allowed_wa * cpm->s_factor + s                      ] = std::cos(tilted_phase);
+			baseband[allowed_wa * cpm->s_factor + s + baseband.size() / 2] = std::sin(tilted_phase);
 		}
 	}
 }
@@ -289,21 +304,21 @@ template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 R Modem_CPM<B,R,Q,MAX>
 ::calculate_phase_response(const R t_stamp)
 {
-	if (cpm.wave_shape == "GMSK")
+	if (cpm->wave_shape == "GMSK")
 	{
 		if (t_stamp == (R)0.0)
 			return (R)0.0;
 
-		GMSK<R> g((R)0.3, -(R)cpm.L / (R)2.0);
+		GMSK<R> g((R)0.3, -(R)cpm->L / (R)2.0);
 		return tools::mid_rect_integral_seq(g, (R)0.0, t_stamp, (int)(t_stamp / (R)1e-4));
 	}
-	else if (cpm.wave_shape == "RCOS")
-		return t_stamp / ((R)2.0 * cpm.L) - sin((R)2.0 * (R)M_PI * t_stamp / (R)cpm.L) / (R)4.0 / (R)M_PI;
-	else if (cpm.wave_shape == "REC")
-		return t_stamp / ((R)2.0 * cpm.L);
+	else if (cpm->wave_shape == "RCOS")
+		return t_stamp / ((R)2.0 * cpm->L) - sin((R)2.0 * (R)M_PI * t_stamp / (R)cpm->L) / (R)4.0 / (R)M_PI;
+	else if (cpm->wave_shape == "REC")
+		return t_stamp / ((R)2.0 * cpm->L);
 	else
 	{
-		std::string message = "Unknown CPM wave shape ('cpm.wave_shape' = " + cpm.wave_shape + ").";
+		std::string message = "Unknown CPM wave shape ('cpm->wave_shape' = " + cpm->wave_shape + ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message);
 	}
 }
@@ -324,14 +339,14 @@ void Modem_CPM<B,R,Q,MAX>
 
 	if (!no_sig2)
 	{
-		this->n->is_of_type_throw(tools::Noise_type::SIGMA);
+		this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
 
-		factor = (R)1 / (this->n->get_noise() * this->n->get_noise()); // 2 / sigma_complex^2
+		factor = (R)1 / (this->noise->get_value() * this->noise->get_value()); // 2 / sigma_complex^2
 	}
 
-	if (cpm.filters_type == "TOTAL")
+	if (cpm->filters_type == "TOTAL")
 	{
-		tools::complex_transpose(cpm.max_wa_id, cpm.s_factor, baseband, projection);
+		tools::complex_transpose(cpm->max_wa_id, cpm->s_factor, baseband, projection);
 
 		for (auto i = 0; i < (int)projection.size() ; i++)
 			projection[i] *= factor;
@@ -341,7 +356,7 @@ void Modem_CPM<B,R,Q,MAX>
 	//}
 	else
 	{
-		std::string message = "Unknown CPM filter bank type ('cpm.filters_type' = " + cpm.filters_type + ").";
+		std::string message = "Unknown CPM filter bank type ('cpm->filters_type' = " + cpm->filters_type + ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message);
 	}
 }

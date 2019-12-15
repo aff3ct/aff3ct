@@ -21,14 +21,22 @@ Decoder_LDPC_BP_flooding_SPA<B,R>
                                const bool enable_syndrome,
                                const int syndrome_depth,
                                const int n_frames)
-: Decoder(K, N, n_frames, 1),
-  Decoder_LDPC_BP_flooding<B,R,tools::Update_rule_SPA<R>>(K, N, n_ite, _H, info_bits_pos,
+: Decoder_LDPC_BP_flooding<B,R,tools::Update_rule_SPA<R>>(K, N, n_ite, _H, info_bits_pos,
                                                           tools::Update_rule_SPA<R>((unsigned int)_H.get_cols_max_degree()),
                                                           enable_syndrome, syndrome_depth, n_frames),
   values(_H.get_cols_max_degree())
 {
 	const std::string name = "Decoder_LDPC_BP_flooding_SPA";
 	this->set_name(name);
+}
+
+template <typename B, typename R>
+Decoder_LDPC_BP_flooding_SPA<B,R>* Decoder_LDPC_BP_flooding_SPA<B,R>
+::clone() const
+{
+	auto m = new Decoder_LDPC_BP_flooding_SPA(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B, typename R>

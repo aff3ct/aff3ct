@@ -24,6 +24,8 @@ public:
 	                             const int n_frames = 1);
 	virtual ~Decoder_RSC_DB_BCJR_DVB_RCS2() = default;
 
+	virtual Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>* clone() const;
+
 protected:
 	void __fwd_recursion(const R *sys, const R *par        );
 	void __bwd_recursion(const R *sys, const R *par, R* ext);

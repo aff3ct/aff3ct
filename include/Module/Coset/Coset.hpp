@@ -62,6 +62,8 @@ public:
 	 */
 	virtual ~Coset() = default;
 
+	virtual Coset<B,D>* clone() const;
+
 	int get_size() const;
 
 	/*!

@@ -55,8 +55,7 @@ Decoder_RSC_BCJR_intra<B,R>
                          const std::vector<std::vector<int>> &trellis,
                          const bool buffered_encoding,
                          const int n_frames)
-: Decoder(K, 2*(K + (int)std::log2(trellis[0].size())), n_frames, 1),
-  Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, n_frames, 1),
+: Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, n_frames, 1),
   alpha(8 * (K +4) + 1 * mipp::nElReg<R>()),
   gamma(2 * (K +3) + 2 * mipp::nElReg<R>())
 {
@@ -81,6 +80,13 @@ Decoder_RSC_BCJR_intra<B,R>
 
 	// init alpha values
 	RSC_BCJR_intra_init<R>::apply(alpha);
+}
+
+template <typename B, typename R>
+Decoder_RSC_BCJR_intra<B,R>* Decoder_RSC_BCJR_intra<B,R>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R>

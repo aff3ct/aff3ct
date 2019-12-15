@@ -15,11 +15,10 @@ Decoder_turbo_fast<B,R>
                      const int& N,
                      const int& n_ite,
                      const Interleaver<R> &pi,
-                     Decoder_SISO<R> &siso_n,
-                     Decoder_SISO<R> &siso_i,
+                     const Decoder_SISO<B,R> &siso_n,
+                     const Decoder_SISO<B,R> &siso_i,
                      const bool buffered_encoding)
-: Decoder(K, N, siso_n.get_n_frames(), siso_n.get_simd_inter_frame_level()),
-  Decoder_turbo<B,R>(K, N, n_ite, pi, siso_n, siso_i, buffered_encoding)
+: Decoder_turbo<B,R>(K, N, n_ite, pi, siso_n, siso_i, buffered_encoding)
 {
 	const std::string name = "Decoder_turbo_fast";
 	this->set_name(name);
@@ -31,8 +30,8 @@ void Decoder_turbo_fast<B,R>
 {
 	if (this->buffered_encoding && this->get_simd_inter_frame_level() > 1)
 	{
-		const auto tail_n = this->siso_n.tail_length();
-		const auto tail_i = this->siso_i.tail_length();
+		const auto tail_n = this->siso_n->tail_length();
+		const auto tail_i = this->siso_i->tail_length();
 
 		if (this->get_simd_inter_frame_level() == mipp::nElReg<B>())
 		{
@@ -41,19 +40,19 @@ void Decoder_turbo_fast<B,R>
 			std::vector<const R*> frames(n_frames);
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N + f*this->N;
-			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_sn.data(), this->siso_n.get_K() + tail_n/2);
+			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_sn.data(), this->siso_n->get_K() + tail_n/2);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*this->N + this->siso_n.get_K() + tail_n/2;
-			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_pn.data(), this->siso_n.get_K() + tail_n/2);
+				frames[f] = Y_N + f*this->N + this->siso_n->get_K() + tail_n/2;
+			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_pn.data(), this->siso_n->get_K() + tail_n/2);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*this->N + this->siso_n.get_N();
+				frames[f] = Y_N + f*this->N + this->siso_n->get_N();
 			tools::Reorderer_static<R,n_frames>::apply(frames, &this->l_si[this->K*n_frames], tail_i/2);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*this->N + this->siso_n.get_N() + tail_i/2;
-			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_pi.data(), this->siso_i.get_K() + tail_i/2);
+				frames[f] = Y_N + f*this->N + this->siso_n->get_N() + tail_i/2;
+			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_pi.data(), this->siso_i->get_K() + tail_i/2);
 
 			this->pi.interleave(this->l_sn.data(), this->l_si.data(), frame_id, this->get_simd_inter_frame_level(), true);
 		}
@@ -64,19 +63,19 @@ void Decoder_turbo_fast<B,R>
 			std::vector<const R*> frames(n_frames);
 			for (auto f = 0; f < n_frames; f++)
 				frames[f] = Y_N + f*this->N;
-			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_sn.data(), this->siso_n.get_K() + tail_n/2);
+			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_sn.data(), this->siso_n->get_K() + tail_n/2);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*this->N + this->siso_n.get_K() + tail_n/2;
-			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_pn.data(), this->siso_n.get_K() + tail_n/2);
+				frames[f] = Y_N + f*this->N + this->siso_n->get_K() + tail_n/2;
+			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_pn.data(), this->siso_n->get_K() + tail_n/2);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*this->N + this->siso_n.get_N();
+				frames[f] = Y_N + f*this->N + this->siso_n->get_N();
 			tools::Reorderer_static<R,n_frames>::apply(frames, &this->l_si[this->K*n_frames], tail_i/2);
 
 			for (auto f = 0; f < n_frames; f++)
-				frames[f] = Y_N + f*this->N + this->siso_n.get_N() + tail_i/2;
-			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_pi.data(), this->siso_i.get_K() + tail_i/2);
+				frames[f] = Y_N + f*this->N + this->siso_n->get_N() + tail_i/2;
+			tools::Reorderer_static<R,n_frames>::apply(frames, this->l_pi.data(), this->siso_i->get_K() + tail_i/2);
 
 			this->pi.interleave(this->l_sn.data(), this->l_si.data(), frame_id, this->get_simd_inter_frame_level(), true);
 		}
@@ -85,6 +84,15 @@ void Decoder_turbo_fast<B,R>
 	}
 	else
 		Decoder_turbo<B,R>::_load(Y_N, frame_id);
+}
+
+template <typename B, typename R>
+Decoder_turbo_fast<B,R>* Decoder_turbo_fast<B,R>
+::clone() const
+{
+	auto m = new Decoder_turbo_fast(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B, typename R>
@@ -97,8 +105,8 @@ void Decoder_turbo_fast<B,R>
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	const auto n_frames = this->get_simd_inter_frame_level();
-	const auto tail_n_2 = this->siso_n.tail_length() / 2;
-	const auto tail_i_2 = this->siso_i.tail_length() / 2;
+	const auto tail_n_2 = this->siso_n->tail_length() / 2;
+	const auto tail_i_2 = this->siso_i->tail_length() / 2;
 
 	// iterative turbo decoding process
 	bool stop = false;
@@ -116,11 +124,11 @@ void Decoder_turbo_fast<B,R>
 		          this->l_sen.begin() +  this->K             * n_frames);
 
 		// SISO in the natural domain
-		this->siso_n.decode_siso(this->l_sen.data(), this->l_pn.data(), this->l_e2n.data(), n_frames);
+		this->siso_n->decode_siso(this->l_sen.data(), this->l_pn.data(), this->l_e2n.data(), n_frames);
 
-		for (auto cb : this->callbacks_siso_n)
+		for (auto &pp : this->post_processings)
 		{
-			stop = cb(ite, this->l_sen, this->l_e2n, this->s);
+			stop = pp->siso_n(ite, this->l_sen, this->l_e2n, this->s);
 			if (stop) break;
 		}
 
@@ -140,11 +148,11 @@ void Decoder_turbo_fast<B,R>
 			          this->l_sei.begin() +  this->K             * n_frames);
 
 			// SISO in the interleave domain
-			this->siso_i.decode_siso(this->l_sei.data(), this->l_pi.data(), this->l_e2i.data(), n_frames);
+			this->siso_i->decode_siso(this->l_sei.data(), this->l_pi.data(), this->l_e2i.data(), n_frames);
 
-			for (auto cb : this->callbacks_siso_i)
+			for (auto &pp : this->post_processings)
 			{
-				stop = cb(ite, this->l_sei, this->l_e2i);
+				stop = pp->siso_i(ite, this->l_sei, this->l_e2i);
 				if (stop) break;
 			}
 
@@ -168,8 +176,9 @@ void Decoder_turbo_fast<B,R>
 	}
 	while ((ite <= this->n_ite) && !stop);
 
-	for (auto cb : this->callbacks_end)
-		cb(ite -1);
+	for (auto &pp : this->post_processings)
+		pp->end(ite -1);
+
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE

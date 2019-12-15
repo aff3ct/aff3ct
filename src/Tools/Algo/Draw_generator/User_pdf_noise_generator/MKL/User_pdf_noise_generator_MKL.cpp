@@ -40,6 +40,17 @@ User_pdf_noise_generator_MKL<R>
 }
 
 template <typename R>
+User_pdf_noise_generator_MKL<R>* User_pdf_noise_generator_MKL<R>
+::clone() const
+{
+	User_pdf_noise_generator_MKL<R>* eg = new User_pdf_noise_generator_MKL(*this);
+	VSLStreamStatePtr new_ptr;
+	vslCopyStream(&new_ptr, (VSLStreamStatePtr*)this->stream_state);
+	eg->stream_state = (void*)new_ptr;
+	return eg;
+}
+
+template <typename R>
 void User_pdf_noise_generator_MKL<R>
 ::set_seed(const int seed)
 {

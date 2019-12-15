@@ -121,15 +121,13 @@ struct Decoder_polar_SC_fast_sys_static<B,R,API_polar,0>
 template <typename B, typename R, class API_polar>
 Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int n_frames)
-: Decoder          (K, N, n_frames, API_polar::get_n_frames()),
-  Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames()),
+: Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames()),
   m                ((int)std::log2(N)),
   l                (2 * N * this->simd_inter_frame_level + mipp::nElReg<R>()   ),
   s                (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>(), 0),
   s_bis            (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>()   ),
   frozen_bits      (frozen_bits),
-  polar_patterns   (N,
-                    frozen_bits,
+  polar_patterns   (frozen_bits,
                     {new tools::Pattern_polar_std,
                      new tools::Pattern_polar_r0_left,
                      new tools::Pattern_polar_r0,
@@ -138,7 +136,8 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
                      new tools::Pattern_polar_rep,
                      new tools::Pattern_polar_spc},
                     2,
-                    3)
+                    3,
+                    true)
 {
 	const std::string name = "Decoder_polar_SC_fast_sys";
 	this->set_name(name);
@@ -173,16 +172,15 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 template <typename B, typename R, class API_polar>
 Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits,
-                            std::vector<std::unique_ptr<tools::Pattern_polar_i>> &&polar_patterns,
+                            const std::vector<tools::Pattern_polar_i*> &polar_patterns,
                             const int idx_r0, const int idx_r1, const int n_frames)
-: Decoder          (K, N, n_frames, API_polar::get_n_frames()),
-  Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames()),
+: Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames()),
   m                ((int)std::log2(N)),
   l                (2 * N * this->simd_inter_frame_level + mipp::nElReg<R>()   ),
   s                (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>(), 0),
   s_bis            (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>()   ),
   frozen_bits      (frozen_bits),
-  polar_patterns   (N, frozen_bits, std::move(polar_patterns), idx_r0, idx_r1)
+  polar_patterns   (frozen_bits, polar_patterns, idx_r0, idx_r1)
 {
 	const std::string name = "Decoder_polar_SC_fast_sys";
 	this->set_name(name);
@@ -215,10 +213,19 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SC_fast_sys<B,R,API_polar>
-::notify_frozenbits_update()
+Decoder_polar_SC_fast_sys<B,R,API_polar>* Decoder_polar_SC_fast_sys<B,R,API_polar>
+::clone() const
 {
-	polar_patterns.notify_frozenbits_update();
+	auto m = new Decoder_polar_SC_fast_sys(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B, typename R, class API_polar>
+void Decoder_polar_SC_fast_sys<B,R,API_polar>
+::notify_noise_update()
+{
+	polar_patterns.notify_noise_update();
 }
 
 template <typename B, typename R, class API_polar>

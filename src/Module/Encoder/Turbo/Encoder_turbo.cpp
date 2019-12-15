@@ -13,11 +13,11 @@ using namespace aff3ct::module;
 template <typename B>
 Encoder_turbo<B>
 ::Encoder_turbo(const int& K, const int& N, const Interleaver<B> &pi,
-                Encoder<B> &enco_n, Encoder<B> &enco_i)
+                const Encoder<B> &enco_n, const Encoder<B> &enco_i)
 : Encoder<B>(K, N, enco_n.get_n_frames()),
   pi        (pi),
-  enco_n    (enco_n),
-  enco_i    (enco_i),
+  enco_n    (enco_n.clone()),
+  enco_i    (enco_i.clone()),
   U_K_i     (K * enco_n.get_n_frames()),
   X_N_tmp   ((enco_n.get_N() >= enco_i.get_N() ? enco_n.get_N() : enco_i.get_N()) * enco_n.get_n_frames())
 {
@@ -52,10 +52,28 @@ Encoder_turbo<B>
 }
 
 template <typename B>
+Encoder_turbo<B>* Encoder_turbo<B>
+::clone() const
+{
+	auto m = new Encoder_turbo(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B>
+void Encoder_turbo<B>
+::deep_copy(const Encoder_turbo<B> &m)
+{
+	Module::deep_copy(m);
+	if (m.enco_n != nullptr) this->enco_n.reset(m.enco_n->clone());
+	if (m.enco_i != nullptr) this->enco_i.reset(m.enco_i->clone());
+}
+
+template <typename B>
 int Encoder_turbo<B>
 ::tail_length() const
 {
-	return enco_n.tail_length() + enco_i.tail_length();
+	return enco_n->tail_length() + enco_i->tail_length();
 }
 
 template <typename B>
@@ -64,37 +82,37 @@ void Encoder_turbo<B>
 {
 	pi.interleave(U_K - frame_id * this->K, U_K_i.data(), frame_id);
 
-	enco_n.encode(U_K - frame_id * this->K, X_N_tmp.data(), frame_id);
+	enco_n->encode(U_K - frame_id * this->K, X_N_tmp.data(), frame_id);
 
-	std::copy(X_N_tmp.data() + frame_id * enco_n.get_N(),
-	          X_N_tmp.data() + frame_id * enco_n.get_N() + enco_n.get_N(),
+	std::copy(X_N_tmp.data() + frame_id * enco_n->get_N(),
+	          X_N_tmp.data() + frame_id * enco_n->get_N() + enco_n->get_N(),
 	          X_N);
 
-	enco_i.encode(U_K_i.data(), X_N_tmp.data(), frame_id);
+	enco_i->encode(U_K_i.data(), X_N_tmp.data(), frame_id);
 
-	std::copy(X_N_tmp.data() + frame_id * enco_i.get_N() + enco_i.get_K(),
-	          X_N_tmp.data() + frame_id * enco_i.get_N() + enco_i.get_N(),
-	          X_N                                        + enco_n.get_N());
+	std::copy(X_N_tmp.data() + frame_id * enco_i->get_N() + enco_i->get_K(),
+	          X_N_tmp.data() + frame_id * enco_i->get_N() + enco_i->get_N(),
+	          X_N                                         + enco_n->get_N());
 }
 
 template <typename B>
 bool Encoder_turbo<B>
 ::is_codeword(const B *X_N)
 {
-	if (!enco_n.is_codeword(X_N))
+	if (!enco_n->is_codeword(X_N))
 		return false;
 
 	const auto *U_K_n = X_N;
 	pi.interleave(U_K_n, U_K_i.data());
 
 	std::copy(U_K_i  .begin(),
-	          U_K_i  .begin() + enco_i.get_K(),
+	          U_K_i  .begin() + enco_i->get_K(),
 	          X_N_tmp.begin());
-	std::copy(X_N             + enco_n.get_N(),
+	std::copy(X_N             + enco_n->get_N(),
 	          X_N             + this->N,
-	          X_N_tmp.begin() + enco_i.get_K());
+	          X_N_tmp.begin() + enco_i->get_K());
 
-	if (!enco_i.is_codeword(X_N_tmp.data()))
+	if (!enco_i->is_codeword(X_N_tmp.data()))
 		return false;
 
 	return true;

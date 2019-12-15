@@ -10,11 +10,19 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_NO<B,R>
 ::Decoder_NO(const int K, const int n_frames)
-: Decoder               (K, K, n_frames, 1),
-  Decoder_SISO_SIHO<B,R>(K, K, n_frames, 1)
+: Decoder_SISO<B,R>(K, K, n_frames, 1)
 {
 	const std::string name = "Decoder_NO";
 	this->set_name(name);
+}
+
+template <typename B, typename R>
+Decoder_NO<B,R>* Decoder_NO<B,R>
+::clone() const
+{
+	auto m = new Decoder_NO(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B, typename R>

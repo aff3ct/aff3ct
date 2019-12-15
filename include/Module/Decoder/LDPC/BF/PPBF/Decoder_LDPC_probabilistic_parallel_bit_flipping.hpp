@@ -19,6 +19,10 @@ namespace module
 template <typename B = int, typename R = float>
 class Decoder_LDPC_probabilistic_parallel_bit_flipping : public Decoder_LDPC_bit_flipping_hard<B,R>
 {
+protected:
+	std::mt19937 rd_engine; // Mersenne Twister 19937
+	std::vector<std::bernoulli_distribution> bernouilli_dist;
+
 public:
 	Decoder_LDPC_probabilistic_parallel_bit_flipping(const int &K, const int &N, const int& n_ite,
 	                                                 const tools::Sparse_matrix &H,
@@ -29,11 +33,11 @@ public:
 	                                                 const int seed = 0,
 	                                                 const int n_frames = 1);
 	virtual ~Decoder_LDPC_probabilistic_parallel_bit_flipping() = default;
+	virtual Decoder_LDPC_probabilistic_parallel_bit_flipping<B,R>* clone() const;
+
+	virtual void set_seed(const int seed);
 
 protected:
-	std::mt19937 rd_engine; // Mersenne Twister 19937
-	std::vector<std::unique_ptr<std::bernoulli_distribution>> bernouilli_dist;
-
 	virtual void cn_process(const B *VN,  B *CN,              const int frame_id);
 	virtual void vn_process(const B *Y_N, B *VN, const B *CN, const int frame_id);
 };

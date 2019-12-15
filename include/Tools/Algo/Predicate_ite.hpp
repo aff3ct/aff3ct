@@ -25,6 +25,8 @@ private:
 public:
 	inline explicit Predicate_ite(const int n_ite);
 
+	virtual Predicate_ite* clone() const;
+
 	virtual ~Predicate_ite() = default;
 
 	inline bool operator()();

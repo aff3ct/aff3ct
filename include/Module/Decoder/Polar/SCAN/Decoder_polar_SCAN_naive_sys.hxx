@@ -12,11 +12,20 @@ template <typename B, typename R,
 Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
 ::Decoder_polar_SCAN_naive_sys(const int &K, const int &N, const int &max_iter, const std::vector<bool> &frozen_bits,
                                const int n_frames)
-: Decoder(K, N, n_frames, 1),
-  Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>(K, N, max_iter, frozen_bits, n_frames)
+: Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>(K, N, max_iter, frozen_bits, n_frames)
 {
 	const std::string name = "Decoder_polar_SCAN_naive_sys";
 	this->set_name(name);
+}
+
+template <typename B, typename R,
+          tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
+Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>* Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
+::clone() const
+{
+	auto m = new Decoder_polar_SCAN_naive_sys(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B, typename R,
@@ -25,7 +34,6 @@ void Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	// ----------------------------------------------------------------------------------------------------------- LOAD
-	this->_load_init();
 
 	// init the softGraph (special case for the right most stage)
 	auto sys_idx = 0, par_idx = 0;

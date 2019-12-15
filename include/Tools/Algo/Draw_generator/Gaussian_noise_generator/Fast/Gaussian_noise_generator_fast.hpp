@@ -22,7 +22,8 @@ private:
 
 public:
 	explicit Gaussian_noise_generator_fast(const int seed = 0);
-	virtual ~Gaussian_noise_generator_fast();
+	virtual ~Gaussian_noise_generator_fast() = default;
+	virtual Gaussian_noise_generator_fast<R>* clone() const;
 
 	virtual void set_seed(const int seed);
 	virtual void generate(R *noise, const unsigned length, const R sigma, const R mu = 0.0);

@@ -62,6 +62,8 @@ public:
 	 */
 	virtual ~Quantizer() = default;
 
+	virtual Quantizer<R,Q>* clone() const;
+
 	int get_N() const;
 
 	/*!

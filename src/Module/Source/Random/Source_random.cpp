@@ -14,12 +14,28 @@ Source_random<B>
 }
 
 template <typename B>
+Source_random<B>* Source_random<B>
+::clone() const
+{
+	auto m = new Source_random(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B>
 void Source_random<B>
 ::_generate(B *U_K, const int frame_id)
 {
 	// generate a random k bits vector U_k
 	for (auto i = 0; i < this->K; i++)
 		U_K[i] = (B)this->uniform_dist(this->rd_engine);
+}
+
+template <typename B>
+void Source_random<B>
+::set_seed(const int seed)
+{
+	rd_engine.seed(seed);
 }
 
 // ==================================================================================== explicit template instantiation

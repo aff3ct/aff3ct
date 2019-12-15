@@ -151,5 +151,23 @@ constexpr size_t offsetOf(U T::*member)
     return (char*)&((T*)nullptr->*member) - (char*)nullptr;
 }
 
+template<typename T>
+std::vector<T*> convert_to_ptr(const std::vector<std::unique_ptr<T>> &v)
+{
+	std::vector<T*> v2;
+	for (auto &e : v)
+		v2.push_back(e.get());
+	return v2;
+}
+
+template<typename T>
+std::vector<T*> convert_to_ptr(const std::vector<std::shared_ptr<T>> &v)
+{
+	std::vector<T*> v2;
+	for (auto &e : v)
+		v2.push_back(e.get());
+	return v2;
+}
+
 }
 }

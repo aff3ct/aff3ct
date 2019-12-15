@@ -9,7 +9,7 @@
 #include <mipp.h>
 
 #include "Tools/Algo/Matrix/Sparse_matrix/Sparse_matrix.hpp"
-#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 #include "Module/Decoder/LDPC/BP/Decoder_LDPC_BP.hpp"
 
 namespace aff3ct
@@ -17,7 +17,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename R = float>
-class Decoder_LDPC_BP_horizontal_layered_ONMS_inter : public Decoder_SISO_SIHO<B,R>, public Decoder_LDPC_BP
+class Decoder_LDPC_BP_horizontal_layered_ONMS_inter : public Decoder_SISO<B,R>, public Decoder_LDPC_BP
 {
 private:
 	const float normalize_factor;
@@ -26,9 +26,6 @@ private:
 
 protected:
 	const R saturation;
-
-	// reset so C_to_V and V_to_C structures can be cleared only at the beginning of the loop in iterative decoding
-	bool init_flag;
 
 	const std::vector<unsigned> &info_bits_pos;
 
@@ -49,10 +46,11 @@ public:
 	                                              const int syndrome_depth = 1,
 	                                              const int n_frames = 1);
 	virtual ~Decoder_LDPC_BP_horizontal_layered_ONMS_inter() = default;
-
-	void reset();
+	virtual Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>* clone() const;
 
 protected:
+	void _reset(const int frame_id);
+
 	void _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);
 	void _decode_siho   (const R *Y_N,  B *V_K,  const int frame_id);
 	void _decode_siho_cw(const R *Y_N,  B *V_N,  const int frame_id);

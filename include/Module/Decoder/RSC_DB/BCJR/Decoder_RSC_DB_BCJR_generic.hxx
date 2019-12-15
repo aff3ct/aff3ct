@@ -14,11 +14,19 @@ Decoder_RSC_DB_BCJR_generic<B,R,MAX>
                               const std::vector<std::vector<int>> &trellis,
                               const bool buffered_encoding,
                               const int n_frames)
-: Decoder(K, 2 * K, n_frames, 1),
-  Decoder_RSC_DB_BCJR<B,R>(K, trellis, buffered_encoding, n_frames)
+: Decoder_RSC_DB_BCJR<B,R>(K, trellis, buffered_encoding, n_frames)
 {
 	const std::string name = "Decoder_RSC_DB_BCJR_generic";
 	this->set_name(name);
+}
+
+template <typename B, typename R, tools::proto_max<R> MAX>
+Decoder_RSC_DB_BCJR_generic<B,R,MAX>* Decoder_RSC_DB_BCJR_generic<B,R,MAX>
+::clone() const
+{
+	auto m = new Decoder_RSC_DB_BCJR_generic(*this);
+	m->deep_copy(*this);
+	return m;
 }
 
 template <typename B, typename R, tools::proto_max<R> MAX>

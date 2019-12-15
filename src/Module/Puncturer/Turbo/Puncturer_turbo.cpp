@@ -39,6 +39,15 @@ Puncturer_turbo<B,Q>
 	}
 }
 
+template<typename B, typename Q>
+Puncturer_turbo<B,Q>* Puncturer_turbo<B,Q>
+::clone() const
+{
+	auto m = new Puncturer_turbo(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
 template <typename B, typename Q>
 void Puncturer_turbo<B,Q>
 ::_puncture(const B *X_N1, B *X_N2, const int frame_id) const

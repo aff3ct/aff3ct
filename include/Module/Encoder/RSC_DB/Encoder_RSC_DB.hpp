@@ -45,6 +45,8 @@ public:
 	               const int n_frames = 1);
 	virtual ~Encoder_RSC_DB() = default;
 
+	virtual Encoder_RSC_DB<B>* clone() const;
+
 	int tail_length() const {return 0;}
 	std::vector<std::vector<int>> get_trellis();
 

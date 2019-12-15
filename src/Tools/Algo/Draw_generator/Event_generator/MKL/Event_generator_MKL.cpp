@@ -28,6 +28,17 @@ Event_generator_MKL<R,E>
 }
 
 template <typename R, typename E>
+Event_generator_MKL<R,E>* Event_generator_MKL<R,E>
+::clone() const
+{
+	Event_generator_MKL<R,E>* eg = new Event_generator_MKL(*this);
+	VSLStreamStatePtr new_ptr;
+	vslCopyStream(&new_ptr, (VSLStreamStatePtr*)this->stream_state);
+	eg->stream_state = (void*)new_ptr;
+	return eg;
+}
+
+template <typename R, typename E>
 void Event_generator_MKL<R,E>
 ::set_seed(const int seed)
 {

@@ -17,6 +17,7 @@ class CRC_NO : public CRC<B>
 public:
 	CRC_NO(const int K, const int n_frames = 1);
 	virtual ~CRC_NO() = default;
+	virtual CRC_NO<B>* clone() const;
 
 	int get_size() const;
 

@@ -28,6 +28,8 @@ public:
 
 	virtual ~Frozenbits_generator_file() = default;
 
+	virtual Frozenbits_generator_file* clone() const;
+
 protected:
 	void evaluate();
 	bool load_channels_file(const std::string& filename, std::vector<uint32_t>& best_channels);

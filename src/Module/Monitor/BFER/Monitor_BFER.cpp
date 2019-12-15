@@ -29,10 +29,10 @@ Monitor_BFER<B>
 	auto &p = this->create_task("check_errors", (int)mnt::tsk::check_errors);
 	auto ps_U = this->template create_socket_in<B>(p, "U", get_K());
 	auto ps_V = this->template create_socket_in<B>(p, "V", get_K());
-	this->create_codelet(p, [this, ps_U, ps_V](Task &t) -> int
+	this->create_codelet(p, [ps_U, ps_V](Module &m, Task &t) -> int
 	{
-		return this->check_errors(static_cast<B*>(t[ps_U].get_dataptr()),
-		                          static_cast<B*>(t[ps_V].get_dataptr()));
+		return static_cast<Monitor_BFER<B>&>(m).check_errors(static_cast<B*>(t[ps_U].get_dataptr()),
+		                                                     static_cast<B*>(t[ps_V].get_dataptr()));
 	});
 
 	reset();
@@ -53,6 +53,38 @@ Monitor_BFER<B>
 {
 }
 
+template <typename B>
+Monitor_BFER<B>* Monitor_BFER<B>
+::clone() const
+{
+	if (this->callback_fe.size())
+	{
+		std::stringstream message;
+		message << "'callback_fe.size()' has to be equal to 0 ('callback_fe.size()' = "
+		        << this->callback_fe.size() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (this->callback_check.size())
+	{
+		std::stringstream message;
+		message << "'callback_check.size()' has to be equal to 0 ('callback_check.size()' = "
+		        << this->callback_check.size() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (this->callback_fe_limit_achieved.size())
+	{
+		std::stringstream message;
+		message << "'callback_fe_limit_achieved.size()' has to be equal to 0 ('callback_fe_limit_achieved.size()' = "
+		        << this->callback_fe_limit_achieved.size() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	auto m = new Monitor_BFER(*this);
+	m->deep_copy(*this);
+	return m;
+}
 
 template <typename B>
 bool Monitor_BFER<B>
@@ -72,8 +104,8 @@ bool Monitor_BFER<B>
 			return false;
 
 		std::stringstream message;
-		message << "'get_max_fe()' is different than 'm.get_max_fe()' ('this->get_max_fe()' = " << get_max_fe() << ", 'm.get_max_fe()' = "
-		        << m.get_max_fe() << ").";
+		message << "'get_max_fe()' is different than 'm.get_max_fe()' ('this->get_max_fe()' = " << get_max_fe()
+		        << ", 'm.get_max_fe()' = " << m.get_max_fe() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -83,8 +115,8 @@ bool Monitor_BFER<B>
 			return false;
 
 		std::stringstream message;
-		message << "'get_max_n_frames()' is different than 'm.get_max_n_frames()' ('this->get_max_n_frames()' = " << get_max_n_frames() << ", 'm.get_max_n_frames()' = "
-		        << m.get_max_n_frames() << ").";
+		message << "'get_max_n_frames()' is different than 'm.get_max_n_frames()' ('this->get_max_n_frames()' = "
+		        << get_max_n_frames() << ", 'm.get_max_n_frames()' = " << m.get_max_n_frames() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -94,8 +126,9 @@ bool Monitor_BFER<B>
 			return false;
 
 		std::stringstream message;
-		message << "'get_count_unknown_values()' is different than 'm.get_count_unknown_values()' ('get_count_unknown_values()' = " << get_count_unknown_values() << ", 'm.get_count_unknown_values()' = "
-		        << m.get_count_unknown_values() << ").";
+		message << "'get_count_unknown_values()' is different than 'm.get_count_unknown_values()' "
+		        << "('get_count_unknown_values()' = " << get_count_unknown_values()
+		        << ", 'm.get_count_unknown_values()' = " << m.get_count_unknown_values() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -115,12 +148,10 @@ int Monitor_BFER<B>
 		                            V + f * get_K(),
 		                            f);
 
-	for (auto& c : this->callbacks_check)
-		c();
+	this->callback_check.notify();
 
 	if (this->fe_limit_achieved())
-		for (auto& c : this->callbacks_fe_limit_achieved)
-			c();
+		this->callback_fe_limit_achieved.notify();
 
 	return n_be;
 }
@@ -144,8 +175,7 @@ int Monitor_BFER<B>
 		if (err_hist_activated)
 			err_hist.add_value(bit_errors_count);
 
-		for (auto& c : this->callbacks_fe)
-			c(bit_errors_count, frame_id);
+		this->callback_fe.notify(bit_errors_count, frame_id);
 	}
 
 	vals.n_fra++;
@@ -173,8 +203,6 @@ bool Monitor_BFER<B>
 {
 	return fe_limit_achieved() || frame_limit_achieved();
 }
-
-
 
 template <typename B>
 const typename Monitor_BFER<B>::Attributes& Monitor_BFER<B>
@@ -271,30 +299,47 @@ void Monitor_BFER<B>
 	err_hist_activated = val;
 }
 
-
-
 template <typename B>
-void Monitor_BFER<B>
-::add_handler_fe(std::function<void(unsigned, int)> callback)
+uint32_t Monitor_BFER<B>
+::record_callback_fe(std::function<void(unsigned, int)> callback)
 {
-	this->callbacks_fe.push_back(callback);
+	return this->callback_fe.record(callback);
 }
 
 template <typename B>
-void Monitor_BFER<B>
-::add_handler_check(std::function<void(void)> callback)
+uint32_t Monitor_BFER<B>
+::record_callback_check(std::function<void(void)> callback)
 {
-	this->callbacks_check.push_back(callback);
+	return this->callback_check.record(callback);
 }
 
 template <typename B>
-void Monitor_BFER<B>
-::add_handler_fe_limit_achieved(std::function<void(void)> callback)
+uint32_t Monitor_BFER<B>
+::record_callback_fe_limit_achieved(std::function<void(void)> callback)
 {
-	this->callbacks_fe_limit_achieved.push_back(callback);
+	return this->callback_fe_limit_achieved.record(callback);
 }
 
+template <typename B>
+bool Monitor_BFER<B>
+::unrecord_callback_fe(const uint32_t id)
+{
+	return this->callback_fe.unrecord(id);
+}
 
+template <typename B>
+bool Monitor_BFER<B>
+::unrecord_callback_check(const uint32_t id)
+{
+	return this->callback_check.unrecord(id);
+}
+
+template <typename B>
+bool Monitor_BFER<B>
+::unrecord_callback_fe_limit_achieved(const uint32_t id)
+{
+	return this->callback_fe_limit_achieved.unrecord(id);
+}
 
 template <typename B>
 void Monitor_BFER<B>
@@ -310,28 +355,23 @@ template <typename B>
 void Monitor_BFER<B>
 ::clear_callbacks()
 {
-	Monitor::clear_callbacks();
-
-	this->callbacks_fe               .clear();
-	this->callbacks_check            .clear();
-	this->callbacks_fe_limit_achieved.clear();
+	this->callback_fe.clear();
+	this->callback_check.clear();
+	this->callback_fe_limit_achieved.clear();
 }
 
 template <typename B>
 void Monitor_BFER<B>
 ::collect(const Monitor& m, bool fully)
 {
-	collect(dynamic_cast<const Monitor_BFER<B>&>(m), fully);
+	collect(static_cast<const Monitor_BFER<B>&>(m), fully);
 }
 
 template <typename B>
 void Monitor_BFER<B>
 ::collect(const Monitor_BFER<B>& m, bool fully)
 {
-	equivalent(m, true);
-
 	collect(m.get_attributes());
-
 	if (fully)
 		this->err_hist.add_values(m.err_hist);
 }
@@ -351,23 +391,18 @@ Monitor_BFER<B>& Monitor_BFER<B>
 	return *this;
 }
 
-
-
 template <typename B>
 void Monitor_BFER<B>
 ::copy(const Monitor& m, bool fully)
 {
-	copy(dynamic_cast<const Monitor_BFER<B>&>(m), fully);
+	copy(static_cast<const Monitor_BFER<B>&>(m), fully);
 }
 
 template <typename B>
 void Monitor_BFER<B>
 ::copy(const Monitor_BFER<B>& m, bool fully)
 {
-	equivalent(m, true);
-
 	copy(m.get_attributes());
-
 	if (fully)
 		this->err_hist = m.err_hist;
 }

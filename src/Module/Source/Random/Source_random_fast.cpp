@@ -22,6 +22,15 @@ Source_random_fast<B>
 }
 
 template <typename B>
+Source_random_fast<B>* Source_random_fast<B>
+::clone() const
+{
+	auto m = new Source_random_fast(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B>
 void Source_random_fast<B>
 ::_generate(B *U_K, const int frame_id)
 {
@@ -59,6 +68,17 @@ void Source_random_fast<B>
 			j++;
 		}
 	}
+}
+
+template <typename B>
+void Source_random_fast<B>
+::set_seed(const int seed)
+{
+	mt19937.seed(seed);
+	mipp::vector<int> seeds(mipp::nElReg<int>());
+	for (auto i = 0; i < mipp::nElReg<int>(); i++)
+		seeds[i] = mt19937.rand();
+	mt19937_simd.seed(seeds.data());
 }
 
 // ==================================================================================== explicit template instantiation

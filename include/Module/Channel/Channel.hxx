@@ -33,8 +33,8 @@ Socket& Channel<R>
 
 template <typename R>
 Channel<R>
-::Channel(const int N, const tools::Noise<R>& _n, const int n_frames)
-: Module(n_frames), N(N), n(_n.clone()), noise(this->N * this->n_frames, 0)
+::Channel(const int N, const int n_frames)
+: Module(n_frames), N(N), noise(nullptr), noised_data(this->N * this->n_frames, 0)
 {
 	const std::string name = "Channel";
 	this->set_name(name);
@@ -50,10 +50,10 @@ Channel<R>
 	auto &p1 = this->create_task("add_noise");
 	auto p1s_X_N = this->template create_socket_in <R>(p1, "X_N", this->N);
 	auto p1s_Y_N = this->template create_socket_out<R>(p1, "Y_N", this->N);
-	this->create_codelet(p1, [this, p1s_X_N, p1s_Y_N](Task &t) -> int
+	this->create_codelet(p1, [p1s_X_N, p1s_Y_N](Module &m, Task &t) -> int
 	{
-		this->add_noise(static_cast<R*>(t[p1s_X_N].get_dataptr()),
-		                static_cast<R*>(t[p1s_Y_N].get_dataptr()));
+		static_cast<Channel<R>&>(m).add_noise(static_cast<R*>(t[p1s_X_N].get_dataptr()),
+		                                      static_cast<R*>(t[p1s_Y_N].get_dataptr()));
 
 		return 0;
 	});
@@ -62,21 +62,21 @@ Channel<R>
 	auto p2s_X_N = this->template create_socket_in <R>(p2, "X_N", this->N);
 	auto p2s_H_N = this->template create_socket_out<R>(p2, "H_N", this->N);
 	auto p2s_Y_N = this->template create_socket_out<R>(p2, "Y_N", this->N);
-	this->create_codelet(p2, [this, p2s_X_N, p2s_H_N, p2s_Y_N](Task &t) -> int
+	this->create_codelet(p2, [p2s_X_N, p2s_H_N, p2s_Y_N](Module &m, Task &t) -> int
 	{
-		this->add_noise_wg(static_cast<R*>(t[p2s_X_N].get_dataptr()),
-		                   static_cast<R*>(t[p2s_H_N].get_dataptr()),
-		                   static_cast<R*>(t[p2s_Y_N].get_dataptr()));
+		static_cast<Channel<R>&>(m).add_noise_wg(static_cast<R*>(t[p2s_X_N].get_dataptr()),
+		                                         static_cast<R*>(t[p2s_H_N].get_dataptr()),
+		                                         static_cast<R*>(t[p2s_Y_N].get_dataptr()));
 
 		return 0;
 	});
 }
 
 template <typename R>
-Channel<R>
-::Channel(const int N, const int n_frames)
-: Channel(N, tools::Sigma<R>(), n_frames)
+Channel<R>* Channel<R>
+::clone() const
 {
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename R>
@@ -88,24 +88,46 @@ int Channel<R>
 
 template <typename R>
 const std::vector<R>& Channel<R>
-::get_noise() const
+::get_noised_data() const
 {
-	return noise;
+	return this->noised_data;
 }
 
 template <typename R>
 void Channel<R>
-::set_noise(const tools::Noise<R>& _n)
+::set_noise(const tools::Noise<>& noise)
 {
-	this->n.reset(_n.clone());
+	this->noise = &noise;
+	if (this->noise->is_set())
+		this->notify_noise_update();
+}
+
+template <typename R>
+void Channel<R>
+::notify_noise_update()
+{
 	this->check_noise();
 }
 
 template<typename R>
-const tools::Noise <R> *Channel<R>
-::current_noise() const
+const tools::Noise<>& Channel<R>
+::get_noise() const
 {
-	return this->n;
+	if (this->noise == nullptr)
+	{
+		std::stringstream message;
+		message << "'noise' should not be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->noise;
+}
+
+template <typename R>
+void Channel<R>
+::set_seed(const int seed)
+{
+	// do nothing in the general case, this method has to be overrided
 }
 
 template <typename R>
@@ -241,10 +263,10 @@ template<typename R>
 void Channel<R>
 ::check_noise()
 {
-	if (this->n == nullptr)
+	if (this->noise == nullptr)
 	{
 		std::stringstream message;
-		message << "No noise has been set.";
+		message << "'noise' should not be nullptr.";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 }

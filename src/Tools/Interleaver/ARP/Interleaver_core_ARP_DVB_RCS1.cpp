@@ -97,6 +97,14 @@ Interleaver_core_ARP_DVB_RCS1<T>
 }
 
 template <typename T>
+Interleaver_core_ARP_DVB_RCS1<T>* Interleaver_core_ARP_DVB_RCS1<T>
+::clone() const
+{
+	auto t = new Interleaver_core_ARP_DVB_RCS1(*this);
+	return t;
+}
+
+template <typename T>
 void Interleaver_core_ARP_DVB_RCS1<T>
 ::gen_lut(T *lut, const int frame_id)
 {

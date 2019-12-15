@@ -14,6 +14,15 @@ Puncturer_NO<B,Q>
 	this->set_name(name);
 }
 
+template<typename B, typename Q>
+Puncturer_NO<B,Q>* Puncturer_NO<B,Q>
+::clone() const
+{
+	auto m = new Puncturer_NO(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
 template <typename B, typename Q>
 void Puncturer_NO<B,Q>
 ::_puncture(const B *X_N1, B *X_N2, const int frame_id) const

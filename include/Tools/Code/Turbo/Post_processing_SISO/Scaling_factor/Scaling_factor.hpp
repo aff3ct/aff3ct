@@ -33,6 +33,8 @@ public:
 	 * \brief Destructor.
 	 */
 	virtual ~Scaling_factor() = default;
+
+	virtual Scaling_factor<B,R>* clone() const;
 };
 }
 }

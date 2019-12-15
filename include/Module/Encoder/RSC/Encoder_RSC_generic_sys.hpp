@@ -26,6 +26,8 @@ public:
 	                        std::vector<int> poly = {5,7}, const int n_frames = 1);
 	virtual ~Encoder_RSC_generic_sys() = default;
 
+	virtual Encoder_RSC_generic_sys<B>* clone() const;
+
 protected:
 	virtual int inner_encode(const int bit_sys, int &state);
 	virtual int tail_bit_sys(const int &state             );

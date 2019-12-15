@@ -7,7 +7,6 @@
 
 #include <vector>
 #include <string>
-#include <memory>
 #include <map>
 #include <cli.hpp>
 
@@ -60,13 +59,13 @@ public:
 
 	// builder
 	template <typename B = int, typename Q = float>
-	module::Decoder_turbo_DB<B,Q>* build(const module::Interleaver<Q>              &itl,
-	                                           module::Decoder_RSC_DB_BCJR<B,Q>    &siso_n,
-	                                           module::Decoder_RSC_DB_BCJR<B,Q>    &siso_i,
-	                                     const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
+	module::Decoder_turbo_DB<B,Q>* build(const module::Interleaver<Q>           &itl,
+	                                     const module::Decoder_RSC_DB_BCJR<B,Q> &siso_n,
+	                                     const module::Decoder_RSC_DB_BCJR<B,Q> &siso_i,
+	                                           module::Encoder<B>               *encoder = nullptr) const;
 
 	template <typename B = int, typename Q = float>
-	module::Decoder_SIHO<B,Q>* build(const std::unique_ptr<module::Encoder<B>> &encoder = nullptr) const;
+	module::Decoder_SIHO<B,Q>* build(module::Encoder<B> *encoder = nullptr) const;
 };
 }
 }

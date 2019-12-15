@@ -36,6 +36,16 @@ User_pdf_noise_generator_GSL<R>
 }
 
 template <typename R>
+User_pdf_noise_generator_GSL<R>* User_pdf_noise_generator_GSL<R>
+::clone() const
+{
+	User_pdf_noise_generator_GSL<R>* eg = new User_pdf_noise_generator_GSL(*this);
+	eg->rng = (void*)gsl_rng_alloc(gsl_rng_mt19937);
+	eg->set_seed((int)gsl_rng_get((gsl_rng*)this->rng));
+	return eg;
+}
+
+template <typename R>
 void User_pdf_noise_generator_GSL<R>
 ::set_seed(const int seed)
 {

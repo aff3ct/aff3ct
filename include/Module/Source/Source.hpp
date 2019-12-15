@@ -9,6 +9,7 @@
 #include <memory>
 #include <vector>
 
+#include "Tools/Interface/Interface_set_seed.hpp"
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
 #include "Module/Module.hpp"
@@ -37,7 +38,7 @@ namespace module
  * Please use Source for inheritance (instead of Source).
  */
 template <typename B = int>
-class Source : public Module
+class Source : public Module, public tools::Interface_set_seed
 {
 public:
 	inline Task&   operator[](const src::tsk           t);
@@ -60,6 +61,8 @@ public:
 	 */
 	virtual ~Source() = default;
 
+	virtual Source<B>* clone() const;
+
 	virtual int get_K() const;
 
 	/*!
@@ -71,6 +74,8 @@ public:
 	void generate(std::vector<B,A>& U_K, const int frame_id = -1);
 
 	virtual void generate(B *U_K, const int frame_id = -1);
+
+	virtual void set_seed(const int seed);
 
 protected:
 	virtual void _generate(B *U_K, const int frame_id);

@@ -6,9 +6,10 @@
 #define DECODER_TURBO_PRODUCT_HPP_
 
 #include <vector>
+#include <memory>
 
 #include "Module/Interleaver/Interleaver.hpp"
-#include "Module/Decoder/Decoder_SISO_SIHO.hpp"
+#include "Module/Decoder/Decoder_SISO.hpp"
 #include "Module/Decoder/Turbo_product/Chase_pyndiah/Decoder_chase_pyndiah.hpp"
 
 namespace aff3ct
@@ -30,7 +31,7 @@ namespace module
  *
  */
 template <typename B = int, typename R = float>
-class Decoder_turbo_product : public Decoder_SISO_SIHO<B,R>
+class Decoder_turbo_product : public Decoder_SISO<B,R>
 {
 protected:
 	const int  n_ite; // number of iterations
@@ -38,8 +39,8 @@ protected:
 	const std::vector<float> beta;
 
 	const Interleaver<R> &pi;
-	Decoder_chase_pyndiah<B,R> &cp_r; // row decoder
-	Decoder_chase_pyndiah<B,R> &cp_c; // col decoder
+	std::shared_ptr<Decoder_chase_pyndiah<B,R>> cp_r; // row decoder
+	std::shared_ptr<Decoder_chase_pyndiah<B,R>> cp_c; // col decoder
 
 	std::vector<R> Y_N_i;
 	std::vector<R> Y_N_pi;
@@ -52,13 +53,15 @@ public:
 	Decoder_turbo_product(const int& n_ite,
 	                      const std::vector<float>& alpha,
 	                      const Interleaver<R> &pi,
-	                      Decoder_chase_pyndiah<B,R> &cp_r,
-	                      Decoder_chase_pyndiah<B,R> &cp_c,
+	                      const Decoder_chase_pyndiah<B,R> &cp_r,
+	                      const Decoder_chase_pyndiah<B,R> &cp_c,
 	                      const std::vector<float>& beta = {},
 	                      const int n_frames = 1);
 	virtual ~Decoder_turbo_product() = default;
+	virtual Decoder_turbo_product<B,R>* clone() const;
 
 protected:
+	virtual void deep_copy(const Decoder_turbo_product<B,R> &m);
 	void _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);
 	void _decode_siho   (const R *Y_N,  B *V_K,  const int frame_id);
 	void _decode_siho_cw(const R *Y_N,  B *V_N,  const int frame_id);

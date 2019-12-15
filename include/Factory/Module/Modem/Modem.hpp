@@ -31,12 +31,12 @@ public:
 
 	// optional parameters
 	// ------- modulator parameters
-	std::string type       = "BPSK";    // modulation type (PAM, QAM, ...)
-	std::string implem     = "STD";
-	std::string const_path = "";        // PATH to constellation file (CSV file)
-	std::string codebook   = "";        // PATH to codebook file
-	bool        complex    = true;      // true if the modulated signal is complex
-	int         bps        = 1;         // bits per symbol
+	std::string type          = "BPSK"; // modulation type (PAM, QAM, ...)
+	std::string implem        = "STD";
+	std::string const_path    = "";     // PATH to constellation file (CSV file)
+	std::string codebook_path = "";     // PATH to codebook file
+	bool        complex       = true;   // true if the modulated signal is complex
+	int         bps           = 1;      // bits per symbol
 
 	// -------- CPM parameters
 	std::string cpm_std        = "";        // the selection of a default cpm standard hardly implemented (GSM)
@@ -54,7 +54,6 @@ public:
 	bool        no_sig2      = false;  // do not divide by (sig^2) / 2 in the demodulation
 	int         n_ite        = 1;      // number of demodulations/decoding sessions to perform in the BFERI simulations
 	int         N_fil        = 0;      // frame size at the output of the filter
-	float       noise        = -1.f;   // noise value
 	int         rop_est_bits = 0;      // The number of bits known by the Modem_OOK_optical_rop_estimate demodulator
 	                                   // to estimate the ROP
 
@@ -74,9 +73,12 @@ public:
 
 	// builder
 	template <typename B = int, typename R = float, typename Q = R>
-	module::Modem<B,R,Q>* build() const;
+	module::Modem<B,R,Q>* build(const tools::Constellation<R>* cstl = nullptr) const;
 	template <typename B = int, typename R = float, typename Q = R>
 	module::Modem<B,R,Q>* build(const tools::Distributions<R>& dist) const;
+
+	template <typename R = float>
+	tools::Constellation<R>* build_constellation() const;
 
 	static bool has_constellation(const std::string &type);
 
@@ -100,13 +102,10 @@ public:
 
 private:
 	template <typename B = int, typename R = float, typename Q = R, tools::proto_max<Q> MAX>
-	inline module::Modem<B,R,Q>* _build() const;
+	inline module::Modem<B,R,Q>* _build(const tools::Constellation<R>* cstl) const;
 
 	template <typename B = int, typename R = float, typename Q = R>
 	inline module::Modem<B,R,Q>* _build_scma() const;
-
-	template <typename R = float>
-	tools::Constellation<R>* build_constellation() const;
 };
 }
 }

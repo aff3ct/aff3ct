@@ -24,6 +24,10 @@ public:
 	Source_random_fast(const int K, const int seed = 0, const int n_frames = 1);
 	virtual ~Source_random_fast() = default;
 
+	virtual Source_random_fast<B>* clone() const;
+
+	virtual void set_seed(const int seed);
+
 protected:
 	void _generate(B *U_K, const int frame_id);
 };

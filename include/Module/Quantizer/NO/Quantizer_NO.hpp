@@ -18,6 +18,8 @@ public:
 	Quantizer_NO(const int N, const int n_frames = 1);
 	virtual ~Quantizer_NO() = default;
 
+	virtual Quantizer_NO<R,Q>* clone() const;
+
 protected:
 	void _process(const R *Y_N1, Q *Y_N2, const int frame_id);
 };

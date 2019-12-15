@@ -10,6 +10,9 @@
 #include <vector>
 #include <memory>
 
+#include "Tools/Interface/Interface_get_set_noise.hpp"
+#include "Tools/Interface/Interface_notify_noise_update.hpp"
+#include "Tools/Interface/Interface_set_seed.hpp"
 #include "Tools/Noise/Noise.hpp"
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
@@ -40,7 +43,10 @@ namespace module
  * Please use Channel for inheritance (instead of Channel).
  */
 template <typename R = float>
-class Channel : public Module
+class Channel : public Module,
+                public tools::Interface_get_set_noise,
+                public tools::Interface_notify_noise_update,
+                public tools::Interface_set_seed
 {
 public:
 	inline Task&   operator[](const chn::tsk               t);
@@ -48,20 +54,11 @@ public:
 	inline Socket& operator[](const chn::sck::add_noise_wg s);
 
 protected:
-	const int N;          // Size of one frame (= number of bits in one frame)
-	std::unique_ptr<tools::Noise<R>> n;   // the current noise to apply to the input signal
-	std::vector<R> noise; // vector of the noise applied to the signal
+	const int N;                 // Size of one frame (= number of bits in one frame)
+	const tools::Noise<> *noise; // the current noise to apply to the input signal
+	std::vector<R> noised_data;  // vector of the noise applied to the signal
 
 public:
-	/*!
-	 * \brief Constructor.
-	 *
-	 * \param N:        size of one frame.
-	 * \param noise:    The noise to apply to the signal
-	 * \param n_frames: number of frames to process in the Channel.
-	 */
-	Channel(const int N, const tools::Noise<R>& noise, const int n_frames = 1);
-
 	/*!
 	 * \brief Constructor.
 	 *
@@ -75,13 +72,17 @@ public:
 	 */
 	virtual ~Channel() = default;
 
+	virtual Channel<R>* clone() const;
+
 	int get_N() const;
 
-	const std::vector<R>& get_noise() const;
+	const std::vector<R>& get_noised_data() const;
 
-	const tools::Noise<R>* current_noise() const;
+	const tools::Noise<>& get_noise() const;
 
-	virtual void set_noise(const tools::Noise<R>& noise);
+	virtual void set_noise(const tools::Noise<>& noise);
+
+	virtual void set_seed(const int seed);
 
 	/*!
 	 * \brief Adds the noise to a perfectly clear signal.
@@ -105,6 +106,8 @@ public:
 	void add_noise_wg(const std::vector<R,A>& X_N, std::vector<R,A>& H_N, std::vector<R,A>& Y_N, const int frame_id = -1);
 
 	virtual void add_noise_wg(const R *X_N, R *Y_N, R *H_N, const int frame_id = -1);
+
+	virtual void notify_noise_update();
 
 protected:
 	virtual void _add_noise(const R *X_N, R *Y_N, const int frame_id);
