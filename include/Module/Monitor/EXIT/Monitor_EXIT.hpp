@@ -50,9 +50,6 @@ private:
 
 public:
 	Monitor_EXIT(const int size, const unsigned max_n_trials, const int n_frames = 1);
-	Monitor_EXIT(const Monitor_EXIT<B,R>& m, const int n_frames = -1); // construct with the same parameters than "m"
-	                                                                   // if n_frames != -1 then set it has "n_frames" value
-	Monitor_EXIT(); // construct with null and default parameters.
 
 	virtual ~Monitor_EXIT() = default;
 
@@ -76,7 +73,6 @@ public:
 	virtual bool is_done() const;
 	bool n_trials_achieved() const;
 
-	const Attributes&  get_attributes  () const;
 	int                get_N           () const;
 	unsigned           get_max_n_trials() const;
 	unsigned long long get_n_trials    () const;
@@ -102,6 +98,8 @@ public:
 	Monitor_EXIT<B,R>& operator=(const Monitor_EXIT<B,R>& m); // not full "copy" call
 
 protected:
+	const Attributes& get_attributes() const;
+
 	virtual void _check_mutual_info_avg  (const B *bits, const R *llrs_a, const int frame_id);
 	virtual R _check_mutual_info_histo() const;
 };

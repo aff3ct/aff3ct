@@ -57,9 +57,6 @@ public:
 	 * 'max_n_cf' is the max number of frames to checked after what the simulation shall stop
 	 */
 	Monitor_MI(const int N, const unsigned max_n_trials, const int n_frames = 1);
-	Monitor_MI(const Monitor_MI<B,R>& m, const int n_frames = -1); // construct with the same parameters than "m"
-	                                                               // if n_frames != -1 then set it has "n_frames" value
-	Monitor_MI(); // construct with null and default parameters.
 
 	virtual ~Monitor_MI() = default;
 
@@ -75,8 +72,6 @@ public:
 	bool n_trials_limit_achieved() const;
 	virtual bool is_done() const;
 
-
-	const Attributes&   get_attributes  () const;
 	int                 get_N           () const;
 	unsigned            get_max_n_trials() const;
 	unsigned long long  get_n_trials    () const;
@@ -110,6 +105,8 @@ public:
 	Monitor_MI<B,R>& operator=(const Monitor_MI<B,R>& m); // "copy" call  with fully = false
 
 protected:
+	const Attributes& get_attributes() const;
+
 	virtual R _get_mutual_info(const B *X, const R *Y, const int frame_id);
 
 	void add_MI_value(const R mi);

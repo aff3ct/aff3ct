@@ -38,20 +38,6 @@ Monitor_MI<B,R>
 }
 
 template <typename B, typename R>
-Monitor_MI<B,R>
-::Monitor_MI(const Monitor_MI<B,R>& mon, const int n_frames)
-: Monitor_MI<B,R>(mon.get_N(), mon.get_max_n_trials(), n_frames == -1 ? mon.get_n_frames() : n_frames)
-{
-}
-
-template <typename B, typename R>
-Monitor_MI<B,R>
-::Monitor_MI()
-: Monitor_MI<B,R>(1, 0)
-{
-}
-
-template <typename B, typename R>
 Monitor_MI<B,R>* Monitor_MI<B,R>
 ::clone() const
 {

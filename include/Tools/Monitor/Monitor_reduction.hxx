@@ -11,22 +11,26 @@ namespace tools
 {
 
 template <class M>
-Monitor_reduction<M>
-::Monitor_reduction(const std::vector<M*>& _monitors)
-: Monitor_reduction_static(),
-  M((_monitors.size() && _monitors.front()) ? *_monitors.front() : M(),
-	std::accumulate(_monitors.begin(), _monitors.end(), 0,
-                    [](int tot, const M *m) { return tot + m->get_n_frames(); })),
-  monitors(_monitors),
-  collecter(*this)
+M& get_monitor_from_vector(const std::vector<M*> &monitors)
 {
-	if (this->monitors.size() == 0)
+	if (monitors.size() == 0)
 	{
 		std::stringstream message;
 		message << "'monitors.size()' has to be greater than 0 ('monitors.size()' = " << monitors.size() << ").";
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	return *monitors.front();
+}
+
+template <class M>
+Monitor_reduction<M>
+::Monitor_reduction(const std::vector<M*>& _monitors)
+: Monitor_reduction_static(),
+  M(get_monitor_from_vector<M>(_monitors)),
+  monitors(_monitors),
+  collecter(*this)
+{
 	const std::string name = "Monitor_reduction<" + monitors[0]->get_name() + ">";
 	this->set_name(name);
 
@@ -57,6 +61,9 @@ Monitor_reduction<M>
 
 		}
 	}
+
+	M::clear_callbacks();
+	this->reduce();
 }
 
 template <class M>

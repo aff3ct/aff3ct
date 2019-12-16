@@ -56,9 +56,6 @@ private:
 
 public:
 	Monitor_BFER(const int K, const unsigned max_fe, const unsigned max_n_frames = 0, const bool count_unknown_values = false, const int n_frames = 1);
-	Monitor_BFER(const Monitor_BFER<B>& m, const int n_frames = -1); // construct with the same parameters than "m"
-	                                                                 // if n_frames != -1 then set it has "n_frames" value
-	Monitor_BFER(); // construct with null and default parameters.
 
 	virtual ~Monitor_BFER() = default;
 
@@ -83,7 +80,6 @@ public:
 	bool frame_limit_achieved() const;
 	virtual bool is_done() const;
 
-	const Attributes&     get_attributes          () const;
 	int                   get_K                   () const;
 	bool                  get_count_unknown_values() const;
 	unsigned              get_max_fe              () const;
@@ -94,7 +90,7 @@ public:
 	float                 get_fer                 () const;
 	float                 get_ber                 () const;
 
-	tools::Histogram<int> get_err_hist            () const;
+	const tools::Histogram<int>& get_err_hist     () const;
 	void activate_err_histogram(bool val);
 
 	virtual uint32_t record_callback_fe               (std::function<void(unsigned, int)> callback);
@@ -121,8 +117,9 @@ public:
 	Monitor_BFER<B>& operator=(const Monitor_BFER<B>& m); // not full "copy" call
 
 protected:
-	virtual int _check_errors(const B *U, const B *Y, const int frame_id);
+	const Attributes& get_attributes() const;
 
+	virtual int _check_errors(const B *U, const B *Y, const int frame_id);
 };
 }
 }

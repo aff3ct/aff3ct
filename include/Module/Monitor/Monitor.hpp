@@ -54,6 +54,8 @@ public:
 
 	virtual void reset();
 
+	virtual void clear_callbacks();
+
 	/*
 	 * \brief return true if enough data have been processed and respect check conditions
 	 */

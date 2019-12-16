@@ -26,3 +26,8 @@ void Monitor
 ::reset()
 {
 }
+
+void Monitor
+::clear_callbacks()
+{
+}

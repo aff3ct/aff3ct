@@ -35,20 +35,6 @@ Monitor_EXIT<B,R>
 }
 
 template <typename B, typename R>
-Monitor_EXIT<B,R>
-::Monitor_EXIT(const Monitor_EXIT<B,R>& mon, const int n_frames)
-: Monitor_EXIT<B,R>(mon.get_N(), mon.get_max_n_trials(), n_frames == -1 ? mon.n_frames : n_frames)
-{
-}
-
-template <typename B, typename R>
-Monitor_EXIT<B,R>
-::Monitor_EXIT()
-: Monitor_EXIT<B,R>(1, 0)
-{
-}
-
-template <typename B, typename R>
 Monitor_EXIT<B,R>* Monitor_EXIT<B,R>
 ::clone() const
 {

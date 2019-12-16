@@ -39,21 +39,6 @@ Monitor_BFER<B>
 }
 
 template <typename B>
-Monitor_BFER<B>
-::Monitor_BFER(const Monitor_BFER<B>& mon, const int n_frames)
-: Monitor_BFER<B>(mon.get_K(), mon.get_max_fe(), mon.get_max_n_frames(), mon.get_count_unknown_values(),
-                  n_frames == -1 ? mon.get_n_frames() : n_frames)
-{
-}
-
-template <typename B>
-Monitor_BFER<B>
-::Monitor_BFER()
-: Monitor_BFER<B>(1, 0)
-{
-}
-
-template <typename B>
 Monitor_BFER<B>* Monitor_BFER<B>
 ::clone() const
 {
@@ -287,7 +272,7 @@ bool Monitor_BFER<B>
 }
 
 template<typename B>
-tools::Histogram<int> Monitor_BFER<B>::get_err_hist() const
+const tools::Histogram<int>& Monitor_BFER<B>::get_err_hist() const
 {
 	return err_hist;
 }
