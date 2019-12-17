@@ -371,6 +371,7 @@ for fn in fileNames:
 	argsAFFECT += simuRef.getSplitCommand()
 	argsAFFECT[len(argsAFFECTcommand)] = args.binaryPath;
 
+	refsNThreads = args.nThreads;
 	# overrides nThreads if the ref specifies an inferior number
 	if "-t" in argsAFFECT and argsAFFECT.index("-t") +1 < len(argsAFFECT):
 		try:
@@ -378,10 +379,10 @@ for fn in fileNames:
 		except (ValueError, TypeError):
 			refsNThreads = args.nThreads
 
-		if args.nThreads == 0 or refsNThreads < args.nThreads:
-			args.nThreads = refsNThreads
+		if refsNThreads == 0 or refsNThreads > args.nThreads:
+			refsNThreads = args.nThreads
 
-	argsAFFECT += ["--ter-freq", "0", "-t", str(args.nThreads), "--sim-meta", simuRef.getMetadata("title"), "--sim-chain"]
+	argsAFFECT += ["--ter-freq", "0", "-t", str(refsNThreads), "--sim-meta", simuRef.getMetadata("title"), "--sim-chain"]
 	if args.maxFE:
 		argsAFFECT += ["-e", str(args.maxFE)]
 
