@@ -59,6 +59,8 @@ The Kronecker powers of the kernel matrix :math:`T_s` defines the :math:`G`
 generator matrix. The frame size :math:`N` can only be a power of the matrix
 size :math:`s`. For traditional Polar codes :math:`s = 2`.
 
+.. note:: This parameter can only be used to define mono-kernel polar codes.
+
 .. _enc-polar_mk-enc-pc-path:
 
 ``--enc-pc-path``
@@ -103,6 +105,8 @@ Kronecker product:
 .. note:: When this parameter is used it overrides the
    :ref:`enc-polar_mk-enc-pc-kernel` parameter.
 
+.. note:: This parameter is the only way to define multi-kernel polar codes.
+
 .. _enc-polar_mk-enc-fb-gen-method:
 
 ``--enc-fb-gen-method``
@@ -131,10 +135,6 @@ Description of the allowed values:
 
 .. note:: When using the ``FILE`` method, the frozen bits are always the same
    regardless of the |SNR| value.
-
-.. note:: At this time, the multi-kernel mode is not supported when using the
-   ``GA`` method, should be used with the :ref:`enc-polar_mk-enc-pc-kernel`
-   parameter.
 
 .. _enc-polar_mk-enc-fb-awgn-path:
 

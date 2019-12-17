@@ -1,4 +1,4 @@
-.. _codec-polar:
+.. _codec-polar_mk:
 
 Codec Polar |MK|
 ****************
