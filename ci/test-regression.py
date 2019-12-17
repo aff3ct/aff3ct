@@ -379,7 +379,7 @@ for fn in fileNames:
 		except (ValueError, TypeError):
 			refsNThreads = args.nThreads
 
-		if refsNThreads == 0 or (refsNThreads > args.nThreads && args.nThreads != 0):
+		if refsNThreads == 0 or (refsNThreads > args.nThreads and args.nThreads != 0):
 			refsNThreads = args.nThreads
 
 	argsAFFECT += ["--ter-freq", "0", "-t", str(refsNThreads), "--sim-meta", simuRef.getMetadata("title"), "--sim-chain"]
