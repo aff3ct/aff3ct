@@ -475,7 +475,7 @@ def add_class(db, name_path_str, class_short_name, class_inheritence, class_temp
     class_entry['class_name'] = name_path_str
     class_entry['class_short_name'] = class_short_name
     if class_inheritence:
-        class_entry['class_inheritence'] = class_inheritence
+        class_entry['class_inheritence'] = re.split(r',\s*', class_inheritence)
     class_entry['class_constructors'] = dict()
     class_entry['class_destructors'] = dict()
     class_entry['class_static_methods'] = dict()
@@ -682,7 +682,7 @@ def process_ast(ast_filename):
                                     continue
                             else:
                                 # try to match a class
-                                m = re.match(r'^(.*)(class|struct) ([_a-zA-Z][_a-zA-Z0-9]*)(?: : ((?:(?:virtual )?public )?(?:[_a-zA-Z][_a-zA-Z0-9]*::)*[_a-zA-Z][_a-zA-Z0-9]*(?:<[^{]+>)?))? {', line)
+                                m = re.match(r'^(.*)(class|struct) ([_a-zA-Z][_a-zA-Z0-9]*)(?: : ((?:(?:virtual )?public )?(?:[_a-zA-Z][_a-zA-Z0-9]*::)*[_a-zA-Z][_a-zA-Z0-9]*(?:<[^{]+>)?(?:, (?:(?:virtual )?public )?(?:[_a-zA-Z][_a-zA-Z0-9]*::)*[_a-zA-Z][_a-zA-Z0-9]*(?:<[^{]+>)?)*))? {', line)
                                 if m is not None:
                                     # push previous class on the class stack
                                     class_stack.append((class_name, class_access, class_entry))
