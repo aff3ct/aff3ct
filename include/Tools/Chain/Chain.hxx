@@ -49,5 +49,19 @@ const std::vector<std::vector<module::Task*>>& Chain
 	return this->tasks_sequences[tid];
 }
 
+template <class SS>
+void Chain
+::delete_tree(Generic_node<SS> *node)
+{
+	if (node != nullptr)
+	{
+		for (auto c : node->get_children())
+			this->delete_tree(c);
+		auto c = node->get_c();
+		if (c != nullptr) delete c;
+		delete node;
+	}
+}
+
 }
 }

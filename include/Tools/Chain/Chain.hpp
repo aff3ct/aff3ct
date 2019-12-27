@@ -14,6 +14,7 @@
 #include <mutex>
 
 #include "Tools/Interface/Interface_clone.hpp"
+#include "Tools/Algo/Tree/Generic/Generic_node.hpp"
 
 namespace aff3ct
 {
@@ -27,10 +28,34 @@ namespace tools
 
 enum class subseq_t : size_t { STD, LOOP, ROUTER };
 
+class Sub_sequence_const
+{
+public:
+	subseq_t type;
+	std::vector<const module::Task*> tasks;
+	size_t id;
+
+	explicit Sub_sequence_const() : type(subseq_t::STD), id(0) {}
+	virtual ~Sub_sequence_const() = default;
+};
+
+class Sub_sequence
+{
+public:
+	subseq_t type;
+	std::vector<module::Task*> tasks;
+	size_t id;
+
+	explicit Sub_sequence() : type(subseq_t::STD), id(0) {}
+	virtual ~Sub_sequence() = default;
+};
+
 class Chain : Interface_clone
 {
 protected:
 	size_t n_threads;
+	std::vector<Generic_node<Sub_sequence>*> sequences;
+
 	std::vector<std::vector<std::vector<module::Task*>>> tasks_sequences;
 	std::vector<std::vector<std::shared_ptr<module::Module>>> modules;
 	std::vector<subseq_t> subseq_types;
@@ -46,7 +71,7 @@ protected:
 public:
 	Chain(const module::Task &first,                           const size_t n_threads = 1);
 	Chain(const module::Task &first, const module::Task &last, const size_t n_threads = 1);
-	virtual ~Chain() = default;
+	virtual ~Chain();
 	virtual Chain* clone() const;
 
 	void exec(std::function<bool(const std::vector<int>&)> stop_condition);
@@ -81,6 +106,36 @@ protected:
 	void _exec_without_statuses(std::function<bool()> &stop_condition,
 	                            std::vector<std::vector<module::Task*>> &tasks_sequence);
 	void duplicate(const std::vector<std::vector<const module::Task*>> &tasks_sequence);
+
+	// new ------------------------------------------------------------------------------------------------------------
+	// ----------------------------------------------------------------------------------------------------------------
+
+	template <class SS>
+	void delete_tree(Generic_node<SS> *node);
+
+	static void init_recursive_new(Generic_node<Sub_sequence_const> *cur_subseq,
+	                               size_t &ssid,
+	                               std::vector<const module::Task*> &loops,
+	                               const module::Task& first,
+	                               const module::Task& current_task,
+	                               const module::Task *last = nullptr);
+
+	void export_dot_new_subsequence(const std::vector<module::Task*> &subseq,
+	                                const subseq_t &subseq_type,
+	                                const std::string &subseq_name,
+	                                const std::string &tab,
+	                                      std::ostream &stream = std::cout) const;
+
+	void export_dot_new_connections(const std::vector<module::Task*> &subseq,
+	                                const std::string &tab,
+	                                      std::ostream &stream = std::cout) const;
+
+	void export_dot_new(Generic_node<Sub_sequence>* root, std::ostream &stream = std::cout) const;
+
+	void duplicate_new(const Generic_node<Sub_sequence_const> *sequence);
+
+	void _exec_without_statuses_new(std::function<bool()> &stop_condition, Generic_node<Sub_sequence>* sequence);
+
 };
 }
 }
