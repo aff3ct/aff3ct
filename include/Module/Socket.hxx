@@ -24,7 +24,7 @@ static std::unordered_map<std::type_index,uint8_t> type_to_size = {{typeid(int8_
 Socket
 ::Socket(Task &task, const std::string &name, const std::type_index datatype, const size_t databytes,
          const bool fast, void *dataptr)
-: task(task), name(name), datatype(datatype), databytes(databytes), fast(fast), dataptr(dataptr)
+: task(task), name(name), datatype(datatype), databytes(databytes), fast(fast), dataptr(dataptr), bound_socket(nullptr)
 {
 }
 
@@ -88,6 +88,18 @@ const std::vector<Socket*> Socket
 	return this->bound_sockets;
 }
 
+const Socket& Socket
+::get_bound_socket() const
+{
+	if (this->bound_socket == nullptr)
+	{
+		std::stringstream message;
+		message << "bound_socket can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+	return *this->bound_socket;
+}
+
 void Socket
 ::set_fast(const bool fast)
 {
@@ -95,61 +107,61 @@ void Socket
 }
 
 void Socket
-::bind(Socket &s, const bool copy_dataptr)
+::bind(Socket &s_out, const bool copy_dataptr)
 {
 	if (!is_fast())
 	{
-		if (s.datatype != this->datatype)
+		if (s_out.datatype != this->datatype)
 		{
 			std::stringstream message;
-			message << "'s.datatype' has to be equal to 'datatype' ("
-			        << "'s.datatype'"         << " = " << type_to_string[s.datatype]     << ", "
-			        << "'s.name'"             << " = " << s.get_name()                   << ", "
-			        << "'s.task.name'"        << " = " << s.task.get_name()              << ", "
-//			        << "'s.task.module.name'" << " = " << s.task.get_module_name()       << ", "
-			        << "'datatype'"           << " = " << type_to_string[this->datatype] << ", "
-			        << "'name'"               << " = " << get_name()                     << ", "
-			        << "'task.name'"          << " = " << task.get_name()                << ", "
-//			        << "'task.module.name'"   << " = " << task.get_module_name()
+			message << "'s_out.datatype' has to be equal to 'datatype' ("
+			        << "'s_out.datatype'"         << " = " << type_to_string[s_out.datatype] << ", "
+			        << "'s_out.name'"             << " = " << s_out.get_name()               << ", "
+			        << "'s_out.task.name'"        << " = " << s_out.task.get_name()          << ", "
+//			        << "'s_out.task.module.name'" << " = " << s_out.task.get_module_name()   << ", "
+			        << "'datatype'"               << " = " << type_to_string[this->datatype] << ", "
+			        << "'name'"                   << " = " << get_name()                     << ", "
+			        << "'task.name'"              << " = " << task.get_name()                << ", "
+//			        << "'task.module.name'"       << " = " << task.get_module_name()
 			        << ").";
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (s.databytes != this->databytes)
+		if (s_out.databytes != this->databytes)
 		{
 			std::stringstream message;
-			message << "'s.databytes' has to be equal to 'databytes' ("
-			        << "'s.databytes'"        << " = " << s.databytes              << ", "
-			        << "'s.name'"             << " = " << s.get_name()             << ", "
-			        << "'s.task.name'"        << " = " << s.task.get_name()        << ", "
-//			        << "'s.task.module.name'" << " = " << s.task.get_module_name() << ", "
-			        << "'databytes'"          << " = " << this->databytes          << ", "
-			        << "'name'"               << " = " << get_name()               << ", "
-			        << "'task.name'"          << " = " << task.get_name()          << ", "
-//			        << "'task.module.name'"   << " = " << task.get_module_name()
+			message << "'s_out.databytes' has to be equal to 'databytes' ("
+			        << "'s_out.databytes'"        << " = " << s_out.databytes              << ", "
+			        << "'s_out.name'"             << " = " << s_out.get_name()             << ", "
+			        << "'s_out.task.name'"        << " = " << s_out.task.get_name()        << ", "
+//			        << "'s_out.task.module.name'" << " = " << s_out.task.get_module_name() << ", "
+			        << "'databytes'"              << " = " << this->databytes              << ", "
+			        << "'name'"                   << " = " << get_name()                   << ", "
+			        << "'task.name'"              << " = " << task.get_name()              << ", "
+//			        << "'task.module.name'"       << " = " << task.get_module_name()
 			        << ").";
 
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (copy_dataptr && s.dataptr == nullptr)
+		if (copy_dataptr && s_out.dataptr == nullptr)
 		{
 			std::stringstream message;
-			message << "'s.dataptr' can't be NULL.";
+			message << "'s_out.dataptr' can't be NULL.";
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 	}
 
-	// this->bound_sockets.push_back(&s);
-	s.bound_sockets.push_back(this);
+	this->bound_socket = &s_out;
+	s_out.bound_sockets.push_back(this);
 	if (copy_dataptr)
-		this->dataptr = s.dataptr;
+		this->dataptr = s_out.dataptr;
 }
 
 void Socket
-::operator()(Socket &s, const bool copy_dataptr)
+::operator()(Socket &s_out, const bool copy_dataptr)
 {
-	bind(s, copy_dataptr);
+	bind(s_out, copy_dataptr);
 }
 
 template <typename T, class A>

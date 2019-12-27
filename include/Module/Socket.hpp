@@ -32,6 +32,7 @@ protected:
 	      bool                  fast;
 	      void*                 dataptr;
 	      std::vector<Socket*>  bound_sockets;
+	      Socket*               bound_socket;
 
 public:
 	inline Socket(Task &task, const std::string &name, const std::type_index datatype, const size_t databytes,
@@ -48,12 +49,13 @@ public:
 	inline bool                       is_fast            () const;
 	inline Task&                      get_task           () const;
 	inline const std::vector<Socket*> get_bound_sockets  () const;
+	inline const Socket&              get_bound_socket   () const;
 
 	inline void set_fast(const bool fast);
 
-	inline void bind(Socket &s, const bool copy_dataptr = true);
+	inline void bind(Socket &s_out, const bool copy_dataptr = true);
 
-	inline void operator()(Socket &s, const bool copy_dataptr = true);
+	inline void operator()(Socket &s_out, const bool copy_dataptr = true);
 
 	template <typename T, class A = std::allocator<T>>
 	inline void bind(std::vector<T,A> &vector);
