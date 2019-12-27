@@ -93,7 +93,7 @@ public:
 	inline bool is_last_input_socket(const Socket &s_in) const;
 	       bool can_exec            (                  ) const;
 
-	inline const Module& get_module     (               ) const;
+	inline Module&       get_module     (               ) const;
 	inline std::string   get_name       (               ) const;
 	inline uint32_t      get_n_calls    (               ) const;
 	       socket_t      get_socket_type(const Socket &s) const;

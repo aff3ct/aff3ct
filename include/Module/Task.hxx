@@ -44,7 +44,7 @@ bool Task
 	return last_input_socket == &s_in;
 }
 
-const Module& Task
+Module& Task
 ::get_module() const
 {
 	return *this->module;
