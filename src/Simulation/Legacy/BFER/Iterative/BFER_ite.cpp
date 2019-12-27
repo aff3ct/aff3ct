@@ -347,7 +347,7 @@ std::unique_ptr<module::Loop_CRC<B,Q>> BFER_ite<B,R,Q>
 ::build_loop_crc(const int tid)
 {
 	tools::Predicate_ite p(params_BFER_ite.n_ite);
-	auto crc = params_BFER_ite.crc->build<B>();
+	auto crc = std::unique_ptr<module::CRC<B>>(params_BFER_ite.crc->build<B>());
 	auto loop_crc = std::unique_ptr<module::Loop_CRC<B,Q>>(new module::Loop_CRC<B,Q>(
 		p,
 		*crc,

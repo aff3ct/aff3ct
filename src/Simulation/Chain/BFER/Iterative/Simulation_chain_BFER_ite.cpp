@@ -132,10 +132,10 @@ std::unique_ptr<module::Loop_CRC<B,Q>> Simulation_chain_BFER_ite<B,R,Q>
 ::build_loop_crc()
 {
 	tools::Predicate_ite p(params_BFER_ite.n_ite);
-	auto crc = params_BFER_ite.crc->build<B>();
+	auto crc = std::unique_ptr<module::CRC<B>>(params_BFER_ite.crc->build<B>());
 	auto loop_crc = std::unique_ptr<module::Loop_CRC<B,Q>>(new module::Loop_CRC<B,Q>(
 		p,
-		*crc,
+		*crc.get(),
 		(size_t)crc->get_size() + (size_t)crc->get_K(),
 		params_BFER_ite.cdc->N_cw,
 		params_BFER_ite.crc_start,
