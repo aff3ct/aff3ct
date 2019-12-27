@@ -145,5 +145,13 @@ bool Generic_node<T>
 	else
 		return false;
 }
+
+template <typename T>
+void Generic_node<T>
+::add_child(Generic_node<T>* child)
+{
+	this->children.push_back(child);
+}
+
 }
 }

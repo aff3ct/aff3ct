@@ -68,6 +68,8 @@ public:
 	inline bool cut_child(const size_t pos);
 
 	inline bool cut_children();
+
+	inline void add_child(Generic_node<T>* child);
 };
 }
 }
