@@ -634,33 +634,15 @@ void Simulation_chain_BFER_ite<B,R,Q>
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	auto monitors_er   = this->chain->template get_modules<module::Monitor_BFER  <B  >>();
-	auto decoders_siso = this->chain->template get_modules<module::Decoder_SISO  <B,Q>>();
-	auto loops_ite     = this->chain->template get_modules<module::Loop_predicate<Q  >>();
-	auto loops_crc     = this->chain->template get_modules<module::Loop_CRC      <B,Q>>();
+	auto monitors_er   = this->chain->template get_modules<module::Monitor_BFER<B  >>();
+	auto decoders_siso = this->chain->template get_modules<module::Decoder_SISO<B,Q>>();
 	for (size_t m = 0; m < monitors_er.size(); m++)
-	{
-		auto cur_monitor_er = monitors_er[m];
-
 		if (m < decoders_siso.size())
 		{
 			auto cur_decoder_siso = decoders_siso[m];
 			cur_decoder_siso->set_auto_reset(false);
-			cur_monitor_er->record_callback_check([cur_decoder_siso](){ cur_decoder_siso->reset(); });
+			monitors_er[m]->record_callback_check([cur_decoder_siso](){ cur_decoder_siso->reset(); });
 		}
-
-		if (m < loops_ite.size())
-		{
-			auto cur_loop_ite = loops_ite[m];
-			cur_monitor_er->record_callback_check([cur_loop_ite](){ cur_loop_ite->reset(); });
-		}
-
-		if (m < loops_crc.size())
-		{
-			auto cur_loop_crc = loops_crc[m];
-			cur_monitor_er->record_callback_check([cur_loop_crc](){ cur_loop_crc->reset(); });
-		}
-	}
 
 	if (this->params_BFER_ite.err_track_enable)
 	{
