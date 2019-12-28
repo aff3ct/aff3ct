@@ -37,30 +37,16 @@ std::vector<C*> Chain
 	return ret;
 }
 
-const std::vector<std::vector<std::vector<module::Task*>>>& Chain
-::get_tasks_sequences() const
+const std::vector<module::Task*>& Chain
+::get_first_tasks() const
 {
-	return this->tasks_sequences;
+	return this->first_tasks;
 }
 
-const std::vector<std::vector<module::Task*>>& Chain
-::get_tasks_sequence(const int tid) const
+const std::vector<module::Task*>& Chain
+::get_last_tasks() const
 {
-	return this->tasks_sequences[tid];
-}
-
-template <class SS>
-void Chain
-::delete_tree(Generic_node<SS> *node)
-{
-	if (node != nullptr)
-	{
-		for (auto c : node->get_children())
-			this->delete_tree(c);
-		auto c = node->get_c();
-		if (c != nullptr) delete c;
-		delete node;
-	}
+	return this->last_tasks;
 }
 
 }
