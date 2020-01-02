@@ -328,9 +328,17 @@ int Task
 	}
 	else
 	{
+		std::stringstream socs;
+		socs << "'socket(s).name' = [";
+		auto s = 0;
+		for (size_t i = 0; i < sockets.size(); i++)
+			if (sockets[i]->dataptr == nullptr)
+				socs << (s != 0 ? ", " : "") << sockets[i]->name;
+		socs << "]";
+
 		std::stringstream message;
-		message << "The task cannot be executed because some of the inputs/outputs are not fed ('task.name' = "
-		        << this->get_name() << ", 'module.name' = " << module->get_name() << ").";
+		message << "The task cannot be executed because some of the inputs/output sockets are not fed ('task.name' = "
+		        << this->get_name() << ", 'module.name' = " << module->get_name() << ", " << socs.str() << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 }
