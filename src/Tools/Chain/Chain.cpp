@@ -120,6 +120,20 @@ Chain* Chain
 	c->duplicate(this->sequences[0]);
 	c->mtx_exception.reset(new std::mutex());
 	c->force_exit_loop.reset(new std::atomic<bool>(false));
+
+	std::function<Sub_sequence*(Generic_node<Sub_sequence>*)> get_last = [&get_last](Generic_node<Sub_sequence>* node)
+	{
+		Sub_sequence* last = node->get_c();
+		for (auto c : node->get_children())
+			last = get_last(c);
+		return last;
+	};
+	for (size_t tid = 0; tid < c->n_threads; tid++)
+	{
+		c->first_tasks[tid] = c->sequences[tid]->get_c()->tasks.front();
+		c->last_tasks[tid] = get_last(c->sequences[tid])->tasks.back();
+	}
+
 	return c;
 }
 
@@ -596,10 +610,20 @@ void Chain
 		}
 	};
 
+	std::function<void(Generic_node<Sub_sequence>*)> set_autoalloc_true =
+		[&set_autoalloc_true](Generic_node<Sub_sequence>* node)
+		{
+			for (auto t : node->get_c()->tasks)
+				t->set_autoalloc(true);
+			for (auto c : node->get_children())
+				set_autoalloc_true(c);
+		};
+
 	for (size_t thread_id = 0; thread_id < this->sequences.size(); thread_id++)
 	{
 		this->sequences[thread_id] = new Generic_node<Sub_sequence>(nullptr, {}, nullptr, 0, 0, 0);
 		duplicate_sequence(sequence, this->sequences[thread_id], thread_id);
+		set_autoalloc_true(this->sequences[thread_id]);
 	}
 }
 
