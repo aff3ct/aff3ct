@@ -101,17 +101,20 @@ protected:
 	                                          const module::Task& current_task,
 	                                          const module::Task *last = nullptr);
 
-	void export_dot_subsequence(const std::vector<module::Task*> &subseq,
+	template <class VTA>
+	void export_dot_subsequence(const VTA &subseq,
 	                            const subseq_t &subseq_type,
 	                            const std::string &subseq_name,
 	                            const std::string &tab,
 	                                  std::ostream &stream = std::cout) const;
 
-	void export_dot_connections(const std::vector<module::Task*> &subseq,
+	template <class VTA>
+	void export_dot_connections(const VTA &subseq,
 	                            const std::string &tab,
 	                                  std::ostream &stream = std::cout) const;
 
-	void export_dot(Generic_node<Sub_sequence>* root, std::ostream &stream = std::cout) const;
+	template <class SS>
+	void export_dot(Generic_node<SS>* root, std::ostream &stream = std::cout) const;
 
 	template <class SS>
 	void duplicate(const Generic_node<SS> *sequence);

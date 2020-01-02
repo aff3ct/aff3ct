@@ -173,7 +173,6 @@ void Chain
 			}
 		};
 
-
 	std::vector<int> statuses(this->n_tasks, 0);
 	try
 	{
@@ -425,15 +424,18 @@ const module::Task& Chain
 					current_task.get_socket_type(*s) == module::socket_t::SOUT)
 				{
 					auto bss = s->get_bound_sockets();
+					const module::Task* last_task = nullptr;
 					for (auto &bs : bss)
 					{
 						if (bs != nullptr)
 						{
 							auto &t = bs->get_task();
 							if (t.is_last_input_socket(*bs) || dynamic_cast<const module::Loop*>(&t.get_module()))
-								return Chain::init_recursive(cur_subseq, ssid, taid, loops, first, t, last);
+								last_task = &Chain::init_recursive(cur_subseq, ssid, taid, loops, first, t, last);
 						}
 					}
+					if (last_task)
+						return *last_task;
 				}
 				else if (current_task.get_socket_type(*s) == module::socket_t::SIN)
 				{
@@ -550,10 +552,11 @@ void Chain
 					if (t_ref->get_socket_type(*t_ref->sockets[s_id]) == module::socket_t::SIN_SOUT ||
 					    t_ref->get_socket_type(*t_ref->sockets[s_id]) == module::socket_t::SIN)
 					{
-						try
+						const module::Socket* s_ref_out = nullptr;
+						try { s_ref_out = &t_ref->sockets[s_id]->get_bound_socket(); } catch (...) {}
+						if (s_ref_out)
 						{
-							auto &s_ref_out = t_ref->sockets[s_id]->get_bound_socket(); // can raise an exception
-							auto &t_ref_out = s_ref_out.get_task();
+							auto &t_ref_out = s_ref_out->get_task();
 							auto &m_ref_out = t_ref_out.get_module();
 
 							auto m_id_out = get_module_id(modules_vec, m_ref_out);
@@ -561,18 +564,18 @@ void Chain
 							if (m_id_out != -1)
 							{
 								auto t_id_out = get_task_id(m_ref_out.tasks, t_ref_out);
-								auto s_id_out = get_socket_id(t_ref_out.sockets, s_ref_out);
+								auto s_id_out = get_socket_id(t_ref_out.sockets, *s_ref_out);
 
 								assert(t_id_out != -1);
 								assert(s_id_out != -1);
 
-								auto &s_in = (*this->modules[thread_id][m_id])[t_id][s_id];
-								auto &s_out = (*this->modules[thread_id][m_id_out])[t_id_out][s_id_out];
+								(*this->modules[thread_id][m_id_out]).tasks[t_id_out]->set_autoalloc(true);
 
+								auto &s_in  = *this->modules[thread_id][m_id    ]->tasks[t_id    ]->sockets[s_id    ];
+								auto &s_out = *this->modules[thread_id][m_id_out]->tasks[t_id_out]->sockets[s_id_out];
 								s_in.bind(s_out);
 							}
 						}
-						catch (...) {}
 					}
 				}
 			}
@@ -620,8 +623,9 @@ void Chain
 template void tools::Chain::delete_tree<tools::Sub_sequence_const>(Generic_node<tools::Sub_sequence_const>*);
 template void tools::Chain::delete_tree<tools::Sub_sequence      >(Generic_node<tools::Sub_sequence      >*);
 
+template <class VTA>
 void Chain
-::export_dot_subsequence(const std::vector<module::Task*> &subseq,
+::export_dot_subsequence(const VTA &subseq,
                          const subseq_t &subseq_type,
                          const std::string &subseq_name,
                          const std::string &tab,
@@ -670,8 +674,12 @@ void Chain
 	}
 }
 
+template void tools::Chain::export_dot_subsequence<std::vector<      module::Task*>>(const std::vector<      module::Task*>&, const subseq_t&, const std::string&, const std::string&, std::ostream&) const;
+template void tools::Chain::export_dot_subsequence<std::vector<const module::Task*>>(const std::vector<const module::Task*>&, const subseq_t&, const std::string&, const std::string&, std::ostream&) const;
+
+template <class VTA>
 void Chain
-::export_dot_connections(const std::vector<module::Task*> &subseq,
+::export_dot_connections(const VTA &subseq,
                          const std::string &tab,
                                std::ostream &stream) const
 {
@@ -691,13 +699,24 @@ void Chain
 	}
 }
 
+template void tools::Chain::export_dot_connections<std::vector<      module::Task*>>(const std::vector<      module::Task*>&, const std::string&, std::ostream&) const;
+template void tools::Chain::export_dot_connections<std::vector<const module::Task*>>(const std::vector<const module::Task*>&, const std::string&, std::ostream&) const;
+
 void Chain
 ::export_dot(std::ostream &stream) const
 {
-	std::function<void(Generic_node<Sub_sequence>*,
+	auto root = this->sequences[0];
+	this->export_dot(root, stream);
+}
+
+template <class SS>
+void Chain
+::export_dot(Generic_node<SS>* root, std::ostream &stream) const
+{
+	std::function<void(Generic_node<SS>*,
 	                   const std::string&,
 	                   std::ostream&)> export_dot_subsequences_recursive =
-		[&export_dot_subsequences_recursive, this](Generic_node<Sub_sequence>* cur_node,
+		[&export_dot_subsequences_recursive, this](Generic_node<SS>* cur_node,
 		                                           const std::string &tab,
 		                                           std::ostream &stream)
 		{
@@ -714,10 +733,10 @@ void Chain
 			}
 		};
 
-	std::function<void(Generic_node<Sub_sequence>*,
+	std::function<void(Generic_node<SS>*,
 	                   const std::string&,
 	                   std::ostream&)> export_dot_connections_recursive =
-		[&export_dot_connections_recursive, this](Generic_node<Sub_sequence> *cur_node,
+		[&export_dot_connections_recursive, this](Generic_node<SS> *cur_node,
 		                                          const std::string &tab,
 		                                          std::ostream &stream)
 		{
@@ -730,7 +749,6 @@ void Chain
 			}
 		};
 
-	auto root = this->sequences[0];
 	std::string tab = "\t";
 	stream << "digraph Chain {" << std::endl;
 	export_dot_subsequences_recursive(root, tab, stream);
