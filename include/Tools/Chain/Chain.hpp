@@ -28,29 +28,21 @@ namespace tools
 
 enum class subseq_t : size_t { STD, LOOP, ROUTER };
 
-class Sub_sequence_const
+template <class VTA = std::vector<module::Task*>>
+class Sub_sequence_generic
 {
 public:
 	subseq_t type;
-	std::vector<const module::Task*> tasks;
+	VTA tasks;
 	std::vector<size_t> tasks_id;
 	size_t id;
 
-	explicit Sub_sequence_const() : type(subseq_t::STD), id(0) {}
-	virtual ~Sub_sequence_const() = default;
+	explicit Sub_sequence_generic() : type(subseq_t::STD), id(0) {}
+	virtual ~Sub_sequence_generic() = default;
 };
 
-class Sub_sequence
-{
-public:
-	subseq_t type;
-	std::vector<module::Task*> tasks;
-	std::vector<size_t> tasks_id;
-	size_t id;
-
-	explicit Sub_sequence() : type(subseq_t::STD), id(0) {}
-	virtual ~Sub_sequence() = default;
-};
+using Sub_sequence       = Sub_sequence_generic<std::vector<      module::Task*>>;
+using Sub_sequence_const = Sub_sequence_generic<std::vector<const module::Task*>>;
 
 class Chain : Interface_clone
 {
@@ -72,6 +64,7 @@ public:
 	Chain(const module::Task &first,                           const size_t n_threads = 1);
 	Chain(const module::Task &first, const module::Task &last, const size_t n_threads = 1);
 	virtual ~Chain();
+	void init(const module::Task &first, const module::Task *last = nullptr);
 	virtual Chain* clone() const;
 
 	void exec(std::function<bool(const std::vector<int>&)> stop_condition);

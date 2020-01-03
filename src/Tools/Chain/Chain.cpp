@@ -28,7 +28,33 @@ Chain
   mtx_exception(new std::mutex()),
   force_exit_loop(new std::atomic<bool>(false))
 {
-	if (n_threads == 0)
+	this->init(first, &last);
+}
+
+Chain
+::Chain(const module::Task &first, const size_t n_threads)
+: n_threads(n_threads),
+  sequences(n_threads, nullptr),
+  first_tasks(n_threads, nullptr),
+  last_tasks(n_threads, nullptr),
+  modules(n_threads),
+  mtx_exception(new std::mutex()),
+  force_exit_loop(new std::atomic<bool>(false))
+{
+	this->init(first);
+}
+
+Chain
+::~Chain()
+{
+	for (auto s : this->sequences)
+		this->delete_tree(s);
+}
+
+void Chain
+::init(const module::Task &first, const module::Task *last)
+{
+	if (this->n_threads == 0)
 	{
 		std::stringstream message;
 		message << "'n_threads' has to be strictly greater than 0.";
@@ -38,15 +64,15 @@ Chain
 	auto root = new Generic_node<Sub_sequence_const>(nullptr, {}, nullptr, 0, 0, 0);
 	size_t ssid = 0, taid = 0;
 	std::vector<const module::Task*> loops;
-	auto &real_last = this->init_recursive(root, ssid, taid, loops, first, first, &last);
-	if (&real_last != &last)
+	auto &real_last = this->init_recursive(root, ssid, taid, loops, first, first, last);
+	if (last != nullptr && &real_last != last)
 	{
 		std::stringstream message;
 		message << "'&real_last' has to be equal to '&last' ("
 		        << "'&real_last'"           << " = " << +&real_last          << ", "
-		        << "'&last'"                << " = " << +&last               << ", "
+		        << "'last'"                 << " = " << +last                << ", "
 		        << "'real_last.get_name()'" << " = " << real_last.get_name() << ", "
-		        << "'last.get_name()'"      << " = " << last.get_name()      << ").";
+		        << "'last->get_name()'"     << " = " << last->get_name()     << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 	this->n_tasks = taid;
@@ -67,73 +93,13 @@ Chain
 	}
 }
 
-Chain
-::Chain(const module::Task &first, const size_t n_threads)
-: n_threads(n_threads),
-  sequences(n_threads, nullptr),
-  first_tasks(n_threads, nullptr),
-  last_tasks(n_threads, nullptr),
-  modules(n_threads),
-  mtx_exception(new std::mutex()),
-  force_exit_loop(new std::atomic<bool>(false))
-{
-	if (n_threads == 0)
-	{
-		std::stringstream message;
-		message << "'n_threads' has to be strictly greater than 0.";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	auto root = new Generic_node<Sub_sequence_const>(nullptr, {}, nullptr, 0, 0, 0);
-	size_t ssid = 0, taid = 0;
-	std::vector<const module::Task*> loops;
-	this->init_recursive(root, ssid, taid, loops, first, first);
-	this->n_tasks = taid;
-	this->duplicate(root);
-	this->delete_tree(root);
-
-	std::function<Sub_sequence*(Generic_node<Sub_sequence>*)> get_last = [&get_last](Generic_node<Sub_sequence>* node)
-	{
-		Sub_sequence* last = node->get_c();
-		for (auto c : node->get_children())
-			last = get_last(c);
-		return last;
-	};
-	for (size_t tid = 0; tid < n_threads; tid++)
-	{
-		this->first_tasks[tid] = this->sequences[tid]->get_c()->tasks.front();
-		this->last_tasks[tid] = get_last(this->sequences[tid])->tasks.back();
-	}
-}
-
-Chain::
-~Chain()
-{
-	for (auto s : this->sequences)
-		this->delete_tree(s);
-}
-
 Chain* Chain
 ::clone() const
 {
 	auto c = new Chain(*this);
-	c->duplicate(this->sequences[0]);
+	c->init(*this->get_first_tasks()[0]);
 	c->mtx_exception.reset(new std::mutex());
 	c->force_exit_loop.reset(new std::atomic<bool>(false));
-
-	std::function<Sub_sequence*(Generic_node<Sub_sequence>*)> get_last = [&get_last](Generic_node<Sub_sequence>* node)
-	{
-		Sub_sequence* last = node->get_c();
-		for (auto c : node->get_children())
-			last = get_last(c);
-		return last;
-	};
-	for (size_t tid = 0; tid < c->n_threads; tid++)
-	{
-		c->first_tasks[tid] = c->sequences[tid]->get_c()->tasks.front();
-		c->last_tasks[tid] = get_last(c->sequences[tid])->tasks.back();
-	}
-
 	return c;
 }
 
