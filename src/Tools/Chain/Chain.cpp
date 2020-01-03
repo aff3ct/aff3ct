@@ -136,18 +136,21 @@ void Chain
 	std::function<void(Generic_node<Sub_sequence>*, std::vector<int>&)> exec_sequence =
 		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss, std::vector<int>& statuses)
 		{
-			auto c = *cur_ss->get_c();
-			if (c.type == subseq_t::LOOP)
+			auto type = cur_ss->get_c()->type;
+			auto &tasks = cur_ss->get_c()->tasks;
+			auto &tasks_id = cur_ss->get_c()->tasks_id;
+
+			if (type == subseq_t::LOOP)
 			{
-				while (!(statuses[c.tasks_id[0]] = c.tasks[0]->exec()))
+				while (!(statuses[tasks_id[0]] = tasks[0]->exec()))
 					exec_sequence(cur_ss->get_children()[0], statuses);
-				static_cast<module::Loop&>(c.tasks[0]->get_module()).reset();
+				static_cast<module::Loop&>(tasks[0]->get_module()).reset();
 				exec_sequence(cur_ss->get_children()[1], statuses);
 			}
 			else
 			{
-				for (size_t ta = 0; ta < c.tasks.size(); ta++)
-					statuses[c.tasks_id[ta]] = c.tasks[ta]->exec();
+				for (size_t ta = 0; ta < tasks.size(); ta++)
+					statuses[tasks_id[ta]] = tasks[ta]->exec();
 				for (auto c : cur_ss->get_children())
 					exec_sequence(c, statuses);
 			}
@@ -192,18 +195,19 @@ void Chain
 	std::function<void(Generic_node<Sub_sequence>*)> exec_sequence =
 		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss)
 		{
-			auto c = *cur_ss->get_c();
-			if (c.type == subseq_t::LOOP)
+			auto type = cur_ss->get_c()->type;
+			auto &tasks = cur_ss->get_c()->tasks;
+			if (type == subseq_t::LOOP)
 			{
-				while (!c.tasks[0]->exec())
+				while (!tasks[0]->exec())
 					exec_sequence(cur_ss->get_children()[0]);
-				static_cast<module::Loop&>(c.tasks[0]->get_module()).reset();
+				static_cast<module::Loop&>(tasks[0]->get_module()).reset();
 				exec_sequence(cur_ss->get_children()[1]);
 			}
 			else
 			{
-				for (size_t ta = 0; ta < c.tasks.size(); ta++)
-					c.tasks[ta]->exec();
+				for (size_t ta = 0; ta < tasks.size(); ta++)
+					tasks[ta]->exec();
 				for (auto c : cur_ss->get_children())
 					exec_sequence(c);
 			}
@@ -294,19 +298,20 @@ int Chain
 	std::function<void(Generic_node<Sub_sequence>*, int&)> exec_sequence =
 		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss, int& ret)
 		{
-			auto c = *cur_ss->get_c();
-			if (c.type == subseq_t::LOOP)
+			auto type = cur_ss->get_c()->type;
+			auto &tasks = cur_ss->get_c()->tasks;
+			if (type == subseq_t::LOOP)
 			{
-				while (!c.tasks[0]->exec())
+				while (!tasks[0]->exec())
 					exec_sequence(cur_ss->get_children()[0], ret);
 				ret++;
-				static_cast<module::Loop&>(c.tasks[0]->get_module()).reset();
+				static_cast<module::Loop&>(tasks[0]->get_module()).reset();
 				exec_sequence(cur_ss->get_children()[1], ret);
 			}
 			else
 			{
-				for (size_t ta = 0; ta < c.tasks.size(); ta++)
-					ret += c.tasks[ta]->exec();
+				for (size_t ta = 0; ta < tasks.size(); ta++)
+					ret += tasks[ta]->exec();
 				for (auto c : cur_ss->get_children())
 					exec_sequence(c, ret);
 			}
