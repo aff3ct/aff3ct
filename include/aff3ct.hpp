@@ -222,6 +222,15 @@
 #ifndef FACTORY_NOISE_HPP
 #include <Factory/Tools/Noise/Noise.hpp>
 #endif
+#ifndef CONNECTOR_1_TO_N_HPP_
+#include <Module/Adaptor/Adaptor_1_to_n.hpp>
+#endif
+#ifndef CONNECTOR_HPP_
+#include <Module/Adaptor/Adaptor.hpp>
+#endif
+#ifndef CONNECTOR_N_TO_1_HPP_
+#include <Module/Adaptor/Adaptor_n_to_1.hpp>
+#endif
 #ifndef CHANNEL_AWGN_LLR_HPP_
 #include <Module/Channel/AWGN/Channel_AWGN_LLR.hpp>
 #endif
