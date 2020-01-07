@@ -774,6 +774,12 @@
 #ifndef SC_MODULE_HPP_
 #include <Module/SC_Module.hpp>
 #endif
+#ifndef SINK_HPP
+#include <Module/Sink/Sink.hpp>
+#endif
+#ifndef SINK_USER_BINARY_HPP
+#include <Module/Sink/User/Sink_user_binary.hpp>
+#endif
 #ifndef SOCKET_HPP_
 #include <Module/Socket.hpp>
 #endif
