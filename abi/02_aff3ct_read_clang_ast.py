@@ -475,7 +475,7 @@ def add_class(db, name_path_str, class_short_name, class_inheritence, class_temp
     class_entry['class_name'] = name_path_str
     class_entry['class_short_name'] = class_short_name
     if class_inheritence:
-        class_entry['class_inheritence'] = re.split(r',\s*', class_inheritence)
+        class_entry['class_inheritence'] = split_args(class_inheritence)
     class_entry['class_constructors'] = dict()
     class_entry['class_destructors'] = dict()
     class_entry['class_static_methods'] = dict()
