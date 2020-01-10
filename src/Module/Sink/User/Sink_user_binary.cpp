@@ -11,20 +11,20 @@ using namespace aff3ct::module;
 
 template <typename B>
 Sink_user_binary<B>
-::Sink_user_binary(const int N, const std::string &filename, const int n_frames)
-: Sink<B>(N, n_frames),
+::Sink_user_binary(const int K, const std::string &filename, const int n_frames)
+: Sink<B>(K, n_frames),
   sink_file(filename.c_str(), std::ios::out | std::ios::binary),
-  chunk(N),
+  chunk(K),
   reconstructed_buffer(CHAR_BIT),
   n_left(0)
 {
 	const std::string name = "Sink_user_binary";
 	this->set_name(name);
 
-	if (this->N < CHAR_BIT)
+	if (this->K < CHAR_BIT)
 	{
 		std::stringstream message;
-		message << "'N' has to be greater or equal to 'CHAR_BIT' ('N' = " <<  this->N
+		message << "'K' has to be greater or equal to 'CHAR_BIT' ('K' = " <<  this->K
 		        << ", 'CHAR_BIT' = " <<  CHAR_BIT << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
@@ -54,19 +54,20 @@ void Sink_user_binary<B>
 	if (this->n_left != 0)
 	{
 		for (size_t i = 0; i < n_completing; i++) // completing byte with n_completing first bits of V
-			this->reconstructed_buffer[i] = V[this->n_left + i];
+			this->reconstructed_buffer[this->n_left +i] = V[i];
+
 		tools::Bit_packer::pack(this->reconstructed_buffer.data(), &reconstructed_byte, CHAR_BIT);
 		sink_file.write(&reconstructed_byte, 1);
 	}
 
-	size_t main_chunk_size = (this->N - n_completing) / CHAR_BIT; // en octet
-	this->n_left           = (this->N - n_completing) % CHAR_BIT;
+	size_t main_chunk_size = (this->K - n_completing) / CHAR_BIT; // in byte
+	this->n_left           = (this->K - n_completing) % CHAR_BIT;
 
 	tools::Bit_packer::pack(V + n_completing, this->chunk.data(), main_chunk_size * CHAR_BIT);
 	sink_file.write(this->chunk.data(), main_chunk_size);
 	sink_file.flush();
 	this->n_left = 0;
-	for (size_t i = n_completing + main_chunk_size * CHAR_BIT; i < (size_t)this->N; i++)
+	for (size_t i = n_completing + main_chunk_size * CHAR_BIT; i < (size_t)this->K; i++)
 		this->reconstructed_buffer[this->n_left++] = V[i];
 }
 

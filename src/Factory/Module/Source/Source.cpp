@@ -54,6 +54,9 @@ void Source
 
 	tools::add_arg(args, p, class_name+"p+seed,S",
 		cli::Integer(cli::Positive()));
+
+	tools::add_arg(args, p, class_name+"p+no-reset",
+		cli::None());
 }
 
 void Source
@@ -61,13 +64,14 @@ void Source
 {
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-info-bits", "K"})) this->K        = vals.to_int ({p+"-info-bits", "K"});
-	if(vals.exist({p+"-fra",       "F"})) this->n_frames = vals.to_int ({p+"-fra",       "F"});
-	if(vals.exist({p+"-type"          })) this->type     = vals.at     ({p+"-type"          });
-	if(vals.exist({p+"-implem"        })) this->implem   = vals.at     ({p+"-implem"        });
-	if(vals.exist({p+"-path"          })) this->path     = vals.to_file({p+"-path"          });
-	if(vals.exist({p+"-seed",      "S"})) this->seed     = vals.to_int ({p+"-seed",      "S"});
-	if(vals.exist({p+"-start-idx"     })) this->start_idx= vals.to_int ({p+"-start-idx"     });
+	if(vals.exist({p+"-info-bits", "K"})) this->K          = vals.to_int ({p+"-info-bits", "K"});
+	if(vals.exist({p+"-fra",       "F"})) this->n_frames   = vals.to_int ({p+"-fra",       "F"});
+	if(vals.exist({p+"-type"          })) this->type       = vals.at     ({p+"-type"          });
+	if(vals.exist({p+"-implem"        })) this->implem     = vals.at     ({p+"-implem"        });
+	if(vals.exist({p+"-path"          })) this->path       = vals.to_file({p+"-path"          });
+	if(vals.exist({p+"-seed",      "S"})) this->seed       = vals.to_int ({p+"-seed",      "S"});
+	if(vals.exist({p+"-start-idx"     })) this->start_idx  = vals.to_int ({p+"-start-idx"     });
+	if(vals.exist({p+"-no-reset"      })) this->auto_reset = false;
 }
 
 void Source
@@ -83,6 +87,9 @@ void Source
 		headers[p].push_back(std::make_pair("Path", this->path));
 	if (this->type == "RAND" && full)
 		headers[p].push_back(std::make_pair("Seed", std::to_string(this->seed)));
+	if (this->type == "USER_BIN")
+		headers[p].push_back(std::make_pair("Auto reset", std::string(this->auto_reset ? "on" : "off")));
+
 }
 
 template <typename B>
@@ -101,7 +108,7 @@ module::Source<B>* Source
 	if (this->type == "USER")  return new module::Source_user<B>(this->K, this->path, this->n_frames, this->start_idx);
 
 	if (this->type == "USER_BIN")
-		return new module::Source_user_binary<B>(this->K, this->path, this->n_frames);
+		return new module::Source_user_binary<B>(this->K, this->path, this->auto_reset, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

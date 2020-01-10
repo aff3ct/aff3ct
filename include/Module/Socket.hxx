@@ -249,6 +249,7 @@ void Socket
 {
 	this->dataptr = nullptr;
 	this->bound_sockets.clear();
+	this->bound_socket = nullptr;
 }
 
 }

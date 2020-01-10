@@ -67,7 +67,7 @@ public:
 
 	Task(      Module &module,
 	     const std::string &name,
-	     const bool autoalloc = false,
+	     const bool autoalloc = true,
 	     const bool stats     = false,
 	     const bool fast      = false,
 	     const bool debug     = false);

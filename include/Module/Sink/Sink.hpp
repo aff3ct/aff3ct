@@ -43,15 +43,15 @@ public:
 	inline Socket& operator[](const snk::sck::send s);
 
 protected:
-	const int N; /*!< Size of one frame (= number of samples in one frame) */
+	const int K; /*!< Size of one frame (= number of samples in one frame) */
 
 public:
 	/*!
 	 * \brief Constructor.
 	 *
-	 * \param N: Radio_frame length.
+	 * \param K: Radio_frame length.
 	 */
-	Sink(const int N, const int n_frames = 1);
+	Sink(const int K, const int n_frames = 1);
 
 	/*!
 	 * \brief Destructor.

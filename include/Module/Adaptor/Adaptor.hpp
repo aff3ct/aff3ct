@@ -62,6 +62,8 @@ protected:
 	virtual void deep_copy(const Adaptor &m);
 	inline bool is_full(const size_t id);
 	inline bool is_empty(const size_t id);
+	inline size_t n_free_slots(const size_t id);
+	inline size_t n_fill_slots(const size_t id);
 
 private:
 	static size_t compute_bytes(const size_t n_elmts, const std::type_index type);

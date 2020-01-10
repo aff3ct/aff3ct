@@ -103,5 +103,19 @@ void Source<B>
 	// do nothing in the general case, this method has to be overrided
 }
 
+template <typename B>
+bool Source<B>
+::is_over() const
+{
+	return false;
+}
+
+template <typename B>
+void Source<B>
+::reset()
+{
+	// do nothing in the general case, this method has to be overrided
+}
+
 }
 }

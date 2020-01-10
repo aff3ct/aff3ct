@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "Tools/Interface/Interface_set_seed.hpp"
+#include "Tools/Interface/Interface_reset.hpp"
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
 #include "Module/Module.hpp"
@@ -38,7 +39,7 @@ namespace module
  * Please use Source for inheritance (instead of Source).
  */
 template <typename B = int>
-class Source : public Module, public tools::Interface_set_seed
+class Source : public Module, public tools::Interface_set_seed, public tools::Interface_reset
 {
 public:
 	inline Task&   operator[](const src::tsk           t);
@@ -76,6 +77,10 @@ public:
 	virtual void generate(B *U_K, const int frame_id = -1);
 
 	virtual void set_seed(const int seed);
+
+	virtual bool is_over() const;
+
+	virtual void reset();
 
 protected:
 	virtual void _generate(B *U_K, const int frame_id);

@@ -141,6 +141,9 @@
 #ifndef FACTORY_QUANTIZER_HPP
 #include <Factory/Module/Quantizer/Quantizer.hpp>
 #endif
+#ifndef FACTORY_SINK_HPP
+#include <Factory/Module/Sink/Sink.hpp>
+#endif
 #ifndef FACTORY_SOURCE_HPP
 #include <Factory/Module/Source/Source.hpp>
 #endif
@@ -773,6 +776,9 @@
 #endif
 #ifndef SC_MODULE_HPP_
 #include <Module/SC_Module.hpp>
+#endif
+#ifndef SINK_NO_HPP
+#include <Module/Sink/NO/Sink_NO.hpp>
 #endif
 #ifndef SINK_HPP
 #include <Module/Sink/Sink.hpp>

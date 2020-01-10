@@ -25,22 +25,22 @@ Socket& Sink<B>
 
 template <typename B>
 Sink<B>
-::Sink(const int N, const int n_frames)
-: Module(n_frames), N(N)
+::Sink(const int K, const int n_frames)
+: Module(n_frames), K(K)
 {
 	const std::string name = "Sink";
 	this->set_name(name);
 	this->set_short_name(name);
 
-	if (N <= 0)
+	if (K <= 0)
 	{
 		std::stringstream message;
-		message << "'N' has to be greater than 0 ('N' = " << N << ").";
+		message << "'K' has to be greater than 0 ('K' = " << K << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	auto &p1 = this->create_task("send");
-	auto p1s_V = this->template create_socket_in <B>(p1, "V", N);
+	auto p1s_V = this->template create_socket_in <B>(p1, "V", K);
 	this->create_codelet(p1, [p1s_V](Module& m, Task& t) -> int
 	{
 		static_cast<Sink<B>&>(m).send(static_cast<B*>(t[p1s_V].get_dataptr()));
@@ -53,11 +53,11 @@ template <class A>
 void Sink<B>
 ::send(const std::vector<B,A>& V, const int frame_id)
 {
-	if (this->N * this->n_frames != (int)V.size())
+	if (this->K * this->n_frames != (int)V.size())
 	{
 		std::stringstream message;
-		message << "'V.size()' has to be equal to 'N' * 'n_frames' ('V.size()' = " << V.size()
-		        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
+		message << "'V.size()' has to be equal to 'K' * 'n_frames' ('V.size()' = " << V.size()
+		        << ", 'K' = " << this->K << ", 'n_frames' = " << this->n_frames << ").";
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -72,7 +72,7 @@ void Sink<B>
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
 	for (auto f = f_start; f < f_stop; f++)
-		this->_send(V + f * this->N, f);
+		this->_send(V + f * this->K, f);
 }
 
 template <typename B>

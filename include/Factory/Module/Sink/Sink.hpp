@@ -1,25 +1,25 @@
 /*!
  * \file
- * \brief Class factory::Source.
+ * \brief Class factory::Sink.
  */
-#ifndef FACTORY_SOURCE_HPP
-#define FACTORY_SOURCE_HPP
+#ifndef FACTORY_SINK_HPP
+#define FACTORY_SINK_HPP
 
 #include <string>
 #include <map>
 #include <cli.hpp>
 
 #include "Tools/Factory/Header.hpp"
-#include "Module/Source/Source.hpp"
+#include "Module/Sink/Sink.hpp"
 #include "Factory/Factory.hpp"
 
 namespace aff3ct
 {
 namespace factory
 {
-extern const std::string Source_name;
-extern const std::string Source_prefix;
-class Source : public Factory
+extern const std::string Sink_name;
+extern const std::string Sink_prefix;
+class Sink : public Factory
 {
 public:
 	// ----------------------------------------------------------------------------------------------------- PARAMETERS
@@ -27,18 +27,15 @@ public:
 	int         K        = 0;
 
 	// optional parameters
-	std::string type       = "RAND";
-	std::string implem     = "STD";
-	std::string path       = "";
-	bool        auto_reset = true;
-	int         n_frames   = 1;
-	int         seed       = 0;
-	int         start_idx  = 0;
+	std::string type     = "NO";
+	std::string implem   = "STD";
+	std::string path     = "";
+	int         n_frames = 1;
 
 	// -------------------------------------------------------------------------------------------------------- METHODS
-	explicit Source(const std::string &p = Source_prefix);
-	virtual ~Source() = default;
-	Source* clone() const;
+	explicit Sink(const std::string &p = Sink_prefix);
+	virtual ~Sink() = default;
+	Sink* clone() const;
 
 	// parameters construction
 	virtual void get_description(cli::Argument_map_info &args) const;
@@ -47,9 +44,9 @@ public:
 
 	// builder
 	template <typename B = int>
-	module::Source<B>* build() const;
+	module::Sink<B>* build() const;
 };
 }
 }
 
-#endif /* FACTORY_SOURCE_HPP */
+#endif /* FACTORY_SINK_HPP */

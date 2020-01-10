@@ -52,6 +52,7 @@ protected:
 	std::vector<module::Task*> first_tasks;
 	std::vector<module::Task*> last_tasks;
 	std::vector<std::vector<std::shared_ptr<module::Module>>> modules;
+	std::vector<std::vector<module::Module*>> all_modules;
 
 	std::shared_ptr<std::mutex> mtx_exception;
 	std::vector<std::string> prev_exception_messages;
@@ -59,12 +60,19 @@ protected:
 	std::shared_ptr<std::atomic<bool>> force_exit_loop;
 
 	size_t n_tasks;
+	bool tasks_inplace;
 
 public:
-	Chain(const module::Task &first,                           const size_t n_threads = 1);
-	Chain(const module::Task &first, const module::Task &last, const size_t n_threads = 1);
+	Chain(const module::Task &first,                           const size_t n_threads = 1                                 );
+	Chain(const module::Task &first, const module::Task &last, const size_t n_threads = 1                                 );
+	Chain(      module::Task &first,                           const size_t n_threads = 1, const bool tasks_inplace = true);
+	Chain(      module::Task &first,       module::Task &last, const size_t n_threads = 1, const bool tasks_inplace = true);
+
 	virtual ~Chain();
-	void init(const module::Task &first, const module::Task *last = nullptr);
+	template <class SS, class TA>
+	void init(TA &first, TA *last = nullptr);
+	template <class SS>
+	inline void _init(Generic_node<SS> *root);
 	virtual Chain* clone() const;
 
 	void exec(std::function<bool(const std::vector<int>&)> stop_condition);
@@ -86,13 +94,14 @@ protected:
 	template <class SS>
 	void delete_tree(Generic_node<SS> *node);
 
-	static const module::Task& init_recursive(Generic_node<Sub_sequence_const> *cur_subseq,
-	                                          size_t &ssid,
-	                                          size_t &taid,
-	                                          std::vector<const module::Task*> &loops,
-	                                          const module::Task& first,
-	                                          const module::Task& current_task,
-	                                          const module::Task *last = nullptr);
+	template <class SS, class TA>
+	const module::Task& init_recursive(Generic_node<SS> *cur_subseq,
+	                                   size_t &ssid,
+	                                   size_t &taid,
+	                                   std::vector<TA*> &loops,
+	                                   TA& first,
+	                                   TA& current_task,
+	                                   TA* last = nullptr);
 
 	template <class VTA>
 	void export_dot_subsequence(const VTA &subseq,
@@ -109,7 +118,7 @@ protected:
 	template <class SS>
 	void export_dot(Generic_node<SS>* root, std::ostream &stream = std::cout) const;
 
-	template <class SS>
+	template <class SS, class MO>
 	void duplicate(const Generic_node<SS> *sequence);
 
 	void _exec(std::function<bool(const std::vector<int>&)> &stop_condition, Generic_node<Sub_sequence>* sequence);

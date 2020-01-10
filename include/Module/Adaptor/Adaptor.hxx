@@ -47,6 +47,8 @@ Adaptor
 
 	for (auto &a : *this->first.get()) a = 0;
 	for (auto &a : *this->last .get()) a = 0;
+
+	this->tasks_with_nullptr.resize((size_t)adp::tsk::SIZE);
 }
 
 size_t Adaptor
@@ -76,7 +78,20 @@ bool Adaptor
 bool Adaptor
 ::is_full(const size_t id)
 {
-	return (size_t)std::abs((int)(*this->last)[id] - (int)(*this->first)[id]) == this->buffer_size;
+	// return (size_t)std::abs((int)(*this->last)[id] - (int)(*this->first)[id]) == this->buffer_size;
+	return !this->n_free_slots(id);
+}
+
+size_t Adaptor
+::n_fill_slots(const size_t id)
+{
+	return (*this->last)[id] - (*this->first)[id];
+}
+
+size_t Adaptor
+::n_free_slots(const size_t id)
+{
+	return this->buffer_size - this->n_fill_slots(id);
 }
 
 }
