@@ -25,14 +25,17 @@ namespace module
 
 class Subchain : public Module
 {
-	std::shared_ptr<tools::Chain> chain;
+	std::shared_ptr<tools::Chain> chain_cloned;
+	                tools::Chain *chain_extern;
 
 public:
 	inline Task& operator[](const sch::tsk t);
 
 	explicit Subchain(const tools::Chain &chain);
-
+	explicit Subchain(      tools::Chain &chain);
 	virtual ~Subchain() = default;
+
+	virtual void init();
 
 	virtual Subchain* clone() const;
 

@@ -53,9 +53,6 @@ public:
 
 	virtual void put_1 (const int8_t *in,  const int frame_id = -1);
 	virtual void pull_n(      int8_t *out, const int frame_id = -1);
-
-protected:
-	virtual void deep_copy(const Adaptor_1_to_n &m);
 };
 }
 }

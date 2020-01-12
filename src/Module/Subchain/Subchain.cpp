@@ -9,13 +9,29 @@ using namespace aff3ct;
 using namespace aff3ct::module;
 
 Subchain
+::Subchain(tools::Chain &chain)
+: Module(chain.get_first_tasks()[0]->get_module().get_n_frames()),
+  chain_extern(&chain)
+{
+	this->init();
+}
+
+Subchain
 ::Subchain(const tools::Chain &chain)
 : Module(chain.get_first_tasks()[0]->get_module().get_n_frames()),
-  chain(chain.clone())
+  chain_cloned(chain.clone()), chain_extern(nullptr)
+{
+	this->init();
+}
+
+void Subchain
+::init()
 {
 	const std::string name = "Subchain";
 	this->set_name(name);
 	this->set_short_name(name);
+
+	auto &chain = this->get_chain();
 
 	if (chain.get_n_threads() != 1)
 	{
@@ -28,7 +44,7 @@ Subchain
 	auto &p = this->create_task("exec");
 	p.set_autoalloc(true);
 
-	auto &first = *this->chain->get_first_tasks()[0];
+	auto &first = *chain.get_first_tasks()[0];
 	for (auto &s : first.sockets)
 	{
 		if (first.get_socket_type(*s) == socket_t::SIN)
@@ -62,7 +78,7 @@ Subchain
 				this->template create_socket_in_out<double >(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
 		}
 	}
-	auto &last  = *this->chain->get_last_tasks()[0];
+	auto &last  = *chain.get_last_tasks()[0];
 	for (auto &s : last.sockets)
 	{
 		if (last.get_socket_type(*s) == socket_t::SOUT)
@@ -122,7 +138,7 @@ Subchain
 	{
 		auto &c = static_cast<Subchain&>(m);
 
-		auto &first = *c.chain->get_first_tasks()[0];
+		auto &first = *c.get_chain().get_first_tasks()[0];
 		size_t sid = 0;
 		for (auto &s : first.sockets)
 		{
@@ -143,14 +159,17 @@ Subchain
 			}
 		}
 
-		return c.chain->exec();
+		return c.get_chain().exec();
 	});
 }
 
 tools::Chain& Subchain
 ::get_chain()
 {
-	return *this->chain;
+	if (this->chain_extern)
+		return *this->chain_extern;
+	else
+		return *this->chain_cloned;
 }
 
 Subchain* Subchain
@@ -165,9 +184,15 @@ void Subchain
 ::deep_copy(const Subchain& m)
 {
 	Module::deep_copy(m);
-	if (m.chain != nullptr) this->chain.reset(m.chain->clone());
+	if (m.chain_cloned != nullptr)
+		this->chain_cloned.reset(m.chain_cloned->clone());
+	else
+	{
+		this->chain_cloned.reset(m.chain_extern->clone());
+		this->chain_extern = nullptr;
+	}
 
-	auto &last = *this->chain->get_last_tasks()[0];
+	auto &last = *this->get_chain().get_last_tasks()[0];
 
 	auto &p = (*this)[sch::tsk::exec];
 
