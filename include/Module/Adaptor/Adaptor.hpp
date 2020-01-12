@@ -15,6 +15,7 @@
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
 #include "Module/Module.hpp"
+#include "Tools/Interface/Interface_waiting.hpp"
 
 namespace aff3ct
 {
@@ -33,7 +34,7 @@ namespace module
 		}
 	}
 
-class Adaptor : public Module
+class Adaptor : public Module, public tools::Interface_waiting
 {
 protected:
 	const size_t n_elmts;
@@ -47,11 +48,14 @@ protected:
 	std::shared_ptr<std::vector<std::atomic<size_t>>> first;
 	std::shared_ptr<std::vector<std::atomic<size_t>>> last;
 
+	std::shared_ptr<std::atomic<bool>> waiting_canceled;
+
 public:
-	virtual Adaptor* clone() const;
 	inline size_t get_n_elmts() const;
 	inline size_t get_n_bytes() const;
 	inline std::type_index get_datatype() const;
+	void send_cancel_signal();
+	void reset();
 
 protected:
 	inline Adaptor(const size_t n_elmts,

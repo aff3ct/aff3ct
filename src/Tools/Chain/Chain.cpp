@@ -119,8 +119,6 @@ void Chain
 	this->n_tasks = taid;
 
 	this->_init<SS>(root);
-	// this->duplicate(root);
-	// this->delete_tree(root);
 
 	std::function<Sub_sequence*(Generic_node<Sub_sequence>*)> get_last = [&get_last](Generic_node<Sub_sequence>* node)
 	{
@@ -211,6 +209,10 @@ void Chain
 		}
 		while (!*force_exit_loop && !stop_condition(statuses));
 	}
+	catch (tools::waiting_canceled const&)
+	{
+		// do nothing, this is normal
+	}
 	catch (std::exception const& e)
 	{
 		*force_exit_loop = true;
@@ -266,6 +268,10 @@ void Chain
 			exec_sequence(sequence);
 		}
 		while (!*force_exit_loop && !stop_condition());
+	}
+	catch (tools::waiting_canceled const&)
+	{
+		// do nothing, this is normal
 	}
 	catch (std::exception const& e)
 	{

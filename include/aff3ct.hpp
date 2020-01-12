@@ -1281,6 +1281,9 @@
 #ifndef UNIMPLEMENTED_ERROR_HPP_
 #include <Tools/Exception/unimplemented_error/unimplemented_error.hpp>
 #endif
+#ifndef WAITING_CANCELED_HPP_
+#include <Tools/Exception/waiting_canceled/waiting_canceled.hpp>
+#endif
 #ifndef COMMAND_PARSER_HPP
 #include <Tools/Factory/Command_parser.hpp>
 #endif
@@ -1307,6 +1310,9 @@
 #endif
 #ifndef INTERFACE_SET_SEED_HPP__
 #include <Tools/Interface/Interface_set_seed.hpp>
+#endif
+#ifndef INTERFACE_WAITING_HPP__
+#include <Tools/Interface/Interface_waiting.hpp>
 #endif
 #ifndef INTERLEAVER_CORE_ARP_DVB1_HPP
 #include <Tools/Interleaver/ARP/Interleaver_core_ARP_DVB_RCS1.hpp>

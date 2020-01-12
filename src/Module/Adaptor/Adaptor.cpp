@@ -11,14 +11,6 @@ Adaptor
 	(*this->last )[this->id] = 0;
 }
 
-Adaptor* Adaptor
-::clone() const
-{
-	auto m = new Adaptor(*this);
-	m->deep_copy(*this);
-	return m;
-}
-
 void Adaptor
 ::deep_copy(const Adaptor &m)
 {
@@ -48,6 +40,8 @@ void Adaptor
 		        << ", 'first->size()' = " << this->first->size() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	this->waiting_canceled.reset(new std::atomic<bool>(m.waiting_canceled->load()));
 }
 
 size_t Adaptor
@@ -65,4 +59,14 @@ size_t Adaptor
 		message << "This should never happen.";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+void Adaptor::send_cancel_signal()
+{
+	*this->waiting_canceled = true;
+}
+
+void Adaptor::reset()
+{
+	*this->waiting_canceled = false;
 }

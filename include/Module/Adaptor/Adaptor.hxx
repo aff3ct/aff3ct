@@ -25,7 +25,8 @@ Adaptor
   buffer(new std::vector<std::vector<std::vector<int8_t>>>
   	(1, std::vector<std::vector<int8_t>>(buffer_size, std::vector<int8_t>(n_frames * n_bytes)))),
   first(new std::vector<std::atomic<size_t>>(1000)),
-  last(new std::vector<std::atomic<size_t>>(1000))
+  last(new std::vector<std::atomic<size_t>>(1000)),
+  waiting_canceled(new std::atomic<bool>(false))
 {
 	const std::string name = "Adaptor";
 	this->set_name(name);

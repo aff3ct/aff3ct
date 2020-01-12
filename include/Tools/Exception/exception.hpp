@@ -57,5 +57,6 @@ public:
 #include "runtime_error/runtime_error.hpp"
 #include "underflow_error/underflow_error.hpp"
 #include "unimplemented_error/unimplemented_error.hpp"
+#include "waiting_canceled/waiting_canceled.hpp"
 
 #endif /* EXCEPTION_HPP_ */

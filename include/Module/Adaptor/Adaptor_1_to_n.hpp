@@ -53,6 +53,9 @@ public:
 
 	virtual void put_1 (const int8_t *in,  const int frame_id = -1);
 	virtual void pull_n(      int8_t *out, const int frame_id = -1);
+
+	void wake_up();
+	void cancel_waiting();
 };
 }
 }

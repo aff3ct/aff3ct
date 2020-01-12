@@ -18,4 +18,4 @@ public:
 }
 }
 
-#endif // INTERFACE_RESET_HPP__
+#endif // INTERFACE_CLONE_HPP__
