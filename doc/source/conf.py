@@ -287,6 +287,7 @@ rst_epilog = """
 .. |DVB-RCS2|  replace:: :abbr:`DVB-RCS2 (Digital Video Broadcasting - Return Channel via Satellite 2)`
 .. |DVB-S1|    replace:: :abbr:`DVB-S1   (Digital Video Broadcasting - Satellite 1)`
 .. |DVB-S2|    replace:: :abbr:`DVB-S2   (Digital Video Broadcasting - Satellite 2)`
+.. |EOF|       replace:: :abbr:`EOF      (End Of File)`
 .. |EP|        replace:: :abbr:`EP       (Event Probability)`
 .. |EXIT|      replace:: :abbr:`EXIT     (EXtrinsic Information Transfer chart)`
 .. |FER|       replace:: :abbr:`FER      (Frame Error Rate)`

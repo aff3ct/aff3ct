@@ -764,6 +764,24 @@
 .. |factory::Quantizer::p+range| replace::
    Select the min/max bounds for the ``CUSTOM`` quantizer.
 
+.. ---------------------------------------------------- factory Sink parameters
+
+.. |factory::Sink::p+info-bits,K| replace::
+   Select the number of information bits :math:`K`.
+
+.. |factory::Sink::p+fra,F| replace::
+   Set the number of frames to process for each task execution.
+
+.. |factory::Sink::p+type| replace::
+   Select the sink type.
+
+.. |factory::Sink::p+implem| replace::
+   Select the implementation of the sink.
+
+.. |factory::Sink::p+path| replace::
+   Set the path to a file to write the :math:`K` bits, to use with the
+   ``USER_BIN`` source type.
+
 .. -------------------------------------------------- factory Source parameters
 
 .. |factory::Source::p+info-bits,K| replace::
@@ -788,6 +806,10 @@
 
 .. |factory::Source::p+seed,S| replace::
    Set the seed used to initialize the |PRNGs|.
+
+.. |factory::Source::p+no-reset| replace::
+   Do not reset the source (start to the beginning) if the file reach |EOF| and
+   pad with zeros after |EOF| (work only for ``USER_BIN`` source type).
 
 .. ------------------------------------ factory Frozenbits_generator parameters
 

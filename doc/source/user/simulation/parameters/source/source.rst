@@ -156,6 +156,13 @@ With the ``USER`` source type, an |ASCII| file is expected:
    # a sequence of 'F * K' bits (separated by spaces)
    B_0 B_1 B_2 B_3 B_4 B_5 [...] B_{(F*K)-1}
 
+.. _src-src-no-reset:
+
+``--src-no-reset``
+""""""""""""""""""
+
+|factory::Source::p+no-reset|
+
 .. _src-src-start-idx:
 
 ``--src-start-idx``
