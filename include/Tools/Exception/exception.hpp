@@ -58,5 +58,6 @@ public:
 #include "underflow_error/underflow_error.hpp"
 #include "unimplemented_error/unimplemented_error.hpp"
 #include "waiting_canceled/waiting_canceled.hpp"
+#include "processing_aborted/processing_aborted.hpp"
 
 #endif /* EXCEPTION_HPP_ */

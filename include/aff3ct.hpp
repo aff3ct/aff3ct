@@ -1269,6 +1269,9 @@
 #ifndef OVERFLOW_ERROR_HPP_
 #include <Tools/Exception/overflow_error/overflow_error.hpp>
 #endif
+#ifndef PROCESSING_ABORTED_HPP_
+#include <Tools/Exception/processing_aborted/processing_aborted.hpp>
+#endif
 #ifndef RANGE_ERROR_HPP_
 #include <Tools/Exception/range_error/range_error.hpp>
 #endif
