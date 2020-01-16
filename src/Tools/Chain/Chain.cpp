@@ -174,6 +174,52 @@ std::vector<std::vector<const module::Module*>> Chain
 	return modules_per_types;
 }
 
+std::vector<std::vector<const module::Task*>> Chain
+::get_tasks_per_threads() const
+{
+	std::vector<std::vector<const module::Task*>> tasks_per_threads(this->n_threads);
+
+	std::function<void(Generic_node<Sub_sequence>*, const size_t)> get_tasks_recursive =
+		[&](Generic_node<Sub_sequence>* cur_ss, const size_t tid)
+		{
+			tasks_per_threads[tid].insert(tasks_per_threads[tid].end(),
+			                              cur_ss->get_c()->tasks.begin(),
+			                              cur_ss->get_c()->tasks.end());
+
+			for (auto c : cur_ss->get_children())
+				get_tasks_recursive(c, tid);
+		};
+
+	for (size_t tid = 0; tid < this->n_threads; tid++)
+		get_tasks_recursive(this->sequences[tid], tid);
+
+	return tasks_per_threads;
+}
+
+std::vector<std::vector<const module::Task*>> Chain
+::get_tasks_per_types() const
+{
+	std::vector<std::vector<const module::Task*>> tasks_per_types(this->n_tasks);
+
+	std::function<void(Generic_node<Sub_sequence>*, size_t&)> get_tasks_recursive =
+		[&](Generic_node<Sub_sequence>* cur_ss, size_t &mid)
+		{
+			for (auto &t : cur_ss->get_c()->tasks)
+				tasks_per_types[mid++].push_back(t);
+
+			for (auto c : cur_ss->get_children())
+				get_tasks_recursive(c, mid);
+		};
+
+	for (size_t tid = 0; tid < this->n_threads; tid++)
+	{
+		size_t mid = 0;
+		get_tasks_recursive(this->sequences[tid], mid);
+	}
+
+	return tasks_per_types;
+}
+
 void Chain
 ::_exec(std::function<bool(const std::vector<int>&)> &stop_condition, Generic_node<Sub_sequence>* sequence)
 {
@@ -205,7 +251,14 @@ void Chain
 	{
 		do
 		{
-			exec_sequence(sequence, statuses);
+			try
+			{
+				exec_sequence(sequence, statuses);
+			}
+			catch (tools::processing_aborted const&)
+			{
+				// do nothing, this is normal
+			}
 		}
 		while (!*force_exit_loop && !stop_condition(statuses));
 	}
@@ -265,7 +318,14 @@ void Chain
 	{
 		do
 		{
-			exec_sequence(sequence);
+			try
+			{
+				exec_sequence(sequence);
+			}
+			catch (tools::processing_aborted const&)
+			{
+				// do nothing, this is normal
+			}
 		}
 		while (!*force_exit_loop && !stop_condition());
 	}
