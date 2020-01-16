@@ -49,6 +49,13 @@ Sink<B>
 }
 
 template <typename B>
+Sink<B>* Sink<B>
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B>
 template <class A>
 void Sink<B>
 ::send(const std::vector<B,A>& V, const int frame_id)

@@ -15,6 +15,15 @@ Sink_NO<B>
 }
 
 template <typename B>
+Sink_NO<B>* Sink_NO<B>
+::clone() const
+{
+	auto m = new Sink_NO(*this);
+	m->deep_copy(*this);
+	return m;
+}
+
+template <typename B>
 void Sink_NO<B>
 ::_send(const B *V, const int frame_id)
 {

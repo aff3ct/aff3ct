@@ -58,6 +58,8 @@ public:
 	 */
 	virtual ~Sink() = default;
 
+	virtual Sink<B>* clone() const;
+
 	/*!
 	 * \brief Consume a frame.
 	 *

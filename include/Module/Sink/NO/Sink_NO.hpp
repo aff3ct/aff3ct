@@ -36,6 +36,8 @@ public:
 	 */
 	~Sink_NO() = default;
 
+	virtual Sink_NO<B>* clone() const;
+
 protected:
 	virtual void _send(const B *V, const int frame_id);
 };
