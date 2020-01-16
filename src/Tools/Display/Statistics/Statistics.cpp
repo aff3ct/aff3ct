@@ -187,6 +187,9 @@ void Statistics
 	throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 }
 
+namespace aff3ct {
+namespace tools {
+
 template <>
 void Statistics
 ::show<module::Module>(std::vector<module::Module*> modules, const bool ordered, std::ostream &stream)
@@ -213,6 +216,9 @@ void Statistics
 ::show<const module::Task>(std::vector<const module::Task*> tasks, const bool ordered, std::ostream &stream)
 {
 	Statistics::show_tasks<const module::Task>(tasks, ordered, stream);
+}
+
+}
 }
 
 template void tools::Statistics::show<const module::Module>(std::vector<const module::Module*>, const bool, std::ostream&);
@@ -342,6 +348,9 @@ void Statistics
 	throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 }
 
+namespace aff3ct {
+namespace tools {
+
 template <>
 void Statistics
 ::show<module::Module>(std::vector<std::vector<module::Module*>> modules, const bool ordered, std::ostream &stream)
@@ -368,6 +377,9 @@ void Statistics
 ::show<const module::Task>(std::vector<std::vector<const module::Task*>> tasks, const bool ordered, std::ostream &stream)
 {
 	Statistics::show_tasks<const module::Task>(tasks, ordered, stream);
+}
+
+}
 }
 
 template void tools::Statistics::show<const module::Module>(std::vector<std::vector<const module::Module*>>, const bool, std::ostream&);
