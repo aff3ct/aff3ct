@@ -27,16 +27,27 @@ protected:
 public:
 	virtual ~Statistics() = default;
 
-	static void show(std::vector<const module::Module*> modules, const bool ordered = false,
+	template <class MODULE_OR_TASK>
+	static void show(std::vector<MODULE_OR_TASK*> modules_or_tasks, const bool ordered = false,
 	                 std::ostream &stream = std::cout);
-	static void show(std::vector<const module::Task*> tasks, const bool ordered = false,
-	                 std::ostream &stream = std::cout);
-	static void show(std::vector<std::vector<const module::Module*>> modules, const bool ordered = false,
-	                 std::ostream &stream = std::cout);
-	static void show(std::vector<std::vector<const module::Task*>> tasks, const bool ordered = false,
+	template <class MODULE_OR_TASK>
+	static void show(std::vector<std::vector<MODULE_OR_TASK*>> modules_or_tasks, const bool ordered = false,
 	                 std::ostream &stream = std::cout);
 
 private:
+	template <class MODULE = const module::Module>
+	static void show_modules(std::vector<MODULE*> modules, const bool ordered = false,
+	                         std::ostream &stream = std::cout);
+	template <class TASK = const module::Task>
+	static void show_tasks(std::vector<TASK*> tasks, const bool ordered = false,
+	                       std::ostream &stream = std::cout);
+	template <class MODULE = const module::Module>
+	static void show_modules(std::vector<std::vector<MODULE*>> modules, const bool ordered = false,
+	                         std::ostream &stream = std::cout);
+	template <class TASK = const module::Task>
+	static void show_tasks(std::vector<std::vector<TASK*>> tasks, const bool ordered = false,
+	                       std::ostream &stream = std::cout);
+
 	static void separation1(std::ostream &stream = std::cout);
 
 	static void separation2(std::ostream &stream = std::cout);

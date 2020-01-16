@@ -1,7 +1,10 @@
+#include <type_traits>
 #include <algorithm>
 #include <iomanip>
+#include <sstream>
 #include <ios>
 
+#include "Tools/Exception/exception.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Display/Statistics/Statistics.hpp"
 
@@ -175,8 +178,51 @@ void Statistics
 	       << std::endl;
 }
 
+template <class MODULE_OR_TASK>
 void Statistics
-::show(std::vector<const module::Module*> modules, const bool ordered, std::ostream &stream)
+::show(std::vector<MODULE_OR_TASK*> modules_or_tasks, const bool ordered, std::ostream &stream)
+{
+	std::stringstream message;
+	message << "The 'Statistics::show' method expect a 'std::vector' of 'module::Module' or 'module::Task'.";
+	throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+}
+
+template <>
+void Statistics
+::show<module::Module>(std::vector<module::Module*> modules, const bool ordered, std::ostream &stream)
+{
+	Statistics::show_modules<module::Module>(modules, ordered, stream);
+}
+
+template <>
+void Statistics
+::show<const module::Module>(std::vector<const module::Module*> modules, const bool ordered, std::ostream &stream)
+{
+	Statistics::show_modules<const module::Module>(modules, ordered, stream);
+}
+
+template <>
+void Statistics
+::show<module::Task>(std::vector<module::Task*> tasks, const bool ordered, std::ostream &stream)
+{
+	Statistics::show_tasks<module::Task>(tasks, ordered, stream);
+}
+
+template <>
+void Statistics
+::show<const module::Task>(std::vector<const module::Task*> tasks, const bool ordered, std::ostream &stream)
+{
+	Statistics::show_tasks<const module::Task>(tasks, ordered, stream);
+}
+
+template void tools::Statistics::show<const module::Module>(std::vector<const module::Module*>, const bool, std::ostream&);
+template void tools::Statistics::show<      module::Module>(std::vector<      module::Module*>, const bool, std::ostream&);
+template void tools::Statistics::show<const module::Task  >(std::vector<const module::Task  *>, const bool, std::ostream&);
+template void tools::Statistics::show<      module::Task  >(std::vector<      module::Task  *>, const bool, std::ostream&);
+
+template <class MODULE>
+void Statistics
+::show_modules(std::vector<MODULE*> modules, const bool ordered, std::ostream &stream)
 {
 	std::vector<const module::Task*> tasks;
 	for (auto& m : modules)
@@ -185,11 +231,12 @@ void Statistics
 				if (t->get_n_calls())
 					tasks.push_back(t.get());
 
-	Statistics::show(tasks, ordered, stream);
+	Statistics::show_tasks(tasks, ordered, stream);
 }
 
+template <class TASK>
 void Statistics
-::show(std::vector<const module::Task*> tasks, const bool ordered, std::ostream &stream)
+::show_tasks(std::vector<TASK*> tasks, const bool ordered, std::ostream &stream)
 {
 	for (size_t t = 0; t < tasks.size(); t++)
 		if (tasks[t] == nullptr)
@@ -285,8 +332,52 @@ void Statistics
 	}
 }
 
+template <class MODULE_OR_TASK>
 void Statistics
-::show(std::vector<std::vector<const module::Module*>> modules, const bool ordered, std::ostream &stream)
+::show(std::vector<std::vector<MODULE_OR_TASK*>> modules_or_tasks, const bool ordered, std::ostream &stream)
+{
+	std::stringstream message;
+	message << "The 'Statistics::show' method expect a 'std::vector' of 'std::vector' of 'module::Module' or "
+	        << "'module::Task'.";
+	throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+}
+
+template <>
+void Statistics
+::show<module::Module>(std::vector<std::vector<module::Module*>> modules, const bool ordered, std::ostream &stream)
+{
+	Statistics::show_modules<module::Module>(modules, ordered, stream);
+}
+
+template <>
+void Statistics
+::show<const module::Module>(std::vector<std::vector<const module::Module*>> modules, const bool ordered, std::ostream &stream)
+{
+	Statistics::show_modules<const module::Module>(modules, ordered, stream);
+}
+
+template <>
+void Statistics
+::show<module::Task>(std::vector<std::vector<module::Task*>> tasks, const bool ordered, std::ostream &stream)
+{
+	Statistics::show_tasks<module::Task>(tasks, ordered, stream);
+}
+
+template <>
+void Statistics
+::show<const module::Task>(std::vector<std::vector<const module::Task*>> tasks, const bool ordered, std::ostream &stream)
+{
+	Statistics::show_tasks<const module::Task>(tasks, ordered, stream);
+}
+
+template void tools::Statistics::show<const module::Module>(std::vector<std::vector<const module::Module*>>, const bool, std::ostream&);
+template void tools::Statistics::show<      module::Module>(std::vector<std::vector<      module::Module*>>, const bool, std::ostream&);
+template void tools::Statistics::show<const module::Task  >(std::vector<std::vector<const module::Task  *>>, const bool, std::ostream&);
+template void tools::Statistics::show<      module::Task  >(std::vector<std::vector<      module::Task  *>>, const bool, std::ostream&);
+
+template <class MODULE>
+void Statistics
+::show_modules(std::vector<std::vector<MODULE*>> modules, const bool ordered, std::ostream &stream)
 {
 	std::vector<std::vector<const module::Task*>> tasks;
 	for (auto &vm : modules)
@@ -302,11 +393,12 @@ void Statistics
 			}
 		}
 
-	Statistics::show(tasks, ordered, stream);
+	Statistics::show_tasks(tasks, ordered, stream);
 }
 
+template <class TASK>
 void Statistics
-::show(std::vector<std::vector<const module::Task*>> tasks, const bool ordered, std::ostream &stream)
+::show_tasks(std::vector<std::vector<TASK*>> tasks, const bool ordered, std::ostream &stream)
 {
 	using namespace std::chrono;
 
@@ -318,8 +410,8 @@ void Statistics
 
 	if (ordered)
 	{
-		std::sort(tasks.begin(), tasks.end(), [](const std::vector<const module::Task*> &t1,
-		                                         const std::vector<const module::Task*> &t2)
+		std::sort(tasks.begin(), tasks.end(), [](const std::vector<TASK*> &t1,
+		                                         const std::vector<TASK*> &t2)
 		{
 			auto total1 = nanoseconds(0);
 			auto total2 = nanoseconds(0);
