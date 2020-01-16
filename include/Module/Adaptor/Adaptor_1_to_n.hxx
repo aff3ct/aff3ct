@@ -16,9 +16,9 @@ Task& Adaptor_1_to_n
 }
 
 Socket& Adaptor_1_to_n
-::operator[](const adp::sck::put_1 s)
+::operator[](const adp::sck::push_1 s)
 {
-	return Module::operator[]((size_t)adp::tsk::put_1)[(size_t)s];
+	return Module::operator[]((size_t)adp::tsk::push_1)[(size_t)s];
 }
 
 Socket& Adaptor_1_to_n
@@ -80,11 +80,11 @@ Adaptor_1_to_n
 			}
 		};
 
-	auto &p1 = this->create_task("put_1", (int)adp::tsk::put_1);
+	auto &p1 = this->create_task("push_1", (int)adp::tsk::push_1);
 	auto p1s_in = create_socket_in(p1, n_elmts, datatype);
 	this->create_codelet(p1, [p1s_in](Module &m, Task &t) -> int
 	{
-		static_cast<Adaptor_1_to_n&>(m).put_1(static_cast<int8_t*>(t[p1s_in].get_dataptr()));
+		static_cast<Adaptor_1_to_n&>(m).push_1(static_cast<int8_t*>(t[p1s_in].get_dataptr()));
 		return 0;
 	});
 
@@ -99,7 +99,7 @@ Adaptor_1_to_n
 
 template <class A>
 void Adaptor_1_to_n
-::put_1(const std::vector<int8_t,A>& in, const int frame_id)
+::push_1(const std::vector<int8_t,A>& in, const int frame_id)
 {
 	if (this->n_bytes * (size_t)this->n_frames != in.size())
 	{
@@ -109,7 +109,7 @@ void Adaptor_1_to_n
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	this->put_1(in.data(), frame_id);
+	this->push_1(in.data(), frame_id);
 }
 
 template <class A>

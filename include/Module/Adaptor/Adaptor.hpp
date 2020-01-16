@@ -23,13 +23,13 @@ namespace module
 {
 	namespace adp
 	{
-		enum class tsk : size_t { put_1, pull_n, put_n, pull_1, SIZE };
+		enum class tsk : size_t { push_1, pull_n, push_n, pull_1, SIZE };
 
 		namespace sck
 		{
-			enum class put_1  : size_t { in,  SIZE };
+			enum class push_1 : size_t { in,  SIZE };
 			enum class pull_n : size_t { out, SIZE };
-			enum class put_n  : size_t { in,  SIZE };
+			enum class push_n : size_t { in,  SIZE };
 			enum class pull_1 : size_t { out, SIZE };
 		}
 	}

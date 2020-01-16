@@ -15,7 +15,7 @@ Adaptor_n_to_1* Adaptor_n_to_1
 }
 
 void Adaptor_n_to_1
-::put_n(const int8_t *in, const int frame_id)
+::push_n(const int8_t *in, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;

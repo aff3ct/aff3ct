@@ -27,7 +27,7 @@ class Adaptor_n_to_1 : public Adaptor
 {
 public:
 	inline Task&   operator[](const adp::tsk         t);
-	inline Socket& operator[](const adp::sck::put_n  s);
+	inline Socket& operator[](const adp::sck::push_n s);
 	inline Socket& operator[](const adp::sck::pull_1 s);
 
 	const bool active_waiting;
@@ -47,11 +47,11 @@ public:
 	virtual Adaptor_n_to_1* clone() const;
 
 	template <class A = std::allocator<int8_t>>
-	void put_n(const std::vector<int8_t,A>& in, const int frame_id = -1);
+	void push_n(const std::vector<int8_t,A>& in, const int frame_id = -1);
 	template <class A = std::allocator<int8_t>>
 	void pull_1(std::vector<int8_t,A>& out, const int frame_id = -1);
 
-	virtual void put_n (const int8_t *in,  const int frame_id = -1);
+	virtual void push_n(const int8_t *in,  const int frame_id = -1);
 	virtual void pull_1(      int8_t *out, const int frame_id = -1);
 
 	void wake_up();
