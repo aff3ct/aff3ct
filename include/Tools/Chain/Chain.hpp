@@ -82,11 +82,11 @@ public:
 
 	template <class C = module::Module>
 	std::vector<C*> get_modules(const bool subchain_modules = true) const;
-	std::vector<std::vector<const module::Module*>> get_modules_per_threads() const;
-	std::vector<std::vector<const module::Module*>> get_modules_per_types  () const;
+	std::vector<std::vector<module::Module*>> get_modules_per_threads() const;
+	std::vector<std::vector<module::Module*>> get_modules_per_types  () const;
 
-	std::vector<std::vector<const module::Task*>> get_tasks_per_threads() const;
-	std::vector<std::vector<const module::Task*>> get_tasks_per_types  () const;
+	std::vector<std::vector<module::Task*>> get_tasks_per_threads() const;
+	std::vector<std::vector<module::Task*>> get_tasks_per_types  () const;
 
 	inline const std::vector<module::Task*>& get_first_tasks() const;
 	inline const std::vector<module::Task*>& get_last_tasks() const;

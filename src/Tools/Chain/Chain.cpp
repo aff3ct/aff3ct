@@ -147,10 +147,10 @@ Chain* Chain
 	return c;
 }
 
-std::vector<std::vector<const module::Module*>> Chain
+std::vector<std::vector<module::Module*>> Chain
 ::get_modules_per_threads() const
 {
-	std::vector<std::vector<const module::Module*>> modules_per_threads(this->all_modules.size());
+	std::vector<std::vector<module::Module*>> modules_per_threads(this->all_modules.size());
 	size_t tid = 0;
 	for (auto &e : this->all_modules)
 	{
@@ -161,10 +161,10 @@ std::vector<std::vector<const module::Module*>> Chain
 	return modules_per_threads;
 }
 
-std::vector<std::vector<const module::Module*>> Chain
+std::vector<std::vector<module::Module*>> Chain
 ::get_modules_per_types() const
 {
-	std::vector<std::vector<const module::Module*>> modules_per_types(this->all_modules[0].size());
+	std::vector<std::vector<module::Module*>> modules_per_types(this->all_modules[0].size());
 	for (auto &e : this->all_modules)
 	{
 		size_t mid = 0;
@@ -174,10 +174,10 @@ std::vector<std::vector<const module::Module*>> Chain
 	return modules_per_types;
 }
 
-std::vector<std::vector<const module::Task*>> Chain
+std::vector<std::vector<module::Task*>> Chain
 ::get_tasks_per_threads() const
 {
-	std::vector<std::vector<const module::Task*>> tasks_per_threads(this->n_threads);
+	std::vector<std::vector<module::Task*>> tasks_per_threads(this->n_threads);
 
 	std::function<void(Generic_node<Sub_sequence>*, const size_t)> get_tasks_recursive =
 		[&](Generic_node<Sub_sequence>* cur_ss, const size_t tid)
@@ -196,10 +196,10 @@ std::vector<std::vector<const module::Task*>> Chain
 	return tasks_per_threads;
 }
 
-std::vector<std::vector<const module::Task*>> Chain
+std::vector<std::vector<module::Task*>> Chain
 ::get_tasks_per_types() const
 {
-	std::vector<std::vector<const module::Task*>> tasks_per_types(this->n_tasks);
+	std::vector<std::vector<module::Task*>> tasks_per_types(this->n_tasks);
 
 	std::function<void(Generic_node<Sub_sequence>*, size_t&)> get_tasks_recursive =
 		[&](Generic_node<Sub_sequence>* cur_ss, size_t &mid)
