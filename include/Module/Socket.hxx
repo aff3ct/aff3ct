@@ -247,7 +247,7 @@ void Socket
 void Socket
 ::reset()
 {
-	this->dataptr = nullptr;
+	// this->dataptr = nullptr;
 	this->bound_sockets.clear();
 	this->bound_socket = nullptr;
 }
