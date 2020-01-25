@@ -82,8 +82,7 @@ Description of the allowed values:
 
 .. |mdm-implem_descr_std|  replace:: Select a standard implementation working
    for any |modem|.
-.. |mdm-implem_descr_fast| replace:: Select a fast implementation, only
-   available for the |BPSK| |modem| at this time.
+.. |mdm-implem_descr_fast| replace:: Select a fast implementation.
 
 .. _mdm-mdm-bps:
 

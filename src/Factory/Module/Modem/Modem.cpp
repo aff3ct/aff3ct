@@ -16,6 +16,7 @@
 #include "Module/Modem/CPM/Modem_CPM.hpp"
 #include "Module/Modem/SCMA/Modem_SCMA.hpp"
 #include "Module/Modem/Generic/Modem_generic.hpp"
+#include "Module/Modem/Generic/Modem_generic_fast.hpp"
 #include "Tools/Constellation/PAM/Constellation_PAM.hpp"
 #include "Tools/Constellation/PSK/Constellation_PSK.hpp"
 #include "Tools/Constellation/QAM/Constellation_QAM.hpp"
@@ -266,7 +267,7 @@ tools::Constellation<R>* Modem
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
-template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
+template <typename B, typename R, typename Q, tools::proto_max<Q> MAX, tools::proto_max_i<Q> MAXI>
 module::Modem<B,R,Q>* Modem
 ::_build(const tools::Constellation<R>* cstl) const
 {
@@ -275,7 +276,12 @@ module::Modem<B,R,Q>* Modem
 	if (this->type == "CPM"  && this->implem == "STD" ) return new module::Modem_CPM      <B,R,Q,MAX>(this->N, this->bps, this->cpm_upf, this->cpm_L, this->cpm_k, this->cpm_p, this->cpm_mapping, this->cpm_wave_shape, this->no_sig2, this->n_frames);
 
 	if (cstl != nullptr)
-		return new module::Modem_generic<B,R,Q,MAX>(N, *cstl, this->no_sig2, this->n_frames);
+	{
+		if (this->implem == "FAST")
+			return new module::Modem_generic_fast<B,R,Q,MAX,MAXI>(N, *cstl, this->no_sig2, this->n_frames);
+		else
+			return new module::Modem_generic     <B,R,Q,MAX     >(N, *cstl, this->no_sig2, this->n_frames);
+	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -308,10 +314,10 @@ module::Modem<B,R,Q>* Modem
 	}
 	else
 	{
-		if (this->max == "MAX"  ) return _build<B,R,Q,tools::max          <Q>>(cstl);
-		if (this->max == "MAXL" ) return _build<B,R,Q,tools::max_linear   <Q>>(cstl);
-		if (this->max == "MAXS" ) return _build<B,R,Q,tools::max_star     <Q>>(cstl);
-		if (this->max == "MAXSS") return _build<B,R,Q,tools::max_star_safe<Q>>(cstl);
+		if (this->max == "MAX"  ) return _build<B,R,Q,tools::max          <Q>,tools::max_i          <Q>>(cstl);
+		if (this->max == "MAXL" ) return _build<B,R,Q,tools::max_linear   <Q>,tools::max_linear_i   <Q>>(cstl);
+		if (this->max == "MAXS" ) return _build<B,R,Q,tools::max_star     <Q>,tools::max_star_i     <Q>>(cstl);
+		if (this->max == "MAXSS") return _build<B,R,Q,tools::max_star_safe<Q>,tools::max_star_safe_i<Q>>(cstl);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

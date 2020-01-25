@@ -66,6 +66,8 @@ public:
 	 */
 	bool is_complex() const;
 
+	size_t size() const;
+
 protected:
 	/*
 	 * \param n_bps is the number of bits per symbol

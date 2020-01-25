@@ -114,6 +114,13 @@ R Constellation<R>
 }
 
 template <typename R>
+size_t Constellation<R>
+::size() const
+{
+	return constellation.size();
+}
+
+template <typename R>
 typename Constellation<R>::S Constellation<R>
 ::bits_to_symbol(const uint8_t bits[]) const
 {

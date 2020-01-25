@@ -91,6 +91,12 @@ inline mipp::Reg<R> max_star_i(const mipp::Reg<R> a, const mipp::Reg<R> b)
 }
 
 template <typename R>
+inline mipp::Reg<R> max_star_safe_i(const mipp::Reg<R> a, const mipp::Reg<R> b)
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename R>
 inline R min(const R a, const R b)
 {
 	return std::min(a, b);

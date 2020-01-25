@@ -36,9 +36,10 @@ template <typename R> inline R min             (const R a, const R b);
 template <typename R> inline R min_star_linear2(const R a, const R b);
 template <typename R> inline R min_star        (const R a, const R b);
 
-template <typename R> inline mipp::Reg<R> max_i       (const mipp::Reg<R> a, const mipp::Reg<R> b);
-template <typename R> inline mipp::Reg<R> max_linear_i(const mipp::Reg<R> a, const mipp::Reg<R> b);
-template <typename R> inline mipp::Reg<R> max_star_i  (const mipp::Reg<R> a, const mipp::Reg<R> b);
+template <typename R> inline mipp::Reg<R> max_i          (const mipp::Reg<R> a, const mipp::Reg<R> b);
+template <typename R> inline mipp::Reg<R> max_linear_i   (const mipp::Reg<R> a, const mipp::Reg<R> b);
+template <typename R> inline mipp::Reg<R> max_star_i     (const mipp::Reg<R> a, const mipp::Reg<R> b);
+template <typename R> inline mipp::Reg<R> max_star_safe_i(const mipp::Reg<R> a, const mipp::Reg<R> b);
 
 template <typename R> inline mipp::Reg<R> min_i             (const mipp::Reg<R> a, const mipp::Reg<R> b);
 template <typename R> inline mipp::Reg<R> min_star_linear2_i(const mipp::Reg<R> a, const mipp::Reg<R> b);

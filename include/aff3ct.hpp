@@ -690,6 +690,9 @@
 #ifndef MODEM_CPM_HPP_
 #include <Module/Modem/CPM/Modem_CPM.hpp>
 #endif
+#ifndef MODEM_GENERIC_FAST_HPP_
+#include <Module/Modem/Generic/Modem_generic_fast.hpp>
+#endif
 #ifndef MODEM_GENERIC_HPP_
 #include <Module/Modem/Generic/Modem_generic.hpp>
 #endif

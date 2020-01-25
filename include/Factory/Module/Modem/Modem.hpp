@@ -101,7 +101,7 @@ public:
 	                                           const tools::Constellation<float>* c = nullptr);
 
 private:
-	template <typename B = int, typename R = float, typename Q = R, tools::proto_max<Q> MAX>
+	template <typename B = int, typename R = float, typename Q = R, tools::proto_max<Q> MAX, tools::proto_max_i<Q> MAXI>
 	inline module::Modem<B,R,Q>* _build(const tools::Constellation<R>* cstl) const;
 
 	template <typename B = int, typename R = float, typename Q = R>
