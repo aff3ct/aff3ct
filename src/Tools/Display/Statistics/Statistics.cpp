@@ -221,11 +221,6 @@ void Statistics
 }
 }
 
-template void tools::Statistics::show<const module::Module>(std::vector<const module::Module*>, const bool, std::ostream&);
-template void tools::Statistics::show<      module::Module>(std::vector<      module::Module*>, const bool, std::ostream&);
-template void tools::Statistics::show<const module::Task  >(std::vector<const module::Task  *>, const bool, std::ostream&);
-template void tools::Statistics::show<      module::Task  >(std::vector<      module::Task  *>, const bool, std::ostream&);
-
 template <class MODULE>
 void Statistics
 ::show_modules(std::vector<MODULE*> modules, const bool ordered, std::ostream &stream)
@@ -381,11 +376,6 @@ void Statistics
 
 }
 }
-
-template void tools::Statistics::show<const module::Module>(std::vector<std::vector<const module::Module*>>, const bool, std::ostream&);
-template void tools::Statistics::show<      module::Module>(std::vector<std::vector<      module::Module*>>, const bool, std::ostream&);
-template void tools::Statistics::show<const module::Task  >(std::vector<std::vector<const module::Task  *>>, const bool, std::ostream&);
-template void tools::Statistics::show<      module::Task  >(std::vector<std::vector<      module::Task  *>>, const bool, std::ostream&);
 
 template <class MODULE>
 void Statistics
