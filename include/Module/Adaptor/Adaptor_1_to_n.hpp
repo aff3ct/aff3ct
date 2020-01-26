@@ -51,7 +51,7 @@ public:
 	virtual ~Adaptor_1_to_n() = default;
 	virtual Adaptor_1_to_n* clone() const;
 
-	void init();
+	inline void init();
 
 	void wake_up();
 	void cancel_waiting();
