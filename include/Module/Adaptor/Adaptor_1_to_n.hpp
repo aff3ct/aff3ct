@@ -43,19 +43,22 @@ public:
 	                      const size_t buffer_size = 1,
 	                      const bool active_waiting = true,
 	                      const int n_frames = 1);
+	inline Adaptor_1_to_n(const std::vector<size_t> &n_elmts,
+	                      const std::vector<std::type_index> &datatype,
+	                      const size_t buffer_size = 1,
+	                      const bool active_waiting = true,
+	                      const int n_frames = 1);
 	virtual ~Adaptor_1_to_n() = default;
 	virtual Adaptor_1_to_n* clone() const;
 
-	template <class A = std::allocator<int8_t>>
-	void push_1(const std::vector<int8_t,A>& in, const int frame_id = -1);
-	template <class A = std::allocator<int8_t>>
-	void pull_n(std::vector<int8_t,A>& out, const int frame_id = -1);
-
-	virtual void push_1(const int8_t *in,  const int frame_id = -1);
-	virtual void pull_n(      int8_t *out, const int frame_id = -1);
+	void init();
 
 	void wake_up();
 	void cancel_waiting();
+
+protected:
+	virtual void push_1(const std::vector<const int8_t*> &in,  const int frame_id = -1);
+	virtual void pull_n(const std::vector<      int8_t*> &out, const int frame_id = -1);
 };
 }
 }

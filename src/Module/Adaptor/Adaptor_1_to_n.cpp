@@ -15,7 +15,7 @@ Adaptor_1_to_n* Adaptor_1_to_n
 }
 
 void Adaptor_1_to_n
-::push_1(const int8_t *in, const int frame_id)
+::push_1(const std::vector<const int8_t*> &in, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -39,11 +39,14 @@ void Adaptor_1_to_n
 	if (*this->waiting_canceled)
 		throw tools::waiting_canceled(__FILE__, __LINE__, __func__);
 
-	int8_t* out = (*this->buffer)[this->cur_id][(*this->last)[this->cur_id] % this->buffer_size].data();
+	for (size_t s = 0; s < this->n_sockets; s++)
+	{
+		int8_t* out = (*this->buffer)[this->cur_id][s][(*this->last)[this->cur_id] % this->buffer_size].data();
 
-	std::copy(in  + f_start * this->n_bytes,
-	          in  + f_stop  * this->n_bytes,
-	          out + f_start * this->n_bytes);
+		std::copy(in[s] + f_start * this->n_bytes[s],
+		          in[s] + f_stop  * this->n_bytes[s],
+		          out   + f_start * this->n_bytes[s]);
+	}
 
 	(*this->last)[this->cur_id]++;
 
@@ -64,7 +67,7 @@ void Adaptor_1_to_n
 }
 
 void Adaptor_1_to_n
-::pull_n(int8_t *out, const int frame_id)
+::pull_n(const std::vector<int8_t*> &out, const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -88,11 +91,14 @@ void Adaptor_1_to_n
 	if (*this->waiting_canceled)
 		throw tools::waiting_canceled(__FILE__, __LINE__, __func__);
 
-	const int8_t* in = (*this->buffer)[this->id][(*this->first)[this->id] % this->buffer_size].data();
+	for (size_t s = 0; s < this->n_sockets; s++)
+	{
+		const int8_t* in = (*this->buffer)[this->id][s][(*this->first)[this->id] % this->buffer_size].data();
 
-	std::copy(in  + f_start * this->n_bytes,
-	          in  + f_stop  * this->n_bytes,
-	          out + f_start * this->n_bytes);
+		std::copy(in     + f_start * this->n_bytes[s],
+		          in     + f_stop  * this->n_bytes[s],
+		          out[s] + f_start * this->n_bytes[s]);
+	}
 
 	(*this->first)[this->id]++;
 

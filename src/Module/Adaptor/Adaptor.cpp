@@ -24,14 +24,18 @@ void Adaptor
 	if (id == -1)
 	{
 		this->id = this->buffer->size();
-		this->buffer->push_back(
-			std::vector<std::vector<int8_t>>(this->buffer_size, std::vector<int8_t>(this->n_frames * this->n_bytes)));
+		this->buffer->push_back(std::vector<std::vector<std::vector<int8_t>>>(this->n_sockets,
+			std::vector<std::vector<int8_t>>(this->buffer_size)));
 	}
 	else
 	{
 		this->id = (size_t)id;
-		(*this->buffer)[this->id].resize(buffer_size, std::vector<int8_t>(this->n_frames * this->n_bytes));
+		(*this->buffer)[this->id].resize(this->n_sockets, std::vector<std::vector<int8_t>>(this->buffer_size));
 	}
+
+	for (auto s = 0; s < this->n_sockets; s++)
+			for (auto b = 0; b < this->buffer_size; b++)
+				(*this->buffer)[this->id][s][b].resize(this->n_frames * this->n_bytes[s]);
 
 	if (this->id >= this->first->size())
 	{
@@ -59,6 +63,23 @@ size_t Adaptor
 		message << "This should never happen.";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+std::vector<size_t> Adaptor
+::compute_bytes(const std::vector<size_t> &n_elmts, const std::vector<std::type_index> &type)
+{
+	if (n_elmts.size() != type.size())
+	{
+		std::stringstream message;
+		message << "'n_elmts.size()' has to be equal to 'type.size()' ('n_elmts.size()' = " << n_elmts.size()
+		        << ", 'type.size()' = " << type.size() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	std::vector<size_t> bytes(n_elmts.size());
+	for (size_t i = 0; i < n_elmts.size(); i++)
+		bytes[i] = Adaptor::compute_bytes(n_elmts[i], type[i]);
+	return bytes;
 }
 
 void Adaptor::send_cancel_signal()

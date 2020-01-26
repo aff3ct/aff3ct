@@ -40,6 +40,28 @@ Adaptor_1_to_n
   cnd_put (new             std::condition_variable (    )),
   mtx_put (new             std::mutex              (    ))
 {
+	this->init();
+}
+
+Adaptor_1_to_n
+::Adaptor_1_to_n(const std::vector<size_t> &n_elmts,
+                 const std::vector<std::type_index> &datatype,
+                 const size_t buffer_size,
+                 const bool active_waiting,
+                 const int n_frames)
+: Adaptor(n_elmts, datatype, buffer_size, n_frames),
+  active_waiting(active_waiting),
+  cnd_pull(new std::vector<std::condition_variable>(1000)),
+  mtx_pull(new std::vector<std::mutex             >(1000)),
+  cnd_put (new             std::condition_variable (    )),
+  mtx_put (new             std::mutex              (    ))
+{
+	this->init();
+}
+
+void Adaptor_1_to_n
+::init()
+{
 	const std::string name = "Adaptor_1_to_n";
 	this->set_name(name);
 	this->set_short_name(name);
@@ -81,51 +103,34 @@ Adaptor_1_to_n
 		};
 
 	auto &p1 = this->create_task("push_1", (int)adp::tsk::push_1);
-	auto p1s_in = create_socket_in(p1, n_elmts, datatype);
+	std::vector<size_t> p1s_in;
+	for (size_t s = 0; s < this->n_sockets; s++)
+		p1s_in.push_back(create_socket_in(p1, this->n_elmts[s], this->datatype[s]));
+
 	this->create_codelet(p1, [p1s_in](Module &m, Task &t) -> int
 	{
-		static_cast<Adaptor_1_to_n&>(m).push_1(static_cast<int8_t*>(t[p1s_in].get_dataptr()));
+		std::vector<const int8_t*> sockets_dataptr(p1s_in.size());
+		for (size_t s = 0; s < p1s_in.size(); s++)
+			sockets_dataptr[s] = static_cast<const int8_t*>(t[p1s_in[s]].get_dataptr());
+
+		static_cast<Adaptor_1_to_n&>(m).push_1(sockets_dataptr);
 		return 0;
 	});
 
 	auto &p2 = this->create_task("pull_n", (int)adp::tsk::pull_n);
-	auto p2s_out = create_socket_out(p2, n_elmts, datatype);
+	std::vector<size_t> p2s_out;
+	for (size_t s = 0; s < this->n_sockets; s++)
+		p2s_out.push_back(create_socket_in(p1, this->n_elmts[s], this->datatype[s]));
+
 	this->create_codelet(p2, [p2s_out](Module &m, Task &t) -> int
 	{
-		static_cast<Adaptor_1_to_n&>(m).pull_n(static_cast<int8_t*>(t[p2s_out].get_dataptr()));
+		std::vector<int8_t*> sockets_dataptr(p2s_out.size());
+		for (size_t s = 0; s < p2s_out.size(); s++)
+			sockets_dataptr[s] = static_cast<int8_t*>(t[p2s_out[s]].get_dataptr());
+
+		static_cast<Adaptor_1_to_n&>(m).pull_n(sockets_dataptr);
 		return 0;
 	});
 }
-
-template <class A>
-void Adaptor_1_to_n
-::push_1(const std::vector<int8_t,A>& in, const int frame_id)
-{
-	if (this->n_bytes * (size_t)this->n_frames != in.size())
-	{
-		std::stringstream message;
-		message << "'in.size()' has to be equal to 'n_bytes' * 'n_frames' ('in.size()' = " << in.size()
-		        << ", 'n_bytes' = " << this->n_bytes << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	this->push_1(in.data(), frame_id);
-}
-
-template <class A>
-void Adaptor_1_to_n
-::pull_n(std::vector<int8_t,A>& out, const int frame_id)
-{
-	if (this->n_bytes * (size_t)this->n_frames != out.size())
-	{
-		std::stringstream message;
-		message << "'out.size()' has to be equal to 'n_bytes' * 'n_frames' ('out.size()' = " << out.size()
-		        << ", 'n_bytes' = " << this->n_bytes << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	this->pull_n(out.data(), frame_id);
-}
-
 }
 }
