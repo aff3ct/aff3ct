@@ -191,6 +191,20 @@ const Polar_code& Codec_polar_MK<B,Q>
 	return *this->code;
 }
 
+template <typename B, typename Q>
+const Frozenbits_generator& Codec_polar_MK<B,Q>
+::get_frozen_bits_generator() const
+{
+	if (this->fb_generator == nullptr)
+	{
+		std::stringstream message;
+		message << "'fb_generator' can't be nullptr.";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return *this->fb_generator.get();
+}
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
