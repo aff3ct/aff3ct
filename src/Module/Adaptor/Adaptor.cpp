@@ -33,8 +33,8 @@ void Adaptor
 		(*this->buffer)[this->id].resize(this->n_sockets, std::vector<std::vector<int8_t>>(this->buffer_size));
 	}
 
-	for (auto s = 0; s < this->n_sockets; s++)
-			for (auto b = 0; b < this->buffer_size; b++)
+	for (size_t s = 0; s < this->n_sockets; s++)
+			for (size_t b = 0; b < this->buffer_size; b++)
 				(*this->buffer)[this->id][s][b].resize(this->n_frames * this->n_bytes[s]);
 
 	if (this->id >= this->first->size())
