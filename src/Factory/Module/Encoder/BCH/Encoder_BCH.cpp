@@ -1,6 +1,8 @@
+#include "Tools/Documentation/documentation.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
 #include "Module/Encoder/BCH/Encoder_BCH.hpp"
+#include "Module/Encoder/BCH/Encoder_BCH_inter.hpp"
 #include "Factory/Module/Encoder/BCH/Encoder_BCH.hpp"
 
 using namespace aff3ct;
@@ -28,27 +30,48 @@ void Encoder_BCH
 	Encoder::get_description(args);
 
 	auto p = this->get_prefix();
+	const std::string class_name = "factory::Encoder_BCH::";
 
 	cli::add_options(args.at({p+"-type"}), 0, "BCH");
+
+	tools::add_arg(args, p, class_name+"p+simd",
+		cli::Text(cli::Including_set("INTER")));
 }
 
 void Encoder_BCH
 ::store(const cli::Argument_map_value &vals)
 {
 	Encoder::store(vals);
+
+	auto p = this->get_prefix();
+
+	if(vals.exist({p+"-simd"})) this->simd_strategy = vals.at({p+"-simd"});
 }
 
 void Encoder_BCH
 ::get_headers(std::map<std::string,tools::header_list>& headers, const bool full) const
 {
 	Encoder::get_headers(headers, full);
+
+	auto p = this->get_prefix();
+
+	if (!this->simd_strategy.empty())
+		headers[p].push_back(std::make_pair("SIMD strategy", this->simd_strategy));
 }
 
 template <typename B>
 module::Encoder_BCH<B>* Encoder_BCH
 ::build(const tools::BCH_polynomial_generator<B> &GF) const
 {
-	if (this->type == "BCH") return new module::Encoder_BCH<B>(this->K, this->N_cw, GF, this->n_frames);
+	if (this->type == "BCH")
+	{
+		if (this->simd_strategy == "INTER")
+			return new module::Encoder_BCH_inter<B>(this->K, this->N_cw, GF, this->n_frames);
+		else if (this->simd_strategy == "INTRA")
+			throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
+		else
+			return new module::Encoder_BCH<B>(this->K, this->N_cw, GF, this->n_frames);
+	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

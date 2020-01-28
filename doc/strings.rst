@@ -500,6 +500,9 @@
 
 .. --------------------------------------------- factory Encoder_BCH parameters
 
+.. |factory::Encoder_BCH::p+simd| replace::
+   Select the |SIMD| strategy.
+
 .. -------------------------------------------- factory Encoder_LDPC parameters
 
 .. |factory::Encoder_LDPC::p+h-path| replace::

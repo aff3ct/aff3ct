@@ -217,7 +217,7 @@ version 8.1.0). When compiling with the GNU compiler in C++11 mode, the
 """"""""""""""
 
    :Type: text
-   :Allowed values: ``INTER``
+   :Allowed values: ``INTER``, ``INTRA``
    :Examples: ``--dec-simd INTER``
 
 |factory::Decoder_LDPC::p+simd|

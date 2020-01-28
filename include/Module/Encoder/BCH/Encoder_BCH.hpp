@@ -33,6 +33,13 @@ public:
 	bool is_codeword(const B *X_N);
 
 protected:
+	Encoder_BCH(const int& K,
+	            const int& N,
+	            const tools::BCH_polynomial_generator<B>& GF,
+	            const bool hack_ambiguous,
+	            const int n_frames = 1,
+	            const int simd_inter_frame_level = 1);
+
 	virtual void  _encode(const B *U_K, B *X_N, const int frame_id);
 	virtual void __encode(const B *U_K, B *bb);
 };

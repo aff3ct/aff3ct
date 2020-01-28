@@ -46,12 +46,19 @@ public:
 	inline Socket& operator[](const enc::sck::encode s);
 
 protected:
-	const int             K;             /*!< Number of information bits in one frame */
-	const int             N;             /*!< Size of one frame (= number of bits in one frame) */
-	      bool            sys;           /*!< Is the generated codeword systematic ? */
-	      bool            memorizing;    /*!< If true, keep the last encoded frame(s) in memory */
-	std::vector<uint32_t> info_bits_pos; /*!< Positions of the information bits in the codeword */
+	const int             n_inter_frame_rest;
 
+	const int             K;                      /*!< Number of information bits in one frame */
+	const int             N;                      /*!< Size of one frame (= number of bits in one frame) */
+	const int             simd_inter_frame_level; /*!< Number of frames absorbed by the SIMD instructions. */
+	const int             n_enc_waves;
+
+	      bool            sys;                    /*!< Is the generated codeword systematic ? */
+	      bool            memorizing;             /*!< If true, keep the last encoded frame(s) in memory */
+	std::vector<uint32_t> info_bits_pos;          /*!< Positions of the information bits in the codeword */
+
+	std::vector<B> U_K;
+	std::vector<B> X_N;
 	std::vector<std::vector<B>> U_K_mem;
 	std::vector<std::vector<B>> X_N_mem;
 
@@ -63,7 +70,7 @@ public:
 	 * \param N:        size of one frame.
 	 * \param n_frames: number of frames to process in the Encoder.
 	 */
-	Encoder(const int K, const int N, const int n_frames = 1);
+	Encoder(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1);
 
 	/*!
 	 * \brief Destructor.

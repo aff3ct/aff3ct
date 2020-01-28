@@ -27,13 +27,18 @@ Socket& Encoder<B>
 
 template <typename B>
 Encoder<B>
-::Encoder(const int K, const int N, const int n_frames)
+::Encoder(const int K, const int N, const int n_frames, const int simd_inter_frame_level)
 : Module(n_frames),
+  n_inter_frame_rest(this->n_frames % simd_inter_frame_level),
   K(K),
   N(N),
+  simd_inter_frame_level(simd_inter_frame_level),
+  n_enc_waves((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level)),
   sys(true),
   memorizing(false),
   info_bits_pos(this->K),
+  U_K(this->n_inter_frame_rest ? this->simd_inter_frame_level * this->K : 0),
+  X_N(this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0),
   U_K_mem(n_frames),
   X_N_mem(n_frames)
 {
@@ -52,6 +57,14 @@ Encoder<B>
 	{
 		std::stringstream message;
 		message << "'N' has to be greater than 0 ('N' = " << N << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (simd_inter_frame_level <= 0)
+	{
+		std::stringstream message;
+		message << "'simd_inter_frame_level' has to be greater than 0 ('simd_inter_frame_level' = "
+		        << simd_inter_frame_level << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -198,10 +211,56 @@ void Encoder<B>
 			          U_K + (f +1) * this->K,
 			          U_K_mem[f].begin());
 
-	for (auto f = f_start; f < f_stop; f++)
-		this->_encode(U_K + f * this->K,
-		              X_N + f * this->N,
-		              f);
+	if (frame_id < 0 || this->simd_inter_frame_level == 1)
+	{
+		const auto w_start = (frame_id < 0) ? 0 : frame_id % this->n_enc_waves;
+		const auto w_stop  = (frame_id < 0) ? this->n_enc_waves : w_start +1;
+
+		auto w = 0;
+		for (w = w_start; w < w_stop -1; w++)
+		{
+			this->_encode(U_K + w * this->K * this->simd_inter_frame_level,
+			              X_N + w * this->N * this->simd_inter_frame_level,
+			              w * this->simd_inter_frame_level);
+		}
+
+		if (this->n_inter_frame_rest == 0)
+		{
+			this->_encode(U_K + w * this->K * this->simd_inter_frame_level,
+			              X_N + w * this->N * this->simd_inter_frame_level,
+			              w * this->simd_inter_frame_level);
+		}
+		else
+		{
+			const auto waves_off1 = w * this->simd_inter_frame_level * this->K;
+			std::copy(U_K + waves_off1,
+			          U_K + waves_off1 + this->n_inter_frame_rest * this->K,
+			          this->U_K.begin());
+
+			this->_encode(this->U_K.data(), this->X_N.data(), w * this->simd_inter_frame_level);
+
+			const auto waves_off2 = w * this->simd_inter_frame_level * this->N;
+			std::copy(this->X_N.begin(),
+			          this->X_N.begin() + this->n_inter_frame_rest * this->N,
+			          X_N + waves_off2);
+		}
+	}
+	else
+	{
+		const auto w = (frame_id % this->n_frames) / this->simd_inter_frame_level;
+		const auto w_pos = frame_id % this->simd_inter_frame_level;
+
+		// std::fill(this->U_K.begin(), this->U_K.end(), (B)0);
+		std::copy(U_K + ((frame_id % this->n_frames) + 0) * this->K,
+		          U_K + ((frame_id % this->n_frames) + 1) * this->K,
+		          this->U_K.begin() + w_pos * this->K);
+
+		this->_encode(this->U_K.data(), this->X_N.data(), w * this->simd_inter_frame_level);
+
+		std::copy(this->X_N.begin() + (w_pos +0) * this->N,
+		          this->X_N.begin() + (w_pos +1) * this->N,
+		          X_N + (frame_id % this->n_frames) * this->N);
+	}
 
 	if (this->is_memorizing())
 		for (auto f = f_start; f < f_stop; f++)

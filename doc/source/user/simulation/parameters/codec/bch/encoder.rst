@@ -61,3 +61,29 @@ Description of the allowed values:
    parameter.
 .. |enc-type_descr_user| replace:: See the common :ref:`enc-common-enc-type`
    parameter.
+
+.. _enc-bch-enc-simd:
+
+``--enc-simd``
+""""""""""""""
+
+   :Type: text
+   :Allowed values: ``INTER``
+   :Examples: ``--enc-simd INTER``
+
+|factory::Encoder_BCH::p+simd|
+
+Description of the allowed values:
+
++-----------+------------------------+
+| Value     | Description            |
++===========+========================+
+| ``INTER`` | |dec-simd_descr_inter| |
++-----------+------------------------+
+
+.. |dec-simd_descr_inter| replace:: Select the inter-frame strategy.
+
+.. note:: Be aware that running the simulator with the :ref:`src-src-fra`
+   parameter set to 1 and the :ref:`dec-polar-dec-simd` parameter set to
+   ``INTER`` will completely be counterproductive and will lead to no throughput
+   improvements.

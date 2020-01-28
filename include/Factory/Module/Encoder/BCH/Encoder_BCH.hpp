@@ -24,7 +24,7 @@ class Encoder_BCH : public Encoder
 {
 public:
 	// ----------------------------------------------------------------------------------------------------- PARAMETERS
-	// empty
+	std::string simd_strategy = "";
 
 	// -------------------------------------------------------------------------------------------------------- METHODS
 	explicit Encoder_BCH(const std::string &p = Encoder_BCH_prefix);

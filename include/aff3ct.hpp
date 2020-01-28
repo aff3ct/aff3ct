@@ -579,6 +579,9 @@
 #ifndef ENCODER_BCH_HPP_
 #include <Module/Encoder/BCH/Encoder_BCH.hpp>
 #endif
+#ifndef ENCODER_BCH_INTER_HPP_
+#include <Module/Encoder/BCH/Encoder_BCH_inter.hpp>
+#endif
 #ifndef ENCODER_COSET_HPP_
 #include <Module/Encoder/Coset/Encoder_coset.hpp>
 #endif

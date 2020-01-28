@@ -10,8 +10,13 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_BCH<B>
-::Encoder_BCH(const int& K, const int& N, const tools::BCH_polynomial_generator<B>& GF_poly, const int n_frames)
- : Encoder<B>(K, N, n_frames), n_rdncy(GF_poly.get_n_rdncy()), g(GF_poly.get_g()), bb(n_rdncy)
+::Encoder_BCH(const int& K,
+              const int& N,
+              const tools::BCH_polynomial_generator<B>& GF_poly,
+              const bool hack_ambigous,
+              const int n_frames,
+              const int simd_inter_frame_level)
+ : Encoder<B>(K, N, n_frames, simd_inter_frame_level), n_rdncy(GF_poly.get_n_rdncy()), g(GF_poly.get_g()), bb(n_rdncy)
 {
 	const std::string name = "Encoder_BCH";
 	this->set_name(name);
@@ -25,6 +30,13 @@ Encoder_BCH<B>
 	}
 
 	std::iota(this->info_bits_pos.begin(), this->info_bits_pos.end(), n_rdncy); // redundancy on the first 'n_rdncy' bits
+}
+
+template <typename B>
+Encoder_BCH<B>
+::Encoder_BCH(const int& K, const int& N, const tools::BCH_polynomial_generator<B>& GF_poly, const int n_frames)
+ : Encoder_BCH<B>(K, N, GF_poly, true, n_frames, 1)
+{
 }
 
 template <typename B>

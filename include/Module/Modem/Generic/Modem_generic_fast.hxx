@@ -95,7 +95,7 @@ size_t kernel_demodulate_complex_SIMD(const Q *Y_N1,
 		}
 		const mipp::Reg<Q> reg_Y_re = arr_Y_re;
 		const mipp::Reg<Q> reg_Y_im = arr_Y_im;
-		const mipp::Regx2<Q> reg_complex_Yk(reg_Y_re, reg_Y_im);;
+		const mipp::Regx2<Q> reg_complex_Yk(reg_Y_re, reg_Y_im);
 
 		mipp::Reg<I> regi_j = regi_zero;
 		for (auto j = 0; j < nbr_symbols; j++)
