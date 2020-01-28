@@ -45,21 +45,9 @@ void Encoder_BCH<B>
 	for (auto i = this->K - 1; i >= 0; i--)
 	{
 		const auto feedback = U_K[i] ^ par[n_rdncy - 1];
-		if (feedback != 0)
-		{
-			for (auto j = n_rdncy - 1; j > 0; j--)
-				if (g[j] != 0)
-					par[j] = par[j - 1] ^ feedback;
-				else
-					par[j] = par[j - 1];
-			par[0] = g[0] && feedback;
-		}
-		else
-		{
-			for (auto j = n_rdncy - 1; j > 0; j--)
-				par[j] = par[j - 1];
-			par[0] = 0;
-		}
+		for (auto j = n_rdncy - 1; j > 0; j--)
+			par[j] = g[j] ? par[j - 1] ^ feedback : par[j - 1];
+		par[0] = feedback ? g[0] && feedback : 0;
 	}
 }
 
