@@ -36,18 +36,20 @@ void Encoder_BCH_inter<B>
 	mipp::Reg<B> reg_g_0 = this->g[0];
 	mipp::Reg<B> reg_zero = (B)0;
 
-	std::vector<mipp::Reg<B>> regs_par(this->n_rdncy, mipp::Reg<B>((B)0));
-
-	for (auto i = this->K - 1; i >= 0; i--)
+	for (auto i = this->K -1; i >= 0; i--)
 	{
-		const auto reg_feedback = regs_par[this->n_rdncy -1] ^ &U_K[i * mipp::N<B>()];
+		mipp::Reg<B> reg_par_n = &par[(this->n_rdncy -1) * mipp::N<B>()];
+		const auto reg_feedback = reg_par_n ^ &U_K[i * mipp::N<B>()];
 		for (auto j = this->n_rdncy -1; j > 0; j--)
-			regs_par[j] = this->g[j] ? regs_par[j -1] ^ reg_feedback : regs_par[j -1];
-		regs_par[0] = mipp::blend(reg_g_0 & reg_feedback, reg_zero, reg_feedback == 1);
-	}
+		{
+			mipp::Reg<B> reg_par_j_1 = &par[(j -1) * mipp::N<B>()];
+			auto reg_par_j = this->g[j] ? reg_par_j_1 ^ reg_feedback : reg_par_j_1;
+			reg_par_j.store(&par[j * mipp::N<B>()]);
+		}
 
-	for (size_t p = 0; p < regs_par.size(); p++)
-		regs_par[p].store(&par[p * mipp::N<B>()]);
+		auto reg_par_0 = mipp::blend(reg_g_0 & reg_feedback, reg_zero, reg_feedback == 1);
+		reg_par_0.store(&par[0 * mipp::N<B>()]);
+	}
 }
 
 template <typename B>
@@ -60,6 +62,8 @@ void Encoder_BCH_inter<B>
 			frames_in[f] = U_K + f*this->K;
 
 	tools::Reorderer_static<B,n_frames>::apply(frames_in, this->U_K_reordered.data(), this->K);
+
+	std::fill(par_reordered.begin(), par_reordered.end(), (B)0);
 
 	// generate the parity bits
 	this->__encode(this->U_K_reordered.data(), par_reordered.data());
