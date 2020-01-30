@@ -33,6 +33,8 @@ template <typename B>
 void Encoder_BCH_inter<B>
 ::__encode(const B *U_K, B *par)
 {
+	std::fill(par, par + this->n_rdncy * mipp::N<B>(), (B)0);
+
 	mipp::Reg<B> reg_g_0 = this->g[0];
 	mipp::Reg<B> reg_zero = (B)0;
 
@@ -62,8 +64,6 @@ void Encoder_BCH_inter<B>
 			frames_in[f] = U_K + f*this->K;
 
 	tools::Reorderer_static<B,n_frames>::apply(frames_in, this->U_K_reordered.data(), this->K);
-
-	std::fill(par_reordered.begin(), par_reordered.end(), (B)0);
 
 	// generate the parity bits
 	this->__encode(this->U_K_reordered.data(), par_reordered.data());
