@@ -241,9 +241,7 @@ void Chain
 ::_exec(std::function<bool(const std::vector<int>&)> &stop_condition, Generic_node<Sub_sequence>* sequence)
 {
 	if (this->is_thread_pinning())
-	{
 		aff3ct::tools::Thread_pinning::pin();
-	}
 
 	std::function<void(Generic_node<Sub_sequence>*, std::vector<int>&)> exec_sequence =
 		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss, std::vector<int>& statuses)
@@ -312,9 +310,7 @@ void Chain
 	}
 
 	if (this->is_thread_pinning())
-	{
 		aff3ct::tools::Thread_pinning::unpin();
-	}
 }
 
 void Chain
@@ -397,13 +393,7 @@ void Chain
 	for (size_t tid = 1; tid < n_threads; tid++)
 		threads[tid] = std::thread(&Chain::_exec, this, std::ref(stop_condition), std::ref(this->sequences[tid]));
 
-	if (this->is_thread_pinning())
-		aff3ct::tools::Thread_pinning::pin();
-
 	this->_exec(stop_condition, this->sequences[0]);
-
-	if (this->is_thread_pinning())
-		aff3ct::tools::Thread_pinning::unpin();
 
 	for (size_t tid = 1; tid < n_threads; tid++)
 		threads[tid].join();
@@ -423,13 +413,7 @@ void Chain
 		threads[tid] = std::thread(&Chain::_exec_without_statuses, this, std::ref(stop_condition),
 		                           std::ref(this->sequences[tid]));
 
-	if (this->is_thread_pinning())
-		aff3ct::tools::Thread_pinning::pin();
-
 	this->_exec_without_statuses(stop_condition, this->sequences[0]);
-
-	if (this->is_thread_pinning())
-		aff3ct::tools::Thread_pinning::unpin();
 
 	for (size_t tid = 1; tid < n_threads; tid++)
 		threads[tid].join();
