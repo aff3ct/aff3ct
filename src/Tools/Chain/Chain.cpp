@@ -7,6 +7,7 @@
 #include <exception>
 #include <algorithm>
 
+#include "Tools/Thread_pinning/Thread_pinning.hpp"
 #include "Tools/Exception/exception.hpp"
 #include "Module/Module.hpp"
 #include "Module/Task.hpp"
@@ -28,7 +29,8 @@ Chain
   all_modules(n_threads),
   mtx_exception(new std::mutex()),
   force_exit_loop(new std::atomic<bool>(false)),
-  tasks_inplace(false)
+  tasks_inplace(false),
+  thread_pinning(false)
 {
 	this->init<tools::Sub_sequence_const,const module::Task>(first, &last);
 }
@@ -43,7 +45,8 @@ Chain
   all_modules(n_threads),
   mtx_exception(new std::mutex()),
   force_exit_loop(new std::atomic<bool>(false)),
-  tasks_inplace(false)
+  tasks_inplace(false),
+  thread_pinning(false)
 {
 	this->init<tools::Sub_sequence_const,const module::Task>(first);
 }
@@ -58,7 +61,8 @@ Chain
   all_modules(n_threads),
   mtx_exception(new std::mutex()),
   force_exit_loop(new std::atomic<bool>(false)),
-  tasks_inplace(tasks_inplace)
+  tasks_inplace(tasks_inplace),
+  thread_pinning(false)
 {
 	if (tasks_inplace)
 		this->init<tools::Sub_sequence,module::Task>(first, &last);
@@ -76,7 +80,8 @@ Chain
   all_modules(n_threads),
   mtx_exception(new std::mutex()),
   force_exit_loop(new std::atomic<bool>(false)),
-  tasks_inplace(tasks_inplace)
+  tasks_inplace(tasks_inplace),
+  thread_pinning(false)
 {
 	if (tasks_inplace)
 		this->init<tools::Sub_sequence,module::Task>(first);
@@ -145,6 +150,18 @@ Chain* Chain
 	c->mtx_exception.reset(new std::mutex());
 	c->force_exit_loop.reset(new std::atomic<bool>(false));
 	return c;
+}
+
+void Chain
+::set_thread_pinning(const bool thread_pinning)
+{
+	this->thread_pinning = thread_pinning;
+}
+
+bool Chain
+::is_thread_pinning()
+{
+	return this->thread_pinning;
 }
 
 std::vector<std::vector<module::Module*>> Chain
@@ -223,6 +240,11 @@ std::vector<std::vector<module::Task*>> Chain
 void Chain
 ::_exec(std::function<bool(const std::vector<int>&)> &stop_condition, Generic_node<Sub_sequence>* sequence)
 {
+	if (this->is_thread_pinning())
+	{
+		aff3ct::tools::Thread_pinning::pin();
+	}
+
 	std::function<void(Generic_node<Sub_sequence>*, std::vector<int>&)> exec_sequence =
 		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss, std::vector<int>& statuses)
 		{
@@ -288,11 +310,19 @@ void Chain
 
 		this->mtx_exception->unlock();
 	}
+
+	if (this->is_thread_pinning())
+	{
+		aff3ct::tools::Thread_pinning::unpin();
+	}
 }
 
 void Chain
 ::_exec_without_statuses(std::function<bool()> &stop_condition, Generic_node<Sub_sequence>* sequence)
 {
+	if (this->is_thread_pinning())
+		aff3ct::tools::Thread_pinning::pin();
+
 	std::function<void(Generic_node<Sub_sequence>*)> exec_sequence =
 		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss)
 		{
@@ -355,6 +385,9 @@ void Chain
 
 		this->mtx_exception->unlock();
 	}
+
+	if (this->is_thread_pinning())
+		aff3ct::tools::Thread_pinning::unpin();
 }
 
 void Chain
@@ -364,7 +397,13 @@ void Chain
 	for (size_t tid = 1; tid < n_threads; tid++)
 		threads[tid] = std::thread(&Chain::_exec, this, std::ref(stop_condition), std::ref(this->sequences[tid]));
 
+	if (this->is_thread_pinning())
+		aff3ct::tools::Thread_pinning::pin();
+
 	this->_exec(stop_condition, this->sequences[0]);
+
+	if (this->is_thread_pinning())
+		aff3ct::tools::Thread_pinning::unpin();
 
 	for (size_t tid = 1; tid < n_threads; tid++)
 		threads[tid].join();
@@ -384,7 +423,13 @@ void Chain
 		threads[tid] = std::thread(&Chain::_exec_without_statuses, this, std::ref(stop_condition),
 		                           std::ref(this->sequences[tid]));
 
+	if (this->is_thread_pinning())
+		aff3ct::tools::Thread_pinning::pin();
+
 	this->_exec_without_statuses(stop_condition, this->sequences[0]);
+
+	if (this->is_thread_pinning())
+		aff3ct::tools::Thread_pinning::unpin();
 
 	for (size_t tid = 1; tid < n_threads; tid++)
 		threads[tid].join();

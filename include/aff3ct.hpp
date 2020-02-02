@@ -1431,6 +1431,9 @@
 #ifndef SC_ROUTER_HPP_
 #include <Tools/SystemC/SC_Router.hpp>
 #endif
+#ifndef THREAD_PINNING_HPP
+#include <Tools/Thread_pinning/Thread_pinning.hpp>
+#endif
 #ifndef TYPES_H_
 #include <Tools/types.h>
 #endif

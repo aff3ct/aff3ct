@@ -20,6 +20,7 @@ option(AFF3CT_COMPILE_STATIC_LIB "Compile the static library"                   
 option(AFF3CT_COMPILE_SHARED_LIB "Compile the shared library"                                                OFF)
 option(AFF3CT_LINK_GSL           "Link with the GSL library (used in the channels)"                          OFF)
 option(AFF3CT_LINK_MKL           "Link with the MKL library (used in the channels)"                          OFF)
+option(AFF3CT_LINK_HWLOC         "Link with the hwloc library (used for threads pinning)"                    OFF)
 option(AFF3CT_SYSTEMC_SIMU       "Enable the SystemC simulation (incompatible with the library compilation)" OFF)
 option(AFF3CT_SYSTEMC_MODULE     "Enable the SystemC support (only for the modules)"                         OFF)
 option(AFF3CT_MPI                "Enable the MPI support"                                                    OFF)
@@ -468,6 +469,18 @@ if(AFF3CT_LINK_MKL)
         aff3ct_target_link_libraries(PUBLIC "${MKL_MINIMAL_LIBRARIES}")
     endif(MKL_FOUND)
 endif(AFF3CT_LINK_MKL)
+
+# hwloc
+if(AFF3CT_LINK_HWLOC)
+    aff3ct_target_compile_definitions(PUBLIC "AFF3CT_HWLOC")
+
+    find_package(Hwloc REQUIRED QUIET)
+    if(Hwloc_FOUND)
+        message(STATUS "AFF3CT - Library found: hwloc")
+        aff3ct_target_include_directories2(PUBLIC "${Hwloc_INCLUDE_DIRS}")
+        aff3ct_target_link_libraries(PUBLIC "${Hwloc_LIBRARIES}")
+    endif(Hwloc_FOUND)
+endif(AFF3CT_LINK_HWLOC)
 
 # MPI
 if(AFF3CT_MPI)

@@ -61,6 +61,7 @@ protected:
 
 	size_t n_tasks;
 	bool tasks_inplace;
+	bool thread_pinning;
 
 public:
 	Chain(const module::Task &first,                           const size_t n_threads = 1                                 );
@@ -74,6 +75,9 @@ public:
 	template <class SS>
 	inline void _init(Generic_node<SS> *root);
 	virtual Chain* clone() const;
+
+	void set_thread_pinning(const bool thread_pinning);
+	bool is_thread_pinning();
 
 	void exec(std::function<bool(const std::vector<int>&)> stop_condition);
 	void exec(std::function<bool(                       )> stop_condition);
