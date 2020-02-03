@@ -107,16 +107,15 @@ void Thread_pinning
 #ifdef AFF3CT_HWLOC
 	if (g_is_init)
 	{
-		/* Get the first PU of the core */
-		if (g_cur_core_obj->arity == 0)
+		int pu_depth = hwloc_get_type_or_below_depth(g_topology, HWLOC_OBJ_PU);
+		hwloc_obj_t pu_obj = hwloc_get_obj_by_depth(g_topology, pu_depth, puid);
+
+		if (pu_obj == nullptr)
 		{
 			std::stringstream message;
-			message << "Unsupported architecture, a core should have at least one PU.";
+			message << "'pu_obj' is nullptr ('puid' = " << puid << ").";
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
-
-		int core_depth = hwloc_get_type_or_below_depth(g_topology, HWLOC_OBJ_CORE);
-		hwloc_obj_t pu_obj = hwloc_get_obj_by_depth(g_topology, core_depth, puid);
 
 		/* Get a copy of its cpuset that we may modify. */
 		hwloc_cpuset_t cpuset = hwloc_bitmap_dup(pu_obj->cpuset);
