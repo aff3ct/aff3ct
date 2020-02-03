@@ -153,9 +153,10 @@ Chain* Chain
 }
 
 void Chain
-::set_thread_pinning(const bool thread_pinning)
+::set_thread_pinning(const bool thread_pinning, const std::vector<size_t> &puids)
 {
 	this->thread_pinning = thread_pinning;
+	this->puids = puids;
 }
 
 bool Chain
@@ -238,10 +239,17 @@ std::vector<std::vector<module::Task*>> Chain
 }
 
 void Chain
-::_exec(std::function<bool(const std::vector<int>&)> &stop_condition, Generic_node<Sub_sequence>* sequence)
+::_exec(const size_t tid,
+        std::function<bool(const std::vector<int>&)> &stop_condition,
+        Generic_node<Sub_sequence>* sequence)
 {
 	if (this->is_thread_pinning())
-		aff3ct::tools::Thread_pinning::pin();
+	{
+		if (tid < this->puids.size())
+			aff3ct::tools::Thread_pinning::pin(this->puids[tid]);
+		else
+			aff3ct::tools::Thread_pinning::pin();
+	}
 
 	std::function<void(Generic_node<Sub_sequence>*, std::vector<int>&)> exec_sequence =
 		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss, std::vector<int>& statuses)
@@ -314,10 +322,17 @@ void Chain
 }
 
 void Chain
-::_exec_without_statuses(std::function<bool()> &stop_condition, Generic_node<Sub_sequence>* sequence)
+::_exec_without_statuses(const size_t tid,
+                         std::function<bool()> &stop_condition,
+                         Generic_node<Sub_sequence>* sequence)
 {
 	if (this->is_thread_pinning())
-		aff3ct::tools::Thread_pinning::pin();
+	{
+		if (tid < this->puids.size())
+			aff3ct::tools::Thread_pinning::pin(this->puids[tid]);
+		else
+			aff3ct::tools::Thread_pinning::pin();
+	}
 
 	std::function<void(Generic_node<Sub_sequence>*)> exec_sequence =
 		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss)
@@ -391,9 +406,9 @@ void Chain
 {
 	std::vector<std::thread> threads(n_threads);
 	for (size_t tid = 1; tid < n_threads; tid++)
-		threads[tid] = std::thread(&Chain::_exec, this, std::ref(stop_condition), std::ref(this->sequences[tid]));
+		threads[tid] = std::thread(&Chain::_exec, this, tid, std::ref(stop_condition), std::ref(this->sequences[tid]));
 
-	this->_exec(stop_condition, this->sequences[0]);
+	this->_exec(0, stop_condition, this->sequences[0]);
 
 	for (size_t tid = 1; tid < n_threads; tid++)
 		threads[tid].join();
@@ -410,10 +425,12 @@ void Chain
 {
 	std::vector<std::thread> threads(n_threads);
 	for (size_t tid = 1; tid < n_threads; tid++)
-		threads[tid] = std::thread(&Chain::_exec_without_statuses, this, std::ref(stop_condition),
+	{
+		threads[tid] = std::thread(&Chain::_exec_without_statuses, this, tid, std::ref(stop_condition),
 		                           std::ref(this->sequences[tid]));
+	}
 
-	this->_exec_without_statuses(stop_condition, this->sequences[0]);
+	this->_exec_without_statuses(0, stop_condition, this->sequences[0]);
 
 	for (size_t tid = 1; tid < n_threads; tid++)
 		threads[tid].join();

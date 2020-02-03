@@ -62,6 +62,7 @@ protected:
 	size_t n_tasks;
 	bool tasks_inplace;
 	bool thread_pinning;
+	std::vector<size_t> puids;
 
 public:
 	Chain(const module::Task &first,                           const size_t n_threads = 1                                 );
@@ -77,6 +78,7 @@ public:
 	virtual Chain* clone() const;
 
 	void set_thread_pinning(const bool thread_pinning);
+	void set_thread_pinning(const bool thread_pinning, const std::vector<size_t> &puids = {});
 	bool is_thread_pinning();
 
 	void exec(std::function<bool(const std::vector<int>&)> stop_condition);
@@ -128,8 +130,13 @@ protected:
 	template <class SS, class MO>
 	void duplicate(const Generic_node<SS> *sequence);
 
-	void _exec(std::function<bool(const std::vector<int>&)> &stop_condition, Generic_node<Sub_sequence>* sequence);
-	void _exec_without_statuses(std::function<bool()> &stop_condition, Generic_node<Sub_sequence>* sequence);
+	void _exec(const size_t tid,
+	           std::function<bool(const std::vector<int>&)> &stop_condition,
+	           Generic_node<Sub_sequence>* sequence);
+
+	void _exec_without_statuses(const size_t tid,
+	                            std::function<bool()> &stop_condition,
+	                            Generic_node<Sub_sequence>* sequence);
 
 };
 }

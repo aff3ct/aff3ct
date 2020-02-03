@@ -21,6 +21,9 @@ static hwloc_topology_t g_topology;
 static int g_topodepth = 0;
 static std::vector<hwloc_uint64_t> g_pinned_threads;
 static hwloc_obj_t g_cur_core_obj;
+// static std::vector<int> g_thread_binding = {47, 46, 45, 44, 43,       23, 22, 21, 20, 19,   35, 18, 34, 17, 33,  16, 32, 15, 31, 14};
+// // static std::vector<int> g_thread_binding = {47, 46, 45, 44, 43, 42,   23, 22, 21, 20, 19,   35, 18, 34, 17, 33,  16, 32, 15, 31, 14};
+// static size_t g_thread_binding_id = 0;
 #endif
 static bool g_is_init = false;
 static std::mutex g_mtx;
@@ -53,10 +56,9 @@ void Thread_pinning
 			 in case we need the topology depth later. */
 			g_topodepth = hwloc_topology_get_depth(g_topology);
 
-			int core_depth = hwloc_get_type_or_below_depth(g_topology, HWLOC_OBJ_CORE);
 			/* Get last core. */
-			int depth_core = hwloc_get_type_or_below_depth(g_topology, HWLOC_OBJ_CORE);
-			int core_id = hwloc_get_nbobjs_by_depth(g_topology, depth_core) -1;
+			int core_depth = hwloc_get_type_or_below_depth(g_topology, HWLOC_OBJ_CORE);
+			int core_id = hwloc_get_nbobjs_by_depth(g_topology, core_depth) -1;
 			g_cur_core_obj = hwloc_get_obj_by_depth(g_topology, core_depth, core_id);
 #endif
 		}
@@ -99,8 +101,75 @@ bool Thread_pinning
 }
 
 void Thread_pinning
+::pin(const size_t puid)
+{
+	g_mtx.lock();
+#ifdef AFF3CT_HWLOC
+	if (g_is_init)
+	{
+		/* Get the first PU of the core */
+		if (g_cur_core_obj->arity == 0)
+		{
+			std::stringstream message;
+			message << "Unsupported architecture, a core should have at least one PU.";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		int core_depth = hwloc_get_type_or_below_depth(g_topology, HWLOC_OBJ_CORE);
+		hwloc_obj_t pu_obj = hwloc_get_obj_by_depth(g_topology, core_depth, puid);
+
+		/* Get a copy of its cpuset that we may modify. */
+		hwloc_cpuset_t cpuset = hwloc_bitmap_dup(pu_obj->cpuset);
+
+		/* Get only one logical processor (in case the core is
+		SMT/hyper-threaded). */
+		hwloc_bitmap_singlify(cpuset);
+
+		if (g_enable_logs)
+		{
+			char c[128];
+			hwloc_bitmap_snprintf(c, 128, cpuset);
+
+			std::cerr << "Thread pinning info -- "
+			          << "PU logical index (hwloc): " << pu_obj->logical_index << " -- "
+			          << "P OS index: " << pu_obj->os_index << " -- "
+			          << "bitmap: " << c << std::endl;
+		}
+
+		/* And try to bind ourself there. */
+		if (hwloc_set_cpubind(g_topology, cpuset, HWLOC_CPUBIND_THREAD))
+		{
+			char *str;
+			int error = errno;
+			hwloc_bitmap_asprintf(&str, pu_obj->cpuset);
+			printf("Couldn't bind to cpuset %s: %s\n", str, strerror(error));
+			free(str);
+		}
+
+		/* Free our cpuset copy */
+		hwloc_bitmap_free(cpuset);
+	}
+	else
+	{
+		if (g_enable_logs)
+		{
+			std::clog << "You can't call the 'pin' method if you have not call the 'init' method before, nothing will "
+			          << "be done." << std::endl;
+		}
+	}
+#else
+	if (g_enable_logs)
+	{
+		std::clog << "'pin' method do nothing as AFF3CT has not been linked with the 'hwloc' library." << std::endl;
+	}
+#endif
+	g_mtx.unlock();
+}
+
+void Thread_pinning
 ::pin()
 {
+	std::cout << "coucou" << std::endl;
 	g_mtx.lock();
 #ifdef AFF3CT_HWLOC
 	if (g_is_init)
@@ -117,17 +186,28 @@ void Thread_pinning
 
 			hwloc_obj_t cur_core_pu0_obj = g_cur_core_obj->children[0];
 
-			if (g_enable_logs)
-				std::cerr << "Thread pinning info -- "
-			              << "CORE logical index (hwloc): " << g_cur_core_obj->logical_index << " -- "
-				          << "PU logical index (hwloc): " << cur_core_pu0_obj->logical_index << " -- "
-				          << "P OS index: " << cur_core_pu0_obj->os_index << std::endl;
+			// // HACK
+			// int core_depth = hwloc_get_type_or_below_depth(g_topology, HWLOC_OBJ_CORE);
+			// cur_core_pu0_obj = hwloc_get_obj_by_depth(g_topology, core_depth, g_thread_binding[g_thread_binding_id++]);
 
 			/* Get a copy of its cpuset that we may modify. */
 			hwloc_cpuset_t cpuset = hwloc_bitmap_dup(cur_core_pu0_obj->cpuset);
 			/* Get only one logical processor (in case the core is
 			SMT/hyper-threaded). */
 			hwloc_bitmap_singlify(cpuset);
+
+			if (g_enable_logs)
+			{
+				char c[128];
+				hwloc_bitmap_snprintf(c, 128, cpuset);
+
+				std::cerr << "Thread pinning info -- "
+			              << "CORE logical index (hwloc): " << g_cur_core_obj->logical_index << " -- "
+				          << "PU logical index (hwloc): " << cur_core_pu0_obj->logical_index << " -- "
+				          << "P OS index: " << cur_core_pu0_obj->os_index << " -- "
+				          << "bitmap: " << c << std::endl;
+			}
+
 			/* And try to bind ourself there. */
 			if (hwloc_set_cpubind(g_topology, cpuset, HWLOC_CPUBIND_THREAD))
 			{
@@ -188,6 +268,22 @@ void Thread_pinning
 	}
 #endif
 	g_mtx.unlock();
+}
+
+std::string Thread_pinning
+::get_cur_cpuset_str()
+{
+	hwloc_cpuset_t cur_cpuset = hwloc_bitmap_alloc();
+
+	hwloc_get_cpubind(g_topology, cur_cpuset, HWLOC_CPUBIND_THREAD);
+
+	char c[128];
+	hwloc_bitmap_snprintf(c, 128, cur_cpuset);
+
+	/* Free our cpuset copy */
+	hwloc_bitmap_free(cur_cpuset);
+
+	return std::string(c);
 }
 
 void Thread_pinning
