@@ -123,9 +123,9 @@ void Chain
 	if (this->is_thread_pinning())
 	{
 		if (0 < this->puids.size())
-			aff3ct::tools::Thread_pinning::pin(this->puids[0]);
+			Thread_pinning::pin(this->puids[0]);
 		else
-			aff3ct::tools::Thread_pinning::pin();
+			Thread_pinning::pin();
 	}
 
 	if (this->n_threads == 0)
@@ -274,9 +274,9 @@ void Chain
 	if (this->is_thread_pinning())
 	{
 		if (tid < this->puids.size())
-			aff3ct::tools::Thread_pinning::pin(this->puids[tid]);
+			Thread_pinning::pin(this->puids[tid]);
 		else
-			aff3ct::tools::Thread_pinning::pin();
+			Thread_pinning::pin();
 	}
 
 	std::function<void(Generic_node<Sub_sequence>*, std::vector<int>&)> exec_sequence =
@@ -357,9 +357,9 @@ void Chain
 	if (this->is_thread_pinning())
 	{
 		if (tid < this->puids.size())
-			aff3ct::tools::Thread_pinning::pin(this->puids[tid]);
+			Thread_pinning::pin(this->puids[tid]);
 		else
-			aff3ct::tools::Thread_pinning::pin();
+			Thread_pinning::pin();
 	}
 
 	std::function<void(Generic_node<Sub_sequence>*)> exec_sequence =
@@ -674,9 +674,9 @@ void Chain
 		{
 			const auto real_tid = tid + (this->tasks_inplace ? 1 : 0);
 			if (real_tid < this->puids.size())
-				aff3ct::tools::Thread_pinning::pin(this->puids[real_tid]);
+				Thread_pinning::pin(this->puids[real_tid]);
 			else
-				aff3ct::tools::Thread_pinning::pin();
+				Thread_pinning::pin();
 		}
 
 		this->modules[tid].resize(modules_vec.size());
@@ -807,9 +807,9 @@ void Chain
 		if (this->is_thread_pinning())
 		{
 			if (thread_id < this->puids.size())
-				aff3ct::tools::Thread_pinning::pin(this->puids[thread_id]);
+				Thread_pinning::pin(this->puids[thread_id]);
 			else
-				aff3ct::tools::Thread_pinning::pin();
+				Thread_pinning::pin();
 		}
 
 		this->sequences[thread_id] = new Generic_node<Sub_sequence>(nullptr, {}, nullptr, 0, 0, 0);
