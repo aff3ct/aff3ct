@@ -272,6 +272,7 @@ void Thread_pinning
 std::string Thread_pinning
 ::get_cur_cpuset_str()
 {
+#ifdef AFF3CT_HWLOC
 	hwloc_cpuset_t cur_cpuset = hwloc_bitmap_alloc();
 
 	hwloc_get_cpubind(g_topology, cur_cpuset, HWLOC_CPUBIND_THREAD);
@@ -283,6 +284,11 @@ std::string Thread_pinning
 	hwloc_bitmap_free(cur_cpuset);
 
 	return std::string(c);
+#else
+	std::stringstream message;
+	message << "'get_cur_cpuset_str' method can be called only if AFF3CT is linked with the 'hwloc' library.";
+	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+#endif
 }
 
 void Thread_pinning
