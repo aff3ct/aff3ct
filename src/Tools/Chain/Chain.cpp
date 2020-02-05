@@ -123,7 +123,7 @@ void Chain
 	if (this->is_thread_pinning())
 	{
 		if (0 < this->puids.size())
-			aff3ct::tools::Thread_pinning::pin(0);
+			aff3ct::tools::Thread_pinning::pin(this->puids[0]);
 		else
 			aff3ct::tools::Thread_pinning::pin();
 	}
@@ -672,8 +672,9 @@ void Chain
 	{
 		if (this->is_thread_pinning())
 		{
-			if (tid < this->puids.size())
-				aff3ct::tools::Thread_pinning::pin(this->puids[tid]);
+			const auto real_tid = tid + (this->tasks_inplace ? 1 : 0);
+			if (real_tid < this->puids.size())
+				aff3ct::tools::Thread_pinning::pin(this->puids[real_tid]);
 			else
 				aff3ct::tools::Thread_pinning::pin();
 		}
