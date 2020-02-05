@@ -65,10 +65,26 @@ protected:
 	std::vector<size_t> puids;
 
 public:
-	Chain(const module::Task &first,                           const size_t n_threads = 1                                 );
-	Chain(const module::Task &first, const module::Task &last, const size_t n_threads = 1                                 );
-	Chain(      module::Task &first,                           const size_t n_threads = 1, const bool tasks_inplace = true);
-	Chain(      module::Task &first,       module::Task &last, const size_t n_threads = 1, const bool tasks_inplace = true);
+	Chain(const module::Task &first,
+	      const size_t n_threads = 1,
+	      const bool thread_pinning = false,
+	      const std::vector<size_t> &puids = {} );
+	Chain(const module::Task &first,
+	      const module::Task &last,
+	      const size_t n_threads = 1,
+	      const bool thread_pinning = false,
+	      const std::vector<size_t> &puids = {});
+	Chain(module::Task &first,
+	      const size_t n_threads = 1,
+	      const bool thread_pinning = false,
+	      const std::vector<size_t> &puids = {},
+	      const bool tasks_inplace = true);
+	Chain(module::Task &first,
+	      module::Task &last,
+	      const size_t n_threads = 1,
+	      const bool thread_pinning = false,
+	      const std::vector<size_t> &puids = {},
+	      const bool tasks_inplace = true);
 
 	virtual ~Chain();
 	template <class SS, class TA>

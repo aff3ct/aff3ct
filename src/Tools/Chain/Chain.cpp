@@ -20,7 +20,11 @@ using namespace aff3ct;
 using namespace aff3ct::tools;
 
 Chain
-::Chain(const module::Task &first, const module::Task &last, const size_t n_threads)
+::Chain(const module::Task &first,
+        const module::Task &last,
+        const size_t n_threads,
+        const bool thread_pinning,
+        const std::vector<size_t> &puids)
 : n_threads(n_threads),
   sequences(n_threads, nullptr),
   first_tasks(n_threads, nullptr),
@@ -30,13 +34,17 @@ Chain
   mtx_exception(new std::mutex()),
   force_exit_loop(new std::atomic<bool>(false)),
   tasks_inplace(false),
-  thread_pinning(false)
+  thread_pinning(thread_pinning),
+  puids(puids)
 {
 	this->init<tools::Sub_sequence_const,const module::Task>(first, &last);
 }
 
 Chain
-::Chain(const module::Task &first, const size_t n_threads)
+::Chain(const module::Task &first,
+        const size_t n_threads,
+        const bool thread_pinning,
+        const std::vector<size_t> &puids)
 : n_threads(n_threads),
   sequences(n_threads, nullptr),
   first_tasks(n_threads, nullptr),
@@ -46,13 +54,19 @@ Chain
   mtx_exception(new std::mutex()),
   force_exit_loop(new std::atomic<bool>(false)),
   tasks_inplace(false),
-  thread_pinning(false)
+  thread_pinning(thread_pinning),
+  puids(puids)
 {
 	this->init<tools::Sub_sequence_const,const module::Task>(first);
 }
 
 Chain
-::Chain(module::Task &first, module::Task &last, const size_t n_threads, const bool tasks_inplace)
+::Chain(module::Task &first,
+        module::Task &last,
+        const size_t n_threads,
+        const bool thread_pinning,
+        const std::vector<size_t> &puids,
+        const bool tasks_inplace)
 : n_threads(n_threads),
   sequences(n_threads, nullptr),
   first_tasks(n_threads, nullptr),
@@ -62,7 +76,8 @@ Chain
   mtx_exception(new std::mutex()),
   force_exit_loop(new std::atomic<bool>(false)),
   tasks_inplace(tasks_inplace),
-  thread_pinning(false)
+  thread_pinning(thread_pinning),
+  puids(puids)
 {
 	if (tasks_inplace)
 		this->init<tools::Sub_sequence,module::Task>(first, &last);
@@ -71,7 +86,11 @@ Chain
 }
 
 Chain
-::Chain(module::Task &first, const size_t n_threads, const bool tasks_inplace)
+::Chain(module::Task &first,
+        const size_t n_threads,
+        const bool thread_pinning,
+        const std::vector<size_t> &puids,
+        const bool tasks_inplace)
 : n_threads(n_threads),
   sequences(n_threads, nullptr),
   first_tasks(n_threads, nullptr),
@@ -81,7 +100,8 @@ Chain
   mtx_exception(new std::mutex()),
   force_exit_loop(new std::atomic<bool>(false)),
   tasks_inplace(tasks_inplace),
-  thread_pinning(false)
+  thread_pinning(false),
+  puids(puids)
 {
 	if (tasks_inplace)
 		this->init<tools::Sub_sequence,module::Task>(first);
@@ -100,6 +120,14 @@ template <class SS, class TA>
 void Chain
 ::init(TA &first, TA *last)
 {
+	if (this->is_thread_pinning())
+	{
+		if (0 < this->puids.size())
+			aff3ct::tools::Thread_pinning::pin(0);
+		else
+			aff3ct::tools::Thread_pinning::pin();
+	}
+
 	if (this->n_threads == 0)
 	{
 		std::stringstream message;
@@ -642,6 +670,14 @@ void Chain
 	// clone the modules
 	for (size_t tid = 0; tid < this->n_threads - (this->tasks_inplace ? 1 : 0); tid++)
 	{
+		if (this->is_thread_pinning())
+		{
+			if (tid < this->puids.size())
+				aff3ct::tools::Thread_pinning::pin(this->puids[tid]);
+			else
+				aff3ct::tools::Thread_pinning::pin();
+		}
+
 		this->modules[tid].resize(modules_vec.size());
 		this->all_modules[tid + (this->tasks_inplace ? 1 : 0)].resize(modules_vec.size());
 		for (size_t m = 0; m < modules_vec.size(); m++)
@@ -767,6 +803,14 @@ void Chain
 
 	for (size_t thread_id = (this->tasks_inplace ? 1 : 0); thread_id < this->sequences.size(); thread_id++)
 	{
+		if (this->is_thread_pinning())
+		{
+			if (thread_id < this->puids.size())
+				aff3ct::tools::Thread_pinning::pin(this->puids[thread_id]);
+			else
+				aff3ct::tools::Thread_pinning::pin();
+		}
+
 		this->sequences[thread_id] = new Generic_node<Sub_sequence>(nullptr, {}, nullptr, 0, 0, 0);
 		duplicate_sequence(sequence, this->sequences[thread_id], thread_id);
 		set_autoalloc_true(this->sequences[thread_id]);
