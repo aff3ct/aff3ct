@@ -26,7 +26,7 @@ class Module;
 namespace tools
 {
 
-enum class subseq_t : size_t { STD, LOOP, ROUTER };
+enum class subseq_t : size_t { STD, LOOP, ROUTER, FIRST_ADP, LAST_ADP, FIRST_LAST_ADP };
 
 template <class VTA = std::vector<module::Task*>>
 class Sub_sequence_generic
@@ -64,7 +64,10 @@ protected:
 	bool thread_pinning;
 	std::vector<size_t> puids;
 
+	bool no_copy_mode_adaptors;
+
 public:
+
 	Chain(const module::Task &first,
 	      const size_t n_threads = 1,
 	      const bool thread_pinning = false,
@@ -115,6 +118,9 @@ public:
 
 	void export_dot(std::ostream &stream = std::cout) const;
 
+	void set_no_copy_mode_adaptors(const bool no_copy_mode);
+	bool is_no_copy_mode_adaptors() const;
+
 protected:
 	template <class SS>
 	void delete_tree(Generic_node<SS> *node);
@@ -153,7 +159,6 @@ protected:
 	void _exec_without_statuses(const size_t tid,
 	                            std::function<bool()> &stop_condition,
 	                            Generic_node<Sub_sequence>* sequence);
-
 };
 }
 }

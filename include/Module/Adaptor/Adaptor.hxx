@@ -29,7 +29,9 @@ Adaptor
   			std::vector<int8_t>(n_frames * this->n_bytes[0]))))),
   first(new std::vector<std::atomic<size_t>>(1000)),
   last(new std::vector<std::atomic<size_t>>(1000)),
-  waiting_canceled(new std::atomic<bool>(false))
+  waiting_canceled(new std::atomic<bool>(false)),
+  no_copy_pull(false),
+  no_copy_push(false)
 {
 	const std::string name = "Adaptor";
 	this->set_name(name);
@@ -73,7 +75,9 @@ Adaptor
   		std::vector<std::vector<int8_t>>(buffer_size)))),
   first(new std::vector<std::atomic<size_t>>(1000)),
   last(new std::vector<std::atomic<size_t>>(1000)),
-  waiting_canceled(new std::atomic<bool>(false))
+  waiting_canceled(new std::atomic<bool>(false)),
+  no_copy_pull(false),
+  no_copy_push(false)
 {
 	const std::string name = "Adaptor";
 	this->set_name(name);

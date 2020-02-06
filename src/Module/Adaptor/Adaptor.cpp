@@ -82,12 +82,38 @@ std::vector<size_t> Adaptor
 	return bytes;
 }
 
-void Adaptor::send_cancel_signal()
+void Adaptor
+::send_cancel_signal()
 {
 	*this->waiting_canceled = true;
 }
 
-void Adaptor::reset()
+void Adaptor
+::reset()
 {
 	*this->waiting_canceled = false;
+}
+
+void Adaptor
+::set_no_copy_pull(const bool hack_mode)
+{
+	this->no_copy_pull = hack_mode;
+}
+
+void Adaptor
+::set_no_copy_push(const bool hack_mode)
+{
+	this->no_copy_push = hack_mode;
+}
+
+bool Adaptor
+::is_no_copy_pull()
+{
+	return this->no_copy_pull;
+}
+
+bool Adaptor
+::is_no_copy_push()
+{
+	return this->no_copy_push;
 }

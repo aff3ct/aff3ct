@@ -17,9 +17,6 @@ Adaptor_n_to_1* Adaptor_n_to_1
 void Adaptor_n_to_1
 ::push_n(const std::vector<const int8_t*> &in, const int frame_id)
 {
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
 	if (this->active_waiting)
 	{
 		while (this->is_full(this->id) && !*this->waiting_canceled);
@@ -39,33 +36,27 @@ void Adaptor_n_to_1
 	if (*this->waiting_canceled)
 		throw tools::waiting_canceled(__FILE__, __LINE__, __func__);
 
-	for (size_t s = 0; s < this->n_sockets; s++)
+	if (!this->is_no_copy_push())
 	{
-		int8_t* out = (*this->buffer)[this->id][s][(*this->last)[this->id] % this->buffer_size].data();
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
-		std::copy(in[s] + f_start * this->n_bytes[s],
-		          in[s] + f_stop  * this->n_bytes[s],
-		          out   + f_start * this->n_bytes[s]);
-	}
-
-	(*this->last)[this->id]++;
-
-	if (!this->active_waiting) // passive waiting
-	{
-		if (!this->is_empty(this->id))
+		for (size_t s = 0; s < this->n_sockets; s++)
 		{
-			std::lock_guard<std::mutex> lock(*this->mtx_pull.get());
-			(*this->cnd_pull.get()).notify_one();
+			int8_t* out = (int8_t*)this->get_empty_buffer(s);
+
+			std::copy(in[s] + f_start * this->n_bytes[s],
+			          in[s] + f_stop  * this->n_bytes[s],
+			          out   + f_start * this->n_bytes[s]);
 		}
+
+		this->wake_up_puller();
 	}
 }
 
 void Adaptor_n_to_1
 ::pull_1(const std::vector<int8_t*> &out, const int frame_id)
 {
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
 	if (this->active_waiting)
 	{
 		while (this->is_empty(this->cur_id) && !*this->waiting_canceled);
@@ -85,31 +76,22 @@ void Adaptor_n_to_1
 	if (*this->waiting_canceled)
 		throw tools::waiting_canceled(__FILE__, __LINE__, __func__);
 
-	for (size_t s = 0; s < this->n_sockets; s++)
+	if (!this->is_no_copy_pull())
 	{
-		const int8_t* in = (*this->buffer)[this->cur_id][s][(*this->first)[this->cur_id] % this->buffer_size].data();
+		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
-		std::copy(in     + f_start * this->n_bytes[s],
-		          in     + f_stop  * this->n_bytes[s],
-		          out[s] + f_start * this->n_bytes[s]);
-	}
-
-	(*this->first)[this->cur_id]++;
-
-	if (!this->active_waiting) // passive waiting
-	{
-		if (!this->is_full(this->cur_id))
+		for (size_t s = 0; s < this->n_sockets; s++)
 		{
-			std::lock_guard<std::mutex> lock((*this->mtx_put.get())[this->cur_id]);
-			(*this->cnd_put.get())[this->cur_id].notify_one();
-		}
-	}
+			const int8_t* in = (const int8_t*)this->get_filled_buffer(s);
 
-	do
-	{
-		this->cur_id = (this->cur_id +1) % this->buffer->size();
+			std::copy(in     + f_start * this->n_bytes[s],
+			          in     + f_stop  * this->n_bytes[s],
+			          out[s] + f_start * this->n_bytes[s]);
+		}
+
+		this->wake_up_pusher();
 	}
-	while((*this->buffer)[this->cur_id].size() == 0);
 }
 
 void Adaptor_n_to_1
@@ -134,4 +116,52 @@ void Adaptor_n_to_1
 {
 	this->send_cancel_signal();
 	this->wake_up();
+}
+
+void* Adaptor_n_to_1
+::get_empty_buffer(const size_t sid)
+{
+	return (*this->buffer)[this->id][sid][(*this->last)[this->id] % this->buffer_size].data();
+}
+
+void* Adaptor_n_to_1
+::get_filled_buffer(const size_t sid)
+{
+	return (*this->buffer)[this->cur_id][sid][(*this->first)[this->cur_id] % this->buffer_size].data();
+}
+
+void Adaptor_n_to_1
+::wake_up_puller()
+{
+	(*this->last)[this->id]++;
+
+	if (!this->active_waiting) // passive waiting
+	{
+		if (!this->is_empty(this->id))
+		{
+			std::lock_guard<std::mutex> lock(*this->mtx_pull.get());
+			(*this->cnd_pull.get()).notify_one();
+		}
+	}
+}
+
+void Adaptor_n_to_1
+::wake_up_pusher()
+{
+	(*this->first)[this->cur_id]++;
+
+	if (!this->active_waiting) // passive waiting
+	{
+		if (!this->is_full(this->cur_id))
+		{
+			std::lock_guard<std::mutex> lock((*this->mtx_put.get())[this->cur_id]);
+			(*this->cnd_put.get())[this->cur_id].notify_one();
+		}
+	}
+
+	do
+	{
+		this->cur_id = (this->cur_id +1) % this->buffer->size();
+	}
+	while((*this->buffer)[this->cur_id].size() == 0);
 }

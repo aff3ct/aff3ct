@@ -14,6 +14,7 @@
 #include "Module/Socket.hpp"
 #include "Module/Loop/Loop.hpp"
 #include "Module/Router/Router.hpp"
+#include "Module/Adaptor/Adaptor.hpp"
 #include "Tools/Chain/Chain.hpp"
 
 using namespace aff3ct;
@@ -35,7 +36,8 @@ Chain
   force_exit_loop(new std::atomic<bool>(false)),
   tasks_inplace(false),
   thread_pinning(thread_pinning),
-  puids(puids)
+  puids(puids),
+  no_copy_mode_adaptors(false)
 {
 	this->init<tools::Sub_sequence_const,const module::Task>(first, &last);
 }
@@ -55,7 +57,8 @@ Chain
   force_exit_loop(new std::atomic<bool>(false)),
   tasks_inplace(false),
   thread_pinning(thread_pinning),
-  puids(puids)
+  puids(puids),
+  no_copy_mode_adaptors(false)
 {
 	this->init<tools::Sub_sequence_const,const module::Task>(first);
 }
@@ -77,7 +80,8 @@ Chain
   force_exit_loop(new std::atomic<bool>(false)),
   tasks_inplace(tasks_inplace),
   thread_pinning(thread_pinning),
-  puids(puids)
+  puids(puids),
+  no_copy_mode_adaptors(false)
 {
 	if (tasks_inplace)
 		this->init<tools::Sub_sequence,module::Task>(first, &last);
@@ -101,7 +105,8 @@ Chain
   force_exit_loop(new std::atomic<bool>(false)),
   tasks_inplace(tasks_inplace),
   thread_pinning(false),
-  puids(puids)
+  puids(puids),
+  no_copy_mode_adaptors(false)
 {
 	if (tasks_inplace)
 		this->init<tools::Sub_sequence,module::Task>(first);
@@ -362,11 +367,15 @@ void Chain
 			Thread_pinning::pin();
 	}
 
+	const size_t n_threads = this->n_threads;
+	const bool no_copy_mode_adaptors = this->is_no_copy_mode_adaptors();
+
 	std::function<void(Generic_node<Sub_sequence>*)> exec_sequence =
-		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss)
+		[&exec_sequence, n_threads, no_copy_mode_adaptors](Generic_node<Sub_sequence>* cur_ss)
 		{
 			auto type = cur_ss->get_c()->type;
 			auto &tasks = cur_ss->get_c()->tasks;
+
 			if (type == subseq_t::LOOP)
 			{
 				while (!tasks[0]->exec())
@@ -374,7 +383,202 @@ void Chain
 				static_cast<module::Loop&>(tasks[0]->get_module()).reset();
 				exec_sequence(cur_ss->get_children()[1]);
 			}
-			else
+			else if (type == subseq_t::FIRST_ADP && no_copy_mode_adaptors)
+			{
+				auto pull_task  = tasks[0];
+				auto first_task = tasks[1];
+
+				auto adp_pull = dynamic_cast<module::Adaptor*>(&pull_task->get_module());
+				adp_pull->set_no_copy_pull(true);
+				size_t sin_id = 0;
+				std::vector<void*> dataptrs_in; // save the original pointers
+				pull_task->exec(); // active or passive waiting here
+				for (size_t s = 0; s < first_task->sockets.size(); s++)
+				{
+					if (first_task->get_socket_type(*first_task->sockets[s]) == module::socket_t::SIN)
+					{
+						dataptrs_in.push_back(first_task->sockets[s]->get_dataptr());
+						auto buff = adp_pull->get_filled_buffer(sin_id++);
+						first_task->sockets[s]->bind(buff);
+					}
+				}
+				first_task->exec();
+				adp_pull->wake_up_pusher();
+
+				// revert the hack
+				adp_pull->set_no_copy_pull(false);
+				sin_id = 0;
+				for (size_t s = 0; s < first_task->sockets.size(); s++)
+					if (first_task->get_socket_type(*first_task->sockets[s]) == module::socket_t::SIN)
+						first_task->sockets[s]->bind(dataptrs_in[sin_id++]);
+
+				for (size_t ta = 2; ta < tasks.size(); ta++)
+					tasks[ta]->exec();
+
+				for (auto c : cur_ss->get_children())
+					exec_sequence(c);
+			}
+			else if (type == subseq_t::LAST_ADP && no_copy_mode_adaptors)
+			{
+				for (size_t ta = 0; ta < tasks.size() -2; ta++)
+					tasks[ta]->exec();
+
+				auto last_task = tasks[tasks.size() -2];
+				auto push_task = tasks[tasks.size() -1];
+
+				auto adp_push = dynamic_cast<module::Adaptor*>(&push_task->get_module());
+				adp_push->set_no_copy_push(true);
+				size_t sout_id = 0;
+				std::vector<void*> dataptrs_out; // save the original pointers
+				push_task->exec(); // active or passive waiting here
+				for (size_t s = 0; s < last_task->sockets.size(); s++)
+				{
+					if (last_task->get_socket_type(*last_task->sockets[s]) == module::socket_t::SOUT)
+					{
+						dataptrs_out.push_back(last_task->sockets[s]->get_dataptr());
+						auto buff = adp_push->get_empty_buffer(sout_id++);
+						last_task->sockets[s]->bind(buff);
+					}
+				}
+				last_task->exec();
+				adp_push->wake_up_puller();
+
+				// revert the hack
+				adp_push->set_no_copy_push(false);
+				sout_id = 0;
+				for (size_t s = 0; s < last_task->sockets.size(); s++)
+					if (last_task->get_socket_type(*last_task->sockets[s]) == module::socket_t::SOUT)
+						last_task->sockets[s]->bind(dataptrs_out[sout_id++]);
+
+				for (auto c : cur_ss->get_children())
+					exec_sequence(c);
+			}
+			else if (type == subseq_t::FIRST_LAST_ADP && no_copy_mode_adaptors && tasks.size() == 3) // Gardner
+			{
+				auto pull_task = tasks[0];
+				auto task      = tasks[1];
+				auto push_task = tasks[2];
+
+				auto adp_pull = dynamic_cast<module::Adaptor*>(&pull_task->get_module());
+				auto adp_push = dynamic_cast<module::Adaptor*>(&push_task->get_module());
+				adp_pull->set_no_copy_pull(true);
+				adp_push->set_no_copy_push(true);
+				size_t sin_id = 0;
+				size_t sout_id = 0;
+				std::vector<void*> dataptrs_in; // save the original pointers
+				std::vector<void*> dataptrs_out; // save the original pointers
+				push_task->exec(); // active or passive waiting here
+				pull_task->exec(); // active or passive waiting here
+				for (size_t s = 0; s < task->sockets.size(); s++)
+				{
+					void* buff = nullptr;
+					switch (task->get_socket_type(*task->sockets[s]))
+					{
+						case module::socket_t::SIN:
+							dataptrs_in.push_back(task->sockets[s]->get_dataptr());
+							buff = adp_pull->get_filled_buffer(sin_id++);
+							break;
+						case module::socket_t::SOUT:
+							dataptrs_out.push_back(task->sockets[s]->get_dataptr());
+							buff = adp_push->get_empty_buffer(sout_id++);
+							break;
+						default:
+							break;
+					}
+
+					task->sockets[s]->bind(buff);
+				}
+				task->exec();
+				adp_pull->wake_up_pusher();
+				adp_push->wake_up_puller();
+
+				// revert the hack
+				adp_pull->set_no_copy_pull(false);
+				adp_push->set_no_copy_push(false);
+				sin_id = 0;
+				sout_id = 0;
+				for (size_t s = 0; s < task->sockets.size(); s++)
+				{
+					switch (task->get_socket_type(*task->sockets[s]))
+					{
+						case module::socket_t::SIN:
+							task->sockets[s]->bind(dataptrs_in[sin_id++]);
+							break;
+						case module::socket_t::SOUT:
+							task->sockets[s]->bind(dataptrs_out[sout_id++]);
+							break;
+						default:
+							break;
+					}
+				}
+
+				for (auto c : cur_ss->get_children())
+					exec_sequence(c);
+			}
+			else if (type == subseq_t::FIRST_LAST_ADP && no_copy_mode_adaptors)
+			{
+				auto pull_task  = tasks[0];
+				auto first_task = tasks[1];
+
+				auto adp_pull = dynamic_cast<module::Adaptor*>(&pull_task->get_module());
+				adp_pull->set_no_copy_pull(true);
+				size_t sin_id = 0;
+				std::vector<void*> dataptrs_in; // save the original pointers
+				pull_task->exec(); // active or passive waiting here
+
+				for (size_t s = 0; s < first_task->sockets.size(); s++)
+				{
+					if (first_task->get_socket_type(*first_task->sockets[s]) == module::socket_t::SIN)
+					{
+						dataptrs_in.push_back(first_task->sockets[s]->get_dataptr());
+						auto buff = adp_pull->get_filled_buffer(sin_id++);
+						first_task->sockets[s]->bind(buff);
+					}
+				}
+				first_task->exec();
+				adp_pull->wake_up_pusher();
+
+				// revert the hack
+				adp_pull->set_no_copy_pull(false);
+				sin_id = 0;
+				for (size_t s = 0; s < first_task->sockets.size(); s++)
+					if (first_task->get_socket_type(*first_task->sockets[s]) == module::socket_t::SIN)
+						first_task->sockets[s]->bind(dataptrs_in[sin_id++]);
+
+				for (size_t ta = 2; ta < tasks.size() -2; ta++)
+					tasks[ta]->exec();
+
+				auto last_task = tasks[tasks.size() -2];
+				auto push_task = tasks[tasks.size() -1];
+
+				auto adp_push = dynamic_cast<module::Adaptor*>(&push_task->get_module());
+				adp_push->set_no_copy_push(true);
+				size_t sout_id = 0;
+				std::vector<void*> dataptrs_out; // save the original pointers
+				push_task->exec(); // active or passive waiting here
+				for (size_t s = 0; s < last_task->sockets.size(); s++)
+				{
+					if (last_task->get_socket_type(*last_task->sockets[s]) == module::socket_t::SOUT)
+					{
+						dataptrs_out.push_back(last_task->sockets[s]->get_dataptr());
+						auto buff = adp_push->get_empty_buffer(sout_id++);
+						last_task->sockets[s]->bind(buff);
+					}
+				}
+				last_task->exec();
+				adp_push->wake_up_puller();
+
+				// revert the hack
+				adp_push->set_no_copy_push(false);
+				sout_id = 0;
+				for (size_t s = 0; s < last_task->sockets.size(); s++)
+					if (last_task->get_socket_type(*last_task->sockets[s]) == module::socket_t::SOUT)
+						last_task->sockets[s]->bind(dataptrs_out[sout_id++]);
+
+				for (auto c : cur_ss->get_children())
+					exec_sequence(c);
+			}
+			else /*if (type == subseq_t::STD)*/
 			{
 				for (size_t ta = 0; ta < tasks.size(); ta++)
 					tasks[ta]->exec();
@@ -596,6 +800,22 @@ const module::Task& Chain
 
 		cur_subseq->get_c()->tasks.push_back(&current_task);
 		cur_subseq->get_c()->tasks_id.push_back(taid++);
+
+		// TAG sub-sequences with adaptors
+		if (auto adp = dynamic_cast<const module::Adaptor*>(&current_task.get_module()))
+		{
+			if (cur_subseq->get_c()->tasks.size() == 1)
+			{
+				cur_subseq->get_c()->type = subseq_t::FIRST_ADP;
+			}
+			else
+			{
+				if (cur_subseq->get_c()->type == subseq_t::FIRST_ADP)
+					cur_subseq->get_c()->type = subseq_t::FIRST_LAST_ADP;
+				else
+					cur_subseq->get_c()->type = subseq_t::LAST_ADP;
+			}
+		}
 
 		if (&current_task != last)
 		{
@@ -875,6 +1095,7 @@ void Chain
 		stream << tab << tab << tab << tab << "color=blue;" << std::endl;
 		stream << tab << tab << tab << "}" << std::endl;
 		stream << tab << tab << tab << "label=\"" << t->get_module().get_name() << "\n"
+		                            << (t->get_module().get_custom_name().empty() ? "" : t->get_module().get_custom_name() + "\n")
 		                            << "exec order: [" << exec_order++ << "]\n"
 		                            << "addr: " << +&t->get_module() << "\";" << std::endl;
 		stream << tab << tab << tab << "color=blue;" << std::endl;
@@ -969,4 +1190,31 @@ void Chain
 	export_dot_subsequences_recursive(root, tab, stream);
 	export_dot_connections_recursive (root, tab, stream);
 	stream << "}" << std::endl;
+}
+
+// void Chain
+// ::set_no_copy_mode_adaptors(const bool hack_mode)
+// {
+// 	for (auto vm : this->all_modules)
+// 		for (auto m : vm)
+// 		{
+// 			auto adp = dynamic_cast<module::Adaptor*>(m);
+// 			if (adp)
+// 			{
+// 				adp->set_no_copy_push(hack_mode);
+// 				adp->set_no_copy_pull(hack_mode);
+// 			}
+// 		}
+// }
+
+void Chain
+::set_no_copy_mode_adaptors(const bool no_copy_mode)
+{
+	this->no_copy_mode_adaptors = no_copy_mode;
+}
+
+bool Chain
+::is_no_copy_mode_adaptors() const
+{
+	return this->no_copy_mode_adaptors;
 }
