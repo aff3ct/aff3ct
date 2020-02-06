@@ -367,11 +367,9 @@ void Chain
 			Thread_pinning::pin();
 	}
 
-	const size_t n_threads = this->n_threads;
 	const bool no_copy_mode_adaptors = this->is_no_copy_mode_adaptors();
-
 	std::function<void(Generic_node<Sub_sequence>*)> exec_sequence =
-		[&exec_sequence, n_threads, no_copy_mode_adaptors](Generic_node<Sub_sequence>* cur_ss)
+		[&exec_sequence, no_copy_mode_adaptors](Generic_node<Sub_sequence>* cur_ss)
 		{
 			auto type = cur_ss->get_c()->type;
 			auto &tasks = cur_ss->get_c()->tasks;
@@ -383,208 +381,68 @@ void Chain
 				static_cast<module::Loop&>(tasks[0]->get_module()).reset();
 				exec_sequence(cur_ss->get_children()[1]);
 			}
-			else if (type == subseq_t::FIRST_ADP && no_copy_mode_adaptors)
+			else
 			{
-				auto pull_task  = tasks[0];
-				auto first_task = tasks[1];
+				size_t start_task = 0;
+				size_t end_task = tasks.size();
 
-				auto adp_pull = dynamic_cast<module::Adaptor*>(&pull_task->get_module());
-				adp_pull->set_no_copy_pull(true);
-				size_t sin_id = 0;
-				std::vector<void*> dataptrs_in; // save the original pointers
-				pull_task->exec(); // active or passive waiting here
-				for (size_t s = 0; s < first_task->sockets.size(); s++)
+				if ((type == subseq_t::FIRST_ADP || type == subseq_t::FIRST_LAST_ADP) && no_copy_mode_adaptors)
 				{
-					if (first_task->get_socket_type(*first_task->sockets[s]) == module::socket_t::SIN)
-					{
-						dataptrs_in.push_back(first_task->sockets[s]->get_dataptr());
-						auto buff = adp_pull->get_filled_buffer(sin_id++);
-						first_task->sockets[s]->bind(buff);
-					}
+					auto pull_task  = tasks[start_task +0];
+					auto first_task = tasks[start_task +1];
+
+					auto adp_pull = dynamic_cast<module::Adaptor*>(&pull_task->get_module());
+					adp_pull->set_no_copy_pull(true);
+					size_t sin_id = 0;
+					pull_task->exec(); // active or passive waiting here
+					for (size_t s = 0; s < first_task->sockets.size(); s++)
+						if (first_task->get_socket_type(*first_task->sockets[s]) == module::socket_t::SIN)
+						{
+							auto buff = adp_pull->get_filled_buffer(sin_id++, first_task->sockets[s]->get_dataptr());
+							first_task->sockets[s]->bind(buff);
+						}
+					first_task->exec();
+					adp_pull->wake_up_pusher();
+					start_task += 2;
 				}
-				first_task->exec();
-				adp_pull->wake_up_pusher();
 
-				// revert the hack
-				adp_pull->set_no_copy_pull(false);
-				sin_id = 0;
-				for (size_t s = 0; s < first_task->sockets.size(); s++)
-					if (first_task->get_socket_type(*first_task->sockets[s]) == module::socket_t::SIN)
-						first_task->sockets[s]->bind(dataptrs_in[sin_id++]);
+				if ((type == subseq_t::LAST_ADP || type == subseq_t::FIRST_LAST_ADP) && no_copy_mode_adaptors)
+					end_task -= 2;
 
-				for (size_t ta = 2; ta < tasks.size(); ta++)
+				for (size_t ta = start_task; ta < end_task; ta++)
 					tasks[ta]->exec();
 
-				for (auto c : cur_ss->get_children())
-					exec_sequence(c);
-			}
-			else if (type == subseq_t::LAST_ADP && no_copy_mode_adaptors)
-			{
-				for (size_t ta = 0; ta < tasks.size() -2; ta++)
-					tasks[ta]->exec();
-
-				auto last_task = tasks[tasks.size() -2];
-				auto push_task = tasks[tasks.size() -1];
-
-				auto adp_push = dynamic_cast<module::Adaptor*>(&push_task->get_module());
-				adp_push->set_no_copy_push(true);
-				size_t sout_id = 0;
-				std::vector<void*> dataptrs_out; // save the original pointers
-				push_task->exec(); // active or passive waiting here
-				for (size_t s = 0; s < last_task->sockets.size(); s++)
+				if ((type == subseq_t::LAST_ADP || type == subseq_t::FIRST_LAST_ADP) && no_copy_mode_adaptors)
 				{
-					if (last_task->get_socket_type(*last_task->sockets[s]) == module::socket_t::SOUT)
-					{
-						dataptrs_out.push_back(last_task->sockets[s]->get_dataptr());
-						auto buff = adp_push->get_empty_buffer(sout_id++);
-						last_task->sockets[s]->bind(buff);
-					}
-				}
-				last_task->exec();
-				adp_push->wake_up_puller();
+					auto last_task = tasks[end_task +0];
+					auto push_task = tasks[end_task +1];
 
-				// revert the hack
-				adp_push->set_no_copy_push(false);
-				sout_id = 0;
-				for (size_t s = 0; s < last_task->sockets.size(); s++)
-					if (last_task->get_socket_type(*last_task->sockets[s]) == module::socket_t::SOUT)
-						last_task->sockets[s]->bind(dataptrs_out[sout_id++]);
-
-				for (auto c : cur_ss->get_children())
-					exec_sequence(c);
-			}
-			else if (type == subseq_t::FIRST_LAST_ADP && no_copy_mode_adaptors && tasks.size() == 3) // Gardner
-			{
-				auto pull_task = tasks[0];
-				auto task      = tasks[1];
-				auto push_task = tasks[2];
-
-				auto adp_pull = dynamic_cast<module::Adaptor*>(&pull_task->get_module());
-				auto adp_push = dynamic_cast<module::Adaptor*>(&push_task->get_module());
-				adp_pull->set_no_copy_pull(true);
-				adp_push->set_no_copy_push(true);
-				size_t sin_id = 0;
-				size_t sout_id = 0;
-				std::vector<void*> dataptrs_in; // save the original pointers
-				std::vector<void*> dataptrs_out; // save the original pointers
-				push_task->exec(); // active or passive waiting here
-				pull_task->exec(); // active or passive waiting here
-				for (size_t s = 0; s < task->sockets.size(); s++)
-				{
-					void* buff = nullptr;
-					switch (task->get_socket_type(*task->sockets[s]))
-					{
-						case module::socket_t::SIN:
-							dataptrs_in.push_back(task->sockets[s]->get_dataptr());
-							buff = adp_pull->get_filled_buffer(sin_id++);
-							break;
-						case module::socket_t::SOUT:
-							dataptrs_out.push_back(task->sockets[s]->get_dataptr());
-							buff = adp_push->get_empty_buffer(sout_id++);
-							break;
-						default:
-							break;
-					}
-
-					task->sockets[s]->bind(buff);
-				}
-				task->exec();
-				adp_pull->wake_up_pusher();
-				adp_push->wake_up_puller();
-
-				// revert the hack
-				adp_pull->set_no_copy_pull(false);
-				adp_push->set_no_copy_push(false);
-				sin_id = 0;
-				sout_id = 0;
-				for (size_t s = 0; s < task->sockets.size(); s++)
-				{
-					switch (task->get_socket_type(*task->sockets[s]))
-					{
-						case module::socket_t::SIN:
-							task->sockets[s]->bind(dataptrs_in[sin_id++]);
-							break;
-						case module::socket_t::SOUT:
-							task->sockets[s]->bind(dataptrs_out[sout_id++]);
-							break;
-						default:
-							break;
-					}
+					auto adp_push = dynamic_cast<module::Adaptor*>(&push_task->get_module());
+					adp_push->set_no_copy_push(true);
+					size_t sout_id = 0;
+					// do not re-execute 'last_task' if 'last_task' and 'first_task' are the same task
+					if (!(type == subseq_t::FIRST_LAST_ADP && tasks.size() <= 3))
+						last_task->exec();
+					push_task->exec(); // active or passive waiting here
+					for (size_t s = 0; s < last_task->sockets.size(); s++)
+						if (last_task->get_socket_type(*last_task->sockets[s]) == module::socket_t::SOUT)
+						{
+							auto buff = adp_push->get_empty_buffer(sout_id++, last_task->sockets[s]->get_dataptr());
+							last_task->sockets[s]->bind(buff);
+						}
+					adp_push->wake_up_puller();
 				}
 
 				for (auto c : cur_ss->get_children())
 					exec_sequence(c);
 			}
-			else if (type == subseq_t::FIRST_LAST_ADP && no_copy_mode_adaptors)
-			{
-				auto pull_task  = tasks[0];
-				auto first_task = tasks[1];
-
-				auto adp_pull = dynamic_cast<module::Adaptor*>(&pull_task->get_module());
-				adp_pull->set_no_copy_pull(true);
-				size_t sin_id = 0;
-				std::vector<void*> dataptrs_in; // save the original pointers
-				pull_task->exec(); // active or passive waiting here
-
-				for (size_t s = 0; s < first_task->sockets.size(); s++)
-				{
-					if (first_task->get_socket_type(*first_task->sockets[s]) == module::socket_t::SIN)
-					{
-						dataptrs_in.push_back(first_task->sockets[s]->get_dataptr());
-						auto buff = adp_pull->get_filled_buffer(sin_id++);
-						first_task->sockets[s]->bind(buff);
-					}
-				}
-				first_task->exec();
-				adp_pull->wake_up_pusher();
-
-				// revert the hack
-				adp_pull->set_no_copy_pull(false);
-				sin_id = 0;
-				for (size_t s = 0; s < first_task->sockets.size(); s++)
-					if (first_task->get_socket_type(*first_task->sockets[s]) == module::socket_t::SIN)
-						first_task->sockets[s]->bind(dataptrs_in[sin_id++]);
-
-				for (size_t ta = 2; ta < tasks.size() -2; ta++)
-					tasks[ta]->exec();
-
-				auto last_task = tasks[tasks.size() -2];
-				auto push_task = tasks[tasks.size() -1];
-
-				auto adp_push = dynamic_cast<module::Adaptor*>(&push_task->get_module());
-				adp_push->set_no_copy_push(true);
-				size_t sout_id = 0;
-				std::vector<void*> dataptrs_out; // save the original pointers
-				push_task->exec(); // active or passive waiting here
-				for (size_t s = 0; s < last_task->sockets.size(); s++)
-				{
-					if (last_task->get_socket_type(*last_task->sockets[s]) == module::socket_t::SOUT)
-					{
-						dataptrs_out.push_back(last_task->sockets[s]->get_dataptr());
-						auto buff = adp_push->get_empty_buffer(sout_id++);
-						last_task->sockets[s]->bind(buff);
-					}
-				}
-				last_task->exec();
-				adp_push->wake_up_puller();
-
-				// revert the hack
-				adp_push->set_no_copy_push(false);
-				sout_id = 0;
-				for (size_t s = 0; s < last_task->sockets.size(); s++)
-					if (last_task->get_socket_type(*last_task->sockets[s]) == module::socket_t::SOUT)
-						last_task->sockets[s]->bind(dataptrs_out[sout_id++]);
-
-				for (auto c : cur_ss->get_children())
-					exec_sequence(c);
-			}
-			else /*if (type == subseq_t::STD)*/
-			{
-				for (size_t ta = 0; ta < tasks.size(); ta++)
-					tasks[ta]->exec();
-				for (auto c : cur_ss->get_children())
-					exec_sequence(c);
-			}
+			// else /*if (type == subseq_t::STD)*/
+			// {
+			// 	for (size_t ta = 0; ta < tasks.size(); ta++)
+			// 		tasks[ta]->exec();
+			// 	for (auto c : cur_ss->get_children())
+			// 		exec_sequence(c);
+			// }
 		};
 
 	try

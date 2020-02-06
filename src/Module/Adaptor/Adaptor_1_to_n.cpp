@@ -121,13 +121,29 @@ void Adaptor_1_to_n
 void* Adaptor_1_to_n
 ::get_empty_buffer(const size_t sid)
 {
-	return (void*)(*this->buffer)[this->cur_id][sid][(*this->last)[this->cur_id] % this->buffer_size].data();
+	return (void*)(*this->buffer)[this->cur_id][sid][(*this->last)[this->cur_id] % this->buffer_size];
 }
 
 void* Adaptor_1_to_n
 ::get_filled_buffer(const size_t sid)
 {
-	return (*this->buffer)[this->id][sid][(*this->first)[this->id] % this->buffer_size].data();
+	return (void*)(*this->buffer)[this->id][sid][(*this->first)[this->id] % this->buffer_size];
+}
+
+void* Adaptor_1_to_n
+::get_empty_buffer(const size_t sid, void* swap_buffer)
+{
+	void* empty_buffer = (void*)(*this->buffer)[this->cur_id][sid][(*this->last)[this->cur_id] % this->buffer_size];
+	(*this->buffer)[this->cur_id][sid][(*this->last)[this->cur_id] % this->buffer_size] = (int8_t*)swap_buffer;
+	return empty_buffer;
+}
+
+void* Adaptor_1_to_n
+::get_filled_buffer(const size_t sid, void* swap_buffer)
+{
+	void* filled_buffer = (void*)(*this->buffer)[this->id][sid][(*this->first)[this->id] % this->buffer_size];
+	(*this->buffer)[this->id][sid][(*this->first)[this->id] % this->buffer_size] = (int8_t*)swap_buffer;
+	return filled_buffer;
 }
 
 void Adaptor_1_to_n

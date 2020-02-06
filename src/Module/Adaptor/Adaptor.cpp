@@ -6,6 +6,9 @@ using namespace aff3ct::module;
 Adaptor
 ::~Adaptor()
 {
+	for (auto b : this->buffer_to_free)
+		delete[] b;
+
 	(*this->buffer)[this->id].clear();
 	(*this->first)[this->id] = 0;
 	(*this->last )[this->id] = 0;
@@ -24,18 +27,22 @@ void Adaptor
 	if (id == -1)
 	{
 		this->id = this->buffer->size();
-		this->buffer->push_back(std::vector<std::vector<std::vector<int8_t>>>(this->n_sockets,
-			std::vector<std::vector<int8_t>>(this->buffer_size)));
+		this->buffer->push_back(std::vector<std::vector<int8_t*>>(this->n_sockets,
+			std::vector<int8_t*>(this->buffer_size)));
 	}
 	else
 	{
 		this->id = (size_t)id;
-		(*this->buffer)[this->id].resize(this->n_sockets, std::vector<std::vector<int8_t>>(this->buffer_size));
+		(*this->buffer)[this->id].resize(this->n_sockets, std::vector<int8_t*>(this->buffer_size));
 	}
 
+	this->buffer_to_free.clear();
 	for (size_t s = 0; s < this->n_sockets; s++)
-			for (size_t b = 0; b < this->buffer_size; b++)
-				(*this->buffer)[this->id][s][b].resize(this->n_frames * this->n_bytes[s]);
+		for (size_t b = 0; b < this->buffer_size; b++)
+		{
+			(*this->buffer)[this->id][s][b] = new int8_t[this->n_frames * this->n_bytes[s]];
+			this->buffer_to_free.push_back((*this->buffer)[this->id][s][b]);
+		}
 
 	if (this->id >= this->first->size())
 	{

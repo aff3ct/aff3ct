@@ -62,6 +62,8 @@ protected:
 
 	void* get_empty_buffer(const size_t sid);
 	void* get_filled_buffer(const size_t sid);
+	void* get_empty_buffer(const size_t sid, void* swap_buffer);
+	void* get_filled_buffer(const size_t sid, void* swap_buffer);
 	void wake_up_pusher();
 	void wake_up_puller();
 };

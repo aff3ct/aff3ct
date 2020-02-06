@@ -49,7 +49,9 @@ protected:
 	size_t id;
 	size_t cur_id;
 
-	std::shared_ptr<std::vector<std::vector<std::vector<std::vector<int8_t>>>>> buffer;
+	std::shared_ptr<std::vector<std::vector<std::vector<int8_t*>>>> buffer;
+	std::vector<int8_t*> buffer_to_free;
+
 	std::shared_ptr<std::vector<std::atomic<size_t>>> first;
 	std::shared_ptr<std::vector<std::atomic<size_t>>> last;
 
@@ -87,6 +89,8 @@ protected:
 	bool is_no_copy_pull();
 	virtual void* get_empty_buffer(const size_t sid) = 0;
 	virtual void* get_filled_buffer(const size_t sid) = 0;
+	virtual void* get_empty_buffer(const size_t sid, void* swap_buffer) = 0;
+	virtual void* get_filled_buffer(const size_t sid, void* swap_buffer) = 0;
 	virtual void wake_up_pusher() = 0;
 	virtual void wake_up_puller() = 0;
 
