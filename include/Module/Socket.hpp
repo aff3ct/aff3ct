@@ -50,6 +50,7 @@ public:
 	inline Task&                      get_task           () const;
 	inline const std::vector<Socket*> get_bound_sockets  () const;
 	inline const Socket&              get_bound_socket   () const;
+	inline       Socket&              get_bound_socket   ();
 
 	inline void set_fast(const bool fast);
 

@@ -99,18 +99,22 @@ void Adaptor
 ::reset()
 {
 	*this->waiting_canceled = false;
+	for (auto &a : *this->first.get()) a = 0;
+	for (auto &a : *this->last .get()) a = 0;
+	this->cur_id = 0;
+	this->reset_buffer();
 }
 
 void Adaptor
-::set_no_copy_pull(const bool hack_mode)
+::set_no_copy_pull(const bool no_copy_pull)
 {
-	this->no_copy_pull = hack_mode;
+	this->no_copy_pull = no_copy_pull;
 }
 
 void Adaptor
-::set_no_copy_push(const bool hack_mode)
+::set_no_copy_push(const bool no_copy_push)
 {
-	this->no_copy_push = hack_mode;
+	this->no_copy_push = no_copy_push;
 }
 
 bool Adaptor
@@ -123,4 +127,13 @@ bool Adaptor
 ::is_no_copy_push()
 {
 	return this->no_copy_push;
+}
+
+void Adaptor
+::reset_buffer()
+{
+	size_t id_buff = 0;
+	for (size_t s = 0; s < this->n_sockets; s++)
+		for (size_t b = 0; b < this->buffer_size; b++)
+			(*this->buffer)[this->id][s][b] = buffer_to_free[id_buff++];
 }

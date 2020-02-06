@@ -88,6 +88,18 @@ const std::vector<Socket*> Socket
 	return this->bound_sockets;
 }
 
+Socket& Socket
+::get_bound_socket()
+{
+	if (this->bound_socket == nullptr)
+	{
+		std::stringstream message;
+		message << "bound_socket can't be nullptr.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+	return *this->bound_socket;
+}
+
 const Socket& Socket
 ::get_bound_socket() const
 {

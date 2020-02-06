@@ -38,7 +38,7 @@ namespace module
 class Adaptor : public Module, public tools::Interface_waiting
 {
 
-friend tools::Chain; // Chain is friend to enable the hack mode (0 copy)
+friend tools::Chain; // Chain is friend to enable the no copy mode (0 copy)
 
 protected:
 	const std::vector<size_t> n_elmts;
@@ -83,10 +83,11 @@ protected:
 	inline size_t n_free_slots(const size_t id);
 	inline size_t n_fill_slots(const size_t id);
 
-	void set_no_copy_push(const bool hack_mode);
-	void set_no_copy_pull(const bool hack_mode);
+	void set_no_copy_push(const bool no_copy_push);
+	void set_no_copy_pull(const bool no_copy_pull);
 	bool is_no_copy_push();
 	bool is_no_copy_pull();
+	void reset_buffer();
 	virtual void* get_empty_buffer(const size_t sid) = 0;
 	virtual void* get_filled_buffer(const size_t sid) = 0;
 	virtual void* get_empty_buffer(const size_t sid, void* swap_buffer) = 0;

@@ -53,7 +53,7 @@ Adaptor
 
 	for (size_t s = 0; s < this->n_sockets; s++)
 		for (size_t b = 0; b < this->buffer_size; b++)
-			this->buffer_to_free.push_back((*this->buffer)[0][s][b]);
+			this->buffer_to_free.push_back((*this->buffer)[this->id][s][b]);
 
 	for (auto &a : *this->first.get()) a = 0;
 	for (auto &a : *this->last .get()) a = 0;
@@ -115,8 +115,8 @@ Adaptor
 	for (size_t s = 0; s < this->n_sockets; s++)
 		for (size_t b = 0; b < this->buffer_size; b++)
 		{
-			(*this->buffer)[0][s][b] = new int8_t[this->n_frames * this->n_bytes[s]];
-			this->buffer_to_free.push_back((*this->buffer)[0][s][b]);
+			(*this->buffer)[this->id][s][b] = new int8_t[this->n_frames * this->n_bytes[s]];
+			this->buffer_to_free.push_back((*this->buffer)[this->id][s][b]);
 		}
 
 	for (auto &a : *this->first.get()) a = 0;

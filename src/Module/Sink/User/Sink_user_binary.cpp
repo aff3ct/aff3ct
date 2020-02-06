@@ -13,6 +13,7 @@ template <typename B>
 Sink_user_binary<B>
 ::Sink_user_binary(const int K, const std::string &filename, const int n_frames)
 : Sink<B>(K, n_frames),
+  filename(filename),
   sink_file(filename.c_str(), std::ios::out | std::ios::binary),
   chunk(K),
   reconstructed_buffer(CHAR_BIT),
@@ -35,6 +36,17 @@ Sink_user_binary<B>
 		message << "'filename' file name is not valid: sink file failbit is set.";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+
+template <typename B>
+void Sink_user_binary<B>
+::reset()
+{
+	sink_file.close();
+	sink_file.open(this->filename.c_str(), std::ios::out | std::ios::binary);
+	if (sink_file.fail())
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, "Could not go back to the beginning of the file.");
+	this->n_left = 0;
 }
 
 template <typename B>

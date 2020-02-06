@@ -28,6 +28,7 @@ template <typename B = int>
 class Sink_user_binary : public Sink<B>
 {
 private:
+	const std::string filename;
 	std::ofstream sink_file;
 	std::vector<char> chunk;
 	std::vector<B> reconstructed_buffer;
@@ -46,6 +47,8 @@ public:
 	 * \brief Destructor.
 	 */
 	~Sink_user_binary() = default;
+
+	virtual void reset();
 
 protected:
 	virtual void _send(const B *V, const int frame_id);

@@ -9,6 +9,7 @@
 #include <memory>
 #include <vector>
 
+#include "Tools/Interface/Interface_reset.hpp"
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
 #include "Module/Module.hpp"
@@ -36,7 +37,7 @@ namespace module
  *
  */
 template <typename B = int>
-class Sink : public Module
+class Sink : public Module, public tools::Interface_reset
 {
 public:
 	inline Task&   operator[](const snk::tsk       t);
@@ -69,6 +70,8 @@ public:
 	void send(const std::vector<B,A>& V, const int frame_id = -1);
 
 	virtual void send(const B *V, const int frame_id = -1);
+
+	virtual void reset();
 
 protected:
 	virtual void _send(const B *V, const int frame_id);

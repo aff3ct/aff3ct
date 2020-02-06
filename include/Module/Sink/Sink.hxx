@@ -89,5 +89,12 @@ void Sink<B>
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
+template <typename B>
+void Sink<B>
+::reset()
+{
+	// do nothing in the general case, this method has to be overrided
+}
+
 }
 }

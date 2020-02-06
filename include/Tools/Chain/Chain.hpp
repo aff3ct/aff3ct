@@ -13,6 +13,7 @@
 #include <atomic>
 #include <mutex>
 
+#include "Module/Socket.hpp"
 #include "Tools/Interface/Interface_clone.hpp"
 #include "Tools/Algo/Tree/Generic/Generic_node.hpp"
 
@@ -34,8 +35,15 @@ class Sub_sequence_generic
 public:
 	subseq_t type;
 	VTA tasks;
+	std::vector<std::function<int()>> processes;
 	std::vector<size_t> tasks_id;
 	size_t id;
+
+	// usefull in case of adaptor to make zero copy and restore original states at the end of the chain execution
+	std::vector<std::vector<module::Socket*>> rebind_in_sockets;
+	std::vector<std::vector<void*>> rebind_in_dataptrs;
+	std::vector<module::Socket*> rebind_out_sockets;
+	std::vector<void*> rebind_out_dataptrs;
 
 	explicit Sub_sequence_generic() : type(subseq_t::STD), id(0) {}
 	virtual ~Sub_sequence_generic() = default;
@@ -159,6 +167,9 @@ protected:
 	void _exec_without_statuses(const size_t tid,
 	                            std::function<bool()> &stop_condition,
 	                            Generic_node<Sub_sequence>* sequence);
+
+	void gen_processes(const bool no_copy_mode_adaptors = false);
+	void reset_no_copy_mode_adaptors();
 };
 }
 }
