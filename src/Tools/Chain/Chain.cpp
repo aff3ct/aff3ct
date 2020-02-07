@@ -1023,17 +1023,16 @@ void Chain
 	std::function<void(Generic_node<Sub_sequence>*)> gen_processes_recursive =
 		[&gen_processes_recursive, no_copy_mode_adaptors](Generic_node<Sub_sequence>* cur_node)
 		{
+			std::map<module::Task*, std::function<int()>> modified_tasks;
 			if (cur_node != nullptr)
 			{
 				auto contents = cur_node->get_c();
 				contents->processes.clear();
-				std::set<module::Task*> skipped_tasks;
 
 				if ((contents->type == subseq_t::FIRST_ADP || contents->type == subseq_t::FIRST_LAST_ADP) &&
 					no_copy_mode_adaptors)
 				{
 					auto pull_task = contents->tasks[0];
-					skipped_tasks.insert(pull_task);
 					auto adp_pull = dynamic_cast<module::Adaptor*>(&pull_task->get_module());
 					adp_pull->set_no_copy_pull(true);
 					contents->rebind_in_sockets.clear();
@@ -1045,15 +1044,12 @@ void Chain
 							auto bound_sockets = pull_task->sockets[s]->get_bound_sockets();
 							std::vector<void*> dataptrs;
 							for (auto s : bound_sockets)
-							{
-								skipped_tasks.insert(&s->get_task());
 								dataptrs.push_back(s->get_dataptr());
-							}
 							contents->rebind_in_sockets.push_back(bound_sockets);
 							contents->rebind_in_dataptrs.push_back(dataptrs);
 						}
 
-					contents->processes.push_back([contents, pull_task, adp_pull]() -> int
+					modified_tasks[pull_task] = [contents, pull_task, adp_pull]() -> int
 					{
 						// active or passive waiting here
 						int ret = pull_task->exec();
@@ -1068,38 +1064,15 @@ void Chain
 							for (size_t ta = 1; ta < contents->rebind_in_sockets[sin_id].size(); ta++)
 								contents->rebind_in_sockets[sin_id][ta]->bind(buff);
 						}
+						adp_pull->wake_up_pusher();
 						return ret;
-					});
-
-					for (size_t s = 0; s < contents->rebind_in_sockets[0].size(); s++)
-					{
-						auto cur_task = &contents->rebind_in_sockets[0][s]->get_task();
-						if (s < contents->rebind_in_sockets[0].size() -1)
-						{
-							contents->processes.push_back([cur_task]() -> int
-							{
-								return cur_task->exec();
-							});
-						}
-						else
-						{
-							// trick to avoid to have a additionally process: we include the 'wake_up_pusher' method
-							// after the last task execution, this way we have the same number of tasks and processes
-							contents->processes.push_back([cur_task, adp_pull]() -> int
-							{
-								auto ret = cur_task->exec();
-								adp_pull->wake_up_pusher();
-								return ret;
-							});
-						}
-					}
+					};
 				}
 
 				if ((contents->type == subseq_t::LAST_ADP || contents->type == subseq_t::FIRST_LAST_ADP) &&
 				    no_copy_mode_adaptors)
 				{
 					auto push_task = contents->tasks[contents->tasks.size() -1];
-					skipped_tasks.insert(push_task);
 					auto adp_push = dynamic_cast<module::Adaptor*>(&push_task->get_module());
 					adp_push->set_no_copy_push(true);
 					contents->rebind_out_sockets.clear();
@@ -1109,45 +1082,12 @@ void Chain
 						if (push_task->get_socket_type(*push_task->sockets[s]) == module::socket_t::SIN)
 						{
 							auto bound_socket = &push_task->sockets[s]->get_bound_socket();
-
-							skipped_tasks.insert(&bound_socket->get_task());
 							void* dataptr = bound_socket->get_dataptr();
-
 							contents->rebind_out_sockets.push_back(bound_socket);
 							contents->rebind_out_dataptrs.push_back(dataptr);
 						}
-				}
 
-				for (size_t ta = 0; ta < contents->tasks.size(); ta++)
-					if (!skipped_tasks.count(contents->tasks[ta]))
-					{
-						auto cur_task = contents->tasks[ta];
-						contents->processes.push_back([cur_task]() -> int
-						{
-							return cur_task->exec();
-						});
-					}
-
-				if ((contents->type == subseq_t::LAST_ADP || contents->type == subseq_t::FIRST_LAST_ADP) &&
-					no_copy_mode_adaptors)
-				{
-					auto push_task = contents->tasks[contents->tasks.size() -1];
-					auto adp_push = dynamic_cast<module::Adaptor*>(&push_task->get_module());
-
-					const bool should_not_execute_task = contents->type == subseq_t::FIRST_LAST_ADP &&
-					                                     contents->tasks.size() <= 3;
-
-					// do not execute the task if the task has been executed before
-					if (!should_not_execute_task)
-					{
-						auto cur_task = &contents->rebind_out_sockets[0]->get_task();
-						contents->processes.push_back([cur_task]() -> int
-						{
-							return cur_task->exec();
-						});
-					}
-
-					contents->processes.push_back([contents, push_task, adp_push]() -> int
+					modified_tasks[push_task] = [contents, push_task, adp_push]() -> int
 					{
 						// active or passive waiting here
 						auto ret = push_task->exec();
@@ -1160,7 +1100,19 @@ void Chain
 						}
 						adp_push->wake_up_puller();
 						return ret;
-					});
+					};
+				}
+
+				for (size_t ta = 0; ta < contents->tasks.size(); ta++)
+				{
+					auto cur_task = contents->tasks[ta];
+					if (modified_tasks.count(cur_task))
+						contents->processes.push_back(modified_tasks[cur_task]);
+					else
+						contents->processes.push_back([cur_task]() -> int
+						{
+							return cur_task->exec();
+						});
 				}
 
 				for (auto c : cur_node->get_children())
