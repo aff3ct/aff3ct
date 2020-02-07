@@ -34,28 +34,23 @@ void Frozenbits_generator_BEC
 {
 	this->check_noise();
 
-	for (unsigned i = 0; i != this->best_channels.size(); i++)
-		this->best_channels[i] = i;
+	std::iota(this->best_channels.begin(), this->best_channels.end(), 0);
 
-	for (auto i = 0; i < std::exp2(m); i++)
-		z[i] = static_cast<double>(this->noise->get_value());
+	z[0] = std::log(static_cast<double>(this->noise->get_value()));
 
 	for (auto l = 1; l <= m; l++)
 	{
-		auto o1 = (int)std::exp2(m - l +1);
-		auto o2 = (int)std::exp2(m - l   );
-
-		for (auto t = 0; t < (int)std::exp2(l -1); t++)
+		auto b = exp2(l);
+		auto stride = N / b;
+		for (auto j = 0; j < b / 2; j++)
 		{
-			double T = z[t * o1];
-
-			z[t * o1] = T * T;
-
-			z[t * o1 + o2] = 2 * T - T * T ;
+			auto t = z[j * 2 * stride ];
+			z[j * 2 * stride         ] = std::log(2) + t + std::log1p(- std::exp(2 * t - (std::log(2) + t)));
+			z[j * 2 * stride + stride] = 2 * t;
 		}
 	}
 
-	std::sort(this->best_channels.begin(), this->best_channels.end(), [this](int i1, int i2) { return z[i1] > z[i2]; });
+	std::sort(this->best_channels.begin(), this->best_channels.end(), [this](int i1, int i2) { return z[i1] < z[i2]; });
 }
 
 void Frozenbits_generator_BEC
