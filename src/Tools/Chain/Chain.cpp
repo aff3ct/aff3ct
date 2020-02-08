@@ -556,6 +556,13 @@ const module::Task& Chain
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	if (dynamic_cast<const module::Adaptor*>(&current_task.get_module()) && !this->tasks_inplace)
+	{
+		std::stringstream message;
+		message << "'module::Adaptor' objects are not supported if 'tasks_inplace' is set to false.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (auto loop = dynamic_cast<const module::Loop*>(&current_task.get_module()))
 	{
 		if (std::find(loops.begin(), loops.end(), &current_task) == loops.end())
