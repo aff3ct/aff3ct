@@ -17,6 +17,46 @@ Adaptor_n_to_1* Adaptor_n_to_1
 void Adaptor_n_to_1
 ::push_n(const std::vector<const int8_t*> &in, const int frame_id)
 {
+	this->wait_push();
+
+	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+	for (size_t s = 0; s < this->n_sockets; s++)
+	{
+		int8_t* out = (int8_t*)this->get_empty_buffer(s);
+
+		std::copy(in[s] + f_start * this->n_bytes[s],
+		          in[s] + f_stop  * this->n_bytes[s],
+		          out   + f_start * this->n_bytes[s]);
+	}
+
+	this->wake_up_puller();
+}
+
+void Adaptor_n_to_1
+::pull_1(const std::vector<int8_t*> &out, const int frame_id)
+{
+	this->wait_pull();
+
+	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
+	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+
+	for (size_t s = 0; s < this->n_sockets; s++)
+	{
+		const int8_t* in = (const int8_t*)this->get_filled_buffer(s);
+
+		std::copy(in     + f_start * this->n_bytes[s],
+		          in     + f_stop  * this->n_bytes[s],
+		          out[s] + f_start * this->n_bytes[s]);
+	}
+
+	this->wake_up_pusher();
+}
+
+void Adaptor_n_to_1
+::wait_push()
+{
 	if (this->active_waiting)
 	{
 		while (this->is_full(this->id) && !*this->waiting_canceled);
@@ -35,27 +75,10 @@ void Adaptor_n_to_1
 
 	if (*this->waiting_canceled)
 		throw tools::waiting_canceled(__FILE__, __LINE__, __func__);
-
-	if (!this->is_no_copy_push())
-	{
-		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
-		for (size_t s = 0; s < this->n_sockets; s++)
-		{
-			int8_t* out = (int8_t*)this->get_empty_buffer(s);
-
-			std::copy(in[s] + f_start * this->n_bytes[s],
-			          in[s] + f_stop  * this->n_bytes[s],
-			          out   + f_start * this->n_bytes[s]);
-		}
-
-		this->wake_up_puller();
-	}
 }
 
 void Adaptor_n_to_1
-::pull_1(const std::vector<int8_t*> &out, const int frame_id)
+::wait_pull()
 {
 	if (this->active_waiting)
 	{
@@ -75,47 +98,6 @@ void Adaptor_n_to_1
 
 	if (*this->waiting_canceled)
 		throw tools::waiting_canceled(__FILE__, __LINE__, __func__);
-
-	if (!this->is_no_copy_pull())
-	{
-		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
-		for (size_t s = 0; s < this->n_sockets; s++)
-		{
-			const int8_t* in = (const int8_t*)this->get_filled_buffer(s);
-
-			std::copy(in     + f_start * this->n_bytes[s],
-			          in     + f_stop  * this->n_bytes[s],
-			          out[s] + f_start * this->n_bytes[s]);
-		}
-
-		this->wake_up_pusher();
-	}
-}
-
-void Adaptor_n_to_1
-::wake_up()
-{
-	if (!this->active_waiting) // passive waiting
-	{
-		for (size_t i = 0; i < this->buffer->size(); i++)
-			if ((*this->buffer)[i].size() != 0)
-			{
-				std::unique_lock<std::mutex> lock((*this->mtx_put.get())[i]);
-				(*this->cnd_put.get())[i].notify_all();
-			}
-
-		std::lock_guard<std::mutex> lock(*this->mtx_pull.get());
-		(*this->cnd_pull.get()).notify_all();
-	}
-}
-
-void Adaptor_n_to_1
-::cancel_waiting()
-{
-	this->send_cancel_signal();
-	this->wake_up();
 }
 
 void* Adaptor_n_to_1
@@ -180,4 +162,28 @@ void Adaptor_n_to_1
 		this->cur_id = (this->cur_id +1) % this->buffer->size();
 	}
 	while((*this->buffer)[this->cur_id].size() == 0);
+}
+
+void Adaptor_n_to_1
+::wake_up()
+{
+	if (!this->active_waiting) // passive waiting
+	{
+		for (size_t i = 0; i < this->buffer->size(); i++)
+			if ((*this->buffer)[i].size() != 0)
+			{
+				std::unique_lock<std::mutex> lock((*this->mtx_put.get())[i]);
+				(*this->cnd_put.get())[i].notify_all();
+			}
+
+		std::lock_guard<std::mutex> lock(*this->mtx_pull.get());
+		(*this->cnd_pull.get()).notify_all();
+	}
+}
+
+void Adaptor_n_to_1
+::cancel_waiting()
+{
+	this->send_cancel_signal();
+	this->wake_up();
 }

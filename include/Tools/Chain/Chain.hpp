@@ -40,10 +40,8 @@ public:
 	size_t id;
 
 	// usefull in case of adaptor to make zero copy and restore original states at the end of the chain execution
-	std::vector<std::vector<std::vector<module::Socket*>>> rebind_in_sockets;
-	std::vector<std::vector<std::vector<void*>>> rebind_in_dataptrs;
-	std::vector<std::vector<module::Socket*>> rebind_out_sockets;
-	std::vector<std::vector<void*>> rebind_out_dataptrs;
+	std::vector<std::vector<std::vector<module::Socket*>>> rebind_sockets;
+	std::vector<std::vector<std::vector<void*>>> rebind_dataptrs;
 
 	explicit Sub_sequence_generic() : type(subseq_t::STD), id(0) {}
 	virtual ~Sub_sequence_generic() = default;
@@ -72,7 +70,7 @@ protected:
 	bool thread_pinning;
 	std::vector<size_t> puids;
 
-	bool no_copy_mode_adaptors;
+	bool no_copy_mode;
 
 public:
 
@@ -126,8 +124,8 @@ public:
 
 	void export_dot(std::ostream &stream = std::cout) const;
 
-	void set_no_copy_mode_adaptors(const bool no_copy_mode);
-	bool is_no_copy_mode_adaptors() const;
+	void set_no_copy_mode(const bool no_copy_mode);
+	bool is_no_copy_mode() const;
 
 protected:
 	template <class SS>
@@ -168,8 +166,8 @@ protected:
 	                            std::function<bool()> &stop_condition,
 	                            Generic_node<Sub_sequence>* sequence);
 
-	void gen_processes(const bool no_copy_mode_adaptors = false);
-	void reset_no_copy_mode_adaptors();
+	void gen_processes(const bool no_copy_mode = false);
+	void reset_no_copy_mode();
 };
 }
 }

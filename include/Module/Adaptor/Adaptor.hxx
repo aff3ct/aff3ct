@@ -25,8 +25,7 @@ Adaptor
   cur_id(0),
   buffer(new std::vector<std::vector<std::vector<int8_t*>>>
   	(1, std::vector<std::vector<int8_t*>>(1,
-  		std::vector<int8_t*>(buffer_size,
-  			new int8_t[n_frames * this->n_bytes[0]])))),
+  		std::vector<int8_t*>(buffer_size)))),
   first(new std::vector<std::atomic<size_t>>(1000)),
   last(new std::vector<std::atomic<size_t>>(1000)),
   waiting_canceled(new std::atomic<bool>(false)),
@@ -53,7 +52,10 @@ Adaptor
 
 	for (size_t s = 0; s < this->n_sockets; s++)
 		for (size_t b = 0; b < this->buffer_size; b++)
+		{
+			(*this->buffer)[this->id][s][b] = new int8_t[this->n_frames * this->n_bytes[s]];
 			this->buffer_to_free.push_back((*this->buffer)[this->id][s][b]);
+		}
 
 	for (auto &a : *this->first.get()) a = 0;
 	for (auto &a : *this->last .get()) a = 0;

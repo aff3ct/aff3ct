@@ -60,6 +60,8 @@ protected:
 	virtual void push_n(const std::vector<const int8_t*> &in,  const int frame_id = -1);
 	virtual void pull_1(const std::vector<      int8_t*> &out, const int frame_id = -1);
 
+	void wait_push();
+	void wait_pull();
 	void* get_empty_buffer(const size_t sid);
 	void* get_filled_buffer(const size_t sid);
 	void* get_empty_buffer(const size_t sid, void* swap_buffer);

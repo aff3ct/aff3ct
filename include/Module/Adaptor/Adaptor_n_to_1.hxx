@@ -107,11 +107,21 @@ void Adaptor_n_to_1
 
 	this->create_codelet(p1, [p1s_in](Module &m, Task &t) -> int
 	{
-		std::vector<const int8_t*> sockets_dataptr(p1s_in.size());
-		for (size_t s = 0; s < p1s_in.size(); s++)
-			sockets_dataptr[s] = static_cast<const int8_t*>(t[p1s_in[s]].get_dataptr());
-
-		static_cast<Adaptor_n_to_1&>(m).push_n(sockets_dataptr);
+		auto &adp = static_cast<Adaptor_n_to_1&>(m);
+		if (adp.is_no_copy_push())
+		{
+			adp.wait_push();
+			// for debug mode coherence
+			for (size_t s = 0; s < t.sockets.size(); s++)
+				t.sockets[s]->bind(adp.get_empty_buffer(s));
+		}
+		else
+		{
+			std::vector<const int8_t*> sockets_dataptr(p1s_in.size());
+			for (size_t s = 0; s < p1s_in.size(); s++)
+				sockets_dataptr[s] = static_cast<const int8_t*>(t[p1s_in[s]].get_dataptr());
+			adp.push_n(sockets_dataptr);
+		}
 		return 0;
 	});
 
@@ -122,11 +132,21 @@ void Adaptor_n_to_1
 
 	this->create_codelet(p2, [p2s_out](Module &m, Task &t) -> int
 	{
-		std::vector<int8_t*> sockets_dataptr(p2s_out.size());
-		for (size_t s = 0; s < p2s_out.size(); s++)
-			sockets_dataptr[s] = static_cast<int8_t*>(t[p2s_out[s]].get_dataptr());
-
-		static_cast<Adaptor_n_to_1&>(m).pull_1(sockets_dataptr);
+		auto &adp = static_cast<Adaptor_n_to_1&>(m);
+		if (adp.is_no_copy_pull())
+		{
+			adp.wait_pull();
+			// for debug mode coherence
+			for (size_t s = 0; s < t.sockets.size(); s++)
+				t.sockets[s]->bind(adp.get_filled_buffer(s));
+		}
+		else
+		{
+			std::vector<int8_t*> sockets_dataptr(p2s_out.size());
+			for (size_t s = 0; s < p2s_out.size(); s++)
+				sockets_dataptr[s] = static_cast<int8_t*>(t[p2s_out[s]].get_dataptr());
+			adp.pull_1(sockets_dataptr);
+		}
 		return 0;
 	});
 }

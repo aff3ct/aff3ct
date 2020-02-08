@@ -37,7 +37,7 @@ Chain
   tasks_inplace(false),
   thread_pinning(thread_pinning),
   puids(puids),
-  no_copy_mode_adaptors(true)
+  no_copy_mode(true)
 {
 	this->init<tools::Sub_sequence_const,const module::Task>(first, &last);
 }
@@ -58,7 +58,7 @@ Chain
   tasks_inplace(false),
   thread_pinning(thread_pinning),
   puids(puids),
-  no_copy_mode_adaptors(true)
+  no_copy_mode(true)
 {
 	this->init<tools::Sub_sequence_const,const module::Task>(first);
 }
@@ -81,7 +81,7 @@ Chain
   tasks_inplace(tasks_inplace),
   thread_pinning(thread_pinning),
   puids(puids),
-  no_copy_mode_adaptors(true)
+  no_copy_mode(true)
 {
 	if (tasks_inplace)
 		this->init<tools::Sub_sequence,module::Task>(first, &last);
@@ -106,7 +106,7 @@ Chain
   tasks_inplace(tasks_inplace),
   thread_pinning(false),
   puids(puids),
-  no_copy_mode_adaptors(true)
+  no_copy_mode(true)
 {
 	if (tasks_inplace)
 		this->init<tools::Sub_sequence,module::Task>(first);
@@ -370,9 +370,9 @@ void Chain
 			Thread_pinning::pin();
 	}
 
-	const bool no_copy_mode_adaptors = this->is_no_copy_mode_adaptors();
+	const bool no_copy_mode = this->is_no_copy_mode();
 	std::function<void(Generic_node<Sub_sequence>*)> exec_sequence =
-		[&exec_sequence, no_copy_mode_adaptors](Generic_node<Sub_sequence>* cur_ss)
+		[&exec_sequence, no_copy_mode](Generic_node<Sub_sequence>* cur_ss)
 		{
 			auto type = cur_ss->get_c()->type;
 			auto &tasks = cur_ss->get_c()->tasks;
@@ -443,7 +443,7 @@ void Chain
 void Chain
 ::exec(std::function<bool(const std::vector<int>&)> stop_condition)
 {
-	if (this->is_no_copy_mode_adaptors())
+	if (this->is_no_copy_mode())
 		this->gen_processes(true);
 
 	std::vector<std::thread> threads(n_threads);
@@ -455,9 +455,9 @@ void Chain
 	for (size_t tid = 1; tid < n_threads; tid++)
 		threads[tid].join();
 
-	if (this->is_no_copy_mode_adaptors())
+	if (this->is_no_copy_mode())
 	{
-		this->reset_no_copy_mode_adaptors();
+		this->reset_no_copy_mode();
 		this->gen_processes(false);
 	}
 
@@ -471,7 +471,7 @@ void Chain
 void Chain
 ::exec(std::function<bool()> stop_condition)
 {
-	if (this->is_no_copy_mode_adaptors())
+	if (this->is_no_copy_mode())
 		this->gen_processes(true);
 
 	std::vector<std::thread> threads(n_threads);
@@ -486,9 +486,9 @@ void Chain
 	for (size_t tid = 1; tid < n_threads; tid++)
 		threads[tid].join();
 
-	if (this->is_no_copy_mode_adaptors())
+	if (this->is_no_copy_mode())
 	{
-		this->reset_no_copy_mode_adaptors();
+		this->reset_no_copy_mode();
 		this->gen_processes(false);
 	}
 
@@ -1002,67 +1002,76 @@ void Chain
 }
 
 void Chain
-::gen_processes(const bool no_copy_mode_adaptors)
+::gen_processes(const bool no_copy_mode)
 {
 	std::function<void(Generic_node<Sub_sequence>*)> gen_processes_recursive =
-		[&gen_processes_recursive, no_copy_mode_adaptors](Generic_node<Sub_sequence>* cur_node)
+		[&gen_processes_recursive, no_copy_mode](Generic_node<Sub_sequence>* cur_node)
 		{
 			if (cur_node != nullptr)
 			{
 				std::map<module::Task*, std::function<int()>> modified_tasks;
 				auto contents = cur_node->get_c();
 				contents->processes.clear();
-				contents->rebind_in_sockets.clear();
-				contents->rebind_in_dataptrs.clear();
-				contents->rebind_out_sockets.clear();
-				contents->rebind_out_dataptrs.clear();
+				contents->rebind_sockets.clear();
+				contents->rebind_dataptrs.clear();
 				for (auto task : contents->tasks)
 				{
 					if (dynamic_cast<module::Adaptor*>(&task->get_module()) &&
-						task->get_name().find("pull") != std::string::npos && no_copy_mode_adaptors)
+						task->get_name().find("pull") != std::string::npos && no_copy_mode)
 					{
 						auto pull_task = task;
 						auto adp_pull = dynamic_cast<module::Adaptor*>(&pull_task->get_module());
 						adp_pull->set_no_copy_pull(true);
-						const auto cur_adp_pull = contents->rebind_in_sockets.size();
-						contents->rebind_in_sockets.resize(cur_adp_pull +1);
-						contents->rebind_in_dataptrs.resize(cur_adp_pull +1);
+						const auto rebind_id = contents->rebind_sockets.size();
+						contents->rebind_sockets.resize(rebind_id +1);
+						contents->rebind_dataptrs.resize(rebind_id +1);
 
 						for (size_t s = 0; s < pull_task->sockets.size(); s++)
 							if (pull_task->get_socket_type(*pull_task->sockets[s]) == module::socket_t::SOUT)
 							{
-								auto bound_sockets = pull_task->sockets[s]->get_bound_sockets();
+								std::vector<module::Socket*> bound_sockets;
 								std::vector<void*> dataptrs;
-								for (auto s : bound_sockets)
+
+								bound_sockets.push_back(pull_task->sockets[s].get());
+								dataptrs.push_back(pull_task->sockets[s]->get_dataptr());
+
+								bound_sockets.insert(bound_sockets.end(),
+								                     pull_task->sockets[s]->get_bound_sockets().begin(),
+								                     pull_task->sockets[s]->get_bound_sockets().end());
+								for (auto sck : bound_sockets)
 								{
-									if (s->get_task().get_socket_type(*s) == module::socket_t::SIN_SOUT)
+									if (sck->get_task().get_socket_type(*sck) == module::socket_t::SIN_SOUT)
 									{
 										std::stringstream message;
 										message << "'SIN_SOUT' socket type is unsupported at this time ("
-										        << "'s->get_name()' = " << s->get_name() << ", "
-										        << "'s->get_task().get_name()' = ." << s->get_task().get_name() << ".)";
+										        << "'sck->get_name()' = " << sck->get_name() << ", "
+										        << "'sck->get_task().get_name()' = ." << sck->get_task().get_name()
+										        << ".)";
 										throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 									}
-									dataptrs.push_back(s->get_dataptr());
+									dataptrs.push_back(sck->get_dataptr());
 								}
-								contents->rebind_in_sockets[cur_adp_pull].push_back(bound_sockets);
-								contents->rebind_in_dataptrs[cur_adp_pull].push_back(dataptrs);
+
+								contents->rebind_sockets[rebind_id].push_back(bound_sockets);
+								contents->rebind_dataptrs[rebind_id].push_back(dataptrs);
 							}
 
-						modified_tasks[pull_task] = [contents, pull_task, adp_pull, cur_adp_pull]() -> int
+						modified_tasks[pull_task] = [contents, pull_task, adp_pull, rebind_id]() -> int
 						{
 							// active or passive waiting here
 							int ret = pull_task->exec();
 							// rebind input sockets on the fly
-							for (size_t sin_id = 0; sin_id < contents->rebind_in_sockets[cur_adp_pull].size(); sin_id++)
+							for (size_t sin_id = 0; sin_id < contents->rebind_sockets[rebind_id].size(); sin_id++)
 							{
-								auto swap_buff = contents->rebind_in_sockets[cur_adp_pull][sin_id][0]->get_dataptr();
+								// we start to 1 because the rebinding of the 'pull_task' is made in the
+								// 'pull_task->exec()' call (this way the debug mode is still working)
+								auto swap_buff = contents->rebind_sockets[rebind_id][sin_id][1]->get_dataptr();
 								auto buff = adp_pull->get_filled_buffer(sin_id, swap_buff);
-								contents->rebind_in_sockets[cur_adp_pull][sin_id][0]->bind(buff);
+								contents->rebind_sockets[rebind_id][sin_id][1]->bind(buff);
 								// for the next tasks the same buffer 'buff' is required, an easy mistake is to re-swap
 								// and the data will be false, this is why we just bind 'buff'
-								for (size_t ta = 1; ta < contents->rebind_in_sockets[cur_adp_pull][sin_id].size(); ta++)
-									contents->rebind_in_sockets[cur_adp_pull][sin_id][ta]->bind(buff);
+								for (size_t ta = 2; ta < contents->rebind_sockets[rebind_id][sin_id].size(); ta++)
+									contents->rebind_sockets[rebind_id][sin_id][ta]->bind(buff);
 							}
 							adp_pull->wake_up_pusher();
 							return ret;
@@ -1070,18 +1079,24 @@ void Chain
 					}
 
 					if (dynamic_cast<module::Adaptor*>(&task->get_module()) &&
-						task->get_name().find("push") != std::string::npos && no_copy_mode_adaptors)
+						task->get_name().find("push") != std::string::npos && no_copy_mode)
 					{
 						auto push_task = task;
 						auto adp_push = dynamic_cast<module::Adaptor*>(&push_task->get_module());
 						adp_push->set_no_copy_push(true);
-						const auto cur_adp_push = contents->rebind_out_sockets.size();
-						contents->rebind_out_sockets.resize(cur_adp_push +1);
-						contents->rebind_out_dataptrs.resize(cur_adp_push +1);
+						const auto rebind_id = contents->rebind_sockets.size();
+						contents->rebind_sockets.resize(rebind_id +1);
+						contents->rebind_dataptrs.resize(rebind_id +1);
 
 						for (size_t s = 0; s < push_task->sockets.size(); s++)
 							if (push_task->get_socket_type(*push_task->sockets[s]) == module::socket_t::SIN)
 							{
+								std::vector<module::Socket*> bound_sockets;
+								std::vector<void*> dataptrs;
+
+								bound_sockets.push_back(push_task->sockets[s].get());
+								dataptrs.push_back(push_task->sockets[s]->get_dataptr());
+
 								auto bound_socket = &push_task->sockets[s]->get_bound_socket();
 								if (bound_socket->get_task().get_socket_type(*bound_socket) ==
 								    module::socket_t::SIN_SOUT)
@@ -1093,23 +1108,48 @@ void Chain
 									        << bound_socket->get_task().get_name() << ".)";
 									throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 								}
+								bound_sockets.push_back(bound_socket);
+								dataptrs.push_back(bound_socket->get_dataptr());
 
-								void* dataptr = bound_socket->get_dataptr();
-								contents->rebind_out_sockets[cur_adp_push].push_back(bound_socket);
-								contents->rebind_out_dataptrs[cur_adp_push].push_back(dataptr);
+								auto &bs = bound_socket->get_bound_sockets();
+								for (size_t s = 0; s < bs.size(); s++)
+									if (&bs[s]->get_task() != push_task)
+									{
+										if (bs[s]->get_task().get_socket_type(*bs[s]) == module::socket_t::SIN_SOUT)
+										{
+											std::stringstream message;
+											message << "'SIN_SOUT' socket type is unsupported at this time ("
+											        << "'s' = " << s << ", "
+											        << "'bs[s]->get_name()' = " << bs[s]->get_name() << ", "
+											        << "'bs[s]->get_task().get_name()' = ."
+											        << bs[s]->get_task().get_name() << ".)";
+											throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+										}
+
+										bound_sockets.push_back(bs[s]);
+										dataptrs.push_back(bs[s]->get_dataptr());
+									}
+
+								contents->rebind_sockets[rebind_id].push_back(bound_sockets);
+								contents->rebind_dataptrs[rebind_id].push_back(dataptrs);
 							}
 
-						modified_tasks[push_task] = [contents, push_task, adp_push, cur_adp_push]() -> int
+						modified_tasks[push_task] = [contents, push_task, adp_push, rebind_id]() -> int
 						{
 							// active or passive waiting here
 							auto ret = push_task->exec();
 							// rebind output sockets on the fly
-							for (size_t sout_id = 0; sout_id < contents->rebind_out_sockets[cur_adp_push].size();
-							     sout_id++)
+							for (size_t sout_id = 0; sout_id < contents->rebind_sockets[rebind_id].size(); sout_id++)
 							{
-								auto swap_buff = contents->rebind_out_sockets[cur_adp_push][sout_id]->get_dataptr();
+								// we start to 1 because the rebinding of the 'push_task' is made in the
+								// 'push_task->exec()' call (this way the debug mode is still working)
+								auto swap_buff = contents->rebind_sockets[rebind_id][sout_id][1]->get_dataptr();
 								auto buff = adp_push->get_empty_buffer(sout_id, swap_buff);
-								contents->rebind_out_sockets[cur_adp_push][sout_id]->bind(buff);
+								contents->rebind_sockets[rebind_id][sout_id][1]->bind(buff);
+								// the output socket linked to the push adp can have more than one socket bound and so
+								// we have to rebind all the input sokects bound to the current output socket
+								for (size_t ta = 2; ta < contents->rebind_sockets[rebind_id][sout_id].size(); ta++)
+									contents->rebind_sockets[rebind_id][sout_id][ta]->bind(buff);
 							}
 							adp_push->wake_up_puller();
 							return ret;
@@ -1144,7 +1184,7 @@ void Chain
 }
 
 void Chain
-::reset_no_copy_mode_adaptors()
+::reset_no_copy_mode()
 {
 	std::function<void(Generic_node<Sub_sequence>*)> reset_no_copy_mode_recursive =
 		[&reset_no_copy_mode_recursive](Generic_node<Sub_sequence>* cur_node)
@@ -1173,16 +1213,11 @@ void Chain
 					}
 				}
 
-				for (size_t adp_pull = 0; adp_pull < contents->rebind_in_sockets.size(); adp_pull++)
-					for (size_t s = 0; s < contents->rebind_in_sockets[adp_pull].size(); s++)
-						for (size_t ta = 0; ta < contents->rebind_in_sockets[adp_pull][s].size(); ta++)
-							contents->rebind_in_sockets[adp_pull][s][ta]
-								->bind(contents->rebind_in_dataptrs[adp_pull][s][ta]);
-
-				for (size_t adp_push = 0; adp_push < contents->rebind_out_sockets.size(); adp_push++)
-					for (size_t s = 0; s < contents->rebind_out_sockets[adp_push].size(); s++)
-						contents->rebind_out_sockets[adp_push][s]
-							->bind(contents->rebind_out_dataptrs[adp_push][s]);
+				for (size_t rebind_id = 0; rebind_id < contents->rebind_sockets.size(); rebind_id++)
+					for (size_t s = 0; s < contents->rebind_sockets[rebind_id].size(); s++)
+						for (size_t ta = 0; ta < contents->rebind_sockets[rebind_id][s].size(); ta++)
+							contents->rebind_sockets[rebind_id][s][ta]
+								->bind(contents->rebind_dataptrs[rebind_id][s][ta]);
 			}
 
 			for (auto c : cur_node->get_children())
@@ -1195,14 +1230,14 @@ void Chain
 }
 
 void Chain
-::set_no_copy_mode_adaptors(const bool no_copy_mode)
+::set_no_copy_mode(const bool no_copy_mode)
 {
-	this->no_copy_mode_adaptors = no_copy_mode;
+	this->no_copy_mode = no_copy_mode;
 }
 
 bool Chain
-::is_no_copy_mode_adaptors() const
+::is_no_copy_mode() const
 {
-	return this->no_copy_mode_adaptors;
+	return this->no_copy_mode;
 }
 

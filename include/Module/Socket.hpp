@@ -39,18 +39,18 @@ public:
 	              const bool fast = false, void *dataptr = nullptr);
 	virtual ~Socket() = default;
 
-	inline const std::string&         get_name           () const;
-	inline const std::type_index&     get_datatype       () const;
-	inline const std::string&         get_datatype_string() const;
-	inline uint8_t                    get_datatype_size  () const;
-	inline size_t                     get_databytes      () const;
-	inline size_t                     get_n_elmts        () const;
-	inline void*                      get_dataptr        () const;
-	inline bool                       is_fast            () const;
-	inline Task&                      get_task           () const;
-	inline const std::vector<Socket*> get_bound_sockets  () const;
-	inline const Socket&              get_bound_socket   () const;
-	inline       Socket&              get_bound_socket   ();
+	inline const std::string&          get_name           () const;
+	inline const std::type_index&      get_datatype       () const;
+	inline const std::string&          get_datatype_string() const;
+	inline uint8_t                     get_datatype_size  () const;
+	inline size_t                      get_databytes      () const;
+	inline size_t                      get_n_elmts        () const;
+	inline void*                       get_dataptr        () const;
+	inline bool                        is_fast            () const;
+	inline Task&                       get_task           () const;
+	inline const std::vector<Socket*>& get_bound_sockets  () const;
+	inline const Socket&               get_bound_socket   () const;
+	inline       Socket&               get_bound_socket   ();
 
 	inline void set_fast(const bool fast);
 

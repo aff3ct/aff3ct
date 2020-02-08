@@ -82,7 +82,7 @@ Task& Socket
 	return this->task;
 }
 
-const std::vector<Socket*> Socket
+const std::vector<Socket*>& Socket
 ::get_bound_sockets() const
 {
 	return this->bound_sockets;
