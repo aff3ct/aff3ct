@@ -27,7 +27,7 @@ class Module;
 namespace tools
 {
 
-enum class subseq_t : size_t { STD, LOOP, ROUTER, FIRST_ADP, LAST_ADP, FIRST_LAST_ADP };
+enum class subseq_t : size_t { STD, LOOP, ROUTER };
 
 template <class VTA = std::vector<module::Task*>>
 class Sub_sequence_generic
@@ -40,10 +40,10 @@ public:
 	size_t id;
 
 	// usefull in case of adaptor to make zero copy and restore original states at the end of the chain execution
-	std::vector<std::vector<module::Socket*>> rebind_in_sockets;
-	std::vector<std::vector<void*>> rebind_in_dataptrs;
-	std::vector<module::Socket*> rebind_out_sockets;
-	std::vector<void*> rebind_out_dataptrs;
+	std::vector<std::vector<std::vector<module::Socket*>>> rebind_in_sockets;
+	std::vector<std::vector<std::vector<void*>>> rebind_in_dataptrs;
+	std::vector<std::vector<module::Socket*>> rebind_out_sockets;
+	std::vector<std::vector<void*>> rebind_out_dataptrs;
 
 	explicit Sub_sequence_generic() : type(subseq_t::STD), id(0) {}
 	virtual ~Sub_sequence_generic() = default;

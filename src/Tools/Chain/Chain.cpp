@@ -457,8 +457,8 @@ void Chain
 
 	if (this->is_no_copy_mode_adaptors())
 	{
-		this->gen_processes(false);
 		this->reset_no_copy_mode_adaptors();
+		this->gen_processes(false);
 	}
 
 	if (!this->prev_exception_messages_to_display.empty())
@@ -488,8 +488,8 @@ void Chain
 
 	if (this->is_no_copy_mode_adaptors())
 	{
-		this->gen_processes(false);
 		this->reset_no_copy_mode_adaptors();
+		this->gen_processes(false);
 	}
 
 	if (!this->prev_exception_messages_to_display.empty())
@@ -625,22 +625,6 @@ const module::Task& Chain
 
 		cur_subseq->get_c()->tasks.push_back(&current_task);
 		cur_subseq->get_c()->tasks_id.push_back(taid++);
-
-		// tag sub-sequences with adaptors
-		if (auto adp = dynamic_cast<const module::Adaptor*>(&current_task.get_module()))
-		{
-			if (cur_subseq->get_c()->tasks.size() == 1)
-			{
-				cur_subseq->get_c()->type = subseq_t::FIRST_ADP;
-			}
-			else
-			{
-				if (cur_subseq->get_c()->type == subseq_t::FIRST_ADP)
-					cur_subseq->get_c()->type = subseq_t::FIRST_LAST_ADP;
-				else
-					cur_subseq->get_c()->type = subseq_t::LAST_ADP;
-			}
-		}
 
 		if (&current_task != last)
 		{
@@ -1023,97 +1007,121 @@ void Chain
 	std::function<void(Generic_node<Sub_sequence>*)> gen_processes_recursive =
 		[&gen_processes_recursive, no_copy_mode_adaptors](Generic_node<Sub_sequence>* cur_node)
 		{
-			std::map<module::Task*, std::function<int()>> modified_tasks;
 			if (cur_node != nullptr)
 			{
+				std::map<module::Task*, std::function<int()>> modified_tasks;
 				auto contents = cur_node->get_c();
 				contents->processes.clear();
-
-				if ((contents->type == subseq_t::FIRST_ADP || contents->type == subseq_t::FIRST_LAST_ADP) &&
-					no_copy_mode_adaptors)
+				contents->rebind_in_sockets.clear();
+				contents->rebind_in_dataptrs.clear();
+				contents->rebind_out_sockets.clear();
+				contents->rebind_out_dataptrs.clear();
+				for (auto task : contents->tasks)
 				{
-					auto pull_task = contents->tasks[0];
-					auto adp_pull = dynamic_cast<module::Adaptor*>(&pull_task->get_module());
-					adp_pull->set_no_copy_pull(true);
-					contents->rebind_in_sockets.clear();
-					contents->rebind_in_dataptrs.clear();
-
-					for (size_t s = 0; s < pull_task->sockets.size(); s++)
-						if (pull_task->get_socket_type(*pull_task->sockets[s]) == module::socket_t::SOUT)
-						{
-							auto bound_sockets = pull_task->sockets[s]->get_bound_sockets();
-							std::vector<void*> dataptrs;
-							for (auto s : bound_sockets)
-								dataptrs.push_back(s->get_dataptr());
-							contents->rebind_in_sockets.push_back(bound_sockets);
-							contents->rebind_in_dataptrs.push_back(dataptrs);
-						}
-
-					modified_tasks[pull_task] = [contents, pull_task, adp_pull]() -> int
+					if (dynamic_cast<module::Adaptor*>(&task->get_module()) &&
+						task->get_name().find("pull") != std::string::npos && no_copy_mode_adaptors)
 					{
-						// active or passive waiting here
-						int ret = pull_task->exec();
-						// rebind input sockets on the fly
-						for (size_t sin_id = 0; sin_id < contents->rebind_in_sockets.size(); sin_id++)
+						auto pull_task = task;
+						auto adp_pull = dynamic_cast<module::Adaptor*>(&pull_task->get_module());
+						adp_pull->set_no_copy_pull(true);
+						const auto cur_adp_pull = contents->rebind_in_sockets.size();
+						contents->rebind_in_sockets.resize(cur_adp_pull +1);
+						contents->rebind_in_dataptrs.resize(cur_adp_pull +1);
+
+						for (size_t s = 0; s < pull_task->sockets.size(); s++)
+							if (pull_task->get_socket_type(*pull_task->sockets[s]) == module::socket_t::SOUT)
+							{
+								auto bound_sockets = pull_task->sockets[s]->get_bound_sockets();
+								std::vector<void*> dataptrs;
+								for (auto s : bound_sockets)
+								{
+									if (s->get_task().get_socket_type(*s) == module::socket_t::SIN_SOUT)
+									{
+										std::stringstream message;
+										message << "'SIN_SOUT' socket type is unsupported at this time ("
+										        << "'s->get_name()' = " << s->get_name() << ", "
+										        << "'s->get_task().get_name()' = ." << s->get_task().get_name() << ".)";
+										throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+									}
+									dataptrs.push_back(s->get_dataptr());
+								}
+								contents->rebind_in_sockets[cur_adp_pull].push_back(bound_sockets);
+								contents->rebind_in_dataptrs[cur_adp_pull].push_back(dataptrs);
+							}
+
+						modified_tasks[pull_task] = [contents, pull_task, adp_pull, cur_adp_pull]() -> int
 						{
-							auto swap_buff = contents->rebind_in_sockets[sin_id][0]->get_dataptr();
-							auto buff = adp_pull->get_filled_buffer(sin_id, swap_buff);
-							contents->rebind_in_sockets[sin_id][0]->bind(buff);
-							// for the next tasks the same buffer 'buff' is required, an easy mistake is to re-swap and
-							// the data will be false, this is why we just bind 'buff'
-							for (size_t ta = 1; ta < contents->rebind_in_sockets[sin_id].size(); ta++)
-								contents->rebind_in_sockets[sin_id][ta]->bind(buff);
-						}
-						adp_pull->wake_up_pusher();
-						return ret;
-					};
+							// active or passive waiting here
+							int ret = pull_task->exec();
+							// rebind input sockets on the fly
+							for (size_t sin_id = 0; sin_id < contents->rebind_in_sockets[cur_adp_pull].size(); sin_id++)
+							{
+								auto swap_buff = contents->rebind_in_sockets[cur_adp_pull][sin_id][0]->get_dataptr();
+								auto buff = adp_pull->get_filled_buffer(sin_id, swap_buff);
+								contents->rebind_in_sockets[cur_adp_pull][sin_id][0]->bind(buff);
+								// for the next tasks the same buffer 'buff' is required, an easy mistake is to re-swap
+								// and the data will be false, this is why we just bind 'buff'
+								for (size_t ta = 1; ta < contents->rebind_in_sockets[cur_adp_pull][sin_id].size(); ta++)
+									contents->rebind_in_sockets[cur_adp_pull][sin_id][ta]->bind(buff);
+							}
+							adp_pull->wake_up_pusher();
+							return ret;
+						};
+					}
+
+					if (dynamic_cast<module::Adaptor*>(&task->get_module()) &&
+						task->get_name().find("push") != std::string::npos && no_copy_mode_adaptors)
+					{
+						auto push_task = task;
+						auto adp_push = dynamic_cast<module::Adaptor*>(&push_task->get_module());
+						adp_push->set_no_copy_push(true);
+						const auto cur_adp_push = contents->rebind_out_sockets.size();
+						contents->rebind_out_sockets.resize(cur_adp_push +1);
+						contents->rebind_out_dataptrs.resize(cur_adp_push +1);
+
+						for (size_t s = 0; s < push_task->sockets.size(); s++)
+							if (push_task->get_socket_type(*push_task->sockets[s]) == module::socket_t::SIN)
+							{
+								auto bound_socket = &push_task->sockets[s]->get_bound_socket();
+								if (bound_socket->get_task().get_socket_type(*bound_socket) ==
+								    module::socket_t::SIN_SOUT)
+								{
+									std::stringstream message;
+									message << "'SIN_SOUT' socket type is unsupported at this time ("
+									        << "'bound_socket->get_name()' = " << bound_socket->get_name() << ", "
+									        << "'bound_socket->get_task().get_name()' = ."
+									        << bound_socket->get_task().get_name() << ".)";
+									throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+								}
+
+								void* dataptr = bound_socket->get_dataptr();
+								contents->rebind_out_sockets[cur_adp_push].push_back(bound_socket);
+								contents->rebind_out_dataptrs[cur_adp_push].push_back(dataptr);
+							}
+
+						modified_tasks[push_task] = [contents, push_task, adp_push, cur_adp_push]() -> int
+						{
+							// active or passive waiting here
+							auto ret = push_task->exec();
+							// rebind output sockets on the fly
+							for (size_t sout_id = 0; sout_id < contents->rebind_out_sockets[cur_adp_push].size();
+							     sout_id++)
+							{
+								auto swap_buff = contents->rebind_out_sockets[cur_adp_push][sout_id]->get_dataptr();
+								auto buff = adp_push->get_empty_buffer(sout_id, swap_buff);
+								contents->rebind_out_sockets[cur_adp_push][sout_id]->bind(buff);
+							}
+							adp_push->wake_up_puller();
+							return ret;
+						};
+					}
 				}
 
-				if ((contents->type == subseq_t::LAST_ADP || contents->type == subseq_t::FIRST_LAST_ADP) &&
-				    no_copy_mode_adaptors)
-				{
-					auto push_task = contents->tasks[contents->tasks.size() -1];
-					auto adp_push = dynamic_cast<module::Adaptor*>(&push_task->get_module());
-					adp_push->set_no_copy_push(true);
-					contents->rebind_out_sockets.clear();
-					contents->rebind_out_dataptrs.clear();
-
-					for (size_t s = 0; s < push_task->sockets.size(); s++)
-						if (push_task->get_socket_type(*push_task->sockets[s]) == module::socket_t::SIN)
-						{
-							auto bound_socket = &push_task->sockets[s]->get_bound_socket();
-							void* dataptr = bound_socket->get_dataptr();
-							contents->rebind_out_sockets.push_back(bound_socket);
-							contents->rebind_out_dataptrs.push_back(dataptr);
-						}
-
-					modified_tasks[push_task] = [contents, push_task, adp_push]() -> int
-					{
-						// active or passive waiting here
-						auto ret = push_task->exec();
-						// rebind output sockets on the fly
-						for (size_t sout_id = 0; sout_id < contents->rebind_out_sockets.size(); sout_id++)
-						{
-							auto swap_buff = contents->rebind_out_sockets[sout_id]->get_dataptr();
-							auto buff = adp_push->get_empty_buffer(sout_id, swap_buff);
-							contents->rebind_out_sockets[sout_id]->bind(buff);
-						}
-						adp_push->wake_up_puller();
-						return ret;
-					};
-				}
-
-				for (size_t ta = 0; ta < contents->tasks.size(); ta++)
-				{
-					auto cur_task = contents->tasks[ta];
-					if (modified_tasks.count(cur_task))
-						contents->processes.push_back(modified_tasks[cur_task]);
+				for (auto task : contents->tasks)
+					if (modified_tasks.count(task))
+						contents->processes.push_back(modified_tasks[task]);
 					else
-						contents->processes.push_back([cur_task]() -> int
-						{
-							return cur_task->exec();
-						});
-				}
+						contents->processes.push_back([task]() -> int { return task->exec(); });
 
 				for (auto c : cur_node->get_children())
 					gen_processes_recursive(c);
@@ -1144,32 +1152,46 @@ void Chain
 			if (cur_node != nullptr)
 			{
 				auto contents = cur_node->get_c();
-
-				if (contents->type == subseq_t::FIRST_ADP || contents->type == subseq_t::FIRST_LAST_ADP)
+				for (auto task : contents->tasks)
 				{
-					auto pull_task = contents->tasks[0];
-					auto adp_pull = dynamic_cast<module::Adaptor*>(&pull_task->get_module());
-					adp_pull->set_no_copy_pull(false);
-					adp_pull->reset_buffer();
-					for (size_t s = 0; s < contents->rebind_in_sockets.size(); s++)
-						for (size_t ta = 0; ta < contents->rebind_in_sockets[s].size(); ta++)
-							contents->rebind_in_sockets[s][ta]->bind(contents->rebind_in_dataptrs[s][ta]);
+					if (dynamic_cast<module::Adaptor*>(&task->get_module()) &&
+						task->get_name().find("pull") != std::string::npos)
+					{
+						auto pull_task = task;
+						auto adp_pull = dynamic_cast<module::Adaptor*>(&pull_task->get_module());
+						adp_pull->set_no_copy_pull(false);
+						adp_pull->reset_buffer();
+					}
+
+					if (dynamic_cast<module::Adaptor*>(&task->get_module()) &&
+						task->get_name().find("push") != std::string::npos)
+					{
+						auto push_task = task;
+						auto adp_push = dynamic_cast<module::Adaptor*>(&push_task->get_module());
+						adp_push->set_no_copy_push(false);
+						adp_push->reset_buffer();
+					}
 				}
 
-				if (contents->type == subseq_t::LAST_ADP || contents->type == subseq_t::FIRST_LAST_ADP)
-				{
-					auto push_task = contents->tasks[contents->tasks.size() -1];
-					auto adp_push = dynamic_cast<module::Adaptor*>(&push_task->get_module());
-					adp_push->set_no_copy_push(false);
-					adp_push->reset_buffer();
-					for (size_t s = 0; s < contents->rebind_out_sockets.size(); s++)
-						contents->rebind_out_sockets[s]->bind(contents->rebind_out_dataptrs[s]);
-				}
+				for (size_t adp_pull = 0; adp_pull < contents->rebind_in_sockets.size(); adp_pull++)
+					for (size_t s = 0; s < contents->rebind_in_sockets[adp_pull].size(); s++)
+						for (size_t ta = 0; ta < contents->rebind_in_sockets[adp_pull][s].size(); ta++)
+							contents->rebind_in_sockets[adp_pull][s][ta]
+								->bind(contents->rebind_in_dataptrs[adp_pull][s][ta]);
+
+				for (size_t adp_push = 0; adp_push < contents->rebind_out_sockets.size(); adp_push++)
+					for (size_t s = 0; s < contents->rebind_out_sockets[adp_push].size(); s++)
+						contents->rebind_out_sockets[adp_push][s]
+							->bind(contents->rebind_out_dataptrs[adp_push][s]);
 			}
+
+			for (auto c : cur_node->get_children())
+				reset_no_copy_mode_recursive(c);
 		};
 
 	for (auto &sequence : this->sequences)
 		reset_no_copy_mode_recursive(sequence);
+
 }
 
 void Chain
