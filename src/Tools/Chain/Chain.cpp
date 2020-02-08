@@ -7,6 +7,7 @@
 #include <exception>
 #include <algorithm>
 
+#include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Thread_pinning/Thread_pinning.hpp"
 #include "Tools/Exception/exception.hpp"
 #include "Module/Module.hpp"
@@ -39,6 +40,20 @@ Chain
   puids(puids),
   no_copy_mode(true)
 {
+#ifndef AFF3CT_HWLOC
+	if (thread_pinning)
+		std::clog << rang::tag::warning << "AFF3CT has not been linked with the 'hwloc' library, the 'thread_pinning' "
+		                                   "option of the 'tools::Chain' will have no effect." << std::endl;
+#endif
+
+	if (thread_pinning && puids.size() < n_threads)
+	{
+		std::stringstream message;
+		message << "'puids.size()' has greater or equal to 'n_threads' ('puids.size()' = " << puids.size()
+		        << " , 'n_threads' = " << n_threads << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	this->init<tools::Sub_sequence_const,const module::Task>(first, &last);
 }
 
@@ -60,6 +75,14 @@ Chain
   puids(puids),
   no_copy_mode(true)
 {
+	if (thread_pinning && puids.size() < n_threads)
+	{
+		std::stringstream message;
+		message << "'puids.size()' has greater or equal to 'n_threads' ('puids.size()' = " << puids.size()
+		        << " , 'n_threads' = " << n_threads << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	this->init<tools::Sub_sequence_const,const module::Task>(first);
 }
 
@@ -83,6 +106,14 @@ Chain
   puids(puids),
   no_copy_mode(true)
 {
+	if (thread_pinning && puids.size() < n_threads)
+	{
+		std::stringstream message;
+		message << "'puids.size()' has greater or equal to 'n_threads' ('puids.size()' = " << puids.size()
+		        << " , 'n_threads' = " << n_threads << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (tasks_inplace)
 		this->init<tools::Sub_sequence,module::Task>(first, &last);
 	else
@@ -108,6 +139,14 @@ Chain
   puids(puids),
   no_copy_mode(true)
 {
+	if (thread_pinning && puids.size() < n_threads)
+	{
+		std::stringstream message;
+		message << "'puids.size()' has greater or equal to 'n_threads' ('puids.size()' = " << puids.size()
+		        << " , 'n_threads' = " << n_threads << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (tasks_inplace)
 		this->init<tools::Sub_sequence,module::Task>(first);
 	else
@@ -126,12 +165,7 @@ void Chain
 ::init(TA &first, TA *last)
 {
 	if (this->is_thread_pinning())
-	{
-		if (0 < this->puids.size())
-			Thread_pinning::pin(this->puids[0]);
-		else
-			Thread_pinning::pin();
-	}
+		Thread_pinning::pin(this->puids[0]);
 
 	if (this->n_threads == 0)
 	{
@@ -190,6 +224,14 @@ Chain* Chain
 void Chain
 ::set_thread_pinning(const bool thread_pinning, const std::vector<size_t> &puids)
 {
+	if (thread_pinning && puids.size() < n_threads)
+	{
+		std::stringstream message;
+		message << "'puids.size()' has greater or equal to 'n_threads' ('puids.size()' = " << puids.size()
+		        << " , 'n_threads' = " << n_threads << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	this->thread_pinning = thread_pinning;
 	this->puids = puids;
 }
@@ -279,12 +321,7 @@ void Chain
         Generic_node<Sub_sequence>* sequence)
 {
 	if (this->is_thread_pinning())
-	{
-		if (tid < this->puids.size())
-			Thread_pinning::pin(this->puids[tid]);
-		else
-			Thread_pinning::pin();
-	}
+		Thread_pinning::pin(this->puids[tid]);
 
 	std::function<void(Generic_node<Sub_sequence>*, std::vector<int>&)> exec_sequence =
 		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss, std::vector<int>& statuses)
@@ -354,7 +391,7 @@ void Chain
 	}
 
 	if (this->is_thread_pinning())
-		aff3ct::tools::Thread_pinning::unpin();
+		Thread_pinning::unpin();
 }
 
 void Chain
@@ -363,12 +400,7 @@ void Chain
                          Generic_node<Sub_sequence>* sequence)
 {
 	if (this->is_thread_pinning())
-	{
-		if (tid < this->puids.size())
-			Thread_pinning::pin(this->puids[tid]);
-		else
-			Thread_pinning::pin();
-	}
+		Thread_pinning::pin(this->puids[tid]);
 
 	const bool no_copy_mode = this->is_no_copy_mode();
 	std::function<void(Generic_node<Sub_sequence>*)> exec_sequence =
@@ -437,7 +469,7 @@ void Chain
 	}
 
 	if (this->is_thread_pinning())
-		aff3ct::tools::Thread_pinning::unpin();
+		Thread_pinning::unpin();
 }
 
 void Chain
@@ -709,10 +741,7 @@ void Chain
 		if (this->is_thread_pinning())
 		{
 			const auto real_tid = tid + (this->tasks_inplace ? 1 : 0);
-			if (real_tid < this->puids.size())
-				Thread_pinning::pin(this->puids[real_tid]);
-			else
-				Thread_pinning::pin();
+			Thread_pinning::pin(this->puids[real_tid]);
 		}
 
 		this->modules[tid].resize(modules_vec.size());
@@ -722,6 +751,9 @@ void Chain
 			this->modules[tid][m].reset(modules_vec[m]->clone());
 			this->all_modules[tid + (this->tasks_inplace ? 1 : 0)][m] = this->modules[tid][m].get();
 		}
+
+		if (this->is_thread_pinning())
+			Thread_pinning::unpin();
 	}
 
 	auto get_module_id = [](const std::vector<MO*> &modules, const module::Module &module)
@@ -841,16 +873,14 @@ void Chain
 	for (size_t thread_id = (this->tasks_inplace ? 1 : 0); thread_id < this->sequences.size(); thread_id++)
 	{
 		if (this->is_thread_pinning())
-		{
-			if (thread_id < this->puids.size())
-				Thread_pinning::pin(this->puids[thread_id]);
-			else
-				Thread_pinning::pin();
-		}
+			Thread_pinning::pin(this->puids[thread_id]);
 
 		this->sequences[thread_id] = new Generic_node<Sub_sequence>(nullptr, {}, nullptr, 0, 0, 0);
 		duplicate_sequence(sequence, this->sequences[thread_id], thread_id);
 		set_autoalloc_true(this->sequences[thread_id]);
+
+		if (this->is_thread_pinning())
+			Thread_pinning::unpin();
 	}
 }
 
@@ -1179,14 +1209,12 @@ void Chain
 	for (auto &sequence : this->sequences)
 	{
 		if (this->is_thread_pinning())
-		{
-			if (thread_id < this->puids.size())
-				Thread_pinning::pin(this->puids[thread_id++]);
-			else
-				Thread_pinning::pin();
-		}
+			Thread_pinning::pin(this->puids[thread_id++]);
 
 		gen_processes_recursive(sequence);
+
+		if (this->is_thread_pinning())
+			Thread_pinning::unpin();
 	}
 }
 
