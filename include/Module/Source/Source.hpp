@@ -25,7 +25,7 @@ namespace module
 
 		namespace sck
 		{
-			enum class generate : size_t { U_K, SIZE };
+			enum class generate : size_t { U_K, status };
 		}
 	}
 

@@ -45,6 +45,7 @@ protected:
 	int32_t debug_frame_max;
 	std::function<int(Module &m, Task& t)> codelet;
 
+	int status;
 	std::vector<mipp::vector<uint8_t>> out_buffers;
 
 	// stats
@@ -127,13 +128,13 @@ protected:
 	size_t create_socket_in_out(const std::string &name, const size_t n_elmts);
 
 	template <typename T>
-	size_t create_socket_out(const std::string &name, const size_t n_elmts);
+	size_t create_socket_out(const std::string &name, const size_t n_elmts, const bool hack_status = false);
 
 	void create_codelet(std::function<int(Module &m, Task& t)> &codelet);
 
 private:
 	template <typename T>
-	inline Socket& create_socket(const std::string &name, const size_t n_elmts);
+	inline Socket& create_socket(const std::string &name, const size_t n_elmts, const bool hack_status = false);
 };
 }
 }

@@ -47,13 +47,13 @@ void Task
 		{
 			this->out_buffers.clear();
 			for (auto& s : sockets)
-				if (get_socket_type(*s) == socket_t::SOUT)
+				if (get_socket_type(*s) == socket_t::SOUT && s->get_name() != "status")
 					s->dataptr = nullptr;
 		}
 		else
 		{
 			for (auto& s : sockets)
-				if (get_socket_type(*s) == socket_t::SOUT)
+				if (get_socket_type(*s) == socket_t::SOUT && s->get_name() != "status")
 				{
 					out_buffers.push_back(mipp::vector<uint8_t>(s->databytes));
 					s->dataptr = out_buffers.back().data();
@@ -214,6 +214,7 @@ int Task
 	{
 		auto exec_status = this->codelet(*this->module, *this);
 		this->n_calls++;
+		(*(int*)this->sockets.back()->get_dataptr()) = exec_status;
 		return exec_status;
 	}
 
@@ -292,6 +293,7 @@ int Task
 		}
 		else
 			exec_status = this->codelet(*this->module, *this);
+		(*(int*)this->sockets.back()->get_dataptr()) = exec_status;
 		this->n_calls++;
 
 		if (debug)
@@ -345,13 +347,20 @@ int Task
 
 template <typename T>
 Socket& Task
-::create_socket(const std::string &name, const size_t n_elmts)
+::create_socket(const std::string &name, const size_t n_elmts, const bool hack_status)
 {
 	if (name.empty())
 	{
 		std::stringstream message;
 		message << "Impossible to create this socket because the name is empty ('task.name' = " << this->get_name()
 		        << ", 'module.name' = " << module->get_name() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (name == "status" && !hack_status)
+	{
+		std::stringstream message;
+		message << "A socket can't be named 'status'.";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -362,6 +371,14 @@ Socket& Task
 			message << "Impossible to create this socket because an other socket has the same name ('socket.name' = "
 			        << name << ", 'task.name' = " << this->get_name()
 			        << ", 'module.name' = " << module->get_name() << ").";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+	for (auto s : this->sockets)
+		if (s->get_name() == "status")
+		{
+			std::stringstream message;
+			message << "Creating new sockets after the 'status' socket is forbidden.";
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
@@ -396,9 +413,9 @@ size_t Task
 
 template <typename T>
 size_t Task
-::create_socket_out(const std::string &name, const size_t n_elmts)
+::create_socket_out(const std::string &name, const size_t n_elmts, const bool hack_status)
 {
-	auto &s = create_socket<T>(name, n_elmts);
+	auto &s = create_socket<T>(name, n_elmts, hack_status);
 	socket_type.push_back(socket_t::SOUT);
 
 	// memory allocation
@@ -415,6 +432,11 @@ void Task
 ::create_codelet(std::function<int(Module &m, Task& t)> &codelet)
 {
 	this->codelet = codelet;
+
+	// create automatically a socket that contains the status of the task
+	const bool hack_status = true;
+	auto s = this->template create_socket_out<int>("status", 1, hack_status);
+	this->sockets[s]->dataptr = (void*)&this->status;
 }
 
 bool Task
@@ -529,7 +551,15 @@ Task* Task
 	{
 		void *dataptr = nullptr;
 		if (this->get_socket_type(*s) == socket_t::SOUT && this->is_autoalloc())
-			dataptr = (void*)t->out_buffers[out_buffers_counter++].data();
+		{
+			if (s->get_name() == "status")
+			{
+				dataptr = (void*)&t->status;
+				out_buffers_counter++;
+			}
+			else
+				dataptr = (void*)t->out_buffers[out_buffers_counter++].data();
+		}
 		else if (this->get_socket_type(*s) == socket_t::SIN)
 			dataptr = s->get_dataptr();
 
@@ -563,10 +593,10 @@ template size_t Task::create_socket_in_out<int64_t>(const std::string&, const si
 template size_t Task::create_socket_in_out<float  >(const std::string&, const size_t);
 template size_t Task::create_socket_in_out<double >(const std::string&, const size_t);
 
-template size_t Task::create_socket_out<int8_t >(const std::string&, const size_t);
-template size_t Task::create_socket_out<int16_t>(const std::string&, const size_t);
-template size_t Task::create_socket_out<int32_t>(const std::string&, const size_t);
-template size_t Task::create_socket_out<int64_t>(const std::string&, const size_t);
-template size_t Task::create_socket_out<float  >(const std::string&, const size_t);
-template size_t Task::create_socket_out<double >(const std::string&, const size_t);
+template size_t Task::create_socket_out<int8_t >(const std::string&, const size_t, const bool);
+template size_t Task::create_socket_out<int16_t>(const std::string&, const size_t, const bool);
+template size_t Task::create_socket_out<int32_t>(const std::string&, const size_t, const bool);
+template size_t Task::create_socket_out<int64_t>(const std::string&, const size_t, const bool);
+template size_t Task::create_socket_out<float  >(const std::string&, const size_t, const bool);
+template size_t Task::create_socket_out<double >(const std::string&, const size_t, const bool);
 // ==================================================================================== explicit template instantiation

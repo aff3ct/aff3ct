@@ -25,8 +25,8 @@ namespace module
 
 		namespace sck
 		{
-			enum class interleave   : size_t { nat, itl, SIZE };
-			enum class deinterleave : size_t { itl, nat, SIZE };
+			enum class interleave   : size_t { nat, itl, status };
+			enum class deinterleave : size_t { itl, nat, status };
 		}
 	}
 

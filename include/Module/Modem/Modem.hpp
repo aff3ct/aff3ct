@@ -27,13 +27,13 @@ namespace module
 
 		namespace sck
 		{
-			enum class modulate       : size_t {      X_N1, X_N2      , SIZE };
-			enum class tmodulate      : size_t {      X_N1, X_N2      , SIZE };
-			enum class filter         : size_t {      Y_N1, Y_N2      , SIZE };
-			enum class demodulate     : size_t {      Y_N1, Y_N2      , SIZE };
-			enum class tdemodulate    : size_t {      Y_N1, Y_N2, Y_N3, SIZE };
-			enum class demodulate_wg  : size_t { H_N, Y_N1, Y_N2      , SIZE };
-			enum class tdemodulate_wg : size_t { H_N, Y_N1, Y_N2, Y_N3, SIZE };
+			enum class modulate       : size_t {      X_N1, X_N2      , status };
+			enum class tmodulate      : size_t {      X_N1, X_N2      , status };
+			enum class filter         : size_t {      Y_N1, Y_N2      , status };
+			enum class demodulate     : size_t {      Y_N1, Y_N2      , status };
+			enum class tdemodulate    : size_t {      Y_N1, Y_N2, Y_N3, status };
+			enum class demodulate_wg  : size_t { H_N, Y_N1, Y_N2      , status };
+			enum class tdemodulate_wg : size_t { H_N, Y_N1, Y_N2, Y_N3, status };
 		}
 	}
 

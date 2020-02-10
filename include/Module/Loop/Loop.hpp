@@ -26,7 +26,7 @@ namespace module
 
 		namespace sck
 		{
-			enum class stop : size_t { in1, in2, in_out1, in_out2, SIZE };
+			enum class stop : size_t { in1, in2, in_out1, in_out2, status };
 		}
 	}
 

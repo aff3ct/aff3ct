@@ -24,9 +24,9 @@ namespace module
 
 		namespace sck
 		{
-			enum class build   : size_t { U_K1, U_K2, SIZE };
-			enum class extract : size_t { V_K1, V_K2, SIZE };
-			enum class check   : size_t { V_K       , SIZE };
+			enum class build   : size_t { U_K1, U_K2, status };
+			enum class extract : size_t { V_K1, V_K2, status };
+			enum class check   : size_t { V_K       , status };
 		}
 	}
 

@@ -23,7 +23,7 @@ namespace module
 
 		namespace sck
 		{
-			enum class process : size_t { Y_N1, Y_N2, SIZE };
+			enum class process : size_t { Y_N1, Y_N2, status };
 		}
 	}
 

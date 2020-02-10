@@ -24,10 +24,10 @@ namespace module
 
 		namespace sck
 		{
-			enum class get_sys_llr         : size_t { Y_N, Y_K     , SIZE };
-			enum class get_sys_bit         : size_t { Y_N, V_K     , SIZE };
-			enum class get_sys_and_par_llr : size_t { Y_N, sys, par, SIZE };
-			enum class add_sys_and_ext_llr : size_t { ext, Y_N     , SIZE };
+			enum class get_sys_llr         : size_t { Y_N, Y_K     , status };
+			enum class get_sys_bit         : size_t { Y_N, V_K     , status };
+			enum class get_sys_and_par_llr : size_t { Y_N, sys, par, status };
+			enum class add_sys_and_ext_llr : size_t { ext, Y_N     , status };
 		}
 	}
 

@@ -26,7 +26,7 @@ namespace module
 
 		namespace sck
 		{
-			enum class route : size_t { in, in_out1, in_out2, SIZE };
+			enum class route : size_t { in, in_out1, in_out2, status };
 		}
 	}
 

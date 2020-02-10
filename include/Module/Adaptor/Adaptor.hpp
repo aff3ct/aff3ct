@@ -28,10 +28,10 @@ namespace module
 
 		namespace sck
 		{
-			enum class push_1 : size_t { in1,  in2,  in3,  in4,  SIZE };
-			enum class pull_n : size_t { out1, out2, out3, out4, SIZE };
-			enum class push_n : size_t { in1,  in2,  in3,  in4,  SIZE };
-			enum class pull_1 : size_t { out1, out2, out3, out4, SIZE };
+			enum class push_1 : size_t { in1,  in2,  in3,  in4,  status };
+			enum class pull_n : size_t { out1, out2, out3, out4, status };
+			enum class push_n : size_t { in1,  in2,  in3,  in4,  status };
+			enum class pull_1 : size_t { out1, out2, out3, out4, status };
 		}
 	}
 

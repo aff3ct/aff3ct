@@ -24,7 +24,7 @@ namespace module
 
 		namespace sck
 		{
-			enum class apply : size_t { ref, in, out, SIZE };
+			enum class apply : size_t { ref, in, out, status };
 		}
 	}
 

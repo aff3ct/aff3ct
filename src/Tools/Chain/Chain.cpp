@@ -49,7 +49,7 @@ Chain
 	if (thread_pinning && puids.size() < n_threads)
 	{
 		std::stringstream message;
-		message << "'puids.size()' has greater or equal to 'n_threads' ('puids.size()' = " << puids.size()
+		message << "'puids.size()' has to be greater or equal to 'n_threads' ('puids.size()' = " << puids.size()
 		        << " , 'n_threads' = " << n_threads << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}

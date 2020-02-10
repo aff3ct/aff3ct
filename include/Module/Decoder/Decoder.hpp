@@ -22,11 +22,11 @@ namespace module
 
 		namespace sck
 		{
-			enum class decode_hiho    : size_t { Y_N,  V_K , SIZE };
-			enum class decode_hiho_cw : size_t { Y_N,  V_N , SIZE };
-			enum class decode_siho    : size_t { Y_N,  V_K , SIZE };
-			enum class decode_siho_cw : size_t { Y_N,  V_N , SIZE };
-			enum class decode_siso    : size_t { Y_N1, Y_N2, SIZE };
+			enum class decode_hiho    : size_t { Y_N,  V_K , status };
+			enum class decode_hiho_cw : size_t { Y_N,  V_N , status };
+			enum class decode_siho    : size_t { Y_N,  V_K , status };
+			enum class decode_siho_cw : size_t { Y_N,  V_N , status };
+			enum class decode_siso    : size_t { Y_N1, Y_N2, status };
 		}
 
 		namespace tm

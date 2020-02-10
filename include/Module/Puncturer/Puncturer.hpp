@@ -23,8 +23,8 @@ namespace module
 
 		namespace sck
 		{
-			enum class puncture   : size_t { X_N1, X_N2, SIZE };
-			enum class depuncture : size_t { Y_N1, Y_N2, SIZE };
+			enum class puncture   : size_t { X_N1, X_N2, status };
+			enum class depuncture : size_t { Y_N1, Y_N2, status };
 		}
 	}
 

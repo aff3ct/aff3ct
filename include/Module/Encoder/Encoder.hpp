@@ -25,7 +25,7 @@ namespace module
 
 		namespace sck
 		{
-			enum class encode : size_t { U_K, X_N, SIZE };
+			enum class encode : size_t { U_K, X_N, status };
 		}
 	}
 

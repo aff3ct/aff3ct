@@ -24,7 +24,7 @@ namespace module
 
 		namespace sck
 		{
-			enum class send : size_t { V, SIZE };
+			enum class send : size_t { V, status };
 		}
 	}
 

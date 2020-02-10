@@ -28,8 +28,8 @@ namespace module
 
 		namespace sck
 		{
-			enum class add_noise    : size_t { X_N, Y_N     , SIZE };
-			enum class add_noise_wg : size_t { X_N, H_N, Y_N, SIZE };
+			enum class add_noise    : size_t { X_N, Y_N     , status };
+			enum class add_noise_wg : size_t { X_N, H_N, Y_N, status };
 		}
 	}
 

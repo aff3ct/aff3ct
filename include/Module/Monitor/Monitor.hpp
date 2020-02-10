@@ -21,9 +21,9 @@ namespace module
 
 		namespace sck
 		{
-			enum class check_errors      : size_t { U, V, SIZE };
-			enum class get_mutual_info   : size_t { X, Y, SIZE };
-			enum class check_mutual_info : size_t { bits, llrs_a, llrs_e, SIZE };
+			enum class check_errors      : size_t { U, V, status };
+			enum class get_mutual_info   : size_t { X, Y, status };
+			enum class check_mutual_info : size_t { bits, llrs_a, llrs_e, status };
 		}
 	}
 
