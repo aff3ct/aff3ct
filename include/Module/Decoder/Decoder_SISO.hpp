@@ -65,10 +65,10 @@ public:
 	 * \param ext: extrinsic information about the systematic bits.
 	 */
 	template <class A = std::allocator<R>>
-	void decode_siso(const std::vector<R,A> &sys, const std::vector<R,A> &par, std::vector<R,A> &ext,
+	int decode_siso(const std::vector<R,A> &sys, const std::vector<R,A> &par, std::vector<R,A> &ext,
 	                 const int n_frames = -1, const int frame_id = -1);
 
-	virtual void decode_siso(const R *sys, const R *par, R *ext, const int n_frames = -1, const int frame_id = -1);
+	virtual int decode_siso(const R *sys, const R *par, R *ext, const int n_frames = -1, const int frame_id = -1);
 
 	/*!
 	 * \brief Decodes a given noisy codeword.
@@ -77,9 +77,9 @@ public:
 	 * \param Y_N2: an extrinsic information about all the bits in the frame.
 	 */
 	template <class A = std::allocator<R>>
-	void decode_siso(const std::vector<R,A> &Y_N1, std::vector<R,A> &Y_N2, const int frame_id = -1);
+	int decode_siso(const std::vector<R,A> &Y_N1, std::vector<R,A> &Y_N2, const int frame_id = -1);
 
-	virtual void decode_siso(const R *Y_N1, R *Y_N2, const int frame_id = -1);
+	virtual int decode_siso(const R *Y_N1, R *Y_N2, const int frame_id = -1);
 
 	/*!
 	 * \brief Gets the number of tail bits.
@@ -89,9 +89,9 @@ public:
 	virtual int tail_length() const;
 
 protected:
-	virtual void _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);
+	virtual int _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);
 
-	virtual void _decode_siso(const R *Y_N1, R *Y_N2, const int frame_id);
+	virtual int _decode_siso(const R *Y_N1, R *Y_N2, const int frame_id);
 };
 }
 }

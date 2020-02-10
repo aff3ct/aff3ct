@@ -29,7 +29,7 @@ protected:
 	virtual Decoder_RSC_BCJR_intra<B,R>* clone() const;
 
 protected:
-	void _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);
+	int _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);
 
 	virtual void compute_gamma   (const R *sys, const R *par) = 0;
 	virtual void compute_alpha   (                          ) = 0;

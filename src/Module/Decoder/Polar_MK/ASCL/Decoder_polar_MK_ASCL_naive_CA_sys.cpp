@@ -62,7 +62,7 @@ void Decoder_polar_MK_ASCL_naive_CA_sys<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_polar_MK_ASCL_naive_CA_sys<B,R>
+int Decoder_polar_MK_ASCL_naive_CA_sys<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	sc_decoder->_decode_siho(Y_N, V_K, frame_id);
@@ -72,10 +72,12 @@ void Decoder_polar_MK_ASCL_naive_CA_sys<B,R>
 
 	if (!crc_decode_result)
 		Decoder_polar_MK_SCL_naive_CA_sys<B,R>::_decode_siho(Y_N, V_K, frame_id);
+
+	return 0;
 }
 
 template <typename B, typename R>
-void Decoder_polar_MK_ASCL_naive_CA_sys<B,R>
+int Decoder_polar_MK_ASCL_naive_CA_sys<B,R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 	sc_decoder->_decode_siho(Y_N, V_N, frame_id);
@@ -87,6 +89,8 @@ void Decoder_polar_MK_ASCL_naive_CA_sys<B,R>
 		Decoder_polar_MK_SCL_naive_CA_sys<B,R>::_decode_siho_cw(Y_N, V_N, frame_id);
 	else
 		sc_decoder->_store(V_N, true);
+
+	return 0;
 }
 
 // ==================================================================================== explicit template instantiation

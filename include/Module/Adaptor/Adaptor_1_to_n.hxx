@@ -112,7 +112,7 @@ void Adaptor_1_to_n
 		{
 			adp.wait_push();
 			// for debug mode coherence
-			for (size_t s = 0; s < t.sockets.size(); s++)
+			for (size_t s = 0; s < t.sockets.size() -1; s++)
 				t.sockets[s]->bind(adp.get_empty_buffer(s));
 		}
 		else
@@ -137,7 +137,7 @@ void Adaptor_1_to_n
 		{
 			adp.wait_pull();
 			// for debug mode coherence
-			for (size_t s = 0; s < t.sockets.size(); s++)
+			for (size_t s = 0; s < t.sockets.size() -1; s++)
 				t.sockets[s]->bind(adp.get_filled_buffer(s));
 		}
 		else

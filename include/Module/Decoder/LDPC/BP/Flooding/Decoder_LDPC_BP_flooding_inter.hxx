@@ -100,7 +100,7 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
+int Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	const auto cur_wave = frame_id / this->simd_inter_frame_level;
@@ -109,7 +109,7 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 	for (auto f = 0; f < mipp::N<R>(); f++) frames_in[f] = Y_N1 + f * this->N;
 	tools::Reorderer_static<R,mipp::N<R>()>::apply(frames_in, (R*)this->Y_N_reorderered.data(), this->N);
 
-	this->_decode(this->Y_N_reorderered.data(), cur_wave);
+	auto status = this->_decode(this->Y_N_reorderered.data(), cur_wave);
 
 	// prepare for next round by processing extrinsic information
 	for (auto v = 0; v < this->N; v++)
@@ -121,10 +121,12 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 	std::vector<R*> frames_out(mipp::N<R>());
 	for (auto f = 0; f < mipp::N<R>(); f++) frames_out[f] = Y_N2 + f * this->N;
 	tools::Reorderer_static<R,mipp::N<R>()>::apply_rev((R*)this->post.data(), frames_out, this->N);
+
+	return status;
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
+int Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -138,7 +140,7 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
-	this->_decode(this->Y_N_reorderered.data(), cur_wave);
+	auto status = this->_decode(this->Y_N_reorderered.data(), cur_wave);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -157,10 +159,12 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
+
+	return status;
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
+int Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -174,7 +178,7 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
-	this->_decode(this->Y_N_reorderered.data(), cur_wave);
+	auto status = this->_decode(this->Y_N_reorderered.data(), cur_wave);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -189,10 +193,12 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::load,   d_load);
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
+
+	return status;
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
+int Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 ::_decode(const mipp::Reg<R> *Y_N, const int cur_wave)
 {
 	this->up_rule.begin_decoding(this->n_ite);
@@ -216,6 +222,8 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 		this->_compute_post(Y_N, this->msg_chk_to_var[cur_wave], this->post);
 
 	this->up_rule.end_decoding();
+
+	return 0;
 }
 
 template <typename B, typename R, class Update_rule>

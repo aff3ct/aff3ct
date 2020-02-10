@@ -35,7 +35,7 @@ Decoder_repetition_fast<B,R>* Decoder_repetition_fast<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_repetition_fast<B,R>
+int Decoder_repetition_fast<B,R>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	for (auto i = 0; i < this->K; i += mipp::nElReg<R>())
@@ -45,6 +45,8 @@ void Decoder_repetition_fast<B,R>
 			r_ext += &par[j*this->K +i];
 		r_ext.store(&ext[i]);
 	}
+
+	return 0;
 }
 
 // ==================================================================================== explicit template instantiation

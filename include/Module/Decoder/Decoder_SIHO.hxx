@@ -61,10 +61,8 @@ Decoder_SIHO<B,R>
 	auto p1s_V_K = this->template create_socket_out<B>(p1, "V_K", this->K);
 	this->create_codelet(p1, [p1s_Y_N, p1s_V_K](Module &m, Task &t) -> int
 	{
-		static_cast<Decoder_SIHO<B,R>&>(m).decode_siho(static_cast<R*>(t[p1s_Y_N].get_dataptr()),
-		                                               static_cast<B*>(t[p1s_V_K].get_dataptr()));
-
-		return 0;
+		return static_cast<Decoder_SIHO<B,R>&>(m).decode_siho(static_cast<R*>(t[p1s_Y_N].get_dataptr()),
+		                                                      static_cast<B*>(t[p1s_V_K].get_dataptr()));
 	});
 	this->register_timer(p1, "load");
 	this->register_timer(p1, "decode");
@@ -76,10 +74,8 @@ Decoder_SIHO<B,R>
 	auto p2s_V_N = this->template create_socket_out<B>(p2, "V_N", this->N);
 	this->create_codelet(p2, [p2s_Y_N, p2s_V_N](Module &m, Task &t) -> int
 	{
-		static_cast<Decoder_SIHO<B,R>&>(m).decode_siho_cw(static_cast<R*>(t[p2s_Y_N].get_dataptr()),
-		                                                  static_cast<B*>(t[p2s_V_N].get_dataptr()));
-
-		return 0;
+		return static_cast<Decoder_SIHO<B,R>&>(m).decode_siho_cw(static_cast<R*>(t[p2s_Y_N].get_dataptr()),
+		                                                         static_cast<B*>(t[p2s_V_N].get_dataptr()));
 	});
 	this->register_timer(p2, "load");
 	this->register_timer(p2, "decode");
@@ -96,7 +92,7 @@ Decoder_SIHO<B,R>* Decoder_SIHO<B,R>
 
 template <typename B, typename R>
 template <class AR, class AB>
-void Decoder_SIHO<B,R>
+int Decoder_SIHO<B,R>
 ::decode_siho(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_K, const int frame_id)
 {
 	if (this->N * this->n_frames != (int)Y_N.size())
@@ -123,13 +119,14 @@ void Decoder_SIHO<B,R>
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	this->decode_siho(Y_N.data(), V_K.data(), frame_id);
+	return this->decode_siho(Y_N.data(), V_K.data(), frame_id);
 }
 
 template <typename B, typename R>
-void Decoder_SIHO<B,R>
+int Decoder_SIHO<B,R>
 ::decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
+	int status = 0;
 	if (frame_id < 0 || this->simd_inter_frame_level == 1)
 	{
 		const auto w_start = (frame_id < 0) ? 0 : frame_id % this->n_dec_waves;
@@ -138,9 +135,11 @@ void Decoder_SIHO<B,R>
 		auto w = 0;
 		for (w = w_start; w < w_stop -1; w++)
 		{
-			this->_decode_siho(Y_N + w * this->N * this->simd_inter_frame_level,
-			                   V_K + w * this->K * this->simd_inter_frame_level,
-			                   w * this->simd_inter_frame_level);
+			status <<= this->simd_inter_frame_level;
+			auto s = this->_decode_siho(Y_N + w * this->N * this->simd_inter_frame_level,
+			                            V_K + w * this->K * this->simd_inter_frame_level,
+			                            w * this->simd_inter_frame_level);
+			status |= s;
 
 			if (this->is_auto_reset())
 				this->_reset(w * this->simd_inter_frame_level);
@@ -148,9 +147,11 @@ void Decoder_SIHO<B,R>
 
 		if (this->n_inter_frame_rest == 0)
 		{
-			this->_decode_siho(Y_N + w * this->N * this->simd_inter_frame_level,
-			                   V_K + w * this->K * this->simd_inter_frame_level,
-			                   w * this->simd_inter_frame_level);
+			status <<= this->simd_inter_frame_level;
+			auto s = this->_decode_siho(Y_N + w * this->N * this->simd_inter_frame_level,
+			                            V_K + w * this->K * this->simd_inter_frame_level,
+			                            w * this->simd_inter_frame_level);
+			status |= s;
 
 			if (this->is_auto_reset())
 				this->_reset(w * this->simd_inter_frame_level);
@@ -162,7 +163,9 @@ void Decoder_SIHO<B,R>
 			          Y_N + waves_off1 + this->n_inter_frame_rest * this->N,
 			          this->Y_N.begin());
 
-			this->_decode_siho(this->Y_N.data(), this->V_KN.data(), w * this->simd_inter_frame_level);
+			status <<= this->simd_inter_frame_level;
+			auto s = this->_decode_siho(this->Y_N.data(), this->V_KN.data(), w * this->simd_inter_frame_level);
+			status |= s;
 
 			if (this->is_auto_reset())
 				this->_reset(w * this->simd_inter_frame_level);
@@ -183,7 +186,9 @@ void Decoder_SIHO<B,R>
 		          Y_N + ((frame_id % this->n_frames) + 1) * this->N,
 		          this->Y_N.begin() + w_pos * this->N);
 
-		this->_decode_siho(this->Y_N.data(), this->V_KN.data(), w * this->simd_inter_frame_level);
+		status <<= this->simd_inter_frame_level;
+		auto s = this->_decode_siho(this->Y_N.data(), this->V_KN.data(), w * this->simd_inter_frame_level);
+		status |= s;
 
 		if (this->is_auto_reset())
 			this->_reset(w * this->simd_inter_frame_level);
@@ -192,11 +197,12 @@ void Decoder_SIHO<B,R>
 		          this->V_KN.begin() + (w_pos +1) * this->K,
 		          V_K + (frame_id % this->n_frames) * this->K);
 	}
+	return status;
 }
 
 template <typename B, typename R>
 template <class AR, class AB>
-void Decoder_SIHO<B,R>
+int Decoder_SIHO<B,R>
 ::decode_siho_cw(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_N, const int frame_id)
 {
 	if (this->N * this->n_frames != (int)Y_N.size())
@@ -223,13 +229,14 @@ void Decoder_SIHO<B,R>
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	this->decode_siho_cw(Y_N.data(), V_N.data(), frame_id);
+	return this->decode_siho_cw(Y_N.data(), V_N.data(), frame_id);
 }
 
 template <typename B, typename R>
-void Decoder_SIHO<B,R>
+int Decoder_SIHO<B,R>
 ::decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
+	int status = 0;
 	if (frame_id < 0 || this->simd_inter_frame_level == 1)
 	{
 		const auto w_start = (frame_id < 0) ? 0 : frame_id % this->n_dec_waves;
@@ -238,9 +245,11 @@ void Decoder_SIHO<B,R>
 		auto w = 0;
 		for (w = w_start; w < w_stop -1; w++)
 		{
-			this->_decode_siho_cw(Y_N + w * this->N * this->simd_inter_frame_level,
-			                      V_N + w * this->N * this->simd_inter_frame_level,
-			                      w * this->simd_inter_frame_level);
+			status <<= this->simd_inter_frame_level;
+			auto s = this->_decode_siho_cw(Y_N + w * this->N * this->simd_inter_frame_level,
+			                               V_N + w * this->N * this->simd_inter_frame_level,
+			                               w * this->simd_inter_frame_level);
+			status |= s;
 
 			if (this->is_auto_reset())
 				this->_reset(w * this->simd_inter_frame_level);
@@ -248,9 +257,11 @@ void Decoder_SIHO<B,R>
 
 		if (this->n_inter_frame_rest == 0)
 		{
-			this->_decode_siho_cw(Y_N + w * this->N * this->simd_inter_frame_level,
-			                      V_N + w * this->N * this->simd_inter_frame_level,
-			                      w * this->simd_inter_frame_level);
+			status <<= this->simd_inter_frame_level;
+			auto s = this->_decode_siho_cw(Y_N + w * this->N * this->simd_inter_frame_level,
+			                               V_N + w * this->N * this->simd_inter_frame_level,
+			                               w * this->simd_inter_frame_level);
+			status |= s;
 
 			if (this->is_auto_reset())
 				this->_reset(w * this->simd_inter_frame_level);
@@ -262,7 +273,9 @@ void Decoder_SIHO<B,R>
 			          Y_N + waves_off1 + this->n_inter_frame_rest * this->N,
 			          this->Y_N.begin());
 
-			this->_decode_siho_cw(this->Y_N.data(), this->V_KN.data(), w * this->simd_inter_frame_level);
+			status <<= this->simd_inter_frame_level;
+			auto s = this->_decode_siho_cw(this->Y_N.data(), this->V_KN.data(), w * this->simd_inter_frame_level);
+			status |= s;
 
 			if (this->is_auto_reset())
 				this->_reset(w * this->simd_inter_frame_level);
@@ -283,7 +296,9 @@ void Decoder_SIHO<B,R>
 		          Y_N + ((frame_id % this->n_frames) + 1) * this->N,
 		          this->Y_N.begin() + w_pos * this->N);
 
-		this->_decode_siho_cw(this->Y_N.data(), this->V_KN.data(), w * this->simd_inter_frame_level);
+		status <<= this->simd_inter_frame_level;
+		auto s = this->_decode_siho_cw(this->Y_N.data(), this->V_KN.data(), w * this->simd_inter_frame_level);
+		status |= s;
 
 		if (this->is_auto_reset())
 			this->_reset(w * this->simd_inter_frame_level);
@@ -292,38 +307,39 @@ void Decoder_SIHO<B,R>
 		          this->V_KN.begin() + (w_pos +1) * this->N,
 		          V_N + (frame_id % this->n_frames) * this->N);
 	}
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_SIHO<B,R>
+int Decoder_SIHO<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R>
-void Decoder_SIHO<B,R>
+int Decoder_SIHO<B,R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R>
-void Decoder_SIHO<B,R>
+int Decoder_SIHO<B,R>
 ::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 {
 	for (auto i = 0; i < this->N * this->simd_inter_frame_level; i++)
 		this->Y_N[i] = Y_N[i] ? (R)-1 : (R)1;
-	this->_decode_siho(this->Y_N.data(), V_K, frame_id);
+	return this->_decode_siho(this->Y_N.data(), V_K, frame_id);
 }
 
 template <typename B, typename R>
-void Decoder_SIHO<B,R>
+int Decoder_SIHO<B,R>
 ::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
 {
 	for (auto i = 0; i < this->N * this->simd_inter_frame_level; i++)
 		this->Y_N[i] = Y_N[i] ? (R)-1 : (R)1;
-	this->_decode_siho_cw(this->Y_N.data(), V_N, frame_id);
+	return this->_decode_siho_cw(this->Y_N.data(), V_N, frame_id);
 }
 
 }

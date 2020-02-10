@@ -269,7 +269,7 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SC_fast_sys<B,R,API_polar>
+int Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	if (!API_polar::isAligned(Y_N))
@@ -294,10 +294,12 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::total,  d_load + d_decod + d_store);
+
+	return 0;
 }
 
 template <typename B, typename R, class API_polar>
-void Decoder_polar_SC_fast_sys<B,R,API_polar>
+int Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 	if (!API_polar::isAligned(Y_N))
@@ -322,6 +324,8 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::total,  d_load + d_decod + d_store);
+
+	return 0;
 }
 
 template <typename B, typename R, class API_polar>

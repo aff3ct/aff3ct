@@ -62,8 +62,8 @@ protected:
 
 	        void _load          (const R *Y_N                            );
 	        void _decode        (                                        );
-	        void _decode_siho   (const R *Y_N, B *V_K, const int frame_id);
-	        void _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id);
+	        int  _decode_siho   (const R *Y_N, B *V_K, const int frame_id);
+	        int  _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id);
 	virtual void _store         (              B *V,   bool coded = false) const;
 
 private:

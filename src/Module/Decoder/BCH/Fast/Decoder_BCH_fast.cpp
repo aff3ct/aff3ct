@@ -101,7 +101,7 @@ mipp::Reg<B> operator%(mipp::Reg<B> r, int mod)
 }
 
 template <typename B, typename R>
-void Decoder_BCH_fast<B,R>
+int Decoder_BCH_fast<B,R>
 ::_decode(const int frame_id)
 {
 	const auto r_zero = mipp::Reg<B>((B)0);
@@ -303,6 +303,8 @@ void Decoder_BCH_fast<B,R>
 	}
 
 	mipp::toReg<B>(~syn_error).store(this->last_is_codeword.data() + frame_id);
+
+	return 0;
 }
 
 template <typename B, typename R>
@@ -318,51 +320,59 @@ void Decoder_BCH_fast<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_BCH_fast<B,R>
+int Decoder_BCH_fast<B,R>
 ::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 {
 	_load(Y_N, frame_id);
 
-	this->_decode(frame_id);
+	auto status = this->_decode(frame_id);
 
 	// reorder data into standard registers
 	std::vector<B*> frames_rev(mipp::N<B>());
 	for (auto f = 0; f < mipp::N<B>(); f++)
 		frames_rev[f] = V_K + f * this->K;
 	tools::Reorderer_static<B,mipp::N<B>()>::apply_rev((B*)(this->Y_N_reorderered.data() + this->N - this->K), frames_rev, this->K);
+
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_BCH_fast<B,R>
+int Decoder_BCH_fast<B,R>
 ::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
 {
 	_load(Y_N, frame_id);
 
-	this->_decode(frame_id);
+	auto status = this->_decode(frame_id);
 
 	// reorder data into standard registers
 	std::vector<B*> frames_rev(mipp::N<B>());
 	for (auto f = 0; f < mipp::N<B>(); f++)
 		frames_rev[f] = V_N + f * this->N;
 	tools::Reorderer_static<B,mipp::N<B>()>::apply_rev((B*)this->Y_N_reorderered.data(), frames_rev, this->N);
+
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_BCH_fast<B,R>
+int Decoder_BCH_fast<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	tools::hard_decide(Y_N, this->YH_N.data(), this->N * mipp::N<B>());
 
-	this->_decode_hiho(this->YH_N.data(), V_K, frame_id);
+	auto status = this->_decode_hiho(this->YH_N.data(), V_K, frame_id);
+
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_BCH_fast<B,R>
+int Decoder_BCH_fast<B,R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 	tools::hard_decide(Y_N, this->YH_N.data(), this->N * mipp::N<B>());
 
-	this->_decode_hiho_cw(this->YH_N.data(), V_N, frame_id);
+	auto status = this->_decode_hiho_cw(this->YH_N.data(), V_N, frame_id);
+
+	return status;
 }
 
 // ==================================================================================== explicit template instantiation

@@ -91,9 +91,9 @@ public:
 	virtual Decoder_chase_pyndiah<B,R>* clone() const;
 
 
-	void _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id); // size is length with parity bit if any
-	void _decode_siho   (const R *Y_N,  B *V_K , const int frame_id);
-	void _decode_siho_cw(const R *Y_N,  B *V_N , const int frame_id);
+	int _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id); // size is length with parity bit if any
+	int _decode_siho   (const R *Y_N,  B *V_K , const int frame_id);
+	int _decode_siho_cw(const R *Y_N,  B *V_N , const int frame_id);
 
 	const std::vector<uint32_t>& get_info_bits_pos();
 
@@ -104,7 +104,7 @@ public:
 
 protected:
 	virtual void deep_copy(const Decoder_chase_pyndiah<B,R> &m);
-	virtual void decode_chase           (const R *Y_N, const int frame_id);
+	virtual int  decode_chase           (const R *Y_N, const int frame_id);
 	virtual void find_least_reliable_pos(const R* Y_N);
 	virtual void compute_test_vectors   (              const int frame_id);
 	virtual void compute_metrics        (const R* Y_N);

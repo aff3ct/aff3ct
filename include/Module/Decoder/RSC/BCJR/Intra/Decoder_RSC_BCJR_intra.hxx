@@ -90,7 +90,7 @@ Decoder_RSC_BCJR_intra<B,R>* Decoder_RSC_BCJR_intra<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_RSC_BCJR_intra<B,R>
+int Decoder_RSC_BCJR_intra<B,R>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	if (!mipp::isAligned(sys))
@@ -105,6 +105,8 @@ void Decoder_RSC_BCJR_intra<B,R>
 	this->compute_gamma   (sys, par);
 	this->compute_alpha   (        );
 	this->compute_beta_ext(sys, ext);
+
+	return 0;
 }
 
 // =================================================================================================== sys/par division

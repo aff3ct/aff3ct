@@ -62,19 +62,19 @@ public:
 	 * \param V_K: a decoded codeword (only the information bits).
 	 */
 	template <class A = std::allocator<B>>
-	void decode_hiho(const std::vector<B,A>& Y_N, std::vector<B,A>& V_K, const int frame_id = -1);
+	int decode_hiho(const std::vector<B,A>& Y_N, std::vector<B,A>& V_K, const int frame_id = -1);
 
-	virtual void decode_hiho(const B *Y_N, B *V_K, const int frame_id = -1);
+	virtual int decode_hiho(const B *Y_N, B *V_K, const int frame_id = -1);
 
 	template <class A = std::allocator<B>>
-	void decode_hiho_cw(const std::vector<B,A>& Y_N, std::vector<B,A>& V_N, const int frame_id = -1);
+	int decode_hiho_cw(const std::vector<B,A>& Y_N, std::vector<B,A>& V_N, const int frame_id = -1);
 
-	virtual void decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id = -1);
+	virtual int decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id = -1);
 
 protected:
-	virtual void _decode_hiho(const B *Y_N, B *V_K, const int frame_id);
+	virtual int _decode_hiho(const B *Y_N, B *V_K, const int frame_id);
 
-	virtual void _decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id);
+	virtual int _decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id);
 };
 }
 }

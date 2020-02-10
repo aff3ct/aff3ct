@@ -27,7 +27,7 @@ public:
 	virtual Decoder_RSC_BCJR_inter_fast<B,R,MAX>* clone() const;
 
 protected:
-	void _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);
+	int _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);
 
 	void compute_gamma(const R *sys, const R *par);
 	void compute_alpha(                          );

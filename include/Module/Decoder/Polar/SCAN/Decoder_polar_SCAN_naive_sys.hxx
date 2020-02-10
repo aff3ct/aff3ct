@@ -30,7 +30,7 @@ Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>* Decoder_polar_SCAN_naive_sys<B,R,F,
 
 template <typename B, typename R,
           tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
-void Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
+int Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	// ----------------------------------------------------------------------------------------------------------- LOAD
@@ -51,11 +51,13 @@ void Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
 	for (auto i = 0; i < this->N; i++)
 		if (!this->frozen_bits[i]) // if "i" is NOT a frozen bit (information bit = sytematic bit)
 			ext[sys_idx++] = this->feedback_graph[this->layers_count -1][i];
+
+	return 0;
 }
 
 template <typename B, typename R,
           tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
-void Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
+int Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// ----------------------------------------------------------------------------------------------------------- LOAD
@@ -68,6 +70,8 @@ void Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
 	std::copy(this->feedback_graph[this->layers_count -1].begin(),
 	          this->feedback_graph[this->layers_count -1].begin() + this->N,
 	          Y_N2);
+
+	return 0;
 }
 
 template <typename B, typename R,

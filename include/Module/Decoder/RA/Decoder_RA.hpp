@@ -34,7 +34,7 @@ public:
 	virtual Decoder_RA<B,R>* clone() const;
 
 protected:
-	void _decode_siho(const R *Y_N, B *V_K, const int frame_id);
+	int _decode_siho(const R *Y_N, B *V_K, const int frame_id);
 
 private:
 	R check_node(R a, R b);

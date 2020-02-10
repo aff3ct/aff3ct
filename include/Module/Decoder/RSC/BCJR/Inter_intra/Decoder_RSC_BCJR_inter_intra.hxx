@@ -75,7 +75,7 @@ void Decoder_RSC_BCJR_inter_intra<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_RSC_BCJR_inter_intra<B,R>
+int Decoder_RSC_BCJR_inter_intra<B,R>
 ::decode_siso(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext, const int n_frames)
 {
 	if (n_frames != -1 && n_frames <= 0)
@@ -123,11 +123,12 @@ void Decoder_RSC_BCJR_inter_intra<B,R>
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	Decoder_SISO<R>::decode_siso(sys.data(), par.data(), ext.data(), real_n_frames);
+	auto status = Decoder_SISO<R>::decode_siso(sys.data(), par.data(), ext.data(), real_n_frames);
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_RSC_BCJR_inter_intra<B,R>
+int Decoder_RSC_BCJR_inter_intra<B,R>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	if (!mipp::isAligned(sys))
@@ -142,6 +143,8 @@ void Decoder_RSC_BCJR_inter_intra<B,R>
 	this->compute_gamma   (sys, par);
 	this->compute_alpha   (        );
 	this->compute_beta_ext(sys, ext);
+
+	return 0;
 }
 
 template <typename B, typename R>

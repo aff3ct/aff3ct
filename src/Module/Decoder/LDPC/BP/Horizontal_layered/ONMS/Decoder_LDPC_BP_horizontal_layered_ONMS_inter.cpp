@@ -83,23 +83,24 @@ void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
+int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// memory zones initialization
 	this->_load(Y_N1, frame_id);
 
 	// actual decoding
+	int status = 0;
 	if (typeid(R) == typeid(short) || typeid(R) == typeid(signed char))
 	{
-		     if (normalize_factor == 0.125f) this->_decode<1>(frame_id);
-		else if (normalize_factor == 0.250f) this->_decode<2>(frame_id);
-		else if (normalize_factor == 0.375f) this->_decode<3>(frame_id);
-		else if (normalize_factor == 0.500f) this->_decode<4>(frame_id);
-		else if (normalize_factor == 0.625f) this->_decode<5>(frame_id);
-		else if (normalize_factor == 0.750f) this->_decode<6>(frame_id);
-		else if (normalize_factor == 0.875f) this->_decode<7>(frame_id);
-		else if (normalize_factor == 1.000f) this->_decode<8>(frame_id);
+		     if (normalize_factor == 0.125f) status = this->_decode<1>(frame_id);
+		else if (normalize_factor == 0.250f) status = this->_decode<2>(frame_id);
+		else if (normalize_factor == 0.375f) status = this->_decode<3>(frame_id);
+		else if (normalize_factor == 0.500f) status = this->_decode<4>(frame_id);
+		else if (normalize_factor == 0.625f) status = this->_decode<5>(frame_id);
+		else if (normalize_factor == 0.750f) status = this->_decode<6>(frame_id);
+		else if (normalize_factor == 0.875f) status = this->_decode<7>(frame_id);
+		else if (normalize_factor == 1.000f) status = this->_decode<8>(frame_id);
 		else
 		{
 			std::stringstream message;
@@ -122,10 +123,12 @@ void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 	std::vector<R*> frames(mipp::N<R>());
 	for (auto f = 0; f < mipp::N<R>(); f++) frames[f] = Y_N2 + f * this->N;
 	tools::Reorderer_static<R,mipp::N<R>()>::apply_rev((R*)this->var_nodes[cur_wave].data(), frames, this->N);
+
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
+int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -134,16 +137,17 @@ void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
+	int status = 0;
 	if (typeid(R) == typeid(short) || typeid(R) == typeid(signed char))
 	{
-		     if (normalize_factor == 0.125f) this->_decode<1>(frame_id);
-		else if (normalize_factor == 0.250f) this->_decode<2>(frame_id);
-		else if (normalize_factor == 0.375f) this->_decode<3>(frame_id);
-		else if (normalize_factor == 0.500f) this->_decode<4>(frame_id);
-		else if (normalize_factor == 0.625f) this->_decode<5>(frame_id);
-		else if (normalize_factor == 0.750f) this->_decode<6>(frame_id);
-		else if (normalize_factor == 0.875f) this->_decode<7>(frame_id);
-		else if (normalize_factor == 1.000f) this->_decode<8>(frame_id);
+		     if (normalize_factor == 0.125f) status = this->_decode<1>(frame_id);
+		else if (normalize_factor == 0.250f) status = this->_decode<2>(frame_id);
+		else if (normalize_factor == 0.375f) status = this->_decode<3>(frame_id);
+		else if (normalize_factor == 0.500f) status = this->_decode<4>(frame_id);
+		else if (normalize_factor == 0.625f) status = this->_decode<5>(frame_id);
+		else if (normalize_factor == 0.750f) status = this->_decode<6>(frame_id);
+		else if (normalize_factor == 0.875f) status = this->_decode<7>(frame_id);
+		else if (normalize_factor == 1.000f) status = this->_decode<8>(frame_id);
 		else
 		{
 			std::stringstream message;
@@ -177,10 +181,12 @@ void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
+
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
+int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -189,16 +195,17 @@ void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
+	int status = 0;
 	if (typeid(R) == typeid(short) || typeid(R) == typeid(signed char))
 	{
-		     if (normalize_factor == 0.125f) this->_decode<1>(frame_id);
-		else if (normalize_factor == 0.250f) this->_decode<2>(frame_id);
-		else if (normalize_factor == 0.375f) this->_decode<3>(frame_id);
-		else if (normalize_factor == 0.500f) this->_decode<4>(frame_id);
-		else if (normalize_factor == 0.625f) this->_decode<5>(frame_id);
-		else if (normalize_factor == 0.750f) this->_decode<6>(frame_id);
-		else if (normalize_factor == 0.875f) this->_decode<7>(frame_id);
-		else if (normalize_factor == 1.000f) this->_decode<8>(frame_id);
+		     if (normalize_factor == 0.125f) status = this->_decode<1>(frame_id);
+		else if (normalize_factor == 0.250f) status = this->_decode<2>(frame_id);
+		else if (normalize_factor == 0.375f) status = this->_decode<3>(frame_id);
+		else if (normalize_factor == 0.500f) status = this->_decode<4>(frame_id);
+		else if (normalize_factor == 0.625f) status = this->_decode<5>(frame_id);
+		else if (normalize_factor == 0.750f) status = this->_decode<6>(frame_id);
+		else if (normalize_factor == 0.875f) status = this->_decode<7>(frame_id);
+		else if (normalize_factor == 1.000f) status = this->_decode<8>(frame_id);
 		else
 		{
 			std::stringstream message;
@@ -229,11 +236,13 @@ void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::load,   d_load);
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
+
+	return status;
 }
 
 template <typename B, typename R>
 template <int F>
-void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
+int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 ::_decode(const int frame_id)
 {
 	const auto cur_wave = frame_id / this->simd_inter_frame_level;
@@ -254,6 +263,8 @@ void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 		else
 			cur_syndrome_depth = 0;
 	}
+
+	return 0;
 }
 
 // --------------------------------------------------------------------------------------------------------------------

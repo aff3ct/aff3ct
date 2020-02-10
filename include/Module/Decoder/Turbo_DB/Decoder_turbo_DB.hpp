@@ -58,7 +58,7 @@ public:
 
 protected:
 	virtual void deep_copy(const Decoder_turbo_DB<B,R> &m);
-	virtual void _decode_siho(const R *Y_N, B *V_K, const int frame_id);
+	virtual int  _decode_siho(const R *Y_N, B *V_K, const int frame_id);
 	virtual void _load       (const R *Y_N                            );
 	virtual void _store      (              B *V_K                    ) const;
 };

@@ -122,7 +122,7 @@ void Decoder_LDPC_bit_flipping<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_bit_flipping<B,R>
+int Decoder_LDPC_bit_flipping<B,R>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// actual decoding
@@ -133,10 +133,12 @@ void Decoder_LDPC_bit_flipping<B,R>
 		Y_N2[i] = this->Lp_N[i] - Y_N1[i];
 
 	// saturate<R>(Y_N2, (R)-C_to_V_max, (R)C_to_V_max);
+
+	return 0;
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_bit_flipping<B,R>
+int Decoder_LDPC_bit_flipping<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -159,10 +161,12 @@ void Decoder_LDPC_bit_flipping<B,R>
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
+
+	return 0;
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_bit_flipping<B,R>
+int Decoder_LDPC_bit_flipping<B,R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 	//	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -180,6 +184,8 @@ void Decoder_LDPC_bit_flipping<B,R>
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::load,   d_load);
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
+
+	return 0;
 }
 
 // BF algorithm

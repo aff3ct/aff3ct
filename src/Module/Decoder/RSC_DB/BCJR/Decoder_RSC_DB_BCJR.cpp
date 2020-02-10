@@ -89,7 +89,7 @@ void Decoder_RSC_DB_BCJR<B,R>
 
 
 template <typename B, typename R>
-void Decoder_RSC_DB_BCJR<B,R>
+int Decoder_RSC_DB_BCJR<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -97,7 +97,7 @@ void Decoder_RSC_DB_BCJR<B,R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_decode_siso(sys.data(), par.data(), ext.data(), frame_id);
+	auto status = this->_decode_siso(sys.data(), par.data(), ext.data(), frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -114,6 +114,8 @@ void Decoder_RSC_DB_BCJR<B,R>
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
+
+	return status;
 }
 
 template <typename B, typename R>
@@ -125,13 +127,15 @@ void Decoder_RSC_DB_BCJR<B,R>
 
 
 template <typename B, typename R>
-void Decoder_RSC_DB_BCJR<B,R>
+int Decoder_RSC_DB_BCJR<B,R>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	__init_alpha_beta();
 	__fwd_recursion(sys, par);
 	__bwd_recursion(sys, par, ext);
 	__save_alpha_beta();
+
+	return 0;
 }
 
 template <typename B, typename R>

@@ -26,21 +26,25 @@ Decoder_NO<B,R>* Decoder_NO<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_NO<B,R>
+int Decoder_NO<B,R>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	std::copy(sys, sys + this->K, ext);
+
+	return 0;
 }
 
 template <typename B, typename R>
-void Decoder_NO<B,R>
+int Decoder_NO<B,R>
 ::_decode_siso(const R *Y_K1, R *Y_K2, const int frame_id)
 {
 	std::copy(Y_K1, Y_K1 + this->K, Y_K2);
+
+	return 0;
 }
 
 template <typename B, typename R>
-void Decoder_NO<B,R>
+int Decoder_NO<B,R>
 ::_decode_siho(const R *Y_K, B *V_K, const int frame_id)
 {
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -48,10 +52,12 @@ void Decoder_NO<B,R>
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store, d_store);
+
+	return 0;
 }
 
 template <typename B, typename R>
-void Decoder_NO<B,R>
+int Decoder_NO<B,R>
 ::_decode_siho_cw(const R *Y_K, B *V_K, const int frame_id)
 {
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -59,6 +65,8 @@ void Decoder_NO<B,R>
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store, d_store);
+
+	return 0;
 }
 
 // ==================================================================================== explicit template instantiation

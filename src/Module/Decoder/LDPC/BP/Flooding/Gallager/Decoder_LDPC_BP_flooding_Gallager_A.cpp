@@ -80,7 +80,7 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>* Decoder_LDPC_BP_flooding_Gallager_A<B,
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
+int Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
@@ -93,10 +93,11 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+	int status = 0;
 	if (this->transform_HY_N)
-		this->_decode(HY_N.data());
+		status = this->_decode(HY_N.data());
 	else
-		this->_decode(Y_N);
+		status = this->_decode(Y_N);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -107,10 +108,12 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
 //	(*this)[dec::tsk::decode_hiho].update_timer(dec::tm::decode_hiho::decode, d_decod);
 //	(*this)[dec::tsk::decode_hiho].update_timer(dec::tm::decode_hiho::store,  d_store);
+
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
+int Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
@@ -123,10 +126,11 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
+	int status = 0;
 	if (this->transform_HY_N)
-		this->_decode(HY_N.data());
+		status = this->_decode(HY_N.data());
 	else
-		this->_decode(Y_N);
+		status = this->_decode(Y_N);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -136,10 +140,12 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 //	(*this)[dec::tsk::decode_siho   ].update_timer(dec::tm::decode_siho::load,      d_load);
 //	(*this)[dec::tsk::decode_hiho_cw].update_timer(dec::tm::decode_hiho_cw::decode, d_decod);
 //	(*this)[dec::tsk::decode_hiho_cw].update_timer(dec::tm::decode_hiho_cw::store,  d_store);
+
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
+int Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
@@ -153,7 +159,7 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_decode(HY_N.data());
+	auto status = this->_decode(HY_N.data());
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -164,10 +170,12 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
+
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
+int Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
@@ -181,7 +189,7 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_decode(HY_N.data());
+	auto status = this->_decode(HY_N.data());
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -191,10 +199,12 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::load,   d_load);
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
+
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
+int Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::_decode(const B *Y_N)
 {
 	auto ite = 0;
@@ -213,6 +223,8 @@ void Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 	}
 	if (ite == this->n_ite)
 		this->_make_majority_vote(Y_N, this->V_N);
+
+	return 0;
 }
 
 template <typename B, typename R>

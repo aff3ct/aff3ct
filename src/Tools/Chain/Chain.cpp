@@ -1063,7 +1063,7 @@ void Chain
 						contents->rebind_sockets.resize(rebind_id +1);
 						contents->rebind_dataptrs.resize(rebind_id +1);
 
-						for (size_t s = 0; s < pull_task->sockets.size(); s++)
+						for (size_t s = 0; s < pull_task->sockets.size() -1; s++)
 							if (pull_task->get_socket_type(*pull_task->sockets[s]) == module::socket_t::SOUT)
 							{
 								std::vector<module::Socket*> bound_sockets;
@@ -1125,7 +1125,7 @@ void Chain
 						contents->rebind_sockets.resize(rebind_id +1);
 						contents->rebind_dataptrs.resize(rebind_id +1);
 
-						for (size_t s = 0; s < push_task->sockets.size(); s++)
+						for (size_t s = 0; s < push_task->sockets.size() -1; s++)
 							if (push_task->get_socket_type(*push_task->sockets[s]) == module::socket_t::SIN)
 							{
 								std::vector<module::Socket*> bound_sockets;

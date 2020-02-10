@@ -46,12 +46,12 @@ public:
 protected:
 	void _reset(const int frame_id);
 
-	void _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);
-	void _decode_siho   (const R *Y_N,  B *V_K,  const int frame_id);
-	void _decode_siho_cw(const R *Y_N,  B *V_N,  const int frame_id);
+	int _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);
+	int _decode_siho   (const R *Y_N,  B *V_K,  const int frame_id);
+	int _decode_siho_cw(const R *Y_N,  B *V_N,  const int frame_id);
 
 	void _load             (const R *Y_N, const int frame_id);
-	void _decode           (const int frame_id);
+	int  _decode           (const int frame_id);
 	void _decode_single_ite(std::vector<R> &var_nodes, std::vector<R> &messages);
 };
 }

@@ -458,13 +458,15 @@ void Decoder_RSC_BCJR_seq_scan<B,R,RD>
 }
 
 template <typename B, typename R, typename RD>
-void Decoder_RSC_BCJR_seq_scan<B,R,RD>
+int Decoder_RSC_BCJR_seq_scan<B,R,RD>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	this->compute_gamma(sys, par);
 	this->compute_alpha(        );
 	this->compute_beta (        );
 	this->compute_ext  (sys, ext);
+
+	return 0;
 }
 }
 }

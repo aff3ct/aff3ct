@@ -28,14 +28,14 @@ Decoder_BCH_genius<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_BCH_genius<B,R>
+int Decoder_BCH_genius<B,R>
 ::_decode(B *Y_N, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R>
-void Decoder_BCH_genius<B,R>
+int Decoder_BCH_genius<B,R>
 ::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 {
 	auto& X_N = encoder.get_X_N(frame_id);
@@ -48,10 +48,12 @@ void Decoder_BCH_genius<B,R>
 		std::copy(Y_N + this->N - this->K, Y_N + this->N, V_K);
 
 	this->last_is_codeword[frame_id] = n_error <= this->t;
+
+	return 0;
 }
 
 template <typename B, typename R>
-void Decoder_BCH_genius<B,R>
+int Decoder_BCH_genius<B,R>
 ::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
 {
 	auto& X_N = encoder.get_X_N(frame_id);
@@ -64,24 +66,30 @@ void Decoder_BCH_genius<B,R>
 		std::copy(Y_N, Y_N + this->N, V_N);
 
 	this->last_is_codeword[frame_id] = n_error <= this->t;
+
+	return 0;
 }
 
 template <typename B, typename R>
-void Decoder_BCH_genius<B,R>
+int Decoder_BCH_genius<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	tools::hard_decide(Y_N, this->YH_N.data(), this->N);
 
-	this->_decode_hiho(this->YH_N.data(), V_K, frame_id);
+	auto status = this->_decode_hiho(this->YH_N.data(), V_K, frame_id);
+
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_BCH_genius<B,R>
+int  Decoder_BCH_genius<B,R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 	tools::hard_decide(Y_N, this->YH_N.data(), this->N);
 
-	this->_decode_hiho_cw(this->YH_N.data(), V_N, frame_id);
+	auto status = this->_decode_hiho_cw(this->YH_N.data(), V_N, frame_id);
+
+	return status;
 }
 
 // ==================================================================================== explicit template instantiation

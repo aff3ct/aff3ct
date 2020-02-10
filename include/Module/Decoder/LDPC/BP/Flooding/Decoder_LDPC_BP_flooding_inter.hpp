@@ -53,12 +53,12 @@ public:
 protected:
 	void _reset(const int frame_id);
 
-	void _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);
-	void _decode_siho   (const R *Y_N,  B *V_K,  const int frame_id);
-	void _decode_siho_cw(const R *Y_N,  B *V_N,  const int frame_id);
+	int _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);
+	int _decode_siho   (const R *Y_N,  B *V_K,  const int frame_id);
+	int _decode_siho_cw(const R *Y_N,  B *V_N,  const int frame_id);
 
 	void _load                 (const R *Y_N, const int frame_id);
-	void _decode               (const mipp::Reg<R> *Y_N, const int cur_wave);
+	int  _decode               (const mipp::Reg<R> *Y_N, const int cur_wave);
 	void _initialize_var_to_chk(const mipp::Reg<R> *Y_N, const mipp::vector<mipp::Reg<R>> &msg_chk_to_var,
 	                                                           mipp::vector<mipp::Reg<R>> &msg_var_to_chk);
 	void _decode_single_ite    (const mipp::vector<mipp::Reg<R>> &msg_var_to_chk,

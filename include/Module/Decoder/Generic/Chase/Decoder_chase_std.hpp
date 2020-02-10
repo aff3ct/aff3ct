@@ -37,8 +37,8 @@ public:
 
 protected:
 	virtual void deep_copy(const Decoder_chase_std<B,R> &m);
-	void _decode_siho   (const R *Y_N,  B *V_K, const int frame_id);
-	void _decode_siho_cw(const R *Y_N,  B *V_N, const int frame_id);
+	int _decode_siho   (const R *Y_N,  B *V_K, const int frame_id);
+	int _decode_siho_cw(const R *Y_N,  B *V_N, const int frame_id);
 
 	void _decode_siho_cw_euclidean(const R *Y_N, B *V_N);
 	void _decode_siho_cw_hamming  (              B *V_N);

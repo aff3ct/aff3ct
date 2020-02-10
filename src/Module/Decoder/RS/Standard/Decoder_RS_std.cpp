@@ -37,7 +37,7 @@ Decoder_RS_std<B,R>* Decoder_RS_std<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_RS_std<B,R>
+int Decoder_RS_std<B,R>
 ::_decode(S *Y_N, const int frame_id)
 {
 	bool syn_error = false;
@@ -248,6 +248,8 @@ void Decoder_RS_std<B,R>
 		// else // elp has degree has degree > t hence cannot solve
 	}
 	// else // no non-zero syndromes => no errors: output received codeword
+
+	return 0;
 }
 
 // ==================================================================================== explicit template instantiation

@@ -81,7 +81,7 @@ void Subchain
 	auto &last  = *chain.get_last_tasks()[0];
 	for (auto &s : last.sockets)
 	{
-		if (last.get_socket_type(*s) == socket_t::SOUT)
+		if (last.get_socket_type(*s) == socket_t::SOUT && s->get_name() != "status")
 		{
 			if (s->get_datatype() == typeid(int8_t ))
 				this->template create_socket_out<int8_t >(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
@@ -116,7 +116,7 @@ void Subchain
 	size_t sid = 0;
 	for (auto &s : last.sockets)
 	{
-		if (last.get_socket_type(*s) == socket_t::SOUT)
+		if (last.get_socket_type(*s) == socket_t::SOUT && s->get_name() != "status")
 		{
 			while (p.get_socket_type(*p.sockets[sid]) != socket_t::SOUT) sid++;
 			p.sockets[sid++]->bind(*s);
@@ -199,7 +199,7 @@ void Subchain
 	size_t sid = 0;
 	for (auto &s : last.sockets)
 	{
-		if (last.get_socket_type(*s) == socket_t::SOUT)
+		if (last.get_socket_type(*s) == socket_t::SOUT && s->get_name() != "status")
 		{
 			while (p.get_socket_type(*p.sockets[sid]) != socket_t::SOUT) sid++;
 			p.sockets[sid++]->bind(*s);

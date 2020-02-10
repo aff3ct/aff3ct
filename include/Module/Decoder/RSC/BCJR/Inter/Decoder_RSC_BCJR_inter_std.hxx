@@ -199,7 +199,7 @@ void Decoder_RSC_BCJR_inter_std<B,R,MAX>
 }
 
 template <typename B, typename R, tools::proto_max_i<R> MAX>
-void Decoder_RSC_BCJR_inter_std<B,R,MAX>
+int Decoder_RSC_BCJR_inter_std<B,R,MAX>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	if (!mipp::isAligned(sys))
@@ -215,6 +215,8 @@ void Decoder_RSC_BCJR_inter_std<B,R,MAX>
 	this->compute_alpha(        );
 	this->compute_beta (        );
 	this->compute_ext  (sys, ext);
+
+	return 0;
 }
 }
 }

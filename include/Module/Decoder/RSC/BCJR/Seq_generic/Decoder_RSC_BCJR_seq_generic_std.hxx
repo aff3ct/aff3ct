@@ -271,7 +271,7 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 }
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
-void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
+int Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	this->compute_gamma   (sys, par);
@@ -279,10 +279,12 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 	// this->compute_beta (        );
 	// this->compute_ext  (sys, ext);
 	this->compute_beta_ext(sys, ext);
+
+	return 0;
 }
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
-void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
+int Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	if (!this->buffered_encoding)
@@ -298,6 +300,8 @@ void Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 	this->compute_beta   (            );
 	this->compute_ext_sys(sys, ext_sys);
 	this->compute_ext_par(par, ext_par);
+
+	return 0;
 }
 }
 }

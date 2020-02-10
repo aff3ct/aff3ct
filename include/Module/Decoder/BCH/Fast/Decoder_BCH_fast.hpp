@@ -44,12 +44,12 @@ public:
 	virtual Decoder_BCH_fast<B,R>* clone() const;
 
 protected:
-	virtual void _decode        (                      const int frame_id);
+	virtual int  _decode        (                      const int frame_id);
 	virtual void _load          (const B *Y_N,         const int frame_id);
-	virtual void _decode_hiho   (const B *Y_N, B *V_K, const int frame_id);
-	virtual void _decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id);
-	virtual void _decode_siho   (const R *Y_N, B *V_K, const int frame_id);
-	virtual void _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id);
+	virtual int  _decode_hiho   (const B *Y_N, B *V_K, const int frame_id);
+	virtual int  _decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id);
+	virtual int  _decode_siho   (const R *Y_N, B *V_K, const int frame_id);
+	virtual int  _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id);
 };
 }
 }

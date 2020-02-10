@@ -57,14 +57,14 @@ void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
+int Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// memory zones initialization
 	this->_load(Y_N1, frame_id);
 
 	// actual decoding
-	this->_decode(frame_id);
+	auto status = this->_decode(frame_id);
 
 	// prepare for next round by processing extrinsic information
 	for (auto v = 0; v < this->N; v++)
@@ -72,10 +72,12 @@ void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 
 	// copy extrinsic information into var_nodes for next TURBO iteration
 	std::copy(Y_N2, Y_N2 + this->N, this->var_nodes[frame_id].begin());
+
+	return status;
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
+int Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -84,7 +86,7 @@ void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
-	this->_decode(frame_id);
+	auto status = this->_decode(frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -99,10 +101,12 @@ void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
+
+	return status;
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
+int Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -111,7 +115,7 @@ void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
-	this->_decode(frame_id);
+	auto status = this->_decode(frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -121,10 +125,12 @@ void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::load,   d_load);
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
+
+	return status;
 }
 
 template <typename B, typename R, class Update_rule>
-void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
+int Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 ::_decode(const int frame_id)
 {
 	this->up_rule.begin_decoding(this->n_ite);
@@ -140,6 +146,8 @@ void Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 	}
 
 	this->up_rule.end_decoding();
+
+	return 0;
 }
 
 template <typename B, typename R, class Update_rule>

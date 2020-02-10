@@ -20,7 +20,7 @@ public:
 	virtual Decoder_repetition_fast<B,R>* clone() const;
 
 protected:
-	void _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);
+	int _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);
 };
 }
 }

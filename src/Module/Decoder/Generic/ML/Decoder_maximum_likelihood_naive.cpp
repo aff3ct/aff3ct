@@ -47,7 +47,7 @@ Decoder_maximum_likelihood_naive<B,R>* Decoder_maximum_likelihood_naive<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_maximum_likelihood_naive<B,R>
+int Decoder_maximum_likelihood_naive<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	if (!this->encoder->is_sys())
@@ -57,22 +57,25 @@ void Decoder_maximum_likelihood_naive<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	this->_decode_siho_cw(Y_N, this->best_X_N.data(), frame_id);
+	auto status = this->_decode_siho_cw(Y_N, this->best_X_N.data(), frame_id);
 
 	const auto &info_bits_pos = this->encoder->get_info_bits_pos();
 	for (auto k = 0; k < this->K; k++)
 		V_K[k] = this->best_X_N[info_bits_pos[k]];
+
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_maximum_likelihood_naive<B,R>
+int Decoder_maximum_likelihood_naive<B,R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 	// compute Hamming distance instead of Euclidean distance
 	if (hamming)
 	{
 		tools::hard_decide(Y_N, this->hard_Y_N.data(), this->N);
-		this->_decode_hiho_cw(this->hard_Y_N.data(), V_N, frame_id);
+		auto status = this->_decode_hiho_cw(this->hard_Y_N.data(), V_N, frame_id);
+		return status;
 	}
 	else
 	{
@@ -103,11 +106,13 @@ void Decoder_maximum_likelihood_naive<B,R>
 			if (this->x_max == std::numeric_limits<uint64_t>::max())
 				break;
 		}
+
+		return 0;
 	}
 }
 
 template <typename B, typename R>
-void Decoder_maximum_likelihood_naive<B,R>
+int Decoder_maximum_likelihood_naive<B,R>
 ::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 {
 	if (!this->encoder->is_sys())
@@ -117,15 +122,17 @@ void Decoder_maximum_likelihood_naive<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	this->_decode_hiho_cw(Y_N, this->best_X_N.data(), frame_id);
+	auto status = this->_decode_hiho_cw(Y_N, this->best_X_N.data(), frame_id);
 
 	const auto &info_bits_pos = this->encoder->get_info_bits_pos();
 	for (auto k = 0; k < this->K; k++)
 		V_K[k] = this->best_X_N[info_bits_pos[k]];
+
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_maximum_likelihood_naive<B,R>
+int Decoder_maximum_likelihood_naive<B,R>
 ::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
 {
 	this->min_hamming_dist = std::numeric_limits<uint32_t>::max();
@@ -155,6 +162,8 @@ void Decoder_maximum_likelihood_naive<B,R>
 		if (x_max == std::numeric_limits<uint64_t>::max())
 			break;
 	}
+
+	return 0;
 }
 
 // ==================================================================================== explicit template instantiation

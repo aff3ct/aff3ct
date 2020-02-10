@@ -302,7 +302,7 @@ int Task
 			for (auto& s : sockets)
 			{
 				auto s_type = get_socket_type(*s);
-				if (s_type == socket_t::SOUT || s_type == socket_t::SIN_SOUT)
+				if ((s_type == socket_t::SOUT || s_type == socket_t::SIN_SOUT) && s->get_name() != "status")
 				{
 					std::string spaces; for (size_t ss = 0; ss < max_n_chars - s->get_name().size(); ss++) spaces += " ";
 

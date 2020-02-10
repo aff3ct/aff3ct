@@ -45,11 +45,11 @@ public:
 protected:
 	void _reset(const int frame_id);
 
-	void _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);
-	void _decode_siho   (const R *Y_N,  B *V_K,  const int frame_id);
-	void _decode_siho_cw(const R *Y_N,  B *V_N,  const int frame_id);
+	int _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);
+	int _decode_siho   (const R *Y_N,  B *V_K,  const int frame_id);
+	int _decode_siho_cw(const R *Y_N,  B *V_N,  const int frame_id);
 
-	        void _decode               (const R *Y_N, const int frame_id);
+	        int  _decode               (const R *Y_N, const int frame_id);
 	        void _initialize_var_to_chk(const R *Y_N, const std::vector<R> &msg_chk_to_var, std::vector<R> &msg_var_to_chk);
 	virtual void _decode_single_ite    (              const std::vector<R> &msg_var_to_chk, std::vector<R> &msg_chk_to_var);
 	        void _compute_post         (const R *Y_N, const std::vector<R> &msg_chk_to_var, std::vector<R> &post);

@@ -28,7 +28,7 @@ public:
 	virtual Decoder_turbo_std<B,R>* clone() const;
 
 protected:
-	virtual void _decode_siho(const R *Y_N, B *V_K, const int frame_id);
+	virtual int _decode_siho(const R *Y_N, B *V_K, const int frame_id);
 };
 }
 }

@@ -153,34 +153,38 @@ void Decoder_chase_pyndiah<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_chase_pyndiah<B,R>
+int Decoder_chase_pyndiah<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	decode_chase(Y_N, frame_id);
+	auto status = decode_chase(Y_N, frame_id);
 
 	auto* DW = test_vect.data() + competitors.front().pos;
 	auto& info_bits_pos = enc->get_info_bits_pos();
 
 	for (int j = 0; j < this->K; j++)
 		V_K[j] = DW[info_bits_pos[j]];
+
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_chase_pyndiah<B,R>
+int Decoder_chase_pyndiah<B,R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
-	decode_chase(Y_N, frame_id);
+	auto status = decode_chase(Y_N, frame_id);
 
 	auto* DW = test_vect.data() + competitors.front().pos;
 
 	std::copy(DW, DW + this->N, V_N);
+
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_chase_pyndiah<B,R>
+int Decoder_chase_pyndiah<B,R>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
-	decode_chase(Y_N1, frame_id);
+	auto status = decode_chase(Y_N1, frame_id);
 
 	compute_reliability(Y_N1, Y_N2);
 
@@ -191,10 +195,12 @@ void Decoder_chase_pyndiah<B,R>
         std::cerr << Y_N2[i] << " ";
     std::cerr << std::endl;
 #endif
+
+    return status;
 }
 
 template <typename B, typename R>
-void Decoder_chase_pyndiah<B,R>
+int Decoder_chase_pyndiah<B,R>
 ::decode_chase(const R *Y_N, const int frame_id)
 {
 	tools::hard_decide(Y_N, hard_Y_N.data(), this->N);
@@ -264,6 +270,8 @@ void Decoder_chase_pyndiah<B,R>
     std::cerr << std::endl;
     { std::vector<R> v(DW, DW+this->N);  ft.display_bit_vector(v); }
 #endif
+
+    return 0;
 }
 
 template <typename B, typename R>

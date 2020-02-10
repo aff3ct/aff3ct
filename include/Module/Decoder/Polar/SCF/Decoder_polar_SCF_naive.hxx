@@ -96,7 +96,7 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 }
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
-void Decoder_polar_SCF_naive<B,R,F,G,H>
+int Decoder_polar_SCF_naive<B,R,F,G,H>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	// initialization
@@ -150,10 +150,12 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
+
+	return 0;
 }
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
-void Decoder_polar_SCF_naive<B,R,F,G,H>
+int Decoder_polar_SCF_naive<B,R,F,G,H>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 	// initialization
@@ -207,6 +209,8 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::load,   d_load);
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
+
+	return 0;
 }
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>

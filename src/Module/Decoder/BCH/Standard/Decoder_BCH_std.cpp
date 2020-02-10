@@ -39,7 +39,7 @@ Decoder_BCH_std<B,R>* Decoder_BCH_std<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_BCH_std<B, R>
+int Decoder_BCH_std<B, R>
 ::_decode(B *Y_N, const int frame_id)
 {
 	int i, j, syn_error = 0;
@@ -206,51 +206,61 @@ void Decoder_BCH_std<B, R>
 			}
 		}
 	}
+
+	return 0;
 }
 
 
 template <typename B, typename R>
-void Decoder_BCH_std<B, R>
+int Decoder_BCH_std<B, R>
 ::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
 {
 	std::copy(Y_N, Y_N + this->N, this->YH_N.begin());
 
-	this->_decode(this->YH_N.data(), frame_id);
+	auto status = this->_decode(this->YH_N.data(), frame_id);
 
 	std::copy(this->YH_N.data() + this->N - this->K, this->YH_N.data() + this->N, V_K);
+
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_BCH_std<B, R>
+int Decoder_BCH_std<B, R>
 ::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
 {
 	std::copy(Y_N, Y_N + this->N, this->YH_N.begin());
 
-	this->_decode(this->YH_N.data(), frame_id);
+	auto status = this->_decode(this->YH_N.data(), frame_id);
 
 	std::copy(this->YH_N.data(), this->YH_N.data() + this->N, V_N);
+
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_BCH_std<B, R>
+int Decoder_BCH_std<B, R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	tools::hard_decide(Y_N, this->YH_N.data(), this->N);
 
-	this->_decode(this->YH_N.data(), frame_id);
+	auto status = this->_decode(this->YH_N.data(), frame_id);
 
 	std::copy(this->YH_N.data() + this->N - this->K, this->YH_N.data() + this->N, V_K);
+
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_BCH_std<B, R>
+int Decoder_BCH_std<B, R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 	tools::hard_decide(Y_N, this->YH_N.data(), this->N);
 
-	this->_decode(this->YH_N.data(), frame_id);
+	auto status = this->_decode(this->YH_N.data(), frame_id);
 
 	std::copy(this->YH_N.data(), this->YH_N.data() + this->N, V_N);
+
+	return status;
 }
 
 // ==================================================================================== explicit template instantiation

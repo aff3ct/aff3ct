@@ -61,7 +61,7 @@ void Decoder_chase_std<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_chase_std<B,R>
+int Decoder_chase_std<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 	if (!this->encoder->is_sys())
@@ -71,11 +71,13 @@ void Decoder_chase_std<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	this->_decode_siho_cw(Y_N, this->best_X_N.data(), frame_id);
+	auto status = this->_decode_siho_cw(Y_N, this->best_X_N.data(), frame_id);
 
 	const auto &info_bits_pos = this->encoder->get_info_bits_pos();
 	for (auto k = 0; k < this->K; k++)
 		V_K[k] = this->best_X_N[info_bits_pos[k]];
+
+	return status;
 }
 
 template <typename B, typename R>
@@ -149,7 +151,7 @@ void Decoder_chase_std<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_chase_std<B,R>
+int Decoder_chase_std<B,R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 	tools::hard_decide(Y_N, V_N, this->N);
@@ -181,6 +183,8 @@ void Decoder_chase_std<B,R>
 			}
 		}
 	}
+
+	return 0;
 }
 
 // ==================================================================================== explicit template instantiation

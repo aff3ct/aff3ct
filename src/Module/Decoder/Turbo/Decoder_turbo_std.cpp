@@ -31,7 +31,7 @@ Decoder_turbo_std<B,R>* Decoder_turbo_std<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_turbo_std<B,R>
+int Decoder_turbo_std<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -115,6 +115,8 @@ void Decoder_turbo_std<B,R>
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::total,  d_load + d_decod + d_store);
+
+	return 0;
 }
 
 // ==================================================================================== explicit template instantiation

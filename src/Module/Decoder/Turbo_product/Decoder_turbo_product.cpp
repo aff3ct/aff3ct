@@ -129,7 +129,7 @@ void Decoder_turbo_product<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_turbo_product<B, R>
+int Decoder_turbo_product<B, R>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -137,7 +137,7 @@ void Decoder_turbo_product<B, R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_decode(Y_N1, 2);
+	auto status = this->_decode(Y_N1, 2);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -147,10 +147,12 @@ void Decoder_turbo_product<B, R>
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
+
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_turbo_product<B, R>
+int Decoder_turbo_product<B, R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -158,7 +160,7 @@ void Decoder_turbo_product<B, R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_decode(Y_N, 0);
+	auto status = this->_decode(Y_N, 0);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -168,10 +170,12 @@ void Decoder_turbo_product<B, R>
 //	(*this)[dec::tsk::decode_hiho].update_timer(dec::tm::decode_hiho::load,   d_load);
 //	(*this)[dec::tsk::decode_hiho].update_timer(dec::tm::decode_hiho::decode, d_decod);
 //	(*this)[dec::tsk::decode_hiho].update_timer(dec::tm::decode_hiho::store,  d_store);
+
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_turbo_product<B, R>
+int Decoder_turbo_product<B, R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -179,7 +183,7 @@ void Decoder_turbo_product<B, R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_decode(Y_N, 1);
+	auto status = this->_decode(Y_N, 1);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -189,10 +193,12 @@ void Decoder_turbo_product<B, R>
 //	(*this)[dec::tsk::decode_cp_cw].update_timer(dec::tm::decode_cp_cw::load,   d_load);
 //	(*this)[dec::tsk::decode_cp_cw].update_timer(dec::tm::decode_cp_cw::decode, d_decod);
 //	(*this)[dec::tsk::decode_cp_cw].update_timer(dec::tm::decode_cp_cw::store,  d_store);
+
+	return status;
 }
 
 template <typename B, typename R>
-void Decoder_turbo_product<B,R>
+int Decoder_turbo_product<B,R>
 ::_decode(const R *Y_N_cha, int return_K_siso)
 {
 	const int n_cols = cp_r->get_N();
@@ -261,6 +267,8 @@ void Decoder_turbo_product<B,R>
 				cp_r->decode_siho_cw(Y_N_i.data(), V_N_i.data(), j); // decode j-th row
 		}
 	}
+
+	return 0;
 }
 
 // ==================================================================================== explicit template instantiation

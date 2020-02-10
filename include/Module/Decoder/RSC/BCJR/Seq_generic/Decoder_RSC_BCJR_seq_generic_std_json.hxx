@@ -127,7 +127,7 @@ void Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
 }
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
-void Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
+int Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	if (ite_counter == 0)
@@ -202,6 +202,8 @@ void Decoder_RSC_BCJR_seq_generic_std_json<B,R,RD,MAX1,MAX2>
 	}
 	else if (!(ite_counter % 2))
 		stream << "," << std::endl;
+
+	return 0;
 }
 }
 }

@@ -46,11 +46,11 @@ protected:
 	void _store         (B *V_K,               const int frame_id);
 	void _store_cw      (B *V_N,               const int frame_id);
 
-	void _decode_siho   (const R *Y_N, B *V_K, const int frame_id);
-	void _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id);
+	int _decode_siho   (const R *Y_N, B *V_K, const int frame_id);
+	int _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id);
 
-	void _decode_hiho   (const B *Y_N, B *V_K, const int frame_id);
-	void _decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id);
+	int _decode_hiho   (const B *Y_N, B *V_K, const int frame_id);
+	int _decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id);
 
 	// return true if the syndrome is valid
 	virtual bool     decode(const B *Y_N,                     const int frame_id);

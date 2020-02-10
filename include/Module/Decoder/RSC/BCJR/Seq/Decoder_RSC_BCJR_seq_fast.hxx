@@ -170,13 +170,15 @@ void Decoder_RSC_BCJR_seq_fast<B,R,RD,MAX1,MAX2>
 }
 
 template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::proto_max<RD> MAX2>
-void Decoder_RSC_BCJR_seq_fast<B,R,RD,MAX1,MAX2>
+int Decoder_RSC_BCJR_seq_fast<B,R,RD,MAX1,MAX2>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	this->compute_gamma(sys, par);
 	this->compute_alpha(        );
 	this->compute_beta (        );
 	this->compute_ext  (sys, ext);
+
+	return 0;
 }
 }
 }

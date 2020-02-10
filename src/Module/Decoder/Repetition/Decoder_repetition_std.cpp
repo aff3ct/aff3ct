@@ -24,7 +24,7 @@ Decoder_repetition_std<B,R>* Decoder_repetition_std<B,R>
 }
 
 template <typename B, typename R>
-void Decoder_repetition_std<B,R>
+int Decoder_repetition_std<B,R>
 ::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	for (auto i = 0; i < this->K; i++)
@@ -34,6 +34,8 @@ void Decoder_repetition_std<B,R>
 			// ext[i] += (par[j*this->K +i] > 0) ? 1 : -1; // hard decision
 			ext[i] += par[j*this->K +i]; // soft decision
 	}
+
+	return 0;
 }
 
 // ==================================================================================== explicit template instantiation

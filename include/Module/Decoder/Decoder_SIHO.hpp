@@ -65,23 +65,23 @@ public:
 	 * \param V_K: a decoded codeword (only the information bits).
 	 */
 	template <class AR = std::allocator<R>, class AB = std::allocator<B>>
-	void decode_siho(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_K, const int frame_id = -1);
+	int decode_siho(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_K, const int frame_id = -1);
 
-	virtual void decode_siho(const R *Y_N, B *V_K, const int frame_id = -1);
+	virtual int decode_siho(const R *Y_N, B *V_K, const int frame_id = -1);
 
 	template <class AR = std::allocator<R>, class AB = std::allocator<B>>
-	void decode_siho_cw(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_N, const int frame_id = -1);
+	int decode_siho_cw(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_N, const int frame_id = -1);
 
-	virtual void decode_siho_cw(const R *Y_N, B *V_N, const int frame_id = -1);
+	virtual int decode_siho_cw(const R *Y_N, B *V_N, const int frame_id = -1);
 
 protected:
-	virtual void _decode_siho(const R *Y_N, B *V_K, const int frame_id);
+	virtual int _decode_siho(const R *Y_N, B *V_K, const int frame_id);
 
-	virtual void _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id);
+	virtual int _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id);
 
-	virtual void _decode_hiho(const B *Y_N, B *V_K, const int frame_id);
+	virtual int _decode_hiho(const B *Y_N, B *V_K, const int frame_id);
 
-	virtual void _decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id);
+	virtual int _decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id);
 };
 }
 }

@@ -161,7 +161,7 @@ void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 
 template <typename B, typename R,
           tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
-void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
+int Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -179,11 +179,13 @@ void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
+
+	return 0;
 }
 
 template <typename B, typename R,
           tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
-void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
+int Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
@@ -201,11 +203,13 @@ void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::load,   d_load);
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
+
+	return 0;
 }
 
 template <typename B, typename R,
           tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
-void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
+int Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// ----------------------------------------------------------------------------------------------------------- LOAD
@@ -218,6 +222,8 @@ void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 	std::copy(this->feedback_graph[this->layers_count -1].begin(),
 	          this->feedback_graph[this->layers_count -1].begin() + this->N,
 	          Y_N2);
+
+	return 0;
 }
 
 /********************************************************************/
