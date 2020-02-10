@@ -26,8 +26,8 @@ Adaptor
   buffer(new std::vector<std::vector<std::vector<int8_t*>>>
   	(1, std::vector<std::vector<int8_t*>>(1,
   		std::vector<int8_t*>(buffer_size)))),
-  first(new std::vector<std::atomic<size_t>>(1000)),
-  last(new std::vector<std::atomic<size_t>>(1000)),
+  first(new std::vector<std::atomic<uint64_t>>(1000)),
+  last(new std::vector<std::atomic<uint64_t>>(1000)),
   waiting_canceled(new std::atomic<bool>(false)),
   no_copy_pull(false),
   no_copy_push(false)
@@ -79,8 +79,8 @@ Adaptor
   buffer(new std::vector<std::vector<std::vector<int8_t*>>>
   	(1, std::vector<std::vector<int8_t*>>(n_sockets,
   		std::vector<int8_t*>(buffer_size)))),
-  first(new std::vector<std::atomic<size_t>>(1000)),
-  last(new std::vector<std::atomic<size_t>>(1000)),
+  first(new std::vector<std::atomic<uint64_t>>(1000)),
+  last(new std::vector<std::atomic<uint64_t>>(1000)),
   waiting_canceled(new std::atomic<bool>(false)),
   no_copy_pull(false),
   no_copy_push(false)

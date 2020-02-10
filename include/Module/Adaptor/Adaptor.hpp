@@ -52,8 +52,8 @@ protected:
 	std::shared_ptr<std::vector<std::vector<std::vector<int8_t*>>>> buffer;
 	std::vector<int8_t*> buffer_to_free;
 
-	std::shared_ptr<std::vector<std::atomic<size_t>>> first;
-	std::shared_ptr<std::vector<std::atomic<size_t>>> last;
+	std::shared_ptr<std::vector<std::atomic<uint64_t>>> first;
+	std::shared_ptr<std::vector<std::atomic<uint64_t>>> last;
 
 	std::shared_ptr<std::atomic<bool>> waiting_canceled;
 
