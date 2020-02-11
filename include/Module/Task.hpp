@@ -45,7 +45,7 @@ protected:
 	int32_t debug_frame_max;
 	std::function<int(Module &m, Task& t)> codelet;
 
-	int status;
+	std::vector<int> status;
 	std::vector<mipp::vector<uint8_t>> out_buffers;
 
 	// stats

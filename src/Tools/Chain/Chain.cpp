@@ -1064,6 +1064,7 @@ void Chain
 						contents->rebind_dataptrs.resize(rebind_id +1);
 
 						for (size_t s = 0; s < pull_task->sockets.size() -1; s++)
+						{
 							if (pull_task->get_socket_type(*pull_task->sockets[s]) == module::socket_t::SOUT)
 							{
 								std::vector<module::Socket*> bound_sockets;
@@ -1072,10 +1073,9 @@ void Chain
 								bound_sockets.push_back(pull_task->sockets[s].get());
 								dataptrs.push_back(pull_task->sockets[s]->get_dataptr());
 
-								bound_sockets.insert(bound_sockets.end(),
-								                     pull_task->sockets[s]->get_bound_sockets().begin(),
-								                     pull_task->sockets[s]->get_bound_sockets().end());
-								for (auto sck : bound_sockets)
+								auto bs = pull_task->sockets[s]->get_bound_sockets();
+								bound_sockets.insert(bound_sockets.end(), bs.begin(), bs.end());
+								for (auto sck : bs)
 								{
 									if (sck->get_task().get_socket_type(*sck) == module::socket_t::SIN_SOUT)
 									{
@@ -1092,6 +1092,7 @@ void Chain
 								contents->rebind_sockets[rebind_id].push_back(bound_sockets);
 								contents->rebind_dataptrs[rebind_id].push_back(dataptrs);
 							}
+						}
 
 						modified_tasks[pull_task] = [contents, pull_task, adp_pull, rebind_id]() -> int
 						{
@@ -1100,15 +1101,18 @@ void Chain
 							// rebind input sockets on the fly
 							for (size_t sin_id = 0; sin_id < contents->rebind_sockets[rebind_id].size(); sin_id++)
 							{
-								// we start to 1 because the rebinding of the 'pull_task' is made in the
-								// 'pull_task->exec()' call (this way the debug mode is still working)
-								auto swap_buff = contents->rebind_sockets[rebind_id][sin_id][1]->get_dataptr();
-								auto buff = adp_pull->get_filled_buffer(sin_id, swap_buff);
-								contents->rebind_sockets[rebind_id][sin_id][1]->bind(buff);
-								// for the next tasks the same buffer 'buff' is required, an easy mistake is to re-swap
-								// and the data will be false, this is why we just bind 'buff'
-								for (size_t ta = 2; ta < contents->rebind_sockets[rebind_id][sin_id].size(); ta++)
-									contents->rebind_sockets[rebind_id][sin_id][ta]->bind(buff);
+								if (contents->rebind_sockets[rebind_id][sin_id].size() > 1)
+								{
+									// we start to 1 because the rebinding of the 'pull_task' is made in the
+									// 'pull_task->exec()' call (this way the debug mode is still working)
+									auto swap_buff = contents->rebind_sockets[rebind_id][sin_id][1]->get_dataptr();
+									auto buff = adp_pull->get_filled_buffer(sin_id, swap_buff);
+									contents->rebind_sockets[rebind_id][sin_id][1]->bind(buff);
+									// for the next tasks the same buffer 'buff' is required, an easy mistake is to re-swap
+									// and the data will be false, this is why we just bind 'buff'
+									for (size_t ta = 2; ta < contents->rebind_sockets[rebind_id][sin_id].size(); ta++)
+										contents->rebind_sockets[rebind_id][sin_id][ta]->bind(buff);
+								}
 							}
 							adp_pull->wake_up_pusher();
 							return ret;

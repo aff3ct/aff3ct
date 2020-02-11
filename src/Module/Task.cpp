@@ -28,6 +28,7 @@ Task
   debug_precision(2),
   debug_frame_max(-1),
   codelet([](Module &m, Task &t) -> int { throw tools::unimplemented_error(__FILE__, __LINE__, __func__); return 0; }),
+  status(module.get_n_frames()),
   n_calls(0),
   duration_total(std::chrono::nanoseconds(0)),
   duration_min(std::chrono::nanoseconds(0)),
@@ -214,7 +215,7 @@ int Task
 	{
 		auto exec_status = this->codelet(*this->module, *this);
 		this->n_calls++;
-		(*(int*)this->sockets.back()->get_dataptr()) = exec_status;
+		((int*)this->sockets.back()->get_dataptr())[0] = exec_status;
 		return exec_status;
 	}
 
@@ -293,7 +294,7 @@ int Task
 		}
 		else
 			exec_status = this->codelet(*this->module, *this);
-		(*(int*)this->sockets.back()->get_dataptr()) = exec_status;
+		((int*)this->sockets.back()->get_dataptr())[0] = exec_status;
 		this->n_calls++;
 
 		if (debug)
@@ -435,8 +436,8 @@ void Task
 
 	// create automatically a socket that contains the status of the task
 	const bool hack_status = true;
-	auto s = this->template create_socket_out<int>("status", 1, hack_status);
-	this->sockets[s]->dataptr = (void*)&this->status;
+	auto s = this->template create_socket_out<int>("status", /*1*/this->get_module().get_n_frames(), hack_status);
+	this->sockets[s]->dataptr = (void*)this->status.data();
 }
 
 bool Task
