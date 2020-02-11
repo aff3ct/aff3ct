@@ -119,7 +119,7 @@ void Socket
 }
 
 void Socket
-::bind(Socket &s_out, const bool copy_dataptr)
+::bind(Socket &s_out, const int priority)
 {
 	if (!is_fast())
 	{
@@ -156,7 +156,7 @@ void Socket
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-		if (copy_dataptr && s_out.dataptr == nullptr)
+		if (s_out.dataptr == nullptr)
 		{
 			std::stringstream message;
 			message << "'s_out.dataptr' can't be NULL.";
@@ -165,15 +165,17 @@ void Socket
 	}
 
 	this->bound_socket = &s_out;
-	s_out.bound_sockets.push_back(this);
-	if (copy_dataptr)
-		this->dataptr = s_out.dataptr;
+	if ((size_t)priority >= s_out.bound_sockets.size() || priority == -1)
+		s_out.bound_sockets.push_back(this);
+	else
+		s_out.bound_sockets.insert(s_out.bound_sockets.begin() + priority, this);
+	this->dataptr = s_out.dataptr;
 }
 
 void Socket
-::operator()(Socket &s_out, const bool copy_dataptr)
+::operator()(Socket &s_out, const int priority)
 {
-	bind(s_out, copy_dataptr);
+	bind(s_out, priority);
 }
 
 template <typename T, class A>

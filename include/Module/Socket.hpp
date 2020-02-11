@@ -54,9 +54,9 @@ public:
 
 	inline void set_fast(const bool fast);
 
-	inline void bind(Socket &s_out, const bool copy_dataptr = true);
+	inline void bind(Socket &s_out, const int priority = -1);
 
-	inline void operator()(Socket &s_out, const bool copy_dataptr = true);
+	inline void operator()(Socket &s_out, const int priority = -1);
 
 	template <typename T, class A = std::allocator<T>>
 	inline void bind(std::vector<T,A> &vector);
