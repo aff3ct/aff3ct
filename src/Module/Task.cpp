@@ -555,7 +555,7 @@ Task* Task
 		{
 			if (s->get_name() == "status")
 			{
-				dataptr = (void*)&t->status;
+				dataptr = (void*)t->status.data();
 				out_buffers_counter++;
 			}
 			else
