@@ -233,7 +233,7 @@ int Task
 			          << "::"
 			          << rang::style::bold << rang::fg::magenta << get_name() << rang::style::reset
 			          << "(";
-			for (auto i = 0; i < (int)sockets.size(); i++)
+			for (auto i = 0; i < (int)sockets.size() -1; i++)
 			{
 				auto &s = *sockets[i];
 				auto s_type = get_socket_type(s);
@@ -242,7 +242,7 @@ int Task
 				          << s.get_datatype_string() << rang::style::reset
 				          << " " << s.get_name() << "[" << (n_fra > 1 ? std::to_string(n_fra) + "x" : "")
 				          << (n_elmts / n_fra) << "]"
-				          << (i < (int)sockets.size() -1 ? ", " : "");
+				          << (i < (int)sockets.size() -2 ? ", " : "");
 
 				max_n_chars = std::max(s.get_name().size(), max_n_chars);
 			}
