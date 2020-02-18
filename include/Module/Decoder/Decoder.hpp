@@ -48,6 +48,7 @@ protected:
 	const int  simd_inter_frame_level; /*!< Number of frames absorbed by the SIMD instructions. */
 	const int  n_dec_waves;
 	      bool auto_reset;
+	const int  mask;
 
 public:
 	Decoder(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1);

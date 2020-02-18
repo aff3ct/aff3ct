@@ -1,4 +1,5 @@
 #include <string>
+#include <limits>
 #include <sstream>
 #include <algorithm>
 
@@ -161,8 +162,7 @@ int Decoder_SISO<B,R>
 		if (this->is_auto_reset())
 			this->_reset(w * this->simd_inter_frame_level);
 	}
-
-	return status;
+	return status & this->mask;
 }
 
 template <typename B, typename R>
@@ -272,7 +272,7 @@ int Decoder_SISO<B,R>
 		          this->Y_N2.begin() + (w_pos +1) * this->N,
 		          Y_N2 + (frame_id % this->n_frames) * this->N);
 	}
-	return status;
+	return status & this->mask;
 }
 
 template <typename B, typename R>

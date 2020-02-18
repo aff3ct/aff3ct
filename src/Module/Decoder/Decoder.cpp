@@ -16,7 +16,8 @@ Decoder
   N(N),
   simd_inter_frame_level(simd_inter_frame_level),
   n_dec_waves((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level)),
-  auto_reset(true)
+  auto_reset(true),
+  mask(std::numeric_limits<int>::max())
 {
 	const std::string name = "Decoder";
 	this->set_name(name);

@@ -1,4 +1,5 @@
 #include <string>
+#include <limits>
 #include <sstream>
 #include <algorithm>
 
@@ -197,7 +198,7 @@ int Decoder_SIHO<B,R>
 		          this->V_KN.begin() + (w_pos +1) * this->K,
 		          V_K + (frame_id % this->n_frames) * this->K);
 	}
-	return status;
+	return status & this->mask;
 }
 
 template <typename B, typename R>
@@ -307,7 +308,7 @@ int Decoder_SIHO<B,R>
 		          this->V_KN.begin() + (w_pos +1) * this->N,
 		          V_N + (frame_id % this->n_frames) * this->N);
 	}
-	return status;
+	return status & this->mask;
 }
 
 template <typename B, typename R>

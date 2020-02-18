@@ -327,6 +327,13 @@ int Task
 			std::cout << "#" << std::endl;
 		}
 
+		if (exec_status < 0)
+		{
+			std::stringstream message;
+			message << "'exec_status' can't be negative ('exec_status' = " << exec_status << ").";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
 		return exec_status;
 	}
 	else

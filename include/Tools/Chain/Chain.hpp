@@ -7,6 +7,7 @@
 
 #include <functional>
 #include <iostream>
+#include <limits>
 #include <memory>
 #include <vector>
 #include <string>
@@ -26,6 +27,8 @@ class Module;
 }
 namespace tools
 {
+
+enum status_t : int { OK = 0, SKIPPED = std::numeric_limits<int>::min() };
 
 enum class subseq_t : size_t { STD, LOOP, ROUTER };
 

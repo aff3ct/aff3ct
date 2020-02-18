@@ -352,6 +352,7 @@ void Chain
 	{
 		do
 		{
+			std::fill(statuses.begin(), statuses.end(), tools::status_t::SKIPPED);
 			try
 			{
 				exec_sequence(sequence, statuses);
