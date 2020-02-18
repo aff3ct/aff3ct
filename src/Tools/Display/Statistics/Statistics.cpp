@@ -269,7 +269,7 @@ void Statistics
 		auto is_first = true;
 		for (auto *t : tasks)
 		{
-			auto task_n_elmts = t->sockets.back()->get_n_elmts();
+			auto task_n_elmts = t->sockets.end()[-2]->get_n_elmts();
 			auto task_n_calls = t->get_n_calls();
 
 			if (is_first)
@@ -292,7 +292,7 @@ void Statistics
 		{
 			auto module_name       = t->get_module().get_custom_name().empty() ? t->get_module().get_short_name() :
 			                                                                     t->get_module().get_custom_name();
-			auto task_n_elmts      = t->sockets.back()->get_n_elmts();
+			auto task_n_elmts      = t->sockets.end()[-2]->get_n_elmts();
 			auto task_name         = t->get_name          ();
 			auto task_n_calls      = t->get_n_calls       ();
 			auto task_tot_duration = t->get_duration_total();
@@ -443,7 +443,7 @@ void Statistics
 		auto is_first = true;
 		for (auto &vt : tasks)
 		{
-			auto task_n_elmts = vt[0]->sockets.back()->get_n_elmts();
+			auto task_n_elmts = vt[0]->sockets.end()[-2]->get_n_elmts();
 			auto task_n_calls = 0;
 
 			for (auto *t : vt)
@@ -471,7 +471,7 @@ void Statistics
 			auto module_name       = vt[0]->get_module().get_custom_name().empty() ?
 			                         vt[0]->get_module().get_short_name() :
 			                         vt[0]->get_module().get_custom_name();
-			auto task_n_elmts      = vt[0]->sockets.back()->get_n_elmts();
+			auto task_n_elmts      = vt[0]->sockets.end()[-2]->get_n_elmts();
 			auto task_name         = vt[0]->get_name();
 			auto task_n_calls      = 0;
 			auto task_tot_duration = nanoseconds(0);
