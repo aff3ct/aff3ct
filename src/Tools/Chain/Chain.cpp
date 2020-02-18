@@ -668,13 +668,13 @@ const module::Task& Chain
 
 		if (&current_task != last)
 		{
+			const module::Task* last_task = nullptr;
 			for (auto &s : current_task.sockets)
 			{
 				if (current_task.get_socket_type(*s) == module::socket_t::SIN_SOUT ||
 					current_task.get_socket_type(*s) == module::socket_t::SOUT)
 				{
 					auto bss = s->get_bound_sockets();
-					const module::Task* last_task = nullptr;
 					for (auto &bs : bss)
 					{
 						if (bs != nullptr)
@@ -684,8 +684,6 @@ const module::Task& Chain
 								last_task = &Chain::init_recursive<SS,TA>(cur_subseq, ssid, taid, loops, first, t, last);
 						}
 					}
-					if (last_task)
-						return *last_task;
 				}
 				else if (current_task.get_socket_type(*s) == module::socket_t::SIN)
 				{
@@ -703,6 +701,8 @@ const module::Task& Chain
 					}
 				}
 			}
+			if (last_task)
+				return *last_task;
 		}
 	}
 
