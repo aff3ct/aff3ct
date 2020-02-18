@@ -44,7 +44,8 @@ Sink<B>
 	this->create_codelet(p1, [p1s_V](Module& m, Task& t) -> int
 	{
 		static_cast<Sink<B>&>(m).send(static_cast<B*>(t[p1s_V].get_dataptr()));
-		return 0;
+
+		return status_t::OK;
 	});
 }
 

@@ -162,7 +162,7 @@ void Modem<B,R,Q>
 		static_cast<Modem<B,R,Q>&>(m).modulate(static_cast<B*>(t[p1s_X_N1].get_dataptr()),
 		                                       static_cast<R*>(t[p1s_X_N2].get_dataptr()));
 
-		return 0;
+		return status_t::OK;
 	});
 
 	auto &p7 = this->create_task("tmodulate");
@@ -173,7 +173,7 @@ void Modem<B,R,Q>
 		static_cast<Modem<B,R,Q>&>(m).tmodulate(static_cast<Q*>(t[p7s_X_N1].get_dataptr()),
 		                                        static_cast<R*>(t[p7s_X_N2].get_dataptr()));
 
-		return 0;
+		return status_t::OK;
 	});
 
 	auto &p2 = this->create_task("filter");
@@ -184,7 +184,7 @@ void Modem<B,R,Q>
 		static_cast<Modem<B,R,Q>&>(m).filter(static_cast<R*>(t[p2s_Y_N1].get_dataptr()),
 		                                     static_cast<R*>(t[p2s_Y_N2].get_dataptr()));
 
-		return 0;
+		return status_t::OK;
 	});
 
 	auto &p3 = this->create_task("demodulate");
@@ -195,7 +195,7 @@ void Modem<B,R,Q>
 		static_cast<Modem<B,R,Q>&>(m).demodulate(static_cast<Q*>(t[p3s_Y_N1].get_dataptr()),
 		                                         static_cast<Q*>(t[p3s_Y_N2].get_dataptr()));
 
-		return 0;
+		return status_t::OK;
 	});
 
 	auto &p4 = this->create_task("tdemodulate");
@@ -208,7 +208,7 @@ void Modem<B,R,Q>
 		                                          static_cast<Q*>(t[p4s_Y_N2].get_dataptr()),
 		                                          static_cast<Q*>(t[p4s_Y_N3].get_dataptr()));
 
-		return 0;
+		return status_t::OK;
 	});
 
 	auto &p5 = this->create_task("demodulate_wg");
@@ -221,7 +221,7 @@ void Modem<B,R,Q>
 		                                            static_cast<Q*>(t[p5s_Y_N1].get_dataptr()),
 		                                            static_cast<Q*>(t[p5s_Y_N2].get_dataptr()));
 
-		return 0;
+		return status_t::OK;
 	});
 
 	auto &p6 = this->create_task("tdemodulate_wg");
@@ -236,7 +236,7 @@ void Modem<B,R,Q>
 		                                             static_cast<Q*>(t[p6s_Y_N2].get_dataptr()),
 		                                             static_cast<Q*>(t[p6s_Y_N3].get_dataptr()));
 
-		return 0;
+		return status_t::OK;
 	});
 }
 

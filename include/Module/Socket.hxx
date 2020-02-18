@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
@@ -164,7 +165,44 @@ void Socket
 		}
 	}
 
+	if (this->bound_socket != nullptr)
+	{
+		std::stringstream message;
+		message << "This socket is already connected ("
+		        << "'bound_socket->databytes'"        << " = " << this->bound_socket->databytes              << ", "
+		        << "'bound_socket->name'"             << " = " << this->bound_socket->get_name()             << ", "
+		        << "'bound_socket->task.name'"        << " = " << this->bound_socket->task.get_name()        << ", "
+//		        << "'bound_socket->task.module.name'" << " = " << this->bound_socket->task.get_module_name() << ", "
+		        << "'s_out.databytes'"                << " = " << s_out.databytes                            << ", "
+		        << "'s_out.name'"                     << " = " << s_out.get_name()                           << ", "
+		        << "'s_out.task.name'"                << " = " << s_out.task.get_name()                      << ", "
+//		        << "'s_out.task.module.name'"         << " = " << s_out.task.get_module_name()               << ", "
+		        << "'databytes'"                      << " = " << this->databytes                            << ", "
+		        << "'name'"                           << " = " << get_name()                                 << ", "
+		        << "'task.name'"                      << " = " << task.get_name()                            << ", "
+//		        << "'task.module.name'"               << " = " << task.get_module_name()
+		        << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	this->bound_socket = &s_out;
+
+	if (std::find(s_out.bound_sockets.begin(), s_out.bound_sockets.end(), this) != s_out.bound_sockets.end())
+	{
+		std::stringstream message;
+		message << "It is not possible to bind the same socket twice ("
+		        << "'s_out.databytes'"        << " = " << s_out.databytes              << ", "
+		        << "'s_out.name'"             << " = " << s_out.get_name()             << ", "
+		        << "'s_out.task.name'"        << " = " << s_out.task.get_name()        << ", "
+//		        << "'s_out.task.module.name'" << " = " << s_out.task.get_module_name() << ", "
+		        << "'databytes'"              << " = " << this->databytes              << ", "
+		        << "'name'"                   << " = " << get_name()                   << ", "
+		        << "'task.name'"              << " = " << task.get_name()              << ", "
+//		        << "'task.module.name'"       << " = " << task.get_module_name()
+		        << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if ((size_t)priority >= s_out.bound_sockets.size() || priority == -1)
 		s_out.bound_sockets.push_back(this);
 	else

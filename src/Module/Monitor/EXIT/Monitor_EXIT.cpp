@@ -28,7 +28,7 @@ Monitor_EXIT<B,R>
 		                                                     static_cast<R*>(t[ps_llrs_a].get_dataptr()),
 		                                                     static_cast<R*>(t[ps_llrs_e].get_dataptr()));
 
-		return 0;
+		return status_t::OK;
 	});
 
 	reset();

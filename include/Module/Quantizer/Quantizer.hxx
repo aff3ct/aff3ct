@@ -47,7 +47,7 @@ Quantizer<R,Q>
 		static_cast<Quantizer<R,Q>&>(m).process(static_cast<R*>(t[ps_Y_N1].get_dataptr()),
 		                                        static_cast<Q*>(t[ps_Y_N2].get_dataptr()));
 
-		return 0;
+		return status_t::OK;
 	});
 }
 

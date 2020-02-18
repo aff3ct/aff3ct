@@ -122,7 +122,7 @@ void Adaptor_n_to_1
 				sockets_dataptr[s] = static_cast<const int8_t*>(t[p1s_in[s]].get_dataptr());
 			adp.push_n(sockets_dataptr);
 		}
-		return 0;
+		return status_t::OK;
 	});
 
 	auto &p2 = this->create_task("pull_1", (int)adp::tsk::pull_1);
@@ -147,7 +147,7 @@ void Adaptor_n_to_1
 				sockets_dataptr[s] = static_cast<int8_t*>(t[p2s_out[s]].get_dataptr());
 			adp.pull_1(sockets_dataptr);
 		}
-		return 0;
+		return status_t::OK;
 	});
 }
 }

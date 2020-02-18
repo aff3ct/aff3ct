@@ -7,6 +7,7 @@
 
 #include <functional>
 #include <cstddef>
+#include <limits>
 #include <string>
 #include <memory>
 #include <chrono>
@@ -22,6 +23,8 @@ namespace module
 {
 class Module;
 class Socket;
+
+enum status_t : int { OK = 0, SKIPPED = std::numeric_limits<int>::min() };
 
 enum class socket_t : uint8_t { SIN, SIN_SOUT, SOUT };
 

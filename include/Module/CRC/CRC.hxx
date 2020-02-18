@@ -61,7 +61,7 @@ CRC<B>
 		static_cast<CRC<B>&>(m).build(static_cast<B*>(t[p1s_U_K1].get_dataptr()),
 		                              static_cast<B*>(t[p1s_U_K2].get_dataptr()));
 
-		return 0;
+		return status_t::OK;
 	});
 
 	auto &p2 = this->create_task("extract");
@@ -72,7 +72,7 @@ CRC<B>
 		static_cast<CRC<B>&>(m).extract(static_cast<B*>(t[p2s_V_K1].get_dataptr()),
 		                                static_cast<B*>(t[p2s_V_K2].get_dataptr()));
 
-		return 0;
+		return status_t::OK;
 	});
 
 	auto &p3 = this->create_task("check");
