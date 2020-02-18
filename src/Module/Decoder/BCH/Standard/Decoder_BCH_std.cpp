@@ -204,10 +204,16 @@ int Decoder_BCH_std<B, R>
 					if (loc[i] < this->N)
 						Y_N[loc[i]] ^= 1;
 			}
-		}
-	}
 
-	return 0;
+			return status_t::OK;
+		}
+		else
+			return 1;
+	}
+	else
+	{
+		return status_t::OK;
+	}
 }
 
 
