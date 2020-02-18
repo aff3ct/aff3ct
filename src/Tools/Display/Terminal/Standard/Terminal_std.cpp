@@ -36,10 +36,8 @@ Terminal_std
 ::Terminal_std(const std::vector<std::unique_ptr<tools::Reporter>>& reporters)
 : Terminal(), reporters()
 {
-	for(auto const &r:reporters)
-	{
+	for (auto const &r : reporters)
 		this->reporters.push_back(r.get());
-	}
 }
 
 void Terminal_std

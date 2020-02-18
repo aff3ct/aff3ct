@@ -37,7 +37,6 @@ public:
 	static const int         column_width;
 
 protected:
-	//const std::vector<std::unique_ptr<tools::Reporter>>& reporters;
 	std::vector<tools::Reporter*> reporters;
 
 public:
