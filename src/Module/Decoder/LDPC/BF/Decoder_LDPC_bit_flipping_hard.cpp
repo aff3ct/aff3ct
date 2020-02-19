@@ -72,7 +72,7 @@ int Decoder_LDPC_bit_flipping_hard<B,R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	auto status = this->decode(Y_N, frame_id);
+	auto synd = this->decode(Y_N, frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -82,7 +82,7 @@ int Decoder_LDPC_bit_flipping_hard<B,R>
 //	(*this)[dec::tsk::decode_hiho].update_timer(dec::tm::decode_hiho::decode, d_decod);
 //	(*this)[dec::tsk::decode_hiho].update_timer(dec::tm::decode_hiho::store,  d_store);
 
-	return status;
+	return !synd;
 }
 
 template <typename B, typename R>
@@ -94,7 +94,7 @@ int Decoder_LDPC_bit_flipping_hard<B,R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	auto status = this->decode(Y_N, frame_id);
+	auto synd = this->decode(Y_N, frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -104,7 +104,7 @@ int Decoder_LDPC_bit_flipping_hard<B,R>
 //	(*this)[dec::tsk::decode_hiho_cw].update_timer(dec::tm::decode_hiho_cw::decode, d_decod);
 //	(*this)[dec::tsk::decode_hiho_cw].update_timer(dec::tm::decode_hiho_cw::store,  d_store);
 
-	return status;
+	return !synd;
 }
 
 template <typename B, typename R>
@@ -117,7 +117,7 @@ int Decoder_LDPC_bit_flipping_hard<B,R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	auto status = this->decode(YH_N.data(), frame_id);
+	auto synd = this->decode(YH_N.data(), frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -128,7 +128,7 @@ int Decoder_LDPC_bit_flipping_hard<B,R>
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
 
-	return status;
+	return !synd;
 }
 
 template <typename B, typename R>
@@ -141,7 +141,7 @@ int Decoder_LDPC_bit_flipping_hard<B,R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	auto status = this->decode(YH_N.data(), frame_id);
+	auto synd = this->decode(YH_N.data(), frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -152,7 +152,7 @@ int Decoder_LDPC_bit_flipping_hard<B,R>
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
 
-	return status;
+	return !synd;
 }
 
 template<typename B, typename R>

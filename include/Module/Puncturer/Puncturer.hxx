@@ -82,7 +82,7 @@ Puncturer<B,Q>
 		static_cast<Puncturer<B,Q>&>(m).puncture(static_cast<B*>(t[p1s_X_N1].get_dataptr()),
 		                                         static_cast<B*>(t[p1s_X_N2].get_dataptr()));
 
-		return status_t::OK;
+		return status_t::SUCCESS;
 	});
 
 	auto &p2 = this->create_task("depuncture");
@@ -93,7 +93,7 @@ Puncturer<B,Q>
 		static_cast<Puncturer<B,Q>&>(m).depuncture(static_cast<Q*>(t[p2s_Y_N1].get_dataptr()),
 		                                           static_cast<Q*>(t[p2s_Y_N2].get_dataptr()));
 
-		return status_t::OK;
+		return status_t::SUCCESS;
 	});
 }
 

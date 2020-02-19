@@ -208,6 +208,7 @@ int Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::_decode(const B *Y_N)
 {
 	auto ite = 0;
+	auto synd = true;
 	for (; ite < this->n_ite; ite++)
 	{
 		this->_initialize_var_to_chk(Y_N, chk_to_var, var_to_chk, ite);
@@ -217,14 +218,14 @@ int Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 		{
 			// for the K variable nodes (make a majority vote with the entering messages)
 			this->_make_majority_vote(Y_N, this->V_N);
-			if (this->check_syndrome_hard(this->V_N.data()))
-				break;
+			synd = this->check_syndrome_hard(this->V_N.data());
+			if (synd) break;
 		}
 	}
 	if (ite == this->n_ite)
 		this->_make_majority_vote(Y_N, this->V_N);
 
-	return 0;
+	return !synd;
 }
 
 template <typename B, typename R>

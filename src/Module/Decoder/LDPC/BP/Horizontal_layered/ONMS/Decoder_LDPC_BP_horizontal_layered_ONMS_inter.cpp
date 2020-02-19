@@ -111,8 +111,8 @@ int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 	}
 	else // float or double
 	{
-		if (normalize_factor == 1.000f) this->_decode<8>(frame_id);
-		else                            this->_decode<0>(frame_id);
+		if (normalize_factor == 1.000f) status = this->_decode<8>(frame_id);
+		else                            status = this->_decode<0>(frame_id);
 	}
 
 	// prepare for next round by processing extrinsic information
@@ -158,8 +158,8 @@ int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 	}
 	else // float or double
 	{
-		if (normalize_factor == 1.000f) this->_decode<8>(frame_id);
-		else                            this->_decode<0>(frame_id);
+		if (normalize_factor == 1.000f) status = this->_decode<8>(frame_id);
+		else                            status = this->_decode<0>(frame_id);
 	}
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
@@ -248,13 +248,13 @@ int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 	const auto cur_wave = frame_id / this->simd_inter_frame_level;
 
 	auto cur_syndrome_depth = 0;
-
+	int packed_synd = 0;
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
 		this->_decode_single_ite<F>(this->var_nodes[cur_wave], this->branches[cur_wave]);
 
 		// stop criterion
-		if (this->enable_syndrome && this->_check_syndrome(frame_id))
+		if (this->enable_syndrome && (packed_synd = this->_check_syndrome_status(frame_id)) == status_t::SUCCESS)
 		{
 			cur_syndrome_depth++;
 			if (cur_syndrome_depth == this->syndrome_depth)
@@ -264,7 +264,7 @@ int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 			cur_syndrome_depth = 0;
 	}
 
-	return 0;
+	return packed_synd;
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -378,6 +378,47 @@ bool Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 	}
 
 	return syndrome_scalar;
+}
+
+template <typename B, typename R>
+int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
+::_check_syndrome_status(const int frame_id)
+{
+	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+	const auto zero = mipp::Msk<mipp::N<B>()>(false);
+	auto syndrome = zero;
+
+	auto n_chk_nodes = (int)H.get_n_cols();
+	auto c = 0;
+	auto syndrome_scalar = true;
+	while (c < n_chk_nodes)
+	{
+		auto sign = zero;
+		const auto chk_degree = (int)this->H[c].size();
+		for (auto v = 0; v < chk_degree; v++)
+		{
+			const auto value = this->var_nodes[cur_wave][this->H[c][v]];
+			sign ^= mipp::sign(value);
+		}
+
+		syndrome |= sign;
+		c++;
+	}
+
+	syndrome_scalar = mipp::testz(syndrome);
+
+	if (!syndrome_scalar)
+	{
+		int packed_synd = 0;
+		for (auto n = 0; n < mipp::N<B>(); n++)
+		{
+			packed_synd <<= 1;
+			packed_synd |= syndrome[n];
+		}
+		return packed_synd;
+	}
+	else
+		return status_t::SUCCESS;
 }
 
 // ==================================================================================== explicit template instantiation

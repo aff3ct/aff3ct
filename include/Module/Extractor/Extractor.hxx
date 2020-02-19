@@ -83,7 +83,7 @@ Extractor<B,Q>
 		static_cast<Extractor<B,Q>&>(m).get_sys_llr(static_cast<Q*>(t[p1s_Y_N].get_dataptr()),
 		                                            static_cast<Q*>(t[p1s_Y_K].get_dataptr()));
 
-		return status_t::OK;
+		return status_t::SUCCESS;
 	});
 
 	auto &p2 = this->create_task("get_sys_bit");
@@ -94,7 +94,7 @@ Extractor<B,Q>
 		static_cast<Extractor<B,Q>&>(m).get_sys_bit(static_cast<Q*>(t[p2s_Y_N].get_dataptr()),
 		                                            static_cast<B*>(t[p2s_V_K].get_dataptr()));
 
-		return status_t::OK;
+		return status_t::SUCCESS;
 	});
 
 	const auto tb_2 = this->tail_length / 2;
@@ -108,7 +108,7 @@ Extractor<B,Q>
 		                                                    static_cast<Q*>(t[p3s_sys].get_dataptr()),
 		                                                    static_cast<Q*>(t[p3s_par].get_dataptr()));
 
-		return status_t::OK;
+		return status_t::SUCCESS;
 	});
 
 	auto &p4 = this->create_task("add_sys_and_ext_llr");
@@ -119,7 +119,7 @@ Extractor<B,Q>
 		static_cast<Extractor<B,Q>&>(m).add_sys_and_ext_llr(static_cast<Q*>(t[p4s_ext].get_dataptr()),
 		                                                    static_cast<Q*>(t[p4s_Y_N].get_dataptr()));
 
-		return status_t::OK;
+		return status_t::SUCCESS;
 	});
 }
 

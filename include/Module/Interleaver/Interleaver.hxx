@@ -51,7 +51,7 @@ Interleaver<D,T>
 		static_cast<Interleaver<D,T>&>(m).interleave(static_cast<D*>(t[p1s_nat].get_dataptr()),
 		                                             static_cast<D*>(t[p1s_itl].get_dataptr()));
 
-		return status_t::OK;
+		return status_t::SUCCESS;
 	});
 
 	auto &p2 = this->create_task("deinterleave");
@@ -62,7 +62,7 @@ Interleaver<D,T>
 		static_cast<Interleaver<D,T>&>(m).deinterleave(static_cast<D*>(t[p2s_itl].get_dataptr()),
 		                                               static_cast<D*>(t[p2s_nat].get_dataptr()));
 
-		return status_t::OK;
+		return status_t::SUCCESS;
 	});
 }
 

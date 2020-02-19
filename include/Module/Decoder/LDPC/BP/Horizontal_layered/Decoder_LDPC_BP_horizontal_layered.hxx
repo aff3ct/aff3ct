@@ -135,19 +135,20 @@ int Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 {
 	this->up_rule.begin_decoding(this->n_ite);
 
+	bool valid_synd = true;
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
 		this->up_rule.begin_ite(ite);
 		this->_decode_single_ite(this->var_nodes[frame_id], this->messages[frame_id]);
 		this->up_rule.end_ite();
 
-		if (this->check_syndrome_soft(this->var_nodes[frame_id].data()))
-			break;
+		valid_synd = this->check_syndrome_soft(this->var_nodes[frame_id].data());
+		if (valid_synd) break;
 	}
 
 	this->up_rule.end_decoding();
 
-	return 0;
+	return !valid_synd && this->enable_syndrome;
 }
 
 template <typename B, typename R, class Update_rule>

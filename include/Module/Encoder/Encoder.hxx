@@ -83,7 +83,7 @@ Encoder<B>
 		static_cast<Encoder<B>&>(m).encode(static_cast<B*>(t[ps_U_K].get_dataptr()),
 		                                   static_cast<B*>(t[ps_X_N].get_dataptr()));
 
-		return status_t::OK;
+		return status_t::SUCCESS;
 	});
 
 	std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);

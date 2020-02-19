@@ -24,7 +24,9 @@ namespace module
 class Module;
 class Socket;
 
-enum status_t : int { OK = 0, SKIPPED = std::numeric_limits<int>::min() };
+enum status_t : int { SUCCESS = 0,
+                      FAILURE = 1,
+                      SKIPPED = std::numeric_limits<int>::min() };
 
 enum class socket_t : uint8_t { SIN, SIN_SOUT, SOUT };
 

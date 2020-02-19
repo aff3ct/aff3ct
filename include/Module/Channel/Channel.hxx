@@ -55,7 +55,7 @@ Channel<R>
 		static_cast<Channel<R>&>(m).add_noise(static_cast<R*>(t[p1s_X_N].get_dataptr()),
 		                                      static_cast<R*>(t[p1s_Y_N].get_dataptr()));
 
-		return status_t::OK;
+		return status_t::SUCCESS;
 	});
 
 	auto &p2 = this->create_task("add_noise_wg");
@@ -68,7 +68,7 @@ Channel<R>
 		                                         static_cast<R*>(t[p2s_H_N].get_dataptr()),
 		                                         static_cast<R*>(t[p2s_Y_N].get_dataptr()));
 
-		return status_t::OK;
+		return status_t::SUCCESS;
 	});
 }
 

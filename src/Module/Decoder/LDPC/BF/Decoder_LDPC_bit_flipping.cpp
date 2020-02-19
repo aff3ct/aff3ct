@@ -126,7 +126,7 @@ int Decoder_LDPC_bit_flipping<B,R>
 ::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
 {
 	// actual decoding
-	this->BF_decode(Y_N1,frame_id);
+	auto synd = this->BF_decode(Y_N1,frame_id);
 
 	// prepare for next round by processing extrinsic information
 	for (auto i = 0; i < this->N; i++)
@@ -134,7 +134,7 @@ int Decoder_LDPC_bit_flipping<B,R>
 
 	// saturate<R>(Y_N2, (R)-C_to_V_max, (R)C_to_V_max);
 
-	return 0;
+	return !synd;
 }
 
 template <typename B, typename R>
@@ -146,7 +146,7 @@ int Decoder_LDPC_bit_flipping<B,R>
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
-	this->BF_decode(Y_N, frame_id);
+	auto synd = this->BF_decode(Y_N, frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -162,7 +162,7 @@ int Decoder_LDPC_bit_flipping<B,R>
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
 
-	return 0;
+	return !synd;
 }
 
 template <typename B, typename R>
@@ -174,7 +174,7 @@ int Decoder_LDPC_bit_flipping<B,R>
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	// actual decoding
-	this->BF_decode(Y_N, frame_id);
+	auto synd = this->BF_decode(Y_N, frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -185,12 +185,12 @@ int Decoder_LDPC_bit_flipping<B,R>
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
 
-	return 0;
+	return !synd;
 }
 
 // BF algorithm
 template <typename B, typename R>
-void Decoder_LDPC_bit_flipping<B,R>
+bool Decoder_LDPC_bit_flipping<B,R>
 ::BF_decode(const R *Y_N, const int frame_id)
 {
 	//compute y_min,m for n in N(m)
@@ -212,16 +212,15 @@ void Decoder_LDPC_bit_flipping<B,R>
 	}
 
 	// actual decoding
+	auto syndrome = true;
 	for (auto ite = 0; ite < this->n_ite; ite++)
 	{
 		// specific inner code depending on the selected implementation (WBF for example)
-		auto syndrome = this->BF_process(Y_N, this->V_to_C[frame_id], this->C_to_V[frame_id]);
+		syndrome = this->BF_process(Y_N, this->V_to_C[frame_id], this->C_to_V[frame_id]);
 
 		// stop criterion
 		if (this->enable_syndrome && syndrome)
-		{
-				break;
-		}
+			break;
 	}
 
 	//output
@@ -231,6 +230,7 @@ void Decoder_LDPC_bit_flipping<B,R>
 		this->Lp_N[i] = (decis[i] == 0)?(R)1:(R)-1;
 	}
 
+	return syndrome;
 }
 
 // ==================================================================================== explicit template instantiation

@@ -203,6 +203,7 @@ int Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 {
 	this->up_rule.begin_decoding(this->n_ite);
 
+	int packed_synd = 0;
 	auto ite = 0;
 	for (; ite < this->n_ite; ite++)
 	{
@@ -214,8 +215,8 @@ int Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 		if (this->enable_syndrome && ite != this->n_ite -1)
 		{
 			this->_compute_post(Y_N, this->msg_chk_to_var[cur_wave], this->post);
-			if (this->_check_syndrome_soft(this->post))
-				break;
+			packed_synd = this->_check_syndrome_soft_status(this->post);
+			if (packed_synd == status_t::SUCCESS) break;
 		}
 	}
 	if (ite == this->n_ite)
@@ -223,7 +224,7 @@ int Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 
 	this->up_rule.end_decoding();
 
-	return 0;
+	return packed_synd;
 }
 
 template <typename B, typename R, class Update_rule>
@@ -332,6 +333,51 @@ bool Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 
 	this->cur_syndrome_depth = syndrome_scalar ? (this->cur_syndrome_depth +1) % this->syndrome_depth : 0;
 	return syndrome_scalar && (this->cur_syndrome_depth == 0);
+}
+
+template <typename B, typename R, class Update_rule>
+int Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
+::_check_syndrome_soft_status(const mipp::vector<mipp::Reg<R>> &var_nodes)
+{
+	const auto zero = mipp::Msk<mipp::N<B>()>(false);
+	auto syndrome = zero;
+
+	auto n_chk_nodes = (int)H.get_n_cols();
+	auto c = 0;
+	auto syndrome_scalar = true;
+	while (c < n_chk_nodes)
+	{
+		auto sign = zero;
+		const auto chk_degree = (int)this->H[c].size();
+		for (auto v = 0; v < chk_degree; v++)
+		{
+			const auto value = var_nodes[this->H[c][v]];
+			sign ^= mipp::sign(value);
+		}
+
+		syndrome |= sign;
+		c++;
+	}
+
+	syndrome_scalar = mipp::testz(syndrome);
+
+	this->cur_syndrome_depth = syndrome_scalar ? (this->cur_syndrome_depth +1) % this->syndrome_depth : 0;
+	if (this->cur_syndrome_depth == 0)
+	{
+		if (!syndrome_scalar)
+		{
+			int packed_synd = 0;
+			for (auto n = 0; n < mipp::N<B>(); n++)
+			{
+				packed_synd <<= 1;
+				packed_synd |= syndrome[n];
+			}
+			return packed_synd;
+		}
+		else
+			return status_t::SUCCESS;
+	}
+	return status_t::FAILURE;
 }
 }
 }

@@ -60,7 +60,7 @@ protected:
 	int _decode_siho_cw(const R *Y_N,  B *V_N,  const int frame_id);
 
 	// BP functions for decoding
-	void BF_decode(const R *Y_N, const int frame_id);
+	bool BF_decode(const R *Y_N, const int frame_id);
 
 	virtual bool BF_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V) = 0;
 };

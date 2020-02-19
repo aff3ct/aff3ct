@@ -45,7 +45,7 @@ Sink<B>
 	{
 		static_cast<Sink<B>&>(m).send(static_cast<B*>(t[p1s_V].get_dataptr()));
 
-		return status_t::OK;
+		return status_t::SUCCESS;
 	});
 }
 

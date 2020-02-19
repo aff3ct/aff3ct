@@ -323,7 +323,7 @@ int Task
 					std::cout << "]" << std::endl;
 				}
 			}
-			std::cout << "# Returned status: " << exec_status << std::endl;
+			std::cout << "# Returned status: " << std::hex << exec_status << std::endl;
 			std::cout << "#" << std::endl;
 		}
 

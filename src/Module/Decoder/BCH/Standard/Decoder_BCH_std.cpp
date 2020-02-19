@@ -59,7 +59,6 @@ int Decoder_BCH_std<B, R>
 
 	this->last_is_codeword[frame_id] = !syn_error;
 
-
 	if (syn_error)
 	{ /* if there are errors, try to correct them */
 		/*
@@ -163,7 +162,7 @@ int Decoder_BCH_std<B, R>
 
 		u++;
 		if (l[u] <= this->t)
-		{/* Can correct errors */
+		{	/* May correct errors */
 			/* put elp into index form */
 			for (i = 0; i <= l[u]; i++)
 				elp[u][i] = (int)index_of[elp[u][i]];
@@ -203,17 +202,17 @@ int Decoder_BCH_std<B, R>
 				for (i = 0; i < l[u]; i++)
 					if (loc[i] < this->N)
 						Y_N[loc[i]] ^= 1;
-			}
 
-			return status_t::OK;
+				return status_t::SUCCESS;
+			}
+			else
+				return status_t::FAILURE;
 		}
 		else
-			return 1;
+			return status_t::FAILURE;
 	}
 	else
-	{
-		return status_t::OK;
-	}
+		return status_t::SUCCESS;
 }
 
 

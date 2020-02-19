@@ -61,6 +61,7 @@ protected:
 	template <int F = 1>
 	void _decode_single_ite(mipp::vector<mipp::Reg<R>> &var_nodes, mipp::vector<mipp::Reg<R>> &branches);
 	bool _check_syndrome(const int frame_id);
+	int  _check_syndrome_status(const int frame_id);
 };
 }
 }

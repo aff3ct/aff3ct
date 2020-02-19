@@ -55,10 +55,11 @@ protected:
 	int _decode_siho   (const R *Y_N,  B *V_K,  const int frame_id);
 	int _decode_siho_cw(const R *Y_N,  B *V_N,  const int frame_id);
 
-	void _load               (const R *Y_N, const int frame_id);
-	int  _decode             (const int frame_id);
-	void _decode_single_ite  (mipp::vector<mipp::Reg<R>> &var_nodes, mipp::vector<mipp::Reg<R>> &messages);
-	bool _check_syndrome_soft(const mipp::vector<mipp::Reg<R>> &var_nodes);
+	void _load                      (const R *Y_N, const int frame_id);
+	int  _decode                    (const int frame_id);
+	void _decode_single_ite         (mipp::vector<mipp::Reg<R>> &var_nodes, mipp::vector<mipp::Reg<R>> &messages);
+	bool _check_syndrome_soft       (const mipp::vector<mipp::Reg<R>> &var_nodes);
+	int  _check_syndrome_soft_status(const mipp::vector<mipp::Reg<R>> &var_nodes);
 };
 }
 }

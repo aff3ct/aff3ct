@@ -49,7 +49,7 @@ Coset<B,D>
 		                                  static_cast<D*>(t[ps_in ].get_dataptr()),
 		                                  static_cast<D*>(t[ps_out].get_dataptr()));
 
-		return status_t::OK;
+		return status_t::SUCCESS;
 	});
 }
 

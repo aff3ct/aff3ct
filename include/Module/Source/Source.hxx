@@ -45,7 +45,7 @@ Source<B>
 	{
 		static_cast<Source<B>&>(m).generate(static_cast<B*>(t[ps_U_K].get_dataptr()));
 
-		return status_t::OK;
+		return status_t::SUCCESS;
 	});
 }
 

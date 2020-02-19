@@ -66,6 +66,8 @@ protected:
 	void _compute_post         (const mipp::Reg<R> *Y_N, const mipp::vector<mipp::Reg<R>> &msg_chk_to_var,
 	                                                           mipp::vector<mipp::Reg<R>> &post);
 	bool _check_syndrome_soft  (const mipp::vector<mipp::Reg<R>> &var_nodes);
+
+	int  _check_syndrome_soft_status(const mipp::vector<mipp::Reg<R>> &var_nodes);
 };
 }
 }

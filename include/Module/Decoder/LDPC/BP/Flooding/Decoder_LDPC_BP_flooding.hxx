@@ -153,6 +153,7 @@ int Decoder_LDPC_BP_flooding<B,R,Update_rule>
 {
 	this->up_rule.begin_decoding(this->n_ite);
 
+	bool valid_synd = true;
 	auto ite = 0;
 	for (; ite < this->n_ite; ite++)
 	{
@@ -164,8 +165,8 @@ int Decoder_LDPC_BP_flooding<B,R,Update_rule>
 		if (this->enable_syndrome && ite != this->n_ite -1)
 		{
 			this->_compute_post(Y_N, this->msg_chk_to_var[frame_id], this->post);
-			if (this->check_syndrome_soft(this->post.data()))
-				break;
+			valid_synd = this->check_syndrome_soft(this->post.data());
+			if (valid_synd) break;
 		}
 	}
 	if (ite == this->n_ite)
@@ -173,7 +174,7 @@ int Decoder_LDPC_BP_flooding<B,R,Update_rule>
 
 	this->up_rule.end_decoding();
 
-	return 0;
+	return !valid_synd;
 }
 
 template <typename B, typename R, class Update_rule>
