@@ -1245,6 +1245,9 @@
 #ifndef STATISTICS_HPP_
 #include <Tools/Display/Statistics/Statistics.hpp>
 #endif
+#ifndef TERMINAL_DUMP_HPP_
+#include <Tools/Display/Terminal/Dump/Terminal_dump.hpp>
+#endif
 #ifndef TERMINAL_STD_HPP_
 #include <Tools/Display/Terminal/Standard/Terminal_std.hpp>
 #endif

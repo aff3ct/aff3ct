@@ -249,7 +249,7 @@ void Terminal_std
 				{
 					auto& text = report[g][c];
 
-					if (text.size() < column_width)
+					if (text.size() < (size_t)column_width)
 					{
 						text += " ";
 						text.insert(0, column_width - text.size(), ' ');
