@@ -26,7 +26,7 @@ Socket& Monitor_BFER<B>
 template <typename B>
 template <class A>
 int Monitor_BFER<B>
-::check_errors(const std::vector<B,A>& U, const std::vector<B,A>& Y, const int frame_id)
+::check_errors(const std::vector<B,A>& U, const std::vector<B,A>& Y, std::vector<int64_t>& FRA, std::vector<int64_t>& BE, std::vector<int64_t>& FE, std::vector<float>& BER, std::vector<float>& FER, const int frame_id)
 {
 	if ((int)U.size() != this->K * this->n_frames)
 	{
@@ -44,6 +44,46 @@ int Monitor_BFER<B>
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	if ((int)FRA.size() != this->n_frames)
+	{
+		std::stringstream message;
+		message << "'FRA.size()' has to be equal to 'n_frames' ('FRA.size()' = " << FRA.size()
+		        << ", 'n_frames' = " << this->n_frames << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if ((int)BE.size() != this->n_frames)
+	{
+		std::stringstream message;
+		message << "'BE.size()' has to be equal to 'n_frames' ('BE.size()' = " << BE.size()
+		        << ", 'n_frames' = " << this->n_frames << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if ((int)FE.size() != this->n_frames)
+	{
+		std::stringstream message;
+		message << "'FE.size()' has to be equal to 'n_frames' ('FE.size()' = " << FE.size()
+		        << ", 'n_frames' = " << this->n_frames << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if ((int)BER.size() != this->n_frames)
+	{
+		std::stringstream message;
+		message << "'BER.size()' has to be equal to 'n_frames' ('BER.size()' = " << BER.size()
+		        << ", 'n_frames' = " << this->n_frames << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if ((int)FER.size() != this->n_frames)
+	{
+		std::stringstream message;
+		message << "'FER.size()' has to be equal to 'n_frames' ('FER.size()' = " << FER.size()
+		        << ", 'n_frames' = " << this->n_frames << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (frame_id != -1 && frame_id >= this->n_frames)
 	{
 		std::stringstream message;
@@ -52,7 +92,7 @@ int Monitor_BFER<B>
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	return this->check_errors(U.data(), Y.data(), frame_id);
+	return this->check_errors(U.data(), Y.data(), FRA.data(), BE.data(), FE.data(), BER.data(), FER.data(), frame_id);
 }
 }
 }
