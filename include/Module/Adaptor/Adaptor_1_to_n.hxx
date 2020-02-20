@@ -103,7 +103,7 @@ void Adaptor_1_to_n
 	auto &p1 = this->create_task("push_1", (int)adp::tsk::push_1);
 	std::vector<size_t> p1s_in;
 	for (size_t s = 0; s < this->n_sockets; s++)
-		p1s_in.push_back(create_socket_in(p1, this->n_elmts[s], this->datatype[s], "in" + std::to_string(s)));
+		p1s_in.push_back(create_socket_in(p1, this->n_elmts[s], this->datatype[s], "in" + std::to_string(s+1)));
 
 	this->create_codelet(p1, [p1s_in](Module &m, Task &t) -> int
 	{
@@ -128,7 +128,7 @@ void Adaptor_1_to_n
 	auto &p2 = this->create_task("pull_n", (int)adp::tsk::pull_n);
 	std::vector<size_t> p2s_out;
 	for (size_t s = 0; s < this->n_sockets; s++)
-		p2s_out.push_back(create_socket_out(p2, this->n_elmts[s], this->datatype[s], "out" + std::to_string(s)));
+		p2s_out.push_back(create_socket_out(p2, this->n_elmts[s], this->datatype[s], "out" + std::to_string(s+1)));
 
 	this->create_codelet(p2, [p2s_out](Module &m, Task &t) -> int
 	{
