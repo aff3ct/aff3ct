@@ -323,8 +323,8 @@ int Task
 					std::cout << "]" << std::endl;
 				}
 			}
-			std::cout << "# Returned status: " << std::hex << exec_status << std::endl;
-			std::cout << "#" << std::endl;
+			std::cout << "# Returned status: " << std::hex << std::showbase << exec_status << std::endl;
+			std::cout << "#" << std::noshowbase << std::endl;
 		}
 
 		if (exec_status < 0)
