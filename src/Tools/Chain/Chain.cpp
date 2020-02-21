@@ -799,6 +799,7 @@ void Chain
 
 			ss_cpy->type = ss_ref->type;
 			ss_cpy->id = ss_ref->id;
+			ss_cpy->tasks_id = ss_ref->tasks_id;
 			for (auto t_ref : ss_ref->tasks)
 			{
 				auto &m_ref = t_ref->get_module();
