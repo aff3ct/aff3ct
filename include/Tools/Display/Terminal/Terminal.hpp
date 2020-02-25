@@ -76,6 +76,8 @@ public:
 
 	void stop_temp_report();
 
+	static void init();
+
 	/*!
 	 * \brief Tells if the user asked for stopping the current computations.
 	 *

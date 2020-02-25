@@ -25,7 +25,12 @@ Terminal
   real_time_state(0)
 {
 	Terminal::interrupt = false;
+	Terminal::init();
+}
 
+void Terminal
+::init()
+{
 	// Install a signal handler
 #if !defined(_WIN64) && !defined(_WIN32)
 	std::signal(SIGUSR1, Terminal::signal_interrupt_handler);
