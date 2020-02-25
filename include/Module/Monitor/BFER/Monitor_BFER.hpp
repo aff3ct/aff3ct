@@ -74,7 +74,7 @@ public:
 	template <class A = std::allocator<B>>
 	int check_errors(const std::vector<B,A>& U, const std::vector<B,A>& Y, std::vector<int64_t>& FRA, std::vector<int64_t>& BE, std::vector<int64_t>& FE, std::vector<float>& BER, std::vector<float>& FER, const int frame_id = -1);
 
-	virtual int check_errors(const B *U, const B *Y, int64_t *FRA, int64_t *BE, int64_t *FE, float *BER, float *FER, const int frame_id = -1);
+	virtual int check_errors(const B *U, const B *Y, int64_t *FRA, int32_t *BE, int32_t *FE, float *BER, float *FER, const int frame_id = -1);
 
 	bool    fe_limit_achieved() const;
 	bool frame_limit_achieved() const;
