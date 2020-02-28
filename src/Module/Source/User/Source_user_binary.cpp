@@ -7,10 +7,15 @@ using namespace aff3ct::module;
 
 template <typename B>
 Source_user_binary<B>
-::Source_user_binary(const int K, const std::string filename, const bool auto_reset, const int n_frames)
+::Source_user_binary(const int K,
+                     const std::string &filename,
+                     const bool auto_reset,
+                     const bool fifo_mode,
+                     const int n_frames)
 : Source<B>(K, n_frames),
   source_file(filename.c_str(), std::ios::in | std::ios::binary),
-  auto_reset(auto_reset),
+  auto_reset(fifo_mode ? true : auto_reset),
+  fifo_mode(fifo_mode),
   over(false),
   n_left(0),
   memblk(K),
@@ -32,7 +37,8 @@ void Source_user_binary<B>
 ::reset()
 {
 	source_file.clear();
-	source_file.seekg (0, std::ios::beg);
+	if (!this->fifo_mode)
+		source_file.seekg(0, std::ios::beg);
 	if (source_file.fail())
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "Could not go back to the beginning of the file.");
 	this->over = false;

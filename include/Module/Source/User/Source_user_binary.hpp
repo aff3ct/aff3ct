@@ -18,13 +18,18 @@ class Source_user_binary : public Source<B>
 private:
 	std::ifstream source_file;
 	const bool auto_reset;
+	const bool fifo_mode;
 	bool over;
 	size_t n_left;
 	std::vector<char> memblk;
 	std::vector<B> left_bits; // to store bits that are left by last call (n_left & n_completing)
 
 public:
-	Source_user_binary(const int K, std::string filename, const bool auto_reset = true, const int n_frames = 1);
+	Source_user_binary(const int K,
+	                   const std::string &filename,
+	                   const bool auto_reset = true,
+	                   const bool fifo_mode = false,
+	                   const int n_frames = 1);
 	virtual ~Source_user_binary() = default;
 
 	virtual bool is_over() const;

@@ -57,6 +57,9 @@ void Source
 
 	tools::add_arg(args, p, class_name+"p+no-reset",
 		cli::None());
+
+	tools::add_arg(args, p, class_name+"p+fifo",
+		cli::None());
 }
 
 void Source
@@ -72,6 +75,10 @@ void Source
 	if(vals.exist({p+"-seed",      "S"})) this->seed       = vals.to_int ({p+"-seed",      "S"});
 	if(vals.exist({p+"-start-idx"     })) this->start_idx  = vals.to_int ({p+"-start-idx"     });
 	if(vals.exist({p+"-no-reset"      })) this->auto_reset = false;
+	if(vals.exist({p+"-fifo"          })) this->fifo_mode  = true;
+
+	if (this->fifo_mode)
+		this->auto_reset = true;
 }
 
 void Source
@@ -88,7 +95,10 @@ void Source
 	if (this->type == "RAND" && full)
 		headers[p].push_back(std::make_pair("Seed", std::to_string(this->seed)));
 	if (this->type == "USER_BIN")
+	{
 		headers[p].push_back(std::make_pair("Auto reset", std::string(this->auto_reset ? "on" : "off")));
+		headers[p].push_back(std::make_pair("Fifo mode", std::string(this->auto_reset ? "on" : "off")));
+	}
 
 }
 
@@ -108,7 +118,7 @@ module::Source<B>* Source
 	if (this->type == "USER")  return new module::Source_user<B>(this->K, this->path, this->n_frames, this->start_idx);
 
 	if (this->type == "USER_BIN")
-		return new module::Source_user_binary<B>(this->K, this->path, this->auto_reset, this->n_frames);
+		return new module::Source_user_binary<B>(this->K, this->path, this->auto_reset, this->fifo_mode, this->n_frames);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

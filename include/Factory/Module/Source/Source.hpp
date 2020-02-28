@@ -31,6 +31,7 @@ public:
 	std::string implem     = "STD";
 	std::string path       = "";
 	bool        auto_reset = true;
+	bool        fifo_mode  = false;
 	int         n_frames   = 1;
 	int         seed       = 0;
 	int         start_idx  = 0;

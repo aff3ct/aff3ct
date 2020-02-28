@@ -163,6 +163,13 @@ With the ``USER`` source type, an |ASCII| file is expected:
 
 |factory::Source::p+no-reset|
 
+.. _src-src-fifo:
+
+``--src-fifo``
+""""""""""""""
+
+|factory::Source::p+fifo|
+
 .. _src-src-start-idx:
 
 ``--src-start-idx``

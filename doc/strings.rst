@@ -814,6 +814,10 @@
    Do not reset the source (start to the beginning) if the file reach |EOF| and
    pad with zeros after |EOF| (work only for ``USER_BIN`` source type).
 
+.. |factory::Source::p+fifo| replace::
+   If the FIFO (or pipe) reach the end, then reset the |EOF| flag and retry to
+   read in loop.
+
 .. ------------------------------------ factory Frozenbits_generator parameters
 
 .. |factory::Frozenbits_generator::p+info-bits,K| replace::
