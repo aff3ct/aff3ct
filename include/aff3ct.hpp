@@ -738,6 +738,27 @@
 #ifndef MONITOR_HPP_
 #include <Module/Monitor/Monitor.hpp>
 #endif
+#ifndef PROBE_LATENCY_HPP_
+#include <Module/Probe/Latency/Probe_latency.hpp>
+#endif
+#ifndef PROBE_OCCURRENCE_HPP_
+#include <Module/Probe/Occurrence/Probe_occurrence.hpp>
+#endif
+#ifndef PROBE_HPP_
+#include <Module/Probe/Probe.hpp>
+#endif
+#ifndef PROBE_THROUGHPUT_HPP_
+#include <Module/Probe/Throughput/Probe_throughput.hpp>
+#endif
+#ifndef PROBE_TIME_HPP_
+#include <Module/Probe/Time/Probe_time.hpp>
+#endif
+#ifndef PROBE_TIMESTAMP_HPP_
+#include <Module/Probe/Timestamp/Probe_timestamp.hpp>
+#endif
+#ifndef PROBE_VALUE_HPP_
+#include <Module/Probe/Value/Probe_value.hpp>
+#endif
 #ifndef PUNCTURER_LDPC_HPP_
 #include <Module/Puncturer/LDPC/Puncturer_LDPC.hpp>
 #endif
@@ -1232,6 +1253,12 @@
 #endif
 #ifndef REPORTER_NOISE_HPP_
 #include <Tools/Display/Reporter/Noise/Reporter_noise.hpp>
+#endif
+#ifndef REPORTER_PROBE_DECSTAT_HPP_
+#include <Tools/Display/Reporter/Probe/Reporter_probe_decstat.hpp>
+#endif
+#ifndef REPORTER_PROBE_HPP_
+#include <Tools/Display/Reporter/Probe/Reporter_probe.hpp>
 #endif
 #ifndef REPORTER_HPP__
 #include <Tools/Display/Reporter/Reporter.hpp>
