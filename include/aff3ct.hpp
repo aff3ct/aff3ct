@@ -834,8 +834,8 @@
 #ifndef SOURCE_USER_HPP_
 #include <Module/Source/User/Source_user.hpp>
 #endif
-#ifndef SUBCHAIN_HPP_
-#include <Module/Subchain/Subchain.hpp>
+#ifndef SUBSEQUENCE_HPP_
+#include <Module/Subsequence/Subsequence.hpp>
 #endif
 #ifndef TASK_HPP_
 #include <Module/Task.hpp>
@@ -956,12 +956,6 @@
 #endif
 #ifndef AUTO_CLONED_UNIQUE_PTR_HPP__
 #include <Tools/auto_cloned_unique_ptr.hpp>
-#endif
-#ifndef CHAIN_HPP_
-#include <Tools/Chain/Chain.hpp>
-#endif
-#ifndef CHAIN_PIPELINE_HPP_
-#include <Tools/Chain/Pipeline.hpp>
 #endif
 #ifndef BCH_POLYNOMIAL_GENERATOR_HPP
 #include <Tools/Code/BCH/BCH_polynomial_generator.hpp>
@@ -1445,6 +1439,12 @@
 #endif
 #ifndef REORDERER_HPP_
 #include <Tools/Perf/Reorderer/Reorderer.hpp>
+#endif
+#ifndef CHAIN_PIPELINE_HPP_
+#include <Tools/Sequence/Pipeline.hpp>
+#endif
+#ifndef SEQUENCE_HPP_
+#include <Tools/Sequence/Sequence.hpp>
 #endif
 #ifndef SC_DEBUG_HPP_
 #include <Tools/SystemC/SC_Debug.hpp>
