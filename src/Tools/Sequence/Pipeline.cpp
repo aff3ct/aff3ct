@@ -18,19 +18,30 @@ using namespace aff3ct::tools;
 //            const module::Task &last,
 //            const std::vector<std::pair<std::vector<const module::Task*>, std::vector<const module::Task*>>> &sep_stages,
 //            const std::vector<size_t> &n_threads,
+//            const std::vector<size_t> &synchro_buffer_sizes,
+//            const std::vector<bool> &synchro_active_waiting,
 //            const std::vector<bool> &thread_pinning,
 //            const std::vector<std::vector<size_t>> &puids)
 // : original_sequence(first, last, 1),
 //   stages(sep_stages.size()),
 //   adaptors(sep_stages.size() -1)
 // {
-// 	this->init<const module::Task>(first, &last, sep_stages, n_threads, thread_pinning, puids);
+// 	this->init<const module::Task>(first,
+// 	                               &last,
+// 	                               sep_stages,
+// 	                               n_threads,
+// 	                               synchro_buffer_sizes,
+// 	                               synchro_active_waiting,
+// 	                               thread_pinning,
+// 	                               puids);
 // }
 
 // Pipeline
 // ::Pipeline(const module::Task &first,
 //            const std::vector<std::pair<std::vector<const module::Task*>, std::vector<const module::Task*>>> &sep_stages,
 //            const std::vector<size_t> &n_threads,
+//            const std::vector<size_t> &synchro_buffer_sizes,
+//            const std::vector<bool> &synchro_active_waiting,
 //            const std::vector<bool> &thread_pinning,
 //            const std::vector<std::vector<size_t>> &puids)
 // : original_sequence(first, 1),
@@ -38,7 +49,14 @@ using namespace aff3ct::tools;
 //   adaptors(sep_stages.size() -1)
 // {
 // 	const module::Task* last = nullptr;
-// 	this->init<const module::Task>(first, last, sep_stages, n_threads, thread_pinning, puids);
+// 	this->init<const module::Task>(first,
+// 	                               last,
+// 	                               sep_stages,
+// 	                               n_threads,
+// 	                               synchro_buffer_sizes,
+// 	                               synchro_active_waiting,
+// 	                               thread_pinning,
+// 	                               puids);
 // }
 
 Pipeline
@@ -46,6 +64,8 @@ Pipeline
            const std::vector<module::Task*> &lasts,
            const std::vector<std::pair<std::vector<module::Task*>, std::vector<module::Task*>>> &sep_stages,
            const std::vector<size_t> &n_threads,
+           const std::vector<size_t> &synchro_buffer_sizes,
+           const std::vector<bool> &synchro_active_waiting,
            const std::vector<bool> &thread_pinning,
            const std::vector<std::vector<size_t>> &puids/*,
            const std::vector<bool> &tasks_inplace*/)
@@ -53,13 +73,22 @@ Pipeline
   stages(sep_stages.size()),
   adaptors(sep_stages.size() -1)
 {
-	this->init<module::Task>(firsts, lasts, sep_stages, n_threads, thread_pinning, puids/*, tasks_inplace*/);
+	this->init<module::Task>(firsts,
+	                         lasts,
+	                         sep_stages,
+	                         n_threads,
+	                         synchro_buffer_sizes,
+	                         synchro_active_waiting,
+	                         thread_pinning, puids
+	                         /*, tasks_inplace*/);
 }
 
 Pipeline
 ::Pipeline(const std::vector<module::Task*> &firsts,
            const std::vector<std::pair<std::vector<module::Task*>, std::vector<module::Task*>>> &sep_stages,
            const std::vector<size_t> &n_threads,
+           const std::vector<size_t> &synchro_buffer_sizes,
+           const std::vector<bool> &synchro_active_waiting,
            const std::vector<bool> &thread_pinning,
            const std::vector<std::vector<size_t>> &puids/*,
            const std::vector<bool> &tasks_inplace*/)
@@ -67,7 +96,15 @@ Pipeline
   stages(sep_stages.size()),
   adaptors(sep_stages.size() -1)
 {
-	this->init<module::Task>(firsts, {}, sep_stages, n_threads, thread_pinning, puids/*, tasks_inplace*/);
+	this->init<module::Task>(firsts,
+	                         {},
+	                         sep_stages,
+	                         n_threads,
+	                         synchro_buffer_sizes,
+	                         synchro_active_waiting,
+	                         thread_pinning,
+	                         puids
+	                         /*, tasks_inplace*/);
 }
 
 Pipeline
@@ -75,10 +112,20 @@ Pipeline
            module::Task &last,
            const std::vector<std::pair<std::vector<module::Task*>, std::vector<module::Task*>>> &sep_stages,
            const std::vector<size_t> &n_threads,
+           const std::vector<size_t> &synchro_buffer_sizes,
+           const std::vector<bool> &synchro_active_waiting,
            const std::vector<bool> &thread_pinning,
            const std::vector<std::vector<size_t>> &puids/*,
            const std::vector<bool> &tasks_inplace*/)
-: Pipeline({&first}, {&last}, sep_stages, n_threads, thread_pinning, puids/*, tasks_inplace*/)
+: Pipeline({&first},
+           {&last},
+           sep_stages,
+           n_threads,
+           synchro_buffer_sizes,
+           synchro_active_waiting,
+           thread_pinning,
+           puids
+           /*, tasks_inplace*/)
 {
 }
 
@@ -86,10 +133,19 @@ Pipeline
 ::Pipeline(module::Task &first,
            const std::vector<std::pair<std::vector<module::Task*>, std::vector<module::Task*>>> &sep_stages,
            const std::vector<size_t> &n_threads,
+           const std::vector<size_t> &synchro_buffer_sizes,
+           const std::vector<bool> &synchro_active_waiting,
            const std::vector<bool> &thread_pinning,
            const std::vector<std::vector<size_t>> &puids/*,
            const std::vector<bool> &tasks_inplace*/)
-: Pipeline({&first}, sep_stages, n_threads, thread_pinning, puids/*, tasks_inplace*/)
+: Pipeline({&first},
+           sep_stages,
+           n_threads,
+           synchro_buffer_sizes,
+           synchro_active_waiting,
+           thread_pinning,
+           puids
+           /*, tasks_inplace*/)
 {
 }
 
@@ -154,6 +210,8 @@ void Pipeline
        const std::vector<TA*> &lasts,
        const std::vector<std::pair<std::vector<TA*>,std::vector<TA*>>> &sep_stages,
        const std::vector<size_t> &n_threads,
+       const std::vector<size_t> &synchro_buffer_sizes,
+       const std::vector<bool> &synchro_active_waiting,
        const std::vector<bool> &thread_pinning,
        const std::vector<std::vector<size_t>> &puids/*,
        const std::vector<bool> &tasks_inplace*/)
@@ -163,6 +221,24 @@ void Pipeline
 		std::stringstream message;
 		message << "'n_threads.size()' has to be equal to 'sep_stages.size()' or equal to '0' ('n_threads.size()' = "
 		        << n_threads.size() << " , 'sep_stages.size()' = " << sep_stages.size() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (sep_stages.size() != synchro_buffer_sizes.size() +1 && synchro_buffer_sizes.size() != 0)
+	{
+		std::stringstream message;
+		message << "'synchro_buffer_sizes.size()' has to be equal to 'sep_stages.size() -1' or equal to '0' "
+		        << "('synchro_buffer_sizes.size()' = " << synchro_buffer_sizes.size() << " , 'sep_stages.size()' = "
+		        << sep_stages.size() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (sep_stages.size() != synchro_active_waiting.size() +1 && synchro_active_waiting.size() != 0)
+	{
+		std::stringstream message;
+		message << "'synchro_active_waiting.size()' has to be equal to 'sep_stages.size() -1' or equal to '0' "
+		        << "('synchro_active_waiting.size()' = " << synchro_active_waiting.size() << " , 'sep_stages.size()' = "
+		        << sep_stages.size() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -245,11 +321,11 @@ void Pipeline
 		}
 	}
 
-	this->create_adaptors();
+	this->create_adaptors(synchro_buffer_sizes, synchro_active_waiting);
 }
 
 void Pipeline
-::create_adaptors()
+::create_adaptors(const std::vector<size_t> &synchro_buffer_sizes, const std::vector<bool> &synchro_active_waiting)
 {
 	//                     sck out addr     occ     stage   tsk id  sck id
 	std::vector<std::tuple<module::Socket*, size_t, size_t, size_t, size_t>> out_sck_orphans;
@@ -477,8 +553,9 @@ void Pipeline
 		{
 			std::vector<size_t         > adp_n_elmts;
 			std::vector<std::type_index> adp_datatype;
-			size_t                       adp_buffer_size = 1024;
-			bool                         adp_active_waiting = false;
+			size_t                       adp_buffer_size = synchro_buffer_sizes.size() ? synchro_buffer_sizes[sta] : 1;
+			bool                         adp_active_waiting = synchro_active_waiting.size() ?
+			                                                  synchro_active_waiting[sta] : false;
 			size_t                       adp_n_frames = 1;
 
 			std::vector<module::Socket*> passed_scks_out;
@@ -513,6 +590,7 @@ void Pipeline
 				                                 adp_active_waiting,
 				                                 adp_n_frames);
 
+			size_t last_task_id = 0;
 			for (size_t t = 0; t < n_threads; t++)
 			{
 				module::Adaptor* cur_adp = (t == 0) ? adp : adp->clone();
@@ -571,15 +649,14 @@ void Pipeline
 				assert(ss != nullptr);
 				ss->tasks    .push_back(task_push);
 				ss->processes.push_back([task_push]() -> int { return task_push->exec(); });
-				ss->tasks_id .push_back(ss->tasks_id[ss->tasks_id.size() -1] +1);
+				last_task_id = ss->tasks_id[ss->tasks_id.size() -1] +1;
+				ss->tasks_id .push_back(last_task_id);
 				// this->stages[sta]->update_tasks_id(t);
 			}
-			auto last_task_id = this->stages[sta]->lasts_tasks_id.back() +1;
 			this->stages[sta]->lasts_tasks_id.clear();
 			this->stages[sta]->lasts_tasks_id.push_back(last_task_id);
 			this->stages[sta]->n_tasks++;
 		}
-
 		this->stages[sta]->update_firsts_and_lasts_tasks();
 		sck_to_adp_sck_id = sck_to_adp_sck_id_new;
 	}
@@ -715,4 +792,85 @@ std::vector<std::vector<module::Task*>> Pipeline
 		                       tasks_per_types_add.end  ());
 	}
 	return tasks_per_types;
+}
+
+void Pipeline
+::export_dot(std::ostream &stream) const
+{
+	std::function<void(Generic_node<Sub_sequence>*,
+	                   const size_t,
+	                   const std::string&,
+	                   std::ostream&)> export_dot_subsequences_recursive =
+		[&export_dot_subsequences_recursive, this](Generic_node<Sub_sequence> *cur_node,
+		                                           const size_t sta,
+		                                           const std::string &tab,
+		                                           std::ostream &stream)
+		{
+			if (cur_node != nullptr)
+			{
+				this->stages[sta]->export_dot_subsequence(cur_node->get_c()->tasks,
+				                                          cur_node->get_c()->tasks_id,
+				                                          cur_node->get_c()->type,
+				                                          "Sub-sequence "+std::to_string(cur_node->get_c()->id),
+				                                          tab,
+				                                          stream);
+
+				for (auto c : cur_node->get_children())
+					export_dot_subsequences_recursive(c, sta, tab, stream);
+			}
+		};
+
+	std::function<void(Generic_node<Sub_sequence>*,
+		               const size_t,
+	                   const std::string&,
+	                   std::ostream&)> export_dot_connections_recursive =
+		[&export_dot_connections_recursive, this](Generic_node<Sub_sequence> *cur_node,
+		                                          const size_t sta,
+		                                          const std::string &tab,
+		                                          std::ostream &stream)
+		{
+			if (cur_node != nullptr)
+			{
+				this->stages[sta]->export_dot_connections(cur_node->get_c()->tasks, tab, stream);
+
+				for (auto c : cur_node->get_children())
+					export_dot_connections_recursive(c, sta, tab, stream);
+			}
+		};
+
+	std::string tab = "\t";
+	stream << "digraph Pipeline {" << std::endl;
+	stream << tab << "compound=true;" << std::endl;
+
+	for (size_t sta = 0; sta < this->stages.size(); sta++)
+	{
+		const auto n_threads = this->stages[sta]->get_n_threads();
+		stream << tab << "subgraph \"cluster_Stage " << sta << "\" {" << std::endl;
+		stream << tab << tab << "node [style=filled];" << std::endl;
+		export_dot_subsequences_recursive(this->stages[sta]->sequences[0], sta, tab, stream);
+		stream << tab << tab << "label=\"Pipeline stage " << sta << " (" << n_threads << " thread(s))\";" << std::endl;
+		std::string color = "blue";
+		stream << tab << tab << "color=" << color << ";" << std::endl;
+		stream << tab << "}" << std::endl;
+	}
+
+	for (size_t sta = 0; sta < this->stages.size(); sta++)
+	{
+		export_dot_connections_recursive(this->stages[sta]->sequences[0], sta, tab, stream);
+		if (sta > 0)
+		{
+			auto tsk1 = this->stages[sta -1]->get_lasts_tasks()[0].back();
+			auto tsk2 = this->stages[sta +0]->get_firsts_tasks()[0][0];
+
+			auto sck1 = tsk1->sockets[0];
+			auto sck2 = tsk2->sockets[0];
+
+			stream << tab << "\"" << +sck1.get() << "\" -> \"" << +sck2.get()
+			              << "\" [ltail=\"cluster_" << +&tsk1->get_module() << "_" << +tsk1
+			              << "\" lhead=\"cluster_" << +&tsk2->get_module() << "_" << +tsk2
+			              << "\" color=\"green\" style=\"dashed\"];" << std::endl;
+		}
+	}
+
+	stream << "}" << std::endl;
 }

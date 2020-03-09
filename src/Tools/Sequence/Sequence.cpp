@@ -1011,13 +1011,14 @@ void Sequence
 {
 	if (!subseq_name.empty())
 	{
-		stream << tab << "subgraph \"cluster_" << subseq_name << "\" {" << std::endl;
+		stream << tab << "subgraph \"cluster_" << subseq_name << "_" << +this << "\" {" << std::endl;
 		stream << tab << tab << "node [style=filled];" << std::endl;
 	}
 	size_t exec_order = 0;
 	for (auto &t : subseq)
 	{
-		stream << tab << tab << "subgraph \"cluster_" << +&t->get_module() << "_" << +&t << "\" {" << std::endl;
+		std::string color = dynamic_cast<module::Adaptor*>(&t->get_module()) ? "green" :"blue";
+		stream << tab << tab << "subgraph \"cluster_" << +&t->get_module() << "_" << +t << "\" {" << std::endl;
 		stream << tab << tab << tab << "node [style=filled];" << std::endl;
 		stream << tab << tab << tab << "subgraph \"cluster_" << +&t << "\" {" << std::endl;
 		stream << tab << tab << tab << tab << "node [style=filled];" << std::endl;
@@ -1035,18 +1036,18 @@ void Sequence
 			                                   << "[label=\"" << stype << ":" << s->get_name() << "\"];" << std::endl;
 		}
 		stream << tab << tab << tab << tab << "label=\"" << t->get_name() << " (id = " << tasks_id[exec_order] << ")" << "\";" << std::endl;
-		stream << tab << tab << tab << tab << "color=blue;" << std::endl;
+		stream << tab << tab << tab << tab << "color=" << color << ";" << std::endl;
 		stream << tab << tab << tab << "}" << std::endl;
 		stream << tab << tab << tab << "label=\"" << t->get_module().get_name() << "\n"
 		                            << (t->get_module().get_custom_name().empty() ? "" : t->get_module().get_custom_name() + "\n")
 		                            << "exec order: [" << exec_order++ << "]\n"
 		                            << "addr: " << +&t->get_module() << "\";" << std::endl;
-		stream << tab << tab << tab << "color=blue;" << std::endl;
+		stream << tab << tab << tab << "color=" << color << ";" << std::endl;
 		stream << tab << tab << "}" << std::endl;
 	}
 	if (!subseq_name.empty())
 	{
-		stream << tab << tab << "label=\"" << subseq_name << " (" << this->get_n_threads() << " thread(s))" << "\";"
+		stream << tab << tab << "label=\"" << subseq_name << "\";"
 		       << std::endl;
 		std::string color = subseq_type == subseq_t::LOOP ? "red" : "blue";
 		stream << tab << tab << "color=" << color << ";" << std::endl;
@@ -1105,7 +1106,7 @@ void Sequence
 				this->export_dot_subsequence(cur_node->get_c()->tasks,
 				                             cur_node->get_c()->tasks_id,
 				                             cur_node->get_c()->type,
-				                             "Sub-sequence"+std::to_string(cur_node->get_c()->id),
+				                             "Sub-sequence "+std::to_string(cur_node->get_c()->id),
 				                             tab,
 				                             stream);
 

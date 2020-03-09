@@ -30,17 +30,23 @@ public:
 	// Pipeline(const module::Task &first,
 	//          const std::vector<std::pair<std::vector<const module::Task*>, std::vector<const module::Task*>>> &sep_stages = {},
 	//          const std::vector<size_t> &n_threads = {},
+	//          const std::vector<size_t> &synchro_buffer_sizes = {},
+	//          const std::vector<bool> &synchro_active_waiting = {},
 	//          const std::vector<bool> &thread_pinning = {},
 	//          const std::vector<std::vector<size_t>> &puids = {});
 	// Pipeline(const module::Task &first,
 	//          const module::Task &last,
 	//          const std::vector<std::pair<std::vector<const module::Task*>, std::vector<const module::Task*>>> &sep_stages = {},
 	//          const std::vector<size_t> &n_threads = {},
+	//          const std::vector<size_t> &synchro_buffer_sizes = {},
+	//          const std::vector<bool> &synchro_active_waiting = {},
 	//          const std::vector<bool> &thread_pinning = {},
 	//          const std::vector<std::vector<size_t>> &puids = {});
 	Pipeline(const std::vector<module::Task*> &firsts,
 	         const std::vector<std::pair<std::vector<module::Task*>, std::vector<module::Task*>>> &sep_stages = {},
 	         const std::vector<size_t> &n_threads = {},
+	         const std::vector<size_t> &synchro_buffer_sizes = {},
+	         const std::vector<bool> &synchro_active_waiting = {},
 	         const std::vector<bool> &thread_pinning = {},
 	         const std::vector<std::vector<size_t>> &puids = {}/*,
 	         const std::vector<bool> &tasks_inplace = {}*/);
@@ -48,12 +54,16 @@ public:
 	         const std::vector<module::Task*> &lasts,
 	         const std::vector<std::pair<std::vector<module::Task*>, std::vector<module::Task*>>> &sep_stages = {},
 	         const std::vector<size_t> &n_threads = {},
+	         const std::vector<size_t> &synchro_buffer_sizes = {},
+	         const std::vector<bool> &synchro_active_waiting = {},
 	         const std::vector<bool> &thread_pinning = {},
 	         const std::vector<std::vector<size_t>> &puids = {}/*,
 	         const std::vector<bool> &tasks_inplace = {}*/);
 	Pipeline(module::Task &first,
 	         const std::vector<std::pair<std::vector<module::Task*>, std::vector<module::Task*>>> &sep_stages = {},
 	         const std::vector<size_t> &n_threads = {},
+	         const std::vector<size_t> &synchro_buffer_sizes = {},
+	         const std::vector<bool> &synchro_active_waiting = {},
 	         const std::vector<bool> &thread_pinning = {},
 	         const std::vector<std::vector<size_t>> &puids = {}/*,
 	         const std::vector<bool> &tasks_inplace = {}*/);
@@ -61,6 +71,8 @@ public:
 	         module::Task &last,
 	         const std::vector<std::pair<std::vector<module::Task*>, std::vector<module::Task*>>> &sep_stages = {},
 	         const std::vector<size_t> &n_threads = {},
+	         const std::vector<size_t> &synchro_buffer_sizes = {},
+	         const std::vector<bool> &synchro_active_waiting = {},
 	         const std::vector<bool> &thread_pinning = {},
 	         const std::vector<std::vector<size_t>> &puids = {}/*,
 	         const std::vector<bool> &tasks_inplace = {}*/);
@@ -84,8 +96,11 @@ public:
 	inline const std::vector<std::vector<module::Task*>>& get_firsts_tasks() const;
 	inline const std::vector<std::vector<module::Task*>>& get_lasts_tasks() const;
 
+	void export_dot(std::ostream &stream = std::cout) const;
+
 protected:
-	void create_adaptors();
+	void create_adaptors(const std::vector<size_t> &synchro_buffer_sizes = {},
+	                     const std::vector<bool> &synchro_active_waiting = {});
 
 private:
 	template <class TA>
@@ -93,6 +108,8 @@ private:
 	          const std::vector<TA*> &lasts,
 	          const std::vector<std::pair<std::vector<TA*>, std::vector<TA*>>> &sep_stages = {},
 	          const std::vector<size_t> &n_threads = {},
+	          const std::vector<size_t> &synchro_buffer_sizes = {},
+	          const std::vector<bool> &synchro_active_waiting = {},
 	          const std::vector<bool> &thread_pinning = {},
 	          const std::vector<std::vector<size_t>> &puids = {}/*,
 	          const std::vector<bool> &tasks_inplace = {}*/);
