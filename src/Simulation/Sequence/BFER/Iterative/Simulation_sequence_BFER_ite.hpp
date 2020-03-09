@@ -1,5 +1,5 @@
-#ifndef SIMULATION_CHAIN_BFER_ITE_HPP_
-#define SIMULATION_CHAIN_BFER_ITE_HPP_
+#ifndef SIMULATION_SEQUENCE_BFER_ITE_HPP_
+#define SIMULATION_SEQUENCE_BFER_ITE_HPP_
 
 #include <memory>
 
@@ -17,7 +17,7 @@
 #include "Tools/Constellation/Constellation.hpp"
 #include "Tools/Math/Distribution/Distributions.hpp"
 #include "Factory/Simulation/BFER/BFER_ite.hpp"
-#include "Simulation/Chain/BFER/Simulation_chain_BFER.hpp"
+#include "Simulation/Sequence/BFER/Simulation_sequence_BFER.hpp"
 
 namespace aff3ct
 {
@@ -25,12 +25,12 @@ namespace simulation
 {
 
 template <typename B = int, typename R = float, typename Q = R>
-class Simulation_chain_BFER_ite : public Simulation_chain_BFER<B,R>
+class Simulation_sequence_BFER_ite : public Simulation_sequence_BFER<B,R>
 {
 protected:
 	const factory::BFER_ite &params_BFER_ite;
 
-	// communication chain
+	// communication sequence
 	std::unique_ptr<module::Source          <B    >> source;
 	std::unique_ptr<module::CRC             <B    >> crc;
 	std::unique_ptr<tools ::Codec_SISO      <B,  Q>> codec1;
@@ -51,8 +51,8 @@ protected:
 	std::shared_ptr<module::Loop_CRC        <B,Q  >> loop_crc;
 
 public:
-	explicit Simulation_chain_BFER_ite(const factory::BFER_ite &params_BFER_ite);
-	virtual ~Simulation_chain_BFER_ite() = default;
+	explicit Simulation_sequence_BFER_ite(const factory::BFER_ite &params_BFER_ite);
+	virtual ~Simulation_sequence_BFER_ite() = default;
 
 protected:
 	std::unique_ptr<module::Source          <B    >> build_source     (                                            );
@@ -70,10 +70,10 @@ protected:
 
 	virtual void create_modules();
 	virtual void bind_sockets();
-	virtual void create_chain();
+	virtual void create_sequence();
 };
 
 }
 }
 
-#endif /* SIMULATION_CHAIN_BFER_ITE_HPP_ */
+#endif /* SIMULATION_SEQUENCE_BFER_ITE_HPP_ */

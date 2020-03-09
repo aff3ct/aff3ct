@@ -1,5 +1,5 @@
-#ifndef SIMULATION_CHAIN_BFER_HPP_
-#define SIMULATION_CHAIN_BFER_HPP_
+#ifndef SIMULATION_SEQUENCE_BFER_HPP_
+#define SIMULATION_SEQUENCE_BFER_HPP_
 
 #include <vector>
 #include <memory>
@@ -7,7 +7,7 @@
 
 #include "Module/Monitor/MI/Monitor_MI.hpp"
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
-#include "Tools/Chain/Chain.hpp"
+#include "Tools/Sequence/Sequence.hpp"
 #include "Tools/Constellation/Constellation.hpp"
 #include "Tools/Math/Distribution/Distributions.hpp"
 #include "Tools/Display/Reporter/Reporter.hpp"
@@ -29,7 +29,7 @@ namespace simulation
 {
 
 template <typename B = int, typename R = float>
-class Simulation_chain_BFER : public Simulation
+class Simulation_sequence_BFER : public Simulation
 {
 protected:
 	const factory::Simulation &params;
@@ -39,10 +39,10 @@ protected:
 	std::unique_ptr<tools::Distributions<R>> distributions;
 	std::unique_ptr<tools::Constellation<R>> constellation;
 
-	// communication chain
+	// communication sequence
 	std::unique_ptr<module::Monitor_BFER<B    >> monitor_er;
 	std::unique_ptr<module::Monitor_MI  <B,R  >> monitor_mi;
-	std::unique_ptr<tools ::Chain              > chain;
+	std::unique_ptr<tools ::Sequence           > sequence;
 
 	std::vector<std::unique_ptr<tools::Reporter>> reporters;
 	std::unique_ptr<tools::Terminal> terminal;
@@ -62,9 +62,9 @@ protected:
 	std::chrono::steady_clock::time_point t_start_noise_point;
 
 public:
-	explicit Simulation_chain_BFER(const factory::BFER &params_BFER);
+	explicit Simulation_sequence_BFER(const factory::BFER &params_BFER);
 
-	virtual ~Simulation_chain_BFER() = default;
+	virtual ~Simulation_sequence_BFER() = default;
 
 	void launch();
 
@@ -78,8 +78,8 @@ protected:
 
 	virtual void create_modules();
 	virtual void bind_sockets() = 0;
-	virtual void create_chain() = 0;
-	void configure_chain_tasks();
+	virtual void create_sequence() = 0;
+	void configure_sequence_tasks();
 	void create_monitors_reduction();
 
 	bool stop_time_reached();
@@ -89,4 +89,4 @@ protected:
 }
 }
 
-#endif /* SIMULATION_CHAIN_BFER_HPP_ */
+#endif /* SIMULATION_SEQUENCE_BFER_HPP_ */

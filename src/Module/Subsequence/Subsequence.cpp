@@ -2,41 +2,41 @@
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Chain/Chain.hpp"
-#include "Module/Subchain/Subchain.hpp"
+#include "Tools/Sequence/Sequence.hpp"
+#include "Module/Subsequence/Subsequence.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::module;
 
-Subchain
-::Subchain(tools::Chain &chain)
-: Module(chain.get_firsts_tasks()[0][0]->get_module().get_n_frames()),
-  chain_extern(&chain)
+Subsequence
+::Subsequence(tools::Sequence &sequence)
+: Module(sequence.get_firsts_tasks()[0][0]->get_module().get_n_frames()),
+  sequence_extern(&sequence)
 {
 	this->init();
 }
 
-Subchain
-::Subchain(const tools::Chain &chain)
-: Module(chain.get_firsts_tasks()[0][0]->get_module().get_n_frames()),
-  chain_cloned(chain.clone()), chain_extern(nullptr)
+Subsequence
+::Subsequence(const tools::Sequence &sequence)
+: Module(sequence.get_firsts_tasks()[0][0]->get_module().get_n_frames()),
+  sequence_cloned(sequence.clone()), sequence_extern(nullptr)
 {
 	this->init();
 }
 
-void Subchain
+void Subsequence
 ::init()
 {
-	const std::string name = "Subchain";
+	const std::string name = "Subsequence";
 	this->set_name(name);
 	this->set_short_name(name);
 
-	auto &chain = this->get_chain();
+	auto &sequence = this->get_sequence();
 
-	if (chain.get_n_threads() != 1)
+	if (sequence.get_n_threads() != 1)
 	{
 		std::stringstream message;
-		message << "'chain.get_n_threads()' has to be equal to 1 ('chain.get_n_threads()' = " << chain.get_n_threads()
+		message << "'sequence.get_n_threads()' has to be equal to 1 ('sequence.get_n_threads()' = " << sequence.get_n_threads()
 		        << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
@@ -44,7 +44,7 @@ void Subchain
 	auto &p = this->create_task("exec");
 	p.set_autoalloc(true);
 
-	auto &firsts = chain.get_firsts_tasks()[0];
+	auto &firsts = sequence.get_firsts_tasks()[0];
 	for (auto &first : firsts) for (auto &s : first->sockets)
 	{
 		if (first->get_socket_type(*s) == socket_t::SIN)
@@ -69,7 +69,7 @@ void Subchain
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 	}
-	auto &lasts  = chain.get_lasts_tasks()[0];
+	auto &lasts  = sequence.get_lasts_tasks()[0];
 	for (auto &last : lasts) for (auto &s : last->sockets)
 	{
 		if (last->get_socket_type(*s) == socket_t::SOUT && s->get_name() != "status")
@@ -107,9 +107,9 @@ void Subchain
 
 	this->create_codelet(p, [](Module &m, Task &t) -> int
 	{
-		auto &c = static_cast<Subchain&>(m);
+		auto &c = static_cast<Subsequence&>(m);
 
-		auto &firsts = c.get_chain().get_firsts_tasks()[0];
+		auto &firsts = c.get_sequence().get_firsts_tasks()[0];
 		size_t sid = 0;
 		for (auto &first : firsts) for (auto &s : first->sockets)
 		{
@@ -120,42 +120,42 @@ void Subchain
 			}
 		}
 
-		return c.get_chain().exec();
+		return c.get_sequence().exec();
 	});
 }
 
-tools::Chain& Subchain
-::get_chain()
+tools::Sequence& Subsequence
+::get_sequence()
 {
-	if (this->chain_extern)
-		return *this->chain_extern;
+	if (this->sequence_extern)
+		return *this->sequence_extern;
 	else
-		return *this->chain_cloned;
+		return *this->sequence_cloned;
 }
 
-Subchain* Subchain
+Subsequence* Subsequence
 ::clone() const
 {
-	auto m = new Subchain(*this);
+	auto m = new Subsequence(*this);
 	m->deep_copy(*this);
 	return m;
 }
 
-void Subchain
-::deep_copy(const Subchain& m)
+void Subsequence
+::deep_copy(const Subsequence& m)
 {
 	Module::deep_copy(m);
-	if (m.chain_cloned != nullptr)
-		this->chain_cloned.reset(m.chain_cloned->clone());
+	if (m.sequence_cloned != nullptr)
+		this->sequence_cloned.reset(m.sequence_cloned->clone());
 	else
 	{
-		this->chain_cloned.reset(m.chain_extern->clone());
-		this->chain_extern = nullptr;
+		this->sequence_cloned.reset(m.sequence_extern->clone());
+		this->sequence_extern = nullptr;
 	}
 
-	auto &lasts = this->get_chain().get_lasts_tasks()[0];
+	auto &lasts = this->get_sequence().get_lasts_tasks()[0];
 
-	auto &p = (*this)[sch::tsk::exec];
+	auto &p = (*this)[ssq::tsk::exec];
 
 	size_t sid = 0;
 	for (auto &last : lasts) for (auto &s : last->sockets)

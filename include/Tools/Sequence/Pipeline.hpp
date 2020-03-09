@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief Class tools::Chain_pipeline.
+ * \brief Class tools::Pipeline.
  */
 #ifndef CHAIN_PIPELINE_HPP_
 #define CHAIN_PIPELINE_HPP_
@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "Tools/Interface/Interface_clone.hpp"
-#include "Tools/Chain/Chain.hpp"
+#include "Tools/Sequence/Sequence.hpp"
 
 namespace aff3ct
 {
@@ -21,8 +21,8 @@ namespace tools
 class Pipeline
 {
 protected:
-	Chain sequential_chain;
-	std::vector<std::shared_ptr<Chain>> stages;
+	Sequence original_sequence;
+	std::vector<std::shared_ptr<Sequence>> stages;
 	std::vector<std::pair<std::vector<std::shared_ptr<module::Adaptor>>,
 	                      std::vector<std::shared_ptr<module::Adaptor>>>> adaptors;
 
@@ -70,11 +70,11 @@ public:
 	void exec(std::function<bool(const std::vector<int>&)> stop_condition);
 	void exec(std::function<bool(                       )> stop_condition);
 
-	std::vector<Chain*> get_stages();
-	Chain& operator[](const size_t stage_id);
+	std::vector<Sequence*> get_stages();
+	Sequence& operator[](const size_t stage_id);
 
 	template <class C = module::Module>
-	std::vector<C*> get_modules(const bool subchain_modules = true) const;
+	std::vector<C*> get_modules(const bool subsequence_modules = true) const;
 	std::vector<std::vector<module::Module*>> get_modules_per_threads() const;
 	std::vector<std::vector<module::Module*>> get_modules_per_types  () const;
 
@@ -101,7 +101,7 @@ private:
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#include "Tools/Chain/Pipeline.hxx"
+#include "Tools/Sequence/Pipeline.hxx"
 #endif
 
 #endif /* CHAIN_PIPELINE_HPP_ */

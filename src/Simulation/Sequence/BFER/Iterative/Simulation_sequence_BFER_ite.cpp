@@ -6,7 +6,7 @@
 #include <string>
 
 #include "Tools/Algo/Predicate_ite.hpp"
-#include "Tools/Chain/Chain.hpp"
+#include "Tools/Sequence/Sequence.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Interface/Interface_set_seed.hpp"
 #include "Tools/Interface/Interface_get_set_noise.hpp"
@@ -16,15 +16,15 @@
 #include "Factory/Module/Coset/Coset.hpp"
 #include "Factory/Tools/Codec/Codec.hpp"
 #include "Factory/Tools/Codec/Codec_SIHO.hpp"
-#include "Simulation/Chain/BFER/Iterative/Simulation_chain_BFER_ite.hpp"
+#include "Simulation/Sequence/BFER/Iterative/Simulation_sequence_BFER_ite.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
-Simulation_chain_BFER_ite<B,R,Q>
-::Simulation_chain_BFER_ite(const factory::BFER_ite &params_BFER_ite)
-: Simulation_chain_BFER<B,R>(params_BFER_ite),
+Simulation_sequence_BFER_ite<B,R,Q>
+::Simulation_sequence_BFER_ite(const factory::BFER_ite &params_BFER_ite)
+: Simulation_sequence_BFER<B,R>(params_BFER_ite),
   params_BFER_ite(params_BFER_ite)
 {
 	if (this->params_BFER_ite.err_track_revert && this->params_BFER_ite.n_threads != 1)
@@ -34,21 +34,21 @@ Simulation_chain_BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<module::Source<B>> Simulation_chain_BFER_ite<B,R,Q>
+std::unique_ptr<module::Source<B>> Simulation_sequence_BFER_ite<B,R,Q>
 ::build_source()
 {
 	return std::unique_ptr<module::Source<B>>(params_BFER_ite.src->build<B>());
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<module::CRC<B>> Simulation_chain_BFER_ite<B,R,Q>
+std::unique_ptr<module::CRC<B>> Simulation_sequence_BFER_ite<B,R,Q>
 ::build_crc()
 {
 	return std::unique_ptr<module::CRC<B>>(params_BFER_ite.crc->build<B>());
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<tools::Codec_SISO<B,Q>> Simulation_chain_BFER_ite<B,R,Q>
+std::unique_ptr<tools::Codec_SISO<B,Q>> Simulation_sequence_BFER_ite<B,R,Q>
 ::build_codec(const module::CRC<B> *crc)
 {
 	auto crc_ptr = this->params_BFER_ite.crc->type == "NO" ? nullptr : crc;
@@ -58,7 +58,7 @@ std::unique_ptr<tools::Codec_SISO<B,Q>> Simulation_chain_BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<tools ::Interleaver_core<>> Simulation_chain_BFER_ite<B,R,Q>
+std::unique_ptr<tools ::Interleaver_core<>> Simulation_sequence_BFER_ite<B,R,Q>
 ::build_interleaver()
 {
 	std::unique_ptr<factory::Interleaver> params_itl(params_BFER_ite.itl->clone());
@@ -66,7 +66,7 @@ std::unique_ptr<tools ::Interleaver_core<>> Simulation_chain_BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<module::Modem<B,R,Q>> Simulation_chain_BFER_ite<B,R,Q>
+std::unique_ptr<module::Modem<B,R,Q>> Simulation_sequence_BFER_ite<B,R,Q>
 ::build_modem(const tools::Distributions<R> *distributions, const tools::Constellation<R> *constellation)
 {
 	if (distributions != nullptr)
@@ -76,7 +76,7 @@ std::unique_ptr<module::Modem<B,R,Q>> Simulation_chain_BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<module::Channel<R>> Simulation_chain_BFER_ite<B,R,Q>
+std::unique_ptr<module::Channel<R>> Simulation_sequence_BFER_ite<B,R,Q>
 ::build_channel(const tools::Distributions<R> *distributions)
 {
 	if (distributions != nullptr)
@@ -89,14 +89,14 @@ std::unique_ptr<module::Channel<R>> Simulation_chain_BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<module::Quantizer<R,Q>> Simulation_chain_BFER_ite<B,R,Q>
+std::unique_ptr<module::Quantizer<R,Q>> Simulation_sequence_BFER_ite<B,R,Q>
 ::build_quantizer()
 {
 	return std::unique_ptr<module::Quantizer<R,Q>>(params_BFER_ite.qnt->build<R,Q>());
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<module::Coset<B,Q>> Simulation_chain_BFER_ite<B,R,Q>
+std::unique_ptr<module::Coset<B,Q>> Simulation_sequence_BFER_ite<B,R,Q>
 ::build_coset_real()
 {
 	factory::Coset cst_params;
@@ -106,7 +106,7 @@ std::unique_ptr<module::Coset<B,Q>> Simulation_chain_BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<module::Coset<B,B>> Simulation_chain_BFER_ite<B,R,Q>
+std::unique_ptr<module::Coset<B,B>> Simulation_sequence_BFER_ite<B,R,Q>
 ::build_coset_bit()
 {
 	factory::Coset cst_params;
@@ -116,7 +116,7 @@ std::unique_ptr<module::Coset<B,B>> Simulation_chain_BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<module::Loop_predicate<Q>> Simulation_chain_BFER_ite<B,R,Q>
+std::unique_ptr<module::Loop_predicate<Q>> Simulation_sequence_BFER_ite<B,R,Q>
 ::build_loop_ite()
 {
 	tools::Predicate_ite p(params_BFER_ite.n_ite);
@@ -128,7 +128,7 @@ std::unique_ptr<module::Loop_predicate<Q>> Simulation_chain_BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<module::Loop_CRC<B,Q>> Simulation_chain_BFER_ite<B,R,Q>
+std::unique_ptr<module::Loop_CRC<B,Q>> Simulation_sequence_BFER_ite<B,R,Q>
 ::build_loop_crc()
 {
 	tools::Predicate_ite p(params_BFER_ite.n_ite);
@@ -144,10 +144,10 @@ std::unique_ptr<module::Loop_CRC<B,Q>> Simulation_chain_BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_chain_BFER_ite<B,R,Q>
+void Simulation_sequence_BFER_ite<B,R,Q>
 ::create_modules()
 {
-	Simulation_chain_BFER<B,R>::create_modules();
+	Simulation_sequence_BFER<B,R>::create_modules();
 
 	this->source           = build_source     (                                                    );
 	this->crc              = build_crc        (                                                    );
@@ -171,7 +171,7 @@ void Simulation_chain_BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_chain_BFER_ite<B,R,Q>
+void Simulation_sequence_BFER_ite<B,R,Q>
 ::bind_sockets()
 {
 	using namespace module;
@@ -580,62 +580,62 @@ void Simulation_chain_BFER_ite<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_chain_BFER_ite<B,R,Q>
-::create_chain()
+void Simulation_sequence_BFER_ite<B,R,Q>
+::create_sequence()
 {
 	const auto is_rayleigh = this->params_BFER_ite.chn->type.find("RAYLEIGH") != std::string::npos;
 	const auto t = this->params_BFER.n_threads;
 	if (this->params_BFER_ite.src->type != "AZCW")
-		this->chain.reset(new tools::Chain((*this->source)[module::src::tsk::generate], t));
+		this->sequence.reset(new tools::Sequence((*this->source)[module::src::tsk::generate], t));
 	else if (this->params_BFER_ite.chn->type != "NO")
 	{
 		if (is_rayleigh)
-			this->chain.reset(new tools::Chain((*this->channel)[module::chn::tsk::add_noise_wg], t));
+			this->sequence.reset(new tools::Sequence((*this->channel)[module::chn::tsk::add_noise_wg], t));
 		else
-			this->chain.reset(new tools::Chain((*this->channel)[module::chn::tsk::add_noise], t));
+			this->sequence.reset(new tools::Sequence((*this->channel)[module::chn::tsk::add_noise], t));
 	}
 	else if (this->modem1->is_filter())
-		this->chain.reset(new tools::Chain((*this->modem1)[module::mdm::tsk::filter], t));
+		this->sequence.reset(new tools::Sequence((*this->modem1)[module::mdm::tsk::filter], t));
 	else if (this->params_BFER_ite.qnt->type != "NO")
-		this->chain.reset(new tools::Chain((*this->quantizer)[module::qnt::tsk::process], t));
+		this->sequence.reset(new tools::Sequence((*this->quantizer)[module::qnt::tsk::process], t));
 	else if (this->modem1->is_demodulator())
 	{
 		if (is_rayleigh)
-			this->chain.reset(new tools::Chain((*this->modem1)[module::mdm::tsk::demodulate_wg], t));
+			this->sequence.reset(new tools::Sequence((*this->modem1)[module::mdm::tsk::demodulate_wg], t));
 		else
-			this->chain.reset(new tools::Chain((*this->modem1)[module::mdm::tsk::demodulate], t));
+			this->sequence.reset(new tools::Sequence((*this->modem1)[module::mdm::tsk::demodulate], t));
 	}
 	else
-		this->chain.reset(new tools::Chain((*this->interleaver_llr1)[module::itl::tsk::deinterleave], t));
+		this->sequence.reset(new tools::Sequence((*this->interleaver_llr1)[module::itl::tsk::deinterleave], t));
 
 	// set the noise
 	this->codec1->set_noise(*this->noise);
 	this->codec2->set_noise(*this->noise);
-	for (auto &m : this->chain->template get_modules<tools::Interface_get_set_noise>())
+	for (auto &m : this->sequence->template get_modules<tools::Interface_get_set_noise>())
 		m->set_noise(*this->noise);
 
 	// registering to noise updates
 	this->noise->record_callback_update([this](){ this->codec1->notify_noise_update(); });
 	this->noise->record_callback_update([this](){ this->codec2->notify_noise_update(); });
-	for (auto &m : this->chain->template get_modules<tools::Interface_notify_noise_update>())
+	for (auto &m : this->sequence->template get_modules<tools::Interface_notify_noise_update>())
 		this->noise->record_callback_update([m](){ m->notify_noise_update(); });
 
 	// set different seeds in the modules that uses PRNG
 	std::mt19937 prng(params_BFER_ite.local_seed);
-	for (auto &m : this->chain->template get_modules<tools::Interface_set_seed>())
+	for (auto &m : this->sequence->template get_modules<tools::Interface_set_seed>())
 		m->set_seed(prng());
 
 	this->interleaver_core->set_seed(params_BFER_ite.itl->core->seed);
 	if (this->interleaver_core->is_uniform())
 	{
 		std::stringstream message;
-		message << "Please use the legacy simulator engine for uniform interleaving (remove the '--sim-chain' "
+		message << "Please use the legacy simulator engine for uniform interleaving (remove the '--sim-sequence' "
 		        << "argument from the command line).";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	auto monitors_er   = this->chain->template get_modules<module::Monitor_BFER<B  >>();
-	auto decoders_siso = this->chain->template get_modules<module::Decoder_SISO<B,Q>>();
+	auto monitors_er   = this->sequence->template get_modules<module::Monitor_BFER<B  >>();
+	auto decoders_siso = this->sequence->template get_modules<module::Decoder_SISO<B,Q>>();
 	for (size_t m = 0; m < monitors_er.size(); m++)
 		if (m < decoders_siso.size())
 		{
@@ -646,7 +646,7 @@ void Simulation_chain_BFER_ite<B,R,Q>
 
 	if (this->params_BFER_ite.err_track_enable)
 	{
-		auto sources = this->chain->template get_modules<module::Source<B>>();
+		auto sources = this->sequence->template get_modules<module::Source<B>>();
 		for (size_t tid = 0; tid < (size_t)this->params_BFER.n_threads; tid++)
 		{
 			auto &source  = sources.size() ? *sources[tid] : *this->source;
@@ -662,7 +662,7 @@ void Simulation_chain_BFER_ite<B,R,Q>
 			                                 {});
 		}
 
-		auto encoders = this->chain->template get_modules<module::Encoder<B>>();
+		auto encoders = this->sequence->template get_modules<module::Encoder<B>>();
 		for (size_t tid = 0; tid < (size_t)this->params_BFER.n_threads; tid++)
 		{
 			auto &encoder = encoders.size() ? *encoders[tid] : this->codec1->get_encoder();
@@ -678,7 +678,7 @@ void Simulation_chain_BFER_ite<B,R,Q>
 			                                 {(unsigned)this->params_BFER_ite.cdc->enc->K});
 		}
 
-		auto channels = this->chain->template get_modules<module::Channel<R>>();
+		auto channels = this->sequence->template get_modules<module::Channel<R>>();
 		for (size_t tid = 0; tid < (size_t)this->params_BFER.n_threads; tid++)
 		{
 			auto &channel = channels.size() ? *channels[tid] : *this->channel;
@@ -703,11 +703,11 @@ void Simulation_chain_BFER_ite<B,R,Q>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template class aff3ct::simulation::Simulation_chain_BFER_ite<B_8,R_8,Q_8>;
-template class aff3ct::simulation::Simulation_chain_BFER_ite<B_16,R_16,Q_16>;
-template class aff3ct::simulation::Simulation_chain_BFER_ite<B_32,R_32,Q_32>;
-template class aff3ct::simulation::Simulation_chain_BFER_ite<B_64,R_64,Q_64>;
+template class aff3ct::simulation::Simulation_sequence_BFER_ite<B_8,R_8,Q_8>;
+template class aff3ct::simulation::Simulation_sequence_BFER_ite<B_16,R_16,Q_16>;
+template class aff3ct::simulation::Simulation_sequence_BFER_ite<B_32,R_32,Q_32>;
+template class aff3ct::simulation::Simulation_sequence_BFER_ite<B_64,R_64,Q_64>;
 #else
-template class aff3ct::simulation::Simulation_chain_BFER_ite<B,R,Q>;
+template class aff3ct::simulation::Simulation_sequence_BFER_ite<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

@@ -15,14 +15,14 @@
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Display/Statistics/Statistics.hpp"
 #include "Tools/Exception/exception.hpp"
-#include "Simulation/Chain/BFER/Simulation_chain_BFER.hpp"
+#include "Simulation/Sequence/BFER/Simulation_sequence_BFER.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::simulation;
 
 template <typename B, typename R>
-Simulation_chain_BFER<B,R>
-::Simulation_chain_BFER(const factory::BFER &params_BFER)
+Simulation_sequence_BFER<B,R>
+::Simulation_sequence_BFER(const factory::BFER &params_BFER)
 : Simulation(),
   params(params_BFER),
   params_BFER(params_BFER),
@@ -54,14 +54,14 @@ Simulation_chain_BFER<B,R>
 }
 
 template <typename B, typename R>
-std::unique_ptr<module::Monitor_MI<B,R>> Simulation_chain_BFER<B,R>
+std::unique_ptr<module::Monitor_MI<B,R>> Simulation_sequence_BFER<B,R>
 ::build_monitor_mi()
 {
 	return std::unique_ptr<module::Monitor_MI<B,R>>(params_BFER.mnt_mi->build<B,R>());
 }
 
 template <typename B, typename R>
-std::unique_ptr<module::Monitor_BFER<B>> Simulation_chain_BFER<B,R>
+std::unique_ptr<module::Monitor_BFER<B>> Simulation_sequence_BFER<B,R>
 ::build_monitor_er()
 {
 	bool count_unknown_values = params_BFER.noise->type == "EP";
@@ -74,7 +74,7 @@ std::unique_ptr<module::Monitor_BFER<B>> Simulation_chain_BFER<B,R>
 }
 
 template <typename B, typename R>
-std::vector<std::unique_ptr<tools::Reporter>> Simulation_chain_BFER<B,R>
+std::vector<std::unique_ptr<tools::Reporter>> Simulation_sequence_BFER<B,R>
 ::build_reporters(const tools ::Noise       < > *noise,
 	              const module::Monitor_BFER<B> *monitor_er,
 	              const module::Monitor_MI<B,R> *monitor_mi)
@@ -98,14 +98,14 @@ std::vector<std::unique_ptr<tools::Reporter>> Simulation_chain_BFER<B,R>
 }
 
 template <typename B, typename R>
-std::unique_ptr<tools::Terminal> Simulation_chain_BFER<B,R>
+std::unique_ptr<tools::Terminal> Simulation_sequence_BFER<B,R>
 ::build_terminal(const std::vector<std::unique_ptr<tools::Reporter>> &reporters)
 {
 	return std::unique_ptr<tools::Terminal>(params_BFER.ter->build(reporters));
 }
 
 template <typename B, typename R>
-void Simulation_chain_BFER<B,R>
+void Simulation_sequence_BFER<B,R>
 ::create_modules()
 {
 	this->monitor_er = this->build_monitor_er();
@@ -114,16 +114,16 @@ void Simulation_chain_BFER<B,R>
 }
 
 template <typename B, typename R>
-void Simulation_chain_BFER<B,R>
-::configure_chain_tasks()
+void Simulation_sequence_BFER<B,R>
+::configure_sequence_tasks()
 {
-	if (!params_BFER.chain_path.empty())
+	if (!params_BFER.sequence_path.empty())
 	{
-		std::ofstream dot_file(params_BFER.chain_path);
-		this->chain->export_dot(dot_file);
+		std::ofstream dot_file(params_BFER.sequence_path);
+		this->sequence->export_dot(dot_file);
 	}
 
-	for (auto &mod : chain->get_modules<module::Module>())
+	for (auto &mod : sequence->get_modules<module::Module>())
 		for (auto &tsk : mod->tasks)
 		{
 			if (this->params.statistics)
@@ -146,10 +146,10 @@ void Simulation_chain_BFER<B,R>
 }
 
 template <typename B, typename R>
-void Simulation_chain_BFER<B,R>
+void Simulation_sequence_BFER<B,R>
 ::create_monitors_reduction()
 {
-	auto monitors_bfer = chain->get_modules<module::Monitor_BFER<B>>();
+	auto monitors_bfer = sequence->get_modules<module::Monitor_BFER<B>>();
 #ifdef AFF3CT_MPI
 	this->monitor_er_red.reset(new tools::Monitor_reduction_MPI<module::Monitor_BFER<B>>(monitors_bfer));
 #else
@@ -158,7 +158,7 @@ void Simulation_chain_BFER<B,R>
 
 	if (params_BFER.mnt_mutinfo)
 	{
-		auto monitors_mi = chain->get_modules<module::Monitor_MI<B,R>>();
+		auto monitors_mi = sequence->get_modules<module::Monitor_MI<B,R>>();
 #ifdef AFF3CT_MPI
 		this->monitor_mi_red.reset(new tools::Monitor_reduction_MPI<module::Monitor_MI<B,R>>(monitors_mi));
 #else
@@ -185,15 +185,15 @@ void Simulation_chain_BFER<B,R>
 }
 
 template <typename B, typename R>
-void Simulation_chain_BFER<B,R>
+void Simulation_sequence_BFER<B,R>
 ::launch()
 {
 	if (!params_BFER.err_track_revert)
 	{
 		this->create_modules();
 		this->bind_sockets();
-		this->create_chain();
-		this->configure_chain_tasks();
+		this->create_sequence();
+		this->configure_sequence_tasks();
 		this->create_monitors_reduction();
 
 		this->reporters = this->build_reporters(this->noise.get(),
@@ -257,8 +257,8 @@ void Simulation_chain_BFER<B,R>
 
 			this->create_modules();
 			this->bind_sockets();
-			this->create_chain();
-			this->configure_chain_tasks();
+			this->create_sequence();
+			this->configure_sequence_tasks();
 			this->create_monitors_reduction();
 
 			this->reporters = this->build_reporters(this->noise.get(),
@@ -290,7 +290,7 @@ void Simulation_chain_BFER<B,R>
 
 		try
 		{
-			this->chain->exec([this]() { return this->stop_condition(); } );
+			this->sequence->exec([this]() { return this->stop_condition(); } );
 			tools::Monitor_reduction_static::last_reduce_all(); // final reduction
 		}
 		catch (std::exception const& e)
@@ -318,7 +318,7 @@ void Simulation_chain_BFER<B,R>
 			if (params_BFER.statistics)
 			{
 				std::cout << "#" << std::endl;
-				tools::Stats::show(this->chain->get_modules_per_types(), true, std::cout);
+				tools::Stats::show(this->sequence->get_modules_per_types(), true, std::cout);
 				std::cout << "#" << std::endl;
 			}
 		}
@@ -375,7 +375,7 @@ void Simulation_chain_BFER<B,R>
 		if (tools::Terminal::is_over())
 			break;
 
-		for (auto &mod : chain->get_modules<module::Module>())
+		for (auto &mod : sequence->get_modules<module::Module>())
 			for (auto &tsk : mod->tasks)
 				tsk->reset();
 
@@ -385,7 +385,7 @@ void Simulation_chain_BFER<B,R>
 }
 
 template <typename B, typename R>
-bool Simulation_chain_BFER<B,R>
+bool Simulation_sequence_BFER<B,R>
 ::stop_time_reached()
 {
 	return this->params_BFER.stop_time != std::chrono::seconds(0) &&
@@ -393,7 +393,7 @@ bool Simulation_chain_BFER<B,R>
 }
 
 template <typename B, typename R>
-bool Simulation_chain_BFER<B,R>
+bool Simulation_sequence_BFER<B,R>
 ::stop_condition()
 {
 	return tools::Terminal::is_interrupt() || tools::Monitor_reduction_static::is_done_all() || stop_time_reached();
@@ -402,11 +402,11 @@ bool Simulation_chain_BFER<B,R>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template class aff3ct::simulation::Simulation_chain_BFER<B_8,R_8>;
-template class aff3ct::simulation::Simulation_chain_BFER<B_16,R_16>;
-template class aff3ct::simulation::Simulation_chain_BFER<B_32,R_32>;
-template class aff3ct::simulation::Simulation_chain_BFER<B_64,R_64>;
+template class aff3ct::simulation::Simulation_sequence_BFER<B_8,R_8>;
+template class aff3ct::simulation::Simulation_sequence_BFER<B_16,R_16>;
+template class aff3ct::simulation::Simulation_sequence_BFER<B_32,R_32>;
+template class aff3ct::simulation::Simulation_sequence_BFER<B_64,R_64>;
 #else
-template class aff3ct::simulation::Simulation_chain_BFER<B,R>;
+template class aff3ct::simulation::Simulation_sequence_BFER<B,R>;
 #endif
 // ==================================================================================== explicit template instantiation

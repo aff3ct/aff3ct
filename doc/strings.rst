@@ -102,13 +102,13 @@
 .. |factory::BFER::p+coset,c| replace::
    Enable the *coset* approach.
 
-.. |factory::BFER::p+chain| replace::
-   Enable the new simulator engine based on a chain (should be faster than the
-   legacy simulator engine).
+.. |factory::BFER::p+sequence| replace::
+   Enable the new simulator engine based on a sequence (should be faster than
+   the legacy simulator engine).
 
-.. |factory::BFER::p+chain-path| replace::
-   Enable the new simulator engine based on a chain and export the simulated
-   chain in Graphviz format at the given path.
+.. |factory::BFER::p+sequence-path| replace::
+   Enable the new simulator engine based on a sequence and export the simulated
+   sequence in Graphviz format at the given path.
 
 .. |factory::BFER::p+clone| replace::
    Enable the *clone* method to allocate the module objects.

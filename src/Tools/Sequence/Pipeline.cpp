@@ -8,7 +8,7 @@
 #include "Module/Adaptor/Adaptor_n_to_1.hpp"
 #include "Tools/Interface/Interface_waiting.hpp"
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Chain/Pipeline.hpp"
+#include "Tools/Sequence/Pipeline.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;
@@ -20,7 +20,7 @@ using namespace aff3ct::tools;
 //            const std::vector<size_t> &n_threads,
 //            const std::vector<bool> &thread_pinning,
 //            const std::vector<std::vector<size_t>> &puids)
-// : sequential_chain(first, last, 1),
+// : original_sequence(first, last, 1),
 //   stages(sep_stages.size()),
 //   adaptors(sep_stages.size() -1)
 // {
@@ -33,7 +33,7 @@ using namespace aff3ct::tools;
 //            const std::vector<size_t> &n_threads,
 //            const std::vector<bool> &thread_pinning,
 //            const std::vector<std::vector<size_t>> &puids)
-// : sequential_chain(first, 1),
+// : original_sequence(first, 1),
 //   stages(sep_stages.size()),
 //   adaptors(sep_stages.size() -1)
 // {
@@ -49,7 +49,7 @@ Pipeline
            const std::vector<bool> &thread_pinning,
            const std::vector<std::vector<size_t>> &puids/*,
            const std::vector<bool> &tasks_inplace*/)
-: sequential_chain(firsts, lasts, 1),
+: original_sequence(firsts, lasts, 1),
   stages(sep_stages.size()),
   adaptors(sep_stages.size() -1)
 {
@@ -63,7 +63,7 @@ Pipeline
            const std::vector<bool> &thread_pinning,
            const std::vector<std::vector<size_t>> &puids/*,
            const std::vector<bool> &tasks_inplace*/)
-: sequential_chain(firsts, 1),
+: original_sequence(firsts, 1),
   stages(sep_stages.size()),
   adaptors(sep_stages.size() -1)
 {
@@ -93,16 +93,16 @@ Pipeline
 {
 }
 
-std::vector<Chain*> Pipeline
+std::vector<Sequence*> Pipeline
 ::get_stages()
 {
-	std::vector<Chain*> stages;
+	std::vector<Sequence*> stages;
 	for (auto &stage : this->stages)
 		stages.push_back(stage.get());
 	return stages;
 }
 
-Chain& Pipeline
+Sequence& Pipeline
 ::operator[](const size_t stage_id)
 {
 	assert(stage_id < this->stages.size());
@@ -110,42 +110,42 @@ Chain& Pipeline
 }
 
 template <class TA>
-tools::Chain* create_chain(const std::vector<TA*> &firsts,
-                           const std::vector<TA*> &lasts,
-                           const size_t &n_threads,
-                           const bool &thread_pinning,
-                           const std::vector<size_t> &puids,
-                           const bool &tasks_inplace)
+tools::Sequence* create_sequence(const std::vector<TA*> &firsts,
+                                 const std::vector<TA*> &lasts,
+                                 const size_t &n_threads,
+                                 const bool &thread_pinning,
+                                 const std::vector<size_t> &puids,
+                                 const bool &tasks_inplace)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <>
-tools::Chain* create_chain<const module::Task>(const std::vector<const module::Task*> &firsts,
-                                               const std::vector<const module::Task*> &lasts,
-                                               const size_t &n_threads,
-                                               const bool &thread_pinning,
-                                               const std::vector<size_t> &puids,
-                                               const bool &tasks_inplace)
+tools::Sequence* create_sequence<const module::Task>(const std::vector<const module::Task*> &firsts,
+                                                     const std::vector<const module::Task*> &lasts,
+                                                     const size_t &n_threads,
+                                                     const bool &thread_pinning,
+                                                     const std::vector<size_t> &puids,
+                                                     const bool &tasks_inplace)
 {
 	if (lasts.size())
-		return new tools::Chain(firsts, lasts, n_threads, thread_pinning, puids);
+		return new tools::Sequence(firsts, lasts, n_threads, thread_pinning, puids);
 	else
-		return new tools::Chain(firsts, n_threads, thread_pinning, puids);
+		return new tools::Sequence(firsts, n_threads, thread_pinning, puids);
 }
 
 template <>
-Chain* create_chain<module::Task>(const std::vector<module::Task*> &firsts,
-                                  const std::vector<module::Task*> &lasts,
-                                  const size_t &n_threads,
-                                  const bool &thread_pinning,
-                                  const std::vector<size_t> &puids,
-                                  const bool &tasks_inplace)
+Sequence* create_sequence<module::Task>(const std::vector<module::Task*> &firsts,
+                                        const std::vector<module::Task*> &lasts,
+                                        const size_t &n_threads,
+                                        const bool &thread_pinning,
+                                        const std::vector<size_t> &puids,
+                                        const bool &tasks_inplace)
 {
 	if (lasts.size())
-		return new tools::Chain(firsts, lasts, n_threads, thread_pinning, puids, tasks_inplace);
+		return new tools::Sequence(firsts, lasts, n_threads, thread_pinning, puids, tasks_inplace);
 	else
-		return new tools::Chain(firsts, n_threads, thread_pinning, puids, tasks_inplace);
+		return new tools::Sequence(firsts, n_threads, thread_pinning, puids, tasks_inplace);
 }
 
 template <class TA>
@@ -213,16 +213,16 @@ void Pipeline
 		const std::vector<size_t> stage_puids =  puids.size() ? puids[s] : std::vector<size_t>();
 		const bool stage_tasks_inplace = /*tasks_inplace.size() ? tasks_inplace[s] :*/ true;
 
-		this->stages[s].reset(create_chain<TA>(stage_firsts,
-		                                       stage_lasts,
-		                                       stage_n_threads,
-		                                       stage_thread_pinning,
-		                                       stage_puids,
-		                                       stage_tasks_inplace));
+		this->stages[s].reset(create_sequence<TA>(stage_firsts,
+		                                          stage_lasts,
+		                                          stage_n_threads,
+		                                          stage_thread_pinning,
+		                                          stage_puids,
+		                                          stage_tasks_inplace));
 	}
 
-	// verify that the sequential chain is equivalent to the pipeline chain
-	auto ref_tasks = this->sequential_chain.get_tasks_per_threads()[0];
+	// verify that the sequential sequence is equivalent to the pipeline sequence
+	auto ref_tasks = this->original_sequence.get_tasks_per_threads()[0];
 	auto cur_tasks = this->get_tasks_per_threads()[0];
 
 	if (ref_tasks.size() != cur_tasks.size())
@@ -426,7 +426,7 @@ void Pipeline
 				}
 
 				auto task_pull = n_threads_prev_sta == 1 ? &(*cur_adp)[(int)module::adp::tsk::pull_n] :
-				                                      &(*cur_adp)[(int)module::adp::tsk::pull_1];
+				                                           &(*cur_adp)[(int)module::adp::tsk::pull_1];
 
 				sck_orphan_binds_new.clear();
 				for (auto &bind : sck_orphan_binds)

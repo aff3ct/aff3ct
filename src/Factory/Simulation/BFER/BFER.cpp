@@ -139,11 +139,11 @@ void BFER
 		cli::None(),
 		cli::arg_rank::ADV);
 
-	tools::add_arg(args, p, class_name+"p+chain",
+	tools::add_arg(args, p, class_name+"p+sequence",
 		cli::None(),
 		cli::arg_rank::ADV);
 
-	tools::add_arg(args, p, class_name+"p+chain-path",
+	tools::add_arg(args, p, class_name+"p+sequence-path",
 		cli::File(cli::openmode::write),
 		cli::arg_rank::ADV);
 }
@@ -168,15 +168,15 @@ void BFER
 	if(vals.exist({p+"-coset",    "c"})) this->coset               = true;
 	if(vals.exist({p+"-coded",       })) this->coded_monitoring    = true;
 	if(vals.exist({p+"-clone",       })) this->alloc_clone         = true;
-	if(vals.exist({p+"-chain",       })) this->chain_threads       = true;
+	if(vals.exist({p+"-sequence",    })) this->sequence_threads    = true;
 
 	if (vals.exist({p+"-chain-path"}))
 	{
-		this->chain_threads = true;
-		this->chain_path = vals.at({p+"-chain-path"});
+		this->sequence_threads = true;
+		this->sequence_path = vals.at({p+"-sequence-path"});
 	}
 
-	if (this->chain_threads)
+	if (this->sequence_threads)
 		this->alloc_clone = true;
 
 	if (this->err_track_revert)
@@ -240,11 +240,11 @@ void BFER
 	std::string enable_alloc_clone = (this->alloc_clone) ? "on" : "off";
 	headers[p].push_back(std::make_pair("Clone allocations", enable_alloc_clone));
 
-	std::string enable_chain_threads = (this->chain_threads) ? "on" : "off";
-	headers[p].push_back(std::make_pair("Chain multithreading", enable_chain_threads));
+	std::string enable_sequence_threads = (this->sequence_threads) ? "on" : "off";
+	headers[p].push_back(std::make_pair("Sequence multithreading", enable_sequence_threads));
 
-	if (!this->chain_path.empty())
-		headers[p].push_back(std::make_pair("Path export chain (dot)", this->chain_path));
+	if (!this->sequence_path.empty())
+		headers[p].push_back(std::make_pair("Path export sequence (dot)", this->sequence_path));
 
 	if (this->err_track_threshold)
 		headers[p].push_back(std::make_pair("Bad frames threshold", std::to_string(this->err_track_threshold)));

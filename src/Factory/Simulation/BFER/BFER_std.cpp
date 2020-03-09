@@ -1,6 +1,6 @@
 #include "Simulation/Legacy/BFER/Standard/SystemC/SC_BFER_std.hpp"
 #include "Simulation/Legacy/BFER/Standard/Threads/BFER_std_threads.hpp"
-#include "Simulation/Chain/BFER/Standard/Simulation_chain_BFER_std.hpp"
+#include "Simulation/Sequence/BFER/Standard/Simulation_sequence_BFER_std.hpp"
 #include "Factory/Simulation/BFER/BFER_std.hpp"
 
 using namespace aff3ct;
@@ -66,8 +66,8 @@ simulation::Simulation* BFER_std
 #if defined(AFF3CT_SYSTEMC_SIMU)
 	return new simulation::SC_BFER_std<B,R,Q>(*this);
 #else
-	if (this->chain_threads)
-		return new simulation::Simulation_chain_BFER_std<B,R,Q>(*this);
+	if (this->sequence_threads)
+		return new simulation::Simulation_sequence_BFER_std<B,R,Q>(*this);
 	else
 		return new simulation::BFER_std_threads<B,R,Q>(*this);
 #endif

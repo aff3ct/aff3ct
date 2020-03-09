@@ -31,7 +31,7 @@ public:
 	// ----------------------------------------------------------------------------------------------------- PARAMETERS
 	// optional parameters
 	std::string err_track_path      = "error_tracker";
-	std::string chain_path          = "";
+	std::string sequence_path       = "";
 	int         err_track_threshold = 0;
 	bool        err_track_revert    = false;
 	bool        err_track_enable    = false;
@@ -40,7 +40,7 @@ public:
 	bool        ter_sigma           = false;
 	bool        mnt_mutinfo         = false;
 	bool        alloc_clone         = false;
-	bool        chain_threads       = false;
+	bool        sequence_threads    = false;
 
 #ifdef AFF3CT_MPI
 	std::chrono::milliseconds mnt_mpi_comm_freq = std::chrono::milliseconds(1000);

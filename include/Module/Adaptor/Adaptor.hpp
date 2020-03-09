@@ -15,7 +15,7 @@
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
 #include "Module/Module.hpp"
-#include "Tools/Chain/Chain.hpp"
+#include "Tools/Sequence/Sequence.hpp"
 #include "Tools/Interface/Interface_waiting.hpp"
 
 namespace aff3ct
@@ -38,7 +38,7 @@ namespace module
 class Adaptor : public Module, public tools::Interface_waiting
 {
 
-friend tools::Chain; // Chain is friend to enable the no copy mode (0 copy)
+friend tools::Sequence; // Sequence is friend to enable the no copy mode (0 copy)
 
 protected:
 	const std::vector<size_t> n_elmts;

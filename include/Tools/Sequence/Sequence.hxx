@@ -1,44 +1,44 @@
 #include <set>
 
-#include "Module/Subchain/Subchain.hpp"
-#include "Tools/Chain/Chain.hpp"
+#include "Module/Subsequence/Subsequence.hpp"
+#include "Tools/Sequence/Sequence.hpp"
 
 namespace aff3ct
 {
 namespace tools
 {
-size_t Chain
+size_t Sequence
 ::get_n_threads() const
 {
 	return this->n_threads;
 }
 
-const std::vector<std::vector<module::Task*>>& Chain
+const std::vector<std::vector<module::Task*>>& Sequence
 ::get_firsts_tasks() const
 {
 	return this->firsts_tasks;
 }
 
-const std::vector<std::vector<module::Task*>>& Chain
+const std::vector<std::vector<module::Task*>>& Sequence
 ::get_lasts_tasks() const
 {
 	return this->lasts_tasks;
 }
 
 template <class C>
-std::vector<C*> Chain
-::get_modules(const bool subchain_modules) const
+std::vector<C*> Sequence
+::get_modules(const bool subsequence_modules) const
 {
 	std::vector<C*> ret;
 	for (auto &mm : this->all_modules)
 		for (auto &m : mm)
 		{
-			if (subchain_modules)
+			if (subsequence_modules)
 			{
-				auto c = dynamic_cast<module::Subchain*>(m);
+				auto c = dynamic_cast<module::Subsequence*>(m);
 				if (c != nullptr)
 				{
-					auto subret = c->get_chain().get_modules<C>(subchain_modules);
+					auto subret = c->get_sequence().get_modules<C>(subsequence_modules);
 					ret.insert(ret.end(), subret.begin(), subret.end());
 				}
 			}
@@ -52,7 +52,7 @@ std::vector<C*> Chain
 }
 
 template <class SS>
-inline void Chain
+inline void Sequence
 ::_init(Generic_node<SS> *root)
 {
 	std::stringstream message;
@@ -61,7 +61,7 @@ inline void Chain
 }
 
 template <>
-inline void Chain
+inline void Sequence
 ::_init(Generic_node<tools::Sub_sequence_const> *root)
 {
 	this->duplicate<tools::Sub_sequence_const, const module::Module>(root);
@@ -69,7 +69,7 @@ inline void Chain
 }
 
 template <>
-inline void Chain
+inline void Sequence
 ::_init(Generic_node<tools::Sub_sequence> *root)
 {
 	this->sequences[0] = root;

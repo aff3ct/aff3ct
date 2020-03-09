@@ -17,17 +17,17 @@
 #include "Module/Loop/Loop.hpp"
 #include "Module/Router/Router.hpp"
 #include "Module/Adaptor/Adaptor.hpp"
-#include "Tools/Chain/Chain.hpp"
+#include "Tools/Sequence/Sequence.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::tools;
 
-Chain
-::Chain(const std::vector<const module::Task*> &firsts,
-        const std::vector<const module::Task*> &lasts,
-        const size_t n_threads,
-        const bool thread_pinning,
-        const std::vector<size_t> &puids)
+Sequence
+::Sequence(const std::vector<const module::Task*> &firsts,
+           const std::vector<const module::Task*> &lasts,
+           const size_t n_threads,
+           const bool thread_pinning,
+           const std::vector<size_t> &puids)
 : n_threads(n_threads),
   sequences(n_threads, nullptr),
   modules(n_threads),
@@ -42,7 +42,7 @@ Chain
 #ifndef AFF3CT_HWLOC
 	if (thread_pinning)
 		std::clog << rang::tag::warning << "AFF3CT has not been linked with the 'hwloc' library, the 'thread_pinning' "
-		                                   "option of the 'tools::Chain' will have no effect." << std::endl;
+		                                   "option of the 'tools::Sequence' will have no effect." << std::endl;
 #endif
 
 	if (thread_pinning && puids.size() < n_threads)
@@ -56,11 +56,11 @@ Chain
 	this->init<tools::Sub_sequence_const,const module::Task>(firsts, lasts);
 }
 
-Chain
-::Chain(const std::vector<const module::Task*> &firsts,
-        const size_t n_threads,
-        const bool thread_pinning,
-        const std::vector<size_t> &puids)
+Sequence
+::Sequence(const std::vector<const module::Task*> &firsts,
+           const size_t n_threads,
+           const bool thread_pinning,
+           const std::vector<size_t> &puids)
 : n_threads(n_threads),
   sequences(n_threads, nullptr),
   modules(n_threads),
@@ -83,32 +83,32 @@ Chain
 	this->init<tools::Sub_sequence_const,const module::Task>(firsts, {});
 }
 
-Chain
-::Chain(const module::Task &first,
-        const module::Task &last,
-        const size_t n_threads,
-        const bool thread_pinning,
-        const std::vector<size_t> &puids)
-: Chain({&first}, {&last}, n_threads, thread_pinning, puids)
+Sequence
+::Sequence(const module::Task &first,
+           const module::Task &last,
+           const size_t n_threads,
+           const bool thread_pinning,
+           const std::vector<size_t> &puids)
+: Sequence({&first}, {&last}, n_threads, thread_pinning, puids)
 {
 }
 
-Chain
-::Chain(const module::Task &first,
-        const size_t n_threads,
-        const bool thread_pinning,
-        const std::vector<size_t> &puids)
-: Chain({&first}, n_threads, thread_pinning, puids)
+Sequence
+::Sequence(const module::Task &first,
+           const size_t n_threads,
+           const bool thread_pinning,
+           const std::vector<size_t> &puids)
+: Sequence({&first}, n_threads, thread_pinning, puids)
 {
 }
 
-Chain
-::Chain(const std::vector<module::Task*> &firsts,
-        const std::vector<module::Task*> &lasts,
-        const size_t n_threads,
-        const bool thread_pinning,
-        const std::vector<size_t> &puids,
-        const bool tasks_inplace)
+Sequence
+::Sequence(const std::vector<module::Task*> &firsts,
+           const std::vector<module::Task*> &lasts,
+           const size_t n_threads,
+           const bool thread_pinning,
+           const std::vector<size_t> &puids,
+           const bool tasks_inplace)
 : n_threads(n_threads),
   sequences(n_threads, nullptr),
   modules(tasks_inplace ? n_threads -1 : n_threads),
@@ -140,12 +140,12 @@ Chain
 	}
 }
 
-Chain
-::Chain(const std::vector<module::Task*> &firsts,
-        const size_t n_threads,
-        const bool thread_pinning,
-        const std::vector<size_t> &puids,
-        const bool tasks_inplace)
+Sequence
+::Sequence(const std::vector<module::Task*> &firsts,
+           const size_t n_threads,
+           const bool thread_pinning,
+           const std::vector<size_t> &puids,
+           const bool tasks_inplace)
 : n_threads(n_threads),
   sequences(n_threads, nullptr),
   modules(tasks_inplace ? n_threads -1 : n_threads),
@@ -175,36 +175,36 @@ Chain
 	}
 }
 
-Chain
-::Chain(module::Task &first,
-        module::Task &last,
-        const size_t n_threads,
-        const bool thread_pinning,
-        const std::vector<size_t> &puids,
-        const bool tasks_inplace)
-: Chain({&first}, {&last}, n_threads, thread_pinning, puids, tasks_inplace)
+Sequence
+::Sequence(module::Task &first,
+           module::Task &last,
+           const size_t n_threads,
+           const bool thread_pinning,
+           const std::vector<size_t> &puids,
+           const bool tasks_inplace)
+: Sequence({&first}, {&last}, n_threads, thread_pinning, puids, tasks_inplace)
 {
 }
 
-Chain
-::Chain(module::Task &first,
-        const size_t n_threads,
-        const bool thread_pinning,
-        const std::vector<size_t> &puids,
-        const bool tasks_inplace)
-: Chain({&first}, n_threads, thread_pinning, puids, tasks_inplace)
+Sequence
+::Sequence(module::Task &first,
+           const size_t n_threads,
+           const bool thread_pinning,
+           const std::vector<size_t> &puids,
+           const bool tasks_inplace)
+: Sequence({&first}, n_threads, thread_pinning, puids, tasks_inplace)
 {
 }
 
-Chain
-::~Chain()
+Sequence
+::~Sequence()
 {
 	for (auto s : this->sequences)
 		this->delete_tree(s);
 }
 
 template <class SS, class TA>
-void Chain
+void Sequence
 ::init(const std::vector<TA*> &firsts, const std::vector<TA*> &lasts)
 {
 	if (this->is_thread_pinning())
@@ -273,10 +273,10 @@ void Chain
 	this->gen_processes();
 }
 
-Chain* Chain
+Sequence* Sequence
 ::clone() const
 {
-	auto c = new Chain(*this);
+	auto c = new Sequence(*this);
 
 	c->tasks_inplace = false;
 	c->modules.resize(c->get_n_threads());
@@ -295,7 +295,7 @@ Chain* Chain
 	return c;
 }
 
-void Chain
+void Sequence
 ::set_thread_pinning(const bool thread_pinning, const std::vector<size_t> &puids)
 {
 	if (thread_pinning && puids.size() < n_threads)
@@ -310,13 +310,13 @@ void Chain
 	this->puids = puids;
 }
 
-bool Chain
+bool Sequence
 ::is_thread_pinning()
 {
 	return this->thread_pinning;
 }
 
-std::vector<std::vector<module::Module*>> Chain
+std::vector<std::vector<module::Module*>> Sequence
 ::get_modules_per_threads() const
 {
 	std::vector<std::vector<module::Module*>> modules_per_threads(this->all_modules.size());
@@ -330,7 +330,7 @@ std::vector<std::vector<module::Module*>> Chain
 	return modules_per_threads;
 }
 
-std::vector<std::vector<module::Module*>> Chain
+std::vector<std::vector<module::Module*>> Sequence
 ::get_modules_per_types() const
 {
 	std::vector<std::vector<module::Module*>> modules_per_types(this->all_modules[0].size());
@@ -343,7 +343,7 @@ std::vector<std::vector<module::Module*>> Chain
 	return modules_per_types;
 }
 
-std::vector<std::vector<module::Task*>> Chain
+std::vector<std::vector<module::Task*>> Sequence
 ::get_tasks_per_threads() const
 {
 	std::vector<std::vector<module::Task*>> tasks_per_threads(this->n_threads);
@@ -365,7 +365,7 @@ std::vector<std::vector<module::Task*>> Chain
 	return tasks_per_threads;
 }
 
-std::vector<std::vector<module::Task*>> Chain
+std::vector<std::vector<module::Task*>> Sequence
 ::get_tasks_per_types() const
 {
 	std::vector<std::vector<module::Task*>> tasks_per_types(this->n_tasks);
@@ -389,7 +389,7 @@ std::vector<std::vector<module::Task*>> Chain
 	return tasks_per_types;
 }
 
-void Chain
+void Sequence
 ::_exec(const size_t tid,
         std::function<bool(const std::vector<int>&)> &stop_condition,
         Generic_node<Sub_sequence>* sequence)
@@ -469,7 +469,7 @@ void Chain
 		Thread_pinning::unpin();
 }
 
-void Chain
+void Sequence
 ::_exec_without_statuses(const size_t tid,
                          std::function<bool()> &stop_condition,
                          Generic_node<Sub_sequence>* sequence)
@@ -547,7 +547,7 @@ void Chain
 		Thread_pinning::unpin();
 }
 
-void Chain
+void Sequence
 ::exec(std::function<bool(const std::vector<int>&)> stop_condition)
 {
 	if (this->is_no_copy_mode())
@@ -555,7 +555,7 @@ void Chain
 
 	std::vector<std::thread> threads(n_threads);
 	for (size_t tid = 1; tid < n_threads; tid++)
-		threads[tid] = std::thread(&Chain::_exec, this, tid, std::ref(stop_condition), std::ref(this->sequences[tid]));
+		threads[tid] = std::thread(&Sequence::_exec, this, tid, std::ref(stop_condition), std::ref(this->sequences[tid]));
 
 	this->_exec(0, stop_condition, this->sequences[0]);
 
@@ -575,7 +575,7 @@ void Chain
 	}
 }
 
-void Chain
+void Sequence
 ::exec(std::function<bool()> stop_condition)
 {
 	if (this->is_no_copy_mode())
@@ -584,7 +584,7 @@ void Chain
 	std::vector<std::thread> threads(n_threads);
 	for (size_t tid = 1; tid < n_threads; tid++)
 	{
-		threads[tid] = std::thread(&Chain::_exec_without_statuses, this, tid, std::ref(stop_condition),
+		threads[tid] = std::thread(&Sequence::_exec_without_statuses, this, tid, std::ref(stop_condition),
 		                           std::ref(this->sequences[tid]));
 	}
 
@@ -606,7 +606,7 @@ void Chain
 	}
 }
 
-int Chain
+int Sequence
 ::exec(const size_t tid)
 {
 	if (tid >= this->sequences.size())
@@ -645,7 +645,7 @@ int Chain
 }
 
 template <class SS, class TA>
-Generic_node<SS>* Chain
+Generic_node<SS>* Sequence
 ::init_recursive(Generic_node<SS> *cur_subseq,
                  size_t &ssid,
                  size_t &taid,
@@ -715,7 +715,7 @@ Generic_node<SS>* Chain
 			{
 				node_loop_son0->get_c()->id = ssid++;
 				auto &t = loop->tasks[0]->sockets[2]->get_bound_sockets()[0]->get_task();
-				Chain::init_recursive<SS,TA>(node_loop_son0, ssid, taid, loops, first, t, lasts, real_lasts_id, real_lasts);
+				Sequence::init_recursive<SS,TA>(node_loop_son0, ssid, taid, loops, first, t, lasts, real_lasts_id, real_lasts);
 			}
 			else
 			{
@@ -730,7 +730,7 @@ Generic_node<SS>* Chain
 			{
 				node_loop_son1->get_c()->id = ssid++;
 				auto &t = loop->tasks[0]->sockets[3]->get_bound_sockets()[0]->get_task();
-				return Chain::init_recursive<SS,TA>(node_loop_son1, ssid, taid, loops, first, t, lasts, real_lasts_id, real_lasts);
+				return Sequence::init_recursive<SS,TA>(node_loop_son1, ssid, taid, loops, first, t, lasts, real_lasts_id, real_lasts);
 			}
 			else
 			{
@@ -768,7 +768,7 @@ Generic_node<SS>* Chain
 							if (t.is_last_input_socket(*bs) || dynamic_cast<const module::Loop*>(&t.get_module()))
 							{
 								is_last = false;
-								last_subseq = Chain::init_recursive<SS,TA>(cur_subseq, ssid, taid, loops, first, t, lasts, real_lasts_id, real_lasts);
+								last_subseq = Sequence::init_recursive<SS,TA>(cur_subseq, ssid, taid, loops, first, t, lasts, real_lasts_id, real_lasts);
 							}
 						}
 					}
@@ -803,11 +803,11 @@ Generic_node<SS>* Chain
 	return cur_subseq;
 }
 
-// template const module::Task& tools::Chain::init_recursive<tools::Sub_sequence_const, const module::Task>(Generic_node<tools::Sub_sequence_const>*, size_t&, size_t&, std::vector<const module::Task*>&, const module::Task&, const module::Task&, const module::Task*);
-// template const module::Task& tools::Chain::init_recursive<tools::Sub_sequence,             module::Task>(Generic_node<tools::Sub_sequence      >*, size_t&, size_t&, std::vector<      module::Task*>&,       module::Task&,       module::Task&,       module::Task*);
+// template const module::Task& tools::Sequence::init_recursive<tools::Sub_sequence_const, const module::Task>(Generic_node<tools::Sub_sequence_const>*, size_t&, size_t&, std::vector<const module::Task*>&, const module::Task&, const module::Task&, const module::Task*);
+// template const module::Task& tools::Sequence::init_recursive<tools::Sub_sequence,             module::Task>(Generic_node<tools::Sub_sequence      >*, size_t&, size_t&, std::vector<      module::Task*>&,       module::Task&,       module::Task&,       module::Task*);
 
 template <class SS, class MO>
-void Chain
+void Sequence
 ::duplicate(const Generic_node<SS> *sequence)
 {
 	std::set<MO*> modules_set;
@@ -980,11 +980,11 @@ void Chain
 	}
 }
 
-template void tools::Chain::duplicate<tools::Sub_sequence_const, const module::Module>(const Generic_node<tools::Sub_sequence_const>*);
-template void tools::Chain::duplicate<tools::Sub_sequence,             module::Module>(const Generic_node<tools::Sub_sequence      >*);
+template void tools::Sequence::duplicate<tools::Sub_sequence_const, const module::Module>(const Generic_node<tools::Sub_sequence_const>*);
+template void tools::Sequence::duplicate<tools::Sub_sequence,             module::Module>(const Generic_node<tools::Sub_sequence      >*);
 
 template <class SS>
-void Chain
+void Sequence
 ::delete_tree(Generic_node<SS> *node)
 {
 	if (node != nullptr)
@@ -997,11 +997,11 @@ void Chain
 	}
 }
 
-template void tools::Chain::delete_tree<tools::Sub_sequence_const>(Generic_node<tools::Sub_sequence_const>*);
-template void tools::Chain::delete_tree<tools::Sub_sequence      >(Generic_node<tools::Sub_sequence      >*);
+template void tools::Sequence::delete_tree<tools::Sub_sequence_const>(Generic_node<tools::Sub_sequence_const>*);
+template void tools::Sequence::delete_tree<tools::Sub_sequence      >(Generic_node<tools::Sub_sequence      >*);
 
 template <class VTA>
-void Chain
+void Sequence
 ::export_dot_subsequence(const VTA &subseq,
                          const std::vector<size_t> &tasks_id,
                          const subseq_t &subseq_type,
@@ -1054,11 +1054,11 @@ void Chain
 	}
 }
 
-template void tools::Chain::export_dot_subsequence<std::vector<      module::Task*>>(const std::vector<      module::Task*>&, const std::vector<size_t>&, const subseq_t&, const std::string&, const std::string&, std::ostream&) const;
-template void tools::Chain::export_dot_subsequence<std::vector<const module::Task*>>(const std::vector<const module::Task*>&, const std::vector<size_t>&, const subseq_t&, const std::string&, const std::string&, std::ostream&) const;
+template void tools::Sequence::export_dot_subsequence<std::vector<      module::Task*>>(const std::vector<      module::Task*>&, const std::vector<size_t>&, const subseq_t&, const std::string&, const std::string&, std::ostream&) const;
+template void tools::Sequence::export_dot_subsequence<std::vector<const module::Task*>>(const std::vector<const module::Task*>&, const std::vector<size_t>&, const subseq_t&, const std::string&, const std::string&, std::ostream&) const;
 
 template <class VTA>
-void Chain
+void Sequence
 ::export_dot_connections(const VTA &subseq,
                          const std::string &tab,
                                std::ostream &stream) const
@@ -1079,10 +1079,10 @@ void Chain
 	}
 }
 
-template void tools::Chain::export_dot_connections<std::vector<      module::Task*>>(const std::vector<      module::Task*>&, const std::string&, std::ostream&) const;
-template void tools::Chain::export_dot_connections<std::vector<const module::Task*>>(const std::vector<const module::Task*>&, const std::string&, std::ostream&) const;
+template void tools::Sequence::export_dot_connections<std::vector<      module::Task*>>(const std::vector<      module::Task*>&, const std::string&, std::ostream&) const;
+template void tools::Sequence::export_dot_connections<std::vector<const module::Task*>>(const std::vector<const module::Task*>&, const std::string&, std::ostream&) const;
 
-void Chain
+void Sequence
 ::export_dot(std::ostream &stream) const
 {
 	auto root = this->sequences[0];
@@ -1090,7 +1090,7 @@ void Chain
 }
 
 template <class SS>
-void Chain
+void Sequence
 ::export_dot(Generic_node<SS>* root, std::ostream &stream) const
 {
 	std::function<void(Generic_node<SS>*,
@@ -1131,13 +1131,13 @@ void Chain
 		};
 
 	std::string tab = "\t";
-	stream << "digraph Chain {" << std::endl;
+	stream << "digraph Sequence {" << std::endl;
 	export_dot_subsequences_recursive(root, tab, stream);
 	export_dot_connections_recursive (root, tab, stream);
 	stream << "}" << std::endl;
 }
 
-void Chain
+void Sequence
 ::gen_processes(const bool no_copy_mode)
 {
 	std::function<void(Generic_node<Sub_sequence>*)> gen_processes_recursive =
@@ -1321,7 +1321,7 @@ void Chain
 	}
 }
 
-void Chain
+void Sequence
 ::reset_no_copy_mode()
 {
 	std::function<void(Generic_node<Sub_sequence>*)> reset_no_copy_mode_recursive =
@@ -1367,19 +1367,19 @@ void Chain
 
 }
 
-void Chain
+void Sequence
 ::set_no_copy_mode(const bool no_copy_mode)
 {
 	this->no_copy_mode = no_copy_mode;
 }
 
-bool Chain
+bool Sequence
 ::is_no_copy_mode() const
 {
 	return this->no_copy_mode;
 }
 
-Sub_sequence* Chain
+Sub_sequence* Sequence
 ::get_last_subsequence(const size_t tid)
 {
 	std::function<Sub_sequence*(Generic_node<Sub_sequence>*)> get_last_subsequence_recursive =
@@ -1402,7 +1402,7 @@ Sub_sequence* Chain
 	return get_last_subsequence_recursive(this->sequences[tid]);
 }
 
-void Chain
+void Sequence
 ::update_tasks_id(const size_t tid)
 {
 	std::function<void(Generic_node<Sub_sequence>*, size_t&)> update_tasks_id_recursive =
@@ -1424,7 +1424,7 @@ void Chain
 	return update_tasks_id_recursive(this->sequences[tid], taid);
 }
 
-std::vector<module::Task*> Chain
+std::vector<module::Task*> Sequence
 ::get_tasks_from_id(const size_t taid)
 {
 	std::function<void(Generic_node<Sub_sequence>*, const size_t, std::vector<module::Task*>&)> get_tasks_from_id_recursive =
@@ -1456,7 +1456,7 @@ std::vector<module::Task*> Chain
 	return tasks;
 }
 
-void Chain
+void Sequence
 ::update_firsts_and_lasts_tasks()
 {
 	this->firsts_tasks.clear();

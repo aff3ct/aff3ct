@@ -5,7 +5,7 @@
 #include <random>
 #include <string>
 
-#include "Tools/Chain/Chain.hpp"
+#include "Tools/Sequence/Sequence.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Interface/Interface_set_seed.hpp"
 #include "Tools/Interface/Interface_get_set_noise.hpp"
@@ -15,15 +15,15 @@
 #include "Factory/Module/Coset/Coset.hpp"
 #include "Factory/Tools/Codec/Codec.hpp"
 #include "Factory/Tools/Codec/Codec_SIHO.hpp"
-#include "Simulation/Chain/BFER/Standard/Simulation_chain_BFER_std.hpp"
+#include "Simulation/Sequence/BFER/Standard/Simulation_sequence_BFER_std.hpp"
 
 using namespace aff3ct;
 using namespace aff3ct::simulation;
 
 template <typename B, typename R, typename Q>
-Simulation_chain_BFER_std<B,R,Q>
-::Simulation_chain_BFER_std(const factory::BFER_std &params_BFER_std)
-: Simulation_chain_BFER<B,R>(params_BFER_std),
+Simulation_sequence_BFER_std<B,R,Q>
+::Simulation_sequence_BFER_std(const factory::BFER_std &params_BFER_std)
+: Simulation_sequence_BFER<B,R>(params_BFER_std),
   params_BFER_std(params_BFER_std)
 {
 	if (this->params_BFER_std.err_track_revert && this->params_BFER_std.n_threads != 1)
@@ -33,21 +33,21 @@ Simulation_chain_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<module::Source<B>> Simulation_chain_BFER_std<B,R,Q>
+std::unique_ptr<module::Source<B>> Simulation_sequence_BFER_std<B,R,Q>
 ::build_source()
 {
 	return std::unique_ptr<module::Source<B>>(params_BFER_std.src->build<B>());
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<module::CRC<B>> Simulation_chain_BFER_std<B,R,Q>
+std::unique_ptr<module::CRC<B>> Simulation_sequence_BFER_std<B,R,Q>
 ::build_crc()
 {
 	return std::unique_ptr<module::CRC<B>>(params_BFER_std.crc->build<B>());
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<tools::Codec_SIHO<B,Q>> Simulation_chain_BFER_std<B,R,Q>
+std::unique_ptr<tools::Codec_SIHO<B,Q>> Simulation_sequence_BFER_std<B,R,Q>
 ::build_codec(const module::CRC<B> *crc)
 {
 	std::unique_ptr<factory::Codec> params_cdc(params_BFER_std.cdc->clone());
@@ -57,7 +57,7 @@ std::unique_ptr<tools::Codec_SIHO<B,Q>> Simulation_chain_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<module::Modem<B,R,R>> Simulation_chain_BFER_std<B,R,Q>
+std::unique_ptr<module::Modem<B,R,R>> Simulation_sequence_BFER_std<B,R,Q>
 ::build_modem(const tools::Distributions<R> *distributions, const tools::Constellation<R> *constellation)
 {
 	if (distributions != nullptr)
@@ -67,7 +67,7 @@ std::unique_ptr<module::Modem<B,R,R>> Simulation_chain_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<module::Channel<R>> Simulation_chain_BFER_std<B,R,Q>
+std::unique_ptr<module::Channel<R>> Simulation_sequence_BFER_std<B,R,Q>
 ::build_channel(const tools::Distributions<R> *distributions)
 {
 	if (distributions != nullptr)
@@ -77,14 +77,14 @@ std::unique_ptr<module::Channel<R>> Simulation_chain_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<module::Quantizer<R,Q>> Simulation_chain_BFER_std<B,R,Q>
+std::unique_ptr<module::Quantizer<R,Q>> Simulation_sequence_BFER_std<B,R,Q>
 ::build_quantizer()
 {
 	return std::unique_ptr<module::Quantizer<R,Q>>(params_BFER_std.qnt->build<R,Q>());
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<module::Coset<B,Q>> Simulation_chain_BFER_std<B,R,Q>
+std::unique_ptr<module::Coset<B,Q>> Simulation_sequence_BFER_std<B,R,Q>
 ::build_coset_real()
 {
 	factory::Coset cst_params;
@@ -94,7 +94,7 @@ std::unique_ptr<module::Coset<B,Q>> Simulation_chain_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-std::unique_ptr<module::Coset<B,B>> Simulation_chain_BFER_std<B,R,Q>
+std::unique_ptr<module::Coset<B,B>> Simulation_sequence_BFER_std<B,R,Q>
 ::build_coset_bit()
 {
 	factory::Coset cst_params;
@@ -104,10 +104,10 @@ std::unique_ptr<module::Coset<B,B>> Simulation_chain_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_chain_BFER_std<B,R,Q>
+void Simulation_sequence_BFER_std<B,R,Q>
 ::create_modules()
 {
-	Simulation_chain_BFER<B,R>::create_modules();
+	Simulation_sequence_BFER<B,R>::create_modules();
 
 	this->source     = this->build_source    (                                                    );
 	this->crc        = this->build_crc       (                                                    );
@@ -120,7 +120,7 @@ void Simulation_chain_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_chain_BFER_std<B,R,Q>
+void Simulation_sequence_BFER_std<B,R,Q>
 ::bind_sockets()
 {
 	using namespace module;
@@ -486,52 +486,52 @@ void Simulation_chain_BFER_std<B,R,Q>
 }
 
 template <typename B, typename R, typename Q>
-void Simulation_chain_BFER_std<B,R,Q>
-::create_chain()
+void Simulation_sequence_BFER_std<B,R,Q>
+::create_sequence()
 {
 	const auto is_rayleigh = this->params_BFER_std.chn->type.find("RAYLEIGH") != std::string::npos;
 	const auto is_optical = this->params_BFER_std.chn->type == "OPTICAL" && this->params_BFER_std.mdm->rop_est_bits > 0;
 	const auto t = this->params_BFER.n_threads;
 	if (this->params_BFER_std.src->type != "AZCW")
-		this->chain.reset(new tools::Chain((*this->source)[module::src::tsk::generate], t));
+		this->sequence.reset(new tools::Sequence((*this->source)[module::src::tsk::generate], t));
 	else if (this->params_BFER_std.chn->type != "NO")
 	{
 		if (is_rayleigh)
-			this->chain.reset(new tools::Chain((*this->channel)[module::chn::tsk::add_noise_wg], t));
+			this->sequence.reset(new tools::Sequence((*this->channel)[module::chn::tsk::add_noise_wg], t));
 		else
-			this->chain.reset(new tools::Chain((*this->channel)[module::chn::tsk::add_noise], t));
+			this->sequence.reset(new tools::Sequence((*this->channel)[module::chn::tsk::add_noise], t));
 	}
 	else if (this->modem->is_demodulator())
 	{
 		if (is_rayleigh || is_optical)
-			this->chain.reset(new tools::Chain((*this->modem)[module::mdm::tsk::demodulate_wg], t));
+			this->sequence.reset(new tools::Sequence((*this->modem)[module::mdm::tsk::demodulate_wg], t));
 		else
-			this->chain.reset(new tools::Chain((*this->modem)[module::mdm::tsk::demodulate], t));
+			this->sequence.reset(new tools::Sequence((*this->modem)[module::mdm::tsk::demodulate], t));
 	}
 	else if (this->modem->is_filter())
-		this->chain.reset(new tools::Chain((*this->modem)[module::mdm::tsk::filter], t));
+		this->sequence.reset(new tools::Sequence((*this->modem)[module::mdm::tsk::filter], t));
 	else if (this->params_BFER_std.qnt->type != "NO")
-		this->chain.reset(new tools::Chain((*this->quantizer)[module::qnt::tsk::process], t));
+		this->sequence.reset(new tools::Sequence((*this->quantizer)[module::qnt::tsk::process], t));
 	else if (this->params_BFER_std.cdc->pct != nullptr && this->params_BFER_std.cdc->pct->type != "NO")
-		this->chain.reset(new tools::Chain(this->codec->get_puncturer()[module::pct::tsk::puncture], t));
+		this->sequence.reset(new tools::Sequence(this->codec->get_puncturer()[module::pct::tsk::puncture], t));
 	else if (this->params_BFER_std.coset)
-		this->chain.reset(new tools::Chain((*this->coset_real)[module::cst::tsk::apply], t));
+		this->sequence.reset(new tools::Sequence((*this->coset_real)[module::cst::tsk::apply], t));
 	else
-		this->chain.reset(new tools::Chain(this->codec->get_decoder_siho()[module::dec::tsk::decode_siho], t));
+		this->sequence.reset(new tools::Sequence(this->codec->get_decoder_siho()[module::dec::tsk::decode_siho], t));
 
 	// set the noise
 	this->codec->set_noise(*this->noise);
-	for (auto &m : this->chain->template get_modules<tools::Interface_get_set_noise>())
+	for (auto &m : this->sequence->template get_modules<tools::Interface_get_set_noise>())
 		m->set_noise(*this->noise);
 
 	// registering to noise updates
 	this->noise->record_callback_update([this](){ this->codec->notify_noise_update(); });
-	for (auto &m : this->chain->template get_modules<tools::Interface_notify_noise_update>())
+	for (auto &m : this->sequence->template get_modules<tools::Interface_notify_noise_update>())
 		this->noise->record_callback_update([m](){ m->notify_noise_update(); });
 
 	// set different seeds in the modules that uses PRNG
 	std::mt19937 prng(params_BFER_std.local_seed);
-	for (auto &m : this->chain->template get_modules<tools::Interface_set_seed>())
+	for (auto &m : this->sequence->template get_modules<tools::Interface_set_seed>())
 		m->set_seed(prng());
 
 	bool is_interleaver = true;
@@ -546,14 +546,14 @@ void Simulation_chain_BFER_std<B,R,Q>
 	if (is_interleaver && codec->get_interleaver().is_uniform())
 	{
 		std::stringstream message;
-		message << "Please use the legacy simulator engine for uniform interleaving (remove the '--sim-chain' "
+		message << "Please use the legacy simulator engine for uniform interleaving (remove the '--sim-sequence' "
 		        << "argument from the command line).";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (this->params_BFER_std.err_track_enable)
 	{
-		auto sources = this->chain->template get_modules<module::Source<B>>();
+		auto sources = this->sequence->template get_modules<module::Source<B>>();
 		for (size_t tid = 0; tid < (size_t)this->params_BFER.n_threads; tid++)
 		{
 			auto &source  = sources.size() ? *sources[tid] : *this->source;
@@ -569,7 +569,7 @@ void Simulation_chain_BFER_std<B,R,Q>
 			                                 {});
 		}
 
-		auto encoders = this->chain->template get_modules<module::Encoder<B>>();
+		auto encoders = this->sequence->template get_modules<module::Encoder<B>>();
 		for (size_t tid = 0; tid < (size_t)this->params_BFER.n_threads; tid++)
 		{
 			auto &encoder = encoders.size() ? *encoders[tid] : this->codec->get_encoder();
@@ -585,7 +585,7 @@ void Simulation_chain_BFER_std<B,R,Q>
 			                                 {(unsigned)this->params_BFER_std.cdc->enc->K});
 		}
 
-		auto channels = this->chain->template get_modules<module::Channel<R>>();
+		auto channels = this->sequence->template get_modules<module::Channel<R>>();
 		for (size_t tid = 0; tid < (size_t)this->params_BFER.n_threads; tid++)
 		{
 			auto &channel = channels.size() ? *channels[tid] : *this->channel;
@@ -597,7 +597,7 @@ void Simulation_chain_BFER_std<B,R,Q>
 			                                 {});
 		}
 
-		auto monitors_er = this->chain->template get_modules<module::Monitor_BFER<B>>();
+		auto monitors_er = this->sequence->template get_modules<module::Monitor_BFER<B>>();
 		for (size_t tid = 0; tid < (size_t)this->params_BFER.n_threads; tid++)
 		{
 			monitors_er[tid]->record_callback_fe(std::bind(&tools::Dumper::add,
@@ -611,11 +611,11 @@ void Simulation_chain_BFER_std<B,R,Q>
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template class aff3ct::simulation::Simulation_chain_BFER_std<B_8,R_8,Q_8>;
-template class aff3ct::simulation::Simulation_chain_BFER_std<B_16,R_16,Q_16>;
-template class aff3ct::simulation::Simulation_chain_BFER_std<B_32,R_32,Q_32>;
-template class aff3ct::simulation::Simulation_chain_BFER_std<B_64,R_64,Q_64>;
+template class aff3ct::simulation::Simulation_sequence_BFER_std<B_8,R_8,Q_8>;
+template class aff3ct::simulation::Simulation_sequence_BFER_std<B_16,R_16,Q_16>;
+template class aff3ct::simulation::Simulation_sequence_BFER_std<B_32,R_32,Q_32>;
+template class aff3ct::simulation::Simulation_sequence_BFER_std<B_64,R_64,Q_64>;
 #else
-template class aff3ct::simulation::Simulation_chain_BFER_std<B,R,Q>;
+template class aff3ct::simulation::Simulation_sequence_BFER_std<B,R,Q>;
 #endif
 // ==================================================================================== explicit template instantiation

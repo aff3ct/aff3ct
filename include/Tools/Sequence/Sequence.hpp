@@ -1,9 +1,9 @@
 /*!
  * \file
- * \brief Class tools::Chain.
+ * \brief Class tools::Sequence.
  */
-#ifndef CHAIN_HPP_
-#define CHAIN_HPP_
+#ifndef SEQUENCE_HPP_
+#define SEQUENCE_HPP_
 
 #include <functional>
 #include <iostream>
@@ -51,28 +51,23 @@ public:
 using Sub_sequence       = Sub_sequence_generic<std::vector<      module::Task*>>;
 using Sub_sequence_const = Sub_sequence_generic<std::vector<const module::Task*>>;
 
-class Chain : public Interface_clone
+class Sequence : public Interface_clone
 {
 	friend Pipeline;
 
 protected:
 	size_t n_threads;
 	std::vector<Generic_node<Sub_sequence>*> sequences;
-
 	std::vector<size_t> firsts_tasks_id;
 	std::vector<size_t> lasts_tasks_id;
-
 	std::vector<std::vector<module::Task*>> firsts_tasks;
 	std::vector<std::vector<module::Task*>> lasts_tasks;
-
 	std::vector<std::vector<std::shared_ptr<module::Module>>> modules;
 	std::vector<std::vector<module::Module*>> all_modules;
-
 	std::shared_ptr<std::mutex> mtx_exception;
 	std::vector<std::string> prev_exception_messages;
 	std::vector<std::string> prev_exception_messages_to_display;
 	std::shared_ptr<std::atomic<bool>> force_exit_loop;
-
 	size_t n_tasks;
 	bool tasks_inplace;
 	bool thread_pinning;
@@ -80,49 +75,49 @@ protected:
 	bool no_copy_mode;
 
 public:
-	Chain(const std::vector<const module::Task*> &firsts,
-	      const size_t n_threads = 1,
-	      const bool thread_pinning = false,
-	      const std::vector<size_t> &puids = {} );
-	Chain(const std::vector<const module::Task*> &firsts,
-	      const std::vector<const module::Task*> &lasts,
-	      const size_t n_threads = 1,
-	      const bool thread_pinning = false,
-	      const std::vector<size_t> &puids = {});
-	Chain(const module::Task &first,
-	      const size_t n_threads = 1,
-	      const bool thread_pinning = false,
-	      const std::vector<size_t> &puids = {} );
-	Chain(const module::Task &first,
-	      const module::Task &last,
-	      const size_t n_threads = 1,
-	      const bool thread_pinning = false,
-	      const std::vector<size_t> &puids = {});
-	Chain(const std::vector<module::Task*> &firsts,
-	      const size_t n_threads = 1,
-	      const bool thread_pinning = false,
-	      const std::vector<size_t> &puids = {},
-	      const bool tasks_inplace = true);
-	Chain(const std::vector<module::Task*> &firsts,
-	      const std::vector<module::Task*> &lasts,
-	      const size_t n_threads = 1,
-	      const bool thread_pinning = false,
-	      const std::vector<size_t> &puids = {},
-	      const bool tasks_inplace = true);
-	Chain(module::Task &first,
-	      const size_t n_threads = 1,
-	      const bool thread_pinning = false,
-	      const std::vector<size_t> &puids = {},
-	      const bool tasks_inplace = true);
-	Chain(module::Task &first,
-	      module::Task &last,
-	      const size_t n_threads = 1,
-	      const bool thread_pinning = false,
-	      const std::vector<size_t> &puids = {},
-	      const bool tasks_inplace = true);
+	Sequence(const std::vector<const module::Task*> &firsts,
+	         const size_t n_threads = 1,
+	         const bool thread_pinning = false,
+	         const std::vector<size_t> &puids = {} );
+	Sequence(const std::vector<const module::Task*> &firsts,
+	         const std::vector<const module::Task*> &lasts,
+	         const size_t n_threads = 1,
+	         const bool thread_pinning = false,
+	         const std::vector<size_t> &puids = {});
+	Sequence(const module::Task &first,
+	         const size_t n_threads = 1,
+	         const bool thread_pinning = false,
+	         const std::vector<size_t> &puids = {} );
+	Sequence(const module::Task &first,
+	         const module::Task &last,
+	         const size_t n_threads = 1,
+	         const bool thread_pinning = false,
+	         const std::vector<size_t> &puids = {});
+	Sequence(const std::vector<module::Task*> &firsts,
+	         const size_t n_threads = 1,
+	         const bool thread_pinning = false,
+	         const std::vector<size_t> &puids = {},
+	         const bool tasks_inplace = true);
+	Sequence(const std::vector<module::Task*> &firsts,
+	         const std::vector<module::Task*> &lasts,
+	         const size_t n_threads = 1,
+	         const bool thread_pinning = false,
+	         const std::vector<size_t> &puids = {},
+	         const bool tasks_inplace = true);
+	Sequence(module::Task &first,
+	         const size_t n_threads = 1,
+	         const bool thread_pinning = false,
+	         const std::vector<size_t> &puids = {},
+	         const bool tasks_inplace = true);
+	Sequence(module::Task &first,
+	         module::Task &last,
+	         const size_t n_threads = 1,
+	         const bool thread_pinning = false,
+	         const std::vector<size_t> &puids = {},
+	         const bool tasks_inplace = true);
 
-	virtual ~Chain();
-	virtual Chain* clone() const;
+	virtual ~Sequence();
+	virtual Sequence* clone() const;
 
 	void set_thread_pinning(const bool thread_pinning);
 	void set_thread_pinning(const bool thread_pinning, const std::vector<size_t> &puids = {});
@@ -134,7 +129,7 @@ public:
 	inline size_t get_n_threads() const;
 
 	template <class C = module::Module>
-	std::vector<C*> get_modules(const bool subchain_modules = true) const;
+	std::vector<C*> get_modules(const bool subsequence_modules = true) const;
 	std::vector<std::vector<module::Module*>> get_modules_per_threads() const;
 	std::vector<std::vector<module::Module*>> get_modules_per_types  () const;
 
@@ -211,7 +206,7 @@ private:
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#include "Tools/Chain/Chain.hxx"
+#include "Tools/Sequence/Sequence.hxx"
 #endif
 
-#endif /* CHAIN_HPP_ */
+#endif /* SEQUENCE_HPP_ */

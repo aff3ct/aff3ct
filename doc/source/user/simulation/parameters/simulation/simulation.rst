@@ -643,24 +643,24 @@ parameter is enabled, it becomes the codeword size (:math:`N`).
 .. note:: Available only for ``BFERI`` simulation type (c.f. the
    :ref:`sim-sim-type` parameter).
 
-.. _sim-sim-chain:
+.. _sim-sim-sequence:
 
-``--sim-chain`` |image_advanced_argument|
-"""""""""""""""""""""""""""""""""""""""""
+``--sim-sequence`` |image_advanced_argument|
+""""""""""""""""""""""""""""""""""""""""""""
 
-|factory::BFER::p+chain|
+|factory::BFER::p+sequence|
 
-.. _sim-sim-chain-path:
+.. _sim-sim-sequence-path:
 
-``--sim-chain-path`` |image_advanced_argument|
-""""""""""""""""""""""""""""""""""""""""""""""
+``--sim-sequence-path`` |image_advanced_argument|
+"""""""""""""""""""""""""""""""""""""""""""""""""
 
    :Type: file
    :Rights: write
-   :Default: :file:`chain.dot`
-   :Examples: ``--sim-chain-path chain.dot``
+   :Default: :file:`sequence.dot`
+   :Examples: ``--sim-sequence-path sequence.dot``
 
-|factory::BFER::p+chain-path|
+|factory::BFER::p+sequence-path|
 
 .. _sim-sim-clone:
 
