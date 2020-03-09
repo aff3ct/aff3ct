@@ -10,7 +10,7 @@ using namespace aff3ct::module;
 
 Subchain
 ::Subchain(tools::Chain &chain)
-: Module(chain.get_first_tasks()[0]->get_module().get_n_frames()),
+: Module(chain.get_firsts_tasks()[0][0]->get_module().get_n_frames()),
   chain_extern(&chain)
 {
 	this->init();
@@ -18,7 +18,7 @@ Subchain
 
 Subchain
 ::Subchain(const tools::Chain &chain)
-: Module(chain.get_first_tasks()[0]->get_module().get_n_frames()),
+: Module(chain.get_firsts_tasks()[0][0]->get_module().get_n_frames()),
   chain_cloned(chain.clone()), chain_extern(nullptr)
 {
 	this->init();
@@ -44,10 +44,10 @@ void Subchain
 	auto &p = this->create_task("exec");
 	p.set_autoalloc(true);
 
-	auto &first = *chain.get_first_tasks()[0];
-	for (auto &s : first.sockets)
+	auto &firsts = chain.get_firsts_tasks()[0];
+	for (auto &first : firsts) for (auto &s : first->sockets)
 	{
-		if (first.get_socket_type(*s) == socket_t::SIN)
+		if (first->get_socket_type(*s) == socket_t::SIN)
 		{
 			if (s->get_datatype() == typeid(int8_t ))
 				this->template create_socket_in<int8_t >(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
@@ -62,26 +62,17 @@ void Subchain
 			else if (s->get_datatype() == typeid(double ))
 				this->template create_socket_in<double >(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
 		}
-		if (first.get_socket_type(*s) == socket_t::SIN_SOUT)
+		if (first->get_socket_type(*s) == socket_t::SIN_SOUT)
 		{
-			if (s->get_datatype() == typeid(int8_t ))
-				this->template create_socket_in_out<int8_t >(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
-			else if (s->get_datatype() == typeid(int16_t))
-				this->template create_socket_in_out<int16_t>(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
-			else if (s->get_datatype() == typeid(int32_t))
-				this->template create_socket_in_out<int32_t>(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
-			else if (s->get_datatype() == typeid(int64_t))
-				this->template create_socket_in_out<int64_t>(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
-			else if (s->get_datatype() == typeid(float  ))
-				this->template create_socket_in_out<float  >(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
-			else if (s->get_datatype() == typeid(double ))
-				this->template create_socket_in_out<double >(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
+			std::stringstream message;
+			message << "'SIN_SOUT' socket type is not supported.";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 	}
-	auto &last  = *chain.get_last_tasks()[0];
-	for (auto &s : last.sockets)
+	auto &lasts  = chain.get_lasts_tasks()[0];
+	for (auto &last : lasts) for (auto &s : last->sockets)
 	{
-		if (last.get_socket_type(*s) == socket_t::SOUT && s->get_name() != "status")
+		if (last->get_socket_type(*s) == socket_t::SOUT && s->get_name() != "status")
 		{
 			if (s->get_datatype() == typeid(int8_t ))
 				this->template create_socket_out<int8_t >(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
@@ -96,40 +87,20 @@ void Subchain
 			else if (s->get_datatype() == typeid(double ))
 				this->template create_socket_out<double >(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
 		}
-		if (last.get_socket_type(*s) == socket_t::SIN_SOUT)
+		if (last->get_socket_type(*s) == socket_t::SIN_SOUT)
 		{
-			if (s->get_datatype() == typeid(int8_t ))
-				this->template create_socket_in_out<int8_t >(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
-			else if (s->get_datatype() == typeid(int16_t))
-				this->template create_socket_in_out<int16_t>(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
-			else if (s->get_datatype() == typeid(int32_t))
-				this->template create_socket_in_out<int32_t>(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
-			else if (s->get_datatype() == typeid(int64_t))
-				this->template create_socket_in_out<int64_t>(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
-			else if (s->get_datatype() == typeid(float  ))
-				this->template create_socket_in_out<float  >(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
-			else if (s->get_datatype() == typeid(double ))
-				this->template create_socket_in_out<double >(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
+			std::stringstream message;
+			message << "'SIN_SOUT' socket type is not supported.";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 	}
 
 	size_t sid = 0;
-	for (auto &s : last.sockets)
+	for (auto &last : lasts) for (auto &s : last->sockets)
 	{
-		if (last.get_socket_type(*s) == socket_t::SOUT && s->get_name() != "status")
+		if (last->get_socket_type(*s) == socket_t::SOUT && s->get_name() != "status")
 		{
 			while (p.get_socket_type(*p.sockets[sid]) != socket_t::SOUT) sid++;
-			p.sockets[sid++]->bind(*s);
-		}
-	}
-
-	// /!\ there is probably a bug with SIN_OUT sockets here
-	sid = 0;
-	for (auto &s : last.sockets)
-	{
-		if (last.get_socket_type(*s) == socket_t::SIN_SOUT)
-		{
-			while (p.get_socket_type(*p.sockets[sid]) != socket_t::SIN_SOUT) sid++;
 			p.sockets[sid++]->bind(*s);
 		}
 	}
@@ -138,23 +109,13 @@ void Subchain
 	{
 		auto &c = static_cast<Subchain&>(m);
 
-		auto &first = *c.get_chain().get_first_tasks()[0];
+		auto &firsts = c.get_chain().get_firsts_tasks()[0];
 		size_t sid = 0;
-		for (auto &s : first.sockets)
+		for (auto &first : firsts) for (auto &s : first->sockets)
 		{
-			if (first.get_socket_type(*s) == socket_t::SIN)
+			if (first->get_socket_type(*s) == socket_t::SIN)
 			{
 				while (t.get_socket_type(*t.sockets[sid]) != socket_t::SIN) sid++;
-				s->bind(t.sockets[sid++]->get_dataptr());
-			}
-		}
-
-		sid = 0;
-		for (auto &s : first.sockets)
-		{
-			if (first.get_socket_type(*s) == socket_t::SIN_SOUT)
-			{
-				while (t.get_socket_type(*t.sockets[sid]) != socket_t::SIN_SOUT) sid++;
 				s->bind(t.sockets[sid++]->get_dataptr());
 			}
 		}
@@ -192,29 +153,17 @@ void Subchain
 		this->chain_extern = nullptr;
 	}
 
-	auto &last = *this->get_chain().get_last_tasks()[0];
+	auto &lasts = this->get_chain().get_lasts_tasks()[0];
 
 	auto &p = (*this)[sch::tsk::exec];
 
 	size_t sid = 0;
-	for (auto &s : last.sockets)
+	for (auto &last : lasts) for (auto &s : last->sockets)
 	{
-		if (last.get_socket_type(*s) == socket_t::SOUT && s->get_name() != "status")
+		if (last->get_socket_type(*s) == socket_t::SOUT && s->get_name() != "status")
 		{
 			while (p.get_socket_type(*p.sockets[sid]) != socket_t::SOUT) sid++;
 			p.sockets[sid++]->bind(*s);
 		}
 	}
-
-	// /!\ there is probably a bug with SIN_OUT sockets here
-	sid = 0;
-	for (auto &s : last.sockets)
-	{
-		if (last.get_socket_type(*s) == socket_t::SIN_SOUT)
-		{
-			while (p.get_socket_type(*p.sockets[sid]) != socket_t::SIN_SOUT) sid++;
-			p.sockets[sid++]->bind(*s);
-		}
-	}
-
 }

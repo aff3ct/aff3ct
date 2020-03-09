@@ -66,6 +66,8 @@ public:
 	inline std::type_index get_datatype(const size_t sid = 0) const;
 	void send_cancel_signal();
 	void reset();
+	virtual ~Adaptor();
+	virtual Adaptor* clone() const;
 
 protected:
 	inline Adaptor(const size_t n_elmts,
@@ -76,7 +78,6 @@ protected:
 	               const std::vector<std::type_index> &datatype,
 	               const size_t buffer_size,
 	               const int n_frames = 1);
-	virtual ~Adaptor();
 	virtual void deep_copy(const Adaptor &m);
 	inline bool is_full(const size_t id);
 	inline bool is_empty(const size_t id);

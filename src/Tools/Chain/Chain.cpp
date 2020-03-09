@@ -4,6 +4,7 @@
 #include <sstream>
 #include <fstream>
 #include <cstring>
+#include <numeric>
 #include <exception>
 #include <algorithm>
 
@@ -22,15 +23,13 @@ using namespace aff3ct;
 using namespace aff3ct::tools;
 
 Chain
-::Chain(const module::Task &first,
-        const module::Task &last,
+::Chain(const std::vector<const module::Task*> &firsts,
+        const std::vector<const module::Task*> &lasts,
         const size_t n_threads,
         const bool thread_pinning,
         const std::vector<size_t> &puids)
 : n_threads(n_threads),
   sequences(n_threads, nullptr),
-  first_tasks(n_threads, nullptr),
-  last_tasks(n_threads, nullptr),
   modules(n_threads),
   all_modules(n_threads),
   mtx_exception(new std::mutex()),
@@ -54,18 +53,16 @@ Chain
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	this->init<tools::Sub_sequence_const,const module::Task>(first, &last);
+	this->init<tools::Sub_sequence_const,const module::Task>(firsts, lasts);
 }
 
 Chain
-::Chain(const module::Task &first,
+::Chain(const std::vector<const module::Task*> &firsts,
         const size_t n_threads,
         const bool thread_pinning,
         const std::vector<size_t> &puids)
 : n_threads(n_threads),
   sequences(n_threads, nullptr),
-  first_tasks(n_threads, nullptr),
-  last_tasks(n_threads, nullptr),
   modules(n_threads),
   all_modules(n_threads),
   mtx_exception(new std::mutex()),
@@ -83,20 +80,37 @@ Chain
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	this->init<tools::Sub_sequence_const,const module::Task>(first);
+	this->init<tools::Sub_sequence_const,const module::Task>(firsts, {});
 }
 
 Chain
-::Chain(module::Task &first,
-        module::Task &last,
+::Chain(const module::Task &first,
+        const module::Task &last,
+        const size_t n_threads,
+        const bool thread_pinning,
+        const std::vector<size_t> &puids)
+: Chain({&first}, {&last}, n_threads, thread_pinning, puids)
+{
+}
+
+Chain
+::Chain(const module::Task &first,
+        const size_t n_threads,
+        const bool thread_pinning,
+        const std::vector<size_t> &puids)
+: Chain({&first}, n_threads, thread_pinning, puids)
+{
+}
+
+Chain
+::Chain(const std::vector<module::Task*> &firsts,
+        const std::vector<module::Task*> &lasts,
         const size_t n_threads,
         const bool thread_pinning,
         const std::vector<size_t> &puids,
         const bool tasks_inplace)
 : n_threads(n_threads),
   sequences(n_threads, nullptr),
-  first_tasks(n_threads, nullptr),
-  last_tasks(n_threads, nullptr),
   modules(tasks_inplace ? n_threads -1 : n_threads),
   all_modules(n_threads),
   mtx_exception(new std::mutex()),
@@ -115,21 +129,25 @@ Chain
 	}
 
 	if (tasks_inplace)
-		this->init<tools::Sub_sequence,module::Task>(first, &last);
+		this->init<tools::Sub_sequence,module::Task>(firsts, lasts);
 	else
-		this->init<tools::Sub_sequence_const,const module::Task>(first, &last);
+	{
+		std::vector<const module::Task*> firsts_bis;
+		for (auto first : firsts) firsts_bis.push_back(first);
+		std::vector<const module::Task*> lasts_bis;
+		for (auto last : lasts) lasts_bis.push_back(last);
+		this->init<tools::Sub_sequence_const,const module::Task>(firsts_bis, lasts_bis);
+	}
 }
 
 Chain
-::Chain(module::Task &first,
+::Chain(const std::vector<module::Task*> &firsts,
         const size_t n_threads,
         const bool thread_pinning,
         const std::vector<size_t> &puids,
         const bool tasks_inplace)
 : n_threads(n_threads),
   sequences(n_threads, nullptr),
-  first_tasks(n_threads, nullptr),
-  last_tasks(n_threads, nullptr),
   modules(tasks_inplace ? n_threads -1 : n_threads),
   all_modules(n_threads),
   mtx_exception(new std::mutex()),
@@ -142,15 +160,40 @@ Chain
 	if (thread_pinning && puids.size() < n_threads)
 	{
 		std::stringstream message;
-		message << "'puids.size()' has greater or equal to 'n_threads' ('puids.size()' = " << puids.size()
+		message << "'puids.size()' has to be greater or equal to 'n_threads' ('puids.size()' = " << puids.size()
 		        << " , 'n_threads' = " << n_threads << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
 	if (tasks_inplace)
-		this->init<tools::Sub_sequence,module::Task>(first);
+		this->init<tools::Sub_sequence,module::Task>(firsts, {});
 	else
-		this->init<tools::Sub_sequence_const,const module::Task>(first);
+	{
+		std::vector<const module::Task*> firsts_bis;
+		for (auto first : firsts) firsts_bis.push_back(first);
+		this->init<tools::Sub_sequence_const,const module::Task>(firsts_bis, {});
+	}
+}
+
+Chain
+::Chain(module::Task &first,
+        module::Task &last,
+        const size_t n_threads,
+        const bool thread_pinning,
+        const std::vector<size_t> &puids,
+        const bool tasks_inplace)
+: Chain({&first}, {&last}, n_threads, thread_pinning, puids, tasks_inplace)
+{
+}
+
+Chain
+::Chain(module::Task &first,
+        const size_t n_threads,
+        const bool thread_pinning,
+        const std::vector<size_t> &puids,
+        const bool tasks_inplace)
+: Chain({&first}, n_threads, thread_pinning, puids, tasks_inplace)
+{
 }
 
 Chain
@@ -162,10 +205,17 @@ Chain
 
 template <class SS, class TA>
 void Chain
-::init(TA &first, TA *last)
+::init(const std::vector<TA*> &firsts, const std::vector<TA*> &lasts)
 {
 	if (this->is_thread_pinning())
 		Thread_pinning::pin(this->puids[0]);
+
+	if (firsts.size() == 0)
+	{
+		std::stringstream message;
+		message << "'firsts.size()' has to be strictly greater than 0.";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 
 	if (this->n_threads == 0)
 	{
@@ -175,47 +225,71 @@ void Chain
 	}
 
 	auto root = new Generic_node<SS>(nullptr, {}, nullptr, 0, 0, 0);
+	root->set_contents(nullptr);
 	size_t ssid = 0, taid = 0;
 	std::vector<TA*> loops;
-	auto &real_last = this->init_recursive<SS,TA>(root, ssid, taid, loops, first, first, last);
-	if (last != nullptr && &real_last != last)
+	std::vector<TA*> real_lasts;
+
+	this->lasts_tasks_id.clear();
+	this->firsts_tasks_id.clear();
+	auto last_subseq = root;
+	for (auto first : firsts)
 	{
-		std::stringstream message;
-		message << "'&real_last' has to be equal to '&last' ("
-		        << "'&real_last'"           << " = " << +&real_last          << ", "
-		        << "'last'"                 << " = " << +last                << ", "
-		        << "'real_last.get_name()'" << " = " << real_last.get_name() << ", "
-		        << "'last->get_name()'"     << " = " << last->get_name()     << ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		auto contents = last_subseq->get_contents();
+		this->firsts_tasks_id.push_back(contents ? contents->tasks_id[contents->tasks_id.size()] : 0);
+		last_subseq = this->init_recursive<SS,TA>(last_subseq,
+		                                          ssid,
+		                                          taid,
+		                                          loops,
+		                                          *first,
+		                                          *first,
+		                                          lasts,
+		                                          this->lasts_tasks_id,
+		                                          real_lasts);
 	}
+
+	std::stringstream real_lasts_ss;
+	for (size_t rl = 0; rl < real_lasts.size(); rl++)
+		real_lasts_ss << "'real_lasts" << "[" << rl << "]'"             << " = " << +real_lasts[rl] << ", "
+		              << "'real_lasts" << "[" << rl << "]->get_name()'" << " = " <<  real_lasts[rl]->get_name()
+		              << ((rl < real_lasts.size() -1) ? ", " : "");
+
+	for (auto last : lasts)
+	{
+		if (std::find(real_lasts.begin(), real_lasts.end(), last) == real_lasts.end())
+		{
+			std::stringstream message;
+			message << "'last' is not contained in the 'real_lasts[" << real_lasts.size() << "]' vector ("
+			        << "'last'"                 << " = " << +last            << ", "
+			        << "'last->get_name()'"     << " = " << last->get_name() << ", "
+			        << real_lasts_ss.str() << ").";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
+	}
+
 	this->n_tasks = taid;
-
 	this->_init<SS>(root);
-
-	std::function<Sub_sequence*(Generic_node<Sub_sequence>*)> get_last = [&get_last](Generic_node<Sub_sequence>* node)
-	{
-		Sub_sequence* last = node->get_c();
-		for (auto c : node->get_children())
-			last = get_last(c);
-		return last;
-	};
-	for (size_t tid = 0; tid < n_threads; tid++)
-	{
-		this->first_tasks[tid] = this->sequences[tid]->get_c()->tasks.front();
-		this->last_tasks[tid] = get_last(this->sequences[tid])->tasks.back();
-	}
-
+	this->update_firsts_and_lasts_tasks();
 	this->gen_processes();
 }
-
-template void tools::Chain::init<tools::Sub_sequence_const, const module::Task>(const module::Task&, const module::Task*);
-template void tools::Chain::init<tools::Sub_sequence,             module::Task>(      module::Task&,       module::Task*);
 
 Chain* Chain
 ::clone() const
 {
 	auto c = new Chain(*this);
-	c->init<tools::Sub_sequence_const,const module::Task>(*this->get_first_tasks()[0]);
+
+	c->tasks_inplace = false;
+	c->modules.resize(c->get_n_threads());
+
+	std::vector<const module::Task*> firsts_tasks;
+	for (auto ta : this->get_firsts_tasks()[0])
+		firsts_tasks.push_back(ta);
+
+	std::vector<const module::Task*> lasts_tasks;
+	for (auto ta : this->get_lasts_tasks()[0])
+		lasts_tasks.push_back(ta);
+
+	c->init<tools::Sub_sequence_const,const module::Task>(firsts_tasks, lasts_tasks);
 	c->mtx_exception.reset(new std::mutex());
 	c->force_exit_loop.reset(new std::atomic<bool>(false));
 	return c;
@@ -571,14 +645,16 @@ int Chain
 }
 
 template <class SS, class TA>
-const module::Task& Chain
+Generic_node<SS>* Chain
 ::init_recursive(Generic_node<SS> *cur_subseq,
                  size_t &ssid,
                  size_t &taid,
                  std::vector<TA*> &loops,
                  TA &first,
                  TA &current_task,
-                 TA *last)
+                 const std::vector<TA*> &lasts,
+                 std::vector<size_t> &real_lasts_id,
+                 std::vector<TA*> &real_lasts)
 {
 	if (this->tasks_inplace && !current_task.is_autoalloc())
 	{
@@ -594,6 +670,14 @@ const module::Task& Chain
 		std::stringstream message;
 		message << "'module::Adaptor' objects are not supported if 'tasks_inplace' is set to false.";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	auto it = std::find(real_lasts.begin(), real_lasts.end(), &current_task);
+	if (it != real_lasts.end())
+	{
+		real_lasts.erase(it);
+		auto dist = std::distance(real_lasts.begin(), it);
+		real_lasts_id.erase(real_lasts_id.begin() + dist);
 	}
 
 	if (auto loop = dynamic_cast<const module::Loop*>(&current_task.get_module()))
@@ -631,7 +715,7 @@ const module::Task& Chain
 			{
 				node_loop_son0->get_c()->id = ssid++;
 				auto &t = loop->tasks[0]->sockets[2]->get_bound_sockets()[0]->get_task();
-				Chain::init_recursive<SS,TA>(node_loop_son0, ssid, taid, loops, first, t, last);
+				Chain::init_recursive<SS,TA>(node_loop_son0, ssid, taid, loops, first, t, lasts, real_lasts_id, real_lasts);
 			}
 			else
 			{
@@ -646,7 +730,7 @@ const module::Task& Chain
 			{
 				node_loop_son1->get_c()->id = ssid++;
 				auto &t = loop->tasks[0]->sockets[3]->get_bound_sockets()[0]->get_task();
-				return Chain::init_recursive<SS,TA>(node_loop_son1, ssid, taid, loops, first, t, last);
+				return Chain::init_recursive<SS,TA>(node_loop_son1, ssid, taid, loops, first, t, lasts, real_lasts_id, real_lasts);
 			}
 			else
 			{
@@ -660,15 +744,16 @@ const module::Task& Chain
 	}
 	else
 	{
-		if (&first == &current_task)
+		if (cur_subseq->get_contents() == nullptr)
 			cur_subseq->set_contents(new SS());
 
 		cur_subseq->get_c()->tasks.push_back(&current_task);
 		cur_subseq->get_c()->tasks_id.push_back(taid++);
 
-		if (&current_task != last)
+		bool is_last = true;
+		Generic_node<SS>* last_subseq = nullptr;
+		if (std::find(lasts.begin(), lasts.end(), &current_task) == lasts.end())
 		{
-			const module::Task* last_task = nullptr;
 			for (auto &s : current_task.sockets)
 			{
 				if (current_task.get_socket_type(*s) == module::socket_t::SIN_SOUT ||
@@ -681,7 +766,10 @@ const module::Task& Chain
 						{
 							auto &t = bs->get_task();
 							if (t.is_last_input_socket(*bs) || dynamic_cast<const module::Loop*>(&t.get_module()))
-								last_task = &Chain::init_recursive<SS,TA>(cur_subseq, ssid, taid, loops, first, t, last);
+							{
+								is_last = false;
+								last_subseq = Chain::init_recursive<SS,TA>(cur_subseq, ssid, taid, loops, first, t, lasts, real_lasts_id, real_lasts);
+							}
 						}
 					}
 				}
@@ -701,16 +789,22 @@ const module::Task& Chain
 					}
 				}
 			}
-			if (last_task)
-				return *last_task;
 		}
+
+		if (is_last && std::find(real_lasts.begin(), real_lasts.end(), &current_task) == real_lasts.end())
+		{
+			real_lasts.push_back(&current_task);
+			real_lasts_id.push_back(cur_subseq->get_contents()->tasks_id.back());
+		}
+		if (last_subseq)
+			return last_subseq;
 	}
 
-	return current_task;
+	return cur_subseq;
 }
 
-template const module::Task& tools::Chain::init_recursive<tools::Sub_sequence_const, const module::Task>(Generic_node<tools::Sub_sequence_const>*, size_t&, size_t&, std::vector<const module::Task*>&, const module::Task&, const module::Task&, const module::Task*);
-template const module::Task& tools::Chain::init_recursive<tools::Sub_sequence,             module::Task>(Generic_node<tools::Sub_sequence      >*, size_t&, size_t&, std::vector<      module::Task*>&,       module::Task&,       module::Task&,       module::Task*);
+// template const module::Task& tools::Chain::init_recursive<tools::Sub_sequence_const, const module::Task>(Generic_node<tools::Sub_sequence_const>*, size_t&, size_t&, std::vector<const module::Task*>&, const module::Task&, const module::Task&, const module::Task*);
+// template const module::Task& tools::Chain::init_recursive<tools::Sub_sequence,             module::Task>(Generic_node<tools::Sub_sequence      >*, size_t&, size_t&, std::vector<      module::Task*>&,       module::Task&,       module::Task&,       module::Task*);
 
 template <class SS, class MO>
 void Chain
@@ -909,6 +1003,7 @@ template void tools::Chain::delete_tree<tools::Sub_sequence      >(Generic_node<
 template <class VTA>
 void Chain
 ::export_dot_subsequence(const VTA &subseq,
+                         const std::vector<size_t> &tasks_id,
                          const subseq_t &subseq_type,
                          const std::string &subseq_name,
                          const std::string &tab,
@@ -939,7 +1034,7 @@ void Chain
 			stream << tab << tab << tab << tab << "\"" << +s.get() << "\""
 			                                   << "[label=\"" << stype << ":" << s->get_name() << "\"];" << std::endl;
 		}
-		stream << tab << tab << tab << tab << "label=\"" << t->get_name() << "\";" << std::endl;
+		stream << tab << tab << tab << tab << "label=\"" << t->get_name() << " (id = " << tasks_id[exec_order] << ")" << "\";" << std::endl;
 		stream << tab << tab << tab << tab << "color=blue;" << std::endl;
 		stream << tab << tab << tab << "}" << std::endl;
 		stream << tab << tab << tab << "label=\"" << t->get_module().get_name() << "\n"
@@ -951,15 +1046,16 @@ void Chain
 	}
 	if (!subseq_name.empty())
 	{
-		stream << tab << tab << "label=\"" << subseq_name << "\";" << std::endl;
+		stream << tab << tab << "label=\"" << subseq_name << " (" << this->get_n_threads() << " thread(s))" << "\";"
+		       << std::endl;
 		std::string color = subseq_type == subseq_t::LOOP ? "red" : "blue";
 		stream << tab << tab << "color=" << color << ";" << std::endl;
 		stream << tab << "}" << std::endl;
 	}
 }
 
-template void tools::Chain::export_dot_subsequence<std::vector<      module::Task*>>(const std::vector<      module::Task*>&, const subseq_t&, const std::string&, const std::string&, std::ostream&) const;
-template void tools::Chain::export_dot_subsequence<std::vector<const module::Task*>>(const std::vector<const module::Task*>&, const subseq_t&, const std::string&, const std::string&, std::ostream&) const;
+template void tools::Chain::export_dot_subsequence<std::vector<      module::Task*>>(const std::vector<      module::Task*>&, const std::vector<size_t>&, const subseq_t&, const std::string&, const std::string&, std::ostream&) const;
+template void tools::Chain::export_dot_subsequence<std::vector<const module::Task*>>(const std::vector<const module::Task*>&, const std::vector<size_t>&, const subseq_t&, const std::string&, const std::string&, std::ostream&) const;
 
 template <class VTA>
 void Chain
@@ -1007,6 +1103,7 @@ void Chain
 			if (cur_node != nullptr)
 			{
 				this->export_dot_subsequence(cur_node->get_c()->tasks,
+				                             cur_node->get_c()->tasks_id,
 				                             cur_node->get_c()->type,
 				                             "Sub-sequence"+std::to_string(cur_node->get_c()->id),
 				                             tab,
@@ -1282,3 +1379,101 @@ bool Chain
 	return this->no_copy_mode;
 }
 
+Sub_sequence* Chain
+::get_last_subsequence(const size_t tid)
+{
+	std::function<Sub_sequence*(Generic_node<Sub_sequence>*)> get_last_subsequence_recursive =
+		[&get_last_subsequence_recursive](Generic_node<Sub_sequence>* cur_node) -> Sub_sequence*
+		{
+			if (cur_node != nullptr)
+			{
+				Sub_sequence* last_ss = nullptr;
+				for (auto c : cur_node->get_children())
+					last_ss = get_last_subsequence_recursive(c);
+				return last_ss ? last_ss : cur_node->get_contents();
+			}
+			else
+			{
+				// should never happen
+				return nullptr;
+			}
+		};
+
+	return get_last_subsequence_recursive(this->sequences[tid]);
+}
+
+void Chain
+::update_tasks_id(const size_t tid)
+{
+	std::function<void(Generic_node<Sub_sequence>*, size_t&)> update_tasks_id_recursive =
+		[&update_tasks_id_recursive](Generic_node<Sub_sequence>* cur_node, size_t& taid)
+		{
+			if (cur_node != nullptr)
+			{
+				Sub_sequence* ss = cur_node->get_contents();
+				ss->tasks_id.resize(ss->tasks.size());
+				std::iota(ss->tasks_id.begin(), ss->tasks_id.end(), taid);
+				taid += ss->tasks_id.size();
+
+				for (auto c : cur_node->get_children())
+					update_tasks_id_recursive(c, taid);
+			}
+		};
+
+	size_t taid = 0;
+	return update_tasks_id_recursive(this->sequences[tid], taid);
+}
+
+std::vector<module::Task*> Chain
+::get_tasks_from_id(const size_t taid)
+{
+	std::function<void(Generic_node<Sub_sequence>*, const size_t, std::vector<module::Task*>&)> get_tasks_from_id_recursive =
+		[&get_tasks_from_id_recursive](Generic_node<Sub_sequence>* cur_node,
+		                               const size_t taid,
+		                               std::vector<module::Task*> &tasks)
+		{
+			if (cur_node != nullptr)
+			{
+				Sub_sequence* ss = cur_node->get_contents();
+				bool found = false;
+				for (size_t t = 0; t < ss->tasks_id.size(); t++)
+					if (ss->tasks_id[t] == taid)
+					{
+						tasks.push_back(ss->tasks[t]);
+						found = true;
+						break;
+					}
+
+				if (!found)
+					for (auto c : cur_node->get_children())
+						get_tasks_from_id_recursive(c, taid, tasks);
+			}
+		};
+
+	std::vector<module::Task*> tasks;
+	for (auto &s : this->sequences)
+		get_tasks_from_id_recursive(s, taid, tasks);
+	return tasks;
+}
+
+void Chain
+::update_firsts_and_lasts_tasks()
+{
+	this->firsts_tasks.clear();
+	this->firsts_tasks.resize(this->n_threads);
+	for (auto taid : firsts_tasks_id)
+	{
+		auto tasks = this->get_tasks_from_id(taid);
+		for (size_t tid = 0; tid < tasks.size(); tid++)
+			firsts_tasks[tid].push_back(tasks[tid]);
+	}
+
+	this->lasts_tasks.clear();
+	this->lasts_tasks.resize(this->n_threads);
+	for (auto taid : lasts_tasks_id)
+	{
+		auto tasks = this->get_tasks_from_id(taid);
+		for (size_t tid = 0; tid < tasks.size(); tid++)
+			lasts_tasks[tid].push_back(tasks[tid]);
+	}
+}

@@ -960,6 +960,9 @@
 #ifndef CHAIN_HPP_
 #include <Tools/Chain/Chain.hpp>
 #endif
+#ifndef CHAIN_PIPELINE_HPP_
+#include <Tools/Chain/Pipeline.hpp>
+#endif
 #ifndef BCH_POLYNOMIAL_GENERATOR_HPP
 #include <Tools/Code/BCH/BCH_polynomial_generator.hpp>
 #endif

@@ -26,6 +26,7 @@ class Module;
 }
 namespace tools
 {
+class Pipeline;
 
 enum class subseq_t : size_t { STD, LOOP, ROUTER };
 
@@ -50,13 +51,20 @@ public:
 using Sub_sequence       = Sub_sequence_generic<std::vector<      module::Task*>>;
 using Sub_sequence_const = Sub_sequence_generic<std::vector<const module::Task*>>;
 
-class Chain : Interface_clone
+class Chain : public Interface_clone
 {
+	friend Pipeline;
+
 protected:
 	size_t n_threads;
 	std::vector<Generic_node<Sub_sequence>*> sequences;
-	std::vector<module::Task*> first_tasks;
-	std::vector<module::Task*> last_tasks;
+
+	std::vector<size_t> firsts_tasks_id;
+	std::vector<size_t> lasts_tasks_id;
+
+	std::vector<std::vector<module::Task*>> firsts_tasks;
+	std::vector<std::vector<module::Task*>> lasts_tasks;
+
 	std::vector<std::vector<std::shared_ptr<module::Module>>> modules;
 	std::vector<std::vector<module::Module*>> all_modules;
 
@@ -69,11 +77,18 @@ protected:
 	bool tasks_inplace;
 	bool thread_pinning;
 	std::vector<size_t> puids;
-
 	bool no_copy_mode;
 
 public:
-
+	Chain(const std::vector<const module::Task*> &firsts,
+	      const size_t n_threads = 1,
+	      const bool thread_pinning = false,
+	      const std::vector<size_t> &puids = {} );
+	Chain(const std::vector<const module::Task*> &firsts,
+	      const std::vector<const module::Task*> &lasts,
+	      const size_t n_threads = 1,
+	      const bool thread_pinning = false,
+	      const std::vector<size_t> &puids = {});
 	Chain(const module::Task &first,
 	      const size_t n_threads = 1,
 	      const bool thread_pinning = false,
@@ -83,6 +98,17 @@ public:
 	      const size_t n_threads = 1,
 	      const bool thread_pinning = false,
 	      const std::vector<size_t> &puids = {});
+	Chain(const std::vector<module::Task*> &firsts,
+	      const size_t n_threads = 1,
+	      const bool thread_pinning = false,
+	      const std::vector<size_t> &puids = {},
+	      const bool tasks_inplace = true);
+	Chain(const std::vector<module::Task*> &firsts,
+	      const std::vector<module::Task*> &lasts,
+	      const size_t n_threads = 1,
+	      const bool thread_pinning = false,
+	      const std::vector<size_t> &puids = {},
+	      const bool tasks_inplace = true);
 	Chain(module::Task &first,
 	      const size_t n_threads = 1,
 	      const bool thread_pinning = false,
@@ -96,10 +122,6 @@ public:
 	      const bool tasks_inplace = true);
 
 	virtual ~Chain();
-	template <class SS, class TA>
-	void init(TA &first, TA *last = nullptr);
-	template <class SS>
-	inline void _init(Generic_node<SS> *root);
 	virtual Chain* clone() const;
 
 	void set_thread_pinning(const bool thread_pinning);
@@ -119,8 +141,8 @@ public:
 	std::vector<std::vector<module::Task*>> get_tasks_per_threads() const;
 	std::vector<std::vector<module::Task*>> get_tasks_per_types  () const;
 
-	inline const std::vector<module::Task*>& get_first_tasks() const;
-	inline const std::vector<module::Task*>& get_last_tasks() const;
+	inline const std::vector<std::vector<module::Task*>>& get_firsts_tasks() const;
+	inline const std::vector<std::vector<module::Task*>>& get_lasts_tasks () const;
 
 	void export_dot(std::ostream &stream = std::cout) const;
 
@@ -132,16 +154,19 @@ protected:
 	void delete_tree(Generic_node<SS> *node);
 
 	template <class SS, class TA>
-	const module::Task& init_recursive(Generic_node<SS> *cur_subseq,
-	                                   size_t &ssid,
-	                                   size_t &taid,
-	                                   std::vector<TA*> &loops,
-	                                   TA& first,
-	                                   TA& current_task,
-	                                   TA* last = nullptr);
+	Generic_node<SS>* init_recursive(Generic_node<SS> *cur_subseq,
+	                                 size_t &ssid,
+	                                 size_t &taid,
+	                                 std::vector<TA*> &loops,
+	                                 TA& first,
+	                                 TA& current_task,
+	                                 const std::vector<TA*> &lasts,
+	                                 std::vector<size_t> &real_lasts_id,
+	                                 std::vector<TA*> &real_lasts);
 
 	template <class VTA>
 	void export_dot_subsequence(const VTA &subseq,
+	                            const std::vector<size_t> &tasks_id,
 	                            const subseq_t &subseq_type,
 	                            const std::string &subseq_name,
 	                            const std::string &tab,
@@ -168,6 +193,19 @@ protected:
 
 	void gen_processes(const bool no_copy_mode = false);
 	void reset_no_copy_mode();
+
+	Sub_sequence* get_last_subsequence(const size_t tid);
+	void update_tasks_id(const size_t tid);
+
+	std::vector<module::Task*> get_tasks_from_id(const size_t taid);
+
+	void update_firsts_and_lasts_tasks();
+
+private:
+	template <class SS, class TA>
+	void init(const std::vector<TA*> &firsts, const std::vector<TA*> &lasts);
+	template <class SS>
+	inline void _init(Generic_node<SS> *root);
 };
 }
 }

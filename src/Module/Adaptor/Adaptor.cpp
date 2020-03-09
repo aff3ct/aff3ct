@@ -14,6 +14,12 @@ Adaptor
 	(*this->last )[this->id] = 0;
 }
 
+Adaptor* Adaptor
+::clone() const
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
 void Adaptor
 ::deep_copy(const Adaptor &m)
 {

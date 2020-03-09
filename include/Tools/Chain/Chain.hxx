@@ -13,6 +13,18 @@ size_t Chain
 	return this->n_threads;
 }
 
+const std::vector<std::vector<module::Task*>>& Chain
+::get_firsts_tasks() const
+{
+	return this->firsts_tasks;
+}
+
+const std::vector<std::vector<module::Task*>>& Chain
+::get_lasts_tasks() const
+{
+	return this->lasts_tasks;
+}
+
 template <class C>
 std::vector<C*> Chain
 ::get_modules(const bool subchain_modules) const
@@ -37,18 +49,6 @@ std::vector<C*> Chain
 		}
 
 	return ret;
-}
-
-const std::vector<module::Task*>& Chain
-::get_first_tasks() const
-{
-	return this->first_tasks;
-}
-
-const std::vector<module::Task*>& Chain
-::get_last_tasks() const
-{
-	return this->last_tasks;
 }
 
 template <class SS>
