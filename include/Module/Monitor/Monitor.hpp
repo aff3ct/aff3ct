@@ -17,11 +17,12 @@ namespace module
 {
 	namespace mnt
 	{
-		enum class tsk : size_t { check_errors, get_mutual_info, check_mutual_info, SIZE };
+		enum class tsk : size_t { check_errors, check_errors2, get_mutual_info, check_mutual_info, SIZE };
 
 		namespace sck
 		{
-			enum class check_errors      : size_t { U, V, FRA, BE, FE, BER, FER, status };
+			enum class check_errors      : size_t { U, V, status };
+			enum class check_errors2     : size_t { U, V, FRA, BE, FE, BER, FER, status };
 			enum class get_mutual_info   : size_t { X, Y, status };
 			enum class check_mutual_info : size_t { bits, llrs_a, llrs_e, status };
 		}

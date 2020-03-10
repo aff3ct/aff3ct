@@ -26,25 +26,34 @@ Monitor_BFER<B>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	auto &p = this->create_task("check_errors", (int)mnt::tsk::check_errors);
-	auto ps_U   = this->template create_socket_in <B      >(p,   "U", get_K());
-	auto ps_V   = this->template create_socket_in <B      >(p,   "V", get_K());
-	auto ps_FRA = this->template create_socket_out<int64_t>(p, "FRA", 1      );
-	auto ps_BE  = this->template create_socket_out<int32_t>(p,  "BE", 1      );
-	auto ps_FE  = this->template create_socket_out<int32_t>(p,  "FE", 1      );
-	auto ps_BER = this->template create_socket_out<float  >(p, "BER", 1      );
-	auto ps_FER = this->template create_socket_out<float  >(p, "FER", 1      );
+	auto &p1 = this->create_task("check_errors", (int)mnt::tsk::check_errors);
+	auto p1s_U = this->template create_socket_in<B>(p1, "U", this->get_K());
+	auto p1s_V = this->template create_socket_in<B>(p1, "V", this->get_K());
 
-	this->create_codelet(p, [ps_U, ps_V, ps_FRA, ps_BE, ps_FE, ps_BER, ps_FER](Module &m, Task &t) -> int
+	this->create_codelet(p1, [p1s_U, p1s_V](Module &m, Task &t) -> int
 	{
-		return static_cast<Monitor_BFER<B>&>(m).check_errors(static_cast<B*      >(t[ps_U  ].get_dataptr()),
-		                                                     static_cast<B*      >(t[ps_V  ].get_dataptr()),
-		                                                     static_cast<int64_t*>(t[ps_FRA].get_dataptr()),
-		                                                     static_cast<int32_t*>(t[ps_BE ].get_dataptr()),
-		                                                     static_cast<int32_t*>(t[ps_FE ].get_dataptr()),
-		                                                     static_cast<float*  >(t[ps_BER].get_dataptr()),
-		                                                     static_cast<float*  >(t[ps_FER].get_dataptr())
-															 );
+		return static_cast<Monitor_BFER<B>&>(m).check_errors(static_cast<B*>(t[p1s_U].get_dataptr()),
+		                                                     static_cast<B*>(t[p1s_V].get_dataptr()));
+	});
+
+	auto &p2 = this->create_task("check_errors2", (int)mnt::tsk::check_errors2);
+	auto p2s_U   = this->template create_socket_in <B      >(p2,   "U", get_K());
+	auto p2s_V   = this->template create_socket_in <B      >(p2,   "V", get_K());
+	auto p2s_FRA = this->template create_socket_out<int64_t>(p2, "FRA", 1      );
+	auto p2s_BE  = this->template create_socket_out<int32_t>(p2,  "BE", 1      );
+	auto p2s_FE  = this->template create_socket_out<int32_t>(p2,  "FE", 1      );
+	auto p2s_BER = this->template create_socket_out<float  >(p2, "BER", 1      );
+	auto p2s_FER = this->template create_socket_out<float  >(p2, "FER", 1      );
+
+	this->create_codelet(p2, [p2s_U, p2s_V, p2s_FRA, p2s_BE, p2s_FE, p2s_BER, p2s_FER](Module &m, Task &t) -> int
+	{
+		return static_cast<Monitor_BFER<B>&>(m).check_errors2(static_cast<B*      >(t[p2s_U  ].get_dataptr()),
+		                                                      static_cast<B*      >(t[p2s_V  ].get_dataptr()),
+		                                                      static_cast<int64_t*>(t[p2s_FRA].get_dataptr()),
+		                                                      static_cast<int32_t*>(t[p2s_BE ].get_dataptr()),
+		                                                      static_cast<int32_t*>(t[p2s_FE ].get_dataptr()),
+		                                                      static_cast<float*  >(t[p2s_BER].get_dataptr()),
+		                                                      static_cast<float*  >(t[p2s_FER].get_dataptr()));
 	});
 
 	reset();
@@ -134,7 +143,37 @@ bool Monitor_BFER<B>
 
 template <typename B>
 int Monitor_BFER<B>
-::check_errors(const B *U, const B *V, int64_t *FRA, int32_t *BE, int32_t *FE, float *BER, float *FER, const int frame_id)
+::check_errors(const B *U,
+               const B *V,
+               const int frame_id)
+{
+	const auto f_start = (frame_id < 0) ? 0 : frame_id % get_n_frames();
+	const auto f_stop  = (frame_id < 0) ? get_n_frames() : f_start +1;
+
+	int n_be_total = 0;
+	for (auto f = f_start; f < f_stop; f++)
+		n_be_total += this->_check_errors(U + f * get_K(),
+		                                  V + f * get_K(),
+		                                  f);
+
+	this->callback_check.notify();
+
+	if (this->fe_limit_achieved())
+		this->callback_fe_limit_achieved.notify();
+
+	return n_be_total;
+}
+
+template <typename B>
+int Monitor_BFER<B>
+::check_errors2(const B *U,
+                const B *V,
+                int64_t *FRA,
+                int32_t *BE,
+                int32_t *FE,
+                float   *BER,
+                float   *FER,
+                const int frame_id)
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % get_n_frames();
 	const auto f_stop  = (frame_id < 0) ? get_n_frames() : f_start +1;

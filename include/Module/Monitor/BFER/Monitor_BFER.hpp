@@ -25,8 +25,9 @@ template <typename B = int>
 class Monitor_BFER : public Monitor
 {
 public:
-	inline Task&   operator[](const mnt::tsk               t);
-	inline Socket& operator[](const mnt::sck::check_errors s);
+	inline Task&   operator[](const mnt::tsk                t);
+	inline Socket& operator[](const mnt::sck::check_errors  s);
+	inline Socket& operator[](const mnt::sck::check_errors2 s);
 
 protected:
 	struct Attributes
@@ -72,9 +73,32 @@ public:
 	 * \param Y: the decoded message (from the Decoder).
 	 */
 	template <class A = std::allocator<B>>
-	int check_errors(const std::vector<B,A>& U, const std::vector<B,A>& Y, std::vector<int64_t>& FRA, std::vector<int64_t>& BE, std::vector<int64_t>& FE, std::vector<float>& BER, std::vector<float>& FER, const int frame_id = -1);
+	int check_errors(const std::vector<B,A>& U,
+	                 const std::vector<B,A>& V,
+	                 const int frame_id = -1);
 
-	virtual int check_errors(const B *U, const B *Y, int64_t *FRA, int32_t *BE, int32_t *FE, float *BER, float *FER, const int frame_id = -1);
+	template <class A = std::allocator<B>>
+	int check_errors2(const std::vector<B,A    >& U,
+	                  const std::vector<B,A    >& V,
+	                        std::vector<int64_t>& FRA,
+	                        std::vector<int64_t>& BE,
+	                        std::vector<int64_t>& FE,
+	                        std::vector<float  >& BER,
+	                        std::vector<float  >& FER,
+	                  const int frame_id = -1);
+
+	virtual int check_errors(const B *U,
+	                         const B *V,
+	                         const int frame_id = -1);
+
+	virtual int check_errors2(const B       *U,
+	                          const B       *V,
+	                                int64_t *FRA,
+	                                int32_t *BE,
+	                                int32_t *FE,
+	                                float   *BER,
+	                                float   *FER,
+	                          const int frame_id = -1);
 
 	bool    fe_limit_achieved() const;
 	bool frame_limit_achieved() const;
@@ -119,7 +143,7 @@ public:
 protected:
 	const Attributes& get_attributes() const;
 
-	virtual int _check_errors(const B *U, const B *Y, const int frame_id);
+	virtual int _check_errors(const B *U, const B *V, const int frame_id);
 };
 }
 }
