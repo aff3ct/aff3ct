@@ -24,7 +24,10 @@ using namespace aff3ct::tools;
 //            const std::vector<std::vector<size_t>> &puids)
 // : original_sequence(first, last, 1),
 //   stages(sep_stages.size()),
-//   adaptors(sep_stages.size() -1)
+//   adaptors(sep_stages.size() -1),
+//   saved_firsts_tasks_id(sep_stages.size()),
+//   saved_lasts_tasks_id(sep_stages.size()),
+//   bound_adaptors(false)
 // {
 // 	this->init<const module::Task>(first,
 // 	                               &last,
@@ -46,7 +49,10 @@ using namespace aff3ct::tools;
 //            const std::vector<std::vector<size_t>> &puids)
 // : original_sequence(first, 1),
 //   stages(sep_stages.size()),
-//   adaptors(sep_stages.size() -1)
+//   adaptors(sep_stages.size() -1),
+//   saved_firsts_tasks_id(sep_stages.size()),
+//   saved_lasts_tasks_id(sep_stages.size()),
+//   bound_adaptors(false)
 // {
 // 	const module::Task* last = nullptr;
 // 	this->init<const module::Task>(first,
@@ -71,7 +77,10 @@ Pipeline
            const std::vector<bool> &tasks_inplace*/)
 : original_sequence(firsts, lasts, 1),
   stages(sep_stages.size()),
-  adaptors(sep_stages.size() -1)
+  adaptors(sep_stages.size() -1),
+  saved_firsts_tasks_id(sep_stages.size()),
+  saved_lasts_tasks_id(sep_stages.size()),
+  bound_adaptors(false)
 {
 	this->init<module::Task>(firsts,
 	                         lasts,
@@ -94,7 +103,10 @@ Pipeline
            const std::vector<bool> &tasks_inplace*/)
 : original_sequence(firsts, 1),
   stages(sep_stages.size()),
-  adaptors(sep_stages.size() -1)
+  adaptors(sep_stages.size() -1),
+  saved_firsts_tasks_id(sep_stages.size()),
+  saved_lasts_tasks_id(sep_stages.size()),
+  bound_adaptors(false)
 {
 	this->init<module::Task>(firsts,
 	                         {},
@@ -322,6 +334,7 @@ void Pipeline
 	}
 
 	this->create_adaptors(synchro_buffer_sizes, synchro_active_waiting);
+	this->bind_adaptors();
 }
 
 void Pipeline
@@ -329,10 +342,6 @@ void Pipeline
 {
 	//                     sck out addr     occ     stage   tsk id  sck id
 	std::vector<std::tuple<module::Socket*, size_t, size_t, size_t, size_t>> out_sck_orphans;
-	//                               sck out addr     stage   tsk id  sck id
-	std::vector<std::pair<std::tuple<module::Socket*, size_t, size_t, size_t>,
-	//                               sck in addr      stage   tsk id  sck id
-	                      std::tuple<module::Socket*, size_t, size_t, size_t>>> sck_orphan_binds;
 
 	// for all the stages in the pipeline
 	for (size_t sta = 0; sta < this->stages.size() -1; sta++)
@@ -403,11 +412,15 @@ void Pipeline
 					if (tsk->get_socket_type(*sck) == module::socket_t::SIN ||
 					    tsk->get_socket_type(*sck) == module::socket_t::SIN_SOUT)
 					{
+						module::Socket* bsck = nullptr;
 						try
 						{
 							// get output bounded socket
-							auto bsck = &sck->get_bound_socket(); // can throw if there is no bounded socket
-
+							bsck = &sck->get_bound_socket(); // can throw if there is no bounded socket
+						}
+						catch (const std::exception&) {}
+						if (bsck != nullptr)
+						{
 							// check if the task of the bounded socket is not in the current stage
 							if (std::find(tasks_per_threads[t].begin(),
 							              tasks_per_threads[t].end(),
@@ -420,15 +433,23 @@ void Pipeline
 										break;
 
 								if (pos < out_sck_orphans.size())
-									sck_orphan_binds.push_back(std::make_pair(
+								{
+									auto sck_out = std::get<0>(out_sck_orphans[pos]);
+									auto sck_in = sck.get();
+									auto unbind_sout_pos = std::distance(sck_out->get_bound_sockets().begin(),
+									                                     std::find(sck_out->get_bound_sockets().begin(),
+									                                               sck_out->get_bound_sockets().end(),
+									                                               sck_in)) -1;
+									this->sck_orphan_binds.push_back(std::make_pair(
 									                               std::make_tuple(std::get<0>(out_sck_orphans[pos]),
 									                                               std::get<2>(out_sck_orphans[pos]),
 									                                               std::get<3>(out_sck_orphans[pos]),
-									                                               std::get<4>(out_sck_orphans[pos])),
-									                               std::make_tuple(sck.get(), sta +1, tsk_id, sck_id)));
+									                                               std::get<4>(out_sck_orphans[pos]),
+									                                               unbind_sout_pos),
+									                               std::make_tuple(sck_in, sta +1, tsk_id, sck_id)));
+								}
 							}
 						}
-						catch (const std::exception&) { /* do nothing */ }
 					}
 				}
 			}
@@ -453,7 +474,7 @@ void Pipeline
 	// }
 
 	// std::cout << std::endl << "Detected socket binds:" << std::endl;
-	// for (auto &bind : sck_orphan_binds)
+	// for (auto &bind : this->sck_orphan_binds)
 	// {
 	// 	auto sck_out_name = std::get<0>(bind.first)->get_name();
 	// 	auto tsk_out_name = std::get<0>(bind.first)->get_task().get_name();
@@ -476,6 +497,7 @@ void Pipeline
 	// ----------------------------------------------------------------------------------------------------------------
 	// ------------------------------------------------------------------------------------------------ create adaptors
 	// ----------------------------------------------------------------------------------------------------------------
+	auto sck_orphan_binds = this->sck_orphan_binds;
 	module::Adaptor* adp = nullptr;
 	std::map<module::Socket*, size_t> sck_to_adp_sck_id;
 	for (size_t sta = 0; sta < this->stages.size(); sta++)
@@ -514,11 +536,14 @@ void Pipeline
 						if (tsk_in_sta == sta)
 						{
 							auto sck_out_ptr = std::get<0>(bind.first);
+							auto priority = std::get<4>(bind.first);
 							auto tsk_in_id = std::get<2>(bind.second);
 							auto sck_in_id = std::get<3>(bind.second);
 							auto sck_in = tasks_per_threads[t][tsk_in_id]->sockets[sck_in_id];
-							sck_in->reset();
-							sck_in->bind(*task_pull->sockets[sck_to_adp_sck_id[sck_out_ptr]]);
+							this->adaptors_binds.push_back(
+								std::make_tuple(task_pull->sockets[sck_to_adp_sck_id[sck_out_ptr]].get(),
+								                sck_in.get(),
+								                priority));
 						}
 						else
 							sck_orphan_binds_new.push_back(bind);
@@ -528,20 +553,9 @@ void Pipeline
 				}
 
 				if (t > 0)
-				{
-					// add the adaptor to the current stage
 					this->stages[sta]->all_modules[t].push_back(cur_adp);
-				}
-
-				auto ss = this->stages[sta]->sequences[t]->get_contents();
-				assert(ss != nullptr);
-				ss->tasks    .insert(ss->tasks.begin(), task_pull);
-				ss->processes.insert(ss->processes.begin(), [task_pull]() -> int { return task_pull->exec(); });
-				this->stages[sta]->update_tasks_id(t);
 			}
-			this->stages[sta]->firsts_tasks_id.clear();
-			this->stages[sta]->firsts_tasks_id.push_back(0);
-			this->stages[sta]->n_tasks++;
+			this->saved_firsts_tasks_id[sta] = this->stages[sta]->firsts_tasks_id;
 			sck_orphan_binds = sck_orphan_binds_new;
 		}
 
@@ -590,7 +604,7 @@ void Pipeline
 				                                 adp_active_waiting,
 				                                 adp_n_frames);
 
-			size_t last_task_id = 0;
+			// size_t last_task_id = 0;
 			for (size_t t = 0; t < n_threads; t++)
 			{
 				module::Adaptor* cur_adp = (t == 0) ? adp : adp->clone();
@@ -614,9 +628,12 @@ void Pipeline
 							auto tsk_out_id = std::get<2>(bind.first);
 							auto sck_out_id = std::get<3>(bind.first);
 							auto sck_out = tasks_per_threads[t][tsk_out_id]->sockets[sck_out_id];
-							sck_out->reset();
+							auto priority = std::get<4>(bind.first);
 							sck_to_adp_sck_id_new[sck_out_ptr] = adp_sck_id;
-							task_push->sockets[adp_sck_id++]->bind(*sck_out);
+							this->adaptors_binds.push_back(
+								std::make_tuple(sck_out.get(),
+									            task_push->sockets[adp_sck_id++].get(),
+									            priority));
 							passed_scks_out.push_back(sck_out_ptr);
 						}
 					}
@@ -635,36 +652,195 @@ void Pipeline
 							auto adp_prev = t == 0 ? this->adaptors[sta -1].first [   0] :
 							                         this->adaptors[sta -1].second[t -1];
 							auto sck_out = (*adp_prev)[tsk_out_id].sockets[sck_out_id];
-							task_push->sockets[adp_sck_id++]->bind(*sck_out);
+							auto priority = std::get<4>(bind.first);
+							this->adaptors_binds.push_back(
+								std::make_tuple(sck_out.get(),
+									            task_push->sockets[adp_sck_id++].get(),
+									            priority));
 							passed_scks_out.push_back(sck_out_ptr);
 						}
 					}
 				}
 				passed_scks_out.clear();
-
-				// add the adaptor to the current stage
-				this->stages[sta]->all_modules[t].push_back(cur_adp);
-
-				auto ss = this->stages[sta]->get_last_subsequence(t);
-				assert(ss != nullptr);
-				ss->tasks    .push_back(task_push);
-				ss->processes.push_back([task_push]() -> int { return task_push->exec(); });
-				last_task_id = ss->tasks_id[ss->tasks_id.size() -1] +1;
-				ss->tasks_id .push_back(last_task_id);
-				// this->stages[sta]->update_tasks_id(t);
 			}
-			this->stages[sta]->lasts_tasks_id.clear();
-			this->stages[sta]->lasts_tasks_id.push_back(last_task_id);
-			this->stages[sta]->n_tasks++;
+			this->saved_lasts_tasks_id[sta] = this->stages[sta]->lasts_tasks_id;
 		}
-		this->stages[sta]->update_firsts_and_lasts_tasks();
 		sck_to_adp_sck_id = sck_to_adp_sck_id_new;
+	}
+}
+
+void Pipeline
+::bind_adaptors()
+{
+	if (!this->bound_adaptors)
+	{
+		for (size_t sta = 0; sta < this->stages.size(); sta++)
+		{
+			const auto n_threads = this->stages[sta]->get_n_threads();
+
+			// --------------------------------------------------------------------------------------------------------
+			// ------------------------------------------------------------------------------------------- pull adaptor
+			// --------------------------------------------------------------------------------------------------------
+			if (sta > 0)
+			{
+				auto n_threads_prev_sta = this->stages[sta -1]->get_n_threads();
+				for (size_t t = 0; t < n_threads; t++)
+				{
+					module::Adaptor* cur_adp = t > 0 ? adaptors[sta -1].second[t -1].get() :
+					                                   adaptors[sta -1].first [   0].get();
+
+					if (t > 0 || sta == this->stages.size() -1) // add the adaptor to the current stage
+						this->stages[sta]->all_modules[t].push_back(cur_adp);
+
+					auto task_pull = n_threads_prev_sta == 1 ? &(*cur_adp)[(int)module::adp::tsk::pull_n] :
+					                                           &(*cur_adp)[(int)module::adp::tsk::pull_1];
+
+					auto ss = this->stages[sta]->sequences[t]->get_contents();
+					assert(ss != nullptr);
+					ss->tasks    .insert(ss->tasks.begin(), task_pull);
+					ss->processes.insert(ss->processes.begin(), [task_pull]() -> int { return task_pull->exec(); });
+					this->stages[sta]->update_tasks_id(t);
+				}
+				this->stages[sta]->firsts_tasks_id.clear();
+				this->stages[sta]->firsts_tasks_id.push_back(0);
+				this->stages[sta]->n_tasks++;
+			}
+
+			// --------------------------------------------------------------------------------------------------------
+			// ------------------------------------------------------------------------------------------- push adaptor
+			// --------------------------------------------------------------------------------------------------------
+			if (sta < this->stages.size() -1)
+			{
+				size_t last_task_id = 0;
+				for (size_t t = 0; t < n_threads; t++)
+				{
+					module::Adaptor* cur_adp = adaptors[sta].first[t].get();
+
+					// add the adaptor to the current stage
+					this->stages[sta]->all_modules[t].push_back(cur_adp);
+
+					auto task_push = n_threads == 1 ? &(*cur_adp)[(int)module::adp::tsk::push_1] :
+					                                  &(*cur_adp)[(int)module::adp::tsk::push_n];
+
+					auto ss = this->stages[sta]->get_last_subsequence(t);
+					assert(ss != nullptr);
+					ss->tasks    .push_back(task_push);
+					ss->processes.push_back([task_push]() -> int { return task_push->exec(); });
+					last_task_id = ss->tasks_id[ss->tasks_id.size() -1] +1;
+					ss->tasks_id .push_back(last_task_id);
+				}
+				this->stages[sta]->lasts_tasks_id.clear();
+				this->stages[sta]->lasts_tasks_id.push_back(last_task_id);
+				this->stages[sta]->n_tasks++;
+			}
+			this->stages[sta]->update_firsts_and_lasts_tasks();
+		}
+
+		// ------------------------------------------------------------------------------------------------------------
+		// ---------------------------------------------------------------------------------------------- bind adaptors
+		// ------------------------------------------------------------------------------------------------------------
+		for (auto &bind : this->sck_orphan_binds)
+		{
+			auto sck_out = std::get<0>(bind.first);
+			auto sck_in  = std::get<0>(bind.second);
+			sck_in->unbind(*sck_out);
+		}
+
+		for (auto &bind : this->adaptors_binds)
+		{
+			auto sck_out  = std::get<0>(bind);
+			auto sck_in   = std::get<1>(bind);
+			auto priority = std::get<2>(bind);
+			sck_in->bind(*sck_out, priority);
+		}
+
+		this->bound_adaptors = true;
+	}
+}
+
+void Pipeline
+::unbind_adaptors()
+{
+	if (this->bound_adaptors)
+	{
+		for (size_t sta = 0; sta < this->stages.size(); sta++)
+		{
+			const auto n_threads = this->stages[sta]->get_n_threads();
+
+			// --------------------------------------------------------------------------------------------------------
+			// ------------------------------------------------------------------------------------------- pull adaptor
+			// --------------------------------------------------------------------------------------------------------
+			if (sta > 0)
+			{
+				for (size_t t = 0; t < n_threads; t++)
+				{
+					if (t > 0 || sta == this->stages.size() -1) // rm the adaptor to the current stage
+						this->stages[sta]->all_modules[t].pop_back();
+
+					auto ss = this->stages[sta]->sequences[t]->get_contents();
+					assert(ss != nullptr);
+					ss->tasks    .erase(ss->tasks.begin());
+					ss->processes.erase(ss->processes.begin());
+					this->stages[sta]->update_tasks_id(t);
+				}
+				this->stages[sta]->firsts_tasks_id = this->saved_firsts_tasks_id[sta];
+				this->stages[sta]->n_tasks--;
+			}
+
+			// --------------------------------------------------------------------------------------------------------
+			// ------------------------------------------------------------------------------------------- push adaptor
+			// --------------------------------------------------------------------------------------------------------
+			if (sta < this->stages.size() -1)
+			{
+				for (size_t t = 0; t < n_threads; t++)
+				{
+					// rm the adaptor to the current stage
+					this->stages[sta]->all_modules[t].pop_back();
+
+					auto ss = this->stages[sta]->get_last_subsequence(t);
+					assert(ss != nullptr);
+					ss->tasks    .pop_back();
+					ss->processes.pop_back();
+					ss->tasks_id .pop_back();
+				}
+				this->stages[sta]->lasts_tasks_id = this->saved_lasts_tasks_id[sta];
+				this->stages[sta]->n_tasks--;
+			}
+			this->stages[sta]->update_firsts_and_lasts_tasks();
+		}
+
+		// ------------------------------------------------------------------------------------------------------------
+		// ---------------------------------------------------------------------------------------------- bind adaptors
+		// ------------------------------------------------------------------------------------------------------------
+		for (auto &bind : this->adaptors_binds)
+		{
+			auto sck_out = std::get<0>(bind);
+			auto sck_in  = std::get<1>(bind);
+			sck_in->unbind(*sck_out);
+		}
+
+		for (auto &bind : this->sck_orphan_binds)
+		{
+			auto sck_out  = std::get<0>(bind.first);
+			auto priority = std::get<4>(bind.first);
+			auto sck_in   = std::get<0>(bind.second);
+			sck_in->bind(*sck_out, priority);
+		}
+
+		this->bound_adaptors = false;
 	}
 }
 
 void Pipeline
 ::exec(std::function<bool(const std::vector<int>&)> stop_condition)
 {
+	if (!this->bound_adaptors)
+	{
+		std::stringstream message;
+		message << "'bound_adaptors' has to be true to execute the pipeline.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	auto &stages = this->stages;
 	auto stop_threads = [&stages]()
 	{
@@ -693,6 +869,13 @@ void Pipeline
 void Pipeline
 ::exec(std::function<bool()> stop_condition)
 {
+	if (!this->bound_adaptors)
+	{
+		std::stringstream message;
+		message << "'bound_adaptors' has to be true to execute the pipeline.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	auto &stages = this->stages;
 	auto stop_threads = [&stages]()
 	{
@@ -821,7 +1004,7 @@ void Pipeline
 		};
 
 	std::function<void(Generic_node<Sub_sequence>*,
-		               const size_t,
+	                   const size_t,
 	                   const std::string&,
 	                   std::ostream&)> export_dot_connections_recursive =
 		[&export_dot_connections_recursive, this](Generic_node<Sub_sequence> *cur_node,
@@ -857,18 +1040,21 @@ void Pipeline
 	for (size_t sta = 0; sta < this->stages.size(); sta++)
 	{
 		export_dot_connections_recursive(this->stages[sta]->sequences[0], sta, tab, stream);
-		if (sta > 0)
+		if (this->bound_adaptors)
 		{
-			auto tsk1 = this->stages[sta -1]->get_lasts_tasks()[0].back();
-			auto tsk2 = this->stages[sta +0]->get_firsts_tasks()[0][0];
+			if (sta > 0)
+			{
+				auto tsk1 = this->stages[sta -1]->get_lasts_tasks()[0].back();
+				auto tsk2 = this->stages[sta +0]->get_firsts_tasks()[0][0];
 
-			auto sck1 = tsk1->sockets[0];
-			auto sck2 = tsk2->sockets[0];
+				auto sck1 = tsk1->sockets[0];
+				auto sck2 = tsk2->sockets[0];
 
-			stream << tab << "\"" << +sck1.get() << "\" -> \"" << +sck2.get()
-			              << "\" [ltail=\"cluster_" << +&tsk1->get_module() << "_" << +tsk1
-			              << "\" lhead=\"cluster_" << +&tsk2->get_module() << "_" << +tsk2
-			              << "\" color=\"green\" style=\"dashed\"];" << std::endl;
+				stream << tab << "\"" << +sck1.get() << "\" -> \"" << +sck2.get()
+				              << "\" [ltail=\"cluster_" << +&tsk1->get_module() << "_" << +tsk1
+				              << "\" lhead=\"cluster_" << +&tsk2->get_module() << "_" << +tsk2
+				              << "\" color=\"green\" style=\"dashed\"];" << std::endl;
+			}
 		}
 	}
 

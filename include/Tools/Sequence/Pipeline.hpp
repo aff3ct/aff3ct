@@ -2,11 +2,12 @@
  * \file
  * \brief Class tools::Pipeline.
  */
-#ifndef CHAIN_PIPELINE_HPP_
-#define CHAIN_PIPELINE_HPP_
+#ifndef PIPELINE_HPP_
+#define PIPELINE_HPP_
 
 #include <functional>
 #include <cstdint>
+#include <utility>
 #include <memory>
 #include <vector>
 
@@ -25,6 +26,19 @@ protected:
 	std::vector<std::shared_ptr<Sequence>> stages;
 	std::vector<std::pair<std::vector<std::shared_ptr<module::Adaptor>>,
 	                      std::vector<std::shared_ptr<module::Adaptor>>>> adaptors;
+
+	//                               sck out addr     stage   tsk id  sck id  unbind_pos
+	std::vector<std::pair<std::tuple<module::Socket*, size_t, size_t, size_t, size_t>,
+	//                               sck in addr      stage   tsk id  sck id
+	                      std::tuple<module::Socket*, size_t, size_t, size_t>>> sck_orphan_binds;
+
+	//                     sck out addr     sck in addr      priority
+	std::vector<std::tuple<module::Socket*, module::Socket*, size_t>> adaptors_binds;
+
+	std::vector<std::vector<size_t>> saved_firsts_tasks_id;
+	std::vector<std::vector<size_t>> saved_lasts_tasks_id;
+
+	bool bound_adaptors;
 
 public:
 	// Pipeline(const module::Task &first,
@@ -98,10 +112,12 @@ public:
 
 	void export_dot(std::ostream &stream = std::cout) const;
 
+	void bind_adaptors();
+	void unbind_adaptors();
+
 protected:
 	void create_adaptors(const std::vector<size_t> &synchro_buffer_sizes = {},
 	                     const std::vector<bool> &synchro_active_waiting = {});
-
 private:
 	template <class TA>
 	void init(const std::vector<TA*> &firsts,
@@ -121,4 +137,4 @@ private:
 #include "Tools/Sequence/Pipeline.hxx"
 #endif
 
-#endif /* CHAIN_PIPELINE_HPP_ */
+#endif /* PIPELINE_HPP_ */
