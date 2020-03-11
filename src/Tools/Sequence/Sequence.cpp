@@ -236,7 +236,7 @@ void Sequence
 	for (auto first : firsts)
 	{
 		auto contents = last_subseq->get_contents();
-		this->firsts_tasks_id.push_back(contents ? contents->tasks_id[contents->tasks_id.size()] : 0);
+		this->firsts_tasks_id.push_back(contents ? contents->tasks_id[contents->tasks_id.size() -1] : 0);
 		last_subseq = this->init_recursive<SS,TA>(last_subseq,
 		                                          ssid,
 		                                          taid,
