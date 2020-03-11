@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iterator>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
@@ -203,7 +204,7 @@ void Socket
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if ((size_t)priority >= s_out.bound_sockets.size() || priority == -1)
+	if ((size_t)priority > s_out.bound_sockets.size() || priority == -1)
 		s_out.bound_sockets.push_back(this);
 	else
 		s_out.bound_sockets.insert(s_out.bound_sockets.begin() + priority, this);
@@ -302,6 +303,73 @@ void Socket
 	// this->dataptr = nullptr;
 	this->bound_sockets.clear();
 	this->bound_socket = nullptr;
+}
+
+size_t Socket
+::unbind(Socket &s_out)
+{
+	if (this->bound_socket == nullptr)
+	{
+		std::stringstream message;
+		message << "The current input socket can't be unbound because it is not bound to any output socket ("
+		        << "'s_out.databytes'"                << " = " << s_out.databytes              << ", "
+		        << "'s_out.name'"                     << " = " << s_out.get_name()             << ", "
+		        << "'s_out.task.name'"                << " = " << s_out.task.get_name()        << ", "
+//		        << "'s_out.task.module.name'"         << " = " << s_out.task.get_module_name() << ", "
+		        << "'databytes'"                      << " = " << this->databytes              << ", "
+		        << "'name'"                           << " = " << get_name()                   << ", "
+		        << "'task.name'"                      << " = " << task.get_name()              << ", "
+//		        << "'task.module.name'"               << " = " << task.get_module_name()
+		        << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (this->bound_socket != &s_out)
+	{
+		std::stringstream message;
+		message << "This socket is connected to a different socket than 's_out' ("
+		        << "'bound_socket->databytes'"        << " = " << this->bound_socket->databytes              << ", "
+		        << "'bound_socket->name'"             << " = " << this->bound_socket->get_name()             << ", "
+		        << "'bound_socket->task.name'"        << " = " << this->bound_socket->task.get_name()        << ", "
+//		        << "'bound_socket->task.module.name'" << " = " << this->bound_socket->task.get_module_name() << ", "
+		        << "'s_out.databytes'"                << " = " << s_out.databytes                            << ", "
+		        << "'s_out.name'"                     << " = " << s_out.get_name()                           << ", "
+		        << "'s_out.task.name'"                << " = " << s_out.task.get_name()                      << ", "
+//		        << "'s_out.task.module.name'"         << " = " << s_out.task.get_module_name()               << ", "
+		        << "'databytes'"                      << " = " << this->databytes                            << ", "
+		        << "'name'"                           << " = " << get_name()                                 << ", "
+		        << "'task.name'"                      << " = " << task.get_name()                            << ", "
+//		        << "'task.module.name'"               << " = " << task.get_module_name()
+		        << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	this->bound_socket = nullptr;
+
+	size_t unbind_pos = 0;
+	auto it = std::find(s_out.bound_sockets.begin(), s_out.bound_sockets.end(), this);
+	if (it != s_out.bound_sockets.end())
+	{
+		unbind_pos = (int)std::distance(s_out.bound_sockets.begin(), it) -1;
+		s_out.bound_sockets.erase(it);
+	}
+	else
+	{
+		std::stringstream message;
+		message << "The 's_out' output socket is not bound to the current input socket ("
+		        << "'s_out.databytes'"                << " = " << s_out.databytes              << ", "
+		        << "'s_out.name'"                     << " = " << s_out.get_name()             << ", "
+		        << "'s_out.task.name'"                << " = " << s_out.task.get_name()        << ", "
+//		        << "'s_out.task.module.name'"         << " = " << s_out.task.get_module_name() << ", "
+		        << "'databytes'"                      << " = " << this->databytes              << ", "
+		        << "'name'"                           << " = " << get_name()                   << ", "
+		        << "'task.name'"                      << " = " << task.get_name()              << ", "
+//		        << "'task.module.name'"               << " = " << task.get_module_name()
+		        << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return unbind_pos;
 }
 
 }

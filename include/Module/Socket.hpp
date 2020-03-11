@@ -75,6 +75,8 @@ public:
 	inline void operator()(void* dataptr);
 
 	inline void reset();
+
+	inline size_t unbind(Socket& s_out);
 };
 }
 }
