@@ -1440,7 +1440,7 @@
 #ifndef REORDERER_HPP_
 #include <Tools/Perf/Reorderer/Reorderer.hpp>
 #endif
-#ifndef CHAIN_PIPELINE_HPP_
+#ifndef PIPELINE_HPP_
 #include <Tools/Sequence/Pipeline.hpp>
 #endif
 #ifndef SEQUENCE_HPP_
