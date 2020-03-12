@@ -14,6 +14,7 @@
 #include "Module/Module.hpp"
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
+#include "Module/Probe/Probe.hpp"
 #include "Module/Loop/Loop.hpp"
 #include "Module/Router/Router.hpp"
 #include "Module/Adaptor/Adaptor.hpp"
@@ -25,6 +26,7 @@ using namespace aff3ct::tools;
 Sequence
 ::Sequence(const std::vector<const module::Task*> &firsts,
            const std::vector<const module::Task*> &lasts,
+           const std::vector<const module::Task*> &exceptions,
            const size_t n_threads,
            const bool thread_pinning,
            const std::vector<size_t> &puids)
@@ -37,7 +39,8 @@ Sequence
   tasks_inplace(false),
   thread_pinning(thread_pinning),
   puids(puids),
-  no_copy_mode(true)
+  no_copy_mode(true),
+  saved_exceptions(exceptions)
 {
 #ifndef AFF3CT_HWLOC
 	if (thread_pinning)
@@ -53,7 +56,17 @@ Sequence
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	this->init<tools::Sub_sequence_const,const module::Task>(firsts, lasts);
+	this->init<tools::Sub_sequence_const,const module::Task>(firsts, lasts, exceptions);
+}
+
+Sequence
+::Sequence(const std::vector<const module::Task*> &firsts,
+           const std::vector<const module::Task*> &lasts,
+           const size_t n_threads,
+           const bool thread_pinning,
+           const std::vector<size_t> &puids)
+: Sequence(firsts, lasts, {}, n_threads, thread_pinning, puids)
+{
 }
 
 Sequence
@@ -61,26 +74,8 @@ Sequence
            const size_t n_threads,
            const bool thread_pinning,
            const std::vector<size_t> &puids)
-: n_threads(n_threads),
-  sequences(n_threads, nullptr),
-  modules(n_threads),
-  all_modules(n_threads),
-  mtx_exception(new std::mutex()),
-  force_exit_loop(new std::atomic<bool>(false)),
-  tasks_inplace(false),
-  thread_pinning(thread_pinning),
-  puids(puids),
-  no_copy_mode(true)
+: Sequence(firsts, {}, {}, n_threads, thread_pinning, puids)
 {
-	if (thread_pinning && puids.size() < n_threads)
-	{
-		std::stringstream message;
-		message << "'puids.size()' has greater or equal to 'n_threads' ('puids.size()' = " << puids.size()
-		        << " , 'n_threads' = " << n_threads << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	this->init<tools::Sub_sequence_const,const module::Task>(firsts, {});
 }
 
 Sequence
@@ -102,9 +97,18 @@ Sequence
 {
 }
 
+std::vector<const module::Task*> exceptions_convert_to_const(const std::vector<module::Task*> &exceptions)
+{
+	std::vector<const module::Task*> exceptions_const;
+	for (auto exception : exceptions)
+		exceptions_const.push_back(exception);
+	return exceptions_const;
+}
+
 Sequence
 ::Sequence(const std::vector<module::Task*> &firsts,
            const std::vector<module::Task*> &lasts,
+           const std::vector<module::Task*> &exceptions,
            const size_t n_threads,
            const bool thread_pinning,
            const std::vector<size_t> &puids,
@@ -118,7 +122,8 @@ Sequence
   tasks_inplace(tasks_inplace),
   thread_pinning(thread_pinning),
   puids(puids),
-  no_copy_mode(true)
+  no_copy_mode(true),
+  saved_exceptions(exceptions_convert_to_const(exceptions))
 {
 	if (thread_pinning && puids.size() < n_threads)
 	{
@@ -129,15 +134,28 @@ Sequence
 	}
 
 	if (tasks_inplace)
-		this->init<tools::Sub_sequence,module::Task>(firsts, lasts);
+		this->init<tools::Sub_sequence,module::Task>(firsts, lasts, exceptions);
 	else
 	{
 		std::vector<const module::Task*> firsts_bis;
 		for (auto first : firsts) firsts_bis.push_back(first);
 		std::vector<const module::Task*> lasts_bis;
 		for (auto last : lasts) lasts_bis.push_back(last);
-		this->init<tools::Sub_sequence_const,const module::Task>(firsts_bis, lasts_bis);
+		std::vector<const module::Task*> exceptions_bis;
+		for (auto exception : exceptions) exceptions_bis.push_back(exception);
+		this->init<tools::Sub_sequence_const,const module::Task>(firsts_bis, lasts_bis, exceptions_bis);
 	}
+}
+
+Sequence
+::Sequence(const std::vector<module::Task*> &firsts,
+           const std::vector<module::Task*> &lasts,
+           const size_t n_threads,
+           const bool thread_pinning,
+           const std::vector<size_t> &puids,
+           const bool tasks_inplace)
+: Sequence(firsts, lasts, {}, n_threads, thread_pinning, puids, tasks_inplace)
+{
 }
 
 Sequence
@@ -146,33 +164,8 @@ Sequence
            const bool thread_pinning,
            const std::vector<size_t> &puids,
            const bool tasks_inplace)
-: n_threads(n_threads),
-  sequences(n_threads, nullptr),
-  modules(tasks_inplace ? n_threads -1 : n_threads),
-  all_modules(n_threads),
-  mtx_exception(new std::mutex()),
-  force_exit_loop(new std::atomic<bool>(false)),
-  tasks_inplace(tasks_inplace),
-  thread_pinning(false),
-  puids(puids),
-  no_copy_mode(true)
+: Sequence(firsts, {}, {}, n_threads, thread_pinning, puids, tasks_inplace)
 {
-	if (thread_pinning && puids.size() < n_threads)
-	{
-		std::stringstream message;
-		message << "'puids.size()' has to be greater or equal to 'n_threads' ('puids.size()' = " << puids.size()
-		        << " , 'n_threads' = " << n_threads << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (tasks_inplace)
-		this->init<tools::Sub_sequence,module::Task>(firsts, {});
-	else
-	{
-		std::vector<const module::Task*> firsts_bis;
-		for (auto first : firsts) firsts_bis.push_back(first);
-		this->init<tools::Sub_sequence_const,const module::Task>(firsts_bis, {});
-	}
 }
 
 Sequence
@@ -205,7 +198,7 @@ Sequence
 
 template <class SS, class TA>
 void Sequence
-::init(const std::vector<TA*> &firsts, const std::vector<TA*> &lasts)
+::init(const std::vector<TA*> &firsts, const std::vector<TA*> &lasts, const std::vector<TA*> &exceptions)
 {
 	if (this->is_thread_pinning())
 		Thread_pinning::pin(this->puids[0]);
@@ -222,6 +215,27 @@ void Sequence
 		std::stringstream message;
 		message << "'n_threads' has to be strictly greater than 0.";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	for (auto exception : exceptions)
+	{
+		if (std::find(firsts.begin(), firsts.end(), exception) != firsts.end())
+		{
+			std::stringstream message;
+			message << "'exception' can't be contained in the 'firsts' vector ("
+			        << "'exception'"                 << " = " << +exception            << ", "
+			        << "'exception->get_name()'"     << " = " << exception->get_name() << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		if (std::find(lasts.begin(), lasts.end(), exception) != lasts.end())
+		{
+			std::stringstream message;
+			message << "'exception' can't be contained in the 'lasts' vector ("
+			        << "'exception'"                 << " = " << +exception            << ", "
+			        << "'exception->get_name()'"     << " = " << exception->get_name() << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 	}
 
 	auto root = new Generic_node<SS>(nullptr, {}, nullptr, 0, 0, 0);
@@ -244,6 +258,7 @@ void Sequence
 		                                          *first,
 		                                          *first,
 		                                          lasts,
+		                                          exceptions,
 		                                          this->lasts_tasks_id,
 		                                          real_lasts);
 	}
@@ -289,7 +304,7 @@ Sequence* Sequence
 	for (auto ta : this->get_lasts_tasks()[0])
 		lasts_tasks.push_back(ta);
 
-	c->init<tools::Sub_sequence_const,const module::Task>(firsts_tasks, lasts_tasks);
+	c->init<tools::Sub_sequence_const,const module::Task>(firsts_tasks, lasts_tasks, this->saved_exceptions);
 	c->mtx_exception.reset(new std::mutex());
 	c->force_exit_loop.reset(new std::atomic<bool>(false));
 	return c;
@@ -653,6 +668,7 @@ Generic_node<SS>* Sequence
                  TA &first,
                  TA &current_task,
                  const std::vector<TA*> &lasts,
+                 const std::vector<TA*> &exceptions,
                  std::vector<size_t> &real_lasts_id,
                  std::vector<TA*> &real_lasts)
 {
@@ -715,7 +731,8 @@ Generic_node<SS>* Sequence
 			{
 				node_loop_son0->get_c()->id = ssid++;
 				auto &t = loop->tasks[0]->sockets[2]->get_bound_sockets()[0]->get_task();
-				Sequence::init_recursive<SS,TA>(node_loop_son0, ssid, taid, loops, first, t, lasts, real_lasts_id, real_lasts);
+				Sequence::init_recursive<SS,TA>(node_loop_son0, ssid, taid, loops, first, t, lasts, exceptions,
+				                                real_lasts_id, real_lasts);
 			}
 			else
 			{
@@ -730,7 +747,8 @@ Generic_node<SS>* Sequence
 			{
 				node_loop_son1->get_c()->id = ssid++;
 				auto &t = loop->tasks[0]->sockets[3]->get_bound_sockets()[0]->get_task();
-				return Sequence::init_recursive<SS,TA>(node_loop_son1, ssid, taid, loops, first, t, lasts, real_lasts_id, real_lasts);
+				return Sequence::init_recursive<SS,TA>(node_loop_son1, ssid, taid, loops, first, t, lasts, exceptions,
+				                                       real_lasts_id, real_lasts);
 			}
 			else
 			{
@@ -765,10 +783,15 @@ Generic_node<SS>* Sequence
 						if (bs != nullptr)
 						{
 							auto &t = bs->get_task();
-							if (t.is_last_input_socket(*bs) || dynamic_cast<const module::Loop*>(&t.get_module()))
+							if (std::find(exceptions.begin(), exceptions.end(), &t) == exceptions.end())
 							{
-								is_last = false;
-								last_subseq = Sequence::init_recursive<SS,TA>(cur_subseq, ssid, taid, loops, first, t, lasts, real_lasts_id, real_lasts);
+								if (t.is_last_input_socket(*bs) || dynamic_cast<const module::Loop*>(&t.get_module()))
+								{
+									is_last = false;
+									last_subseq = Sequence::init_recursive<SS,TA>(cur_subseq, ssid, taid, loops, first,
+									                                              t, lasts, exceptions, real_lasts_id,
+									                                              real_lasts);
+								}
 							}
 						}
 					}
@@ -802,9 +825,6 @@ Generic_node<SS>* Sequence
 
 	return cur_subseq;
 }
-
-// template const module::Task& tools::Sequence::init_recursive<tools::Sub_sequence_const, const module::Task>(Generic_node<tools::Sub_sequence_const>*, size_t&, size_t&, std::vector<const module::Task*>&, const module::Task&, const module::Task&, const module::Task*);
-// template const module::Task& tools::Sequence::init_recursive<tools::Sub_sequence,             module::Task>(Generic_node<tools::Sub_sequence      >*, size_t&, size_t&, std::vector<      module::Task*>&,       module::Task&,       module::Task&,       module::Task*);
 
 template <class SS, class MO>
 void Sequence
@@ -843,7 +863,16 @@ void Sequence
 		this->all_modules[tid + (this->tasks_inplace ? 1 : 0)].resize(modules_vec.size());
 		for (size_t m = 0; m < modules_vec.size(); m++)
 		{
-			this->modules[tid][m].reset(modules_vec[m]->clone());
+			try
+			{
+				this->modules[tid][m].reset(modules_vec[m]->clone());
+			}
+			catch (std::exception &e)
+			{
+				std::cerr << rang::tag::error << "Module clone failed when trying to duplicate the sequence: module "
+				                              << "name is '" << modules_vec[m]->get_name() << "'." << std::endl;
+				throw e;
+			}
 			this->all_modules[tid + (this->tasks_inplace ? 1 : 0)][m] = this->modules[tid][m].get();
 		}
 
@@ -1018,6 +1047,7 @@ void Sequence
 	for (auto &t : subseq)
 	{
 		std::string color = dynamic_cast<module::Adaptor*>(&t->get_module()) ? "green" :"blue";
+		color = dynamic_cast<module::AProbe*>(&t->get_module()) ? "pink" : color;
 		stream << tab << tab << "subgraph \"cluster_" << +&t->get_module() << "_" << +t << "\" {" << std::endl;
 		stream << tab << tab << tab << "node [style=filled];" << std::endl;
 		stream << tab << tab << tab << "subgraph \"cluster_" << +&t << "\" {" << std::endl;

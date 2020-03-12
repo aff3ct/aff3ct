@@ -32,8 +32,15 @@ namespace module
 		}
 	}
 
+class AProbe : public Module
+{
+protected:
+	AProbe(const int n_frames = 1);
+	virtual ~AProbe() = default;
+};
+
 template <typename T>
-class Probe : public Module, public tools::Interface_reset
+class Probe : public AProbe, public tools::Interface_reset
 {
 public:
 	inline Task&   operator[](const prb::tsk        t);

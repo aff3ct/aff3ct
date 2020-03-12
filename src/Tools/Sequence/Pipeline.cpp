@@ -2,6 +2,7 @@
 #include <thread>
 #include <utility>
 #include <cassert>
+#include <fstream>
 
 #include "Module/Adaptor/Adaptor.hpp"
 #include "Module/Adaptor/Adaptor_1_to_n.hpp"
@@ -68,7 +69,7 @@ using namespace aff3ct::tools;
 Pipeline
 ::Pipeline(const std::vector<module::Task*> &firsts,
            const std::vector<module::Task*> &lasts,
-           const std::vector<std::pair<std::vector<module::Task*>, std::vector<module::Task*>>> &sep_stages,
+           const std::vector<std::tuple<std::vector<module::Task*>, std::vector<module::Task*>, std::vector<module::Task*>>> &sep_stages,
            const std::vector<size_t> &n_threads,
            const std::vector<size_t> &synchro_buffer_sizes,
            const std::vector<bool> &synchro_active_waiting,
@@ -94,6 +95,7 @@ Pipeline
 
 Pipeline
 ::Pipeline(const std::vector<module::Task*> &firsts,
+           const std::vector<module::Task*> &lasts,
            const std::vector<std::pair<std::vector<module::Task*>, std::vector<module::Task*>>> &sep_stages,
            const std::vector<size_t> &n_threads,
            const std::vector<size_t> &synchro_buffer_sizes,
@@ -101,22 +103,67 @@ Pipeline
            const std::vector<bool> &thread_pinning,
            const std::vector<std::vector<size_t>> &puids/*,
            const std::vector<bool> &tasks_inplace*/)
-: original_sequence(firsts, 1),
+: original_sequence(firsts, lasts, 1),
   stages(sep_stages.size()),
   adaptors(sep_stages.size() -1),
   saved_firsts_tasks_id(sep_stages.size()),
   saved_lasts_tasks_id(sep_stages.size()),
   bound_adaptors(false)
 {
+	std::vector<std::tuple<std::vector<module::Task*>,
+	                       std::vector<module::Task*>,
+	                       std::vector<module::Task*>>> sep_stages_bis;
+	for (auto &sep_stage : sep_stages)
+		sep_stages_bis.push_back(std::make_tuple(sep_stage.first, sep_stage.second, std::vector<module::Task*>()));
+
 	this->init<module::Task>(firsts,
-	                         {},
-	                         sep_stages,
+	                         lasts,
+	                         sep_stages_bis,
 	                         n_threads,
 	                         synchro_buffer_sizes,
 	                         synchro_active_waiting,
-	                         thread_pinning,
-	                         puids
+	                         thread_pinning, puids
 	                         /*, tasks_inplace*/);
+}
+
+Pipeline
+::Pipeline(const std::vector<module::Task*> &firsts,
+           const std::vector<std::tuple<std::vector<module::Task*>, std::vector<module::Task*>, std::vector<module::Task*>>> &sep_stages,
+           const std::vector<size_t> &n_threads,
+           const std::vector<size_t> &synchro_buffer_sizes,
+           const std::vector<bool> &synchro_active_waiting,
+           const std::vector<bool> &thread_pinning,
+           const std::vector<std::vector<size_t>> &puids/*,
+           const std::vector<bool> &tasks_inplace*/)
+: Pipeline(firsts,
+           {},
+           sep_stages,
+           n_threads,
+           synchro_buffer_sizes,
+           synchro_active_waiting,
+           thread_pinning, puids/*,
+           tasks_inplace*/)
+{
+}
+
+Pipeline
+::Pipeline(const std::vector<module::Task*> &firsts,
+           const std::vector<std::pair<std::vector<module::Task*>, std::vector<module::Task*>>> &sep_stages,
+           const std::vector<size_t> &n_threads,
+           const std::vector<size_t> &synchro_buffer_sizes,
+           const std::vector<bool> &synchro_active_waiting,
+           const std::vector<bool> &thread_pinning,
+           const std::vector<std::vector<size_t>> &puids/*,
+           const std::vector<bool> &tasks_inplace*/)
+: Pipeline(firsts,
+           {},
+           sep_stages,
+           n_threads,
+           synchro_buffer_sizes,
+           synchro_active_waiting,
+           thread_pinning, puids/*,
+           tasks_inplace*/)
+{
 }
 
 Pipeline
@@ -180,6 +227,7 @@ Sequence& Pipeline
 template <class TA>
 tools::Sequence* create_sequence(const std::vector<TA*> &firsts,
                                  const std::vector<TA*> &lasts,
+                                 const std::vector<TA*> &exceptions,
                                  const size_t &n_threads,
                                  const bool &thread_pinning,
                                  const std::vector<size_t> &puids,
@@ -191,36 +239,32 @@ tools::Sequence* create_sequence(const std::vector<TA*> &firsts,
 template <>
 tools::Sequence* create_sequence<const module::Task>(const std::vector<const module::Task*> &firsts,
                                                      const std::vector<const module::Task*> &lasts,
+                                                     const std::vector<const module::Task*> &exceptions,
                                                      const size_t &n_threads,
                                                      const bool &thread_pinning,
                                                      const std::vector<size_t> &puids,
                                                      const bool &tasks_inplace)
 {
-	if (lasts.size())
-		return new tools::Sequence(firsts, lasts, n_threads, thread_pinning, puids);
-	else
-		return new tools::Sequence(firsts, n_threads, thread_pinning, puids);
+	return new tools::Sequence(firsts, lasts, exceptions, n_threads, thread_pinning, puids);
 }
 
 template <>
 Sequence* create_sequence<module::Task>(const std::vector<module::Task*> &firsts,
                                         const std::vector<module::Task*> &lasts,
+                                        const std::vector<module::Task*> &exceptions,
                                         const size_t &n_threads,
                                         const bool &thread_pinning,
                                         const std::vector<size_t> &puids,
                                         const bool &tasks_inplace)
 {
-	if (lasts.size())
-		return new tools::Sequence(firsts, lasts, n_threads, thread_pinning, puids, tasks_inplace);
-	else
-		return new tools::Sequence(firsts, n_threads, thread_pinning, puids, tasks_inplace);
+	return new tools::Sequence(firsts, lasts, exceptions, n_threads, thread_pinning, puids, tasks_inplace);
 }
 
 template <class TA>
 void Pipeline
 ::init(const std::vector<TA*> &firsts,
        const std::vector<TA*> &lasts,
-       const std::vector<std::pair<std::vector<TA*>,std::vector<TA*>>> &sep_stages,
+       const std::vector<std::tuple<std::vector<TA*>,std::vector<TA*>,std::vector<TA*>>> &sep_stages,
        const std::vector<size_t> &n_threads,
        const std::vector<size_t> &synchro_buffer_sizes,
        const std::vector<bool> &synchro_active_waiting,
@@ -294,8 +338,9 @@ void Pipeline
 
 	for (size_t s = 0; s < sep_stages.size(); s++)
 	{
-		const std::vector<TA*> &stage_firsts = sep_stages[s].first;
-		const std::vector<TA*> &stage_lasts = sep_stages[s].second;
+		const std::vector<TA*> &stage_firsts = std::get<0>(sep_stages[s]);
+		const std::vector<TA*> &stage_lasts = std::get<1>(sep_stages[s]);
+		const std::vector<TA*> &stage_exceptions = std::get<2>(sep_stages[s]);
 		const size_t stage_n_threads = n_threads.size() ? n_threads[s] : 1;
 		const bool stage_thread_pinning = thread_pinning.size() ? thread_pinning[s] : false;
 		const std::vector<size_t> stage_puids =  puids.size() ? puids[s] : std::vector<size_t>();
@@ -303,6 +348,7 @@ void Pipeline
 
 		this->stages[s].reset(create_sequence<TA>(stage_firsts,
 		                                          stage_lasts,
+		                                          stage_exceptions,
 		                                          stage_n_threads,
 		                                          stage_thread_pinning,
 		                                          stage_puids,
@@ -832,8 +878,16 @@ void Pipeline
 }
 
 void Pipeline
-::exec(std::function<bool(const std::vector<int>&)> stop_condition)
+::exec(const std::vector<std::function<bool(const std::vector<int>&)>> &stop_conditions)
 {
+	if (stop_conditions.size() != this->stages.size())
+	{
+		std::stringstream message;
+		message << "'stop_conditions.size()' has to be equal to 'stages.size()' ('stop_conditions.size()' = "
+		        << stop_conditions.size() << ", 'stages.size()' = " << stages.size() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (!this->bound_adaptors)
 	{
 		std::stringstream message;
@@ -853,13 +907,14 @@ void Pipeline
 	for (size_t s = 0; s < stages.size() -1; s++)
 	{
 		auto &stage = stages[s];
+		auto &stop_condition = stop_conditions[s];
 		threads.push_back(std::thread([&stage, &stop_condition, &stop_threads]()
 		{
 			stage->exec(stop_condition);
 			stop_threads();
 		}));
 	}
-	stages[stages.size() -1]->exec(stop_condition);
+	stages[stages.size() -1]->exec(stop_conditions[stages.size() -1]);
 	stop_threads();
 
 	for (auto &t : threads)
@@ -867,8 +922,16 @@ void Pipeline
 }
 
 void Pipeline
-::exec(std::function<bool()> stop_condition)
+::exec(const std::vector<std::function<bool()>> &stop_conditions)
 {
+	if (stop_conditions.size() != this->stages.size())
+	{
+		std::stringstream message;
+		message << "'stop_conditions.size()' has to be equal to 'stages.size()' ('stop_conditions.size()' = "
+		        << stop_conditions.size() << ", 'stages.size()' = " << stages.size() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (!this->bound_adaptors)
 	{
 		std::stringstream message;
@@ -888,17 +951,30 @@ void Pipeline
 	for (size_t s = 0; s < stages.size() -1; s++)
 	{
 		auto &stage = stages[s];
+		auto &stop_condition = stop_conditions[s];
 		threads.push_back(std::thread([&stage, &stop_condition, &stop_threads]()
 		{
 			stage->exec(stop_condition);
 			stop_threads();
 		}));
 	}
-	stages[stages.size() -1]->exec(stop_condition);
+	stages[stages.size() -1]->exec(stop_conditions[stages.size() -1]);
 	stop_threads();
 
 	for (auto &t : threads)
 		t.join();
+}
+
+void Pipeline
+::exec(std::function<bool(const std::vector<int>&)> stop_condition)
+{
+	this->exec(std::vector<std::function<bool(const std::vector<int>&)>>(this->stages.size(), stop_condition));
+}
+
+void Pipeline
+::exec(std::function<bool()> stop_condition)
+{
+	this->exec(std::vector<std::function<bool()>>(this->stages.size(), stop_condition));
 }
 
 const std::vector<std::vector<module::Task*>>& Pipeline

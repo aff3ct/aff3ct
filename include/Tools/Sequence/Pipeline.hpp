@@ -57,7 +57,8 @@ public:
 	//          const std::vector<bool> &thread_pinning = {},
 	//          const std::vector<std::vector<size_t>> &puids = {});
 	Pipeline(const std::vector<module::Task*> &firsts,
-	         const std::vector<std::pair<std::vector<module::Task*>, std::vector<module::Task*>>> &sep_stages = {},
+	         const std::vector<module::Task*> &lasts,
+	         const std::vector<std::tuple<std::vector<module::Task*>, std::vector<module::Task*>, std::vector<module::Task*>>> &sep_stages = {},
 	         const std::vector<size_t> &n_threads = {},
 	         const std::vector<size_t> &synchro_buffer_sizes = {},
 	         const std::vector<bool> &synchro_active_waiting = {},
@@ -66,6 +67,22 @@ public:
 	         const std::vector<bool> &tasks_inplace = {}*/);
 	Pipeline(const std::vector<module::Task*> &firsts,
 	         const std::vector<module::Task*> &lasts,
+	         const std::vector<std::pair<std::vector<module::Task*>, std::vector<module::Task*>>> &sep_stages = {},
+	         const std::vector<size_t> &n_threads = {},
+	         const std::vector<size_t> &synchro_buffer_sizes = {},
+	         const std::vector<bool> &synchro_active_waiting = {},
+	         const std::vector<bool> &thread_pinning = {},
+	         const std::vector<std::vector<size_t>> &puids = {}/*,
+	         const std::vector<bool> &tasks_inplace = {}*/);
+	Pipeline(const std::vector<module::Task*> &firsts,
+	         const std::vector<std::tuple<std::vector<module::Task*>, std::vector<module::Task*>, std::vector<module::Task*>>> &sep_stages = {},
+	         const std::vector<size_t> &n_threads = {},
+	         const std::vector<size_t> &synchro_buffer_sizes = {},
+	         const std::vector<bool> &synchro_active_waiting = {},
+	         const std::vector<bool> &thread_pinning = {},
+	         const std::vector<std::vector<size_t>> &puids = {}/*,
+	         const std::vector<bool> &tasks_inplace = {}*/);
+	Pipeline(const std::vector<module::Task*> &firsts,
 	         const std::vector<std::pair<std::vector<module::Task*>, std::vector<module::Task*>>> &sep_stages = {},
 	         const std::vector<size_t> &n_threads = {},
 	         const std::vector<size_t> &synchro_buffer_sizes = {},
@@ -92,6 +109,9 @@ public:
 	         const std::vector<bool> &tasks_inplace = {}*/);
 
 	virtual ~Pipeline() = default;
+
+	void exec(const std::vector<std::function<bool(const std::vector<int>&)>> &stop_conditions);
+	void exec(const std::vector<std::function<bool(                       )>> &stop_conditions);
 
 	void exec(std::function<bool(const std::vector<int>&)> stop_condition);
 	void exec(std::function<bool(                       )> stop_condition);
@@ -122,7 +142,7 @@ private:
 	template <class TA>
 	void init(const std::vector<TA*> &firsts,
 	          const std::vector<TA*> &lasts,
-	          const std::vector<std::pair<std::vector<TA*>, std::vector<TA*>>> &sep_stages = {},
+	          const std::vector<std::tuple<std::vector<TA*>, std::vector<TA*>, std::vector<TA*>>> &sep_stages = {},
 	          const std::vector<size_t> &n_threads = {},
 	          const std::vector<size_t> &synchro_buffer_sizes = {},
 	          const std::vector<bool> &synchro_active_waiting = {},

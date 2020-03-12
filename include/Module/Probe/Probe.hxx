@@ -25,7 +25,7 @@ Socket& Probe<T>
 template <typename T>
 Probe<T>
 ::Probe(const int size, const std::string &col_name, tools::Reporter_probe& reporter, const int n_frames)
-: Module(n_frames), size(size), col_name(col_name), reporter(reporter)
+: AProbe(n_frames), size(size), col_name(col_name), reporter(reporter)
 {
 	const std::string name = "Probe<" + col_name + ">";
 	this->set_name(name);
