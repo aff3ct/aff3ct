@@ -16,7 +16,7 @@ before_script:
 
 analysis-cppcheck:
   stage: analysis
-  allow_failure: true
+  allow_failure: false
   except:
     - schedules
   artifacts:
