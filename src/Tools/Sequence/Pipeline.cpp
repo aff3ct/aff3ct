@@ -361,6 +361,11 @@ void Pipeline
 
 	if (ref_tasks.size() != cur_tasks.size())
 	{
+		std::ofstream f1("dbg_ref_sequence.dot");
+		this->original_sequence.export_dot(f1);
+		std::ofstream f2("dbg_cur_pipeline.dot");
+		this->export_dot(f2);
+
 		std::stringstream message;
 		message << "'ref_tasks.size()' has to be equal to 'cur_tasks.size()' ('ref_tasks.size()' = "
 		        << ref_tasks.size() << ", 'cur_tasks.size()' = " << cur_tasks.size() << ").";
@@ -371,6 +376,11 @@ void Pipeline
 	{
 		if (std::find(ref_tasks.begin(), ref_tasks.end(), cur_tasks[ta]) == ref_tasks.end())
 		{
+			std::ofstream f1("dbg_ref_sequence.dot");
+			this->original_sequence.export_dot(f1);
+			std::ofstream f2("dbg_cur_pipeline.dot");
+			this->export_dot(f2);
+
 			std::stringstream message;
 			message << "'cur_tasks[ta]' is not contained in the 'ref_tasks' vector ('ta' = " << ta
 			        << ", 'cur_tasks[ta]' = " << +cur_tasks[ta]
