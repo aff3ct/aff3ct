@@ -73,7 +73,7 @@ protected:
 	bool thread_pinning;
 	std::vector<size_t> puids;
 	bool no_copy_mode;
-	const std::vector<const module::Task*> saved_exceptions;
+	const std::vector<const module::Task*> saved_exclusions;
 
 public:
 	Sequence(const std::vector<const module::Task*> &firsts,
@@ -87,7 +87,7 @@ public:
 	         const std::vector<size_t> &puids = {});
 	Sequence(const std::vector<const module::Task*> &firsts,
 	         const std::vector<const module::Task*> &lasts,
-	         const std::vector<const module::Task*> &exceptions,
+	         const std::vector<const module::Task*> &exclusions,
 	         const size_t n_threads = 1,
 	         const bool thread_pinning = false,
 	         const std::vector<size_t> &puids = {});
@@ -113,7 +113,7 @@ public:
 	         const bool tasks_inplace = true);
 	Sequence(const std::vector<module::Task*> &firsts,
 	         const std::vector<module::Task*> &lasts,
-	         const std::vector<module::Task*> &exceptions,
+	         const std::vector<module::Task*> &exclusions,
 	         const size_t n_threads = 1,
 	         const bool thread_pinning = false,
 	         const std::vector<size_t> &puids = {},
@@ -170,7 +170,7 @@ protected:
 	                                 TA& first,
 	                                 TA& current_task,
 	                                 const std::vector<TA*> &lasts,
-	                                 const std::vector<TA*> &exceptions,
+	                                 const std::vector<TA*> &exclusions,
 	                                 std::vector<size_t> &real_lasts_id,
 	                                 std::vector<TA*> &real_lasts);
 
@@ -213,7 +213,7 @@ protected:
 
 private:
 	template <class SS, class TA>
-	void init(const std::vector<TA*> &firsts, const std::vector<TA*> &lasts, const std::vector<TA*> &exceptions);
+	void init(const std::vector<TA*> &firsts, const std::vector<TA*> &lasts, const std::vector<TA*> &exclusions);
 	template <class SS>
 	inline void _init(Generic_node<SS> *root);
 };

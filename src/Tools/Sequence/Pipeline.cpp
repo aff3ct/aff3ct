@@ -227,7 +227,7 @@ Sequence& Pipeline
 template <class TA>
 tools::Sequence* create_sequence(const std::vector<TA*> &firsts,
                                  const std::vector<TA*> &lasts,
-                                 const std::vector<TA*> &exceptions,
+                                 const std::vector<TA*> &exclusions,
                                  const size_t &n_threads,
                                  const bool &thread_pinning,
                                  const std::vector<size_t> &puids,
@@ -239,25 +239,25 @@ tools::Sequence* create_sequence(const std::vector<TA*> &firsts,
 template <>
 tools::Sequence* create_sequence<const module::Task>(const std::vector<const module::Task*> &firsts,
                                                      const std::vector<const module::Task*> &lasts,
-                                                     const std::vector<const module::Task*> &exceptions,
+                                                     const std::vector<const module::Task*> &exclusions,
                                                      const size_t &n_threads,
                                                      const bool &thread_pinning,
                                                      const std::vector<size_t> &puids,
                                                      const bool &tasks_inplace)
 {
-	return new tools::Sequence(firsts, lasts, exceptions, n_threads, thread_pinning, puids);
+	return new tools::Sequence(firsts, lasts, exclusions, n_threads, thread_pinning, puids);
 }
 
 template <>
 Sequence* create_sequence<module::Task>(const std::vector<module::Task*> &firsts,
                                         const std::vector<module::Task*> &lasts,
-                                        const std::vector<module::Task*> &exceptions,
+                                        const std::vector<module::Task*> &exclusions,
                                         const size_t &n_threads,
                                         const bool &thread_pinning,
                                         const std::vector<size_t> &puids,
                                         const bool &tasks_inplace)
 {
-	return new tools::Sequence(firsts, lasts, exceptions, n_threads, thread_pinning, puids, tasks_inplace);
+	return new tools::Sequence(firsts, lasts, exclusions, n_threads, thread_pinning, puids, tasks_inplace);
 }
 
 template <class TA>
@@ -340,7 +340,7 @@ void Pipeline
 	{
 		const std::vector<TA*> &stage_firsts = std::get<0>(sep_stages[s]);
 		const std::vector<TA*> &stage_lasts = std::get<1>(sep_stages[s]);
-		const std::vector<TA*> &stage_exceptions = std::get<2>(sep_stages[s]);
+		const std::vector<TA*> &stage_exclusions = std::get<2>(sep_stages[s]);
 		const size_t stage_n_threads = n_threads.size() ? n_threads[s] : 1;
 		const bool stage_thread_pinning = thread_pinning.size() ? thread_pinning[s] : false;
 		const std::vector<size_t> stage_puids =  puids.size() ? puids[s] : std::vector<size_t>();
@@ -348,7 +348,7 @@ void Pipeline
 
 		this->stages[s].reset(create_sequence<TA>(stage_firsts,
 		                                          stage_lasts,
-		                                          stage_exceptions,
+		                                          stage_exclusions,
 		                                          stage_n_threads,
 		                                          stage_thread_pinning,
 		                                          stage_puids,
@@ -445,12 +445,10 @@ void Pipeline
 		// for (size_t t = 0; t < tasks_per_threads.size(); t++)
 		{
 			// for all the tasks in the stage
-			// for (auto &tsk : tasks_per_threads[t])
 			for (size_t tsk_id = 0; tsk_id < tasks_per_threads[t].size(); tsk_id++)
 			{
 				auto tsk = tasks_per_threads[t][tsk_id];
 				// for all the sockets of the tasks
-				// for (auto sck : tsk->sockets)
 				for (size_t sck_id = 0; sck_id < tsk->sockets.size(); sck_id++)
 				{
 					auto sck = tsk->sockets[sck_id];
@@ -650,7 +648,6 @@ void Pipeline
 				                                 adp_active_waiting,
 				                                 adp_n_frames);
 
-			// size_t last_task_id = 0;
 			for (size_t t = 0; t < n_threads; t++)
 			{
 				module::Adaptor* cur_adp = (t == 0) ? adp : adp->clone();
@@ -678,8 +675,8 @@ void Pipeline
 							sck_to_adp_sck_id_new[sck_out_ptr] = adp_sck_id;
 							this->adaptors_binds.push_back(
 								std::make_tuple(sck_out.get(),
-									            task_push->sockets[adp_sck_id++].get(),
-									            priority));
+								                task_push->sockets[adp_sck_id++].get(),
+								                priority));
 							passed_scks_out.push_back(sck_out_ptr);
 						}
 					}
@@ -701,8 +698,8 @@ void Pipeline
 							auto priority = std::get<4>(bind.first);
 							this->adaptors_binds.push_back(
 								std::make_tuple(sck_out.get(),
-									            task_push->sockets[adp_sck_id++].get(),
-									            priority));
+								                task_push->sockets[adp_sck_id++].get(),
+								                priority));
 							passed_scks_out.push_back(sck_out_ptr);
 						}
 					}
