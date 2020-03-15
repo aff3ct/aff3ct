@@ -61,12 +61,15 @@ SC_Module
 			break;
 
 		case socket_t::SOUT:
-			indirect_sockets_out[i] = id_out;
-			indirect_sockets_out_rev.push_back(i);
-			sockets_out.push_back(std::unique_ptr<tlm_utils::simple_initiator_socket<SC_Module>>(
-			                          new tlm_utils::simple_initiator_socket<SC_Module>(name.c_str())));
-			if (!is_inputs)
-				SC_THREAD(start_sc_thread);
+			if (name != "status")
+			{
+				indirect_sockets_out[i] = id_out;
+				indirect_sockets_out_rev.push_back(i);
+				sockets_out.push_back(std::unique_ptr<tlm_utils::simple_initiator_socket<SC_Module>>(
+				                          new tlm_utils::simple_initiator_socket<SC_Module>(name.c_str())));
+				if (!is_inputs)
+					SC_THREAD(start_sc_thread);
+			}
 			break;
 
 		case socket_t::SIN_SOUT:
