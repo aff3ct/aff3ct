@@ -27,6 +27,11 @@ if [ $COUNT -gt 1 ]; then
 	echo "Errors list:"
 	cat cppcheck/cppcheck_error.log
 	exit 1;
+elif [ $COUNT -gt 0 ]; then
+	echo "There is one false positive error.";
+	echo ""
+	echo "Errors list:"
+	cat cppcheck/cppcheck_error.log
 else
 	echo "There is no error :-)."
 fi
