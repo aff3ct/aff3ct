@@ -164,7 +164,8 @@ void Dumper_reduction
 		{
 			file.open(path, std::ofstream::out | std::ios_base::binary);
 
-			this->write_header_binary(file, n_data, size, head);
+			if (this->write_headers)
+				this->write_header_binary(file, n_data, size, head);
 			this->write_body_binary(file, this->buffer[i], size * size_of);
 			for (auto& d : this->dumpers)
 				this->write_body_binary(file, d->buffer[i], size * size_of);
@@ -173,7 +174,8 @@ void Dumper_reduction
 		{
 			file.open(path, std::ofstream::out);
 
-			this->write_header_text(file, n_data, size, head);
+			if (this->write_headers)
+				this->write_header_text(file, n_data, size, head);
 			this->write_body_text(file, this->buffer[i], size, type);
 			for (auto& d : this->dumpers)
 				this->write_body_text(file, d->buffer[i], size, type);

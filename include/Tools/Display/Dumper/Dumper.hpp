@@ -36,6 +36,7 @@ protected:
 	std::vector<bool>                  registered_data_bin;
 	std::vector<std::vector<unsigned>> registered_data_head;
 	std::vector<unsigned>              registered_data_n_frames;
+	bool write_headers;
 
 public:
 	Dumper(/*const int n_frames = 1*/);
@@ -53,6 +54,8 @@ public:
 	virtual void dump (const std::string& base_path                );
 	virtual void add  (const unsigned n_err, const int frame_id = 0);
 	virtual void clear(                                            );
+
+	void set_write_headers(const bool write_headers);
 
 protected:
 	void write_header_text(std::ofstream &file, const unsigned n_data, const unsigned data_size,

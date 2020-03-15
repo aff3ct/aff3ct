@@ -13,8 +13,14 @@ const std::string aff3ct::tools::Dumper::default_ext = "dump";
 
 Dumper
 ::Dumper()
-: add_threshold(0)
+: add_threshold(0), write_headers(true)
 {
+}
+
+void Dumper
+::set_write_headers(const bool write_headers)
+{
+	this->write_headers = write_headers;
 }
 
 template <typename T>
@@ -124,15 +130,17 @@ void Dumper
 		{
 			file.open(path, std::ofstream::out | std::ios_base::binary);
 
-			this->write_header_binary(file, (unsigned)this->buffer[i].size(), size, head);
-			this->write_body_binary  (file, this->buffer[i], size * size_of);
+			if (this->write_headers)
+				this->write_header_binary(file, (unsigned)this->buffer[i].size(), size, head);
+			this->write_body_binary(file, this->buffer[i], size * size_of);
 		}
 		else
 		{
 			file.open(path, std::ofstream::out);
 
-			this->write_header_text(file, (unsigned)this->buffer[i].size(), size, head);
-			this->write_body_text  (file, this->buffer[i], size, type);
+			if (this->write_headers)
+				this->write_header_text(file, (unsigned)this->buffer[i].size(), size, head);
+			this->write_body_text(file, this->buffer[i], size, type);
 		}
 
 		file.close();
