@@ -62,6 +62,8 @@ public:
 	 */
 	void legend(std::ostream &stream = std::cout) const;
 
+	std::vector<tools::Reporter*>& get_reporters();
+
 protected:
 	virtual void report(std::ostream &stream = std::cout, bool final = false);
 

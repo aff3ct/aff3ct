@@ -100,6 +100,8 @@ public:
 
 	virtual void probe(const std::string &name, const void *data, const int frame_id);
 
+	virtual void reset();
+
 protected:
 	void create_probe_checks(const std::string &name);
 

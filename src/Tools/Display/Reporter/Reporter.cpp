@@ -13,3 +13,8 @@ const std::vector<Reporter::group_t>& Reporter
 {
 	return this->cols_groups;
 }
+
+void Reporter
+::reset()
+{
+}

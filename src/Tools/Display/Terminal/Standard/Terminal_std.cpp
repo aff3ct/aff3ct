@@ -40,6 +40,12 @@ Terminal_std
 		this->reporters.push_back(r.get());
 }
 
+std::vector<tools::Reporter*>& Terminal_std
+::get_reporters()
+{
+	return this->reporters;
+}
+
 void Terminal_std
 ::legend(std::ostream &stream) const
 {

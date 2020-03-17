@@ -9,11 +9,13 @@
 #include <utility>
 #include <string>
 
+#include "Tools/Interface/Interface_reset.hpp"
+
 namespace aff3ct
 {
 namespace tools
 {
-class Reporter
+class Reporter : public Interface_reset
 {
 public:
 	using title_t        = std::pair<std::string, std::string>;
@@ -38,6 +40,8 @@ public:
 	virtual report_t report(bool final = false) = 0;
 
 	virtual void init(); // do nothing by default
+
+	virtual void reset();
 };
 }
 }

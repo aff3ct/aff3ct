@@ -62,6 +62,13 @@ void Reporter_probe
 	}
 }
 
+void Reporter_probe
+::reset()
+{
+	std::fill(this->head.begin(), this->head.end(), 0);
+	std::fill(this->tail.begin(), this->tail.end(), 0);
+}
+
 template <typename T>
 bool Reporter_probe
 ::format_values(const int col, std::stringstream &temp_stream)
