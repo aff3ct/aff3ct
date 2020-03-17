@@ -926,6 +926,14 @@ void Pipeline
 
 	for (auto &t : threads)
 		t.join();
+
+	for (auto &padps : this->adaptors)
+	{
+		for (auto &adp : padps.first)
+			adp->reset();
+		for (auto &adp : padps.second)
+			adp->reset();
+	}
 }
 
 void Pipeline
@@ -970,6 +978,14 @@ void Pipeline
 
 	for (auto &t : threads)
 		t.join();
+
+	for (auto &padps : this->adaptors)
+	{
+		for (auto &adp : padps.first)
+			adp->reset();
+		for (auto &adp : padps.second)
+			adp->reset();
+	}
 }
 
 void Pipeline
