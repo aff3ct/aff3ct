@@ -350,7 +350,7 @@ size_t Socket
 	auto it = std::find(s_out.bound_sockets.begin(), s_out.bound_sockets.end(), this);
 	if (it != s_out.bound_sockets.end())
 	{
-		unbind_pos = (int)std::distance(s_out.bound_sockets.begin(), it) -1;
+		unbind_pos = (size_t)std::distance(s_out.bound_sockets.begin(), it);
 		s_out.bound_sockets.erase(it);
 	}
 	else
