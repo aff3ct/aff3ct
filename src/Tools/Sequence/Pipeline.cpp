@@ -493,7 +493,7 @@ void Pipeline
 									auto unbind_sout_pos = std::distance(sck_out->get_bound_sockets().begin(),
 									                                     std::find(sck_out->get_bound_sockets().begin(),
 									                                               sck_out->get_bound_sockets().end(),
-									                                               sck_in)) -1;
+									                                               sck_in));
 									this->sck_orphan_binds.push_back(std::make_pair(
 									                               std::make_tuple(std::get<0>(out_sck_orphans[pos]),
 									                                               std::get<2>(out_sck_orphans[pos]),
@@ -535,6 +535,7 @@ void Pipeline
 	// 	auto tsk_out_sta  = std::get<1>(bind.first);
 	// 	auto tsk_out_id   = std::get<2>(bind.first);
 	// 	auto sck_out_id   = std::get<3>(bind.first);
+	// 	auto sck_out_ubp  = std::get<4>(bind.first);
 
 	// 	auto sck_in_name = std::get<0>(bind.second)->get_name();
 	// 	auto tsk_in_name = std::get<0>(bind.second)->get_task().get_name();
@@ -543,7 +544,7 @@ void Pipeline
 	// 	auto sck_in_id   = std::get<3>(bind.second);
 
 	// 	std::cout << "  " << tsk_out_name << "[" << sck_out_name << "] (stage " << tsk_out_sta << ", tsk id = "
-	// 	                  << tsk_out_id << ", sck id = " << sck_out_id << ")"  << " -> "
+	// 	                  << tsk_out_id << ", sck id = " << sck_out_id << ", ubp = " << sck_out_ubp << ")"  << " -> "
 	// 	                  << tsk_in_name  << "[" << sck_in_name  << "] (stage " << tsk_in_sta  << ", tsk id = "
 	// 	                  << tsk_in_id  << ", sck id = " << sck_in_id  << ")" << std::endl;
 	// }
