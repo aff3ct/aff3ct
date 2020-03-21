@@ -300,9 +300,10 @@ void Socket
 void Socket
 ::reset()
 {
-	// this->dataptr = nullptr;
-	this->bound_sockets.clear();
-	this->bound_socket = nullptr;
+	if (this->bound_socket != nullptr)
+		this->unbind(*this->bound_socket);
+	for (auto socket : this->bound_sockets)
+		socket->unbind(*this);
 }
 
 size_t Socket
