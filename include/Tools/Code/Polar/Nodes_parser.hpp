@@ -1,3 +1,7 @@
+/*!
+ * \file
+ * \brief Struct tools::Nodes_parser.
+ */
 #ifndef NODES_PARSER_HPP
 #define NODES_PARSER_HPP
 
@@ -44,6 +48,8 @@ public:
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "Tools/Code/Polar/Nodes_parser.hxx"
+#endif
 
 #endif /* NODES_PARSER_HPP */

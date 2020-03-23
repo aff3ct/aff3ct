@@ -1137,6 +1137,9 @@
 #ifndef FROZENBITS_GENERATOR_TV_HPP_
 #include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_TV.hpp>
 #endif
+#ifndef NODES_PARSER_HPP
+#include <Tools/Code/Polar/Nodes_parser.hpp>
+#endif
 #ifndef PATTERN_POLAR_PARSER_HPP
 #include <Tools/Code/Polar/Pattern_polar_parser.hpp>
 #endif

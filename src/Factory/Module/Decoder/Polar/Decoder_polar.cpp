@@ -35,7 +35,7 @@
 #include "Tools/Code/Polar/API/API_polar_static_intra_16bit.hpp"
 #include "Tools/Code/Polar/API/API_polar_static_intra_32bit.hpp"
 #endif
-#include "Tools/Code/Polar/Nodes_parser.h"
+#include "Tools/Code/Polar/Nodes_parser.hpp"
 #include "Factory/Module/Decoder/Polar/Decoder_polar.hpp"
 
 using namespace aff3ct;
