@@ -36,7 +36,7 @@ if (read_the_docs_build):
 # -- Project information -----------------------------------------------------
 
 project = 'AFF3CT'
-copyright = '2019, AFF3CT team'
+copyright = '2020, AFF3CT team'
 author = 'AFF3CT team'
 
 # get the AFF3CT version from Git

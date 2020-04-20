@@ -148,7 +148,7 @@ void print_version()
 	std::cout << "  - GSL:               " << gsl                                              << std::endl;
 	std::cout << "  - MKL:               " << mkl                                              << std::endl;
 	std::cout << "  - SystemC:           " << systemc                                          << std::endl;
-	std::cout << "Copyright (c) 2016-2019 - MIT license."                                      << std::endl;
+	std::cout << "Copyright (c) 2016-2020 - MIT license."                                      << std::endl;
 	std::cout << "This is free software; see the source for copying conditions.  There is NO"  << std::endl;
 	std::cout << "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." << std::endl;
 	exit(EXIT_SUCCESS);
