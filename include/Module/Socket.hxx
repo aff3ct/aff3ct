@@ -166,6 +166,9 @@ void Socket
 		}
 	}
 
+	if (this->bound_socket == &s_out)
+		this->unbind(s_out);
+
 	if (this->bound_socket != nullptr)
 	{
 		std::stringstream message;
