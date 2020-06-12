@@ -13,7 +13,7 @@ Interleaver_core_ARP_DVB_RCS2<T>
 {
 	switch (size)
 	{
-		case 56:
+		case 56: // wfm 2
 			p  = 9;
 			q0 = 2;
 			q1 = 2;
@@ -27,7 +27,7 @@ Interleaver_core_ARP_DVB_RCS2<T>
 			q2 = 8;
 			q3 = 1;
 			break;
-		case 152:
+		case 152: // wfm 1, wfm 3
 			p  = 17;
 			q0 = 9;
 			q1 = 5;
@@ -47,6 +47,13 @@ Interleaver_core_ARP_DVB_RCS2<T>
 			q1 = 11;
 			q2 = 2;
 			q3 = 3;
+			break;
+		case 236:
+			p  = 23;
+			q0 = 10;
+			q1 = 2;
+			q2 = 11;
+			q3 = 1;
 			break;
 		case 340:
 			p  = 23;
@@ -83,6 +90,34 @@ Interleaver_core_ARP_DVB_RCS2<T>
 			q2 = 8;
 			q3 = 1;
 			break;
+		case 460: // wfm 8
+			p  = 29;
+			q0 = 6;
+			q1 = 5;
+			q2 = 0;
+			q3 = 0;
+			break;
+		case 492: // wfm 13	
+			p  = 31;
+			q0 = 0;
+			q1 = 3;
+			q2 = 1;
+			q3 = 0;
+			break;
+		case 520: // wfm 9
+			p  = 31;
+			q0 = 0;
+			q1 = 1;
+			q2 = 2;
+			q3 = 0;
+			break;
+		case 576: // wfm 10
+			p  = 31;
+			q0 = 0;
+			q1 = 0;
+			q2 = 0;
+			q3 = 0;
+			break;
 		case 652:
 			p  = 107;
 			q0 = 2;
@@ -111,6 +146,13 @@ Interleaver_core_ARP_DVB_RCS2<T>
 			q2 = 13;
 			q3 = 5;
 			break;
+		case 1056: // wfm 15
+			p  = 43;
+			q0 = 0;
+			q1 = 0;
+			q2 = 6;
+			q3 = 2;
+			break;			
 		case 1192:
 			p  = 49;
 			q0 = 0;
@@ -125,6 +167,13 @@ Interleaver_core_ARP_DVB_RCS2<T>
 			q2 = 6;
 			q3 = 2;
 			break;
+		case 1420:
+			p  = 53;
+			q0 = 1;
+			q1 = 4;
+			q2 = 6;
+			q3 = 2;
+			break;
 		case 1504:
 			p  = 53;
 			q0 = 2;
@@ -132,6 +181,13 @@ Interleaver_core_ARP_DVB_RCS2<T>
 			q2 = 2;
 			q3 = 2;
 			break;
+		case 1600:
+			p  = 53;
+			q0 = 1;
+			q1 = 10;
+			q2 = 7;
+			q3 = 1;
+			break;			
 		case 1752:
 			p  = 59;
 			q0 = 1;
@@ -139,6 +195,13 @@ Interleaver_core_ARP_DVB_RCS2<T>
 			q2 = 2;
 			q3 = 1;
 			break;
+		case 1777:
+			p  = 59;
+			q0 = 3;
+			q1 = 8;
+			q2 = 5;
+			q3 = 1;
+			break;		
 		default:
 			std::stringstream message;
 			message << "There is no ARP parameters for 'size' = " << size << " (supported sizes are 56, 64, 152, "
