@@ -1336,7 +1336,7 @@ deploy-upload-ppa:
   script:
     - source ./ci/tools/git-branch.sh
     - source ./ci/tools/threads.sh
-    - export DISTRIBS="xenial;bionic"
+    - export DISTRIBS="xenial;bionic;focal"
     - export CC="gcc"
     - export CXX="g++"
     - export CFLAGS="-Wall -funroll-loops -m64 -msse4.2"
