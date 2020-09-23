@@ -36,7 +36,6 @@ To install |AFF3CT|, call the `install` target on the current Makefile:
 .. note:: Depending on the chosen ``CMAKE_INSTALL_PREFIX`` location, the
           administrator privileges (**sudo**) can be required.
 
-
 Visual Studio Solution
 """"""""""""""""""""""
 
@@ -98,8 +97,6 @@ Update package list and install:
 .. note:: Only LTS releases of Ubuntu are officially supported, starting from
           16.04. For other releases, you may try to use `the pinning method
           <https://help.ubuntu.com/community/PinningHowto>`_.
-
-
 
 Contents
 --------
