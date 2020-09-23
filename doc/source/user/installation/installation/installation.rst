@@ -95,6 +95,11 @@ Update package list and install:
 
 * The package ``libaff3ct-dev`` contains the ``include/`` folder and depends on the ``libaff3ct`` package.
 
+.. note:: Only LTS releases of Ubuntu are officially supported, starting from
+          16.04. For other releases, you may try to use `the pinning method
+          <https://help.ubuntu.com/community/PinningHowto>`_.
+
+
 
 Contents
 --------
