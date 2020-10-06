@@ -506,6 +506,7 @@ if(AFF3CT_MPI)
                 endif()
             endif(MPI_CXX_LINK_FLAGS)
         else()
+            aff3ct_target_include_directories2(PUBLIC "${MPI_CXX_INCLUDE_PATH}")
             aff3ct_target_link_libraries(PUBLIC MPI::MPI_CXX)
         endif()
 
