@@ -113,7 +113,11 @@ build-linux-gcc-nointr:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies: []
+  needs:
+    - job: analysis-cppcheck
+      artifacts: false
+    - job: analysis-headers
+      artifacts: false
   tags:
     - linux
     - gcc
@@ -139,8 +143,13 @@ build-linux-gcc-x64-sse4.2:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - analysis-documentation
+  needs:
+    - job: analysis-cppcheck
+      artifacts: false
+    - job: analysis-headers
+      artifacts: false
+    - job: analysis-documentation
+      artifacts: true
   tags:
     - linux
     - gcc
@@ -165,8 +174,13 @@ build-linux-gcc-x64-avx2:
   stage: build
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
-  dependencies:
-    - analysis-documentation
+  needs:
+    - job: analysis-cppcheck
+      artifacts: false
+    - job: analysis-headers
+      artifacts: false
+    - job: analysis-documentation
+      artifacts: true
   tags:
     - linux
     - gcc
@@ -193,7 +207,11 @@ build-linux-gcc-8-bit:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies: []
+  needs:
+    - job: analysis-cppcheck
+      artifacts: false
+    - job: analysis-headers
+      artifacts: false
   tags:
     - linux
     - gcc
@@ -219,7 +237,11 @@ build-linux-gcc-mpi:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies: []
+  needs:
+    - job: analysis-cppcheck
+      artifacts: false
+    - job: analysis-headers
+      artifacts: false
   tags:
     - linux
     - gcc
@@ -245,7 +267,11 @@ build-linux-gcc-systemc:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies: []
+  needs:
+    - job: analysis-cppcheck
+      artifacts: false
+    - job: analysis-headers
+      artifacts: false
   tags:
     - linux
     - gcc
@@ -272,7 +298,11 @@ build-linux-clang:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies: []
+  needs:
+    - job: analysis-cppcheck
+      artifacts: false
+    - job: analysis-headers
+      artifacts: false
   tags:
     - linux
     - clang
@@ -297,7 +327,11 @@ build-linux-gcc-4.8:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies: []
+  needs:
+    - job: analysis-cppcheck
+      artifacts: false
+    - job: analysis-headers
+      artifacts: false
   tags:
     - linux
     - gcc-4.8
@@ -322,7 +356,11 @@ build-linux-icpc:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies: []
+  needs:
+    - job: analysis-cppcheck
+      artifacts: false
+    - job: analysis-headers
+      artifacts: false
   tags:
     - linux
     - icpc
@@ -350,8 +388,13 @@ build-windows-gcc-x86-sse4.2:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - analysis-documentation
+  needs:
+    - job: analysis-cppcheck
+      artifacts: false
+    - job: analysis-headers
+      artifacts: false
+    - job: analysis-documentation
+      artifacts: true
   tags:
     - windows
     - gcc
@@ -376,8 +419,13 @@ build-windows-gcc-x64-avx2:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - analysis-documentation
+  needs:
+    - job: analysis-cppcheck
+      artifacts: false
+    - job: analysis-headers
+      artifacts: false
+    - job: analysis-documentation
+      artifacts: true
   tags:
     - windows
     - 64-bit
@@ -402,7 +450,11 @@ build-windows-msvc-avx:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies: []
+  needs:
+    - job: analysis-cppcheck
+      artifacts: false
+    - job: analysis-headers
+      artifacts: false
   tags:
     - windows
     - msvc
@@ -425,8 +477,13 @@ build-macos-clang-x64-sse4.2:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - analysis-documentation
+  needs:
+    - job: analysis-cppcheck
+      artifacts: false
+    - job: analysis-headers
+      artifacts: false
+    - job: analysis-documentation
+      artifacts: true
   tags:
     - macos
     - apple-clang
@@ -451,8 +508,9 @@ check-debug-parser:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies:
-    - build-linux-gcc-x64-sse4.2
+  needs:
+    - job: build-linux-gcc-x64-sse4.2
+      artifacts: true
   tags:
     - linux
     - x86
@@ -475,8 +533,9 @@ check-documentation:
   stage: check
   except:
     - schedules
-  dependencies:
-    - build-linux-gcc-x64-sse4.2
+  needs:
+    - job: build-linux-gcc-x64-sse4.2
+      artifacts: true
   tags:
     - linux
     - x86
@@ -493,8 +552,9 @@ test-regression-bch:
   retry: 1
   except:
     - schedules
-  dependencies:
-    - build-linux-gcc-x64-sse4.2
+  needs:
+    - job: build-linux-gcc-x64-sse4.2
+      artifacts: true
   tags:
     - linux
     - x86
@@ -518,8 +578,9 @@ test-regression-bch:
 #     GIT_SUBMODULE_STRATEGY: recursive
 #   only:
 #     - schedules
-#   dependencies:
-#     - build-linux-gcc-x64-avx2
+#  needs:
+#    - job: build-linux-gcc-x64-avx2
+#      artifacts: true
 #   tags:
 #     - linux
 #     - x86
@@ -546,8 +607,9 @@ test-regression-ldpc:
   retry: 1
   except:
     - schedules
-  dependencies:
-    - build-linux-gcc-x64-sse4.2
+  needs:
+    - job: build-linux-gcc-x64-sse4.2
+      artifacts: true
   tags:
     - linux
     - x86
@@ -572,8 +634,9 @@ test-regression-ldpc:
 #     GIT_SUBMODULE_STRATEGY: recursive
 #   only:
 #     - schedules
-#   dependencies:
-#     - build-linux-gcc-x64-avx2
+#  needs:
+#    - job: build-linux-gcc-x64-avx2
+#      artifacts: true
 #   tags:
 #     - linux
 #     - x86
@@ -600,8 +663,9 @@ test-regression-polar:
   retry: 1
   except:
     - schedules
-  dependencies:
-    - build-linux-gcc-x64-sse4.2
+  needs:
+    - job: build-linux-gcc-x64-sse4.2
+      artifacts: true
   tags:
     - linux
     - x86
@@ -626,8 +690,9 @@ test-regression-polar:
 #     GIT_SUBMODULE_STRATEGY: recursive
 #   only:
 #     - schedules
-#   dependencies:
-#     - build-linux-gcc-x64-avx2
+#  needs:
+#    - job: build-linux-gcc-x64-avx2
+#      artifacts: true
 #   tags:
 #     - linux
 #     - x86
@@ -654,8 +719,9 @@ test-regression-polar-mk:
   retry: 1
   except:
     - schedules
-  dependencies:
-    - build-linux-gcc-x64-sse4.2
+  needs:
+    - job: build-linux-gcc-x64-sse4.2
+      artifacts: true
   tags:
     - linux
     - x86
@@ -680,8 +746,9 @@ test-regression-polar-mk:
 #     GIT_SUBMODULE_STRATEGY: recursive
 #   only:
 #     - schedules
-#   dependencies:
-#     - build-linux-gcc-x64-avx2
+#  needs:
+#    - job: build-linux-gcc-x64-avx2
+#      artifacts: true
 #   tags:
 #     - linux
 #     - x86
@@ -708,8 +775,9 @@ test-regression-ra:
   retry: 1
   except:
     - schedules
-  dependencies:
-    - build-linux-gcc-x64-sse4.2
+  needs:
+    - job: build-linux-gcc-x64-sse4.2
+      artifacts: true
   tags:
     - linux
     - x86
@@ -733,8 +801,9 @@ test-regression-ra:
 #     GIT_SUBMODULE_STRATEGY: recursive
 #   only:
 #     - schedules
-#   dependencies:
-#     - build-linux-gcc-x64-avx2
+#  needs:
+#    - job: build-linux-gcc-x64-avx2
+#      artifacts: true
 #   tags:
 #     - linux
 #     - x86
@@ -761,8 +830,9 @@ test-regression-rep:
   retry: 1
   except:
     - schedules
-  dependencies:
-    - build-linux-gcc-x64-sse4.2
+  needs:
+    - job: build-linux-gcc-x64-sse4.2
+      artifacts: true
   tags:
     - linux
     - x86
@@ -786,8 +856,9 @@ test-regression-rep:
 #     GIT_SUBMODULE_STRATEGY: recursive
 #   only:
 #     - schedules
-#   dependencies:
-#     - build-linux-gcc-x64-avx2
+#  needs:
+#    - job: build-linux-gcc-x64-avx2
+#      artifacts: true
 #   tags:
 #     - linux
 #     - x86
@@ -814,8 +885,9 @@ test-regression-rs:
   retry: 1
   except:
     - schedules
-  dependencies:
-    - build-linux-gcc-x64-sse4.2
+  needs:
+    - job: build-linux-gcc-x64-sse4.2
+      artifacts: true
   tags:
     - linux
     - x86
@@ -839,8 +911,9 @@ test-regression-rs:
 #     GIT_SUBMODULE_STRATEGY: recursive
 #   only:
 #     - schedules
-#   dependencies:
-#     - build-linux-gcc-x64-avx2
+#  needs:
+#    - job: build-linux-gcc-x64-avx2
+#      artifacts: true
 #   tags:
 #     - linux
 #     - x86
@@ -867,8 +940,9 @@ test-regression-rsc:
   retry: 1
   except:
     - schedules
-  dependencies:
-    - build-linux-gcc-x64-sse4.2
+  needs:
+    - job: build-linux-gcc-x64-sse4.2
+      artifacts: true
   tags:
     - linux
     - x86
@@ -892,8 +966,9 @@ test-regression-rsc:
 #     GIT_SUBMODULE_STRATEGY: recursive
 #   only:
 #     - schedules
-#   dependencies:
-#     - build-linux-gcc-x64-avx2
+#  needs:
+#    - job: build-linux-gcc-x64-avx2
+#      artifacts: true
 #   tags:
 #     - linux
 #     - x86
@@ -920,8 +995,9 @@ test-regression-rsc-db:
   retry: 1
   except:
     - schedules
-  dependencies:
-    - build-linux-gcc-x64-sse4.2
+  needs:
+    - job: build-linux-gcc-x64-sse4.2
+      artifacts: true
   tags:
     - linux
     - x86
@@ -945,8 +1021,9 @@ test-regression-rsc-db:
 #     GIT_SUBMODULE_STRATEGY: recursive
 #   only:
 #     - schedules
-#   dependencies:
-#     - build-linux-gcc-x64-avx2
+#  needs:
+#    - job: build-linux-gcc-x64-avx2
+#      artifacts: true
 #   tags:
 #     - linux
 #     - x86
@@ -973,8 +1050,9 @@ test-regression-turbo:
   retry: 1
   except:
     - schedules
-  dependencies:
-    - build-linux-gcc-x64-sse4.2
+  needs:
+    - job: build-linux-gcc-x64-sse4.2
+      artifacts: true
   tags:
     - linux
     - x86
@@ -999,8 +1077,9 @@ test-regression-turbo:
 #     GIT_SUBMODULE_STRATEGY: recursive
 #   only:
 #     - schedules
-#   dependencies:
-#     - build-linux-gcc-x64-avx2
+#  needs:
+#    - job: build-linux-gcc-x64-avx2
+#      artifacts: true
 #   tags:
 #     - linux
 #     - x86
@@ -1027,8 +1106,9 @@ test-regression-turbo-db:
   retry: 1
   except:
     - schedules
-  dependencies:
-    - build-linux-gcc-x64-sse4.2
+  needs:
+    - job: build-linux-gcc-x64-sse4.2
+      artifacts: true
   tags:
     - linux
     - x86
@@ -1053,8 +1133,9 @@ test-regression-turbo-db:
 #     GIT_SUBMODULE_STRATEGY: recursive
 #   only:
 #     - schedules
-#   dependencies:
-#     - build-linux-gcc-x64-avx2
+#  needs:
+#    - job: build-linux-gcc-x64-avx2
+#      artifacts: true
 #   tags:
 #     - linux
 #     - x86
@@ -1081,8 +1162,9 @@ test-regression-turbo-prod:
   retry: 1
   except:
     - schedules
-  dependencies:
-    - build-linux-gcc-x64-sse4.2
+  needs:
+    - job: build-linux-gcc-x64-sse4.2
+      artifacts: true
   tags:
     - linux
     - x86
@@ -1107,8 +1189,9 @@ test-regression-turbo-prod:
 #     GIT_SUBMODULE_STRATEGY: recursive
 #   only:
 #     - schedules
-#   dependencies:
-#     - build-linux-gcc-x64-avx2
+#  needs:
+#    - job: build-linux-gcc-x64-avx2
+#      artifacts: true
 #   tags:
 #     - linux
 #     - x86
@@ -1135,8 +1218,9 @@ test-regression-uncoded:
   retry: 1
   except:
     - schedules
-  dependencies:
-    - build-linux-gcc-x64-sse4.2
+  needs:
+    - job: build-linux-gcc-x64-sse4.2
+      artifacts: true
   tags:
     - linux
     - x86
@@ -1160,8 +1244,9 @@ test-regression-uncoded:
 #     GIT_SUBMODULE_STRATEGY: recursive
 #   only:
 #     - schedules
-#   dependencies:
-#     - build-linux-gcc-x64-avx2
+#  needs:
+#    - job: build-linux-gcc-x64-avx2
+#      artifacts: true
 #   tags:
 #     - linux
 #     - x86
@@ -1187,8 +1272,9 @@ test-regression-long:
     GIT_SUBMODULE_STRATEGY: recursive
   only:
     - schedules
-  dependencies:
-    - build-linux-gcc-x64-avx2
+  needs:
+    - job: build-linux-gcc-x64-avx2
+      artifacts: true
   tags:
     - linux
     - x86
@@ -1214,7 +1300,11 @@ test-build-coverage-regression:
     GIT_SUBMODULE_STRATEGY: recursive
   except:
     - schedules
-  dependencies: []
+  needs:
+    - job: analysis-cppcheck
+      artifacts: false
+    - job: analysis-headers
+      artifacts: false
   tags:
     - linux
     - gcc
@@ -1235,8 +1325,9 @@ coverage-linux:
   stage: coverage
   except:
     - schedules
-  dependencies:
-    - test-build-coverage-regression
+  needs:
+    - job: test-build-coverage-regression
+      artifacts: true
   tags:
     - linux
     - lcov
