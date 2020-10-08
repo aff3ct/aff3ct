@@ -17,8 +17,6 @@ before_script:
 analysis-cppcheck:
   stage: analysis
   allow_failure: false
-  except:
-    - schedules
   artifacts:
     name: analysis-cppcheck-logs
     when: always
@@ -59,8 +57,6 @@ analysis-clang:
 
 analysis-headers:
   stage: analysis
-  except:
-    - schedules
   artifacts:
     name: analysis-headers
     when: always
@@ -89,8 +85,6 @@ analysis-git-submodules:
 
 analysis-documentation:
   stage: analysis
-  except:
-    - schedules
   artifacts:
     name: analysis-documentation
     when: always
