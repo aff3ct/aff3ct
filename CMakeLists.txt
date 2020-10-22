@@ -587,7 +587,7 @@ if (AFF3CT_COMPILE_SHARED_LIB OR AFF3CT_COMPILE_STATIC_LIB)
             NAMESPACE aff3ct::
             COMPONENT library)
 
-    install(FILES "${CMAKE_BINARY_DIR}/lib/cmake/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct-config-version.cmake"
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct-config-version.cmake"
             DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/aff3ct-${AFF3CT_VERSION_FULL}/"
             COMPONENT library)
 
