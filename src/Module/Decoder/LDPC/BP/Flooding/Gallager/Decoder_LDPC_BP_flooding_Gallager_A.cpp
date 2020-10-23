@@ -2,6 +2,7 @@
 #include <sstream>
 #include <numeric>
 
+#include "Tools/general_utils.h"
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
@@ -27,6 +28,8 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 {
 	const std::string name = "Decoder_LDPC_BP_flooding_Gallager_A";
 	this->set_name(name);
+
+	tools::check_LUT(info_bits_pos, "info_bits_pos", (size_t)K);
 
 	std::vector<unsigned char> connections(this->H.get_n_rows(), 0);
 

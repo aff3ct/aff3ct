@@ -1,6 +1,8 @@
+#include <map>
 #include <cmath>
 #include <limits>
 #include <sstream>
+#include <cstdint>
 #include <algorithm>
 
 #include "Tools/Math/utils.h"
@@ -174,6 +176,33 @@ std::vector<R> aff3ct::tools::generate_range(const std::vector<std::vector<R>>& 
 	return rangeR;
 }
 
+template <typename T>
+void aff3ct::tools::check_LUT(const std::vector<T> &LUT, const std::string &LUT_name, const size_t LUT_size)
+{
+	std::map<T, unsigned> count_map;
+
+	if (LUT_size != 0 && LUT.size() != LUT_size)
+	{
+		std::stringstream message;
+		message << "'" + LUT_name + ".size()' has to be equal to '" << LUT_size << "' ('" << LUT_name << ".size()' = "
+		        << LUT.size() << ", 'LUT_size' = " << LUT_size << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	for (size_t i = 0; i < LUT.size(); i++)
+	{
+		count_map[LUT[i]]++;
+		if (count_map[LUT[i]] != 1)
+		{
+			std::stringstream message;
+			message << "The '" << LUT_name << "' vector is ill-formed, it sould not contain two or more times the same "
+			        << "value ('count_map[" << LUT[i] << "]' = " << count_map[LUT[i]] << ", "
+			        << "'LUT[" << i << "]' = " << LUT[i] << ").";
+			throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+	}
+}
+
 // ==================================================================================== explicit template instantiation
 template float  aff3ct::tools::sigma_to_esn0<float >(const float,                const int);
 template double aff3ct::tools::sigma_to_esn0<double>(const double,               const int);
@@ -185,4 +214,8 @@ template float  aff3ct::tools::ebn0_to_esn0 <float >(const float,  const float, 
 template double aff3ct::tools::ebn0_to_esn0 <double>(const double, const double, const int);
 template std::vector<float > aff3ct::tools::generate_range(const std::vector<std::vector<float >>&, const float );
 template std::vector<double> aff3ct::tools::generate_range(const std::vector<std::vector<double>>&, const double);
+template void aff3ct::tools::check_LUT<uint8_t >(const std::vector<uint8_t >&, const std::string&, const size_t);
+template void aff3ct::tools::check_LUT<uint16_t>(const std::vector<uint16_t>&, const std::string&, const size_t);
+template void aff3ct::tools::check_LUT<uint32_t>(const std::vector<uint32_t>&, const std::string&, const size_t);
+template void aff3ct::tools::check_LUT<uint64_t>(const std::vector<uint64_t>&, const std::string&, const size_t);
 // ==================================================================================== explicit template instantiation

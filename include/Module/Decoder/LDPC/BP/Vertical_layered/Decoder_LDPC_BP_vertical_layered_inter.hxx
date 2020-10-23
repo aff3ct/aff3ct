@@ -6,6 +6,7 @@
 #include <sstream>
 #include <algorithm>
 
+#include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 #include "Module/Decoder/LDPC/BP/Horizontal_layered/Decoder_LDPC_BP_horizontal_layered_inter.hpp"
@@ -39,6 +40,8 @@ Decoder_LDPC_BP_vertical_layered_inter<B,R,Update_rule>
 {
 	const std::string name = "Decoder_LDPC_BP_vertical_layered_inter<" + this->up_rule.get_name() + ">";
 	this->set_name(name);
+
+	tools::check_LUT(info_bits_pos, "info_bits_pos", (size_t)K);
 
 	if (this->sat_val <= 0)
 	{

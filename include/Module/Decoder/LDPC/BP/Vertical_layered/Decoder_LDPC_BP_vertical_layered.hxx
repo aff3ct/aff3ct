@@ -5,6 +5,7 @@
 #include <string>
 #include <cmath>
 
+#include "Tools/general_utils.h"
 #include "Tools/Perf/common/hard_decide.h"
 #include "Module/Decoder/LDPC/BP/Vertical_layered/Decoder_LDPC_BP_vertical_layered.hpp"
 
@@ -32,6 +33,8 @@ Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>
 {
 	const std::string name = "Decoder_LDPC_BP_vertical_layered<" + this->up_rule.get_name() + ">";
 	this->set_name(name);
+
+	tools::check_LUT(info_bits_pos, "info_bits_pos", (size_t)K);
 
 	size_t cur_off_msg = 0;
 	const auto n_chk_nodes = (int)this->H.get_n_cols();

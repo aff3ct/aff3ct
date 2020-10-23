@@ -4,6 +4,7 @@
 #include <limits>
 #include <cmath>
 
+#include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 #include "Module/Decoder/LDPC/BP/Horizontal_layered/ONMS/Decoder_LDPC_BP_horizontal_layered_ONMS_inter.hpp"
@@ -35,6 +36,8 @@ Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 {
 	const std::string name = "Decoder_LDPC_BP_horizontal_layered_ONMS_inter";
 	this->set_name(name);
+
+	tools::check_LUT(info_bits_pos, "info_bits_pos", (size_t)K);
 
 	if (sizeof(R) == 1)
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "This decoder does not work in 8-bit fixed-point.");

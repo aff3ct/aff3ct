@@ -23,9 +23,9 @@ private:
 	static std::thread::id master_thread_id;
 
 public:
-	Encoder_LDPC_from_H(const int K, const int N, const tools::Sparse_matrix &H, const std::string& G_method = "FAST",
-	                    const std::string& G_save_path = "", const bool G_save_path_single_thread = true,
-	                    const int n_frames = 1);
+	Encoder_LDPC_from_H(const int K, const int N, const tools::Sparse_matrix &H,
+		                const std::string& G_method = "IDENTITY", const std::string& G_save_path = "",
+		                const bool G_save_path_single_thread = true, const int n_frames = 1);
 	virtual ~Encoder_LDPC_from_H() = default;
 
 	virtual Encoder_LDPC_from_H<B>* clone() const;

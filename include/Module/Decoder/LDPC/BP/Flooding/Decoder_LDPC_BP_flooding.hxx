@@ -2,6 +2,7 @@
 #include <sstream>
 #include <string>
 
+#include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/common/hard_decide.h"
 #include "Module/Decoder/LDPC/BP/Flooding/Decoder_LDPC_BP_flooding.hpp"
@@ -30,6 +31,8 @@ Decoder_LDPC_BP_flooding<B,R,Update_rule>
 {
 	const std::string name = "Decoder_LDPC_BP_flooding<" + this->up_rule.get_name() + ">";
 	this->set_name(name);
+
+	tools::check_LUT(info_bits_pos, "info_bits_pos", (size_t)K);
 
 	mipp::vector<unsigned char> connections(this->H.get_n_rows(), 0);
 

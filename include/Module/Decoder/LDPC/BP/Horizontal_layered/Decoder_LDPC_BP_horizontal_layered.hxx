@@ -1,6 +1,7 @@
 #include <string>
 #include <algorithm>
 
+#include "Tools/general_utils.h"
 #include "Tools/Perf/common/hard_decide.h"
 #include "Module/Decoder/LDPC/BP/Horizontal_layered/Decoder_LDPC_BP_horizontal_layered.hpp"
 
@@ -27,6 +28,8 @@ Decoder_LDPC_BP_horizontal_layered<B,R,Update_rule>
 {
 	const std::string name = "Decoder_LDPC_BP_horizontal_layered<" + this->up_rule.get_name() + ">";
 	this->set_name(name);
+
+	tools::check_LUT(info_bits_pos, "info_bits_pos", (size_t)K);
 
 	this->reset();
 }

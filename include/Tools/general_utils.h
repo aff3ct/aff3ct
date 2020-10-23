@@ -97,11 +97,14 @@ std::string get_time_format(T secondes);
 template<typename T, typename U>
 constexpr size_t offsetOf(U T::*member);
 
-template<typename T>
+template <typename T>
 std::vector<T*> convert_to_ptr(const std::vector<std::unique_ptr<T>> &v);
 
-template<typename T>
+template <typename T>
 std::vector<T*> convert_to_ptr(const std::vector<std::shared_ptr<T>> &v);
+
+template <typename T>
+void check_LUT(const std::vector<T> &LUT, const std::string &LUT_name = "LUT", const size_t LUT_size = 0);
 
 }
 }

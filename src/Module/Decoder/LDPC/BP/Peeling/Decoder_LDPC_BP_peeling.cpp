@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <string>
 
+#include "Tools/general_utils.h"
 #include "Tools/Perf/common/hard_decide.h"
 #include "Tools/Noise/noise_utils.h"
 #include "Module/Decoder/LDPC/BP/Peeling/Decoder_LDPC_BP_peeling.hpp"
@@ -22,6 +23,8 @@ Decoder_LDPC_BP_peeling<B,R>::Decoder_LDPC_BP_peeling(const int K, const int N, 
 {
 	const std::string name = "Decoder_LDPC_BP_peeling";
 	this->set_name(name);
+
+	tools::check_LUT(info_bits_pos, "info_bits_pos", (size_t)K);
 }
 
 template <typename B, typename R>
