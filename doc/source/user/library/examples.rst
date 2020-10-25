@@ -982,7 +982,7 @@ definition file,
 .. code-block:: python
 	:caption: Python-C interface definition
 	:name: codec_pxd
-	:emphasize-lines: 7-9
+	:emphasize-lines: 7,9
 	:linenos:
 
 	from libcpp.vector cimport vector
@@ -995,134 +995,36 @@ definition file,
 	    vector[int] polar_decode(const int, const int, const vector[bool] &, const vector[float] &)
 	    vector[vector[int]] polar_decode_multiple(const int, const int, const vector[bool] &, const vector[vector[float]] &)
 
-Lines ``7-9`` support 2-D [ndarray](https://numpy.org/doc/stable/reference/arrays.ndarray.html) arguments, and return 2-D lists.
+Lines ``7,9`` support 2-D [ndarray](https://numpy.org/doc/stable/reference/arrays.ndarray.html) arguments, and return 2-D lists. To learn more about using C++ with Cpython, the readers are refered [here](https://cython.readthedocs.io/en/latest/src/userguide/wrapping_CPlusPlus.html).
 
-
-:numref:`codec_pyx` implements the Python interface,
+A typical Python workflow can be
 
 .. code-block:: python
-	:caption: Python interface function
-	:name: codec_pyx
+	:caption: Typical Python Workflow invoking Cython example
+	:name: workflow
 	:emphasize-lines: 
-	:linenos:
+	:linenos: 7
+	
+	# generate frozen bits
+	frozen_bits = py_generate_frozen_bits(k, n, snr)
 
-	cimport cython
+	# generate information bits and encode
+	info_bits = np.random.randint(2, size=(n_frame, k))
+	encoded = np.array(py_polar_encode_multiple(k, n, frozen_bits, info_bits))
+	received = -encoded * 2 + 1
 
-	def py_generate_frozen_bits(k, n, snr_max):
-	    """Generate Frozen Bits following Arikan's method
-	    Parameters
-	    ----------
-	    k : int
-		The length of information bits in a codeword
-	    n : int
-		Codeword length
-	    snr_max : float
-		estimated SNR in dB
-	    Returns
-	    -------
-	    list of booleans, size (n,)
-		The frozen bits
-	    """
-	    return generate_frozen_bits(k, n, snr_max)
+	# decode
+	decoded = np.array(py_polar_decode_multiple(k, n, frozen_bits, received))
 
+Note that ``7`` demonstrate a mapping of bits to symbols like `[0, 1] -> [1, -1]`.
 
-	def py_polar_encode(k, n, frozen_bits, info_bits):
-	    """Polar encode
-	    Parameters
-	    ----------
-	    k : int
-		The length of information bits in a codeword
-	    n : int
-		Codeword length
-	    frozen_bits : list of booleans, size (n,)
-		The frozen bits, maybe generated from `py_generate_frozen_bits`
-	    info_bits : list (or ndarray) of information bits of shape (k,)
-		The information bits pending to be encoded
-	    Returns
-	    -------
-	    list of encoded bits, size (n,)
-		The polar encoded bits
-	    """
-	    return polar_encode(k, n, frozen_bits, info_bits)
-
-
-	def py_polar_encode_multiple(k, n, frozen_bits, info_bits):
-	    """Polar encode for multiple frames
-	    Parameters
-	    ----------
-	    k : int
-		The length of information bits in a codeword
-	    n : int
-		Codeword length
-	    frozen_bits : list of booleans, size (n,)
-		The frozen bits, maybe generated from `py_generate_frozen_bits`
-	    info_bits : list (or ndarray) of information bits of shape (n_frame, k)
-		The information bits pending to be encoded
-	    Returns
-	    -------
-	    list of encoded bits, size (n_frame, n)
-		The polar encoded bits
-	    """
-	    assert info_bits.shape[1] > 0
-	    return polar_encode_multiple(k, n, frozen_bits, info_bits)
-
-
-	def py_polar_decode(k, n, frozen_bits, received):
-	    """Polar decode
-	    Parameters
-	    ----------
-	    k : int
-		The length of informatio bits in a codeword
-	    n : int
-		Codeword length
-	    frozen_bits : list of booleans, size (n,)
-		The frozen bits, maybe generated from `py_generate_frozen_bits`
-	    received : list (or ndarray) of received LLRs, size (n,)
-		The received log-likelihood ratios (LLRs)
-	    Returns
-	    -------
-	    list of decoded bits, size (k,)
-		The polar decoded bits
-	    """
-	    return polar_decode(k, n, frozen_bits, received)
-
-
-	def py_polar_decode_multiple(k, n, frozen_bits, received):
-	    """Polar decode for multiple frames
-	    Parameters
-	    ----------
-	    k : int
-		The length of informatio bits in a codeword
-	    n : int
-		Codeword length
-	    frozen_bits : list of booleans, size (n,)
-		The frozen bits, maybe generated from `py_generate_frozen_bits`
-	    received : list (or ndarray) of received LLRs, size (n_frame, n)
-		The received log-likelihood ratios (LLRs)
-	    Returns
-	    -------
-	    list of decoded bits, size (n_frame, k)
-		The polar decoded bits
-	    """
-	    assert received.shape[1] > 0
-	    return polar_decode_multiple(k, n, frozen_bits, received)
-
-:numref:`codec_hpp` implements the C++ to AFF3CT interface, and it implements the basic
-logic of Polar frozen bits generator, encoder and decoder.
+:numref:`codec_hpp-1` implements the C++ to AFF3CT frozen bit generator interface.
 
 .. code-block:: c++
-	:caption: C++-AFF3CT interface
-	:name: codec_hpp
+	:caption: C++-AFF3CT interface -- frozen bits generator
+	:name: codec_hpp-1
 	:emphasize-lines: 
 	:linenos:
-
-	#include <iostream>
-	#include <string>
-	#include <vector>
-
-	#include <aff3ct.hpp>
-
-	using namespace aff3ct;
 
 	/**
 	 * @brief Generate frozen bits for a specific SNR
@@ -1150,6 +1052,17 @@ logic of Polar frozen bits generator, encoder and decoder.
 	  frozen_bits_generator.generate(frozen_bits);
 	  return frozen_bits;
 	}
+
+To reduce the overhead of constructing encoder object, :numref:`codec_hpp-1`
+incorporates a `polar_encode_multiple` function that is able to encode multiple frames 
+at one Python function call, therefore provides better performance than invoking 
+`polar_encode` multiple times through Python `for-loop`.
+
+.. code-block:: c++
+	:caption: C++-AFF3CT interface -- encoder
+	:name: codec_hpp-2
+	:emphasize-lines: 
+	:linenos:
 
 	/**
 	 * @brief Polar encoder for single frame
@@ -1196,6 +1109,15 @@ logic of Polar frozen bits generator, encoder and decoder.
 	  }
 	  return encoded_bits;
 	}
+
+Similarly for decoder, `polar_decode_multiple` performs better in terms of 
+throughput.
+
+.. code-block:: c++
+	:caption: C++-AFF3CT interface -- decoder
+	:name: codec_hpp-3
+	:emphasize-lines: 
+	:linenos:
 
 	/**
 	 * @brief Polar decoder for single frame
@@ -1245,12 +1167,9 @@ logic of Polar frozen bits generator, encoder and decoder.
 	  return decoded_bits;
 	}
 
-
 Upon successful compilation, a `codec.cpp` source file will be generated by Cython and `codec.cpython*.so` (on Linux)
-dynamic library is present. Now, you are able to `import` the library as
+dynamic library is present. Now, you are able to try a short demo script by (Python >= 3.6 is required)
 
 ```python
-from codec import *
+python3 codec_polar.py
 ```
-
-
