@@ -65,7 +65,9 @@ public:
 	 *
 	 * \return the number of frames to process in this Module.
 	 */
-	virtual int get_n_frames() const;
+	int get_n_frames() const;
+
+	virtual void set_n_frames(const int n_frames);
 
 	const std::string& get_name() const;
 

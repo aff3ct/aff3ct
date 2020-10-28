@@ -74,6 +74,8 @@ public:
 
 	virtual int decode_siho_cw(const R *Y_N, B *V_N, const int frame_id = -1);
 
+	virtual void set_n_frames(const int n_frames);
+
 protected:
 	virtual int _decode_siho(const R *Y_N, B *V_K, const int frame_id);
 

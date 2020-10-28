@@ -88,6 +88,8 @@ public:
 	 */
 	virtual int tail_length() const;
 
+	virtual void set_n_frames(const int n_frames);
+
 protected:
 	virtual int _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);
 

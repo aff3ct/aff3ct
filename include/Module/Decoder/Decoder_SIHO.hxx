@@ -343,6 +343,22 @@ int Decoder_SIHO<B,R>
 	return this->_decode_siho_cw(this->Y_N.data(), V_N, frame_id);
 }
 
+template <typename B, typename R>
+void Decoder_SIHO<B,R>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	Decoder_HIHO<B>::set_n_frames(n_frames);
+
+	const auto old_Y_N_size = this->Y_N.size();
+	const auto new_Y_N_size = (old_Y_N_size / old_n_frames) * old_n_frames;
+	this->Y_N.resize(new_Y_N_size);
+
+	const auto old_V_KN_size = this->V_KN.size();
+	const auto new_V_KN_size = (old_V_KN_size / old_n_frames) * old_n_frames;
+	this->V_KN.resize(new_V_KN_size);
+}
+
 }
 }
 

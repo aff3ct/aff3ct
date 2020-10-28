@@ -296,5 +296,21 @@ int Decoder_SISO<B,R>
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
+template <typename B, typename R>
+void Decoder_SISO<B, R>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	Decoder_SIHO<B,R>::set_n_frames(n_frames);
+
+	const auto old_Y_N1_size = this->Y_N1.size();
+	const auto new_Y_N1_size = (old_Y_N1_size / old_n_frames) * old_n_frames;
+	this->Y_N1.resize(new_Y_N1_size);
+
+	const auto old_Y_N2_size = this->Y_N2.size();
+	const auto new_Y_N2_size = (old_Y_N2_size / old_n_frames) * old_n_frames;
+	this->Y_N2.resize(new_Y_N2_size);
+}
+
 }
 }

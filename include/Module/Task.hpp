@@ -99,10 +99,10 @@ public:
 	inline bool is_last_input_socket(const Socket &s_in) const;
 	       bool can_exec            (                  ) const;
 
-	inline Module&       get_module     (               ) const;
-	inline std::string   get_name       (               ) const;
-	inline uint32_t      get_n_calls    (               ) const;
-	       socket_t      get_socket_type(const Socket &s) const;
+	inline Module&     get_module     (               ) const;
+	inline std::string get_name       (               ) const;
+	inline uint32_t    get_n_calls    (               ) const;
+	       socket_t    get_socket_type(const Socket &s) const;
 
 	// get stats
 	std::chrono::nanoseconds                     get_duration_total() const;
@@ -136,6 +136,8 @@ protected:
 	size_t create_socket_out(const std::string &name, const size_t n_elmts, const bool hack_status = false);
 
 	void create_codelet(std::function<int(Module &m, Task& t)> &codelet);
+
+	void update_n_frames(const size_t old_n_frames, const size_t new_n_frames);
 
 private:
 	template <typename T>

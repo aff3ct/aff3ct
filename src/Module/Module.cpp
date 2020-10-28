@@ -62,6 +62,27 @@ int Module
 }
 
 void Module
+::set_n_frames(const int n_frames)
+{
+#ifdef AFF3CT_SYSTEMC_MODULE
+	std::stringstream message;
+	message << "'This feature is not supported with the SystemC/TLM interface.";
+	throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+#endif
+
+	if (n_frames <= 0)
+	{
+		std::stringstream message;
+		message << "'n_frames' has to be greater than 0 ('n_frames' = " << n_frames << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	for (auto &t : tasks)
+		t->update_n_frames((size_t)this->get_n_frames(), (size_t)n_frames);
+	this->n_frames = n_frames;
+}
+
+void Module
 ::set_name(const std::string &name)
 {
 	this->name = name;

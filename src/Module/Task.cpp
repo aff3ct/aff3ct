@@ -443,8 +443,29 @@ void Task
 
 	// create automatically a socket that contains the status of the task
 	const bool hack_status = true;
-	auto s = this->template create_socket_out<int>("status", /*1*/this->get_module().get_n_frames(), hack_status);
+	auto s = this->template create_socket_out<int>("status", this->get_module().get_n_frames(), hack_status);
 	this->sockets[s]->dataptr = (void*)this->status.data();
+}
+
+void Task
+::update_n_frames(const size_t old_n_frames, const size_t new_n_frames)
+{
+	for (auto &s : this->sockets)
+	{
+		const auto old_databytes = s->get_databytes();
+		const auto new_databytes = (old_databytes / old_n_frames) * new_n_frames;
+		s->set_databytes(new_databytes);
+	}
+
+	if (this->is_autoalloc())
+	{
+		for (auto &v : this->out_buffers)
+		{
+			const auto old_databytes = v.size();
+			const auto new_databytes = (old_databytes / old_n_frames) * new_n_frames;
+			v.resize(new_databytes);
+		}
+	}
 }
 
 bool Task

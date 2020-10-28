@@ -376,5 +376,11 @@ size_t Socket
 	return unbind_pos;
 }
 
+void Socket
+::set_databytes(const size_t databytes)
+{
+	this->databytes = databytes;
+}
+
 }
 }
