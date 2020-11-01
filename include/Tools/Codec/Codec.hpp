@@ -50,7 +50,7 @@ protected :
 	const Noise<> *noise;
 
 public:
-	Codec(const int K, const int N_cw, const int N, const int n_frames = 1);
+	Codec(const int K, const int N_cw, const int N);
 
 	virtual ~Codec() = default;
 
@@ -67,6 +67,10 @@ public:
 
 	virtual void notify_noise_update();
 
+	int get_n_frames() const;
+
+	virtual void set_n_frames(const int n_frames);
+
 protected:
 	virtual void deep_copy(const Codec<B,Q> &t);
 
@@ -82,8 +86,8 @@ protected:
 	virtual void set_puncturer  (module::Puncturer<B,Q>* pct);
 	virtual void set_extractor  (module::Extractor<B,Q>* pct);
 
-	virtual const module::Interleaver<B>& get_interleaver_bit();
-	virtual const module::Interleaver<Q>& get_interleaver_llr();
+	virtual module::Interleaver<B>& get_interleaver_bit();
+	virtual module::Interleaver<Q>& get_interleaver_llr();
 };
 }
 }

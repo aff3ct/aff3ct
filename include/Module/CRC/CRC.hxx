@@ -39,8 +39,8 @@ Socket& CRC<B>
 
 template <typename B>
 CRC<B>
-::CRC(const int K, const int size, const int n_frames)
-: Module(n_frames), K(K), size(size)
+::CRC(const int K, const int size)
+: Module(), K(K), size(size)
 {
 	const std::string name = "CRC";
 	this->set_name(name);

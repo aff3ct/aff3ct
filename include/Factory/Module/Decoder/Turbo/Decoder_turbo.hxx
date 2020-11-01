@@ -88,7 +88,6 @@ void Decoder_turbo<D1,D2>
 		auto pi = itl->get_prefix();
 
 		args.erase({pi+"-size"    });
-		args.erase({pi+"-fra", "F"});
 	}
 
 	Decoder_turbo_common::add_args_and_options(args, p, class_name);
@@ -104,7 +103,6 @@ void Decoder_turbo<D1,D2>
 	auto pfnc = fnc->get_prefix();
 
 	args.erase({pfnc+"-size"     });
-	args.erase({pfnc+"-fra",  "F"});
 	args.erase({pfnc+"-ite",  "i"});
 	args.erase({pfnc+"-crc-ite"  });
 	args.erase({pfnc+"-crc-start"});
@@ -115,7 +113,6 @@ void Decoder_turbo<D1,D2>
 
 	args.erase({ps1+"-info-bits", "K"});
 	args.erase({ps1+"-cw-size",   "N"});
-	args.erase({ps1+"-fra",       "F"});
 
 	if (!std::is_same<D1,D2>())
 	{
@@ -123,7 +120,6 @@ void Decoder_turbo<D1,D2>
 
 		args.erase({ps2+"-info-bits", "K"});
 		args.erase({ps2+"-cw-size",   "N"});
-		args.erase({ps2+"-fra",       "F"});
 	}
 }
 
@@ -140,10 +136,8 @@ void Decoder_turbo<D1,D2>
 	if(vals.exist({p+"-json"     })) this->enable_json    = true;
 	if(vals.exist({p+"-crc-start"})) this->crc_start_ite  = vals.to_int({p+"-crc-start"});
 
-	this->sub1->K        = this->K;
-	this->sub2->K        = this->K;
-	this->sub1->n_frames = this->n_frames;
-	this->sub2->n_frames = this->n_frames;
+	this->sub1->K = this->K;
+	this->sub2->K = this->K;
 
 	sub1->store(vals);
 	sub2->store(vals);
@@ -162,8 +156,7 @@ void Decoder_turbo<D1,D2>
 
 	if (itl != nullptr)
 	{
-		this->itl->core->size     = this->K;
-		this->itl->core->n_frames = this->n_frames;
+		this->itl->core->size = this->K;
 
 		itl->store(vals);
 
@@ -179,7 +172,6 @@ void Decoder_turbo<D1,D2>
 	sf->store(vals);
 
 	this->fnc->size          = this->K;
-	this->fnc->n_frames      = this->n_frames;
 	this->fnc->n_ite         = this->n_ite;
 	this->fnc->crc_start_ite = this->crc_start_ite;
 
@@ -220,15 +212,15 @@ void Decoder_turbo<D1,D2>
 template <class D1, class D2>
 template <typename B, typename Q>
 module::Decoder_turbo<B,Q>* Decoder_turbo<D1,D2>
-::build(const module::Interleaver<Q>    &itl,
-        const module::Decoder_SISO<B,Q> &siso_n,
+::build(const module::Decoder_SISO<B,Q> &siso_n,
         const module::Decoder_SISO<B,Q> &siso_i,
+              module::Interleaver<Q>    &itl,
               module::Encoder<B>        *encoder) const
 {
 	if (this->type == "TURBO")
 	{
-		if (this->implem == "STD" ) return new module::Decoder_turbo_std <B,Q>(this->K, this->N_cw, this->n_ite, itl, siso_n, siso_i, this->sub1->buffered);
-		if (this->implem == "FAST") return new module::Decoder_turbo_fast<B,Q>(this->K, this->N_cw, this->n_ite, itl, siso_n, siso_i, this->sub1->buffered);
+		if (this->implem == "STD" ) return new module::Decoder_turbo_std <B,Q>(this->K, this->N_cw, this->n_ite, siso_n, siso_i, itl, this->sub1->buffered);
+		if (this->implem == "FAST") return new module::Decoder_turbo_fast<B,Q>(this->K, this->N_cw, this->n_ite, siso_n, siso_i, itl, this->sub1->buffered);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

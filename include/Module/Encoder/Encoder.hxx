@@ -27,8 +27,8 @@ Socket& Encoder<B>
 
 template <typename B>
 Encoder<B>
-::Encoder(const int K, const int N, const int n_frames, const int simd_inter_frame_level)
-: Module(n_frames),
+::Encoder(const int K, const int N, const int simd_inter_frame_level)
+: Module(),
   n_inter_frame_rest(this->n_frames % simd_inter_frame_level),
   K(K),
   N(N),
@@ -39,8 +39,8 @@ Encoder<B>
   info_bits_pos(this->K),
   U_K(this->n_inter_frame_rest ? this->simd_inter_frame_level * this->K : 0),
   X_N(this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0),
-  U_K_mem(n_frames),
-  X_N_mem(n_frames)
+  U_K_mem(this->n_frames),
+  X_N_mem(this->n_frames)
 {
 	const std::string name = "Encoder";
 	this->set_name(name);
@@ -325,6 +325,33 @@ void Encoder<B>
 ::set_seed(const int seed)
 {
 	// do nothing in the general case, this method has to be overrided
+}
+
+template <typename B>
+void Encoder<B>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Module::set_n_frames(n_frames);
+
+		this->n_inter_frame_rest = n_frames % this->simd_inter_frame_level;
+		this->n_enc_waves = (int)std::ceil((float)n_frames / (float)this->simd_inter_frame_level),
+
+		this->U_K.resize(this->n_inter_frame_rest ? this->simd_inter_frame_level * this->K : 0);
+		this->X_N.resize(this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0);
+
+		const auto vec_size = this->U_K_mem[0].size();
+		const auto old_U_K_mem_size = this->U_K_mem.size();
+		const auto new_U_K_mem_size = (old_U_K_mem_size / old_n_frames) * n_frames;
+		this->U_K_mem.resize(new_U_K_mem_size, std::vector<B>(vec_size));
+
+		const auto vec_size2 = this->X_N_mem[0].size();
+		const auto old_X_N_mem_size = this->X_N_mem.size();
+		const auto new_X_N_mem_size = (old_X_N_mem_size / old_n_frames) * n_frames;
+		this->X_N_mem.resize(new_X_N_mem_size, std::vector<B>(vec_size2));
+	}
 }
 
 }

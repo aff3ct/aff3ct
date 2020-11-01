@@ -10,8 +10,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_repetition_sys<B>
-::Encoder_repetition_sys(const int& K, const int& N, const bool buffered_encoding, const int n_frames)
-: Encoder<B>(K, N, n_frames), rep_count((N/K) -1), buffered_encoding(buffered_encoding)
+::Encoder_repetition_sys(const int& K, const int& N, const bool buffered_encoding)
+: Encoder<B>(K, N), rep_count((N/K) -1), buffered_encoding(buffered_encoding)
 {
 	const std::string name = "Encoder_repetition_sys";
 	this->set_name(name);

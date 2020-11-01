@@ -17,27 +17,26 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_LDPC_bit_flipping<B,R>
 ::Decoder_LDPC_bit_flipping(const int &K, const int &N, const int& n_ite,
-                           const tools::Sparse_matrix &H,
-                           const std::vector<unsigned> &info_bits_pos,
-                           const R mwbf_factor,
-                           const bool enable_syndrome,
-                           const int syndrome_depth,
-                           const int n_frames)
-: Decoder_SISO<B,R>(K, N, n_frames, 1                         ),
-  n_ite            (n_ite                                     ),
-  n_V_nodes        (N                                         ), // same as N but more explicit
-  n_C_nodes        ((int)H.get_n_cols()                       ),
-  n_branches       ((int)H.get_n_connections()                ),
-  mwbf_factor      (mwbf_factor                               ),
-  enable_syndrome  (enable_syndrome                           ),
-  syndrome_depth   (syndrome_depth                            ),
-  H                (H                                         ),
-  info_bits_pos    (info_bits_pos                             ),
-  Lp_N             (N,                                      -1), // -1 in order to fail when AZCW
-  C_to_V           (n_frames, std::vector<R>(this->n_branches)),
-  V_to_C           (n_frames, std::vector<R>(this->n_branches)),
-  Y_min            (this->n_C_nodes                           ),
-  decis            (this->n_V_nodes                           )
+                            const tools::Sparse_matrix &H,
+                            const std::vector<unsigned> &info_bits_pos,
+                            const R mwbf_factor,
+                            const bool enable_syndrome,
+                            const int syndrome_depth)
+: Decoder_SISO<B,R>(K, N, 1                                         ),
+  n_ite            (n_ite                                           ),
+  n_V_nodes        (N                                               ), // same as N but more explicit
+  n_C_nodes        ((int)H.get_n_cols()                             ),
+  n_branches       ((int)H.get_n_connections()                      ),
+  mwbf_factor      (mwbf_factor                                     ),
+  enable_syndrome  (enable_syndrome                                 ),
+  syndrome_depth   (syndrome_depth                                  ),
+  H                (H                                               ),
+  info_bits_pos    (info_bits_pos                                   ),
+  Lp_N             (N,                                            -1), // -1 in order to fail when AZCW
+  C_to_V           (this->n_frames, std::vector<R>(this->n_branches)),
+  V_to_C           (this->n_frames, std::vector<R>(this->n_branches)),
+  Y_min            (this->n_C_nodes                                 ),
+  decis            (this->n_V_nodes                                 )
 {
 	const std::string name = "Decoder_LDPC_bit_flipping";
 	this->set_name(name);
@@ -234,6 +233,25 @@ bool Decoder_LDPC_bit_flipping<B,R>
 	}
 
 	return syndrome;
+}
+
+template <typename B, typename R>
+void Decoder_LDPC_bit_flipping<B,R>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Decoder_SISO<B,R>::set_n_frames(n_frames);
+
+		const auto old_C_to_V_size = this->C_to_V.size();
+		const auto new_C_to_V_size = (old_C_to_V_size / old_n_frames) * n_frames;
+		this->C_to_V.resize(new_C_to_V_size, std::vector<R>(this->n_branches));
+
+		const auto old_V_to_C_size = this->V_to_C.size();
+		const auto new_V_to_C_size = (old_V_to_C_size / old_n_frames) * n_frames;
+		this->V_to_C.resize(new_V_to_C_size, std::vector<R>(this->n_branches));
+	}
 }
 
 // ==================================================================================== explicit template instantiation

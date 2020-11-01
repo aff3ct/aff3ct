@@ -379,7 +379,37 @@ size_t Socket
 void Socket
 ::set_databytes(const size_t databytes)
 {
+	if (bound_sockets.size() != 0 || bound_socket != nullptr)
+	{
+		std::stringstream message;
+		message << "The current socket is already bound, it is impossible to set new databytes ("
+		        << "'cur_databytes'"    << " = " << get_databytes() << ", "
+		        << "'new_databytes'"    << " = " << databytes       << ", "
+		        << "'name'"             << " = " << get_name()      << ", "
+		        << "'task.name'"        << " = " << task.get_name()
+//		        << "'task.module.name'" << " = " << task.get_module_name()
+		        << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 	this->databytes = databytes;
+}
+
+void Socket
+::set_dataptr(void* dataptr)
+{
+	if (bound_sockets.size() != 0 || bound_socket != nullptr)
+	{
+		std::stringstream message;
+		message << "The current socket is already bound, it is impossible to set new dataptr ("
+		        << "'cur_dataptr'"      << " = " << get_dataptr()   << ", "
+		        << "'new_dataptr'"      << " = " << dataptr         << ", "
+		        << "'name'"             << " = " << get_name()      << ", "
+		        << "'task.name'"        << " = " << task.get_name()
+//		        << "'task.module.name'" << " = " << task.get_module_name()
+		        << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+	this->dataptr = dataptr;
 }
 
 }

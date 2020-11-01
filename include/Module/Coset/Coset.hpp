@@ -52,10 +52,9 @@ public:
 	/*!
 	 * \brief Constructor.
 	 *
-	 * \param size:     size of the input data.
-	 * \param n_frames: number of frames to process in the Source.
+	 * \param size: size of the input data.
 	 */
-	Coset(const int size, const int n_frames = 1);
+	Coset(const int size);
 
 	/*!
 	 * \brief Destructor.

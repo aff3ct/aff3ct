@@ -10,8 +10,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_repetition_fast<B,R>
-::Decoder_repetition_fast(const int& K, const int& N, const bool buffered_encoding, const int n_frames)
-: Decoder_repetition<B,R>(K, N, buffered_encoding, n_frames)
+::Decoder_repetition_fast(const int& K, const int& N, const bool buffered_encoding)
+: Decoder_repetition<B,R>(K, N, buffered_encoding)
 {
 	const std::string name = "Decoder_repetition_fast";
 	this->set_name(name);

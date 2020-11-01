@@ -16,8 +16,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_BCH_fast<B,R>
-::Decoder_BCH_fast(const int& K, const int& N, const tools::BCH_polynomial_generator<B> &GF_poly, const int n_frames)
-: Decoder_BCH<B,R>(K, N, GF_poly.get_t(), n_frames, mipp::N<R>()           ),
+::Decoder_BCH_fast(const int& K, const int& N, const tools::BCH_polynomial_generator<B> &GF_poly)
+: Decoder_BCH<B,R>(K, N, GF_poly.get_t(), mipp::N<R>()                     ),
   t2              (2 * this->t                                             ),
   YH_N            (this->N * mipp::N<B>()                                  ),
   Y_N_reorderered (this->N,                              mipp::Reg<B>((B)0)),
@@ -51,7 +51,7 @@ Decoder_BCH_fast<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	this->last_is_codeword.resize(n_frames + mipp::N<B>()); // in case where only the last frame_id is called to prevent memory leak
+	this->last_is_codeword.resize(this->n_frames + mipp::N<B>()); // in case where only the last frame_id is called to prevent memory leak
 }
 
 template <typename B, typename R>

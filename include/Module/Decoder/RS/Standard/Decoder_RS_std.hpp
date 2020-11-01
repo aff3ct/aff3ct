@@ -37,7 +37,7 @@ private:
 	std::vector<int> err;
 
 public:
-	Decoder_RS_std(const int& K, const int& N, const tools::RS_polynomial_generator &GF, const int n_frames = 1);
+	Decoder_RS_std(const int& K, const int& N, const tools::RS_polynomial_generator &GF);
 	virtual ~Decoder_RS_std() = default;
 	virtual Decoder_RS_std<B,R>* clone() const;
 

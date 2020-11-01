@@ -78,8 +78,7 @@ void Decoder_turbo_DB
 
 		auto pi = this->itl->get_prefix();
 
-		args.erase({pi+"-size"    });
-		args.erase({pi+"-fra", "F"});
+		args.erase({pi+"-size"});
 	}
 
 	cli::add_options(args.at({p+"-type", "D"}), 0, "TURBO_DB");
@@ -102,7 +101,6 @@ void Decoder_turbo_DB
 	auto pfnc = fnc->get_prefix();
 
 	args.erase({pfnc+"-size"     });
-	args.erase({pfnc+"-fra",  "F"});
 	args.erase({pfnc+"-ite",  "i"});
 	args.erase({pfnc+"-crc-ite"  });
 	args.erase({pfnc+"-crc-start"});
@@ -113,7 +111,6 @@ void Decoder_turbo_DB
 
 	args.erase({ps+"-info-bits", "K"});
 	args.erase({ps+"-cw-size",   "N"});
-	args.erase({ps+"-fra",       "F"});
 }
 
 void Decoder_turbo_DB
@@ -126,8 +123,7 @@ void Decoder_turbo_DB
 	if(vals.exist({p+"-ite", "i"}))  this->n_ite         = vals.to_int({p+"-ite", "i"});
 	if(vals.exist({p+"-crc-start"})) this->crc_start_ite = vals.to_int({p+"-crc-start"});
 
-	this->sub->K        = this->K;
-	this->sub->n_frames = this->n_frames;
+	this->sub->K = this->K;
 
 	sub->store(vals);
 
@@ -136,8 +132,7 @@ void Decoder_turbo_DB
 
 	if (itl != nullptr)
 	{
-		this->itl->core->size     = this->K >> 1;
-		this->itl->core->n_frames = this->n_frames;
+		this->itl->core->size = this->K >> 1;
 
 		itl->store(vals);
 
@@ -153,7 +148,6 @@ void Decoder_turbo_DB
 	sf->store(vals);
 
 	this->fnc->size          = this->K;
-	this->fnc->n_frames      = this->n_frames;
 	this->fnc->n_ite         = this->n_ite;
 	this->fnc->crc_start_ite = this->crc_start_ite;
 
@@ -185,14 +179,14 @@ void Decoder_turbo_DB
 
 template <typename B, typename Q>
 module::Decoder_turbo_DB<B,Q>* Decoder_turbo_DB
-::build(const module::Interleaver<Q>           &itl,
-        const module::Decoder_RSC_DB_BCJR<B,Q> &siso_n,
+::build(const module::Decoder_RSC_DB_BCJR<B,Q> &siso_n,
         const module::Decoder_RSC_DB_BCJR<B,Q> &siso_i,
+              module::Interleaver<Q>           &itl,
               module::Encoder<B>               *encoder) const
 {
 	if (this->type == "TURBO_DB")
 	{
-		if (this->implem == "STD") return new module::Decoder_turbo_DB<B,Q>(this->K, this->N_cw, this->n_ite, itl, siso_n, siso_i);
+		if (this->implem == "STD") return new module::Decoder_turbo_DB<B,Q>(this->K, this->N_cw, this->n_ite, siso_n, siso_i, itl);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
@@ -208,12 +202,12 @@ module::Decoder_SIHO<B,Q>* Decoder_turbo_DB
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Decoder_turbo_DB<B_8 ,Q_8 >* aff3ct::factory::Decoder_turbo_DB::build<B_8 ,Q_8 >(const aff3ct::module::Interleaver<Q_8 >&, const aff3ct::module::Decoder_RSC_DB_BCJR<B_8 ,Q_8 >&, const aff3ct::module::Decoder_RSC_DB_BCJR<B_8 ,Q_8 >&, module::Encoder<B_8 >*) const;
-template aff3ct::module::Decoder_turbo_DB<B_16,Q_16>* aff3ct::factory::Decoder_turbo_DB::build<B_16,Q_16>(const aff3ct::module::Interleaver<Q_16>&, const aff3ct::module::Decoder_RSC_DB_BCJR<B_16,Q_16>&, const aff3ct::module::Decoder_RSC_DB_BCJR<B_16,Q_16>&, module::Encoder<B_16>*) const;
-template aff3ct::module::Decoder_turbo_DB<B_32,Q_32>* aff3ct::factory::Decoder_turbo_DB::build<B_32,Q_32>(const aff3ct::module::Interleaver<Q_32>&, const aff3ct::module::Decoder_RSC_DB_BCJR<B_32,Q_32>&, const aff3ct::module::Decoder_RSC_DB_BCJR<B_32,Q_32>&, module::Encoder<B_32>*) const;
-template aff3ct::module::Decoder_turbo_DB<B_64,Q_64>* aff3ct::factory::Decoder_turbo_DB::build<B_64,Q_64>(const aff3ct::module::Interleaver<Q_64>&, const aff3ct::module::Decoder_RSC_DB_BCJR<B_64,Q_64>&, const aff3ct::module::Decoder_RSC_DB_BCJR<B_64,Q_64>&, module::Encoder<B_64>*) const;
+template aff3ct::module::Decoder_turbo_DB<B_8 ,Q_8 >* aff3ct::factory::Decoder_turbo_DB::build<B_8 ,Q_8 >(const aff3ct::module::Decoder_RSC_DB_BCJR<B_8 ,Q_8 >&, const aff3ct::module::Decoder_RSC_DB_BCJR<B_8 ,Q_8 >&, aff3ct::module::Interleaver<Q_8 >&, module::Encoder<B_8 >*) const;
+template aff3ct::module::Decoder_turbo_DB<B_16,Q_16>* aff3ct::factory::Decoder_turbo_DB::build<B_16,Q_16>(const aff3ct::module::Decoder_RSC_DB_BCJR<B_16,Q_16>&, const aff3ct::module::Decoder_RSC_DB_BCJR<B_16,Q_16>&, aff3ct::module::Interleaver<Q_16>&, module::Encoder<B_16>*) const;
+template aff3ct::module::Decoder_turbo_DB<B_32,Q_32>* aff3ct::factory::Decoder_turbo_DB::build<B_32,Q_32>(const aff3ct::module::Decoder_RSC_DB_BCJR<B_32,Q_32>&, const aff3ct::module::Decoder_RSC_DB_BCJR<B_32,Q_32>&, aff3ct::module::Interleaver<Q_32>&, module::Encoder<B_32>*) const;
+template aff3ct::module::Decoder_turbo_DB<B_64,Q_64>* aff3ct::factory::Decoder_turbo_DB::build<B_64,Q_64>(const aff3ct::module::Decoder_RSC_DB_BCJR<B_64,Q_64>&, const aff3ct::module::Decoder_RSC_DB_BCJR<B_64,Q_64>&, aff3ct::module::Interleaver<Q_64>&, module::Encoder<B_64>*) const;
 #else
-template aff3ct::module::Decoder_turbo_DB<B,Q>* aff3ct::factory::Decoder_turbo_DB::build<B,Q>(const aff3ct::module::Interleaver<Q>&, const aff3ct::module::Decoder_RSC_DB_BCJR<B,Q>&, const aff3ct::module::Decoder_RSC_DB_BCJR<B,Q>&, module::Encoder<B>*) const;
+template aff3ct::module::Decoder_turbo_DB<B,Q>* aff3ct::factory::Decoder_turbo_DB::build<B,Q>(const aff3ct::module::Decoder_RSC_DB_BCJR<B,Q>&, const aff3ct::module::Decoder_RSC_DB_BCJR<B,Q>&, aff3ct::module::Interleaver<Q>&, module::Encoder<B>*) const;
 #endif
 
 #ifdef AFF3CT_MULTI_PREC

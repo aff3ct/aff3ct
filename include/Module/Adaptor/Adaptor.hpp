@@ -41,8 +41,8 @@ class Adaptor : public Module, public tools::Interface_waiting
 friend tools::Sequence; // Sequence is friend to enable the no copy mode (0 copy)
 
 protected:
-	const std::vector<size_t> n_elmts;
-	const std::vector<size_t> n_bytes;
+	std::vector<size_t> n_elmts;
+	std::vector<size_t> n_bytes;
 	const std::vector<std::type_index> datatype;
 	const size_t buffer_size;
 	const size_t n_sockets;
@@ -68,16 +68,15 @@ public:
 	void reset();
 	virtual ~Adaptor();
 	virtual Adaptor* clone() const;
+	virtual void set_n_frames(const int n_frames);
 
 protected:
 	inline Adaptor(const size_t n_elmts,
 	               const std::type_index datatype,
-	               const size_t buffer_size,
-	               const int n_frames = 1);
+	               const size_t buffer_size);
 	inline Adaptor(const std::vector<size_t> &n_elmts,
 	               const std::vector<std::type_index> &datatype,
-	               const size_t buffer_size,
-	               const int n_frames = 1);
+	               const size_t buffer_size);
 	virtual void deep_copy(const Adaptor &m);
 	inline bool is_full(const size_t id);
 	inline bool is_empty(const size_t id);

@@ -13,9 +13,8 @@ template <typename B, typename R, tools::proto_max_i<R> MAX>
 Decoder_RSC_BCJR_inter_fast<B,R,MAX>
 ::Decoder_RSC_BCJR_inter_fast(const int &K,
                               const std::vector<std::vector<int>> &trellis,
-                              const bool buffered_encoding,
-                              const int n_frames)
-: Decoder_RSC_BCJR_inter<B,R>(K, trellis, buffered_encoding, n_frames)
+                              const bool buffered_encoding)
+: Decoder_RSC_BCJR_inter<B,R>(K, trellis, buffered_encoding)
 {
 	const std::string name = "Decoder_RSC_BCJR_inter_fast";
 	this->set_name(name);

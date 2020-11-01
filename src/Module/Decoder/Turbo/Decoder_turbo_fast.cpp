@@ -14,11 +14,11 @@ Decoder_turbo_fast<B,R>
 ::Decoder_turbo_fast(const int& K,
                      const int& N,
                      const int& n_ite,
-                     const Interleaver<R> &pi,
                      const Decoder_SISO<B,R> &siso_n,
                      const Decoder_SISO<B,R> &siso_i,
+                           Interleaver<R> &pi,
                      const bool buffered_encoding)
-: Decoder_turbo<B,R>(K, N, n_ite, pi, siso_n, siso_i, buffered_encoding)
+: Decoder_turbo<B,R>(K, N, n_ite, siso_n, siso_i, pi, buffered_encoding)
 {
 	const std::string name = "Decoder_turbo_fast";
 	this->set_name(name);
@@ -99,6 +99,14 @@ template <typename B, typename R>
 int Decoder_turbo_fast<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
+	if (this->pi.get_n_frames() != this->get_n_frames())
+	{
+		std::stringstream message;
+		message << "'pi.get_n_frames()' has to be equal to 'n_frames' ('pi.get_n_frames()' = "
+		        << this->pi.get_n_frames() << ", 'n_frames' = " << this->get_n_frames() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N, frame_id);
 //	auto d_load = std::chrono::steady_clock::now() - t_load;

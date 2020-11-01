@@ -97,6 +97,9 @@
 .. |factory::Simulation::p+seed,S| replace::
    Set the |PRNG| seed used in the Monte Carlo simulation.
 
+.. |factory::Simulation::p+inter-fra,F| replace::
+   Set the number of frames to process for each task execution.
+
 .. ---------------------------------------------------- factory BFER parameters
 
 .. |factory::BFER::p+coset,c| replace::
@@ -183,9 +186,6 @@
 .. |factory::Channel::p+fra-size,N| replace::
    Set the number of symbols by frame.
 
-.. |factory::Channel::p+fra,F| replace::
-   Set the number of inter frame level to process.
-
 .. |factory::Channel::p+type| replace::
    Select the channel type.
 
@@ -247,17 +247,11 @@
 .. |factory::Coset::p+type| replace::
    Set the coset type.
 
-.. |factory::Coset::p+fra,F| replace::
-   Set the number of inter frame level to process.
-
 .. ----------------------------------------------------- factory CRC parameters
 
 .. |factory::CRC::p+info-bits,K| replace::
    Set the number of generated bits (information bits :math:`K`, the CRC is not
    included).
-
-.. |factory::CRC::p+fra,F| replace::
-   Set the number of inter frame level to process.
 
 .. |factory::CRC::p+type,p+poly| replace::
    Select the |CRC| type you want to use among the predefined (or not)
@@ -277,9 +271,6 @@
 
 .. |factory::Decoder::p+info-bits,K| replace::
    Set the number of information bits :math:`K`.
-
-.. |factory::Decoder::p+fra,F| replace::
-   Set the number of inter frame level to process.
 
 .. |factory::Decoder::p+type,D| replace::
    Select the decoder algorithm.
@@ -481,9 +472,6 @@
 .. |factory::Encoder::p+cw-size,N| replace::
    Set the codeword size :math:`N`.
 
-.. |factory::Encoder::p+fra,F| replace::
-   Set the number of inter frame level to process.
-
 .. |factory::Encoder::p+type| replace::
    Select the encoder type.
 
@@ -530,9 +518,6 @@
 
 .. |factory::Encoder_NO::p+info-bits,K| replace::
    Set the number of information bits :math:`K`.
-
-.. |factory::Encoder_NO::p+fra,F| replace::
-   Set the number of inter frame level to process.
 
 .. |factory::Encoder_NO::p+type| replace::
    Select the encoder type.
@@ -601,9 +586,6 @@
 .. |factory::Modem::p+fra-size,N| replace::
    Set the number of symbols by frame.
 
-.. |factory::Modem::p+fra,F| replace::
-   Set the number of inter frame level to process.
-
 .. |factory::Modem::p+type| replace::
    Select the modulation type.
 
@@ -666,9 +648,6 @@
 .. |factory::Monitor_BFER::p+info-bits,K| replace::
    Set the number of bits to check.
 
-.. |factory::Monitor_BFER::p+fra,F| replace::
-   Set the number of inter frame level to process.
-
 .. |factory::Monitor_BFER::p+max-fe,e| replace::
    Set the maximum number of frame errors to simulated for each noise point.
 
@@ -689,9 +668,6 @@
 .. |factory::Monitor_EXIT::p+size,K| replace::
    Set the number of bits to check.
 
-.. |factory::Monitor_EXIT::p+fra,F| replace::
-   Set the number of inter frame level to process.
-
 .. |factory::Monitor_EXIT::p+trials,n| replace::
    Set the number of frames to simulate per :math:`\sigma A` value.
 
@@ -699,9 +675,6 @@
 
 .. |factory::Monitor_MI::p+fra-size,N| replace::
    Select the frame size for the mutual information computation.
-
-.. |factory::Monitor_MI::p+fra,F| replace::
-   Set the number of inter frame level to process.
 
 .. |factory::Monitor_MI::p+trials,n| replace::
    Set the number of frames to simulate.
@@ -714,9 +687,6 @@
 .. |factory::Puncturer::p+fra-size,N| replace::
    Set the frame size :math:`N`. This is not necessarily the codeword size if a
    puncturing pattern is used.
-
-.. |factory::Puncturer::p+fra,F| replace::
-   Set the number of inter frame level to process.
 
 .. |factory::Puncturer::p+type| replace::
    Select the puncturer type.
@@ -749,9 +719,6 @@
 .. |factory::Quantizer::p+size,N| replace::
    Set the number of real to quantize.
 
-.. |factory::Quantizer::p+fra,F| replace::
-   Set the number of inter frame level to process.
-
 .. |factory::Quantizer::p+type| replace::
    Select the quantizer type.
 
@@ -772,9 +739,6 @@
 .. |factory::Sink::p+info-bits,K| replace::
    Select the number of information bits :math:`K`.
 
-.. |factory::Sink::p+fra,F| replace::
-   Set the number of frames to process for each task execution.
-
 .. |factory::Sink::p+type| replace::
    Select the sink type.
 
@@ -789,9 +753,6 @@
 
 .. |factory::Source::p+info-bits,K| replace::
    Select the number of information bits :math:`K`.
-
-.. |factory::Source::p+fra,F| replace::
-   Set the number of frames to process for each task execution.
 
 .. |factory::Source::p+type| replace::
    Method used to generate the :math:`K` information bits.
@@ -881,9 +842,6 @@
 .. |factory::Flip_and_check::p+size| replace::
    Set the size (in bit) of the extrinsic for the |FNC| processing.
 
-.. |factory::Flip_and_check::p+fra,F| replace::
-   Set the number of inter frame level to process.
-
 .. |factory::Flip_and_check::p+q| replace::
    Set the search space for the |FNC| technique.
 
@@ -929,9 +887,6 @@
 
 .. |factory::Interleaver_core::p+size| replace::
    Select the number of symbols to interleave.
-
-.. |factory::Interleaver_core::p+fra,F| replace::
-   Set the number of inter frame level to process.
 
 .. |factory::Interleaver_core::p+type| replace::
    Select the interleaver type.

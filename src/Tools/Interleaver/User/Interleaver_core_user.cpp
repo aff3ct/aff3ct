@@ -12,8 +12,8 @@ using namespace aff3ct::tools;
 
 template <typename T>
 Interleaver_core_user<T>
-::Interleaver_core_user(const int size, const std::string &filename, const int n_frames)
-: Interleaver_core<T>(size, "user", false, n_frames), cur_itl_id(0)
+::Interleaver_core_user(const int size, const std::string &filename)
+: Interleaver_core<T>(size, "user", false), cur_itl_id(0)
 {
 	if (filename.empty())
 		throw invalid_argument(__FILE__, __LINE__, __func__, "'filename' should not be empty.");

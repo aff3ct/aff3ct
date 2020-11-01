@@ -73,8 +73,8 @@ module::Encoder_polar_MK<B>* Encoder_polar_MK
 {
 	if (this->type == "POLAR_MK")
 	{
-		if (this->systematic) return new module::Encoder_polar_MK_sys<B>(this->K, this->N_cw, code, frozen_bits, this->n_frames);
-		else                  return new module::Encoder_polar_MK    <B>(this->K, this->N_cw, code, frozen_bits, this->n_frames);
+		if (this->systematic) return new module::Encoder_polar_MK_sys<B>(this->K, this->N_cw, code, frozen_bits);
+		else                  return new module::Encoder_polar_MK    <B>(this->K, this->N_cw, code, frozen_bits);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

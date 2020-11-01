@@ -37,14 +37,18 @@ template <typename B, typename R, typename Q>
 std::unique_ptr<module::Source<B>> Simulation_sequence_BFER_ite<B,R,Q>
 ::build_source()
 {
-	return std::unique_ptr<module::Source<B>>(params_BFER_ite.src->build<B>());
+	auto src = std::unique_ptr<module::Source<B>>(params_BFER_ite.src->build<B>());
+	src->set_n_frames(this->params.n_frames);
+	return src;
 }
 
 template <typename B, typename R, typename Q>
 std::unique_ptr<module::CRC<B>> Simulation_sequence_BFER_ite<B,R,Q>
 ::build_crc()
 {
-	return std::unique_ptr<module::CRC<B>>(params_BFER_ite.crc->build<B>());
+	auto crc = std::unique_ptr<module::CRC<B>>(params_BFER_ite.crc->build<B>());
+	crc->set_n_frames(this->params.n_frames);
+	return crc;
 }
 
 template <typename B, typename R, typename Q>
@@ -54,7 +58,9 @@ std::unique_ptr<tools::Codec_SISO<B,Q>> Simulation_sequence_BFER_ite<B,R,Q>
 	auto crc_ptr = this->params_BFER_ite.crc->type == "NO" ? nullptr : crc;
 	std::unique_ptr<factory::Codec> params_cdc(params_BFER_ite.cdc->clone());
 	auto param_siso_siho = dynamic_cast<factory::Codec_SISO*>(params_cdc.get());
-	return std::unique_ptr<tools::Codec_SISO<B,Q>>(param_siso_siho->template build<B,Q>(crc_ptr));
+	auto cdc = std::unique_ptr<tools::Codec_SISO<B,Q>>(param_siso_siho->template build<B,Q>(crc_ptr));
+	cdc->set_n_frames(this->params.n_frames);
+	return cdc;
 }
 
 template <typename B, typename R, typename Q>
@@ -62,7 +68,9 @@ std::unique_ptr<tools ::Interleaver_core<>> Simulation_sequence_BFER_ite<B,R,Q>
 ::build_interleaver()
 {
 	std::unique_ptr<factory::Interleaver> params_itl(params_BFER_ite.itl->clone());
-	return std::unique_ptr<tools::Interleaver_core<>>(params_itl->core->build<>());
+	auto itl = std::unique_ptr<tools::Interleaver_core<>>(params_itl->core->build<>());
+	itl->set_n_frames(this->params.n_frames);
+	return itl;
 }
 
 template <typename B, typename R, typename Q>
@@ -70,9 +78,17 @@ std::unique_ptr<module::Modem<B,R,Q>> Simulation_sequence_BFER_ite<B,R,Q>
 ::build_modem(const tools::Distributions<R> *distributions, const tools::Constellation<R> *constellation)
 {
 	if (distributions != nullptr)
-		return std::unique_ptr<module::Modem<B,R,Q>>(params_BFER_ite.mdm->build<B,R,Q>(*distributions));
+	{
+		auto mdm = std::unique_ptr<module::Modem<B,R,Q>>(params_BFER_ite.mdm->build<B,R,Q>(*distributions));
+		mdm->set_n_frames(this->params.n_frames);
+		return mdm;
+	}
 	else
-		return std::unique_ptr<module::Modem<B,R,Q>>(params_BFER_ite.mdm->build<B,R,Q>(constellation));
+	{
+		auto mdm = std::unique_ptr<module::Modem<B,R,Q>>(params_BFER_ite.mdm->build<B,R,Q>(constellation));
+		mdm->set_n_frames(this->params.n_frames);
+		return mdm;
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -80,11 +96,16 @@ std::unique_ptr<module::Channel<R>> Simulation_sequence_BFER_ite<B,R,Q>
 ::build_channel(const tools::Distributions<R> *distributions)
 {
 	if (distributions != nullptr)
-		return std::unique_ptr<module::Channel<R>>(params_BFER_ite.chn->build<R>(*distributions));
+	{
+		auto chn = std::unique_ptr<module::Channel<R>>(params_BFER_ite.chn->build<R>(*distributions));
+		chn->set_n_frames(this->params.n_frames);
+		return chn;
+	}
 	else
 	{
-		auto c = std::unique_ptr<module::Channel<R>>(params_BFER_ite.chn->build<R>());
-		return c;
+		auto chn = std::unique_ptr<module::Channel<R>>(params_BFER_ite.chn->build<R>());
+		chn->set_n_frames(this->params.n_frames);
+		return chn;
 	}
 }
 
@@ -92,7 +113,9 @@ template <typename B, typename R, typename Q>
 std::unique_ptr<module::Quantizer<R,Q>> Simulation_sequence_BFER_ite<B,R,Q>
 ::build_quantizer()
 {
-	return std::unique_ptr<module::Quantizer<R,Q>>(params_BFER_ite.qnt->build<R,Q>());
+	auto qnt = std::unique_ptr<module::Quantizer<R,Q>>(params_BFER_ite.qnt->build<R,Q>());
+	qnt->set_n_frames(this->params.n_frames);
+	return qnt;
 }
 
 template <typename B, typename R, typename Q>
@@ -101,8 +124,9 @@ std::unique_ptr<module::Coset<B,Q>> Simulation_sequence_BFER_ite<B,R,Q>
 {
 	factory::Coset cst_params;
 	cst_params.size = params_BFER_ite.cdc->N_cw;
-	cst_params.n_frames = params_BFER_ite.src->n_frames;
-	return std::unique_ptr<module::Coset<B,Q>>(cst_params.build_real<B,Q>());
+	auto cst = std::unique_ptr<module::Coset<B,Q>>(cst_params.build_real<B,Q>());
+	cst->set_n_frames(this->params.n_frames);
+	return cst;
 }
 
 template <typename B, typename R, typename Q>
@@ -111,8 +135,9 @@ std::unique_ptr<module::Coset<B,B>> Simulation_sequence_BFER_ite<B,R,Q>
 {
 	factory::Coset cst_params;
 	cst_params.size = params_BFER_ite.coded_monitoring ? params_BFER_ite.cdc->N_cw : params_BFER_ite.cdc->K;
-	cst_params.n_frames = params_BFER_ite.src->n_frames;
-	return std::unique_ptr<module::Coset<B,B>>(cst_params.build_bit<B,B>());
+	auto cst = std::unique_ptr<module::Coset<B,B>>(cst_params.build_bit<B,B>());
+	cst->set_n_frames(this->params.n_frames);
+	return cst;
 }
 
 template <typename B, typename R, typename Q>
@@ -122,8 +147,8 @@ std::unique_ptr<module::Loop_predicate<Q>> Simulation_sequence_BFER_ite<B,R,Q>
 	tools::Predicate_ite p(params_BFER_ite.n_ite);
 	auto loop_ite =  std::unique_ptr<module::Loop_predicate<Q>>(new module::Loop_predicate<Q>(
 		p,
-		params_BFER_ite.cdc->N_cw,
-		params_BFER_ite.src->n_frames));
+		params_BFER_ite.cdc->N_cw));
+	loop_ite->set_n_frames(this->params.n_frames);
 	return loop_ite;
 }
 
@@ -138,8 +163,8 @@ std::unique_ptr<module::Loop_CRC<B,Q>> Simulation_sequence_BFER_ite<B,R,Q>
 		*crc.get(),
 		(size_t)crc->get_size() + (size_t)crc->get_K(),
 		params_BFER_ite.cdc->N_cw,
-		params_BFER_ite.crc_start,
-		params_BFER_ite.src->n_frames));
+		params_BFER_ite.crc_start));
+	loop_crc->set_n_frames(this->params.n_frames);
 	return loop_crc;
 }
 
@@ -652,13 +677,13 @@ void Simulation_sequence_BFER_ite<B,R,Q>
 			auto &source  = sources.size() ? *sources[tid] : *this->source;
 			auto src_data = (B*)(source[module::src::sck::generate::U_K].get_dataptr());
 			auto src_bytes = source[module::src::sck::generate::U_K].get_databytes();
-			auto src_size = (src_bytes / sizeof(B)) / this->params_BFER_ite.src->n_frames;
+			auto src_size = (src_bytes / sizeof(B)) / this->params_BFER_ite.n_frames;
 			this->dumper[tid]->register_data(src_data,
 			                                 (unsigned int)src_size,
 			                                 this->params_BFER_ite.err_track_threshold,
 			                                 "src",
 			                                 false,
-			                                 this->params_BFER_ite.src->n_frames,
+			                                 this->params_BFER_ite.n_frames,
 			                                 {});
 		}
 
@@ -668,13 +693,13 @@ void Simulation_sequence_BFER_ite<B,R,Q>
 			auto &encoder = encoders.size() ? *encoders[tid] : this->codec1->get_encoder();
 			auto enc_data = (B*)(encoder[module::enc::sck::encode::X_N].get_dataptr());
 			auto enc_bytes = encoder[module::enc::sck::encode::X_N].get_databytes();
-			auto enc_size = (enc_bytes / sizeof(B)) / this->params_BFER_ite.src->n_frames;
+			auto enc_size = (enc_bytes / sizeof(B)) / this->params_BFER_ite.n_frames;
 			this->dumper[tid]->register_data(enc_data,
 			                                 (unsigned int)enc_size,
 			                                 this->params_BFER_ite.err_track_threshold,
 			                                 "enc",
 			                                 false,
-			                                 this->params_BFER_ite.src->n_frames,
+			                                 this->params_BFER_ite.n_frames,
 			                                 {(unsigned)this->params_BFER_ite.cdc->enc->K});
 		}
 
@@ -686,7 +711,7 @@ void Simulation_sequence_BFER_ite<B,R,Q>
 			                                 this->params_BFER_ite.err_track_threshold,
 			                                 "chn",
 			                                 true,
-			                                 this->params_BFER_ite.src->n_frames,
+			                                 this->params_BFER_ite.n_frames,
 			                                 {});
 		}
 

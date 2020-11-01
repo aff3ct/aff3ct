@@ -46,8 +46,8 @@ Socket& Extractor<B,Q>
 
 template <typename B, typename Q>
 Extractor<B,Q>
-::Extractor(const int K, const int N, const int tail_length, const int n_frames)
-: Module(n_frames),
+::Extractor(const int K, const int N, const int tail_length)
+: Module(),
   K(K), N(N), tail_length(tail_length)
 {
 	const std::string name = "Extractor";

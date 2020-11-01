@@ -12,19 +12,12 @@ using namespace aff3ct::module;
 template <typename B>
 Encoder_RSC_generic_json_sys<B>
 ::Encoder_RSC_generic_json_sys(const int& K, const int& N, const bool buffered_encoding, const std::vector<int> poly,
-                               std::ostream &stream, const int n_frames)
-: Encoder_RSC_generic_sys<B>(K, N, buffered_encoding, poly, n_frames),
+                               std::ostream &stream)
+: Encoder_RSC_generic_sys<B>(K, N, buffered_encoding, poly),
   stream(stream), bit_counter(0), natural_domain(true), poly(poly)
 {
 	const std::string name = "Encoder_RSC_generic_json_sys";
 	this->set_name(name);
-
-	if (n_frames != 1)
-	{
-		std::stringstream message;
-		message << "'n_frames' has to be equal to 1 ('n_frames' = " << n_frames << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
 }
 
 template <typename B>
@@ -127,6 +120,22 @@ int Encoder_RSC_generic_json_sys<B>
 	}
 
 	return bit_par;
+}
+
+template <typename B>
+void Encoder_RSC_generic_json_sys<B>
+::set_n_frames(const int n_frames)
+{
+	if (n_frames != 1)
+	{
+		std::stringstream message;
+		message << "'n_frames' has to be equal to 1 ('n_frames' = " << n_frames << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+		Encoder_RSC_generic_sys<B>::set_n_frames(n_frames);
 }
 
 // ==================================================================================== explicit template instantiation

@@ -35,9 +35,6 @@ void Monitor_MI
 		cli::Integer(cli::Positive(), cli::Non_zero()),
 		cli::arg_rank::REQ);
 
-	tools::add_arg(args, p, class_name+"p+fra,F",
-		cli::Integer(cli::Positive(), cli::Non_zero()));
-
 	tools::add_arg(args, p, class_name+"p+trials,n",
 		cli::Integer(cli::Positive(), cli::Non_zero()));
 }
@@ -50,7 +47,6 @@ void Monitor_MI
 	auto p = this->get_prefix();
 
 	if(vals.exist({p+"-fra-size", "N"})) this->N        = vals.to_int({p+"-fra-size", "N"});
-	if(vals.exist({p+"-fra",      "F"})) this->n_frames = vals.to_int({p+"-fra",      "F"});
 	if(vals.exist({p+"-trials",   "n"})) this->n_trials = vals.to_int({p+"-trials",   "n"});
 }
 
@@ -63,14 +59,13 @@ void Monitor_MI
 
 	headers[p].push_back(std::make_pair("Number of trials (n)",        std::to_string(this->n_trials)));
 	if (full) headers[p].push_back(std::make_pair("Size (N)",          std::to_string(this->N       )));
-	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 }
 
 template <typename B, typename R>
 module::Monitor_MI<B,R>* Monitor_MI
 ::build() const
 {
-	if (this->type == "STD") return new module::Monitor_MI<B,R>(this->N, this->n_trials, this->n_frames);
+	if (this->type == "STD") return new module::Monitor_MI<B,R>(this->N, this->n_trials);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

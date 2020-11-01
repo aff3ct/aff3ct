@@ -25,8 +25,8 @@ Socket& Source<B>
 
 template <typename B>
 Source<B>
-::Source(const int K, const int n_frames)
-: Module(n_frames), K(K)
+::Source(const int K)
+: Module(), K(K)
 {
 	const std::string name = "Source";
 	this->set_name(name);

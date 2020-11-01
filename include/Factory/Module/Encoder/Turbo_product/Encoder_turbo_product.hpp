@@ -52,9 +52,9 @@ public:
 
 	// builder
 	template <typename B = int>
-	module::Encoder_turbo_product<B>* build(const module::Interleaver<B> &itl,
-	                                        const module::Encoder_BCH<B> &enc_r,
-	                                        const module::Encoder_BCH<B> &enc_c) const;
+	module::Encoder_turbo_product<B>* build(const module::Encoder_BCH<B> &enc_r,
+	                                        const module::Encoder_BCH<B> &enc_c,
+	                                              module::Interleaver<B> &itl) const;
 };
 }
 }

@@ -47,8 +47,7 @@ protected:
 	std::vector<std::vector<tools::Binary_node<Contents_SCL<B,R>>*>> leaves_array;
 
 public:
-	Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-	                        const int n_frames = 1);
+	Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits);
 	virtual ~Decoder_polar_SCL_naive();
 
 	virtual Decoder_polar_SCL_naive<B,R,F,G>* clone() const;

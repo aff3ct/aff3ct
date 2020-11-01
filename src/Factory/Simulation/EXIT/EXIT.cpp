@@ -142,9 +142,6 @@ void EXIT
 		headers[p].push_back(std::make_pair("Bit rate", std::to_string(bit_rate)));
 	}
 
-	if (this->src != nullptr)
-		headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->src->n_frames)));
-
 	if (this->src != nullptr) { this->src->get_headers(headers, full); }
 	if (this->cdc != nullptr) { this->cdc->get_headers(headers, full); }
 	if (this->mdm != nullptr) { this->mdm->get_headers(headers, full); }

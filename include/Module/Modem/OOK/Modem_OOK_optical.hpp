@@ -20,8 +20,7 @@ protected:
 	const tools::Distribution<R>* current_dist;
 
 public:
-	Modem_OOK_optical(const int N, const tools::Distributions<R>& dist,
-	                  const int n_frames = 1);
+	Modem_OOK_optical(const int N, const tools::Distributions<R>& dist);
 	virtual ~Modem_OOK_optical() = default;
 
 	virtual Modem_OOK_optical<B,R,Q>* clone() const;

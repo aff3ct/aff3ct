@@ -7,8 +7,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename Q>
 Extractor_LDPC<B,Q>
-::Extractor_LDPC(const int K, const int N, const std::vector<uint32_t> &info_bits_pos, const int n_frames)
-: Extractor<B,Q>(K, N, 0, n_frames),
+::Extractor_LDPC(const int K, const int N, const std::vector<uint32_t> &info_bits_pos)
+: Extractor<B,Q>(K, N, 0),
   info_bits_pos(info_bits_pos)
 {
 	const std::string name = "Extractor_LDPC";

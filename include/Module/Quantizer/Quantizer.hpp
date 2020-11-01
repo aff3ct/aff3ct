@@ -52,10 +52,9 @@ public:
 	/*!
 	 * \brief Constructor.
 	 *
-	 * \param N:        size of one frame.
-	 * \param n_frames: number of frames to process in the Decoder.
+	 * \param N: size of one frame.
 	 */
-	Quantizer(const int N, const int n_frames = 1);
+	Quantizer(const int N);
 
 	/*!
 	 * \brief Destructor.

@@ -62,10 +62,9 @@ public:
 	/*!
 	 * \brief Constructor.
 	 *
-	 * \param N:        size of one frame.
-	 * \param n_frames: number of frames to process in the Channel.
+	 * \param N: size of one frame.
 	 */
-	Channel(const int N, const int n_frames = 1);
+	Channel(const int N);
 
 	/*!
 	 * \brief Destructor.
@@ -108,6 +107,8 @@ public:
 	virtual void add_noise_wg(const R *X_N, R *Y_N, R *H_N, const int frame_id = -1);
 
 	virtual void notify_noise_update();
+
+	virtual void set_n_frames(const int n_frames);
 
 protected:
 	virtual void _add_noise(const R *X_N, R *Y_N, const int frame_id);

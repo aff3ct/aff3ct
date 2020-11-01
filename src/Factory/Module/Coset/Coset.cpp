@@ -35,9 +35,6 @@ void Coset
 
 	tools::add_arg(args, p, class_name+"p+type",
 		cli::Text(cli::Including_set("STD")));
-
-	tools::add_arg(args, p, class_name+"p+fra,F",
-		cli::Integer(cli::Positive(), cli::Non_zero()));
 }
 
 void Coset
@@ -45,9 +42,8 @@ void Coset
 {
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-size", "N"})) this->size     = vals.to_int({p+"-size", "N"});
-	if(vals.exist({p+"-fra",  "F"})) this->n_frames = vals.to_int({p+"-fra",  "F"});
-	if(vals.exist({p+"-type"     })) this->type     = vals.at    ({p+"-type"     });
+	if(vals.exist({p+"-size", "N"})) this->size = vals.to_int({p+"-size", "N"});
+	if(vals.exist({p+"-type"     })) this->type = vals.at    ({p+"-type"     });
 }
 
 void Coset
@@ -57,14 +53,13 @@ void Coset
 
 	headers[p].push_back(std::make_pair("Type", this->type));
 	if (full) headers[p].push_back(std::make_pair("Size (N)", std::to_string(this->size)));
-	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 }
 
 template <typename B1, typename B2>
 module::Coset<B1,B2>* Coset
 ::build_bit() const
 {
-	if (type == "STD") return new module::Coset_bit<B1,B2>(size, n_frames);
+	if (type == "STD") return new module::Coset_bit<B1,B2>(size);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -73,7 +68,7 @@ template <typename B, typename R>
 module::Coset<B,R>* Coset
 ::build_real() const
 {
-	if (type == "STD") return new module::Coset_real<B,R>(size, n_frames);
+	if (type == "STD") return new module::Coset_real<B,R>(size);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

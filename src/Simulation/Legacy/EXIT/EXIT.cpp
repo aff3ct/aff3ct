@@ -348,33 +348,37 @@ template <typename B, typename R>
 std::unique_ptr<module::Source<B>> EXIT<B,R>
 ::build_source()
 {
-	return std::unique_ptr<module::Source<B>>(params_EXIT.src->template build<B>());
+	auto src = std::unique_ptr<module::Source<B>>(params_EXIT.src->template build<B>());
+	src->set_n_frames(this->params.n_frames);
+	return src;
 }
 
 template <typename B, typename R>
 std::unique_ptr<tools::Codec_SISO<B,R>> EXIT<B,R>
 ::build_codec()
 {
-	auto codec = std::unique_ptr<tools::Codec_SISO<B,R>>(params_EXIT.cdc->template build<B,R>());
-	codec->set_noise(this->noise);
+	auto cdc = std::unique_ptr<tools::Codec_SISO<B,R>>(params_EXIT.cdc->template build<B,R>());
+	cdc->set_n_frames(this->params.n_frames);
+	cdc->set_noise(this->noise);
 
-	auto ptr = codec.get();
+	auto ptr = cdc.get();
 	this->noise.record_callback_update([ptr]() { ptr->notify_noise_update(); });
 
-	return codec;
+	return cdc;
 }
 
 template <typename B, typename R>
 std::unique_ptr<module::Modem<B,R,R>> EXIT<B,R>
 ::build_modem()
 {
-	auto modem = std::unique_ptr<module::Modem<B,R,R>>(params_EXIT.mdm->template build<B,R>(this->constellation.get()));
-	modem->set_noise(this->noise);
+	auto mdm = std::unique_ptr<module::Modem<B,R,R>>(params_EXIT.mdm->template build<B,R>(this->constellation.get()));
+	mdm->set_n_frames(this->params.n_frames);
+	mdm->set_noise(this->noise);
 
-	auto ptr = modem.get();
+	auto ptr = mdm.get();
 	this->noise.record_callback_update([ptr]() { ptr->notify_noise_update(); });
 
-	return modem;
+	return mdm;
 }
 
 template <typename B, typename R>
@@ -383,26 +387,28 @@ std::unique_ptr<module::Modem<B,R>> EXIT<B,R>
 {
 	std::unique_ptr<factory::Modem> mdm_params(params_EXIT.mdm->clone());
 	mdm_params->N = params_EXIT.cdc->K;
-	auto modem = std::unique_ptr<module::Modem<B,R>>(mdm_params->template build<B,R>(this->constellation.get()));
-	modem->set_noise(this->noise_a);
+	auto mdm = std::unique_ptr<module::Modem<B,R>>(mdm_params->template build<B,R>(this->constellation.get()));
+	mdm->set_n_frames(this->params.n_frames);
+	mdm->set_noise(this->noise_a);
 
-	auto ptr = modem.get();
+	auto ptr = mdm.get();
 	this->noise_a.record_callback_update([ptr]() { ptr->notify_noise_update(); });
 
-	return modem;
+	return mdm;
 }
 
 template <typename B, typename R>
 std::unique_ptr<module::Channel<R>> EXIT<B,R>
 ::build_channel(const int size)
 {
-	auto channel = std::unique_ptr<module::Channel<R>>(params_EXIT.chn->template build<R>());
-	channel->set_noise(this->noise);
+	auto chn = std::unique_ptr<module::Channel<R>>(params_EXIT.chn->template build<R>());
+	chn->set_n_frames(this->params.n_frames);
+	chn->set_noise(this->noise);
 
-	auto ptr = channel.get();
+	auto ptr = chn.get();
 	this->noise.record_callback_update([ptr]() { ptr->notify_noise_update(); });
 
-	return channel;
+	return chn;
 }
 
 template <typename B, typename R>
@@ -416,20 +422,23 @@ std::unique_ptr<module::Channel<R>> EXIT<B,R>
 	                                                                 params_EXIT.mdm->cpm_upf,
 	                                                                 params_EXIT.mdm->cpm_L);
 
-	auto channel = std::unique_ptr<module::Channel<R>>(chn_params->template build<R>());
-	channel->set_noise(this->noise_a);
+	auto chn = std::unique_ptr<module::Channel<R>>(chn_params->template build<R>());
+	chn->set_n_frames(this->params.n_frames);
+	chn->set_noise(this->noise_a);
 
-	auto ptr = channel.get();
+	auto ptr = chn.get();
 	this->noise_a.record_callback_update([ptr]() { ptr->notify_noise_update(); });
 
-	return channel;
+	return chn;
 }
 
 template <typename B, typename R>
 std::unique_ptr<module::Monitor_EXIT<B,R>> EXIT<B,R>
 ::build_monitor()
 {
-	return std::unique_ptr<module::Monitor_EXIT<B,R>>(params_EXIT.mnt->template build<B,R>());
+	auto mnt = std::unique_ptr<module::Monitor_EXIT<B,R>>(params_EXIT.mnt->template build<B,R>());
+	mnt->set_n_frames(this->params.n_frames);
+	return mnt;
 }
 
 template <typename B, typename R>

@@ -27,9 +27,8 @@ public:
 	 * \brief Constructor.
 	 *
 	 * \param K: Radio_frame length.
-	 * \param n_frames: number of frames.
 	 */
-	Sink_NO(const int K, const int n_frames = 1);
+	Sink_NO(const int K);
 
 	/*!
 	 * \brief Destructor.

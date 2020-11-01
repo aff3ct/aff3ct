@@ -11,8 +11,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Monitor_MI<B,R>
-::Monitor_MI(const int N, const unsigned max_n_trials, const int n_frames)
-: Monitor(n_frames), N(N), max_n_trials(max_n_trials),
+::Monitor_MI(const int N, const unsigned max_n_trials)
+: Monitor(), N(N), max_n_trials(max_n_trials),
   mutinfo_hist(1), mutinfo_hist_activated(false)
 {
 	const std::string name = "Monitor_MI";

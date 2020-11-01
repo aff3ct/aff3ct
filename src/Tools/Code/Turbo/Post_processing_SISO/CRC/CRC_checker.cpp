@@ -5,12 +5,12 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 CRC_checker<B,R>
-::CRC_checker(const module::CRC<B> &crc, const int start_crc_check_ite, const int simd_inter_frame_level)
+::CRC_checker(const module::CRC<B> &crc, const int start_crc_check_ite)
 : Post_processing_SISO<B,R>(),
-  start_crc_check_ite   (start_crc_check_ite   ),
-  simd_inter_frame_level(simd_inter_frame_level),
-  crc                   (crc.clone()           )
+  start_crc_check_ite(start_crc_check_ite),
+  crc                (crc.clone())
 {
+	this->set_n_frames(this->crc->get_n_frames());
 }
 
 template <typename B, typename R>
@@ -54,10 +54,22 @@ bool CRC_checker<B,R>
 		for (auto i = loop_size1 * mipp::nElReg<R>(); i < loop_size2; i++)
 			s[i] = (sys[i] + ext[i]) < 0;
 
-		return crc->check(s, simd_inter_frame_level);
+		return crc->check(s, this->n_frames);
 	}
 
 	return false;
+}
+
+template <typename B, typename R>
+void CRC_checker<B,R>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (n_frames != old_n_frames)
+	{
+		Post_processing_SISO<B,R>::set_n_frames(n_frames);
+		crc->set_n_frames(n_frames);
+	}
 }
 
 // ==================================================================================== explicit template instantiation

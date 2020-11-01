@@ -66,8 +66,7 @@ void Encoder_turbo_DB
 
 		auto pi = itl->get_prefix();
 
-		args.erase({pi+"-size"    });
-		args.erase({pi+"-fra", "F"});
+		args.erase({pi+"-size"});
 	}
 
 	cli::add_options(args.at({p+"-type"}), 0, "TURBO_DB");
@@ -78,7 +77,6 @@ void Encoder_turbo_DB
 
 	args.erase({ps+"-info-bits", "K"});
 	args.erase({ps+"-cw-size",   "N"});
-	args.erase({ps+"-fra",       "F"});
 	args.erase({ps+"-seed",      "S"});
 	args.erase({ps+"-path"          });
 	args.erase({ps+"-no-buff"       });
@@ -89,9 +87,8 @@ void Encoder_turbo_DB
 {
 	Encoder::store(vals);
 
-	this->sub->K        = this->K;
-	this->sub->n_frames = this->n_frames;
-	this->sub->seed     = this->seed;
+	this->sub->K    = this->K;
+	this->sub->seed = this->seed;
 
 	sub->store(vals);
 
@@ -100,8 +97,7 @@ void Encoder_turbo_DB
 
 	if (itl != nullptr)
 	{
-		this->itl->core->size     = this->K >> 1;
-		this->itl->core->n_frames = this->n_frames;
+		this->itl->core->size = this->K >> 1;
 
 		itl->store(vals);
 
@@ -131,9 +127,9 @@ void Encoder_turbo_DB
 
 template <typename B>
 module::Encoder_turbo_DB<B>* Encoder_turbo_DB
-::build(const module::Interleaver<B> &itl, const module::Encoder_RSC_DB<B> &sub_enc) const
+::build(const module::Encoder_RSC_DB<B> &sub_enc, module::Interleaver<B> &itl) const
 {
-	if (this->type == "TURBO_DB") return new module::Encoder_turbo_DB<B>(this->K, this->N_cw, itl, sub_enc, sub_enc);
+	if (this->type == "TURBO_DB") return new module::Encoder_turbo_DB<B>(this->K, this->N_cw, sub_enc, sub_enc, itl);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -141,11 +137,11 @@ module::Encoder_turbo_DB<B>* Encoder_turbo_DB
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Encoder_turbo_DB<B_8 >* aff3ct::factory::Encoder_turbo_DB::build<B_8 >(const aff3ct::module::Interleaver<B_8 >&, const aff3ct::module::Encoder_RSC_DB<B_8 >&) const;
-template aff3ct::module::Encoder_turbo_DB<B_16>* aff3ct::factory::Encoder_turbo_DB::build<B_16>(const aff3ct::module::Interleaver<B_16>&, const aff3ct::module::Encoder_RSC_DB<B_16>&) const;
-template aff3ct::module::Encoder_turbo_DB<B_32>* aff3ct::factory::Encoder_turbo_DB::build<B_32>(const aff3ct::module::Interleaver<B_32>&, const aff3ct::module::Encoder_RSC_DB<B_32>&) const;
-template aff3ct::module::Encoder_turbo_DB<B_64>* aff3ct::factory::Encoder_turbo_DB::build<B_64>(const aff3ct::module::Interleaver<B_64>&, const aff3ct::module::Encoder_RSC_DB<B_64>&) const;
+template aff3ct::module::Encoder_turbo_DB<B_8 >* aff3ct::factory::Encoder_turbo_DB::build<B_8 >(const aff3ct::module::Encoder_RSC_DB<B_8 >&, aff3ct::module::Interleaver<B_8 >&) const;
+template aff3ct::module::Encoder_turbo_DB<B_16>* aff3ct::factory::Encoder_turbo_DB::build<B_16>(const aff3ct::module::Encoder_RSC_DB<B_16>&, aff3ct::module::Interleaver<B_16>&) const;
+template aff3ct::module::Encoder_turbo_DB<B_32>* aff3ct::factory::Encoder_turbo_DB::build<B_32>(const aff3ct::module::Encoder_RSC_DB<B_32>&, aff3ct::module::Interleaver<B_32>&) const;
+template aff3ct::module::Encoder_turbo_DB<B_64>* aff3ct::factory::Encoder_turbo_DB::build<B_64>(const aff3ct::module::Encoder_RSC_DB<B_64>&, aff3ct::module::Interleaver<B_64>&) const;
 #else
-template aff3ct::module::Encoder_turbo_DB<B>* aff3ct::factory::Encoder_turbo_DB::build<B>(const aff3ct::module::Interleaver<B>&, const aff3ct::module::Encoder_RSC_DB<B>&) const;
+template aff3ct::module::Encoder_turbo_DB<B>* aff3ct::factory::Encoder_turbo_DB::build<B>(const aff3ct::module::Encoder_RSC_DB<B>&, aff3ct::module::Interleaver<B>&) const;
 #endif
 // ==================================================================================== explicit template instantiation

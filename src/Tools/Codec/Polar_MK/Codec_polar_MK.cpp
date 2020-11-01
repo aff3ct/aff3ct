@@ -20,7 +20,7 @@ Codec_polar_MK<B,Q>
                  const factory::Encoder_polar_MK        &enc_params,
                  const factory::Decoder_polar_MK        &dec_params,
                  const module::CRC<B>                   *crc)
-: Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames),
+: Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw),
   adaptive_fb(fb_params.noise == -1.f),
   frozen_bits(new std::vector<bool>(fb_params.N_cw, true)),
   fb_decoder(nullptr),
@@ -44,14 +44,6 @@ Codec_polar_MK<B,Q>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (enc_params.n_frames != dec_params.n_frames)
-	{
-		std::stringstream message;
-		message << "'enc_params.n_frames' has to be equal to 'dec_params.n_frames' ('enc_params.n_frames' = "
-		        << enc_params.n_frames << ", 'dec_params.n_frames' = " << dec_params.n_frames << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	// ---------------------------------------------------------------------------------------------------------- tools
 	// build the polar code
 	code.reset(pc_params.build());
@@ -61,11 +53,10 @@ Codec_polar_MK<B,Q>
 
 	// ---------------------------------------------------------------------------------------------------- allocations
 	factory::Puncturer pct_params;
-	pct_params.type     = "NO";
-	pct_params.K        = enc_params.K;
-	pct_params.N        = enc_params.N_cw;
-	pct_params.N_cw     = enc_params.N_cw;
-	pct_params.n_frames = enc_params.n_frames;
+	pct_params.type = "NO";
+	pct_params.K    = enc_params.K;
+	pct_params.N    = enc_params.N_cw;
+	pct_params.N_cw = enc_params.N_cw;
 
 	this->set_puncturer(pct_params.build<B,Q>());
 
@@ -86,8 +77,7 @@ Codec_polar_MK<B,Q>
 
 	this->set_extractor(new module::Extractor_polar<B,Q>(enc_params.K,
 	                                                     enc_params.N_cw,
-	                                                     *frozen_bits,
-	                                                     enc_params.n_frames));
+	                                                     *frozen_bits));
 	fb_extractor = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_extractor());
 
 	// ------------------------------------------------------------------------------------------------- frozen bit gen

@@ -73,7 +73,7 @@ template <typename B>
 module::Encoder_RSC_DB<B>* Encoder_RSC_DB
 ::build() const
 {
-	if (this->type == "RSC_DB") return new module::Encoder_RSC_DB<B>(this->K, this->N_cw, this->standard, this->buffered, this->n_frames);
+	if (this->type == "RSC_DB") return new module::Encoder_RSC_DB<B>(this->K, this->N_cw, this->standard, this->buffered);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

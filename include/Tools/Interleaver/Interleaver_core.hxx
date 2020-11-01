@@ -10,21 +10,14 @@ namespace tools
 {
 template <typename T>
 Interleaver_core<T>
-::Interleaver_core(const int size, const std::string &name, const bool uniform, const int n_frames)
-: size(size), name(name), n_frames(n_frames), uniform(uniform), initialized(false),
-  pi(size * n_frames, 0), pi_inv(size * n_frames, 0)
+::Interleaver_core(const int size, const std::string &name, const bool uniform)
+: size(size), name(name), n_frames(1), uniform(uniform), initialized(false),
+  pi(size * this->n_frames, 0), pi_inv(size * this->n_frames, 0)
 {
 	if (size <= 0)
 	{
 		std::stringstream message;
 		message << "'size' has to be greater than 0 ('size' = " << size << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (n_frames <= 0)
-	{
-		std::stringstream message;
-		message << "'n_frames' has to be greater than 0 ('n_frames' = " << size << ").";
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -74,6 +67,35 @@ int Interleaver_core<T>
 ::get_n_frames() const
 {
 	return n_frames;
+}
+
+template <typename T>
+void Interleaver_core<T>
+::set_n_frames(const int n_frames)
+{
+	if (n_frames <= 0)
+	{
+		std::stringstream message;
+		message << "'n_frames' has to be greater than 0 ('n_frames' = " << size << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		this->initialized = false;
+		this->n_frames = n_frames;
+
+		const auto old_pi_size = this->pi.size();
+		const auto new_pi_size = (old_pi_size / old_n_frames) * n_frames;
+		this->pi.resize(new_pi_size, 0);
+
+		const auto old_pi_inv_size = this->pi_inv.size();
+		const auto new_pi_inv_size = (old_pi_inv_size / old_n_frames) * n_frames;
+		this->pi_inv.resize(new_pi_inv_size, 0);
+
+		this->init();
+	}
 }
 
 template <typename T>

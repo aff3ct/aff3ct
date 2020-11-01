@@ -50,8 +50,7 @@ public:
 	              const std::type_index datatype_in,
 	              const size_t n_elmts_out,
 	              const std::type_index datatype_out,
-	              const size_t n_outputs,
-	              const int n_frames = 1);
+	              const size_t n_outputs);
 	virtual ~Router() = default;
 
 	inline size_t get_n_elmts_in () const;

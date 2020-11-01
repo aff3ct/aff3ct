@@ -13,9 +13,8 @@ Puncturer_LDPC<B,Q>
 ::Puncturer_LDPC(const int &K,
                  const int &N,
                  const int &N_cw,
-                 const std::vector<bool> &pattern,
-                 const int n_frames)
-: Puncturer<B,Q>(K, N, N_cw, n_frames)
+                 const std::vector<bool> &pattern)
+: Puncturer<B,Q>(K, N, N_cw)
 {
 	const std::string name = "Puncturer_LDPC";
 	this->set_name(name);

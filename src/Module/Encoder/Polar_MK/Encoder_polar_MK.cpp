@@ -10,9 +10,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_polar_MK<B>
-::Encoder_polar_MK(const int& K, const int& N, const tools::Polar_code& code, const std::vector<bool>& frozen_bits,
-                   const int n_frames)
-: Encoder<B>(K, N, n_frames),
+::Encoder_polar_MK(const int& K, const int& N, const tools::Polar_code& code, const std::vector<bool>& frozen_bits)
+: Encoder<B>(K, N),
   code(code),
   frozen_bits(frozen_bits),
   Ke(code.get_kernel_matrices().size()),

@@ -38,7 +38,6 @@ void Codec_RA
 
 	args.erase({pdec+"-cw-size",   "N"});
 	args.erase({pdec+"-info-bits", "K"});
-	args.erase({pdec+"-fra",       "F"});
 
 	if (itl != nullptr)
 	{
@@ -46,8 +45,7 @@ void Codec_RA
 
 		auto pi = itl->get_prefix();
 
-		args.erase({pi+"-size"    });
-		args.erase({pi+"-fra", "F"});
+		args.erase({pi+"-size"});
 	}
 }
 
@@ -60,12 +58,8 @@ void Codec_RA
 
 	enc->store(vals);
 
-	dec_ra->K                   = enc->K;
-	dec_ra->N_cw                = enc->N_cw;
-	dec_ra->n_frames            = enc->n_frames;
-
-	if (dec_ra->itl != nullptr)
-		dec_ra->itl->core->n_frames = enc->n_frames;
+	dec_ra->K    = enc->K;
+	dec_ra->N_cw = enc->N_cw;
 
 	dec->store(vals);
 
@@ -75,8 +69,7 @@ void Codec_RA
 
 	if (itl != nullptr)
 	{
-		itl->core->size     = dec_ra->N_cw;
-		itl->core->n_frames = dec_ra->n_frames;
+		itl->core->size = dec_ra->N_cw;
 
 		itl->store(vals);
 	}

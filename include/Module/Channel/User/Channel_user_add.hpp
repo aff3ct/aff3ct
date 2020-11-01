@@ -25,7 +25,7 @@ template <typename R = float>
 class Channel_user_add : public Channel_user<R>
 {
 public:
-	Channel_user_add(const int N, const std::string &filename, const bool add_users = false, const int n_frames = 1);
+	Channel_user_add(const int N, const std::string &filename, const bool add_users = false);
 	virtual ~Channel_user_add() = default;
 	virtual Channel_user_add<R>* clone() const;
 

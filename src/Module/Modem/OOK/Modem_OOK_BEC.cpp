@@ -12,8 +12,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename R, typename Q>
 Modem_OOK_BEC<B,R,Q>
-::Modem_OOK_BEC(const int N, const int n_frames)
-: Modem_OOK<B,R,Q>(N, n_frames)
+::Modem_OOK_BEC(const int N)
+: Modem_OOK<B,R,Q>(N)
 {
 	const std::string name = "Modem_OOK_BEC";
 	this->set_name(name);

@@ -9,8 +9,8 @@ using namespace aff3ct;
 using namespace aff3ct::module;
 
 Decoder
-::Decoder(const int K, const int N, const int n_frames, const int simd_inter_frame_level)
-: Module(n_frames),
+::Decoder(const int K, const int N, const int simd_inter_frame_level)
+: Module(),
   n_inter_frame_rest(this->n_frames % simd_inter_frame_level),
   K(K),
   N(N),
@@ -136,4 +136,17 @@ void Decoder
 ::set_seed(const int seed)
 {
 	// do nothing in the general case, this method has to be overrided
+}
+
+void Decoder
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Module::set_n_frames(n_frames);
+
+		this->n_inter_frame_rest = n_frames % this->simd_inter_frame_level;
+		this->n_dec_waves = (int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level);
+	}
 }

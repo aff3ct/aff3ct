@@ -18,7 +18,7 @@ protected:
 	Q log_pe_1_pe; // = log(pe / (1- pe))
 
 public:
-	Modem_OOK_BSC(const int N, const int n_frames = 1);
+	Modem_OOK_BSC(const int N);
 	virtual ~Modem_OOK_BSC() = default;
 
 	virtual Modem_OOK_BSC<B,R,Q>* clone() const;

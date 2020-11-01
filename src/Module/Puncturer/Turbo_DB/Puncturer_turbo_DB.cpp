@@ -11,8 +11,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename Q>
 Puncturer_turbo_DB<B,Q>
-::Puncturer_turbo_DB(const int &K, const int &N, const int n_frames)
-: Puncturer<B,Q>(K, N, K * 3, n_frames)
+::Puncturer_turbo_DB(const int &K, const int &N)
+: Puncturer<B,Q>(K, N, K * 3)
 {
 	const std::string name = "Puncturer_turbo_DB";
 	this->set_name(name);
@@ -83,8 +83,8 @@ void Puncturer_turbo_DB<B,Q>
 		for(auto i = 0; i < this->K; i+=12)
 		{
 			X_N2[j++] = X_N1[this->K + i    ];
-			X_N2[j++] = X_N1[this->K + i + 1];			
-			X_N2[j++] = X_N1[this->K + i + 4];			
+			X_N2[j++] = X_N1[this->K + i + 1];
+			X_N2[j++] = X_N1[this->K + i + 4];
 			X_N2[j++] = X_N1[this->K + i + 5];
 		}
 	}
@@ -127,8 +127,8 @@ void Puncturer_turbo_DB<B,Q>
 	}
 	else if (coderate == "1/3") // all the AB, all the Y1Y2, all the W1W2
 	{
-		std::copy(Y_N1              , Y_N1 + 3 * this->K, Y_N2);		
-	}	
+		std::copy(Y_N1              , Y_N1 + 3 * this->K, Y_N2);
+	}
 	else if (coderate == "2/5")// all the AB, all the Y1Y2 , one W1W2 over two
 	{
 		std::copy(Y_N1              , Y_N1 + 2 * this->K, Y_N2);

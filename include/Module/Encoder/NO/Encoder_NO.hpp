@@ -15,7 +15,7 @@ template <typename B = int>
 class Encoder_NO : public Encoder<B>
 {
 public:
-	Encoder_NO(const int K, const int n_frames = 1);
+	Encoder_NO(const int K);
 	virtual ~Encoder_NO() = default;
 
 	virtual Encoder_NO<B>* clone() const;

@@ -20,10 +20,10 @@ private:
 	R delta_inv;
 
 public:
-	Quantizer_custom(const int N, const int n_frames = 1);
-	Quantizer_custom(const int N, const short& saturation_pos, const int n_frames = 1);
-	Quantizer_custom(const int N, const float min_max, const int n_frames = 1);
-	Quantizer_custom(const int N, const float min_max, const short& saturation_pos,  const int n_frames = 1);
+	Quantizer_custom(const int N);
+	Quantizer_custom(const int N, const short& saturation_pos);
+	Quantizer_custom(const int N, const float min_max);
+	Quantizer_custom(const int N, const float min_max, const short& saturation_pos);
 	virtual ~Quantizer_custom() = default;
 
 	virtual Quantizer_custom<R,Q>* clone() const;

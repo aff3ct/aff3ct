@@ -42,9 +42,6 @@ void Puncturer
 		cli::Integer(cli::Positive(), cli::Non_zero()),
 		cli::arg_rank::REQ);
 
-	tools::add_arg(args, p, class_name+"p+fra,F",
-		cli::Integer(cli::Positive(), cli::Non_zero()));
-
 	tools::add_arg(args, p, class_name+"p+type",
 		cli::Text(cli::Including_set("NO")));
 }
@@ -54,10 +51,9 @@ void Puncturer
 {
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-info-bits", "K"})) this->K        = vals.to_int({p+"-info-bits", "K"});
-	if(vals.exist({p+"-fra-size",  "N"})) this->N        = vals.to_int({p+"-fra-size",  "N"});
-	if(vals.exist({p+"-fra",       "F"})) this->n_frames = vals.to_int({p+"-fra",       "F"});
-	if(vals.exist({p+"-type"          })) this->type     = vals.at    ({p+"-type"          });
+	if(vals.exist({p+"-info-bits", "K"})) this->K    = vals.to_int({p+"-info-bits", "K"});
+	if(vals.exist({p+"-fra-size",  "N"})) this->N    = vals.to_int({p+"-fra-size",  "N"});
+	if(vals.exist({p+"-type"          })) this->type = vals.at    ({p+"-type"          });
 
 	this->N_cw = this->N;
 }
@@ -71,14 +67,13 @@ void Puncturer
 	if (full) headers[p].push_back(std::make_pair("Info. bits (K)", std::to_string(this->K)));
 	if (full) headers[p].push_back(std::make_pair("Frame size (N)", std::to_string(this->N)));
 	if (full) headers[p].push_back(std::make_pair("Codeword size", std::to_string(this->N_cw)));
-	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 }
 
 template <typename B, typename Q>
 module::Puncturer<B,Q>* Puncturer
 ::build() const
 {
-	if (this->type == "NO") return new module::Puncturer_NO<B,Q>(this->K, this->N, this->n_frames);
+	if (this->type == "NO") return new module::Puncturer_NO<B,Q>(this->K, this->N);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

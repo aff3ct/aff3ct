@@ -12,14 +12,13 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_LDPC_bit_flipping_OMWBF<B,R>
 ::Decoder_LDPC_bit_flipping_OMWBF(const int &K, const int &N, const int& n_ite,
-                                const tools::Sparse_matrix &H,
-                                const std::vector<unsigned> &info_bits_pos,
+                                  const tools::Sparse_matrix &H,
+                                  const std::vector<unsigned> &info_bits_pos,
 //                                const float normalize_factor,
-                                const R mwbf_factor,
-                                const bool enable_syndrome,
-                                const int syndrome_depth,
-                                const int n_frames)
-: Decoder_LDPC_bit_flipping<B,R>(K, N, n_ite, H, info_bits_pos,mwbf_factor , enable_syndrome, syndrome_depth, n_frames),
+                                  const R mwbf_factor,
+                                  const bool enable_syndrome,
+                                  const int syndrome_depth)
+: Decoder_LDPC_bit_flipping<B,R>(K, N, n_ite, H, info_bits_pos,mwbf_factor , enable_syndrome, syndrome_depth),
   synd  (this->n_C_nodes),
   energy(this->n_V_nodes)
 {

@@ -28,8 +28,7 @@ public:
 	Source_user_binary(const int K,
 	                   const std::string &filename,
 	                   const bool auto_reset = true,
-	                   const bool fifo_mode = false,
-	                   const int n_frames = 1);
+	                   const bool fifo_mode = false);
 	virtual ~Source_user_binary() = default;
 
 	virtual bool is_over() const;

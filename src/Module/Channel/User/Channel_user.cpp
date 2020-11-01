@@ -13,8 +13,8 @@ using namespace aff3ct::module;
 
 template <typename R>
 Channel_user<R>
-::Channel_user(const int N, const std::string &filename, const bool add_users, const int n_frames)
-: Channel<R>(N, n_frames), add_users(add_users), noise_counter(0)
+::Channel_user(const int N, const std::string &filename, const bool add_users)
+: Channel<R>(N), add_users(add_users), noise_counter(0)
 {
 	const std::string name = "Channel_user";
 	this->set_name(name);

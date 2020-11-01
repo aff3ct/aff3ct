@@ -30,8 +30,7 @@ public:
 	                                                 const std::vector<float> &bernouilli_probas,
 	                                                 const bool enable_syndrome = true,
 	                                                 const int syndrome_depth = 1,
-	                                                 const int seed = 0,
-	                                                 const int n_frames = 1);
+	                                                 const int seed = 0);
 	virtual ~Decoder_LDPC_probabilistic_parallel_bit_flipping() = default;
 	virtual Decoder_LDPC_probabilistic_parallel_bit_flipping<B,R>* clone() const;
 

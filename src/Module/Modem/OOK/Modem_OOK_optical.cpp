@@ -13,8 +13,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename R, typename Q>
 Modem_OOK_optical<B,R,Q>
-::Modem_OOK_optical(const int N, const tools::Distributions<R>& dist, const int n_frames)
-: Modem_OOK<B,R,Q>(N, n_frames), dist(dist), current_dist(nullptr)
+::Modem_OOK_optical(const int N, const tools::Distributions<R>& dist)
+: Modem_OOK<B,R,Q>(N), dist(dist), current_dist(nullptr)
 {
 	const std::string name = "Modem_OOK_optical";
 	this->set_name(name);

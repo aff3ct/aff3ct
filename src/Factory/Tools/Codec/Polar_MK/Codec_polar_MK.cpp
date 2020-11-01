@@ -115,7 +115,6 @@ void Codec_polar_MK
 	auto pfbg = fbg->get_prefix();
 
 	args.erase({pdec+"-info-bits", "K"});
-	args.erase({pdec+"-fra",       "F"});
 	args.erase({pdec+"-no-sys"        });
 	args.erase({pdec+"-cw-size",   "N"});
 	args.erase({ppc +"-cw-size",   "N"});
@@ -130,9 +129,8 @@ void Codec_polar_MK
 
 	enc->store(vals);
 
-	           fbg->K    = dec->K        = enc->K;
-	pc->N_cw = fbg->N_cw = dec->N_cw     = enc->N_cw;
-	                       dec->n_frames = enc->n_frames;
+	           fbg->K    = dec->K    = enc->K;
+	pc->N_cw = fbg->N_cw = dec->N_cw = enc->N_cw;
 
 	pc->store(vals);
 

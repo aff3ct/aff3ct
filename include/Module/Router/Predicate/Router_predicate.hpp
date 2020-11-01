@@ -22,7 +22,7 @@ class Router_predicate : public Router
 	std::vector<int8_t> hack;
 
 public:
-	Router_predicate(const tools::Predicate &predicate, const size_t n_elmts_out, const int n_frames = 1);
+	Router_predicate(const tools::Predicate &predicate, const size_t n_elmts_out);
 	virtual ~Router_predicate() = default;
 	virtual Router_predicate<O>* clone() const;
 

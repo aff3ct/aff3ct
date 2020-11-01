@@ -30,8 +30,7 @@ public:
 	                                      const std::vector<std::vector<int>> &trellis,
 	                                      const int n_ite = 1,
 	                                      const bool buffered_encoding = true,
-	                                      std::ostream &stream = std::cout,
-	                                      const int n_frames = 1);
+	                                      std::ostream &stream = std::cout);
 	virtual ~Decoder_RSC_BCJR_seq_generic_std_json() = default;
 
 protected:

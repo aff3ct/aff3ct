@@ -19,7 +19,7 @@ class Encoder_polar_MK_sys : public Encoder_polar_MK<B>
 {
 public:
 	Encoder_polar_MK_sys(const int& K, const int& N, const tools::Polar_code& code,
-	                     const std::vector<bool>& frozen_bits, const int n_frames = 1);
+	                     const std::vector<bool>& frozen_bits);
 
 	virtual ~Encoder_polar_MK_sys() = default;
 

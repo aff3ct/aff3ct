@@ -35,12 +35,10 @@ Modem_CPM<B,R,Q,MAX>
             const int  cpm_p,
             const std::string &mapping,
             const std::string &wave_shape,
-            const bool no_sig2,
-            const int  n_frames)
+            const bool no_sig2)
 : Modem<B,R,Q>(N,
                Modem_CPM<B,R,Q,MAX>::size_mod(N, bits_per_symbol, cpm_L, cpm_p, sampling_factor),
-               Modem_CPM<B,R,Q,MAX>::size_fil(N, bits_per_symbol, cpm_L, cpm_p),
-               n_frames),
+               Modem_CPM<B,R,Q,MAX>::size_fil(N, bits_per_symbol, cpm_L, cpm_p)),
   no_sig2   (no_sig2                             ),
   cpm       (new tools::CPM_parameters<SIN,SOUT>(cpm_L,
                                                  cpm_k,

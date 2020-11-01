@@ -650,14 +650,13 @@ void Pipeline
 				adp = new module::Adaptor_1_to_n(adp_n_elmts,
 				                                 adp_datatype,
 				                                 adp_buffer_size,
-				                                 adp_active_waiting,
-				                                 adp_n_frames);
+				                                 adp_active_waiting);
 			else
 				adp = new module::Adaptor_n_to_1(adp_n_elmts,
 				                                 adp_datatype,
 				                                 adp_buffer_size,
-				                                 adp_active_waiting,
-				                                 adp_n_frames);
+				                                 adp_active_waiting);
+			adp->set_n_frames(adp_n_frames);
 
 			for (size_t t = 0; t < n_threads; t++)
 			{

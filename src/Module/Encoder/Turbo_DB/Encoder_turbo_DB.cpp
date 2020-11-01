@@ -11,9 +11,9 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_turbo_DB<B>
-::Encoder_turbo_DB(const int& K, const int& N, const Interleaver<B> &pi,
-                   const Encoder_RSC_DB<B> &enco_n, const Encoder_RSC_DB<B> &enco_i)
-: Encoder<B>(K, N, enco_n.get_n_frames()),
+::Encoder_turbo_DB(const int& K, const int& N, const Encoder_RSC_DB<B> &enco_n, const Encoder_RSC_DB<B> &enco_i,
+                   Interleaver<B> &pi)
+: Encoder<B>(K, N),
   pi(pi),
   enco_n(enco_n.clone()),
   enco_i(enco_i.clone()),
@@ -63,6 +63,16 @@ Encoder_turbo_DB<B>
 		        << enco_n.get_n_frames() << ", 'enco_i.get_n_frames()' = " << enco_i.get_n_frames() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	if (enco_n.get_n_frames() != pi.get_n_frames())
+	{
+		std::stringstream message;
+		message << "'enco_n.get_n_frames()' has to be equal to 'pi.get_n_frames()' ('enco_n.get_n_frames()' = "
+		        << enco_n.get_n_frames() << ", 'pi.get_n_frames()' = " << pi.get_n_frames() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	this->set_n_frames(enco_n.get_n_frames());
 }
 
 template <typename B>
@@ -88,6 +98,14 @@ template <typename B>
 void Encoder_turbo_DB<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
+	if (this->pi.get_n_frames() != this->get_n_frames())
+	{
+		std::stringstream message;
+		message << "'pi.get_n_frames()' has to be equal to 'n_frames' ('pi.get_n_frames()' = "
+		        << this->pi.get_n_frames() << ", 'n_frames' = " << this->get_n_frames() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	std::copy(U_K, U_K + this->K, U_K_cpy.begin() + frame_id * this->K);
 
 	for (auto i = 0; i < this->K; i+=4)
@@ -167,6 +185,33 @@ bool Encoder_turbo_DB<B>
 		return false;
 
 	return true;
+}
+
+template <typename B>
+void Encoder_turbo_DB<B>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Encoder<B>::set_n_frames(n_frames);
+
+		const auto old_U_K_cpy_size = this->U_K_cpy.size();
+		const auto new_U_K_cpy_size = (old_U_K_cpy_size / old_n_frames) * n_frames;
+		this->U_K_cpy.resize(new_U_K_cpy_size);
+
+		const auto old_U_K_i_size = this->U_K_i.size();
+		const auto new_U_K_i_size = (old_U_K_i_size / old_n_frames) * n_frames;
+		this->U_K_i.resize(new_U_K_i_size);
+
+		const auto old_X_N_tmp_size = this->X_N_tmp.size();
+		const auto new_X_N_tmp_size = (old_X_N_tmp_size / old_n_frames) * n_frames;
+		this->X_N_tmp.resize(new_X_N_tmp_size);
+
+		this->enco_n->set_n_frames(n_frames);
+		this->enco_i->set_n_frames(n_frames);
+		this->pi.set_n_frames(n_frames);
+	}
 }
 
 // ==================================================================================== explicit template instantiation

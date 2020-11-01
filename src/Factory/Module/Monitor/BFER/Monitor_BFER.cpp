@@ -35,9 +35,6 @@ void Monitor_BFER
 		cli::Integer(cli::Positive(), cli::Non_zero()),
 		cli::arg_rank::REQ);
 
-	tools::add_arg(args, p, class_name+"p+fra,F",
-		cli::Integer(cli::Positive(), cli::Non_zero()));
-
 	tools::add_arg(args, p, class_name+"p+max-fe,e",
 		cli::Integer(cli::Positive(), cli::Non_zero()));
 
@@ -60,7 +57,6 @@ void Monitor_BFER
 	auto p = this->get_prefix();
 
 	if(vals.exist({p+"-info-bits", "K"})) this->K              = vals.to_int({p+"-info-bits", "K"});
-	if(vals.exist({p+"-fra",       "F"})) this->n_frames       = vals.to_int({p+"-fra",       "F"});
 	if(vals.exist({p+"-max-fe",    "e"})) this->n_frame_errors = vals.to_int({p+"-max-fe",    "e"});
 	if(vals.exist({p+"-err-hist"      })) this->err_hist       = vals.to_int({p+"-err-hist"      });
 	if(vals.exist({p+"-err-hist-path" })) this->err_hist_path  = vals.at    ({p+"-err-hist-path" });
@@ -76,7 +72,6 @@ void Monitor_BFER
 
 	headers[p].push_back(std::make_pair("Frame error count (e)", std::to_string(this->n_frame_errors)));
 	if (full) headers[p].push_back(std::make_pair("Size (K)",          std::to_string(this->K       )));
-	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 
 	if (this->err_hist >= 0)
 		headers[p].push_back(std::make_pair("Error histogram path", this->err_hist_path));
@@ -86,7 +81,7 @@ template <typename B>
 module::Monitor_BFER<B>* Monitor_BFER
 ::build(bool count_unknown_values) const
 {
-	if (this->type == "STD") return new module::Monitor_BFER<B>(this->K, this->n_frame_errors, this->max_frame, count_unknown_values, this->n_frames);
+	if (this->type == "STD") return new module::Monitor_BFER<B>(this->K, this->n_frame_errors, this->max_frame, count_unknown_values);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

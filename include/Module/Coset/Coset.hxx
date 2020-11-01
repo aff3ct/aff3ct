@@ -25,8 +25,8 @@ Socket& Coset<B,D>
 
 template <typename B, typename D>
 Coset<B,D>
-::Coset(const int size, const int n_frames)
-: Module(n_frames), size(size)
+::Coset(const int size)
+: Module(), size(size)
 {
 	const std::string name = "Coset";
 	this->set_name(name);

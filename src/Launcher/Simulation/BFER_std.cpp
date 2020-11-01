@@ -185,15 +185,8 @@ void BFER_std<B,R,Q>
 
 	params.cdc->enc->seed = params.local_seed;
 
-	if (!this->arg_vals.exist({psrc+"-fra", "F"}) && params.mdm->type == "SCMA")
-		params.src->n_frames = params.mdm->n_frames;
-
-	params.crc   ->n_frames = params.src->n_frames;
-	params.mdm   ->n_frames = params.src->n_frames;
-	params.chn   ->n_frames = params.src->n_frames;
-	params.qnt   ->n_frames = params.src->n_frames;
-	params.mnt_er->n_frames = params.src->n_frames;
-	params.mnt_mi->n_frames = params.src->n_frames;
+	if (!this->arg_vals.exist({psim+"-inter-fra", "F"}) && params.mdm->type == "SCMA")
+		params.n_frames = 6;
 
 	params.mnt_er->max_frame = params.max_frame;
 	params.mnt_mi->n_trials  = 0;

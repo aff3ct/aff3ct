@@ -27,7 +27,7 @@ private:
 #endif
 
 public:
-	Encoder_coset(const int K, const int N, const int seed = 0, const int n_frames = 1);
+	Encoder_coset(const int K, const int N, const int seed = 0);
 	virtual ~Encoder_coset() = default;
 
 	virtual Encoder_coset<B>* clone() const;

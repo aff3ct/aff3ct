@@ -46,12 +46,12 @@ public:
 	inline Socket& operator[](const enc::sck::encode s);
 
 protected:
-	const int             n_inter_frame_rest;
+	      int             n_inter_frame_rest;
 
 	const int             K;                      /*!< Number of information bits in one frame */
 	const int             N;                      /*!< Size of one frame (= number of bits in one frame) */
 	const int             simd_inter_frame_level; /*!< Number of frames absorbed by the SIMD instructions. */
-	const int             n_enc_waves;
+	      int             n_enc_waves;
 
 	      bool            sys;                    /*!< Is the generated codeword systematic ? */
 	      bool            memorizing;             /*!< If true, keep the last encoded frame(s) in memory */
@@ -66,11 +66,10 @@ public:
 	/*!
 	 * \brief Constructor.
 	 *
-	 * \param K:        number of information bits in the frame.
-	 * \param N:        size of one frame.
-	 * \param n_frames: number of frames to process in the Encoder.
+	 * \param K: number of information bits in the frame.
+	 * \param N: size of one frame.
 	 */
-	Encoder(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1);
+	Encoder(const int K, const int N, const int simd_inter_frame_level = 1);
 
 	/*!
 	 * \brief Destructor.
@@ -122,6 +121,8 @@ public:
 	virtual int tail_length() const;
 
 	virtual void set_seed(const int seed);
+
+	virtual void set_n_frames(const int n_frames);
 
 protected:
 	virtual void _encode(const B *U_K, B *X_N, const int frame_id);

@@ -15,7 +15,7 @@ template <typename B = int, typename Q = float>
 class Puncturer_NO : public Puncturer<B,Q>
 {
 public:
-	Puncturer_NO(const int K, const int N, const int n_frames = 1);
+	Puncturer_NO(const int K, const int N);
 	virtual ~Puncturer_NO() = default;
 
 	virtual Puncturer_NO<B,Q>* clone() const;

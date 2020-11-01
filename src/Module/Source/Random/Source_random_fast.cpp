@@ -7,8 +7,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 Source_random_fast<B>
-::Source_random_fast(const int K, const int seed, const int n_frames)
-: Source<B>(K, n_frames),
+::Source_random_fast(const int K, const int seed)
+: Source<B>(K),
   mt19937(seed),
   mt19937_simd()
 {

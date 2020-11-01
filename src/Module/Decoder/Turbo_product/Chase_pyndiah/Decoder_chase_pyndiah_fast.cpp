@@ -11,14 +11,13 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_chase_pyndiah_fast<B,R>
 ::Decoder_chase_pyndiah_fast(const int K, const int N, // N includes the parity bit if any
-                             const int n_frames,
                              const Decoder_BCH<B,R> &dec_,
                              const Encoder    <B  > &enc_,
                              const int n_least_reliable_positions_,
                              const int n_test_vectors_,
                              const int n_competitors_,
                              const std::vector<float>& cp_coef)
-: Decoder_chase_pyndiah<B,R>(K, N, n_frames, dec_, enc_, n_least_reliable_positions_, n_test_vectors_, n_competitors_, cp_coef)
+: Decoder_chase_pyndiah<B,R>(K, N, dec_, enc_, n_least_reliable_positions_, n_test_vectors_, n_competitors_, cp_coef)
 {
 	const std::string name = "Decoder_chase_pyndiah_fast";
 	this->set_name(name);

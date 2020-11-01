@@ -34,9 +34,6 @@ void Sink
 		cli::Integer(cli::Positive(), cli::Non_zero()),
 		cli::arg_rank::REQ);
 
-	tools::add_arg(args, p, class_name+"p+fra,F",
-		cli::Integer(cli::Positive(), cli::Non_zero()));
-
 	tools::add_arg(args, p, class_name+"p+type",
 		cli::Text(cli::Including_set("NO", "USER_BIN")));
 
@@ -52,11 +49,10 @@ void Sink
 {
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-info-bits", "K"})) this->K          = vals.to_int ({p+"-info-bits", "K"});
-	if(vals.exist({p+"-fra",       "F"})) this->n_frames   = vals.to_int ({p+"-fra",       "F"});
-	if(vals.exist({p+"-type"          })) this->type       = vals.at     ({p+"-type"          });
-	if(vals.exist({p+"-implem"        })) this->implem     = vals.at     ({p+"-implem"        });
-	if(vals.exist({p+"-path"          })) this->path       = vals.to_file({p+"-path"          });
+	if(vals.exist({p+"-info-bits", "K"})) this->K      = vals.to_int ({p+"-info-bits", "K"});
+	if(vals.exist({p+"-type"          })) this->type   = vals.at     ({p+"-type"          });
+	if(vals.exist({p+"-implem"        })) this->implem = vals.at     ({p+"-implem"        });
+	if(vals.exist({p+"-path"          })) this->path   = vals.to_file({p+"-path"          });
 }
 
 void Sink
@@ -67,7 +63,6 @@ void Sink
 	headers[p].push_back(std::make_pair("Type", this->type));
 	headers[p].push_back(std::make_pair("Implementation", this->implem));
 	if (full) headers[p].push_back(std::make_pair("Info. bits (K_info)", std::to_string(this->K)));
-	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 	if (this->type == "USER" || this->type == "USER_BIN")
 		headers[p].push_back(std::make_pair("Path", this->path));
 }
@@ -78,8 +73,8 @@ module::Sink<B>* Sink
 {
 	if (this->implem == "STD")
 	{
-		if (this->type == "NO"      ) return new module::Sink_NO         <B>(this->K,             this->n_frames);
-		if (this->type == "USER_BIN") return new module::Sink_user_binary<B>(this->K, this->path, this->n_frames);
+		if (this->type == "NO"      ) return new module::Sink_NO         <B>(this->K            );
+		if (this->type == "USER_BIN") return new module::Sink_user_binary<B>(this->K, this->path);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

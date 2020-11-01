@@ -21,7 +21,7 @@ private:
 	std::mt19937 rd_engine;
 
 public:
-	Interleaver_core_random(const int size, const int seed = 0, const bool uniform = false, const int n_frames = 1);
+	Interleaver_core_random(const int size, const int seed = 0, const bool uniform = false);
 	virtual ~Interleaver_core_random() = default;
 
 	virtual Interleaver_core_random<T>* clone() const;

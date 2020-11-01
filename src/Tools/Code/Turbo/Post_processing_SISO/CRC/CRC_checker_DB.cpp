@@ -7,9 +7,9 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 CRC_checker_DB<B,R>
-::CRC_checker_DB(const module::CRC<B> &crc, const int start_crc_check_ite, const int simd_inter_frame_level)
-: CRC_checker<B,R>(crc, start_crc_check_ite, simd_inter_frame_level),
-  apost           (2 * (this->crc->get_K() + this->crc->get_size()) * simd_inter_frame_level)
+::CRC_checker_DB(const module::CRC<B> &crc, const int start_crc_check_ite)
+: CRC_checker<B,R>(crc, start_crc_check_ite),
+  apost           (2 * (this->crc->get_K() + this->crc->get_size()) * this->n_frames)
 {
 }
 
@@ -41,10 +41,25 @@ bool CRC_checker_DB<B,R>
 			s[i  ] = (std::max(apost[2*i+2], apost[2*i+3]) - std::max(apost[2*i+0], apost[2*i+1])) > 0;
 			s[i+1] = (std::max(apost[2*i+1], apost[2*i+3]) - std::max(apost[2*i+0], apost[2*i+2])) > 0;
 		}
-		return this->crc->check(s, this->simd_inter_frame_level);
+		return this->crc->check(s, this->n_frames);
 	}
 
 	return false;
+}
+
+template <typename B, typename R>
+void CRC_checker_DB<B,R>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (n_frames != old_n_frames)
+	{
+		CRC_checker<B,R>::set_n_frames(n_frames);
+
+		const auto old_apost_size = this->apost.size();
+		const auto new_apost_size = (old_apost_size / old_n_frames) * n_frames;
+		this->apost.resize(new_apost_size);
+	}
 }
 
 // ==================================================================================== explicit template instantiation

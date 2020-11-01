@@ -56,7 +56,7 @@ private:
 	tools::Callback<             > callback_fe_limit_achieved;
 
 public:
-	Monitor_BFER(const int K, const unsigned max_fe, const unsigned max_n_frames = 0, const bool count_unknown_values = false, const int n_frames = 1);
+	Monitor_BFER(const int K, const unsigned max_fe, const unsigned max_n_frames = 0, const bool count_unknown_values = false);
 
 	virtual ~Monitor_BFER() = default;
 

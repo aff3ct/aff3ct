@@ -120,8 +120,8 @@ struct Decoder_polar_SC_fast_sys_static<B,R,API_polar,0>
 
 template <typename B, typename R, class API_polar>
 Decoder_polar_SC_fast_sys<B,R,API_polar>
-::Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int n_frames)
-: Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames()),
+::Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits)
+: Decoder_SIHO<B,R>(K, N, API_polar::get_n_frames()),
   m                ((int)std::log2(N)),
   l                (2 * N * this->simd_inter_frame_level + mipp::nElReg<R>()   ),
   s                (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>(), 0),
@@ -173,8 +173,8 @@ template <typename B, typename R, class API_polar>
 Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits,
                             const std::vector<tools::Pattern_polar_i*> &polar_patterns,
-                            const int idx_r0, const int idx_r1, const int n_frames)
-: Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames()),
+                            const int idx_r0, const int idx_r1)
+: Decoder_SIHO<B,R>(K, N, API_polar::get_n_frames()),
   m                ((int)std::log2(N)),
   l                (2 * N * this->simd_inter_frame_level + mipp::nElReg<R>()   ),
   s                (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>(), 0),

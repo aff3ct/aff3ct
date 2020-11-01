@@ -20,7 +20,7 @@ protected:
 	std::string coderate;
 
 public:
-	Puncturer_turbo_DB(const int &K, const int &N, const int n_frames = 1);
+	Puncturer_turbo_DB(const int &K, const int &N);
 	virtual ~Puncturer_turbo_DB() = default;
 
 	virtual Puncturer_turbo_DB<B,Q>* clone() const;

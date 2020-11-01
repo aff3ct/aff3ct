@@ -39,16 +39,16 @@ public:
 	inline Socket& operator[](const itl::sck::deinterleave s);
 
 protected:
-	const tools::Interleaver_core<T> &core;
+	tools::Interleaver_core<T> &core;
 
 public:
-	explicit Interleaver(const tools::Interleaver_core<T> &core);
+	explicit Interleaver(tools::Interleaver_core<T> &core);
 
 	virtual ~Interleaver() = default;
 
 	virtual Interleaver<D,T>* clone() const;
 
-	const tools::Interleaver_core<T>& get_core() const;
+	tools::Interleaver_core<T>& get_core();
 
 	template <class A = std::allocator<D>>
 	inline void interleave(const std::vector<D,A> &nat, std::vector<D,A> &itl, const int frame_id = -1) const;
@@ -65,6 +65,8 @@ public:
 
 	inline void deinterleave(const D *itl, D *nat, const int frame_id, const int n_frames,
 	                         const bool frame_reordering = false) const;
+
+	virtual void set_n_frames(const int n_frames);
 
 private:
 	inline void _interleave(const D *in_vec, D *out_vec,

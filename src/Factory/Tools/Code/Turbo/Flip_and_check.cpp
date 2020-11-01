@@ -38,9 +38,6 @@ void Flip_and_check
 		cli::Integer(cli::Positive(), cli::Non_zero()),
 		cli::arg_rank::REQ);
 
-	tools::add_arg(args, p, class_name+"p+fra,F",
-		cli::Integer(cli::Positive(), cli::Non_zero()));
-
 	tools::add_arg(args, p, class_name+"p+",
 		cli::None());
 
@@ -72,7 +69,6 @@ void Flip_and_check
 	if(vals.exist({p+"-size"     })) this->size          = vals.to_int({p+"-size"     });
 	if(vals.exist({p+"-q"        })) this->q             = vals.to_int({p+"-q"        });
 	if(vals.exist({p+"-crc-start"})) this->crc_start_ite = vals.to_int({p+"-crc-ite"  });
-	if(vals.exist({p+"-fra",  "F"})) this->n_frames      = vals.to_int({p+"-fra", "F" });
 	if(vals.exist({p+"-ite-s"    })) this->ite_step      = vals.to_int({p+"-ite-s"    });
 	if(vals.exist({p+"-ite",  "i"})) this->n_ite         = vals.to_int({p+"-ite",  "i"});
 	if(vals.exist({p+"-ite-m"    })) this->ite_min       = vals.to_int({p+"-ite-m"    });
@@ -102,7 +98,7 @@ tools::Flip_and_check<B,Q>* Flip_and_check
 	if (!this->enable)
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 
-	return new tools::Flip_and_check<B,Q>(this->size, this->n_ite, crc, this->crc_start_ite, this->q, this->ite_min, this->ite_max, this->ite_step, this->n_frames);
+	return new tools::Flip_and_check<B,Q>(this->size, this->n_ite, crc, this->crc_start_ite, this->q, this->ite_min, this->ite_max, this->ite_step);
 }
 
 // ==================================================================================== explicit template instantiation

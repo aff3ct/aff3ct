@@ -32,10 +32,9 @@ public:
 	               const module::CRC<B> &crc,
 	               const int             start_crc_check_ite,
 	               const int             q,
-	               const int             m                      =  1,
-	               const int             M                      = -1,
-	               const int             s                      =  1,
-	               const int             simd_inter_frame_level =  1);
+	               const int             m =  1,
+	               const int             M = -1,
+	               const int             s =  1);
 
 	virtual ~Flip_and_check() = default;
 
@@ -45,6 +44,8 @@ public:
 	            const mipp::vector<R>& sys,
 	                  mipp::vector<R>& ext,
 	                  mipp::vector<B>& s);
+
+	virtual void set_n_frames(const int n_frames);
 
 private:
 	bool apply_flip_and_check(const mipp::vector<R>& sys, const mipp::vector<R>& ext, mipp::vector<B>& s);

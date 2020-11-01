@@ -57,7 +57,9 @@ template <typename B, typename R>
 std::unique_ptr<module::Monitor_MI<B,R>> Simulation_sequence_BFER<B,R>
 ::build_monitor_mi()
 {
-	return std::unique_ptr<module::Monitor_MI<B,R>>(params_BFER.mnt_mi->build<B,R>());
+	auto mnt = std::unique_ptr<module::Monitor_MI<B,R>>(params_BFER.mnt_mi->build<B,R>());
+	mnt->set_n_frames(this->params.n_frames);
+	return mnt;
 }
 
 template <typename B, typename R>
@@ -69,6 +71,8 @@ std::unique_ptr<module::Monitor_BFER<B>> Simulation_sequence_BFER<B,R>
 	auto mnt_tmp = params_BFER.mnt_er->build<B>(count_unknown_values);
 	auto mnt = std::unique_ptr<module::Monitor_BFER<B>>(mnt_tmp);
 	mnt->activate_err_histogram(params_BFER.mnt_er->err_hist != -1);
+
+	mnt->set_n_frames(this->params.n_frames);
 
 	return mnt;
 }

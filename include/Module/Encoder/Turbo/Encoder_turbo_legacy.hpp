@@ -19,17 +19,19 @@ template <typename B = int>
 class Encoder_turbo_legacy : public Encoder_turbo<B>
 {
 protected:
-	const Interleaver<B>        &pi;      // the interleaver
+	Interleaver<B>              &pi;      // the interleaver
 	std::shared_ptr<Encoder<B>>  sub_enc; // sub encoder
 	std::vector<B>               X_N_n;   // internal buffer for the encoded bits in the natural     domain
 	std::vector<B>               X_N_i;   // internal buffer for the encoded bits in the interleaved domain
 
 public:
-	Encoder_turbo_legacy(const int& K, const int& N, const Interleaver<B> &pi, const Encoder<B> &sub_enc);
+	Encoder_turbo_legacy(const int& K, const int& N, const Encoder<B> &sub_enc, Interleaver<B> &pi);
 	virtual ~Encoder_turbo_legacy() = default;
 	virtual Encoder_turbo_legacy<B>* clone() const;
 
 	bool is_codeword(const B *X_N);
+
+	virtual void set_n_frames(const int n_frames);
 
 protected:
 	virtual void deep_copy(const Encoder_turbo_legacy<B> &m);

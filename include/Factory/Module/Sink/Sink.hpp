@@ -24,13 +24,12 @@ class Sink : public Factory
 public:
 	// ----------------------------------------------------------------------------------------------------- PARAMETERS
 	// required parameters
-	int         K        = 0;
+	int         K      = 0;
 
 	// optional parameters
-	std::string type     = "NO";
-	std::string implem   = "STD";
-	std::string path     = "";
-	int         n_frames = 1;
+	std::string type   = "NO";
+	std::string implem = "STD";
+	std::string path   = "";
 
 	// -------------------------------------------------------------------------------------------------------- METHODS
 	explicit Sink(const std::string &p = Sink_prefix);

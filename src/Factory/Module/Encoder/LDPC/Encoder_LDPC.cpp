@@ -116,10 +116,10 @@ template <typename B>
 module::Encoder_LDPC<B>* Encoder_LDPC
 ::build(const tools::Sparse_matrix &G, const tools::Sparse_matrix &H) const
 {
-	if (this->type == "LDPC"    ) return new module::Encoder_LDPC         <B>(this->K, this->N_cw, G, this->n_frames);
-	if (this->type == "LDPC_H"  ) return new module::Encoder_LDPC_from_H  <B>(this->K, this->N_cw, H, this->G_method, this->G_save_path, true, this->n_frames);
-	if (this->type == "LDPC_QC" ) return new module::Encoder_LDPC_from_QC <B>(this->K, this->N_cw, H, this->n_frames);
-	if (this->type == "LDPC_IRA") return new module::Encoder_LDPC_from_IRA<B>(this->K, this->N_cw, H, this->n_frames);
+	if (this->type == "LDPC"    ) return new module::Encoder_LDPC         <B>(this->K, this->N_cw, G);
+	if (this->type == "LDPC_H"  ) return new module::Encoder_LDPC_from_H  <B>(this->K, this->N_cw, H, this->G_method, this->G_save_path, true);
+	if (this->type == "LDPC_QC" ) return new module::Encoder_LDPC_from_QC <B>(this->K, this->N_cw, H);
+	if (this->type == "LDPC_IRA") return new module::Encoder_LDPC_from_IRA<B>(this->K, this->N_cw, H);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -128,7 +128,7 @@ template <typename B>
 module::Encoder_LDPC<B>* Encoder_LDPC
 ::build(const tools::Sparse_matrix &G, const tools::Sparse_matrix &H, const tools::dvbs2_values& dvbs2) const
 {
-	if (this->type == "LDPC_DVBS2") return new module::Encoder_LDPC_DVBS2<B>(dvbs2, this->n_frames);
+	if (this->type == "LDPC_DVBS2") return new module::Encoder_LDPC_DVBS2<B>(dvbs2);
 
 	return build<B>(G, H);
 }

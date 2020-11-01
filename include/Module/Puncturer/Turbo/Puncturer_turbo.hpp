@@ -26,8 +26,7 @@ public:
 	                const int &N,
 	                const int &tail_bits,
 	                const std::vector<std::vector<bool>> &pattern_bits,
-	                const bool buff_enc = true,
-	                const int n_frames = 1);
+	                const bool buff_enc = true);
 	virtual ~Puncturer_turbo() = default;
 
 	virtual Puncturer_turbo<B,Q>* clone() const;

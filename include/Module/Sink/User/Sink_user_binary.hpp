@@ -39,9 +39,8 @@ public:
 	 * \brief Constructor.
 	 *
 	 * \param K: Radio_frame length.
-	 * \param n_frames: number of frames.
 	 */
-	Sink_user_binary(const int K, const std::string &filename, const int n_frames = 1);
+	Sink_user_binary(const int K, const std::string &filename);
 
 	/*!
 	 * \brief Destructor.

@@ -15,7 +15,7 @@ template <typename B = int>
 class Encoder_RSC3_CPE_sys : public Encoder_RSC_sys<B>
 {
 public:
-	Encoder_RSC3_CPE_sys(const int& K, const int& N, const int& n_frames = 1, const bool buffered_encoding = true);
+	Encoder_RSC3_CPE_sys(const int& K, const int& N, const bool buffered_encoding = true);
 	virtual ~Encoder_RSC3_CPE_sys() = default;
 
 	virtual Encoder_RSC3_CPE_sys<B>* clone() const;

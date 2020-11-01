@@ -21,8 +21,8 @@ private:
 	const int   factor;
 
 public:
-	Quantizer_pow2_fast(const int N, const short& fixed_point_pos, const int n_frames = 1);
-	Quantizer_pow2_fast(const int N, const short& fixed_point_pos, const short& saturation_pos, const int n_frames = 1);
+	Quantizer_pow2_fast(const int N, const short& fixed_point_pos);
+	Quantizer_pow2_fast(const int N, const short& fixed_point_pos, const short& saturation_pos);
 	virtual ~Quantizer_pow2_fast() = default;
 
 	virtual Quantizer_pow2_fast<R,Q>* clone() const;

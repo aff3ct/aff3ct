@@ -20,9 +20,9 @@ public:
 	Decoder_turbo_std(const int& K,
 	                  const int& N,
 	                  const int& n_ite,
-	                  const Interleaver<R> &pi,
 	                  const Decoder_SISO<B,R> &siso_n,
 	                  const Decoder_SISO<B,R> &siso_i,
+	                        Interleaver<R> &pi,
 	                  const bool buffered_encoding = true);
 	virtual ~Decoder_turbo_std() = default;
 	virtual Decoder_turbo_std<B,R>* clone() const;

@@ -15,8 +15,8 @@ template <typename B, typename R>
 Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::Decoder_LDPC_BP_flooding_Gallager_A(const int K, const int N, const int n_ite, const tools::Sparse_matrix &_H,
                                       const std::vector<unsigned> &info_bits_pos, const bool transform_HY_N,
-                                      const bool enable_syndrome, const int syndrome_depth, const int n_frames)
-: Decoder_SIHO<B,R>(K, N, n_frames, 1                               ),
+                                      const bool enable_syndrome, const int syndrome_depth)
+: Decoder_SIHO<B,R>(K, N, 1                                         ),
   Decoder_LDPC_BP  (K, N, n_ite, _H, enable_syndrome, syndrome_depth),
   transform_HY_N   (transform_HY_N                                  ),
   info_bits_pos    (info_bits_pos                                   ),
@@ -68,8 +68,8 @@ template <typename B, typename R>
 Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::Decoder_LDPC_BP_flooding_Gallager_A(const int K, const int N, const int n_ite, const tools::Sparse_matrix &_H,
                                       const std::vector<unsigned> &info_bits_pos, const bool enable_syndrome,
-                                      const int syndrome_depth, const int n_frames)
-: Decoder_LDPC_BP_flooding_Gallager_A<B,R>(K, N, n_ite, _H, info_bits_pos, false, enable_syndrome, syndrome_depth, n_frames)
+                                      const int syndrome_depth)
+: Decoder_LDPC_BP_flooding_Gallager_A<B,R>(K, N, n_ite, _H, info_bits_pos, false, enable_syndrome, syndrome_depth)
 {
 }
 

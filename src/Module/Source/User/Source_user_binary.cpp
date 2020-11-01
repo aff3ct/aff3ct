@@ -10,9 +10,8 @@ Source_user_binary<B>
 ::Source_user_binary(const int K,
                      const std::string &filename,
                      const bool auto_reset,
-                     const bool fifo_mode,
-                     const int n_frames)
-: Source<B>(K, n_frames),
+                     const bool fifo_mode)
+: Source<B>(K),
   source_file(filename.c_str(), std::ios::in | std::ios::binary),
   auto_reset(fifo_mode ? true : auto_reset),
   fifo_mode(fifo_mode),

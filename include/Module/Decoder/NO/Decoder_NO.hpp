@@ -15,7 +15,7 @@ template <typename B = int, typename R = float>
 class Decoder_NO : public Decoder_SISO<B,R>
 {
 public:
-	Decoder_NO(const int K, const int n_frames = 1);
+	Decoder_NO(const int K);
 	virtual ~Decoder_NO() = default;
 	virtual Decoder_NO<B,R>* clone() const;
 

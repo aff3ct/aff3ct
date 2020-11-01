@@ -49,8 +49,8 @@ Socket& Decoder_SIHO<B,R>
 
 template <typename B, typename R>
 Decoder_SIHO<B,R>
-::Decoder_SIHO(const int K, const int N, const int n_frames, const int simd_inter_frame_level)
-: Decoder_HIHO<B>(K, N, n_frames, simd_inter_frame_level),
+::Decoder_SIHO(const int K, const int N, const int simd_inter_frame_level)
+: Decoder_HIHO<B>(K, N, simd_inter_frame_level),
   Y_N            (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0),
   V_KN           (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0)
 {
@@ -348,15 +348,13 @@ void Decoder_SIHO<B,R>
 ::set_n_frames(const int n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
-	Decoder_HIHO<B>::set_n_frames(n_frames);
+	if (old_n_frames != n_frames)
+	{
+		Decoder_HIHO<B>::set_n_frames(n_frames);
 
-	const auto old_Y_N_size = this->Y_N.size();
-	const auto new_Y_N_size = (old_Y_N_size / old_n_frames) * old_n_frames;
-	this->Y_N.resize(new_Y_N_size);
-
-	const auto old_V_KN_size = this->V_KN.size();
-	const auto new_V_KN_size = (old_V_KN_size / old_n_frames) * old_n_frames;
-	this->V_KN.resize(new_V_KN_size);
+		this->Y_N .resize(this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0);
+		this->V_KN.resize(this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0);
+	}
 }
 
 }

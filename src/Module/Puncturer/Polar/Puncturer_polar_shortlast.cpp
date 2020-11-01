@@ -14,9 +14,8 @@ template <typename B, typename Q>
 Puncturer_polar_shortlast<B,Q>
 ::Puncturer_polar_shortlast(const int &K,
                             const int &N,
-                            const tools::Frozenbits_generator &fb_generator,
-                            const int n_frames)
-: Puncturer<B,Q>(K, N, (int)std::exp2(std::ceil(std::log2(N))), n_frames),
+                            const tools::Frozenbits_generator &fb_generator)
+: Puncturer<B,Q>(K, N, (int)std::exp2(std::ceil(std::log2(N)))),
   fb_generator(fb_generator)
 {
 	const std::string name = "Puncturer_polar_shortlast";

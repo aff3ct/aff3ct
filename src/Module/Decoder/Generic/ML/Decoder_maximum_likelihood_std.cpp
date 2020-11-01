@@ -13,9 +13,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_maximum_likelihood_std<B,R>
-::Decoder_maximum_likelihood_std(const int K, const int N, const Encoder<B> &encoder, const bool hamming,
-                                 const int n_frames)
-: Decoder_maximum_likelihood<B,R>(K, N, encoder, n_frames),
+::Decoder_maximum_likelihood_std(const int K, const int N, const Encoder<B> &encoder, const bool hamming)
+: Decoder_maximum_likelihood<B,R>(K, N, encoder),
   hamming(hamming),
   u_max(0),
   min_euclidean_dist(std::numeric_limits<float>::max()),

@@ -17,7 +17,7 @@ template <typename B = int>
 class Encoder_LDPC_from_IRA : public Encoder_LDPC<B>
 {
 public:
-	Encoder_LDPC_from_IRA(const int K, const int N, const tools::Sparse_matrix &H, const int n_frames = 1);
+	Encoder_LDPC_from_IRA(const int K, const int N, const tools::Sparse_matrix &H);
 	virtual ~Encoder_LDPC_from_IRA() = default;
 
 	virtual Encoder_LDPC_from_IRA<B>* clone() const;

@@ -17,9 +17,8 @@ Decoder_polar_MK_SCL_naive_CA_sys<B,R>
                                     const std::vector<bool>& frozen_bits,
                                     const std::vector<std::vector<std::function<R(const std::vector<R> &LLRs,
                                                                                   const std::vector<B> &bits)>>> &lambdas,
-                                    const CRC<B>& crc,
-                                    const int n_frames)
-: Decoder_polar_MK_SCL_naive_CA<B,R>(K, N, L, code, frozen_bits, lambdas, crc, n_frames)
+                                    const CRC<B>& crc)
+: Decoder_polar_MK_SCL_naive_CA<B,R>(K, N, L, code, frozen_bits, lambdas, crc)
 {
 	const std::string name = "Decoder_polar_MK_SCL_naive_CA_sys";
 	this->set_name(name);
@@ -39,9 +38,8 @@ Decoder_polar_MK_SCL_naive_CA_sys<B,R>
                                     const int& L,
                                     const tools::Polar_code& code,
                                     const std::vector<bool>& frozen_bits,
-                                    const CRC<B>& crc,
-                                    const int n_frames)
-: Decoder_polar_MK_SCL_naive_CA_sys<B,R>(K, N, L, code, frozen_bits, {}, crc, n_frames)
+                                    const CRC<B>& crc)
+: Decoder_polar_MK_SCL_naive_CA_sys<B,R>(K, N, L, code, frozen_bits, {}, crc)
 {
 }
 

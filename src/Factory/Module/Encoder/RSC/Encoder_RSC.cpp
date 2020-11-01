@@ -114,8 +114,8 @@ template <typename B>
 module::Encoder_RSC_sys<B>* Encoder_RSC
 ::build(std::ostream &stream) const
 {
-	if (this->type == "RSC_JSON") return new module::Encoder_RSC_generic_json_sys<B>(this->K, this->N_cw, this->buffered, this->poly, stream, this->n_frames);
-	if (this->type == "RSC"     ) return new module::Encoder_RSC_generic_sys     <B>(this->K, this->N_cw, this->buffered, this->poly,         this->n_frames);
+	if (this->type == "RSC_JSON") return new module::Encoder_RSC_generic_json_sys<B>(this->K, this->N_cw, this->buffered, this->poly, stream);
+	if (this->type == "RSC"     ) return new module::Encoder_RSC_generic_sys     <B>(this->K, this->N_cw, this->buffered, this->poly        );
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

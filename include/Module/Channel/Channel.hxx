@@ -33,8 +33,8 @@ Socket& Channel<R>
 
 template <typename R>
 Channel<R>
-::Channel(const int N, const int n_frames)
-: Module(n_frames), N(N), noise(nullptr), noised_data(this->N * this->n_frames, 0)
+::Channel(const int N)
+: Module(), N(N), noise(nullptr), noised_data(this->N * this->n_frames, 0)
 {
 	const std::string name = "Channel";
 	this->set_name(name);
@@ -268,6 +268,21 @@ void Channel<R>
 		std::stringstream message;
 		message << "'noise' should not be nullptr.";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+}
+
+template<typename R>
+void Channel<R>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Module::set_n_frames(n_frames);
+
+		const auto old_noised_data_size = this->noised_data.size();
+		const auto new_noised_data_size = (old_noised_data_size / old_n_frames) * n_frames;
+		this->noised_data.resize(new_noised_data_size);
 	}
 }
 

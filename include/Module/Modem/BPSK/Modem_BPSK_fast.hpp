@@ -19,7 +19,7 @@ private:
 	R two_on_square_sigma;
 
 public:
-	Modem_BPSK_fast(const int N, const bool disable_sig2 = false, const int n_frames = 1);
+	Modem_BPSK_fast(const int N, const bool disable_sig2 = false);
 	virtual ~Modem_BPSK_fast() = default;
 
 	virtual Modem_BPSK_fast<B,R,Q>* clone() const;

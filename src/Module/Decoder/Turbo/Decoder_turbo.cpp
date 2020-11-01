@@ -14,11 +14,11 @@ Decoder_turbo<B,R>
 ::Decoder_turbo(const int& K,
                 const int& N,
                 const int& n_ite,
-                const Interleaver<R> &pi,
                 const Decoder_SISO<B,R> &siso_n,
                 const Decoder_SISO<B,R> &siso_i,
+                      Interleaver<R> &pi,
                 const bool buffered_encoding)
-: Decoder_SIHO<B,R>(K, N, siso_n.get_n_frames(), siso_n.get_simd_inter_frame_level()),
+: Decoder_SIHO<B,R>(K, N, siso_n.get_simd_inter_frame_level()),
   n_ite(n_ite),
   buffered_encoding(buffered_encoding),
   pi(pi),
@@ -87,6 +87,14 @@ Decoder_turbo<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	if (pi.get_n_frames() != siso_n.get_n_frames())
+	{
+		std::stringstream message;
+		message << "'pi.get_n_frames()' has to be equal to 'siso_n.get_n_frames()' ('pi.get_n_frames()' = "
+		        << pi.get_n_frames() << ", 'siso_n.get_n_frames()' = " << siso_n.get_n_frames() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (siso_n.get_simd_inter_frame_level() != siso_i.get_simd_inter_frame_level())
 	{
 		std::stringstream message;
@@ -95,6 +103,8 @@ Decoder_turbo<B,R>
 		        << ", 'siso_i.get_simd_inter_frame_level()' = " << siso_i.get_simd_inter_frame_level() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	this->set_n_frames(siso_n.get_n_frames());
 }
 
 template <typename B, typename R>
@@ -121,6 +131,8 @@ void Decoder_turbo<B,R>
 ::add_post_processing(const tools::Post_processing_SISO<B,R> &post_processing)
 {
 	this->post_processings.push_back(std::shared_ptr<tools::Post_processing_SISO<B,R>>(post_processing.clone()));
+	if (this->post_processings.back()->get_n_frames() != this->get_simd_inter_frame_level())
+		this->post_processings.back()->set_n_frames(this->get_simd_inter_frame_level());
 }
 
 template <typename B, typename R>
@@ -257,6 +269,20 @@ void Decoder_turbo<B,R>
 		for (auto f = 0; f < n_frames; f++)
 			frames[f] = V_K + f*this->K;
 		tools::Reorderer<B>::apply_rev(s.data(), frames, this->K);
+	}
+}
+
+template <typename B, typename R>
+void Decoder_turbo<B,R>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Decoder_SIHO<B,R>::set_n_frames(n_frames);
+		this->siso_n->set_n_frames(n_frames);
+		this->siso_i->set_n_frames(n_frames);
+		this->pi.set_n_frames(n_frames);
 	}
 }
 

@@ -21,13 +21,15 @@ protected:
 	std::shared_ptr<module::Decoder_HIHO<B>> decoder_hiho;
 
 public:
-	Codec_HIHO(const int K, const int N_cw, const int N, const int n_frames = 1);
+	Codec_HIHO(const int K, const int N_cw, const int N);
 
 	virtual ~Codec_HIHO() = default;
 
 	virtual Codec_HIHO<B,Q>* clone() const;
 
 	virtual module::Decoder_HIHO<B>& get_decoder_hiho();
+
+	virtual void set_n_frames(const int n_frames);
 
 protected:
 	virtual void deep_copy(const Codec_HIHO<B,Q> &t);

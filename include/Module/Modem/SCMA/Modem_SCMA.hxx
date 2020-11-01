@@ -18,12 +18,10 @@ namespace module
 {
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 Modem_SCMA<B,R,Q,PSI>
-::Modem_SCMA(const int N, const std::string &codebook_path, const bool disable_sig2, const int n_ite,
-             const int n_frames)
+::Modem_SCMA(const int N, const std::string &codebook_path, const bool disable_sig2, const int n_ite)
 : Modem<B,R,Q>(N,
                Modem_SCMA<B,R,Q,PSI>::size_mod(N, codebook_path),
-               Modem_SCMA<B,R,Q,PSI>::size_fil(N, codebook_path),
-               n_frames),
+               Modem_SCMA<B,R,Q,PSI>::size_fil(N, codebook_path)),
   CB                   (codebook_path),
   arr_phi              (CB.get_number_of_resources(), CB.get_codebook_size(),       CB.get_codebook_size(), CB.get_codebook_size(), (Q)0),
   msg_user_to_resources(CB.get_number_of_users(),     CB.get_number_of_resources(), CB.get_codebook_size(),                         (Q)0),
@@ -35,20 +33,14 @@ Modem_SCMA<B,R,Q,PSI>
 	const std::string name = "Modem_SCMA";
 	this->set_name(name);
 
-	if (n_frames != CB.get_number_of_users())
-	{
-		std::stringstream message;
-		message << "'n_frames' has to be equal to CB.get_number_of_users() ('n_frames' = " << n_frames
-		        << ", 'CB.get_number_of_users()' = " << CB.get_number_of_users() << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	if (n_ite <= 0)
 	{
 		std::stringstream message;
 		message << "'n_ite' has to be greater than 0 ('n_ite' = " << n_ite << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	this->set_n_frames(CB.get_number_of_users());
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
@@ -420,6 +412,23 @@ int Modem_SCMA<B,R,Q,PSI>
 	const tools::Codebook<R> CB(codebook_path);
 	int bps = (int)CB.get_system_bps();
 	return size_mod(N, bps);
+}
+
+template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
+void Modem_SCMA<B,R,Q,PSI>
+::set_n_frames(const int n_frames)
+{
+	if (n_frames != CB.get_number_of_users())
+	{
+		std::stringstream message;
+		message << "'n_frames' has to be equal to CB.get_number_of_users() ('n_frames' = " << n_frames
+		        << ", 'CB.get_number_of_users()' = " << CB.get_number_of_users() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+		Modem<B,R,Q>::set_n_frames(n_frames);
 }
 
 }

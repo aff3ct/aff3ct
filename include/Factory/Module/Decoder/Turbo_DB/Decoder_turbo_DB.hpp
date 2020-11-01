@@ -59,9 +59,9 @@ public:
 
 	// builder
 	template <typename B = int, typename Q = float>
-	module::Decoder_turbo_DB<B,Q>* build(const module::Interleaver<Q>           &itl,
-	                                     const module::Decoder_RSC_DB_BCJR<B,Q> &siso_n,
+	module::Decoder_turbo_DB<B,Q>* build(const module::Decoder_RSC_DB_BCJR<B,Q> &siso_n,
 	                                     const module::Decoder_RSC_DB_BCJR<B,Q> &siso_i,
+	                                           module::Interleaver<Q>           &itl,
 	                                           module::Encoder<B>               *encoder = nullptr) const;
 
 	template <typename B = int, typename Q = float>

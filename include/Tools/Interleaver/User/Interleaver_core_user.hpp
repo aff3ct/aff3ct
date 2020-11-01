@@ -23,7 +23,7 @@ private:
 	int cur_itl_id;
 
 public:
-	Interleaver_core_user(const int size, const std::string &filename, const int n_frames = 1);
+	Interleaver_core_user(const int size, const std::string &filename);
 	virtual ~Interleaver_core_user() = default;
 
 	virtual Interleaver_core_user<T>* clone() const;

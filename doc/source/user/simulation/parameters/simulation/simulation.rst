@@ -615,6 +615,50 @@ parameter is enabled, it becomes the codeword size (:math:`N`).
    number of threads is high, the memory footprint can exceeds the size of the
    CPU caches and it becomes less interesting to use a large number of threads.
 
+.. _sim-sim-inter-fra:
+
+``--sim-inter-fra, -F``
+"""""""""""""""""""""""
+
+   :Type: integer
+   :Default: 1
+   :Examples: ``--sim-inter-fra 3``
+
+|factory::Simulation::p+inter-fra,F|
+
+The default behavior is to generate one frame at a time. This parameter enables
+to process more than one frame during the execution of a task.
+
+The number of frames consumed and produced when a task is executed is called the
+**inter frame level** or |IFL|. Setting the |IFL| will automatically affect the
+|IFL| level in all the simulation modules (c.f. :numref:`fig_sim_fra_inter`).
+
+.. _fig_sim_fra_inter:
+
+.. figure:: images/sim_fra_inter.svg
+   :figwidth: 70 %
+   :align: center
+
+   3-way inter frame level in the communication chain.
+
+The |IFL| also allows multi-user configurations to be simulated (see
+:numref:`fig_sim_fra_multi_user`). This configurations is used when using |SCMA|
+modulation (see the :ref:`mdm-mdm-type` ``SCMA`` parameter).
+
+.. _fig_sim_fra_multi_user:
+
+.. figure:: images/sim_fra_multi_user.svg
+   :figwidth: 70 %
+   :align: center
+
+   3-way inter frame level with multi-user channel in the communication chain.
+
+.. note:: **For short frames**, increase the |IFL| can **increase the
+  simulation throughput**, it can hide task call overheads.
+
+.. note:: **For large frames**, increase the |IFL| can **decrease the
+  simulation throughput** due the CPU cache size limitation.
+
 .. _sim-sim-crc-start:
 
 ``--sim-crc-start``

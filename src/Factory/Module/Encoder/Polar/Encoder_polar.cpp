@@ -53,8 +53,8 @@ template <typename B>
 module::Encoder_polar<B>* Encoder_polar
 ::build(const std::vector<bool> &frozen_bits) const
 {
-	if (this->type == "POLAR" && !this->systematic) return new module::Encoder_polar    <B>(this->K, this->N_cw, frozen_bits, this->n_frames);
-	if (this->type == "POLAR" &&  this->systematic) return new module::Encoder_polar_sys<B>(this->K, this->N_cw, frozen_bits, this->n_frames);
+	if (this->type == "POLAR" && !this->systematic) return new module::Encoder_polar    <B>(this->K, this->N_cw, frozen_bits);
+	if (this->type == "POLAR" &&  this->systematic) return new module::Encoder_polar_sys<B>(this->K, this->N_cw, frozen_bits);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

@@ -49,7 +49,7 @@ private:
 	std::vector<R> llrs_e_buff;
 
 public:
-	Monitor_EXIT(const int size, const unsigned max_n_trials, const int n_frames = 1);
+	Monitor_EXIT(const int size, const unsigned max_n_trials);
 
 	virtual ~Monitor_EXIT() = default;
 

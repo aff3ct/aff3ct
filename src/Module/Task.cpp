@@ -450,21 +450,38 @@ void Task
 void Task
 ::update_n_frames(const size_t old_n_frames, const size_t new_n_frames)
 {
+	size_t s_id = 0;
 	for (auto &s : this->sockets)
 	{
-		const auto old_databytes = s->get_databytes();
-		const auto new_databytes = (old_databytes / old_n_frames) * new_n_frames;
-		s->set_databytes(new_databytes);
-	}
-
-	if (this->is_autoalloc())
-	{
-		for (auto &v : this->out_buffers)
+		if (s->get_name() != "status")
 		{
-			const auto old_databytes = v.size();
+			const auto old_databytes = s->get_databytes();
 			const auto new_databytes = (old_databytes / old_n_frames) * new_n_frames;
-			v.resize(new_databytes);
+			s->set_databytes(new_databytes);
+
+			if (this->is_autoalloc() && this->socket_type[s_id] == socket_t::SOUT)
+			{
+				const auto old_ptr = s->get_dataptr();
+				bool found = false;
+				for (auto &v : this->out_buffers)
+				{
+					if ((void*)v.data() == old_ptr)
+					{
+						v.resize(new_databytes);
+						s->set_dataptr((void*)v.data());
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+				{
+					std::stringstream message;
+					message << "This should never happen.";
+					throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+				}
+			}
 		}
+		s_id++;
 	}
 }
 

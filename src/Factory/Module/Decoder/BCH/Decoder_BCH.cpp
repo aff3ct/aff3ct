@@ -100,12 +100,12 @@ module::Decoder_SIHO<B,Q>* Decoder_BCH
 	{
 		if (this->type == "ALGEBRAIC")
 		{
-			if (this->implem == "STD" ) return new module::Decoder_BCH_std <B,Q>(this->K, this->N_cw, GF, this->n_frames);
-			if (this->implem == "FAST") return new module::Decoder_BCH_fast<B,Q>(this->K, this->N_cw, GF, this->n_frames);
+			if (this->implem == "STD" ) return new module::Decoder_BCH_std <B,Q>(this->K, this->N_cw, GF);
+			if (this->implem == "FAST") return new module::Decoder_BCH_fast<B,Q>(this->K, this->N_cw, GF);
 
 			if (encoder)
 			{
-				if (this->implem == "GENIUS") return new module::Decoder_BCH_genius<B,Q>(this->K, this->N_cw, this->t, *encoder, this->n_frames);
+				if (this->implem == "GENIUS") return new module::Decoder_BCH_genius<B,Q>(this->K, this->N_cw, this->t, *encoder);
 			}
 		}
 	}

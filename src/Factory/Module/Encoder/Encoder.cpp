@@ -45,9 +45,6 @@ void Encoder
 		cli::Integer(cli::Positive(), cli::Non_zero()),
 		cli::arg_rank::REQ);
 
-	tools::add_arg(args, p, class_name+"p+fra,F",
-		cli::Integer(cli::Positive(), cli::Non_zero()));
-
 	tools::add_arg(args, p, class_name+"p+type",
 		cli::Text(cli::Including_set("AZCW", "COSET", "USER")));
 
@@ -68,7 +65,6 @@ void Encoder
 
 	if(vals.exist({p+"-info-bits", "K"})) this->K          = vals.to_int ({p+"-info-bits", "K"});
 	if(vals.exist({p+"-cw-size",   "N"})) this->N_cw       = vals.to_int ({p+"-cw-size",   "N"});
-	if(vals.exist({p+"-fra",       "F"})) this->n_frames   = vals.to_int ({p+"-fra",       "F"});
 	if(vals.exist({p+"-seed",      "S"})) this->seed       = vals.to_int ({p+"-seed",      "S"});
 	if(vals.exist({p+"-type"          })) this->type       = vals.at     ({p+"-type"          });
 	if(vals.exist({p+"-path"          })) this->path       = vals.to_file({p+"-path"          });
@@ -87,7 +83,6 @@ void Encoder
 	if (full) headers[p].push_back(std::make_pair("Info. bits (K)", std::to_string(this->K)));
 	if (full) headers[p].push_back(std::make_pair("Codeword size (N)", std::to_string(this->N_cw)));
 	if (full) headers[p].push_back(std::make_pair("Code rate (R)", std::to_string(this->R)));
-	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 	headers[p].push_back(std::make_pair("Systematic", ((this->systematic) ? "yes" : "no")));
 	if (this->type == "USER")
 		headers[p].push_back(std::make_pair("Path", this->path));
@@ -99,9 +94,9 @@ template <typename B>
 module::Encoder<B>* Encoder
 ::build() const
 {
-	if (this->type == "AZCW" ) return new module::Encoder_AZCW <B>(this->K, this->N_cw,             this->n_frames);
-	if (this->type == "COSET") return new module::Encoder_coset<B>(this->K, this->N_cw, this->seed, this->n_frames);
-	if (this->type == "USER" ) return new module::Encoder_user <B>(this->K, this->N_cw, this->path, this->n_frames, this->start_idx);
+	if (this->type == "AZCW" ) return new module::Encoder_AZCW <B>(this->K, this->N_cw);
+	if (this->type == "COSET") return new module::Encoder_coset<B>(this->K, this->N_cw, this->seed);
+	if (this->type == "USER" ) return new module::Encoder_user <B>(this->K, this->N_cw, this->path, this->start_idx);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

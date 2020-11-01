@@ -8,8 +8,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename Q>
 Extractor_RSC<B,Q>
-::Extractor_RSC(const int K, const int N, const int tail_length, const bool buffered_encoding, const int n_frames)
-: Extractor<B,Q>(K, N, tail_length, n_frames),
+::Extractor_RSC(const int K, const int N, const int tail_length, const bool buffered_encoding)
+: Extractor<B,Q>(K, N, tail_length),
   buffered_encoding(buffered_encoding), info_bits_pos(K, 0)
 {
 	const std::string name = "Extractor_RSC";

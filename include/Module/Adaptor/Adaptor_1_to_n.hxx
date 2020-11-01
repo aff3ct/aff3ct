@@ -31,9 +31,8 @@ Adaptor_1_to_n
 ::Adaptor_1_to_n(const size_t n_elmts,
                  const std::type_index datatype,
                  const size_t buffer_size,
-                 const bool active_waiting,
-                 const int n_frames)
-: Adaptor(n_elmts, datatype, buffer_size, n_frames),
+                 const bool active_waiting)
+: Adaptor(n_elmts, datatype, buffer_size),
   active_waiting(active_waiting),
   cnd_pull(new std::vector<std::condition_variable>(1000)),
   mtx_pull(new std::vector<std::mutex             >(1000)),
@@ -47,9 +46,8 @@ Adaptor_1_to_n
 ::Adaptor_1_to_n(const std::vector<size_t> &n_elmts,
                  const std::vector<std::type_index> &datatype,
                  const size_t buffer_size,
-                 const bool active_waiting,
-                 const int n_frames)
-: Adaptor(n_elmts, datatype, buffer_size, n_frames),
+                 const bool active_waiting)
+: Adaptor(n_elmts, datatype, buffer_size),
   active_waiting(active_waiting),
   cnd_pull(new std::vector<std::condition_variable>(1000)),
   mtx_pull(new std::vector<std::mutex             >(1000)),

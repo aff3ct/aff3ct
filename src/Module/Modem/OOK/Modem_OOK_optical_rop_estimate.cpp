@@ -16,9 +16,9 @@ using namespace aff3ct::module;
 
 template <typename B, typename R, typename Q>
 Modem_OOK_optical_rop_estimate<B,R,Q>
-::Modem_OOK_optical_rop_estimate(const int N, const std::vector<size_t> &ROP_known_bits, const tools::Distributions<R>& dist,
-                                 const int n_frames)
-: module::Modem_OOK<B,R,Q>(N, n_frames),
+::Modem_OOK_optical_rop_estimate(const int N, const std::vector<size_t> &ROP_known_bits,
+                                 const tools::Distributions<R>& dist)
+: module::Modem_OOK<B,R,Q>(N),
   ROP_known_bits(ROP_known_bits),
   dist(dist),
   rop_noise(0)
@@ -33,8 +33,8 @@ Modem_OOK_optical_rop_estimate<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Modem_OOK_optical_rop_estimate<B,R,Q>
-::Modem_OOK_optical_rop_estimate(const int N, int n_known_bits, const tools::Distributions<R>& dist, const int n_frames)
-: module::Modem_OOK<B,R,Q>(N, n_frames),
+::Modem_OOK_optical_rop_estimate(const int N, int n_known_bits, const tools::Distributions<R>& dist)
+: module::Modem_OOK<B,R,Q>(N),
   ROP_known_bits(n_known_bits),
   dist(dist),
   rop_noise(0)

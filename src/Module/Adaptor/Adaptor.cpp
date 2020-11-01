@@ -143,3 +143,36 @@ void Adaptor
 		for (size_t b = 0; b < this->buffer_size; b++)
 			(*this->buffer)[this->id][s][b] = buffer_to_free[id_buff++];
 }
+
+void Adaptor
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Module::set_n_frames(n_frames);
+		for (size_t s = 0; s < (*this->buffer)[this->id].size(); s++)
+			for (size_t b = 0; b < (*this->buffer)[this->id][s].size(); b++)
+			{
+				auto old_ptr = (*this->buffer)[this->id][s][b];
+				(*this->buffer)[this->id][s][b] = new int8_t[this->n_bytes[s] * n_frames];
+
+				bool found = false;
+				for (size_t bf = 0; bf < this->buffer_to_free.size(); bf++)
+					if (this->buffer_to_free[bf] == old_ptr)
+					{
+						delete[] this->buffer_to_free[bf];
+						this->buffer_to_free[bf] = (*this->buffer)[this->id][s][b];
+						found = true;
+						break;
+					}
+
+				if (found == false)
+				{
+					std::stringstream message;
+					message << "This should never happen.";
+					throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+				}
+			}
+	}
+}

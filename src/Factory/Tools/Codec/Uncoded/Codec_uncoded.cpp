@@ -36,7 +36,6 @@ void Codec_uncoded
 	args.erase({penc+"-type"          });
 	args.erase({pdec+"-cw-size",   "N"});
 	args.erase({pdec+"-info-bits", "K"});
-	args.erase({pdec+"-fra",       "F"});
 }
 
 void Codec_uncoded
@@ -48,13 +47,12 @@ void Codec_uncoded
 
 	enc->store(vals);
 
-	enc->N_cw     = enc->K;
+	enc->N_cw   = enc->K;
 
-	dec->type     = "NONE";
-	dec->implem   = "HARD_DECISION";
-	dec->K        = enc->K;
-	dec->N_cw     = enc->N_cw;
-	dec->n_frames = enc->n_frames;
+	dec->type   = "NONE";
+	dec->implem = "HARD_DECISION";
+	dec->K      = enc->K;
+	dec->N_cw   = enc->N_cw;
 
 	dec->store(vals);
 

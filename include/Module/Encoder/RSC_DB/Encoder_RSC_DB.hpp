@@ -41,8 +41,7 @@ private:
 public:
 	Encoder_RSC_DB(const int& K, const int& N,
 	               const std::string &standard = default_std,
-	               const bool buffered_encoding = true,
-	               const int n_frames = 1);
+	               const bool buffered_encoding = true);
 	virtual ~Encoder_RSC_DB() = default;
 
 	virtual Encoder_RSC_DB<B>* clone() const;

@@ -56,10 +56,9 @@ public:
 	/*!
 	 * \brief Constructor.
 	 *
-	 * \param K:        number of information bits (the CRC bits are included in K).
-	 * \param n_frames: number of frames to process in the CRC.
+	 * \param K: number of information bits (the CRC bits are included in K).
 	 */
-	CRC(const int K, const int size, const int n_frames = 1);
+	CRC(const int K, const int size);
 
 	/*!
 	 * \brief Destructor.

@@ -13,8 +13,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_RS<B>
-::Encoder_RS(const int& K, const int& N, const tools::RS_polynomial_generator& GF, const int n_frames)
-: Encoder<B>(K * GF.get_m(), N * GF.get_m(), n_frames),
+::Encoder_RS(const int& K, const int& N, const tools::RS_polynomial_generator& GF)
+: Encoder<B>(K * GF.get_m(), N * GF.get_m()),
   K_rs        (K                   ),
   N_rs        (N                   ),
   m           (GF.get_m()          ),

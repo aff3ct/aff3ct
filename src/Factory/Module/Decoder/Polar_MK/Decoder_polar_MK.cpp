@@ -115,11 +115,11 @@ module::Decoder_SIHO<B,Q>* Decoder_polar_MK
 			{
 				if (crc != nullptr && std::unique_ptr<module::CRC<B>>(crc->clone())->get_size() > 0)
 				{
-					if (this->type == "SCL" ) return new module::Decoder_polar_MK_SCL_naive_CA <B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, lambdas, *crc, this->n_frames);
-					if (this->type == "ASCL") return new module::Decoder_polar_MK_ASCL_naive_CA<B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, lambdas, *crc, this->n_frames);
+					if (this->type == "SCL" ) return new module::Decoder_polar_MK_SCL_naive_CA <B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, lambdas, *crc);
+					if (this->type == "ASCL") return new module::Decoder_polar_MK_ASCL_naive_CA<B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, lambdas, *crc);
 				}
-				if (this->type == "SC" ) return new module::Decoder_polar_MK_SC_naive <B,Q>(this->K, this->N_cw,          code, frozen_bits, lambdas, this->n_frames);
-				if (this->type == "SCL") return new module::Decoder_polar_MK_SCL_naive<B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, lambdas, this->n_frames);
+				if (this->type == "SC" ) return new module::Decoder_polar_MK_SC_naive <B,Q>(this->K, this->N_cw,          code, frozen_bits, lambdas);
+				if (this->type == "SCL") return new module::Decoder_polar_MK_SCL_naive<B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, lambdas);
 			}
 		}
 		else // systematic encoding
@@ -128,11 +128,11 @@ module::Decoder_SIHO<B,Q>* Decoder_polar_MK
 			{
 				if (crc != nullptr && std::unique_ptr<module::CRC<B>>(crc->clone())->get_size() > 0)
 				{
-					if (this->type == "SCL" ) return new module::Decoder_polar_MK_SCL_naive_CA_sys <B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, lambdas, *crc, this->n_frames);
-					if (this->type == "ASCL") return new module::Decoder_polar_MK_ASCL_naive_CA_sys<B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, lambdas, *crc, this->n_frames);
+					if (this->type == "SCL" ) return new module::Decoder_polar_MK_SCL_naive_CA_sys <B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, lambdas, *crc);
+					if (this->type == "ASCL") return new module::Decoder_polar_MK_ASCL_naive_CA_sys<B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, lambdas, *crc);
 				}
-				if (this->type == "SC" ) return new module::Decoder_polar_MK_SC_naive_sys <B,Q>(this->K, this->N_cw,          code, frozen_bits, lambdas, this->n_frames);
-				if (this->type == "SCL") return new module::Decoder_polar_MK_SCL_naive_sys<B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, lambdas, this->n_frames);
+				if (this->type == "SC" ) return new module::Decoder_polar_MK_SC_naive_sys <B,Q>(this->K, this->N_cw,          code, frozen_bits, lambdas);
+				if (this->type == "SCL") return new module::Decoder_polar_MK_SCL_naive_sys<B,Q>(this->K, this->N_cw, this->L, code, frozen_bits, lambdas);
 			}
 		}
 	}

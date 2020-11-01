@@ -7,18 +7,17 @@ using namespace aff3ct::tools;
 
 template <typename B, typename R>
 Self_corrected<B,R>
-::Self_corrected(const int K, const int n_ite, const int m, const int M, const int simd_inter_frame_level)
-: Post_processing_SISO<B,R>     (                                                       ),
-  K                             (K                                                      ),
-  simd_inter_frame_level        (simd_inter_frame_level                                 ),
-  m                             (m                                                      ),
-  M                             (M == -1 ? n_ite : M                                    ),
-  ext_nat(n_ite, mipp::vector<R>(K * simd_inter_frame_level + mipp::nElReg<R>(), (R)0)  ),
-  ext_int(n_ite, mipp::vector<R>(K * simd_inter_frame_level + mipp::nElReg<R>(), (R)0)  ),
-  osc_nat                       (K * simd_inter_frame_level + mipp::nElReg<B>(), (B)0   ),
-  osc_int                       (K * simd_inter_frame_level + mipp::nElReg<B>(), (B)0   ),
-  previously_corrected_nat      (K * simd_inter_frame_level + mipp::nElReg<B>(), (B)0   ),
-  previously_corrected_int      (K * simd_inter_frame_level + mipp::nElReg<B>(), (B)0   )
+::Self_corrected(const int K, const int n_ite, const int m, const int M)
+: Post_processing_SISO<B,R>     (                                             ),
+  K                             (K                                            ),
+  m                             (m                                            ),
+  M                             (M == -1 ? n_ite : M                          ),
+  ext_nat(n_ite, mipp::vector<R>(K * this->n_frames + mipp::nElReg<R>(), (R)0)),
+  ext_int(n_ite, mipp::vector<R>(K * this->n_frames + mipp::nElReg<R>(), (R)0)),
+  osc_nat                       (K * this->n_frames + mipp::nElReg<B>(), (B)0 ),
+  osc_int                       (K * this->n_frames + mipp::nElReg<B>(), (B)0 ),
+  previously_corrected_nat      (K * this->n_frames + mipp::nElReg<B>(), (B)0 ),
+  previously_corrected_int      (K * this->n_frames + mipp::nElReg<B>(), (B)0 )
 {
 }
 
@@ -108,6 +107,28 @@ inline void Self_corrected<B,R>
 			prev_corr[idx] = (B)0;
 	}
 }
+
+template <typename B, typename R>
+void Self_corrected<B,R>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (n_frames != old_n_frames)
+	{
+		Post_processing_SISO<B,R>::set_n_frames(n_frames);
+
+		for (auto &ext : ext_nat)
+			ext.resize(this->K * this->n_frames + mipp::nElReg<R>(), (R)0);
+		for (auto &ext : ext_int)
+			ext.resize(this->K * this->n_frames + mipp::nElReg<R>(), (R)0);
+
+		osc_nat                 .resize(this->K * this->n_frames + mipp::nElReg<B>(), (B)0);
+		osc_int                 .resize(this->K * this->n_frames + mipp::nElReg<B>(), (B)0);
+		previously_corrected_nat.resize(this->K * this->n_frames + mipp::nElReg<B>(), (B)0);
+		previously_corrected_int.resize(this->K * this->n_frames + mipp::nElReg<B>(), (B)0);
+	}
+}
+
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"

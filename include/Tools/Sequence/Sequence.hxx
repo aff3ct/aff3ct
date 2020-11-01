@@ -95,5 +95,23 @@ inline void Sequence
 	this->duplicate<tools::Sub_sequence, module::Module>(root);
 }
 
+int Sequence
+::get_n_frames() const
+{
+	const auto n_frames = this->all_modules[0][0]->get_n_frames();
+
+	for (auto &mm : this->all_modules)
+		for (auto &m : mm)
+			if (m->get_n_frames() != n_frames)
+			{
+				std::stringstream message;
+				message << "All the modules do not have the same 'n_frames' value ('m->get_n_frames()' = "
+				        << m->get_n_frames() << ", 'n_frames' = " << n_frames << ").";
+				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+			}
+
+	return n_frames;
+}
+
 }
 }

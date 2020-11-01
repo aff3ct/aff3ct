@@ -11,8 +11,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 Sink_user_binary<B>
-::Sink_user_binary(const int K, const std::string &filename, const int n_frames)
-: Sink<B>(K, n_frames),
+::Sink_user_binary(const int K, const std::string &filename)
+: Sink<B>(K),
   filename(filename),
   sink_file(filename.c_str(), std::ios::out | std::ios::binary),
   chunk(K),

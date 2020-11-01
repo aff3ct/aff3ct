@@ -26,12 +26,14 @@ protected:
 	std::vector<R> Tu, Td, Wu, Wd, U;
 	std::vector<mipp::vector<R>> Xd, Xu;
 
-	const Interleaver<R>& interleaver;
+	Interleaver<R>& interleaver;
 
 public:
-	Decoder_RA(const int& K, const int& N, const Interleaver<R>& interleaver, int max_iter, const int n_frames = 1);
+	Decoder_RA(const int& K, const int& N, Interleaver<R>& interleaver, int max_iter = 10);
 	virtual ~Decoder_RA() = default;
 	virtual Decoder_RA<B,R>* clone() const;
+
+	virtual void set_n_frames(const int n_frames);
 
 protected:
 	int _decode_siho(const R *Y_N, B *V_K, const int frame_id);

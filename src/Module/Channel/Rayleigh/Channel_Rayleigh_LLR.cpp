@@ -23,12 +23,11 @@ Channel_Rayleigh_LLR<R>
 ::Channel_Rayleigh_LLR(const int N,
                        const bool complex,
                        const tools::Gaussian_gen<R> &gaussian_generator,
-                       const bool add_users,
-                       const int n_frames)
-: Channel<R>(N, n_frames),
+                       const bool add_users)
+: Channel<R>(N),
   complex(complex),
   add_users(add_users),
-  gains(complex ? N * n_frames : 2 * N * n_frames),
+  gains(complex ? N * this->n_frames : 2 * N * this->n_frames),
   gaussian_generator(gaussian_generator.clone())
 {
 	const std::string name = "Channel_Rayleigh_LLR";
@@ -76,12 +75,11 @@ Channel_Rayleigh_LLR<R>
                        const bool complex,
                        const tools::Gaussian_noise_generator_implem implem,
                        const int seed,
-                       const bool add_users,
-                       const int n_frames)
-: Channel<R>(N, n_frames),
+                       const bool add_users)
+: Channel<R>(N),
   complex(complex),
   add_users(add_users),
-  gains(complex ? N * n_frames : 2 * N * n_frames),
+  gains(complex ? N * this->n_frames : 2 * N * this->n_frames),
   gaussian_generator(create_gaussian_generator<R>(implem, seed))
 {
 	const std::string name = "Channel_Rayleigh_LLR";
@@ -221,11 +219,27 @@ void Channel_Rayleigh_LLR<R>
 }
 
 template<typename R>
-void Channel_Rayleigh_LLR<R>::check_noise()
+void Channel_Rayleigh_LLR<R>
+::check_noise()
 {
 	Channel<R>::check_noise();
 
 	this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
+}
+
+template<typename R>
+void Channel_Rayleigh_LLR<R>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Channel<R>::set_n_frames(n_frames);
+
+		const auto old_gains_size = this->gains.size();
+		const auto new_gains_size = (old_gains_size / old_n_frames) * n_frames;
+		this->gains.resize(new_gains_size);
+	}
 }
 
 // ==================================================================================== explicit template instantiation

@@ -7,18 +7,12 @@ using namespace aff3ct;
 using namespace aff3ct::module;
 
 Module
-::Module(const int n_frames)
-: n_frames(n_frames), name("Module"), short_name("Module")
+::Module()
+: n_frames(1), name("Module"), short_name("Module")
 #ifdef AFF3CT_SYSTEMC_MODULE
 , sc(*this)
 #endif
 {
-	if (n_frames <= 0)
-	{
-		std::stringstream message;
-		message << "'n_frames' has to be greater than 0 ('n_frames' = " << n_frames << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
 }
 
 void Module
@@ -55,12 +49,6 @@ Module* Module
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
-int Module
-::get_n_frames() const
-{
-	return n_frames;
-}
-
 void Module
 ::set_n_frames(const int n_frames)
 {
@@ -70,16 +58,20 @@ void Module
 	throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 #endif
 
-	if (n_frames <= 0)
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
 	{
-		std::stringstream message;
-		message << "'n_frames' has to be greater than 0 ('n_frames' = " << n_frames << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
+		if (n_frames <= 0)
+		{
+			std::stringstream message;
+			message << "'n_frames' has to be greater than 0 ('n_frames' = " << n_frames << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
 
-	for (auto &t : tasks)
-		t->update_n_frames((size_t)this->get_n_frames(), (size_t)n_frames);
-	this->n_frames = n_frames;
+		for (auto &t : tasks)
+			t->update_n_frames((size_t)this->get_n_frames(), (size_t)n_frames);
+		this->n_frames = n_frames;
+	}
 }
 
 void Module

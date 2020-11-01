@@ -37,8 +37,7 @@ public:
 	                               const tools::Sparse_matrix &H,
 	                               const std::vector<unsigned> &info_bits_pos,
 	                               const bool enable_syndrome = true,
-	                               const int syndrome_depth = 1,
-	                               const int n_frames = 1);
+	                               const int syndrome_depth = 1);
 	virtual ~Decoder_LDPC_bit_flipping_hard() = default;
 	virtual Decoder_LDPC_bit_flipping_hard<B,R>* clone() const;
 

@@ -12,9 +12,8 @@ const std::string aff3ct::module::Encoder_RSC_DB<B>::default_std = "DVB-RCS1";
 
 template <typename B>
 Encoder_RSC_DB<B>
-::Encoder_RSC_DB(const int& K, const int& N, const std::string &standard, const bool buffered_encoding,
-                 const int n_frames)
-: Encoder<B>       (K, N, n_frames),
+::Encoder_RSC_DB(const int& K, const int& N, const std::string &standard, const bool buffered_encoding)
+: Encoder<B>       (K, N),
   n_ff             (standard == "DVB-RCS1" ? 3 : 4),
   n_states         (1 << n_ff),
   buffered_encoding(buffered_encoding),

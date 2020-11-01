@@ -24,8 +24,7 @@ public:
 	Puncturer_LDPC(const int &K,
 	               const int &N,
 	               const int &N_cw,
-	               const std::vector<bool> &pattern,
-	               const int n_frames = 1);
+	               const std::vector<bool> &pattern);
 	virtual ~Puncturer_LDPC() = default;
 
 	virtual Puncturer_LDPC<B,Q>* clone() const;

@@ -20,8 +20,7 @@ class Decoder_RSC_DB_BCJR_generic : public Decoder_RSC_DB_BCJR<B,R>
 public:
 	Decoder_RSC_DB_BCJR_generic(const int K,
 	                            const std::vector<std::vector<int>> &trellis,
-	                            const bool buffered_encoding = true,
-	                            const int n_frames = 1);
+	                            const bool buffered_encoding = true);
 	virtual ~Decoder_RSC_DB_BCJR_generic() = default;
 
 	virtual Decoder_RSC_DB_BCJR_generic<B,R,MAX>* clone() const;

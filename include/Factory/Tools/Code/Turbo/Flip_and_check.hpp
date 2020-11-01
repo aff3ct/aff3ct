@@ -35,7 +35,6 @@ public:
 	int  ite_max       = 10;
 	int  ite_step      = 1;
 	int  crc_start_ite = 2;
-	int  n_frames      = 1;
 
 	// -------------------------------------------------------------------------------------------------------- METHODS
 	explicit Flip_and_check(const std::string &p = Flip_and_check_prefix);

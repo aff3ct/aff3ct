@@ -33,7 +33,7 @@ private:
 	                                            {19,376,224,600}};
 
 public:
-	Interleaver_core_ARP_DVB_RCS1(const int size, const int n_frames = 1);
+	Interleaver_core_ARP_DVB_RCS1(const int size);
 	virtual ~Interleaver_core_ARP_DVB_RCS1() = default;
 
 	virtual Interleaver_core_ARP_DVB_RCS1<T>* clone() const;

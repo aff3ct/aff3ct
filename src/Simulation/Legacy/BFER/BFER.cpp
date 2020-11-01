@@ -292,7 +292,9 @@ template <typename B, typename R, typename Q>
 std::unique_ptr<typename BFER<B,R,Q>::Monitor_MI_type> BFER<B,R,Q>
 ::build_monitor_mi(const int tid)
 {
-	return std::unique_ptr<typename BFER<B,R,Q>::Monitor_MI_type>(params_BFER.mnt_mi->build<B,R>());
+	auto mnt = std::unique_ptr<typename BFER<B,R,Q>::Monitor_MI_type>(params_BFER.mnt_mi->build<B,R>());
+	mnt->set_n_frames(this->params.n_frames);
+	return mnt;
 }
 
 template <typename B, typename R, typename Q>
@@ -304,7 +306,7 @@ std::unique_ptr<typename BFER<B,R,Q>::Monitor_BFER_type> BFER<B,R,Q>
 	auto mnt_tmp = params_BFER.mnt_er->build<B>(count_unknown_values);
 	auto mnt = std::unique_ptr<typename BFER<B,R,Q>::Monitor_BFER_type>(mnt_tmp);
 	mnt->activate_err_histogram(params_BFER.mnt_er->err_hist != -1);
-
+	mnt->set_n_frames(this->params.n_frames);
 	return mnt;
 }
 

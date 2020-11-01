@@ -27,8 +27,7 @@ public:
 	                                const std::vector<unsigned> &info_bits_pos,
 	                                const R mwbf_factor = (R)0,
 	                                const bool enable_syndrome = true,
-	                                const int syndrome_depth = 1,
-	                                const int n_frames = 1);
+	                                const int syndrome_depth = 1);
 	virtual ~Decoder_LDPC_bit_flipping_OMWBF() = default;
 	virtual Decoder_LDPC_bit_flipping_OMWBF<B,R>* clone() const;
 

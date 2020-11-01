@@ -15,9 +15,8 @@ Loop_CRC<I,O>
            const CRC<I> &crc,
            const size_t n_elmts_in,
            const size_t n_elmts_out,
-           const size_t crc_ite_start,
-           const int n_frames)
-: Loop_predicate<O>(predicate, n_elmts_in, typeid(I), n_elmts_out, n_frames),
+           const size_t crc_ite_start)
+: Loop_predicate<O>(predicate, n_elmts_in, typeid(I), n_elmts_out),
   crc(crc.clone()),
   crc_ite_start(crc_ite_start)
 {

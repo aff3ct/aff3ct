@@ -24,8 +24,7 @@ protected:
 
 	Decoder_RSC_BCJR_seq(const int &K,
 	                     const std::vector<std::vector<int>> &trellis,
-	                     const bool buffered_encoding = true,
-	                     const int n_frames = 1);
+	                     const bool buffered_encoding = true);
 	virtual ~Decoder_RSC_BCJR_seq() = default;
 	virtual Decoder_RSC_BCJR_seq<B,R>* clone() const;
 };

@@ -56,8 +56,8 @@ Socket& Decoder_SISO<B,R>
 
 template <typename B, typename R>
 Decoder_SISO<B,R>
-::Decoder_SISO(const int K, const int N, const int n_frames, const int simd_inter_frame_level)
-: Decoder_SIHO<B,R>(K, N, n_frames, simd_inter_frame_level),
+::Decoder_SISO(const int K, const int N, const int simd_inter_frame_level)
+: Decoder_SIHO<B,R>(K, N, simd_inter_frame_level),
   Y_N1             (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0),
   Y_N2             (this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0)
 {
@@ -301,15 +301,13 @@ void Decoder_SISO<B, R>
 ::set_n_frames(const int n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
-	Decoder_SIHO<B,R>::set_n_frames(n_frames);
+	if (old_n_frames != n_frames)
+	{
+		Decoder_SIHO<B,R>::set_n_frames(n_frames);
 
-	const auto old_Y_N1_size = this->Y_N1.size();
-	const auto new_Y_N1_size = (old_Y_N1_size / old_n_frames) * old_n_frames;
-	this->Y_N1.resize(new_Y_N1_size);
-
-	const auto old_Y_N2_size = this->Y_N2.size();
-	const auto new_Y_N2_size = (old_Y_N2_size / old_n_frames) * old_n_frames;
-	this->Y_N2.resize(new_Y_N2_size);
+		this->Y_N1.resize(this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0);
+		this->Y_N2.resize(this->n_inter_frame_rest ? this->simd_inter_frame_level * this->N : 0);
+	}
 }
 
 }

@@ -10,8 +10,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_LDPC_from_IRA<B>
-::Encoder_LDPC_from_IRA(const int K, const int N, const tools::Sparse_matrix &_H, const int n_frames)
-: Encoder_LDPC<B>(K, N, n_frames)
+::Encoder_LDPC_from_IRA(const int K, const int N, const tools::Sparse_matrix &_H)
+: Encoder_LDPC<B>(K, N)
 {
 	const std::string name = "Encoder_LDPC_from_IRA";
 	this->set_name(name);

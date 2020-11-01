@@ -34,7 +34,6 @@ void Codec_RSC
 
 	args.erase({pdec+"-cw-size",   "N"});
 	args.erase({pdec+"-info-bits", "K"});
-	args.erase({pdec+"-fra",       "F"});
 	args.erase({pdec+"-no-buff"       });
 	args.erase({pdec+"-poly"          });
 	args.erase({pdec+"-std"           });
@@ -52,7 +51,6 @@ void Codec_RSC
 
 	dec_rsc->K        = enc_rsc->K;
 	dec_rsc->N_cw     = enc_rsc->N_cw;
-	dec_rsc->n_frames = enc_rsc->n_frames;
 	dec_rsc->buffered = enc_rsc->buffered;
 	dec_rsc->poly     = enc_rsc->poly;
 	dec_rsc->standard = enc_rsc->standard;

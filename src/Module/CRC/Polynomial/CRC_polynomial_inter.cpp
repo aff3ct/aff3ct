@@ -11,8 +11,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 CRC_polynomial_inter<B>
-::CRC_polynomial_inter(const int K, const std::string &poly_key, const int size, const int n_frames)
-: CRC_polynomial<B>(K, poly_key, size, n_frames)
+::CRC_polynomial_inter(const int K, const std::string &poly_key, const int size)
+: CRC_polynomial<B>(K, poly_key, size)
 {
 	const std::string name = "CRC_polynomial_inter";
 	this->set_name(name);

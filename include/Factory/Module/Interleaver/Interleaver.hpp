@@ -41,7 +41,7 @@ public:
 
 	// builder
 	template <typename D = int32_t>
-	static module::Interleaver<D>* build(const tools::Interleaver_core<>& itl_core);
+	static module::Interleaver<D>* build(tools::Interleaver_core<>& itl_core);
 };
 }
 }

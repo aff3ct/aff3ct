@@ -45,7 +45,6 @@ void Codec_turbo_DB
 
 		args.erase({ppct+"-info-bits", "K"});
 		args.erase({ppct+"-no-buff"       });
-		args.erase({ppct+"-fra",       "F"});
 		args.erase({ppct+"-tail-length"   });
 
 		args[{ppct+"-fra-size", "N"}]->rank = cli::arg_rank::OPT;
@@ -59,7 +58,6 @@ void Codec_turbo_DB
 
 	args.erase({pdec+"-cw-size",   "N"});
 	args.erase({pdec+"-info-bits", "K"});
-	args.erase({pdec+"-fra",       "F"});
 	args.erase({pdes+"-no-buff"       });
 	args.erase({pdes+"-std"           });
 	args.erase({pdec+"-json"          });
@@ -71,8 +69,7 @@ void Codec_turbo_DB
 
 		auto pi = itl->get_prefix();
 
-		args.erase({pi+"-size"    });
-		args.erase({pi+"-fra", "F"});
+		args.erase({pi+"-size"});
 	}
 }
 
@@ -88,10 +85,9 @@ void Codec_turbo_DB
 
 	if (pct != nullptr)
 	{
-		pct->K        = enc->K;
-		pct->N        = enc->N_cw;
-		pct->N_cw     = enc->N_cw;
-		pct->n_frames = enc->n_frames;
+		pct->K    = enc->K;
+		pct->N    = enc->N_cw;
+		pct->N_cw = enc->N_cw;
 
 		pct->store(vals);
 	}
@@ -99,8 +95,6 @@ void Codec_turbo_DB
 	dec_tur->K             = enc_tur->K;
 	dec_tur->N_cw          = enc_tur->N_cw;
 	dec_tur->sub->buffered = enc_tur->sub->buffered;
-	dec_tur->n_frames      = enc_tur->n_frames;
-	dec_tur->sub->n_frames = enc_tur->sub->n_frames;
 
 	dec->store(vals);
 
@@ -117,8 +111,7 @@ void Codec_turbo_DB
 
 	if (itl != nullptr)
 	{
-		itl->core->size     = enc->K >> 1;
-		itl->core->n_frames = enc->n_frames;
+		itl->core->size = enc->K >> 1;
 
 		itl->store(vals);
 

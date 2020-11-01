@@ -26,7 +26,7 @@ private:
 #endif
 
 public:
-	Source_random(const int K, const int seed = 0, const int n_frames = 1);
+	Source_random(const int K, const int seed = 0);
 
 	virtual ~Source_random() = default;
 

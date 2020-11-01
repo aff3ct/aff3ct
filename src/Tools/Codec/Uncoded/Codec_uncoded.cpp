@@ -14,7 +14,7 @@ template <typename B, typename Q>
 Codec_uncoded<B,Q>
 ::Codec_uncoded(const factory::Encoder_NO &enc_params,
                 const factory::Decoder_NO &dec_params)
-: Codec_SISO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw, enc_params.n_frames)
+: Codec_SISO<B,Q>(enc_params.K, enc_params.N_cw, enc_params.N_cw)
 {
 	// ----------------------------------------------------------------------------------------------------- exceptions
 	if (enc_params.K != dec_params.K)
@@ -41,21 +41,12 @@ Codec_uncoded<B,Q>
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (enc_params.n_frames != dec_params.n_frames)
-	{
-		std::stringstream message;
-		message << "'enc_params.n_frames' has to be equal to 'dec_params.n_frames' ('enc_params.n_frames' = "
-		        << enc_params.n_frames << ", 'dec_params.n_frames' = " << dec_params.n_frames << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	// ---------------------------------------------------------------------------------------------------- allocations
 	factory::Puncturer pct_params;
-	pct_params.type     = "NO";
-	pct_params.K        = enc_params.K;
-	pct_params.N        = enc_params.N_cw;
-	pct_params.N_cw     = enc_params.N_cw;
-	pct_params.n_frames = enc_params.n_frames;
+	pct_params.type = "NO";
+	pct_params.K    = enc_params.K;
+	pct_params.N    = enc_params.N_cw;
+	pct_params.N_cw = enc_params.N_cw;
 
 	this->set_puncturer(pct_params.build<B,Q>());
 	this->set_encoder(enc_params.build<B>());
@@ -68,7 +59,7 @@ Codec_uncoded<B,Q>
 		this->set_decoder_siho(dec_params.build<B,Q>(&this->get_encoder()));
 	}
 
-	this->set_extractor(new module::Extractor_uncoded<B,Q>(enc_params.K, enc_params.n_frames));
+	this->set_extractor(new module::Extractor_uncoded<B,Q>(enc_params.K));
 }
 
 template <typename B, typename Q>

@@ -21,8 +21,7 @@ protected:
 public:
 	Puncturer_polar_shortlast(const int &K,
 	                          const int &N,
-	                          const tools::Frozenbits_generator &fb_generator,
-	                          const int n_frames = 1);
+	                          const tools::Frozenbits_generator &fb_generator);
 	virtual ~Puncturer_polar_shortlast() = default;
 
 	virtual Puncturer_polar_shortlast<B,Q>* clone() const;

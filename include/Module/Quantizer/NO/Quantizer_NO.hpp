@@ -15,7 +15,7 @@ template <typename R = float, typename Q = int>
 class Quantizer_NO : public Quantizer<R,Q>
 {
 public:
-	Quantizer_NO(const int N, const int n_frames = 1);
+	Quantizer_NO(const int N);
 	virtual ~Quantizer_NO() = default;
 
 	virtual Quantizer_NO<R,Q>* clone() const;

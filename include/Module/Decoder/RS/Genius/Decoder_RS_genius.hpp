@@ -26,7 +26,7 @@ protected:
 	std::vector<S> X_Ns; // packed as symbols X_N
 
 public:
-	Decoder_RS_genius(const int K, const int N, const tools::RS_polynomial_generator &GF, Encoder<B> &encoder, const int n_frames = 1);
+	Decoder_RS_genius(const int K, const int N, const tools::RS_polynomial_generator &GF, Encoder<B> &encoder);
 	virtual ~Decoder_RS_genius() = default;
 
 protected:

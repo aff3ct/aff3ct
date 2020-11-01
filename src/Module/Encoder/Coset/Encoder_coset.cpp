@@ -8,8 +8,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_coset<B>
-::Encoder_coset(const int K, const int N, const int seed, const int n_frames)
-: Encoder<B>(K, N, n_frames), rd_engine(seed), uniform_dist(0, 1)
+::Encoder_coset(const int K, const int N, const int seed)
+: Encoder<B>(K, N), rd_engine(seed), uniform_dist(0, 1)
 {
 	const std::string name = "Encoder_coset";
 	this->set_name(name);

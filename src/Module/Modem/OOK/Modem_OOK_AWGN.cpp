@@ -10,8 +10,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename R, typename Q>
 Modem_OOK_AWGN<B,R,Q>
-::Modem_OOK_AWGN(const int N, const bool disable_sig2, const int n_frames)
-: Modem_OOK<B,R,Q>(N, n_frames),
+::Modem_OOK_AWGN(const int N, const bool disable_sig2)
+: Modem_OOK<B,R,Q>(N),
   disable_sig2(disable_sig2),
   sigma_factor((R)1.0)
 {

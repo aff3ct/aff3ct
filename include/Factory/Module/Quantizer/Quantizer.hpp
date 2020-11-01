@@ -32,7 +32,6 @@ public:
 	float       range      = 0.f;
 	int         n_bits     = 8;
 	int         n_decimals = 3;
-	int         n_frames   = 1;
 
 	// -------------------------------------------------------------------------------------------------------- METHODS
 	explicit Quantizer(const std::string &p = Quantizer_prefix);

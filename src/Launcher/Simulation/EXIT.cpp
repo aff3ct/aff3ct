@@ -100,9 +100,6 @@ void EXIT<B,R>
 
 	params.cdc->enc->seed = params.local_seed;
 
-	params.mdm->n_frames = params.src->n_frames;
-	params.chn->n_frames = params.src->n_frames;
-
 	auto pmnt = params.mnt->get_prefix();
 
 	if (!this->arg_vals.exist({pmnt+"-trials", "n"}) && params.cdc->K != 0)

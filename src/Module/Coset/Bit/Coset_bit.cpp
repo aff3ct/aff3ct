@@ -5,8 +5,8 @@
 using namespace aff3ct::module;
 
 template <typename B, typename D>
-Coset_bit<B,D>::Coset_bit(const int size, const int n_frames)
-: Coset<B,D>(size, n_frames)
+Coset_bit<B,D>::Coset_bit(const int size)
+: Coset<B,D>(size)
 {
 	const std::string name = "Coset_bit";
 	this->set_name(name);

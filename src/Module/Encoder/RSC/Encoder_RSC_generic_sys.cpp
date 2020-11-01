@@ -11,9 +11,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_RSC_generic_sys<B>
-::Encoder_RSC_generic_sys(const int& K, const int& N, const bool buffered_encoding, const std::vector<int> poly,
-                          const int n_frames)
-: Encoder_RSC_sys<B>(K, N, (int)std::floor(std::log2(poly[0])), n_frames, buffered_encoding),
+::Encoder_RSC_generic_sys(const int& K, const int& N, const bool buffered_encoding, const std::vector<int> poly)
+: Encoder_RSC_sys<B>(K, N, (int)std::floor(std::log2(poly[0])), buffered_encoding),
   out_parity(),
   next_state(),
   sys_tail  ()

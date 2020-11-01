@@ -29,14 +29,12 @@ protected:
 
 public:
 	Channel_optical(const int N,
-	                const tools::User_pdf_noise_generator<R>& pdf_noise_generator,
-	                const int n_frames = 1);
+	                const tools::User_pdf_noise_generator<R>& pdf_noise_generator);
 
 	Channel_optical(const int N,
 	                const tools::Distributions<R>& dist,
 	                const tools::User_pdf_noise_generator_implem implem = tools::User_pdf_noise_generator_implem::STD,
-	                const int seed = 0,
-	                const int n_frames = 1);
+	                const int seed = 0);
 
 	virtual ~Channel_optical() = default;
 

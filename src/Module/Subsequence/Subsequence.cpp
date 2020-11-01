@@ -10,7 +10,7 @@ using namespace aff3ct::module;
 
 Subsequence
 ::Subsequence(tools::Sequence &sequence)
-: Module(sequence.get_firsts_tasks()[0][0]->get_module().get_n_frames()),
+: Module(),
   sequence_extern(&sequence)
 {
 	this->init();
@@ -18,7 +18,7 @@ Subsequence
 
 Subsequence
 ::Subsequence(const tools::Sequence &sequence)
-: Module(sequence.get_firsts_tasks()[0][0]->get_module().get_n_frames()),
+: Module(),
   sequence_cloned(sequence.clone()), sequence_extern(nullptr)
 {
 	this->init();
@@ -165,5 +165,20 @@ void Subsequence
 			while (p.get_socket_type(*p.sockets[sid]) != socket_t::SOUT) sid++;
 			p.sockets[sid++]->bind(*s);
 		}
+	}
+}
+
+void Subsequence
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Module::set_n_frames(n_frames);
+
+		if (this->sequence_extern)
+			this->sequence_extern->set_n_frames(n_frames);
+		else
+			this->sequence_cloned->set_n_frames(n_frames);
 	}
 }

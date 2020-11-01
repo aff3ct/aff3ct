@@ -6,8 +6,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_RSC3_CPE_sys<B>
-::Encoder_RSC3_CPE_sys(const int& K, const int& N, const int& n_frames, const bool buffered_encoding)
-: Encoder_RSC_sys<B>(K, N, 3, n_frames, buffered_encoding)
+::Encoder_RSC3_CPE_sys(const int& K, const int& N, const bool buffered_encoding)
+: Encoder_RSC_sys<B>(K, N, 3, buffered_encoding)
 {
 	const std::string name = "Encoder_RSC3_CPE_sys";
 	this->set_name(name);

@@ -57,9 +57,8 @@ inline void normalize_scl_metrics(std::vector<signed char> &metrics, const int L
 
 template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_fast_sys<B,R,API_polar>
-::Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-                             const int n_frames)
-: Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames()),
+::Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits)
+: Decoder_SIHO<B,R>(K, N, API_polar::get_n_frames()),
   m                ((int)std::log2(N)),
   L                (L),
   frozen_bits      (frozen_bits),
@@ -148,8 +147,8 @@ template <typename B, typename R, class API_polar>
 Decoder_polar_SCL_fast_sys<B,R,API_polar>
 ::Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
                              const std::vector<tools::Pattern_polar_i*> &polar_patterns,
-                             const int idx_r0, const int idx_r1, const int n_frames)
-: Decoder_SIHO<B,R>(K, N, n_frames, API_polar::get_n_frames()),
+                             const int idx_r0, const int idx_r1)
+: Decoder_SIHO<B,R>(K, N, API_polar::get_n_frames()),
   m                ((int)std::log2(N)),
   L                (L),
   frozen_bits      (frozen_bits),

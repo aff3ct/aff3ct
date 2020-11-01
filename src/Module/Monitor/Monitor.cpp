@@ -6,8 +6,8 @@ using namespace aff3ct;
 using namespace aff3ct::module;
 
 Monitor
-::Monitor(int n_frames)
-: Module(n_frames)
+::Monitor()
+: Module()
 {
 	const std::string name = "Monitor";
 	this->set_name(name);

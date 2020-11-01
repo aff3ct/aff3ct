@@ -26,10 +26,12 @@ private:
 public:
 	Encoder_RSC_generic_json_sys(const int& K, const int& N,
 	                             const bool buffered_encoding = true, std::vector<int> poly = {5,7},
-	                             std::ostream &stream = std::cout, const int n_frames = 1);
+	                             std::ostream &stream = std::cout);
 	virtual ~Encoder_RSC_generic_json_sys() = default;
 
 	std::vector<std::vector<int>> get_trellis();
+
+	virtual void set_n_frames(const int n_frames);
 
 protected:
 	int inner_encode(const int bit_sys, int &state);

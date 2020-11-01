@@ -18,7 +18,7 @@ template <typename B = int>
 class CRC_polynomial_inter : public CRC_polynomial<B>
 {
 public:
-	CRC_polynomial_inter(const int K, const std::string &poly_key, const int size, const int n_frames);
+	CRC_polynomial_inter(const int K, const std::string &poly_key, const int size);
 	virtual ~CRC_polynomial_inter() = default;
 	virtual CRC_polynomial_inter<B>* clone() const;
 

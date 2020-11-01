@@ -21,7 +21,7 @@ class Decoder_polar_SCL_naive_CA_sys : public Decoder_polar_SCL_naive_CA<B,R,F,G
 
 public:
 	Decoder_polar_SCL_naive_CA_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits,
-	                               const CRC<B>& crc, const int n_frames = 1);
+	                               const CRC<B>& crc);
 
 	virtual ~Decoder_polar_SCL_naive_CA_sys() = default;
 

@@ -100,9 +100,8 @@ template <typename B, typename R>
 Decoder_RSC_BCJR_inter<B,R>
 ::Decoder_RSC_BCJR_inter(const int &K,
                          const std::vector<std::vector<int>> &trellis,
-                         const bool buffered_encoding,
-                         const int n_frames)
-: Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, n_frames, mipp::nElmtsPerRegister<R>())
+                         const bool buffered_encoding)
+: Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, mipp::N<R>())
 {
 	const std::string name = "Decoder_RSC_BCJR_inter";
 	this->set_name(name);

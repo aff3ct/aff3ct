@@ -10,8 +10,8 @@ namespace module
 
 template <typename O>
 Loop_predicate<O>
-::Loop_predicate(const tools::Predicate &predicate, const size_t n_elmts_out, const int n_frames)
-: Loop(1, typeid(int8_t), n_elmts_out, typeid(O), n_frames),
+::Loop_predicate(const tools::Predicate &predicate, const size_t n_elmts_out)
+: Loop(1, typeid(int8_t), n_elmts_out, typeid(O)),
   predicate(predicate.clone()),
   use_hack(true),
   hack(1)
@@ -27,9 +27,8 @@ Loop_predicate<O>
 ::Loop_predicate(const tools::Predicate &predicate,
                  const size_t n_elmts_in,
                  const std::type_index datatype_in,
-                 const size_t n_elmts_out,
-                 const int n_frames)
-: Loop(n_elmts_in, datatype_in, n_elmts_out, typeid(O), n_frames),
+                 const size_t n_elmts_out)
+: Loop(n_elmts_in, datatype_in, n_elmts_out, typeid(O)),
   predicate(predicate.clone()),
   use_hack(false)
 {

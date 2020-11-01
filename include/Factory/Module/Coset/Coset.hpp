@@ -28,7 +28,6 @@ public:
 
 	// optional parameters
 	std::string type     = "STD";
-	int         n_frames = 1;
 
 	// -------------------------------------------------------------------------------------------------------- METHODS
 	explicit Coset(const std::string &p = Coset_prefix);

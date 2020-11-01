@@ -24,7 +24,7 @@ protected:
 	std::vector<mipp::Reg<B>> regs_par;
 
 public:
-	Encoder_BCH_inter(const int& K, const int& N, const tools::BCH_polynomial_generator<B>& GF, const int n_frames = 1);
+	Encoder_BCH_inter(const int& K, const int& N, const tools::BCH_polynomial_generator<B>& GF);
 
 	virtual ~Encoder_BCH_inter() = default;
 

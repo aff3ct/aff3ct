@@ -31,7 +31,7 @@ public:
 	virtual Decoder_maximum_likelihood<B,R>* clone() const;
 
 protected:
-	Decoder_maximum_likelihood(const int K, const int N, const Encoder<B> &encoder, const int n_frames = 1);
+	Decoder_maximum_likelihood(const int K, const int N, const Encoder<B> &encoder);
 
 	virtual void deep_copy(const Decoder_maximum_likelihood<B,R> &m);
 

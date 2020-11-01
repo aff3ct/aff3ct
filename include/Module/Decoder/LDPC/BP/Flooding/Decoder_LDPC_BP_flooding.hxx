@@ -18,16 +18,15 @@ Decoder_LDPC_BP_flooding<B,R,Update_rule>
                            const std::vector<uint32_t> &info_bits_pos,
                            const Update_rule &up_rule,
                            const bool enable_syndrome,
-                           const int syndrome_depth,
-                           const int n_frames)
-: Decoder_SISO<B,R>(K, N, n_frames, 1                                    ),
-  Decoder_LDPC_BP  (K, N, n_ite, _H, enable_syndrome, syndrome_depth     ),
-  info_bits_pos    (info_bits_pos                                        ),
-  up_rule          (up_rule                                              ),
-  transpose        (this->H.get_n_connections()                          ),
-  post             (N, -1                                                ),
-  msg_chk_to_var   (n_frames, std::vector<R>(this->H.get_n_connections())),
-  msg_var_to_chk   (n_frames, std::vector<R>(this->H.get_n_connections()))
+                           const int syndrome_depth)
+: Decoder_SISO<B,R>(K, N, 1                                                    ),
+  Decoder_LDPC_BP  (K, N, n_ite, _H, enable_syndrome, syndrome_depth           ),
+  info_bits_pos    (info_bits_pos                                              ),
+  up_rule          (up_rule                                                    ),
+  transpose        (this->H.get_n_connections()                                ),
+  post             (N, -1                                                      ),
+  msg_chk_to_var   (this->n_frames, std::vector<R>(this->H.get_n_connections())),
+  msg_var_to_chk   (this->n_frames, std::vector<R>(this->H.get_n_connections()))
 {
 	const std::string name = "Decoder_LDPC_BP_flooding<" + this->up_rule.get_name() + ">";
 	this->set_name(name);
@@ -252,5 +251,27 @@ void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 		msg_chk_to_var_ptr += var_degree;
 	}
 }
+
+template <typename B, typename R, class Update_rule>
+void Decoder_LDPC_BP_flooding<B,R,Update_rule>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Decoder_SISO<B,R>::set_n_frames(n_frames);
+
+		const auto vec_size = this->msg_chk_to_var[0].size();
+		const auto old_msg_chk_to_var_size = this->msg_chk_to_var.size();
+		const auto new_msg_chk_to_var_size = (old_msg_chk_to_var_size / old_n_frames) * n_frames;
+		this->msg_chk_to_var.resize(new_msg_chk_to_var_size, std::vector<R>(vec_size));
+
+		const auto vec_size2 = this->msg_var_to_chk[0].size();
+		const auto old_msg_var_to_chk_size = this->msg_var_to_chk.size();
+		const auto new_msg_var_to_chk_size = (old_msg_var_to_chk_size / old_n_frames) * n_frames;
+		this->msg_var_to_chk.resize(new_msg_var_to_chk_size, std::vector<R>(vec_size2));
+	}
+}
+
 }
 }

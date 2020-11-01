@@ -31,14 +31,13 @@ public:
 	                        const tools::Sparse_matrix &H,
 	                        const std::vector<unsigned> &info_bits_pos,
 	                        const bool enable_syndrome = true,
-	                        const int syndrome_depth = 1,
-	                        const int n_frames = 1);
+	                        const int syndrome_depth = 1);
 	virtual ~Decoder_LDPC_BP_peeling() = default;
 	virtual Decoder_LDPC_BP_peeling<B,R>* clone() const;
 
 protected:
-	void _store         (B *V_K,               const int frame_id);
-	void _store_cw      (B *V_N,               const int frame_id);
+	void _store        (B *V_K,               const int frame_id);
+	void _store_cw     (B *V_N,               const int frame_id);
 
 	int _decode_hiho   (const B *Y_N, B *V_K, const int frame_id);
 	int _decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id);

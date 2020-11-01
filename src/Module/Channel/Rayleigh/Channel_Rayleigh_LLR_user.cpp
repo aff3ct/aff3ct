@@ -26,12 +26,11 @@ Channel_Rayleigh_LLR_user<R>
                             const tools::Gaussian_gen<R> &gaussian_generator,
                             const std::string& gains_filename,
                             const int gain_occurrences,
-                            const bool add_users,
-                            const int n_frames)
-: Channel<R>(N, n_frames),
+                            const bool add_users)
+: Channel<R>(N),
   complex(complex),
   add_users(add_users),
-  gains(N * n_frames),
+  gains(N * this->n_frames),
   gaussian_generator(gaussian_generator.clone()),
   gain_occur(gain_occurrences),
   current_gain_occur(0),
@@ -85,12 +84,11 @@ Channel_Rayleigh_LLR_user<R>
                             const tools::Gaussian_noise_generator_implem implem,
                             const int seed,
                             const int gain_occurrences,
-                            const bool add_users,
-                            const int n_frames)
-: Channel<R>(N, n_frames),
+                            const bool add_users)
+: Channel<R>(N),
   complex(complex),
   add_users(add_users),
-  gains(N * n_frames),
+  gains(N * this->n_frames),
   gaussian_generator(create_gaussian_generator<R>(implem, seed)),
   gain_occur(gain_occurrences),
   current_gain_occur(0),
@@ -209,6 +207,21 @@ void Channel_Rayleigh_LLR_user<R>
 	Channel<R>::check_noise();
 
 	this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
+}
+
+template<typename R>
+void Channel_Rayleigh_LLR_user<R>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Channel<R>::set_n_frames(n_frames);
+
+		const auto old_gains_size = this->gains.size();
+		const auto new_gains_size = (old_gains_size / old_n_frames) * n_frames;
+		this->gains.resize(new_gains_size);
+	}
 }
 
 // ==================================================================================== explicit template instantiation

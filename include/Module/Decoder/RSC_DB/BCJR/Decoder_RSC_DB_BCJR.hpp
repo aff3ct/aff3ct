@@ -32,8 +32,7 @@ protected:
 public:
 	Decoder_RSC_DB_BCJR(const int K,
 	                    const std::vector<std::vector<int>> &trellis,
-	                    const bool buffered_encoding = true,
-	                    const int n_frames = 1);
+	                    const bool buffered_encoding = true);
 	virtual ~Decoder_RSC_DB_BCJR() = default;
 	virtual Decoder_RSC_DB_BCJR<B,R>* clone() const;
 

@@ -35,7 +35,7 @@ namespace module
 class AProbe : public Module
 {
 protected:
-	AProbe(const int n_frames = 1);
+	AProbe();
 	virtual ~AProbe() = default;
 };
 
@@ -52,7 +52,7 @@ protected:
 	tools::Reporter_probe& reporter;
 
 public:
-	Probe(const int size, const std::string &col_name, tools::Reporter_probe& reporter, const int n_frames = 1);
+	Probe(const int size, const std::string &col_name, tools::Reporter_probe& reporter, const int n_frames);
 
 	virtual ~Probe() = default;
 
@@ -64,6 +64,8 @@ public:
 	virtual std::type_index get_datatype() const = 0;
 
 	virtual void reset();
+
+	void set_n_frames(const int n_frames);
 
 protected:
 	virtual void _probe(const T *in, const int frame_id);

@@ -24,8 +24,7 @@ protected:
 	uint32_t min_hamming_dist;
 
 public:
-	Decoder_maximum_likelihood_std(const int K, const int N, const Encoder<B> &encoder, const bool hamming = false,
-	                               const int n_frames = 1);
+	Decoder_maximum_likelihood_std(const int K, const int N, const Encoder<B> &encoder, const bool hamming = false);
 	virtual ~Decoder_maximum_likelihood_std() = default;
 	virtual Decoder_maximum_likelihood_std<B,R>* clone() const;
 

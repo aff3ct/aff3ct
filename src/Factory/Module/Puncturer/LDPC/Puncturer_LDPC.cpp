@@ -113,7 +113,7 @@ template <typename B, typename Q>
 module::Puncturer<B,Q>* Puncturer_LDPC
 ::build() const
 {
-	if (this->type == "LDPC") return new module::Puncturer_LDPC<B,Q>(this->K, this->N, this->N_cw, this->pattern, this->n_frames);
+	if (this->type == "LDPC") return new module::Puncturer_LDPC<B,Q>(this->K, this->N, this->N_cw, this->pattern);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

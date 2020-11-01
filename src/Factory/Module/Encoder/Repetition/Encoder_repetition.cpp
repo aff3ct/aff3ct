@@ -62,7 +62,7 @@ template <typename B>
 module::Encoder_repetition_sys<B>* Encoder_repetition
 ::build() const
 {
-	if (this->type == "REP") return new module::Encoder_repetition_sys<B>(this->K, this->N_cw, this->buffered, this->n_frames);
+	if (this->type == "REP") return new module::Encoder_repetition_sys<B>(this->K, this->N_cw, this->buffered);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

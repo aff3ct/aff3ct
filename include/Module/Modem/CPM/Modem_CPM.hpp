@@ -55,8 +55,7 @@ public:
 	          const int  cpm_p              = 2,
 	          const std::string &mapping    = mapping_default,
 	          const std::string &wave_shape = wave_shape_default,
-	          const bool no_sig2            = false,
-	          const int  n_frames           = 1);
+	          const bool no_sig2            = false);
 	virtual ~Modem_CPM() = default;
 
 	virtual Modem_CPM<B,R,Q,MAX>* clone() const;

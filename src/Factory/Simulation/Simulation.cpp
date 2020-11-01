@@ -79,6 +79,9 @@ void Simulation
 
 	tools::add_arg(args, p, class_name+"p+seed,S",
 		cli::Integer(cli::Positive()));
+
+	tools::add_arg(args, p, class_name+"p+inter-fra,F",
+		cli::Integer(cli::Positive(), cli::Non_zero()));
 }
 
 void Simulation
@@ -92,10 +95,11 @@ void Simulation
 
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-meta"          })) this->meta        =         vals.at    ({p+"-meta"        });
-	if(vals.exist({p+"-stop-time"     })) this->stop_time   = seconds(vals.to_int({p+"-stop-time"   }));
-	if(vals.exist({p+"-max-fra",   "n"})) this->max_frame   =         vals.to_int({p+"-max-fra", "n"});
-	if(vals.exist({p+"-seed",      "S"})) this->global_seed =         vals.to_int({p+"-seed",    "S"});
+	if(vals.exist({p+"-meta"          })) this->meta        =         vals.at    ({p+"-meta"         });
+	if(vals.exist({p+"-stop-time"     })) this->stop_time   = seconds(vals.to_int({p+"-stop-time"    }));
+	if(vals.exist({p+"-max-fra",   "n"})) this->max_frame   =         vals.to_int({p+"-max-fra",  "n"});
+	if(vals.exist({p+"-seed",      "S"})) this->global_seed =         vals.to_int({p+"-seed",     "S"});
+	if(vals.exist({p+"-inter-fra", "F"})) this->n_frames    =         vals.to_int({p+"-inter-fra","F"});
 	if(vals.exist({p+"-stats"         })) this->statistics  = true;
 	if(vals.exist({p+"-dbg"           })) this->debug       = true;
 	if(vals.exist({p+"-crit-nostop"   })) this->crit_nostop = true;
@@ -178,6 +182,8 @@ void Simulation
 		if (this->debug_limit)
 			headers[p].push_back(std::make_pair("Debug limit", std::to_string(this->debug_limit)));
 	}
+
+	headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 
 	std::string threads = "unused";
 	if (this->n_threads)

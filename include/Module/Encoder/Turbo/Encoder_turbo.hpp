@@ -19,7 +19,7 @@ template <typename B = int>
 class Encoder_turbo : public Encoder<B>
 {
 protected:
-	const Interleaver<B> &pi; // the interleaver
+	Interleaver<B> &pi; // the interleaver
 
 	std::shared_ptr<Encoder<B>> enco_n; // polar systematic encoder
 	std::shared_ptr<Encoder<B>> enco_i; // sub encoder
@@ -28,14 +28,15 @@ protected:
 	std::vector<B> X_N_tmp;
 
 public:
-	Encoder_turbo(const int& K, const int& N, const Interleaver<B> &pi, const Encoder<B> &enco_n,
-	              const Encoder<B> &enco_i);
+	Encoder_turbo(const int& K, const int& N, const Encoder<B> &enco_n, const Encoder<B> &enco_i, Interleaver<B> &pi);
 	virtual ~Encoder_turbo() = default;
 	virtual Encoder_turbo<B>* clone() const;
 
 	int tail_length() const;
 
 	virtual bool is_codeword(const B *X_N);
+
+	virtual void set_n_frames(const int n_frames);
 
 protected:
 	virtual void deep_copy(const Encoder_turbo<B> &m);

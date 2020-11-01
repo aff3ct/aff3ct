@@ -39,9 +39,9 @@ void RSC<L,B,R,Q>
 	params_cdc->store(this->arg_vals);
 
 	if (dec_rsc->simd_strategy == "INTER")
-		this->params.src->n_frames = mipp::N<Q>();
+		this->params.n_frames = mipp::N<Q>();
 	if (dec_rsc->simd_strategy == "INTRA")
-		this->params.src->n_frames = (int)std::ceil(mipp::N<Q>() / 8.f);
+		this->params.n_frames = (int)std::ceil(mipp::N<Q>() / 8.f);
 
 	if (std::is_same<Q,int8_t>())
 	{
@@ -55,9 +55,6 @@ void RSC<L,B,R,Q>
 	}
 
 	L::store_args();
-
-	params_cdc->enc->n_frames = this->params.src->n_frames;
-	params_cdc->dec->n_frames = this->params.src->n_frames;
 }
 
 // ==================================================================================== explicit template instantiation

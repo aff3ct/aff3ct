@@ -25,8 +25,8 @@ class Frozenbits_generator_MK : public Factory
 public:
 	// ----------------------------------------------------------------------------------------------------- PARAMETERS
 	// required parameters
-	int         K       = -1;
-	int         N_cw    = -1;
+	int         K                  = -1;
+	int         N_cw               = -1;
 
 	// optional parameters
 	std::string type               = "GA";

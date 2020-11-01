@@ -38,7 +38,7 @@ protected:
 	const std::vector<float> alpha;
 	const std::vector<float> beta;
 
-	const Interleaver<R> &pi;
+	Interleaver<R> &pi;
 	std::shared_ptr<Decoder_chase_pyndiah<B,R>> cp_r; // row decoder
 	std::shared_ptr<Decoder_chase_pyndiah<B,R>> cp_c; // col decoder
 
@@ -52,13 +52,15 @@ protected:
 public:
 	Decoder_turbo_product(const int& n_ite,
 	                      const std::vector<float>& alpha,
-	                      const Interleaver<R> &pi,
 	                      const Decoder_chase_pyndiah<B,R> &cp_r,
 	                      const Decoder_chase_pyndiah<B,R> &cp_c,
-	                      const std::vector<float>& beta = {},
-	                      const int n_frames = 1);
+	                            Interleaver<R> &pi,
+	                      const std::vector<float>& beta = {});
 	virtual ~Decoder_turbo_product() = default;
+
 	virtual Decoder_turbo_product<B,R>* clone() const;
+
+	virtual void set_n_frames(const int n_frames);
 
 protected:
 	virtual void deep_copy(const Decoder_turbo_product<B,R> &m);
@@ -69,7 +71,7 @@ protected:
 	// when return_K_siso = 0 then hard decode and fill V_K_i
 	// else if = 1 then hard decode and fill V_H_i
 	// else soft decode and fill Y_N_i
-	virtual int _decode(const R *Y_N, int return_K_siso);
+	virtual int _decode(const R *Y_N, const int frame_id, int return_K_siso);
 
 };
 

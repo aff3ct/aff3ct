@@ -15,7 +15,7 @@ template <typename B = int, typename R = float, typename Q = R>
 class Modem_OOK_BEC : public Modem_OOK<B,R,Q>
 {
 public:
-	Modem_OOK_BEC(const int N, const int n_frames = 1);
+	Modem_OOK_BEC(const int N);
 	virtual ~Modem_OOK_BEC() = default;
 
 	virtual Modem_OOK_BEC<B,R,Q>* clone() const;

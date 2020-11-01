@@ -31,7 +31,6 @@ public:
 	std::string type        = "AZCW";
 	std::string path        = "";
 	bool        systematic  = true;
-	int         n_frames    = 1;
 	int         seed        = 0;
 	int         tail_length = 0;
 	int         start_idx   = 0;

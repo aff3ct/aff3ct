@@ -24,7 +24,7 @@ class Source : public Factory
 public:
 	// ----------------------------------------------------------------------------------------------------- PARAMETERS
 	// required parameters
-	int         K        = 0;
+	int         K          = 0;
 
 	// optional parameters
 	std::string type       = "RAND";
@@ -32,7 +32,6 @@ public:
 	std::string path       = "";
 	bool        auto_reset = true;
 	bool        fifo_mode  = false;
-	int         n_frames   = 1;
 	int         seed       = 0;
 	int         start_idx  = 0;
 

@@ -12,8 +12,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 CRC_polynomial<B>
-::CRC_polynomial(const int K, const std::string &poly_key, const int size, const int n_frames)
-: CRC<B>(K, size ? size : CRC_polynomial<B>::get_size(CRC_polynomial<B>::get_name(poly_key)), n_frames),
+::CRC_polynomial(const int K, const std::string &poly_key, const int size)
+: CRC<B>(K, size ? size : CRC_polynomial<B>::get_size(CRC_polynomial<B>::get_name(poly_key))),
   polynomial       (0                                     ),
   polynomial_packed(CRC_polynomial<B>::get_value(poly_key)),
   buff_crc         (0                                     )
@@ -166,6 +166,21 @@ bool CRC_polynomial<B>
 	std::copy(V_K, V_K + this->K + this->size, V_K_unpack.begin());
 	tools::Bit_packer::unpack(V_K_unpack, this->K + this->size);
 	return _check(V_K_unpack.data(), frame_id);
+}
+
+template <typename B>
+void CRC_polynomial<B>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		CRC<B>::set_n_frames(n_frames);
+
+		const auto old_buff_crc_size = this->buff_crc.size();
+		const auto new_buff_crc_size = (old_buff_crc_size / old_n_frames) * n_frames;
+		this->buff_crc.resize(new_buff_crc_size);
+	}
 }
 
 // ==================================================================================== explicit template instantiation

@@ -11,8 +11,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_RA<B, R>
-::Decoder_RA(const int& K, const int& N, const Interleaver<R>& interleaver, int max_iter, const int n_frames)
-: Decoder_SIHO<B,R>(K, N, n_frames, 1),
+::Decoder_RA(const int& K, const int& N, Interleaver<R>& interleaver, int max_iter)
+: Decoder_SIHO<B,R>(K, N, 1),
   rep_count(N/K),
   max_iter(max_iter),
   Fw(N),
@@ -55,6 +55,8 @@ Decoder_RA<B, R>
 	Xd[1].resize(N);
 	Xu[0].resize(N);
 	Xu[1].resize(N);
+
+	this->set_n_frames(interleaver.get_n_frames());
 }
 
 template <typename B, typename R>
@@ -70,6 +72,14 @@ template <typename B, typename R>
 int Decoder_RA<B, R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
+	if (this->interleaver.get_n_frames() != this->get_n_frames())
+	{
+		std::stringstream message;
+		message << "'interleaver.get_n_frames()' has to be equal to 'n_frames' ('interleaver.get_n_frames()' = "
+		        << this->interleaver.get_n_frames() << ", 'n_frames' = " << this->get_n_frames() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	//set F, B and Td at 0
 	for (auto i = 0; i < this->N; i++)
@@ -160,6 +170,18 @@ int Decoder_RA<B, R>
 ::sign(R x)
 {
 	return (x > 0) ? 1 : -1;
+}
+
+template <typename B, typename R>
+void Decoder_RA<B, R>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Decoder_SIHO<B,R>::set_n_frames(n_frames);
+		this->interleaver.set_n_frames(n_frames);
+	}
 }
 
 // ==================================================================================== explicit template instantiation

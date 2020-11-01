@@ -30,7 +30,6 @@ public:
 	std::string type          = "NO"; // "32-GZIP"; // type is the polynomial
 	std::string implem        = "FAST";
 	int         size          = 0;
-	int         n_frames      = 1;
 
 	// -------------------------------------------------------------------------------------------------------- METHODS
 	explicit CRC(const std::string &p = CRC_prefix);

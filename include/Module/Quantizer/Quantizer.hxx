@@ -25,8 +25,8 @@ Socket& Quantizer<R,Q>
 
 template <typename R, typename Q>
 Quantizer<R,Q>
-::Quantizer(const int N, const int n_frames)
-: Module(n_frames), N(N)
+::Quantizer(const int N)
+: Module(), N(N)
 {
 	const std::string name = "Quantizer";
 	this->set_name(name);

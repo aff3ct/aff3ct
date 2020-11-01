@@ -58,7 +58,6 @@ public:
 	                                   // to estimate the ROP
 
 	// ------- common parameters
-	int         n_frames     = 1;
 	std::string channel_type = "AWGN"; // the channel type used to build correct OOK modulation
 
 	// -------------------------------------------------------------------------------------------------------- METHODS

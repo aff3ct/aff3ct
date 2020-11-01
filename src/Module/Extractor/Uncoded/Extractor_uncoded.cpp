@@ -8,8 +8,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename Q>
 Extractor_uncoded<B,Q>
-::Extractor_uncoded(const int K, const int n_frames)
-: Extractor<B,Q>(K, K, 0, n_frames),
+::Extractor_uncoded(const int K)
+: Extractor<B,Q>(K, K, 0),
   info_bits_pos(K, 0)
 {
 	const std::string name = "Extractor_uncoded";

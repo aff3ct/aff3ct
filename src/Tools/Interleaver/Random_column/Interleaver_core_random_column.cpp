@@ -9,9 +9,8 @@ using namespace aff3ct::tools;
 
 template <typename T>
 Interleaver_core_random_column<T>
-::Interleaver_core_random_column(const int size, const int n_cols, const int seed, const bool uniform,
-                                 const int n_frames)
-: Interleaver_core<T>(size, "random_column", uniform, n_frames),
+::Interleaver_core_random_column(const int size, const int n_cols, const int seed, const bool uniform)
+: Interleaver_core<T>(size, "random_column", uniform),
   rd_engine(), n_cols(n_cols), col_size(size / n_cols)
 {
 	if (col_size * n_cols != size)

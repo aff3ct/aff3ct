@@ -17,7 +17,7 @@ template <typename B = int>
 class Encoder_polar_sys : public Encoder_polar<B>
 {
 public:
-	Encoder_polar_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int& n_frames = 1);
+	Encoder_polar_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits);
 	virtual ~Encoder_polar_sys() = default;
 
 	virtual Encoder_polar_sys<B>* clone() const;

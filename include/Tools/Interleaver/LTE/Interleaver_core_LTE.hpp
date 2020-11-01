@@ -17,7 +17,7 @@ template <typename T = uint32_t>
 class Interleaver_core_LTE : public Interleaver_core<T>
 {
 public:
-	Interleaver_core_LTE(const int size, const int n_frames = 1);
+	Interleaver_core_LTE(const int size);
 	virtual ~Interleaver_core_LTE() = default;
 
 	virtual Interleaver_core_LTE<T>* clone() const;

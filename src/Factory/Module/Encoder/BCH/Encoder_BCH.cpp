@@ -66,11 +66,11 @@ module::Encoder_BCH<B>* Encoder_BCH
 	if (this->type == "BCH")
 	{
 		if (this->simd_strategy == "INTER")
-			return new module::Encoder_BCH_inter<B>(this->K, this->N_cw, GF, this->n_frames);
+			return new module::Encoder_BCH_inter<B>(this->K, this->N_cw, GF);
 		else if (this->simd_strategy == "INTRA")
 			throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 		else
-			return new module::Encoder_BCH<B>(this->K, this->N_cw, GF, this->n_frames);
+			return new module::Encoder_BCH<B>(this->K, this->N_cw, GF);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

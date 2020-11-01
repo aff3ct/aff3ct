@@ -10,8 +10,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_LDPC<B>
-::Encoder_LDPC(const int K, const int N, const int n_frames)
-: Encoder<B>(K, N, n_frames)
+::Encoder_LDPC(const int K, const int N)
+: Encoder<B>(K, N)
 {
 	const std::string name = "Encoder_LDPC";
 	this->set_name(name);
@@ -28,8 +28,8 @@ Encoder_LDPC<B>* Encoder_LDPC<B>
 
 template <typename B>
 Encoder_LDPC<B>
-::Encoder_LDPC(const int K, const int N, const tools::Sparse_matrix &G, const int n_frames)
-: Encoder<B>(K, N, n_frames), G(G)
+::Encoder_LDPC(const int K, const int N, const tools::Sparse_matrix &G)
+: Encoder<B>(K, N), G(G)
 {
 	const std::string name = "Encoder_LDPC";
 	this->set_name(name);
@@ -39,8 +39,8 @@ Encoder_LDPC<B>
 
 template <typename B>
 Encoder_LDPC<B>
-::Encoder_LDPC(const int K, const int N, const tools::Sparse_matrix &G, const tools::Sparse_matrix &H, const int n_frames)
-: Encoder<B>(K, N, n_frames), G(G), H(H)
+::Encoder_LDPC(const int K, const int N, const tools::Sparse_matrix &G, const tools::Sparse_matrix &H)
+: Encoder<B>(K, N), G(G), H(H)
 {
 	const std::string name = "Encoder_LDPC";
 	this->set_name(name);

@@ -178,14 +178,6 @@ void BFER_ite<B,R,Q>
 	}
 
 	params.cdc->enc->seed = params.local_seed;
-
-	params.crc->      n_frames = params.src->n_frames;
-	params.itl->core->n_frames = params.src->n_frames;
-	params.mdm->      n_frames = params.src->n_frames;
-	params.chn->      n_frames = params.src->n_frames;
-	params.qnt->      n_frames = params.src->n_frames;
-	params.mnt_er->   n_frames = params.src->n_frames;
-
 	params.mnt_er->max_frame = params.max_frame;
 
 #ifdef AFF3CT_MPI

@@ -35,7 +35,6 @@ void Codec_repetition
 	args.erase({pdec+"-cw-size",   "N"});
 	args.erase({pdec+"-info-bits", "K"});
 	args.erase({pdec+"-no-buff"       });
-	args.erase({pdec+"-fra",       "F"});
 }
 
 void Codec_repetition
@@ -51,7 +50,6 @@ void Codec_repetition
 	dec_r->K        = enc_r->K;
 	dec_r->N_cw     = enc_r->N_cw;
 	dec_r->buffered = enc_r->buffered;
-	dec_r->n_frames = enc_r->n_frames;
 
 	dec->store(vals);
 

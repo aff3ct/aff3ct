@@ -10,8 +10,8 @@ using namespace aff3ct::module;
 
 template <typename R>
 Channel_user_bs<R>
-::Channel_user_bs(const int N, const std::string &filename, const int n_frames)
-: Channel_user<R>(N, filename, false, n_frames)
+::Channel_user_bs(const int N, const std::string &filename)
+: Channel_user<R>(N, filename, false)
 {
 	const std::string name = "Channel_user_bs";
 	this->set_name(name);

@@ -23,7 +23,7 @@ private:
 
 public:
 	Encoder_RSC_generic_sys(const int& K, const int& N, const bool buffered_encoding = true,
-	                        std::vector<int> poly = {5,7}, const int n_frames = 1);
+	                        std::vector<int> poly = {5,7});
 	virtual ~Encoder_RSC_generic_sys() = default;
 
 	virtual Encoder_RSC_generic_sys<B>* clone() const;

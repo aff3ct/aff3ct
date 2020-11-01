@@ -9,8 +9,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_RS_std<B,R>
-::Decoder_RS_std(const int& K, const int& N, const tools::RS_polynomial_generator &GF, const int n_frames)
-: Decoder_RS<B,R>(K, N, GF, n_frames                            ),
+::Decoder_RS_std(const int& K, const int& N, const tools::RS_polynomial_generator &GF)
+: Decoder_RS<B,R>(K, N, GF                                      ),
   t2             (2 * this->t                                   ),
   elp            (this->N_p2_1+2, std::vector<int>(this->N_p2_1)),
   discrepancy    (this->N_p2_1+2                                ),

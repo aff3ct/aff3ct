@@ -24,13 +24,12 @@ class Puncturer : public Factory
 public:
 	// ----------------------------------------------------------------------------------------------------- PARAMETERS
 	// required parameters
-	int         K        = 0;
-	int         N        = 0;
+	int         K    = 0;
+	int         N    = 0;
 
 	// optional parameters
-	std::string type     = "NO";
-	int         N_cw     = 0;
-	int         n_frames = 1;
+	std::string type = "NO";
+	int         N_cw = 0;
 
 	// -------------------------------------------------------------------------------------------------------- METHODS
 	explicit Puncturer(const std::string &p = Puncturer_prefix);

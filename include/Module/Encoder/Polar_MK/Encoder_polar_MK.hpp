@@ -26,8 +26,7 @@ protected:
 	      std::vector<B>              u;
 
 public:
-	Encoder_polar_MK(const int& K, const int& N, const tools::Polar_code& code, const std::vector<bool>& frozen_bits,
-	                 const int n_frames = 1);
+	Encoder_polar_MK(const int& K, const int& N, const tools::Polar_code& code, const std::vector<bool>& frozen_bits);
 
 	virtual ~Encoder_polar_MK() = default;
 

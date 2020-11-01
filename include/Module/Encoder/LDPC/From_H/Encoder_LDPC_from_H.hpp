@@ -25,7 +25,7 @@ private:
 public:
 	Encoder_LDPC_from_H(const int K, const int N, const tools::Sparse_matrix &H,
 		                const std::string& G_method = "IDENTITY", const std::string& G_save_path = "",
-		                const bool G_save_path_single_thread = true, const int n_frames = 1);
+		                const bool G_save_path_single_thread = true);
 	virtual ~Encoder_LDPC_from_H() = default;
 
 	virtual Encoder_LDPC_from_H<B>* clone() const;

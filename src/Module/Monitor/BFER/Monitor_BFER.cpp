@@ -12,8 +12,8 @@ using namespace aff3ct::module;
 template <typename B>
 Monitor_BFER<B>
 ::Monitor_BFER(const int K, const unsigned max_fe, const unsigned max_n_frames,
-               const bool count_unknown_values, const int n_frames)
-: Monitor(n_frames), K(K), max_fe(max_fe), max_n_frames(max_n_frames),
+               const bool count_unknown_values)
+: Monitor(), K(K), max_fe(max_fe), max_n_frames(max_n_frames),
   count_unknown_values(count_unknown_values), err_hist(0), err_hist_activated(false)
 {
 	const std::string name = "Monitor_BFER";

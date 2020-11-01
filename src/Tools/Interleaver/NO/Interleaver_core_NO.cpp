@@ -7,8 +7,8 @@ using namespace aff3ct::tools;
 
 template <typename T>
 Interleaver_core_NO<T>
-::Interleaver_core_NO(const int size, const int n_frames)
-: Interleaver_core<T>(size, "NO", false, n_frames)
+::Interleaver_core_NO(const int size)
+: Interleaver_core<T>(size, "NO", false)
 {
 	this->init();
 }

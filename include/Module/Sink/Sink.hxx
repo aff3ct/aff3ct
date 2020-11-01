@@ -25,8 +25,8 @@ Socket& Sink<B>
 
 template <typename B>
 Sink<B>
-::Sink(const int K, const int n_frames)
-: Module(n_frames), K(K)
+::Sink(const int K)
+: Module(), K(K)
 {
 	const std::string name = "Sink";
 	this->set_name(name);

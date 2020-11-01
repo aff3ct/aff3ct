@@ -12,12 +12,11 @@ template <typename B, typename R>
 Decoder_turbo_product<B,R>
 ::Decoder_turbo_product(const int& n_ite,
                         const std::vector<float>& alpha,
-                        const Interleaver<R>& pi,
                         const Decoder_chase_pyndiah<B,R> &cp_r,
                         const Decoder_chase_pyndiah<B,R> &cp_c,
-                        const std::vector<float>& beta,
-                        const int n_frames)
-: Decoder_SISO<B,R>(cp_r.get_K() * cp_c.get_K(), pi.get_core().get_size(), n_frames, 1),
+                              Interleaver<R>& pi,
+                        const std::vector<float>& beta)
+: Decoder_SISO<B,R>(cp_r.get_K() * cp_c.get_K(), pi.get_core().get_size(), 1),
   n_ite(n_ite),
   alpha(alpha),
   beta (beta ),
@@ -102,12 +101,13 @@ Decoder_turbo_product<B,R>
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-
 	if (beta.size())
 	{
 		this->cp_r->clear_beta();
 		this->cp_c->clear_beta();
 	}
+
+	this->set_n_frames(this->pi.get_n_frames());
 }
 
 template <typename B, typename R>
@@ -137,7 +137,7 @@ int Decoder_turbo_product<B, R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	auto status = this->_decode(Y_N1, 2);
+	auto status = this->_decode(Y_N1, frame_id, 2);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -160,7 +160,7 @@ int Decoder_turbo_product<B, R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	auto status = this->_decode(Y_N, 0);
+	auto status = this->_decode(Y_N, frame_id, 0);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -183,7 +183,7 @@ int Decoder_turbo_product<B, R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	auto status = this->_decode(Y_N, 1);
+	auto status = this->_decode(Y_N, frame_id, 1);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -199,16 +199,24 @@ int Decoder_turbo_product<B, R>
 
 template <typename B, typename R>
 int Decoder_turbo_product<B,R>
-::_decode(const R *Y_N_cha, int return_K_siso)
+::_decode(const R *Y_N_cha, const int frame_id, int return_K_siso)
 {
+	if (this->pi.get_n_frames() != this->get_n_frames())
+	{
+		std::stringstream message;
+		message << "'pi.get_n_frames()' has to be equal to 'n_frames' ('pi.get_n_frames()' = "
+		        << this->pi.get_n_frames() << ", 'n_frames' = " << this->get_n_frames() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	const int n_cols = cp_r->get_N();
 	const int n_rows = cp_c->get_N();
 
-	pi.interleave(Y_N_cha, Y_N_cha_i.data(), 0, 1); // interleave data from the channel
+	pi.interleave(Y_N_cha, Y_N_cha_i.data(), frame_id, 1); // interleave data from the channel
 
 	for (int i = 0; i < n_ite; i++)
 	{
-		pi.interleave(Y_N_i.data(), Y_N_pi.data(), 0, 1); // columns becomes rows
+		pi.interleave(Y_N_i.data(), Y_N_pi.data(), frame_id, 1); // columns becomes rows
 
 		if (beta.size())
 		{
@@ -231,8 +239,7 @@ int Decoder_turbo_product<B,R>
 			}
 		}
 
-
-		pi.deinterleave(Y_N_pi.data(), Y_N_i.data(), 0, 1); // rows go back as columns
+		pi.deinterleave(Y_N_pi.data(), Y_N_i.data(), frame_id, 1); // rows go back as columns
 
 		// decode each row
 		if (i < (n_ite -1) || return_K_siso >= 2)
@@ -269,6 +276,18 @@ int Decoder_turbo_product<B,R>
 	}
 
 	return 0;
+}
+
+template <typename B, typename R>
+void Decoder_turbo_product<B,R>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Decoder_SISO<B,R>::set_n_frames(n_frames);
+		this->pi.set_n_frames(n_frames);
+	}
 }
 
 // ==================================================================================== explicit template instantiation

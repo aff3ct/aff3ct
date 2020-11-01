@@ -15,7 +15,7 @@ template <typename B = int, typename D = int>
 class Coset_bit : public Coset<B,D>
 {
 public:
-	Coset_bit(const int size, const int n_frames = 1);
+	Coset_bit(const int size);
 
 	virtual ~Coset_bit() = default;
 

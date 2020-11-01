@@ -39,7 +39,7 @@ protected:
 
 
 public:
-	Decoder_BCH_fast(const int& K, const int& N, const tools::BCH_polynomial_generator<B> &GF, const int n_frames = 1);
+	Decoder_BCH_fast(const int& K, const int& N, const tools::BCH_polynomial_generator<B> &GF);
 	virtual ~Decoder_BCH_fast() = default;
 	virtual Decoder_BCH_fast<B,R>* clone() const;
 

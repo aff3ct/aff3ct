@@ -20,11 +20,10 @@ class CRC_checker : public Post_processing_SISO<B,R>
 {
 protected:
 	const int                       start_crc_check_ite;
-	const int                       simd_inter_frame_level;
 	std::shared_ptr<module::CRC<B>> crc;
 
 public:
-	CRC_checker(const module::CRC<B> &crc, const int start_crc_check_ite = 2, const int simd_inter_frame_level = 1);
+	CRC_checker(const module::CRC<B> &crc, const int start_crc_check_ite = 2);
 
 	virtual ~CRC_checker() = default;
 
@@ -35,6 +34,7 @@ public:
 	                          mipp::vector<R>& ext,
 	                          mipp::vector<B>& s);
 
+	virtual void set_n_frames(const int n_frames);
 protected:
 	void deep_copy(const CRC_checker<B,R>& t);
 };

@@ -28,7 +28,7 @@ class Channel_user_bs : public Channel_user<R>
 public:
 	using E = typename tools::matching_types<R>::B; //Event type
 
-	Channel_user_bs(const int N, const std::string &filename, const int n_frames = 1);
+	Channel_user_bs(const int N, const std::string &filename);
 	virtual ~Channel_user_bs() = default;
 	virtual Channel_user_bs<R>* clone() const;
 

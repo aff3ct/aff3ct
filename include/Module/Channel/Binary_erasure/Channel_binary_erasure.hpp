@@ -25,13 +25,11 @@ protected:
 
 public:
 	Channel_binary_erasure(const int N,
-	                       const tools::Event_generator<R> &event_generator,
-	                       const int n_frames = 1);
+	                       const tools::Event_generator<R> &event_generator);
 
 	explicit Channel_binary_erasure(const int N,
 	                                const tools::Event_generator_implem implem = tools::Event_generator_implem::STD,
-	                                const int seed = 0,
-	                                const int n_frames = 1);
+	                                const int seed = 0);
 
 	virtual ~Channel_binary_erasure() = default;
 

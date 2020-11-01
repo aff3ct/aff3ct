@@ -24,7 +24,7 @@ protected:
 	std::vector<B> bb;       // coefficients of redundancy polynomial x^(length-k) i(x) modulo g(x)
 
 public:
-	Encoder_BCH(const int& K, const int& N, const tools::BCH_polynomial_generator<B>& GF, const int n_frames = 1);
+	Encoder_BCH(const int& K, const int& N, const tools::BCH_polynomial_generator<B>& GF);
 
 	virtual ~Encoder_BCH() = default;
 
@@ -37,7 +37,6 @@ protected:
 	            const int& N,
 	            const tools::BCH_polynomial_generator<B>& GF,
 	            const bool hack_ambiguous,
-	            const int n_frames = 1,
 	            const int simd_inter_frame_level = 1);
 
 	virtual void  _encode(const B *U_K, B *X_N, const int frame_id);

@@ -14,10 +14,10 @@ Decoder_turbo_DB<B,R>
 ::Decoder_turbo_DB(const int& K,
                    const int& N,
                    const int& n_ite,
-                   const Interleaver<R> &pi,
                    const Decoder_RSC_DB_BCJR<B,R> &siso_n,
-                   const Decoder_RSC_DB_BCJR<B,R> &siso_i)
-: Decoder_SIHO<B,R>(K, N, siso_n.get_n_frames(), 1),
+                   const Decoder_RSC_DB_BCJR<B,R> &siso_i,
+                         Interleaver<R> &pi)
+: Decoder_SIHO<B,R>(K, N, 1),
   n_ite            (n_ite),
   pi               (pi),
   siso_n           (siso_n.clone()),
@@ -84,6 +84,14 @@ Decoder_turbo_DB<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	if (pi.get_n_frames() != siso_n.get_n_frames())
+	{
+		std::stringstream message;
+		message << "'pi.get_n_frames()' has to be equal to 'siso_n.get_n_frames()' ('pi.get_n_frames()' = "
+		        << pi.get_n_frames() << ", 'siso_n.get_n_frames()' = " << siso_n.get_n_frames() << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (siso_n.get_simd_inter_frame_level() != 1)
 	{
 		std::stringstream message;
@@ -100,6 +108,8 @@ Decoder_turbo_DB<B,R>
 		        << ", 'siso_i.get_simd_inter_frame_level()' = " << siso_i.get_simd_inter_frame_level() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	this->set_n_frames(siso_n.get_n_frames());
 }
 
 template <typename B, typename R>
@@ -128,6 +138,8 @@ void Decoder_turbo_DB<B,R>
 ::add_post_processing(const tools::Post_processing_SISO<B,R> &post_processing)
 {
 	this->post_processings.push_back(std::shared_ptr<tools::Post_processing_SISO<B,R>>(post_processing.clone()));
+	if (this->post_processings.back()->get_n_frames() != this->get_simd_inter_frame_level())
+		this->post_processings.back()->set_n_frames(this->get_simd_inter_frame_level());
 }
 
 template <typename B, typename R>
@@ -178,6 +190,14 @@ template <typename B, typename R>
 int Decoder_turbo_DB<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
+	if (this->pi.get_n_frames() != this->get_n_frames())
+	{
+		std::stringstream message;
+		message << "'pi.get_n_frames()' has to be equal to 'n_frames' ('pi.get_n_frames()' = "
+		        << this->pi.get_n_frames() << ", 'n_frames' = " << this->get_n_frames() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
@@ -281,6 +301,20 @@ void Decoder_turbo_DB<B,R>
 ::_store(B *V_K) const
 {
 	std::copy(s.data(), s.data() + this->K, V_K);
+}
+
+template <typename B, typename R>
+void Decoder_turbo_DB<B,R>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Decoder_SIHO<B,R>::set_n_frames(n_frames);
+		this->siso_n->set_n_frames(n_frames);
+		this->siso_i->set_n_frames(n_frames);
+		this->pi.set_n_frames(n_frames);
+	}
 }
 
 // ==================================================================================== explicit template instantiation

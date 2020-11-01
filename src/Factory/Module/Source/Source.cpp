@@ -37,9 +37,6 @@ void Source
 		cli::Integer(cli::Positive(), cli::Non_zero()),
 		cli::arg_rank::REQ);
 
-	tools::add_arg(args, p, class_name+"p+fra,F",
-		cli::Integer(cli::Positive(), cli::Non_zero()));
-
 	tools::add_arg(args, p, class_name+"p+type",
 		cli::Text(cli::Including_set("RAND", "AZCW", "USER", "USER_BIN")));
 
@@ -68,7 +65,6 @@ void Source
 	auto p = this->get_prefix();
 
 	if(vals.exist({p+"-info-bits", "K"})) this->K          = vals.to_int ({p+"-info-bits", "K"});
-	if(vals.exist({p+"-fra",       "F"})) this->n_frames   = vals.to_int ({p+"-fra",       "F"});
 	if(vals.exist({p+"-type"          })) this->type       = vals.at     ({p+"-type"          });
 	if(vals.exist({p+"-implem"        })) this->implem     = vals.at     ({p+"-implem"        });
 	if(vals.exist({p+"-path"          })) this->path       = vals.to_file({p+"-path"          });
@@ -89,7 +85,6 @@ void Source
 	headers[p].push_back(std::make_pair("Type", this->type));
 	headers[p].push_back(std::make_pair("Implementation", this->implem));
 	headers[p].push_back(std::make_pair("Info. bits (K_info)", std::to_string(this->K)));
-	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 	if (this->type == "USER" || this->type == "USER_BIN")
 		headers[p].push_back(std::make_pair("Path", this->path));
 	if (this->type == "RAND" && full)
@@ -109,16 +104,16 @@ module::Source<B>* Source
 	if (this->type == "RAND")
 	{
 		if (this->implem == "STD")
-			return new module::Source_random     <B>(this->K, this->seed, this->n_frames);
+			return new module::Source_random     <B>(this->K, this->seed);
 		else if (this->implem == "FAST")
-			return new module::Source_random_fast<B>(this->K, this->seed, this->n_frames);
+			return new module::Source_random_fast<B>(this->K, this->seed);
 	}
 
-	if (this->type == "AZCW")  return new module::Source_AZCW<B>(this->K,             this->n_frames);
-	if (this->type == "USER")  return new module::Source_user<B>(this->K, this->path, this->n_frames, this->start_idx);
+	if (this->type == "AZCW")  return new module::Source_AZCW<B>(this->K);
+	if (this->type == "USER")  return new module::Source_user<B>(this->K, this->path, this->start_idx);
 
 	if (this->type == "USER_BIN")
-		return new module::Source_user_binary<B>(this->K, this->path, this->auto_reset, this->fifo_mode, this->n_frames);
+		return new module::Source_user_binary<B>(this->K, this->path, this->auto_reset, this->fifo_mode);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

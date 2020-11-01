@@ -38,9 +38,6 @@ void Decoder
 		cli::Integer(cli::Positive(), cli::Non_zero()),
 		cli::arg_rank::REQ);
 
-	tools::add_arg(args, p, class_name+"p+fra,F",
-		cli::Integer(cli::Positive(), cli::Non_zero()));
-
 	tools::add_arg(args, p, class_name+"p+type,D",
 		cli::Text(cli::Including_set("ML", "CHASE")));
 
@@ -64,7 +61,6 @@ void Decoder
 
 	if(vals.exist({p+"-info-bits", "K"})) this->K          = vals.to_int({p+"-info-bits", "K"});
 	if(vals.exist({p+"-cw-size",   "N"})) this->N_cw       = vals.to_int({p+"-cw-size",   "N"});
-	if(vals.exist({p+"-fra",       "F"})) this->n_frames   = vals.to_int({p+"-fra",       "F"});
 	if(vals.exist({p+"-flips"         })) this->flips      = vals.to_int({p+"-flips"         });
 	if(vals.exist({p+"-seed"          })) this->seed       = vals.to_int({p+"-seed"          });
 	if(vals.exist({p+"-type",      "D"})) this->type       = vals.at    ({p+"-type",      "D"});
@@ -86,7 +82,6 @@ void Decoder
 	if (full) headers[p].push_back(std::make_pair("Codeword size (N)", std::to_string(this->N_cw)));
 	if (full) headers[p].push_back(std::make_pair("Code rate (R)", std::to_string(this->R)));
 	headers[p].push_back(std::make_pair("Systematic", ((this->systematic) ? "yes" : "no")));
-	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 	if(this->type == "ML" || this->type == "CHASE")
 		headers[p].push_back(std::make_pair("Distance", this->hamming ? "Hamming" : "Euclidean"));
 	if(this->type == "CHASE")
@@ -103,12 +98,12 @@ module::Decoder_SIHO<B,Q>* Decoder
 	{
 		if (this->type == "ML")
 		{
-			if (this->implem == "STD"  ) return new module::Decoder_ML_std  <B,Q>(this->K, this->N_cw, *encoder, this->hamming, this->n_frames);
-			if (this->implem == "NAIVE") return new module::Decoder_ML_naive<B,Q>(this->K, this->N_cw, *encoder, this->hamming, this->n_frames);
+			if (this->implem == "STD"  ) return new module::Decoder_ML_std  <B,Q>(this->K, this->N_cw, *encoder, this->hamming);
+			if (this->implem == "NAIVE") return new module::Decoder_ML_naive<B,Q>(this->K, this->N_cw, *encoder, this->hamming);
 		}
 		else if (this->type == "CHASE")
 		{
-			if (this->implem == "STD") return new module::Decoder_chase_std<B,Q>(this->K, this->N_cw, *encoder, this->flips, this->hamming, this->n_frames);
+			if (this->implem == "STD") return new module::Decoder_chase_std<B,Q>(this->K, this->N_cw, *encoder, this->flips, this->hamming);
 		}
 	}
 

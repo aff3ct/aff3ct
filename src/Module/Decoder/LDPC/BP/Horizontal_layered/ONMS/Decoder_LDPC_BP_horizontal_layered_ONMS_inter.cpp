@@ -20,9 +20,8 @@ Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
                                                 const float normalize_factor,
                                                 const R offset,
                                                 const bool enable_syndrome,
-                                                const int syndrome_depth,
-                                                const int n_frames)
-: Decoder_SISO<B,R>(K, N, n_frames, mipp::N<R>()                                                       ),
+                                                const int syndrome_depth)
+: Decoder_SISO<B,R>(K, N, mipp::N<R>()                                                                 ),
   Decoder_LDPC_BP  (K, N, n_ite, _H, enable_syndrome, syndrome_depth                                   ),
   normalize_factor (normalize_factor                                                                   ),
   offset           (offset                                                                             ),
@@ -422,6 +421,27 @@ int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 	}
 	else
 		return status_t::SUCCESS;
+}
+
+template <typename B, typename R>
+void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Decoder_SISO<B,R>::set_n_frames(n_frames);
+
+		const auto vec_size = this->var_nodes[0].size();
+		const auto old_var_nodes_size = this->var_nodes.size();
+		const auto new_var_nodes_size = (old_var_nodes_size / old_n_frames) * n_frames;
+		this->var_nodes.resize(new_var_nodes_size, mipp::vector<mipp::Reg<R>>(vec_size));
+
+		const auto vec_size2 = this->branches[0].size();
+		const auto old_branches_size = this->branches.size();
+		const auto new_branches_size = (old_branches_size / old_n_frames) * n_frames;
+		this->branches.resize(new_branches_size, mipp::vector<mipp::Reg<R>>(vec_size2));
+	}
 }
 
 // ==================================================================================== explicit template instantiation

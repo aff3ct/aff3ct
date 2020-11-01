@@ -22,8 +22,7 @@ protected:
 	std::vector<uint32_t> info_bits_pos;
 
 public:
-	Extractor_RSC(const int K, const int N, const int tail_length, const bool buffered_encoding = true,
-	              const int n_frames = 1);
+	Extractor_RSC(const int K, const int N, const int tail_length, const bool buffered_encoding = true);
 	virtual ~Extractor_RSC() = default;
 
 	virtual Extractor_RSC<B,Q>* clone() const;

@@ -54,7 +54,7 @@ template <typename B, typename Q>
 module::Puncturer<B,Q>* Puncturer_turbo_DB
 ::build() const
 {
-	if (this->type == "TURBO_DB") return new module::Puncturer_turbo_DB<B,Q>(this->K, this->N, this->n_frames);
+	if (this->type == "TURBO_DB") return new module::Puncturer_turbo_DB<B,Q>(this->K, this->N);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

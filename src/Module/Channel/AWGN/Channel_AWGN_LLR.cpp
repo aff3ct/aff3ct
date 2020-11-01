@@ -20,9 +20,8 @@ template <typename R>
 Channel_AWGN_LLR<R>
 ::Channel_AWGN_LLR(const int N,
                    const tools::Gaussian_gen<R> &gaussian_generator,
-                   const bool add_users,
-                   const int n_frames)
-: Channel<R>(N, n_frames),
+                   const bool add_users)
+: Channel<R>(N),
   add_users(add_users),
   gaussian_generator(gaussian_generator.clone())
 {
@@ -63,9 +62,8 @@ Channel_AWGN_LLR<R>
 ::Channel_AWGN_LLR(const int N,
                    const tools::Gaussian_noise_generator_implem implem,
                    const int seed,
-                   const bool add_users,
-                   const int n_frames)
-: Channel<R>(N, n_frames),
+                   const bool add_users)
+: Channel<R>(N),
   add_users(add_users),
   gaussian_generator(create_gaussian_generator<R>(implem, seed))
 {

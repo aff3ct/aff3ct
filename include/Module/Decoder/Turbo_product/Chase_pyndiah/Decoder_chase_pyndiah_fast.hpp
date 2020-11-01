@@ -24,7 +24,6 @@ class Decoder_chase_pyndiah_fast : public Decoder_chase_pyndiah<B,R>
 
 public:
 	Decoder_chase_pyndiah_fast(const int K, const int N, // N with the parity bit if any
-	                           const int n_frames,
 	                           const Decoder_BCH<B,R> &dec,
 	                           const Encoder    <B  > &enc,
 	                           const int n_least_reliable_positions = 2,

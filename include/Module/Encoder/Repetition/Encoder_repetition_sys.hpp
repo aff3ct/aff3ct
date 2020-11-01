@@ -20,7 +20,7 @@ protected:
 	const bool buffered_encoding;
 
 public:
-	Encoder_repetition_sys(const int& K, const int& N, const bool buffered_encoding = true, const int n_frames = 1);
+	Encoder_repetition_sys(const int& K, const int& N, const bool buffered_encoding = true);
 	virtual ~Encoder_repetition_sys() = default;
 
 	virtual Encoder_repetition_sys<B>* clone() const;

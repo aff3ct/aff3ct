@@ -31,7 +31,6 @@ public:
 	std::string path       = "";
 	std::string read_order = "TOP_LEFT";
 	int         n_cols     = 4;          // number of columns of the columns interleaver
-	int         n_frames   = 1;
 	int         seed       = 0;
 	bool        uniform    = false;      // set at true to regenerate the interleaver at each new frame
 

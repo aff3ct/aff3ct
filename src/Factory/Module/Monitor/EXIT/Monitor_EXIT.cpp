@@ -35,9 +35,6 @@ void Monitor_EXIT
 		cli::Integer(cli::Positive(), cli::Non_zero()),
 		cli::arg_rank::REQ);
 
-	tools::add_arg(args, p, class_name+"p+fra,F",
-		cli::Integer(cli::Positive(), cli::Non_zero()));
-
 	tools::add_arg(args, p, class_name+"p+trials,n",
 		cli::Integer(cli::Positive(), cli::Non_zero()));
 }
@@ -50,7 +47,6 @@ void Monitor_EXIT
 	auto p = this->get_prefix();
 
 	if(vals.exist({p+"-size",   "K"})) this->size     = vals.to_int({p+"-size",   "K"});
-	if(vals.exist({p+"-fra",    "F"})) this->n_frames = vals.to_int({p+"-fra",    "F"});
 	if(vals.exist({p+"-trials", "n"})) this->n_trials = vals.to_int({p+"-trials", "n"});
 }
 
@@ -63,14 +59,13 @@ void Monitor_EXIT
 
 	headers[p].push_back(std::make_pair("Number of trials", std::to_string(this->n_trials)));
 	if (full) headers[p].push_back(std::make_pair("Size (K)", std::to_string(this->size)));
-	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 }
 
 template <typename B, typename R>
 module::Monitor_EXIT<B,R>* Monitor_EXIT
 ::build() const
 {
-	if (this->type == "STD") return new module::Monitor_EXIT<B,R>(this->size, this->n_trials, this->n_frames);
+	if (this->type == "STD") return new module::Monitor_EXIT<B,R>(this->size, this->n_trials);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

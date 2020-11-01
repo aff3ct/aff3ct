@@ -15,7 +15,7 @@ template <typename B = int, typename R = float>
 class Decoder_repetition_fast : public Decoder_repetition<B,R>
 {
 public:
-	Decoder_repetition_fast(const int& K, const int& N, const bool buffered_encoding = true, const int n_frames = 1);
+	Decoder_repetition_fast(const int& K, const int& N, const bool buffered_encoding = true);
 	virtual ~Decoder_repetition_fast() = default;
 	virtual Decoder_repetition_fast<B,R>* clone() const;
 

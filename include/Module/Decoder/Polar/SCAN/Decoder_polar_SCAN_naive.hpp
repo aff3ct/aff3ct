@@ -31,11 +31,12 @@ protected:
 	std::vector<std::vector<R>> soft_graph;
 
 public:
-	Decoder_polar_SCAN_naive(const int &K, const int &N, const int &max_iter, const std::vector<bool> &frozen_bits,
-	                         const int n_frames = 1);
+	Decoder_polar_SCAN_naive(const int &K, const int &N, const int &max_iter, const std::vector<bool> &frozen_bits);
 	virtual ~Decoder_polar_SCAN_naive() = default;
 
 	virtual Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>* clone() const;
+
+	virtual void set_n_frames(const int n_frames);
 
 protected:
 	void _reset(const int frame_id);

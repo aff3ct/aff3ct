@@ -78,7 +78,6 @@ protected:
 public:
 
 	Decoder_chase_pyndiah(const int K, const int N, // N with the parity bit if any
-	                      const int n_frames,
 	                      const Decoder_BCH<B,R> &dec,
 	                      const Encoder    <B  > &enc,
 	                      const int n_least_reliable_positions = 2,

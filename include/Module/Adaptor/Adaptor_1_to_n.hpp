@@ -41,13 +41,11 @@ public:
 	inline Adaptor_1_to_n(const size_t n_elmts,
 	                      const std::type_index datatype,
 	                      const size_t buffer_size = 1,
-	                      const bool active_waiting = true,
-	                      const int n_frames = 1);
+	                      const bool active_waiting = true);
 	inline Adaptor_1_to_n(const std::vector<size_t> &n_elmts,
 	                      const std::vector<std::type_index> &datatype,
 	                      const size_t buffer_size = 1,
-	                      const bool active_waiting = true,
-	                      const int n_frames = 1);
+	                      const bool active_waiting = true);
 	virtual ~Adaptor_1_to_n() = default;
 	virtual Adaptor_1_to_n* clone() const;
 

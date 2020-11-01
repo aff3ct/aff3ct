@@ -25,7 +25,7 @@ protected:
 	const int  n_ite; // number of iterations
 	const bool buffered_encoding;
 
-	const Interleaver<R> &pi;
+	Interleaver<R> &pi;
 	std::shared_ptr<Decoder_SISO<B,R>> siso_n;
 	std::shared_ptr<Decoder_SISO<B,R>> siso_i;
 
@@ -47,9 +47,9 @@ public:
 	Decoder_turbo(const int& K,
 	              const int& N,
 	              const int& n_ite,
-	              const Interleaver<R> &pi,
 	              const Decoder_SISO<B,R> &siso_n,
 	              const Decoder_SISO<B,R> &siso_i,
+	                    Interleaver<R> &pi,
 	              const bool buffered_encoding = true);
 
 	virtual ~Decoder_turbo() = default;
@@ -57,6 +57,8 @@ public:
 	virtual Decoder_turbo<B,R>* clone() const;
 
 	void add_post_processing(const tools::Post_processing_SISO<B,R> &post_processing);
+
+	virtual void set_n_frames(const int n_frames);
 
 protected:
 	virtual void deep_copy(const Decoder_turbo<B,R> &m);

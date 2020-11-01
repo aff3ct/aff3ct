@@ -21,7 +21,7 @@ protected:
 	const std::vector<uint32_t> &info_bits_pos;
 
 public:
-	Extractor_LDPC(const int K, const int N, const std::vector<uint32_t> &info_bits_pos, const int n_frames = 1);
+	Extractor_LDPC(const int K, const int N, const std::vector<uint32_t> &info_bits_pos);
 	virtual ~Extractor_LDPC() = default;
 
 	virtual Extractor_LDPC<B,Q>* clone() const;

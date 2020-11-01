@@ -23,7 +23,7 @@ protected:
 	      std::vector<B>     X_N_tmp;
 
 public:
-	Encoder_polar(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int n_frames = 1);
+	Encoder_polar(const int& K, const int& N, const std::vector<bool>& frozen_bits);
 	virtual ~Encoder_polar() = default;
 
 	virtual Encoder_polar<B>* clone() const;

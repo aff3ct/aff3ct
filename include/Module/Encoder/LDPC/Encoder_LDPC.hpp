@@ -27,11 +27,11 @@ protected:
 	                        // H rows are the N dimension
 
 protected:
-	Encoder_LDPC(const int K, const int N, const int n_frames = 1);
+	Encoder_LDPC(const int K, const int N);
 
 public:
-	Encoder_LDPC(const int K, const int N, const tools::Sparse_matrix &G, const int n_frames = 1);
-	Encoder_LDPC(const int K, const int N, const tools::Sparse_matrix &G, const tools::Sparse_matrix &H, const int n_frames = 1);
+	Encoder_LDPC(const int K, const int N, const tools::Sparse_matrix &G);
+	Encoder_LDPC(const int K, const int N, const tools::Sparse_matrix &G, const tools::Sparse_matrix &H);
 	virtual ~Encoder_LDPC() = default;
 
 	virtual Encoder_LDPC<B>* clone() const;

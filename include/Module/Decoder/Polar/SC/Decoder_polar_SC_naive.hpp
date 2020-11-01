@@ -41,7 +41,7 @@ protected:
 	tools::Binary_tree<Contents_SC<B,R>> polar_tree;
 
 public:
-	Decoder_polar_SC_naive(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int n_frames = 1);
+	Decoder_polar_SC_naive(const int& K, const int& N, const std::vector<bool>& frozen_bits);
 	virtual ~Decoder_polar_SC_naive();
 
 	virtual Decoder_polar_SC_naive<B,R,F,G,H>* clone() const;

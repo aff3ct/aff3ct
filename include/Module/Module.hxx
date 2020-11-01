@@ -35,5 +35,12 @@ inline size_t Module
 {
 	return task.template create_socket_out<T>(name, n_elmts * this->n_frames);
 }
+
+int Module
+::get_n_frames() const
+{
+	return n_frames;
+}
+
 }
 }

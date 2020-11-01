@@ -23,7 +23,7 @@ protected:
 	std::vector<uint32_t> info_bits_pos;
 
 public:
-	Extractor_polar(const int K, const int N, const std::vector<bool>& frozen_bits, const int n_frames = 1);
+	Extractor_polar(const int K, const int N, const std::vector<bool>& frozen_bits);
 	virtual ~Extractor_polar() = default;
 
 	virtual Extractor_polar<B,Q>* clone() const;

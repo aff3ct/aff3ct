@@ -16,8 +16,8 @@ namespace module
 {
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 Decoder_polar_SC_naive<B,R,F,G,H>
-::Decoder_polar_SC_naive(const int& K, const int& N, const std::vector<bool>& frozen_bits, const int n_frames)
-: Decoder_SIHO<B,R>(K, N, n_frames, 1),
+::Decoder_polar_SC_naive(const int& K, const int& N, const std::vector<bool>& frozen_bits)
+: Decoder_SIHO<B,R>(K, N, 1),
   m((int)std::log2(N)), frozen_bits(frozen_bits), polar_tree(m +1)
 {
 	const std::string name = "Decoder_polar_SC_naive";

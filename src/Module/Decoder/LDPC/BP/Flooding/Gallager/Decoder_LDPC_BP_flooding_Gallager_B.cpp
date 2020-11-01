@@ -12,8 +12,8 @@ template <typename B, typename R>
 Decoder_LDPC_BP_flooding_Gallager_B<B,R>
 ::Decoder_LDPC_BP_flooding_Gallager_B(const int K, const int N, const int n_ite, const tools::Sparse_matrix &_H,
                                       const std::vector<unsigned> &info_bits_pos, const bool enable_syndrome,
-                                      const int syndrome_depth, const int n_frames)
-: Decoder_LDPC_BP_flooding_Gallager_A<B,R>(K, N, n_ite, _H, info_bits_pos, enable_syndrome, syndrome_depth, n_frames)
+                                      const int syndrome_depth)
+: Decoder_LDPC_BP_flooding_Gallager_A<B,R>(K, N, n_ite, _H, info_bits_pos, enable_syndrome, syndrome_depth)
 {
 	const std::string name = "Decoder_LDPC_BP_flooding_Gallager_B";
 	this->set_name(name);

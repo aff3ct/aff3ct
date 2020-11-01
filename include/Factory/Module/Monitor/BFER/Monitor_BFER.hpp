@@ -32,7 +32,6 @@ public:
 	int         err_hist       = -1;
 	int         n_frame_errors = 100;
 	int         max_frame      = 0;
-	int         n_frames       = 1;
 
 	// -------------------------------------------------------------------------------------------------------- METHODS
 	explicit Monitor_BFER(const std::string &p = Monitor_BFER_prefix);

@@ -12,7 +12,7 @@ namespace tools
 
 template <typename B, typename Q>
 Codec<B,Q>
-::Codec(const int K, const int N_cw, const int N, const int n_frames)
+::Codec(const int K, const int N_cw, const int N)
 : K(K), N_cw(N_cw), N(N), noise(nullptr)
 {
 	if (K <= 0)
@@ -154,6 +154,31 @@ void Codec<B,Q>
 }
 
 template <typename B, typename Q>
+int Codec<B,Q>
+::get_n_frames() const
+{
+	return this->get_encoder().get_n_frames();
+}
+
+template <typename B, typename Q>
+void Codec<B,Q>
+::set_n_frames(const int n_frames)
+{
+	if (this->interleaver_core != nullptr)
+		this->interleaver_core->set_n_frames(n_frames);
+	if (this->interleaver_bit != nullptr)
+		this->interleaver_bit->set_n_frames(n_frames);
+	if (this->interleaver_llr != nullptr)
+		this->interleaver_llr->set_n_frames(n_frames);
+	if (this->encoder != nullptr)
+		this->encoder->set_n_frames(n_frames);
+	if (this->puncturer != nullptr)
+		this->puncturer->set_n_frames(n_frames);
+	if (this->extractor != nullptr)
+		this->extractor->set_n_frames(n_frames);
+}
+
+template <typename B, typename Q>
 void Codec<B,Q>
 ::check_noise()
 {
@@ -225,14 +250,14 @@ void Codec<B,Q>
 }
 
 template <typename B, typename Q>
-const module::Interleaver<B>& Codec<B,Q>
+module::Interleaver<B>& Codec<B,Q>
 ::get_interleaver_bit()
 {
 	return *this->interleaver_bit;
 }
 
 template <typename B, typename Q>
-const module::Interleaver<Q>& Codec<B,Q>
+module::Interleaver<Q>& Codec<B,Q>
 ::get_interleaver_llr()
 {
 	return *this->interleaver_llr;

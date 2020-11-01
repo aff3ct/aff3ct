@@ -26,8 +26,7 @@ public:
 	         const CRC<I> &crc,
 	         const size_t n_elmts_in,
 	         const size_t n_elmts_out,
-	         const size_t crc_ite_start = 0,
-	         const int n_frames = 1);
+	         const size_t crc_ite_start = 0);
 	virtual ~Loop_CRC() = default;
 	virtual Loop_CRC<I,O>* clone() const;
 

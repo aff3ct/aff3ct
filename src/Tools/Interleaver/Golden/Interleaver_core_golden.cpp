@@ -10,8 +10,8 @@ using namespace aff3ct::tools;
 
 template <typename T>
 Interleaver_core_golden<T>
-::Interleaver_core_golden(const int size, const int seed, const bool uniform, const int n_frames)
-: Interleaver_core<T>(size, "golden", uniform, n_frames), gen(), dist(0.0, size * 0.1)
+::Interleaver_core_golden(const int size, const int seed, const bool uniform)
+: Interleaver_core<T>(size, "golden", uniform), gen(), dist(0.0, size * 0.1)
 {
 	gen.seed(seed);
 	this->init();

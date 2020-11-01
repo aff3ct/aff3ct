@@ -18,7 +18,7 @@ template <typename B = int>
 class Encoder_AZCW : public Encoder<B>
 {
 public:
-	Encoder_AZCW(const int K, const int N, const int n_frames = 1);
+	Encoder_AZCW(const int K, const int N);
 	virtual ~Encoder_AZCW() = default;
 
 	virtual Encoder_AZCW<B>* clone() const;

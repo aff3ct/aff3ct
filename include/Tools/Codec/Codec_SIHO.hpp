@@ -21,13 +21,15 @@ protected:
 	std::shared_ptr<module::Decoder_SIHO<B,Q>> decoder_siho;
 
 public:
-	Codec_SIHO(const int K, const int N_cw, const int N, const int n_frames = 1);
+	Codec_SIHO(const int K, const int N_cw, const int N);
 
 	virtual ~Codec_SIHO() = default;
 
 	virtual Codec_SIHO<B,Q>* clone() const;
 
 	module::Decoder_SIHO<B,Q>& get_decoder_siho();
+
+	virtual void set_n_frames(const int n_frames);
 
 protected:
 	virtual void deep_copy(const Codec_SIHO<B,Q> &t);

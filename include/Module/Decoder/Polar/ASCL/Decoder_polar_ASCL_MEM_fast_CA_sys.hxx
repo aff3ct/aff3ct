@@ -11,9 +11,9 @@ template <typename B, typename R, class API_polar>
 Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 ::Decoder_polar_ASCL_MEM_fast_CA_sys(const int& K, const int& N, const int& L_max,
                                      const std::vector<bool>& frozen_bits, const CRC<B>& crc,
-                                     const bool is_full_adaptive, const int n_frames)
-: Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>(K, N, L_max, frozen_bits, crc, n_frames),
-  sc_decoder(new Decoder_polar_SC_fast_sys<B,R,API_polar>(K, N, frozen_bits, n_frames)),
+                                     const bool is_full_adaptive)
+: Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>(K, N, L_max, frozen_bits, crc),
+  sc_decoder(new Decoder_polar_SC_fast_sys<B,R,API_polar>(K, N, frozen_bits)),
   L_max(L_max), is_full_adaptive(is_full_adaptive)
 {
 	const std::string name = "Decoder_polar_ASCL_MEM_fast_CA_sys";
@@ -26,9 +26,9 @@ Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
                                      const std::vector<bool>& frozen_bits,
                                      const std::vector<tools::Pattern_polar_i*> &polar_patterns,
                                      const int idx_r0, const int idx_r1,
-                                     const CRC<B>& crc, const bool is_full_adaptive, const int n_frames)
-: Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>(K, N, L_max, frozen_bits, polar_patterns, idx_r0, idx_r1, crc, n_frames),
-  sc_decoder(new Decoder_polar_SC_fast_sys<B,R,API_polar>(K, N, frozen_bits, n_frames)),
+                                     const CRC<B>& crc, const bool is_full_adaptive)
+: Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>(K, N, L_max, frozen_bits, polar_patterns, idx_r0, idx_r1, crc),
+  sc_decoder(new Decoder_polar_SC_fast_sys<B,R,API_polar>(K, N, frozen_bits)),
   L_max(L_max), is_full_adaptive(is_full_adaptive)
 {
 	const std::string name = "Decoder_polar_ASCL_MEM_fast_CA_sys";
@@ -136,5 +136,18 @@ int Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 
 	return 0;
 }
+
+template <typename B, typename R, class API_polar>
+void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar>::set_n_frames(n_frames);
+		sc_decoder->set_n_frames(n_frames);
+	}
+}
+
 }
 }

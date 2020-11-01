@@ -34,7 +34,7 @@ protected:
 public:
 	bool last_is_codeword;
 
-	Decoder_RS(const int K, const int N, const tools::RS_polynomial_generator &GF, const int n_frames = 1);
+	Decoder_RS(const int K, const int N, const tools::RS_polynomial_generator &GF);
 
 	virtual ~Decoder_RS() = default;
 

@@ -28,7 +28,7 @@ class Interleaver_core : public Interface_set_seed, public Interface_clone
 protected:
 	const int size;
 	const std::string name;
-	const int n_frames;
+	      int n_frames;
 	      bool uniform;
 	      bool initialized;
 	std::vector<T> pi;     /*!< Lookup table for the interleaving process :
@@ -43,7 +43,7 @@ public:
 	 * \param n_frames: number of frames to process in the Interleaver.
 	 * \param name:     Interleaver's name.
 	 */
-	Interleaver_core(const int size, const std::string &name, const bool uniform = false, const int n_frames = 1);
+	Interleaver_core(const int size, const std::string &name, const bool uniform = false);
 
 	virtual ~Interleaver_core() = default;
 
@@ -55,7 +55,9 @@ public:
 
 	int get_size() const;
 
-	int get_n_frames() const;
+	inline int get_n_frames() const;
+
+	virtual void set_n_frames(const int n_frames);
 
 	bool is_uniform() const;
 

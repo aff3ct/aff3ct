@@ -52,10 +52,9 @@ public:
 	/*!
 	 * \brief Constructor.
 	 *
-	 * \param K:        number of information bits in the frame.
-	 * \param n_frames: number of frames to process in the Source.
+	 * \param K: number of information bits in the frame.
 	 */
-	Source(const int K, const int n_frames = 1);
+	Source(const int K);
 
 	/*!
 	 * \brief Destructor.

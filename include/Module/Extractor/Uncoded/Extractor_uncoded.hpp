@@ -21,7 +21,7 @@ protected:
 	std::vector<uint32_t> info_bits_pos;
 
 public:
-	Extractor_uncoded(const int K, const int n_frames = 1);
+	Extractor_uncoded(const int K);
 	virtual ~Extractor_uncoded() = default;
 
 	virtual Extractor_uncoded<B,Q>* clone() const;

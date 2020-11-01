@@ -47,7 +47,7 @@ protected:
 	const int tail_length;
 
 public:
-	Extractor(const int K, const int N, const int tail_length = 0, const int n_frames = 1);
+	Extractor(const int K, const int N, const int tail_length = 0);
 	virtual ~Extractor() = default;
 
 	virtual Extractor<B,Q>* clone() const;

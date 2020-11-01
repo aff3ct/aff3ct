@@ -107,7 +107,7 @@ template <typename B, typename Q>
 module::Puncturer<B,Q>* Puncturer_turbo
 ::build() const
 {
-	if (this->type == "TURBO") return new module::Puncturer_turbo<B,Q>(this->K, this->N, this->tail_length, this->pattern, this->buffered, this->n_frames);
+	if (this->type == "TURBO") return new module::Puncturer_turbo<B,Q>(this->K, this->N, this->tail_length, this->pattern, this->buffered);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

@@ -25,7 +25,7 @@ Socket& Probe<T>
 template <typename T>
 Probe<T>
 ::Probe(const int size, const std::string &col_name, tools::Reporter_probe& reporter, const int n_frames)
-: AProbe(n_frames), size(size), col_name(col_name), reporter(reporter)
+: AProbe(), size(size), col_name(col_name), reporter(reporter)
 {
 	const std::string name = "Probe<" + col_name + ">";
 	this->set_name(name);
@@ -45,6 +45,17 @@ Probe<T>
 		static_cast<Probe<T>&>(m).probe(static_cast<const T*>(t[p1s_in].get_dataptr()));
 		return 0;
 	});
+
+	AProbe::set_n_frames(n_frames);
+}
+
+template <typename T>
+void Probe<T>
+::set_n_frames(const int n_frames)
+{
+	std::stringstream message;
+	message << "This method is disabled in the 'Probe' class.";
+	throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 }
 
 template <typename T>

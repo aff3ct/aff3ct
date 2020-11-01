@@ -35,7 +35,7 @@ protected:
 
 public:
 	// K and N are the RS size in symbols: K_rs and N_rs. K and N in bits are deduced as K = K_rs * m and N = N_rs * M
-	Encoder_RS(const int& K, const int& N, const tools::RS_polynomial_generator& GF, const int n_frames = 1);
+	Encoder_RS(const int& K, const int& N, const tools::RS_polynomial_generator& GF);
 
 	virtual ~Encoder_RS() = default;
 

@@ -41,17 +41,17 @@ namespace module
 class Decoder : public Module, public tools::Interface_set_seed, public tools::Interface_reset
 {
 protected:
-	const int n_inter_frame_rest;
+	      int  n_inter_frame_rest;
 
 	const int  K;                      /*!< Number of information bits in one frame */
 	const int  N;                      /*!< Size of one frame (= number of bits in one frame) */
 	const int  simd_inter_frame_level; /*!< Number of frames absorbed by the SIMD instructions. */
-	const int  n_dec_waves;
+	      int  n_dec_waves;
 	      bool auto_reset;
 	const int  mask;
 
 public:
-	Decoder(const int K, const int N, const int n_frames = 1, const int simd_inter_frame_level = 1);
+	Decoder(const int K, const int N, const int simd_inter_frame_level = 1);
 
 	/*!
 	 * \brief Destructor.
@@ -80,6 +80,8 @@ public:
 	void reset();
 
 	virtual void set_seed(const int seed);
+
+	virtual void set_n_frames(const int n_frames);
 
 protected:
 	virtual void _reset(const int frame_id);

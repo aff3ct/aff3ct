@@ -44,9 +44,6 @@ void Channel
 		cli::Integer(cli::Positive(), cli::Non_zero()),
 		cli::arg_rank::REQ);
 
-	tools::add_arg(args, p, class_name+"p+fra,F",
-		cli::Integer(cli::Positive(), cli::Non_zero()));
-
 	tools::add_arg(args, p, class_name+"p+type",
 		cli::Text(cli::Including_set("NO", "AWGN", "RAYLEIGH", "RAYLEIGH_USER", "BEC", "BSC", "OPTICAL", "USER",
 		                             "USER_ADD", "USER_BEC", "USER_BSC")));
@@ -86,7 +83,6 @@ void Channel
 	auto p = this->get_prefix();
 
 	if(vals.exist({p+"-fra-size", "N"})) this->N            = vals.to_int ({p+"-fra-size", "N"});
-	if(vals.exist({p+"-fra",      "F"})) this->n_frames     = vals.to_int ({p+"-fra",      "F"});
 	if(vals.exist({p+"-seed",     "S"})) this->seed         = vals.to_int ({p+"-seed",     "S"});
 	if(vals.exist({p+"-gain-occur"   })) this->gain_occur   = vals.to_int ({p+"-gain-occur"   });
 	if(vals.exist({p+"-type"         })) this->type         = vals.at     ({p+"-type"         });
@@ -106,7 +102,6 @@ void Channel
 	headers[p].push_back(std::make_pair("Implementation", this->implem));
 
 	if (full) headers[p].push_back(std::make_pair("Frame size (N)", std::to_string(this->N)));
-	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 
 	if (this->type == "USER" || this->type == "USER_ADD" || this->type == "RAYLEIGH_USER")
 		headers[p].push_back(std::make_pair("Path", this->path));
@@ -140,8 +135,8 @@ module::Channel<R>* Channel
 	else
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 
-	if (type == "BEC") return new module::Channel_binary_erasure  <R>(this->N, impl, this->seed, this->n_frames);
-	if (type == "BSC") return new module::Channel_binary_symmetric<R>(this->N, impl, this->seed, this->n_frames);
+	if (type == "BEC") return new module::Channel_binary_erasure  <R>(this->N, impl, this->seed);
+	if (type == "BSC") return new module::Channel_binary_symmetric<R>(this->N, impl, this->seed);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -162,9 +157,9 @@ module::Channel<R>* Channel
 	else
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 
-	if (type == "AWGN"         ) return new module::Channel_AWGN_LLR         <R>(this->N,                            impl, this->seed,                   this->add_users, this->n_frames);
-	if (type == "RAYLEIGH"     ) return new module::Channel_Rayleigh_LLR     <R>(this->N, this->complex,             impl, this->seed,                   this->add_users, this->n_frames);
-	if (type == "RAYLEIGH_USER") return new module::Channel_Rayleigh_LLR_user<R>(this->N, this->complex, this->path, impl, this->seed, this->gain_occur, this->add_users, this->n_frames);
+	if (type == "AWGN"         ) return new module::Channel_AWGN_LLR         <R>(this->N,                            impl, this->seed,                   this->add_users);
+	if (type == "RAYLEIGH"     ) return new module::Channel_Rayleigh_LLR     <R>(this->N, this->complex,             impl, this->seed,                   this->add_users);
+	if (type == "RAYLEIGH_USER") return new module::Channel_Rayleigh_LLR_user<R>(this->N, this->complex, this->path, impl, this->seed, this->gain_occur, this->add_users);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -185,7 +180,7 @@ module::Channel<R>* Channel
 	else
 		throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 
-	if (type == "OPTICAL") return new module::Channel_optical<R>(this->N, dist, impl, this->seed, this->n_frames);
+	if (type == "OPTICAL") return new module::Channel_optical<R>(this->N, dist, impl, this->seed);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -202,11 +197,11 @@ module::Channel<R>* Channel
 		return build_event<R>();
 	} catch (tools::cannot_allocate&) {}
 
-	if (type == "USER"    ) return new module::Channel_user    <R>(this->N, this->path, this->add_users, this->n_frames);
-	if (type == "USER_ADD") return new module::Channel_user_add<R>(this->N, this->path, this->add_users, this->n_frames);
-	if (type == "USER_BEC") return new module::Channel_user_be <R>(this->N, this->path,                  this->n_frames);
-	if (type == "USER_BSC") return new module::Channel_user_bs <R>(this->N, this->path,                  this->n_frames);
-	if (type == "NO"      ) return new module::Channel_NO      <R>(this->N,             this->add_users, this->n_frames);
+	if (type == "USER"    ) return new module::Channel_user    <R>(this->N, this->path, this->add_users);
+	if (type == "USER_ADD") return new module::Channel_user_add<R>(this->N, this->path, this->add_users);
+	if (type == "USER_BEC") return new module::Channel_user_be <R>(this->N, this->path                 );
+	if (type == "USER_BSC") return new module::Channel_user_bs <R>(this->N, this->path                 );
+	if (type == "NO"      ) return new module::Channel_NO      <R>(this->N,             this->add_users);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

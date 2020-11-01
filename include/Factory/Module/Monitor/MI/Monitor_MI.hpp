@@ -29,7 +29,6 @@ public:
 	// optional parameters
 	std::string type     = "STD";
 	int         n_trials = 200;
-	int         n_frames = 1;
 
 	// -------------------------------------------------------------------------------------------------------- METHODS
 	explicit Monitor_MI(const std::string &p = Monitor_MI_prefix);

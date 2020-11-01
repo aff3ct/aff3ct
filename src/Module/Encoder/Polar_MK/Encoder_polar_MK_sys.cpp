@@ -9,9 +9,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_polar_MK_sys<B>
-::Encoder_polar_MK_sys(const int& K, const int& N, const tools::Polar_code& code, const std::vector<bool>& frozen_bits,
-                       const int n_frames)
-: Encoder_polar_MK<B>(K, N, code, frozen_bits, n_frames)
+::Encoder_polar_MK_sys(const int& K, const int& N, const tools::Polar_code& code, const std::vector<bool>& frozen_bits)
+: Encoder_polar_MK<B>(K, N, code, frozen_bits)
 {
 	const std::string name = "Encoder_polar_MK_sys";
 	this->set_name(name);

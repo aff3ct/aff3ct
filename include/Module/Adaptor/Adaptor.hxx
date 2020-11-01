@@ -13,9 +13,8 @@ namespace module
 Adaptor
 ::Adaptor(const size_t n_elmts,
           const std::type_index datatype,
-          const size_t buffer_size,
-          const int n_frames)
-: Module(n_frames),
+          const size_t buffer_size)
+: Module(),
   n_elmts(1, n_elmts),
   n_bytes(1, compute_bytes(n_elmts, datatype)),
   datatype(1, datatype),
@@ -66,9 +65,8 @@ Adaptor
 Adaptor
 ::Adaptor(const std::vector<size_t> &n_elmts,
           const std::vector<std::type_index> &datatype,
-          const size_t buffer_size,
-          const int n_frames)
-: Module(n_frames),
+          const size_t buffer_size)
+: Module(),
   n_elmts(n_elmts),
   n_bytes(compute_bytes(n_elmts, datatype)),
   datatype(datatype),

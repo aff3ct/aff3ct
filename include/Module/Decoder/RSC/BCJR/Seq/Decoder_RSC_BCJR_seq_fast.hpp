@@ -22,8 +22,7 @@ class Decoder_RSC_BCJR_seq_fast : public Decoder_RSC_BCJR_seq<B,R>
 public:
 	Decoder_RSC_BCJR_seq_fast(const int &K,
 	                          const std::vector<std::vector<int>> &trellis,
-	                          const bool buffered_encoding = true,
-	                          const int n_frames = 1);
+	                          const bool buffered_encoding = true);
 	virtual ~Decoder_RSC_BCJR_seq_fast() = default;
 
 	virtual Decoder_RSC_BCJR_seq_fast<B,R,RD,MAX1,MAX2>* clone() const;

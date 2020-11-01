@@ -35,7 +35,6 @@ void Codec_BCH
 
 	args.erase({pdec+"-cw-size",   "N"});
 	args.erase({pdec+"-info-bits", "K"});
-	args.erase({pdec+"-fra",       "F"});
 	args.erase({pdec+"-no-sys"        });
 
 	args.add_link({pdec+"-corr-pow", "T"}, {penc+"-info-bits", "K"});
@@ -48,9 +47,8 @@ void Codec_BCH
 
 	enc->store(vals);
 
-	dec->K        = enc->K;
-	dec->N_cw     = enc->N_cw;
-	dec->n_frames = enc->n_frames;
+	dec->K    = enc->K;
+	dec->N_cw = enc->N_cw;
 
 	dec->store(vals);
 

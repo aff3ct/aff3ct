@@ -8,8 +8,8 @@ using namespace aff3ct::tools;
 
 template <typename T>
 Interleaver_core_random<T>
-::Interleaver_core_random(const int size, const int seed, const bool uniform, const int n_frames)
-: Interleaver_core<T>(size, "random", uniform, n_frames), rd_engine()
+::Interleaver_core_random(const int size, const int seed, const bool uniform)
+: Interleaver_core<T>(size, "random", uniform), rd_engine()
 {
 	rd_engine.seed(seed);
 	this->init();

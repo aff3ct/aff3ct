@@ -207,87 +207,87 @@ module::Decoder_SISO<B,Q>* Decoder_LDPC
 	{
 		const auto max_CN_degree = (unsigned int)H.get_cols_max_degree();
 
-		if (this->implem == "MS"  )  return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_MS  <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_MS  <Q                           >(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "OMS" )  return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_OMS <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_OMS <Q                           >((Q)this->offset  ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "NMS" )  return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_NMS <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS <Q                           >(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "SPA" )  return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_SPA <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_SPA <Q                           >(max_CN_degree    ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "LSPA")  return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_LSPA<Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_LSPA<Q                           >(max_CN_degree    ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		if (this->implem == "MS"  )  return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_MS  <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_MS  <Q                           >(                 ), this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "OMS" )  return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_OMS <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_OMS <Q                           >((Q)this->offset  ), this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "NMS" )  return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_NMS <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS <Q                           >(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "SPA" )  return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_SPA <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_SPA <Q                           >(max_CN_degree    ), this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "LSPA")  return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_LSPA<Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_LSPA<Q                           >(max_CN_degree    ), this->enable_syndrome, this->syndrome_depth);
 		if (this->implem == "AMS" )
 		{
-			if (this->min == "MIN" ) return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_AMS <Q,tools::min             <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min             <Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-			if (this->min == "MINL") return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-			if (this->min == "MINS") return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_AMS <Q,tools::min_star        <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star        <Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			if (this->min == "MIN" ) return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_AMS <Q,tools::min             <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min             <Q>>(                 ), this->enable_syndrome, this->syndrome_depth);
+			if (this->min == "MINL") return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>(                 ), this->enable_syndrome, this->syndrome_depth);
+			if (this->min == "MINS") return new module::Decoder_LDPC_BP_flooding<B,Q,tools::Update_rule_AMS <Q,tools::min_star        <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star        <Q>>(                 ), this->enable_syndrome, this->syndrome_depth);
 		}
 	}
 	else if (this->type == "BP_HORIZONTAL_LAYERED" && this->simd_strategy.empty())
 	{
 		const auto max_CN_degree = (unsigned int)H.get_cols_max_degree();
 
-		if (this->implem == "MS"  )  return new module::Decoder_LDPC_BP_horizontal_layered<B,Q,tools::Update_rule_MS  <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_MS  <Q                           >(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "OMS" )  return new module::Decoder_LDPC_BP_horizontal_layered<B,Q,tools::Update_rule_OMS <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_OMS <Q                           >((Q)this->offset  ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "NMS" )  return new module::Decoder_LDPC_BP_horizontal_layered<B,Q,tools::Update_rule_NMS <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS <Q                           >(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "SPA" )  return new module::Decoder_LDPC_BP_horizontal_layered<B,Q,tools::Update_rule_SPA <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_SPA <Q                           >(max_CN_degree    ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "LSPA")  return new module::Decoder_LDPC_BP_horizontal_layered<B,Q,tools::Update_rule_LSPA<Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_LSPA<Q                           >(max_CN_degree    ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		if (this->implem == "MS"  )  return new module::Decoder_LDPC_BP_horizontal_layered<B,Q,tools::Update_rule_MS  <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_MS  <Q                           >(                 ), this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "OMS" )  return new module::Decoder_LDPC_BP_horizontal_layered<B,Q,tools::Update_rule_OMS <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_OMS <Q                           >((Q)this->offset  ), this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "NMS" )  return new module::Decoder_LDPC_BP_horizontal_layered<B,Q,tools::Update_rule_NMS <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS <Q                           >(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "SPA" )  return new module::Decoder_LDPC_BP_horizontal_layered<B,Q,tools::Update_rule_SPA <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_SPA <Q                           >(max_CN_degree    ), this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "LSPA")  return new module::Decoder_LDPC_BP_horizontal_layered<B,Q,tools::Update_rule_LSPA<Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_LSPA<Q                           >(max_CN_degree    ), this->enable_syndrome, this->syndrome_depth);
 		if (this->implem == "AMS" )
 		{
-			if (this->min == "MIN" ) return new module::Decoder_LDPC_BP_horizontal_layered<B,Q,tools::Update_rule_AMS <Q,tools::min             <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min             <Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-			if (this->min == "MINL") return new module::Decoder_LDPC_BP_horizontal_layered<B,Q,tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-			if (this->min == "MINS") return new module::Decoder_LDPC_BP_horizontal_layered<B,Q,tools::Update_rule_AMS <Q,tools::min_star        <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star        <Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			if (this->min == "MIN" ) return new module::Decoder_LDPC_BP_horizontal_layered<B,Q,tools::Update_rule_AMS <Q,tools::min             <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min             <Q>>(                 ), this->enable_syndrome, this->syndrome_depth);
+			if (this->min == "MINL") return new module::Decoder_LDPC_BP_horizontal_layered<B,Q,tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>(                 ), this->enable_syndrome, this->syndrome_depth);
+			if (this->min == "MINS") return new module::Decoder_LDPC_BP_horizontal_layered<B,Q,tools::Update_rule_AMS <Q,tools::min_star        <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star        <Q>>(                 ), this->enable_syndrome, this->syndrome_depth);
 		}
 	}
 	else if (this->type == "BP_VERTICAL_LAYERED" && this->simd_strategy.empty())
 	{
 		const auto max_CN_degree = (unsigned int)H.get_cols_max_degree();
 
-		if (this->implem == "MS"  )  return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_MS  <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_MS  <Q                           >(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "OMS" )  return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_OMS <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_OMS <Q                           >((Q)this->offset  ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "NMS" )  return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_NMS <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS <Q                           >(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "SPA" )  return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_SPA <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_SPA <Q                           >(max_CN_degree    ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "LSPA")  return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_LSPA<Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_LSPA<Q                           >(max_CN_degree    ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		if (this->implem == "MS"  )  return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_MS  <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_MS  <Q                           >(                 ), this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "OMS" )  return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_OMS <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_OMS <Q                           >((Q)this->offset  ), this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "NMS" )  return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_NMS <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS <Q                           >(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "SPA" )  return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_SPA <Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_SPA <Q                           >(max_CN_degree    ), this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "LSPA")  return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_LSPA<Q                           >>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_LSPA<Q                           >(max_CN_degree    ), this->enable_syndrome, this->syndrome_depth);
 		if (this->implem == "AMS" )
 		{
-			if (this->min == "MIN" ) return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_AMS <Q,tools::min             <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min             <Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-			if (this->min == "MINL") return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-			if (this->min == "MINS") return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_AMS <Q,tools::min_star        <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star        <Q>>(                 ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			if (this->min == "MIN" ) return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_AMS <Q,tools::min             <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min             <Q>>(                 ), this->enable_syndrome, this->syndrome_depth);
+			if (this->min == "MINL") return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star_linear2<Q>>(                 ), this->enable_syndrome, this->syndrome_depth);
+			if (this->min == "MINS") return new module::Decoder_LDPC_BP_vertical_layered<B,Q,tools::Update_rule_AMS <Q,tools::min_star        <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS <Q,tools::min_star        <Q>>(                 ), this->enable_syndrome, this->syndrome_depth);
 		}
 	}
 	else if (this->type == "BIT_FLIPPING")
 	{
-		if (this->implem == "WBF" ) return new module::Decoder_LDPC_bit_flipping_OMWBF<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, (Q)0.               , this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "MWBF") return new module::Decoder_LDPC_bit_flipping_OMWBF<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, (Q)this->mwbf_factor, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		if (this->implem == "WBF" ) return new module::Decoder_LDPC_bit_flipping_OMWBF<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, (Q)0.               , this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "MWBF") return new module::Decoder_LDPC_bit_flipping_OMWBF<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, (Q)this->mwbf_factor, this->enable_syndrome, this->syndrome_depth);
 	}
 #ifdef __cpp_aligned_new
 	else if (this->type == "BP_HORIZONTAL_LAYERED" && this->simd_strategy == "INTER")
 	{
 		const auto max_CN_degree = (unsigned int)H.get_cols_max_degree();
 
-		if (this->implem == "SPA" ) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_SPA_simd <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_SPA_simd <Q>(max_CN_degree), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "LSPA") return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_LSPA_simd<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_LSPA_simd<Q>(max_CN_degree), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "MS"  ) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_MS_simd  <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_MS_simd  <Q>(             ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "OMS" ) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_OMS_simd <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_OMS_simd <Q>(this->offset ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		if (this->implem == "SPA" ) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_SPA_simd <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_SPA_simd <Q>(max_CN_degree), this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "LSPA") return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_LSPA_simd<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_LSPA_simd<Q>(max_CN_degree), this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "MS"  ) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_MS_simd  <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_MS_simd  <Q>(             ), this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "OMS" ) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_OMS_simd <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_OMS_simd <Q>(this->offset ), this->enable_syndrome, this->syndrome_depth);
 		if (this->implem == "NMS" )
 		{
 			if (typeid(Q) == typeid(int16_t) || typeid(Q) == typeid(int8_t))
 			{
-				if (this->norm_factor == 0.125f) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,1>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,1>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-				if (this->norm_factor == 0.250f) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,2>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,2>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-				if (this->norm_factor == 0.375f) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,3>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,3>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-				if (this->norm_factor == 0.500f) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,4>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,4>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-				if (this->norm_factor == 0.625f) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,5>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,5>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-				if (this->norm_factor == 0.750f) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,6>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,6>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-				if (this->norm_factor == 0.875f) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,7>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,7>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-				if (this->norm_factor == 1.000f) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,8>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,8>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+				if (this->norm_factor == 0.125f) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,1>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,1>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+				if (this->norm_factor == 0.250f) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,2>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,2>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+				if (this->norm_factor == 0.375f) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,3>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,3>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+				if (this->norm_factor == 0.500f) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,4>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,4>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+				if (this->norm_factor == 0.625f) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,5>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,5>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+				if (this->norm_factor == 0.750f) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,6>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,6>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+				if (this->norm_factor == 0.875f) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,7>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,7>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+				if (this->norm_factor == 1.000f) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,8>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,8>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
 
-				return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+				return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
 			}
 			else
-				return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+				return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
 		}
 		else if (this->implem == "AMS" )
 		{
-			if (this->min == "MIN" ) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_AMS_simd<Q,tools::min_i             <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS_simd<Q,tools::min_i             <Q>>(), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-			if (this->min == "MINL") return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_AMS_simd<Q,tools::min_star_linear2_i<Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS_simd<Q,tools::min_star_linear2_i<Q>>(), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-			if (this->min == "MINS") return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_AMS_simd<Q,tools::min_star_i        <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS_simd<Q,tools::min_star_i        <Q>>(), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			if (this->min == "MIN" ) return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_AMS_simd<Q,tools::min_i             <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS_simd<Q,tools::min_i             <Q>>(), this->enable_syndrome, this->syndrome_depth);
+			if (this->min == "MINL") return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_AMS_simd<Q,tools::min_star_linear2_i<Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS_simd<Q,tools::min_star_linear2_i<Q>>(), this->enable_syndrome, this->syndrome_depth);
+			if (this->min == "MINS") return new module::Decoder_LDPC_BP_horizontal_layered_inter<B,Q,tools::Update_rule_AMS_simd<Q,tools::min_star_i        <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS_simd<Q,tools::min_star_i        <Q>>(), this->enable_syndrome, this->syndrome_depth);
 		}
 	}
 #endif
@@ -297,42 +297,42 @@ module::Decoder_SISO<B,Q>* Decoder_LDPC
 	else if (this->type == "BP_HORIZONTAL_LAYERED" && this->simd_strategy == "INTER")
 #endif
 	{
-		if (this->implem == "MS" ) return new module::Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, 1.f              , (Q)0           , this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "NMS") return new module::Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->norm_factor, (Q)0           , this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "OMS") return new module::Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, 1.f              , (Q)this->offset, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		if (this->implem == "MS" ) return new module::Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, 1.f              , (Q)0           , this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "NMS") return new module::Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->norm_factor, (Q)0           , this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "OMS") return new module::Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, 1.f              , (Q)this->offset, this->enable_syndrome, this->syndrome_depth);
 	}
 #ifdef __cpp_aligned_new
 	else if (this->type == "BP_FLOODING" && this->simd_strategy == "INTER")
 	{
 		const auto max_CN_degree = (unsigned int)H.get_cols_max_degree();
 
-		if (this->implem == "SPA" ) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_SPA_simd <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_SPA_simd <Q>(max_CN_degree), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "LSPA") return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_LSPA_simd<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_LSPA_simd<Q>(max_CN_degree), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "MS"  ) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_MS_simd  <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_MS_simd  <Q>(             ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "OMS" ) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_OMS_simd <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_OMS_simd <Q>(this->offset ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		if (this->implem == "SPA" ) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_SPA_simd <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_SPA_simd <Q>(max_CN_degree), this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "LSPA") return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_LSPA_simd<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_LSPA_simd<Q>(max_CN_degree), this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "MS"  ) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_MS_simd  <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_MS_simd  <Q>(             ), this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "OMS" ) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_OMS_simd <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_OMS_simd <Q>(this->offset ), this->enable_syndrome, this->syndrome_depth);
 		if (this->implem == "NMS" )
 		{
 			if (typeid(Q) == typeid(int16_t) || typeid(Q) == typeid(int8_t))
 			{
-				if (this->norm_factor == 0.125f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_simd<Q,1>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,1>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-				if (this->norm_factor == 0.250f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_simd<Q,2>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,2>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-				if (this->norm_factor == 0.375f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_simd<Q,3>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,3>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-				if (this->norm_factor == 0.500f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_simd<Q,4>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,4>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-				if (this->norm_factor == 0.625f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_simd<Q,5>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,5>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-				if (this->norm_factor == 0.750f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_simd<Q,6>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,6>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-				if (this->norm_factor == 0.875f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_simd<Q,7>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,7>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-				if (this->norm_factor == 1.000f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_simd<Q,8>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,8>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+				if (this->norm_factor == 0.125f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_simd<Q,1>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,1>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+				if (this->norm_factor == 0.250f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_simd<Q,2>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,2>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+				if (this->norm_factor == 0.375f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_simd<Q,3>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,3>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+				if (this->norm_factor == 0.500f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_simd<Q,4>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,4>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+				if (this->norm_factor == 0.625f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_simd<Q,5>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,5>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+				if (this->norm_factor == 0.750f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_simd<Q,6>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,6>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+				if (this->norm_factor == 0.875f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_simd<Q,7>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,7>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+				if (this->norm_factor == 1.000f) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_simd<Q,8>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,8>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
 
-				return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_simd<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+				return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_simd<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
 			}
 			else
-				return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_simd<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+				return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_NMS_simd<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
 		}
 		else if (this->implem == "AMS" )
 		{
-			if (this->min == "MIN" ) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_AMS_simd<Q,tools::min_i             <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS_simd<Q,tools::min_i             <Q>>(), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-			if (this->min == "MINL") return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_AMS_simd<Q,tools::min_star_linear2_i<Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS_simd<Q,tools::min_star_linear2_i<Q>>(), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-			if (this->min == "MINS") return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_AMS_simd<Q,tools::min_star_i        <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS_simd<Q,tools::min_star_i        <Q>>(), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			if (this->min == "MIN" ) return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_AMS_simd<Q,tools::min_i             <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS_simd<Q,tools::min_i             <Q>>(), this->enable_syndrome, this->syndrome_depth);
+			if (this->min == "MINL") return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_AMS_simd<Q,tools::min_star_linear2_i<Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS_simd<Q,tools::min_star_linear2_i<Q>>(), this->enable_syndrome, this->syndrome_depth);
+			if (this->min == "MINS") return new module::Decoder_LDPC_BP_flooding_inter<B,Q,tools::Update_rule_AMS_simd<Q,tools::min_star_i        <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS_simd<Q,tools::min_star_i        <Q>>(), this->enable_syndrome, this->syndrome_depth);
 		}
 	}
 #endif
@@ -341,39 +341,39 @@ module::Decoder_SISO<B,Q>* Decoder_LDPC
 	{
 		const auto max_CN_degree = (unsigned int)H.get_cols_max_degree();
 
-		if (this->implem == "SPA" ) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_SPA_simd <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_SPA_simd <Q>(max_CN_degree), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "LSPA") return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_LSPA_simd<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_LSPA_simd<Q>(max_CN_degree), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "MS"  ) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_MS_simd  <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_MS_simd  <Q>(             ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-		if (this->implem == "OMS" ) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_OMS_simd <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_OMS_simd <Q>(this->offset ), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		if (this->implem == "SPA" ) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_SPA_simd <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_SPA_simd <Q>(max_CN_degree), this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "LSPA") return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_LSPA_simd<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_LSPA_simd<Q>(max_CN_degree), this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "MS"  ) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_MS_simd  <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_MS_simd  <Q>(             ), this->enable_syndrome, this->syndrome_depth);
+		if (this->implem == "OMS" ) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_OMS_simd <Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_OMS_simd <Q>(this->offset ), this->enable_syndrome, this->syndrome_depth);
 		if (this->implem == "NMS" )
 		{
 			if (typeid(Q) == typeid(int16_t) || typeid(Q) == typeid(int8_t))
 			{
-				if (this->norm_factor == 0.125f) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,1>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,1>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-				if (this->norm_factor == 0.250f) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,2>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,2>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-				if (this->norm_factor == 0.375f) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,3>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,3>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-				if (this->norm_factor == 0.500f) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,4>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,4>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-				if (this->norm_factor == 0.625f) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,5>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,5>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-				if (this->norm_factor == 0.750f) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,6>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,6>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-				if (this->norm_factor == 0.875f) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,7>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,7>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-				if (this->norm_factor == 1.000f) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,8>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,8>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+				if (this->norm_factor == 0.125f) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,1>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,1>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+				if (this->norm_factor == 0.250f) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,2>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,2>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+				if (this->norm_factor == 0.375f) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,3>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,3>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+				if (this->norm_factor == 0.500f) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,4>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,4>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+				if (this->norm_factor == 0.625f) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,5>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,5>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+				if (this->norm_factor == 0.750f) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,6>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,6>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+				if (this->norm_factor == 0.875f) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,7>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,7>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
+				if (this->norm_factor == 1.000f) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q,8>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q,8>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
 
-				return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+				return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
 			}
 			else
-				return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q>(this->norm_factor), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+				return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_NMS_simd<Q>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_NMS_simd<Q>(this->norm_factor), this->enable_syndrome, this->syndrome_depth);
 		}
 		else if (this->implem == "AMS" )
 		{
-			if (this->min == "MIN" ) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_AMS_simd<Q,tools::min_i             <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS_simd<Q,tools::min_i             <Q>>(), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-			if (this->min == "MINL") return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_AMS_simd<Q,tools::min_star_linear2_i<Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS_simd<Q,tools::min_star_linear2_i<Q>>(), this->enable_syndrome, this->syndrome_depth, this->n_frames);
-			if (this->min == "MINS") return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_AMS_simd<Q,tools::min_star_i        <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS_simd<Q,tools::min_star_i        <Q>>(), this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			if (this->min == "MIN" ) return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_AMS_simd<Q,tools::min_i             <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS_simd<Q,tools::min_i             <Q>>(), this->enable_syndrome, this->syndrome_depth);
+			if (this->min == "MINL") return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_AMS_simd<Q,tools::min_star_linear2_i<Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS_simd<Q,tools::min_star_linear2_i<Q>>(), this->enable_syndrome, this->syndrome_depth);
+			if (this->min == "MINS") return new module::Decoder_LDPC_BP_vertical_layered_inter<B,Q,tools::Update_rule_AMS_simd<Q,tools::min_star_i        <Q>>>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, tools::Update_rule_AMS_simd<Q,tools::min_star_i        <Q>>(), this->enable_syndrome, this->syndrome_depth);
 		}
 	}
 #endif
 	else if (this->type == "BP_FLOODING" && this->simd_strategy == "INTRA")
 	{
-		if (this->implem == "SPA" ) return new module::Decoder_LDPC_BP_flooding_SPA<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+		if (this->implem == "SPA" ) return new module::Decoder_LDPC_BP_flooding_SPA<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
@@ -391,17 +391,17 @@ module::Decoder_SIHO<B,Q>* Decoder_LDPC
 	{
 		if ((this->type == "BP" || this->type == "BP_FLOODING") && this->simd_strategy.empty())
 		{
-			if (this->implem == "GALA") return new module::Decoder_LDPC_BP_flooding_GALA<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth, this->n_frames);
-			if (this->implem == "GALB") return new module::Decoder_LDPC_BP_flooding_GALB<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth, this->n_frames);
-			if (this->implem == "GALE") return new module::Decoder_LDPC_BP_flooding_GALE<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			if (this->implem == "GALA") return new module::Decoder_LDPC_BP_flooding_GALA<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth);
+			if (this->implem == "GALB") return new module::Decoder_LDPC_BP_flooding_GALB<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth);
+			if (this->implem == "GALE") return new module::Decoder_LDPC_BP_flooding_GALE<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth);
 		}
 		else if (this->type == "BP_PEELING")
 		{
-			if (this->implem == "STD") return new module::Decoder_LDPC_BP_peeling<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth, this->n_frames);
+			if (this->implem == "STD") return new module::Decoder_LDPC_BP_peeling<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->enable_syndrome, this->syndrome_depth);
 		}
 		else if (this->type == "BIT_FLIPPING")
 		{
-		    if (this->implem == "PPBF") return new module::Decoder_LDPC_PPBF<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->ppbf_proba,  this->enable_syndrome, this->syndrome_depth, this->seed, this->n_frames);
+		    if (this->implem == "PPBF") return new module::Decoder_LDPC_PPBF<B,Q>(this->K, this->N_cw, this->n_ite, H, info_bits_pos, this->ppbf_proba,  this->enable_syndrome, this->syndrome_depth, this->seed);
 		}
 		return build_siso<B,Q>(H, info_bits_pos);
 	}

@@ -43,10 +43,11 @@ public:
 	                                              const float normalize_factor = 1.f,
 	                                              const R offset = (R)0,
 	                                              const bool enable_syndrome = true,
-	                                              const int syndrome_depth = 1,
-	                                              const int n_frames = 1);
+	                                              const int syndrome_depth = 1);
 	virtual ~Decoder_LDPC_BP_horizontal_layered_ONMS_inter() = default;
 	virtual Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>* clone() const;
+
+	virtual void set_n_frames(const int n_frames);
 
 protected:
 	void _reset(const int frame_id);

@@ -26,8 +26,7 @@ private:
 public:
 	Decoder_RSC_BCJR_seq_generic_std(const int &K,
 	                                 const std::vector<std::vector<int>> &trellis,
-	                                 const bool buffered_encoding = true,
-	                                 const int n_frames = 1);
+	                                 const bool buffered_encoding = true);
 	virtual ~Decoder_RSC_BCJR_seq_generic_std() = default;
 
 	virtual Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>* clone() const;

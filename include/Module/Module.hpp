@@ -48,10 +48,8 @@ public:
 
 	/*!
 	 * \brief Constructor.
-	 *
-	 * \param n_frames: number of frames to process in this Module.
 	 */
-	explicit Module(const int n_frames = 1);
+	explicit Module();
 
 	/*!
 	 * \brief Destructor.
@@ -65,7 +63,7 @@ public:
 	 *
 	 * \return the number of frames to process in this Module.
 	 */
-	int get_n_frames() const;
+	inline int get_n_frames() const;
 
 	virtual void set_n_frames(const int n_frames);
 

@@ -31,7 +31,7 @@ protected:
 
 public:
 	Decoder_chase_std(const int K, const int N, const Encoder<B> &encoder, const uint32_t max_flips = 3,
-	                  const bool hamming = false, const int n_frames = 1);
+	                  const bool hamming = false);
 	virtual ~Decoder_chase_std() = default;
 	virtual Decoder_chase_std<B,R>* clone() const;
 

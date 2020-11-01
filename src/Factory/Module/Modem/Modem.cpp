@@ -52,9 +52,6 @@ void Modem
 		cli::Integer(cli::Positive(), cli::Non_zero()),
 		cli::arg_rank::REQ);
 
-	tools::add_arg(args, p, class_name+"p+fra,F",
-		cli::Integer(cli::Positive(), cli::Non_zero()));
-
 	tools::add_arg(args, p, class_name+"p+type",
 		cli::Text(cli::Including_set("BPSK", "OOK", "PSK", "PAM", "QAM", "CPM", "USER", "SCMA")));
 
@@ -146,12 +143,10 @@ void Modem
 	{
 		tools::Codebook<float> cb(this->codebook_path);
 
-		this->bps      = (int)cb.get_system_bps(); // codebook bps is float so here bps is stocked rounded
-		this->n_frames = cb.get_number_of_users();
+		this->bps = (int)cb.get_system_bps(); // codebook bps is float so here bps is stocked rounded
 	}
 
 	if(vals.exist({p+"-fra-size", "N"})) this->N              = vals.to_int ({p+"-fra-size", "N"});
-	if(vals.exist({p+"-fra",      "F"})) this->n_frames       = vals.to_int ({p+"-fra",      "F"});
 	if(vals.exist({p+"-bps"          })) this->bps            = vals.to_int ({p+"-bps"          });
 	if(vals.exist({p+"-const-path"   })) this->const_path     = vals.to_file({p+"-const-path"   });
 	if(vals.exist({p+"-cpm-L"        })) this->cpm_L          = vals.to_int ({p+"-cpm-L"        });
@@ -209,7 +204,6 @@ void Modem
 	headers[p].push_back(std::make_pair("Type",           this->type  ));
 	headers[p].push_back(std::make_pair("Implementation", this->implem));
 	if (full) headers[p].push_back(std::make_pair("Frame size (N)", std::to_string(this->N)));
-	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 	if (this->type == "CPM")
 	{
 		if(this->cpm_std.size())
@@ -271,16 +265,16 @@ template <typename B, typename R, typename Q, tools::proto_max<Q> MAX, tools::pr
 module::Modem<B,R,Q>* Modem
 ::_build(const tools::Constellation<R>* cstl) const
 {
-	if (this->type == "BPSK" && this->implem == "STD" ) return new module::Modem_BPSK     <B,R,Q    >(this->N,                                                                                                           this->no_sig2, this->n_frames);
-	if (this->type == "BPSK" && this->implem == "FAST") return new module::Modem_BPSK_fast<B,R,Q    >(this->N,                                                                                                           this->no_sig2, this->n_frames);
-	if (this->type == "CPM"  && this->implem == "STD" ) return new module::Modem_CPM      <B,R,Q,MAX>(this->N, this->bps, this->cpm_upf, this->cpm_L, this->cpm_k, this->cpm_p, this->cpm_mapping, this->cpm_wave_shape, this->no_sig2, this->n_frames);
+	if (this->type == "BPSK" && this->implem == "STD" ) return new module::Modem_BPSK     <B,R,Q    >(this->N,                                                                                                           this->no_sig2);
+	if (this->type == "BPSK" && this->implem == "FAST") return new module::Modem_BPSK_fast<B,R,Q    >(this->N,                                                                                                           this->no_sig2);
+	if (this->type == "CPM"  && this->implem == "STD" ) return new module::Modem_CPM      <B,R,Q,MAX>(this->N, this->bps, this->cpm_upf, this->cpm_L, this->cpm_k, this->cpm_p, this->cpm_mapping, this->cpm_wave_shape, this->no_sig2);
 
 	if (cstl != nullptr)
 	{
 		if (this->implem == "FAST")
-			return new module::Modem_generic_fast<B,R,Q,MAX,MAXI>(N, *cstl, this->no_sig2, this->n_frames);
+			return new module::Modem_generic_fast<B,R,Q,MAX,MAXI>(N, *cstl, this->no_sig2);
 		else
-			return new module::Modem_generic     <B,R,Q,MAX     >(N, *cstl, this->no_sig2, this->n_frames);
+			return new module::Modem_generic     <B,R,Q,MAX     >(N, *cstl, this->no_sig2);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
@@ -290,10 +284,10 @@ template <typename B, typename R, typename Q>
 module::Modem<B,R,Q>* Modem
 ::_build_scma() const
 {
-	if (this->psi == "PSI0") return new module::Modem_SCMA<B,R,Q,tools::psi_0<Q>>(this->N, this->codebook_path, this->no_sig2, this->n_ite, this->n_frames);
-	if (this->psi == "PSI1") return new module::Modem_SCMA<B,R,Q,tools::psi_1<Q>>(this->N, this->codebook_path, this->no_sig2, this->n_ite, this->n_frames);
-	if (this->psi == "PSI2") return new module::Modem_SCMA<B,R,Q,tools::psi_2<Q>>(this->N, this->codebook_path, this->no_sig2, this->n_ite, this->n_frames);
-	if (this->psi == "PSI3") return new module::Modem_SCMA<B,R,Q,tools::psi_3<Q>>(this->N, this->codebook_path, this->no_sig2, this->n_ite, this->n_frames);
+	if (this->psi == "PSI0") return new module::Modem_SCMA<B,R,Q,tools::psi_0<Q>>(this->N, this->codebook_path, this->no_sig2, this->n_ite);
+	if (this->psi == "PSI1") return new module::Modem_SCMA<B,R,Q,tools::psi_1<Q>>(this->N, this->codebook_path, this->no_sig2, this->n_ite);
+	if (this->psi == "PSI2") return new module::Modem_SCMA<B,R,Q,tools::psi_2<Q>>(this->N, this->codebook_path, this->no_sig2, this->n_ite);
+	if (this->psi == "PSI3") return new module::Modem_SCMA<B,R,Q,tools::psi_3<Q>>(this->N, this->codebook_path, this->no_sig2, this->n_ite);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -308,9 +302,9 @@ module::Modem<B,R,Q>* Modem
 	}
 	else if (this->type == "OOK" && this->implem == "STD")
 	{
-		if (channel_type == "AWGN") return new module::Modem_OOK_AWGN<B,R,Q>(this->N, this->no_sig2, this->n_frames);
-		if (channel_type == "BEC" ) return new module::Modem_OOK_BEC <B,R,Q>(this->N,                this->n_frames);
-		if (channel_type == "BSC" ) return new module::Modem_OOK_BSC <B,R,Q>(this->N,                this->n_frames);
+		if (channel_type == "AWGN") return new module::Modem_OOK_AWGN<B,R,Q>(this->N, this->no_sig2);
+		if (channel_type == "BEC" ) return new module::Modem_OOK_BEC <B,R,Q>(this->N               );
+		if (channel_type == "BSC" ) return new module::Modem_OOK_BSC <B,R,Q>(this->N               );
 	}
 	else
 	{
@@ -330,9 +324,9 @@ module::Modem<B,R,Q>* Modem
 	if (this->type == "OOK" && this->implem == "STD" && channel_type == "OPTICAL")
 	{
 		if (this->rop_est_bits == 0)
-			return new module::Modem_OOK_optical<B,R,Q>(this->N, dist, this->n_frames);
+			return new module::Modem_OOK_optical<B,R,Q>(this->N, dist);
 		else
-			return new module::Modem_OOK_optical_rop_estimate<B,R,Q>(this->N, rop_est_bits, dist, this->n_frames);
+			return new module::Modem_OOK_optical_rop_estimate<B,R,Q>(this->N, rop_est_bits, dist);
 	}
 	return build<B,R,Q>();
 }

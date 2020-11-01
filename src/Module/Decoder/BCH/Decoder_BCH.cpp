@@ -10,9 +10,9 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_BCH<B, R>
-::Decoder_BCH(const int K, const int N, const int t, const int n_frames, const int simd_inter_frame_level)
-: Decoder_SIHO<B,R>(K, N, n_frames, simd_inter_frame_level),
-  t(t), N_p2_1(tools::next_power_of_2(N) -1), last_is_codeword(n_frames)
+::Decoder_BCH(const int K, const int N, const int t, const int simd_inter_frame_level)
+: Decoder_SIHO<B,R>(K, N, simd_inter_frame_level),
+  t(t), N_p2_1(tools::next_power_of_2(N) -1), last_is_codeword(this->n_frames)
 {
 	const std::string name = "Decoder_BCH";
 	this->set_name(name);
@@ -27,8 +27,8 @@ Decoder_BCH<B, R>
 
 template <typename B, typename R>
 Decoder_BCH<B, R>
-::Decoder_BCH(const int K, const int N, const int t, const int n_frames)
-: Decoder_BCH(K, N, t, n_frames, 1)
+::Decoder_BCH(const int K, const int N, const int t)
+: Decoder_BCH(K, N, t, 1)
 {
 }
 
@@ -45,6 +45,22 @@ bool Decoder_BCH<B, R>
 {
 	return last_is_codeword[frame_id < 0 ? 0 : frame_id];
 }
+
+template <typename B, typename R>
+void Decoder_BCH<B, R>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Decoder_SIHO<B,R>::set_n_frames(n_frames);
+
+		const auto old_last_is_codeword_size = this->last_is_codeword.size();
+		const auto new_last_is_codeword_size = (old_last_is_codeword_size / old_n_frames) * n_frames;
+		this->last_is_codeword.resize(new_last_is_codeword_size);
+	}
+}
+
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC

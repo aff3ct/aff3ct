@@ -9,14 +9,13 @@ using namespace aff3ct::tools;
 template <typename B, typename R>
 Flip_and_check<B,R>
 ::Flip_and_check(const int K, const int n_ite, const module::CRC<B> &crc, const int start_crc_check_ite,
-                 const int q, const int m, const int M, const int s,
-                 const int simd_inter_frame_level)
-: CRC_checker<B,R>(crc, start_crc_check_ite, simd_inter_frame_level),
-  K               (K                                               ),
-  q               (q                                               ),
-  metric          (K * simd_inter_frame_level                      ),
-  s_tmp           (K * simd_inter_frame_level                      ),
-  tab_flips       ((1 << q) -1, mipp::vector<B>(q, (B)0)           )
+                 const int q, const int m, const int M, const int s)
+: CRC_checker<B,R>(crc, start_crc_check_ite),
+  K               (K                                    ),
+  q               (q                                    ),
+  metric          (K * this->n_frames                   ),
+  s_tmp           (K * this->n_frames                   ),
+  tab_flips       ((1 << q) -1, mipp::vector<B>(q, (B)0))
 {
 	// generation of the array that will be used to flip the bits
 	// it contains: 1000, 0100, 1100, 0010, ...
@@ -84,7 +83,7 @@ bool Flip_and_check<B,R>
 ::apply_flip_and_check(const mipp::vector<R>& sys, const mipp::vector<R>& ext, mipp::vector<B>& s)
 {
 	// reconstruct the a posteriori information and calculate the metric associated
-	for (auto i = 0; i < this->K * this->simd_inter_frame_level; i++)
+	for (auto i = 0; i < this->K * this->n_frames; i++)
 		metric[i] = std::abs(sys[i] + ext[i]);
 
 	// get the least reliable positions
@@ -98,7 +97,7 @@ bool Flip_and_check<B,R>
 		std::copy(s.begin(), s.end(), s_tmp.begin());
 		for (auto depth = 0; depth < q; depth++)
 			s_tmp[positions[depth]] ^= tab_flips[pattern][depth];
-		check_crc = this->crc->check(s_tmp, this->simd_inter_frame_level);
+		check_crc = this->crc->check(s_tmp, this->n_frames);
 		pattern++;
 	}
 	while ((pattern < (int)tab_flips.size()) && !check_crc);
@@ -108,6 +107,25 @@ bool Flip_and_check<B,R>
 		std::copy(s_tmp.begin(), s_tmp.end(), s.begin());
 
 	return check_crc;
+}
+
+template <typename B, typename R>
+void Flip_and_check<B,R>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (n_frames != old_n_frames)
+	{
+		CRC_checker<B,R>::set_n_frames(n_frames);
+
+		const auto old_metric_size = this->metric.size();
+		const auto new_metric_size = (old_metric_size / old_n_frames) * n_frames;
+		this->metric.resize(new_metric_size);
+
+		const auto old_s_tmp_size = this->s_tmp.size();
+		const auto new_s_tmp_size = (old_s_tmp_size / old_n_frames) * n_frames;
+		this->s_tmp.resize(new_s_tmp_size);
+	}
 }
 
 // ==================================================================================== explicit template instantiation

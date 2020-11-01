@@ -33,9 +33,6 @@ void RS<L,B,R,Q>
 	params_cdc->store(this->arg_vals);
 
 	L::store_args();
-
-	params_cdc->enc->n_frames = this->params.src->n_frames;
-	params_cdc->dec->n_frames = this->params.src->n_frames;
 }
 
 // ==================================================================================== explicit template instantiation

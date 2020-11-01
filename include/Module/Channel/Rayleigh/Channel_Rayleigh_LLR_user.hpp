@@ -36,8 +36,7 @@ public:
 	                          const tools::Gaussian_gen<R> &gaussian_generator,
 	                          const std::string& gains_filename,
 	                          const int gain_occurrences = 1,
-	                          const bool add_users = false,
-	                          const int n_frames = 1);
+	                          const bool add_users = false);
 
 	Channel_Rayleigh_LLR_user(const int N,
 	                          const bool complex,
@@ -45,8 +44,7 @@ public:
 	                          const tools::Gaussian_noise_generator_implem implem = tools::Gaussian_noise_generator_implem::STD,
 	                          const int seed = 0,
 	                          const int gain_occurrences = 1,
-	                          const bool add_users = false,
-	                          const int n_frames = 1);
+	                          const bool add_users = false);
 
 	virtual ~Channel_Rayleigh_LLR_user() = default;
 
@@ -55,6 +53,8 @@ public:
 	void set_seed(const int seed);
 
 	virtual void add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id = -1); using Channel<R>::add_noise_wg;
+
+	virtual void set_n_frames(const int n_frames);
 
 protected:
 	virtual void deep_copy(const Channel_Rayleigh_LLR_user<R>& m);

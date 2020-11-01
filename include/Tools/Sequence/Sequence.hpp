@@ -158,6 +158,9 @@ public:
 	void set_no_copy_mode(const bool no_copy_mode);
 	bool is_no_copy_mode() const;
 
+	inline int get_n_frames() const;
+	void set_n_frames(const int n_frames);
+
 protected:
 	template <class SS>
 	void delete_tree(Generic_node<SS> *node);

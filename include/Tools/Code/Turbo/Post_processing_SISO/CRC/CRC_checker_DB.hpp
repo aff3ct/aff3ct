@@ -22,7 +22,7 @@ protected:
 	std::vector<R> apost;
 
 public:
-	CRC_checker_DB(const module::CRC<B> &crc, const int start_crc_check_ite = 2, const int simd_inter_frame_level = 1);
+	CRC_checker_DB(const module::CRC<B> &crc, const int start_crc_check_ite = 2);
 
 	virtual ~CRC_checker_DB() = default;
 
@@ -32,6 +32,8 @@ public:
 	                    const mipp::vector<R>& sys,
 	                          mipp::vector<R>& ext,
 	                          mipp::vector<B>& s);
+
+	virtual void set_n_frames(const int n_frames);
 };
 }
 }

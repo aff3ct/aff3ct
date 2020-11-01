@@ -14,11 +14,10 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_RS_genius<B,R>
-::Decoder_RS_genius(const int K, const int N, const tools::RS_polynomial_generator &GF, Encoder<B> &encoder,
-                    const int n_frames)
-: Decoder_RS<B,R>(K, N, GF, n_frames),
-  encoder        (encoder           ),
-  X_Ns           (this->N_rs        )
+::Decoder_RS_genius(const int K, const int N, const tools::RS_polynomial_generator &GF, Encoder<B> &encoder)
+: Decoder_RS<B,R>(K, N, GF  ),
+  encoder        (encoder   ),
+  X_Ns           (this->N_rs)
 {
 	const std::string name = "Decoder_RS_genius";
 	this->set_name(name);

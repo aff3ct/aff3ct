@@ -21,7 +21,7 @@ private:
 	tools::PRNG_MT19937_simd mt19937_simd; // Mersenne Twister 19937 (SIMD)
 
 public:
-	Source_random_fast(const int K, const int seed = 0, const int n_frames = 1);
+	Source_random_fast(const int K, const int seed = 0);
 	virtual ~Source_random_fast() = default;
 
 	virtual Source_random_fast<B>* clone() const;

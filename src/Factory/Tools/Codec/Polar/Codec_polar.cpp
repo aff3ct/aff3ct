@@ -107,7 +107,6 @@ void Codec_polar
 	auto pfbg = fbg->get_prefix();
 
 	args.erase({pdec+"-info-bits", "K"});
-	args.erase({pdec+"-fra",       "F"});
 	args.erase({pdec+"-no-sys"        });
 	args.erase({pdec+"-cw-size",   "N"});
 	args.erase({pfbg+"-cw-size",   "N"});
@@ -121,7 +120,6 @@ void Codec_polar
 
 		args.erase({penc+"-cw-size",   "N"});
 		args.erase({penc+"-info-bits", "K"});
-		args.erase({penc+"-fra",       "F"});
 	}
 }
 
@@ -134,18 +132,16 @@ void Codec_polar
 	{
 		pct->store(vals);
 
-		enc->K        = fbg->K    = dec->K        = pct->K;
-		enc->N_cw     = fbg->N_cw = dec->N_cw     = pct->N_cw;
-		enc->n_frames             = dec->n_frames = pct->n_frames;
+		enc->K    = fbg->K    = dec->K    = pct->K;
+		enc->N_cw = fbg->N_cw = dec->N_cw = pct->N_cw;
 	}
 
 	enc->store(vals);
 
 	if (pct == nullptr)
 	{
-		fbg->K    = dec->K        = enc->K;
-		fbg->N_cw = dec->N_cw     = enc->N_cw;
-		            dec->n_frames = enc->n_frames;
+		fbg->K    = dec->K    = enc->K;
+		fbg->N_cw = dec->N_cw = enc->N_cw;
 	}
 
 	fbg->store(vals);

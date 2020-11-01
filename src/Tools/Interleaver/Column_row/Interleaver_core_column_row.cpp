@@ -25,15 +25,15 @@ static typename Interleaver_core_column_row<T>::READ_ORDER read_order_cvt(const 
 
 template <typename T>
 Interleaver_core_column_row<T>
-::Interleaver_core_column_row(const int size, const int n_cols, const std::string& read_order, const int n_frames)
-: Interleaver_core_column_row<T>(size, n_cols, read_order_cvt<T>(read_order), n_frames)
+::Interleaver_core_column_row(const int size, const int n_cols, const std::string& read_order)
+: Interleaver_core_column_row<T>(size, n_cols, read_order_cvt<T>(read_order))
 {
 }
 
 template <typename T>
 Interleaver_core_column_row<T>
-::Interleaver_core_column_row(const int size, const int n_cols, const READ_ORDER read_order, const int n_frames)
-: Interleaver_core<T>(size, "row_column", false, n_frames), n_cols(n_cols), n_rows(size / n_cols), read_order(read_order)
+::Interleaver_core_column_row(const int size, const int n_cols, const READ_ORDER read_order)
+: Interleaver_core<T>(size, "row_column", false), n_cols(n_cols), n_rows(size / n_cols), read_order(read_order)
 {
 	if (n_rows * n_cols != size)
 	{

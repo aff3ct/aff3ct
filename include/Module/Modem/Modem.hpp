@@ -76,29 +76,26 @@ public:
 	/*!
 	 * \brief Constructor.
 	 *
-	 * \param N:        size of one frame (= number of bits in one frame).
-	 * \param N_mod:    number of transmitted elements after the modulation (could be smaller, bigger or equal to N).
-	 * \param N_fil:    number of transmitted elements after the filtering process.
-	 * \param n_frames: number of frames to process in the Modem.
+	 * \param N:     size of one frame (= number of bits in one frame).
+	 * \param N_mod: number of transmitted elements after the modulation (could be smaller, bigger or equal to N).
+	 * \param N_fil: number of transmitted elements after the filtering process.
 	 */
-	Modem(const int N, const int N_mod, const int N_fil, const int n_frames);
+	Modem(const int N, const int N_mod, const int N_fil);
 
 	/*!
 	 * \brief Constructor (assumes that nothing is done in the filtering process).
 	 *
-	 * \param N:        size of one frame (= number of bits in one frame).
-	 * \param N_mod:    number of transmitted elements after the modulation (could be smaller, bigger or equal to N).
-	 * \param n_frames: number of frames to process in the Modem.
+	 * \param N:     size of one frame (= number of bits in one frame).
+	 * \param N_mod: number of transmitted elements after the modulation (could be smaller, bigger or equal to N).
 	 */
-	Modem(const int N, const int N_mod, const int n_frames);
+	Modem(const int N, const int N_mod);
 
 	/*!
 	 * \brief Constructor (assumes that nothing is done in the filtering process).
 	 *
-	 * \param N:        size of one frame (= number of bits in one frame).
-	 * \param n_frames: number of frames to process in the Modem.
+	 * \param N: size of one frame (= number of bits in one frame).
 	 */
-	Modem(const int N, const int n_frames);
+	Modem(const int N);
 
 	virtual Modem<B,R,Q>* clone() const;
 

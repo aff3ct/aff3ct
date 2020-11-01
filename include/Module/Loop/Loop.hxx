@@ -26,9 +26,8 @@ Loop
 ::Loop(const size_t n_elmts_in,
        const std::type_index datatype_in,
        const size_t n_elmts_out,
-       const std::type_index datatype_out,
-       const int n_frames)
-: Module(n_frames),
+       const std::type_index datatype_out)
+: Module(),
   n_elmts_in(n_elmts_in),
   n_bytes_in(compute_bytes(n_elmts_in, datatype_in)),
   datatype_in(datatype_in),

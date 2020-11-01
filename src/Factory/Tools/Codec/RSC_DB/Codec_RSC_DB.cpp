@@ -34,7 +34,6 @@ void Codec_RSC_DB
 
 	args.erase({pdec+"-cw-size",   "N"});
 	args.erase({pdec+"-info-bits", "K"});
-	args.erase({pdec+"-fra",       "F"});
 	args.erase({pdec+"-no-buff"       });
 }
 
@@ -50,7 +49,6 @@ void Codec_RSC_DB
 
 	dec_rsc->K        = enc_rsc->K;
 	dec_rsc->N_cw     = enc_rsc->N_cw;
-	dec_rsc->n_frames = enc_rsc->n_frames;
 	dec_rsc->buffered = enc_rsc->buffered;
 
 	dec->store(vals);

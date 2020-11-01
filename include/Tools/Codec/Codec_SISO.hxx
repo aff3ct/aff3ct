@@ -9,8 +9,8 @@ namespace tools
 {
 template <typename B, typename Q>
 Codec_SISO<B,Q>
-::Codec_SISO(const int K, const int N_cw, const int N, const int n_frames)
-: Codec_SIHO<B,Q>(K, N_cw, N, n_frames), decoder_siso(nullptr)
+::Codec_SISO(const int K, const int N_cw, const int N)
+: Codec_SIHO<B,Q>(K, N_cw, N), decoder_siso(nullptr)
 {
 }
 
@@ -57,6 +57,15 @@ void Codec_SISO<B,Q>
 {
 	this->decoder_siso = dec;
 	this->set_decoder_siho(this->decoder_siso);
+}
+
+template <typename B, typename Q>
+void Codec_SISO<B,Q>
+::set_n_frames(const int n_frames)
+{
+	Codec_SIHO<B,Q>::set_n_frames(n_frames);
+	if (this->decoder_siso != nullptr)
+		this->decoder_siso->set_n_frames(n_frames);
 }
 
 }

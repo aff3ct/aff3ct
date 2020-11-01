@@ -23,7 +23,7 @@ class Loop_predicate : public Loop
 	std::vector<int8_t> hack;
 
 public:
-	Loop_predicate(const tools::Predicate &predicate, const size_t n_elmts_out, const int n_frames = 1);
+	Loop_predicate(const tools::Predicate &predicate, const size_t n_elmts_out);
 	virtual ~Loop_predicate() = default;
 	virtual Loop_predicate<O>* clone() const;
 
@@ -37,8 +37,7 @@ protected:
 	Loop_predicate(const tools::Predicate &predicate,
 	               const size_t n_elmts_in,
 	               const std::type_index datatype_in,
-	               const size_t n_elmts_out,
-	               const int n_frames = 1);
+	               const size_t n_elmts_out);
 
 	virtual void deep_copy(const Loop_predicate<O> &m);
 };

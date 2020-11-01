@@ -9,8 +9,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 Source_user<B>
-::Source_user(const int K, const std::string &filename, const int n_frames, const int start_idx)
-: Source<B>(K, n_frames), source(), src_counter(start_idx)
+::Source_user(const int K, const std::string &filename, const int start_idx)
+: Source<B>(K), source(), src_counter(start_idx)
 {
 	const std::string name = "Source_user";
 	this->set_name(name);

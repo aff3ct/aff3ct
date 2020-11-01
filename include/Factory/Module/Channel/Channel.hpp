@@ -34,7 +34,6 @@ public:
 	std::string block_fading = "NO";
 	bool        add_users    = false;
 	bool        complex      = false;
-	int         n_frames     = 1;
 	int         seed         = 0;
 	int         gain_occur   = 1;
 

@@ -7,8 +7,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 Sink_NO<B>
-::Sink_NO(const int K, const int n_frames)
-: Sink<B>(K, n_frames)
+::Sink_NO(const int K)
+: Sink<B>(K)
 {
 	const std::string name = "Sink_NO";
 	this->set_name(name);

@@ -15,9 +15,8 @@ template <typename B, typename R>
 Decoder_RSC_DB_BCJR<B,R>
 ::Decoder_RSC_DB_BCJR(const int K,
                       const std::vector<std::vector<int>> &trellis,
-                      const bool buffered_encoding,
-                      const int n_frames)
-: Decoder_SISO<B,R>(K, 2 * K, n_frames, 1                   ),
+                      const bool buffered_encoding)
+: Decoder_SISO<B,R>(K, 2 * K, 1                             ),
   n_states         ((int)trellis[0].size()/4                ),
   n_ff             ((int)std::log2(n_states)                ),
   buffered_encoding(buffered_encoding                       ),

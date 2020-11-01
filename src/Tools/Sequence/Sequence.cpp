@@ -1508,3 +1508,59 @@ void Sequence
 			lasts_tasks[tid].push_back(tasks[tid]);
 	}
 }
+
+void Sequence
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		if (n_frames <= 0)
+		{
+			std::stringstream message;
+			message << "'n_frames' has to be greater than 0 ('n_frames' = " << n_frames << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		std::vector<std::pair<module::Socket*, module::Socket*>> unbind_sockets;
+		std::function<void(const std::vector<module::Task*>, module::Task*)> unbind_sockets_recursive =
+		[&unbind_sockets, &unbind_sockets_recursive](const std::vector<module::Task*> possessed_tsks,
+		                                             module::Task* tsk_out)
+		{
+			for (auto sck_out : tsk_out->sockets)
+			{
+				if (tsk_out->get_socket_type(*sck_out) == module::socket_t::SIN_SOUT ||
+					tsk_out->get_socket_type(*sck_out) == module::socket_t::SOUT)
+				{
+					for (auto sck_in : sck_out->get_bound_sockets())
+					{
+						auto tsk_in = &sck_in->get_task();
+						// if the task of the current input socket is in the tasks of the sequence
+						if (std::find(possessed_tsks.begin(), possessed_tsks.end(), tsk_in) != possessed_tsks.end())
+						{
+							sck_in->unbind(*sck_out);
+							// memorize the unbinds to rebind after!
+							unbind_sockets.push_back(std::make_pair(sck_in, sck_out.get()));
+							// do the same operation recursively on the current "tsk_in"
+							unbind_sockets_recursive(possessed_tsks, tsk_in);
+						}
+					}
+				}
+			}
+		};
+
+		auto tsks_per_threads = this->get_tasks_per_threads();
+		for (size_t t = 0; t < this->get_n_threads(); t++)
+			for (auto &tsk : this->firsts_tasks[t])
+				unbind_sockets_recursive(tsks_per_threads[t], tsk);
+
+		// set_n_frames for all the modules (be aware that this operation can fail)
+		for (auto &mm : this->all_modules)
+			for (auto &m : mm)
+				m->set_n_frames(n_frames);
+
+		// rebind the sockets
+		for (auto &u : unbind_sockets)
+			u.first->bind(*u.second);
+	}
+}

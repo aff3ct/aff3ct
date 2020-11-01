@@ -12,7 +12,6 @@
 using namespace aff3ct;
 using namespace aff3ct::module;
 
-
 std::vector<uint32_t> read_info_bits_pos(std::istream &stream)
 {
 	std::string line;
@@ -61,12 +60,10 @@ std::vector<uint32_t> read_info_bits_pos(std::istream &stream)
 	return info_bits_pos;
 }
 
-
-
 template <typename B>
 Encoder_user<B>
-::Encoder_user(const int K, const int N, const std::string &filename, const int n_frames, const int start_idx)
-: Encoder<B>(K, N, n_frames), codewords(), cw_counter(start_idx)
+::Encoder_user(const int K, const int N, const std::string &filename, const int start_idx)
+: Encoder<B>(K, N), codewords(), cw_counter(start_idx)
 {
 	const std::string name = "Encoder_user";
 	this->set_name(name);

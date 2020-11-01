@@ -52,7 +52,7 @@ public:
 	 *
 	 * \param K: Radio_frame length.
 	 */
-	Sink(const int K, const int n_frames = 1);
+	Sink(const int K);
 
 	/*!
 	 * \brief Destructor.

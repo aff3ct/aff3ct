@@ -8,8 +8,8 @@ using namespace aff3ct::tools;
 
 template <typename T>
 Interleaver_core_ARP_DVB_RCS1<T>
-::Interleaver_core_ARP_DVB_RCS1(const int size, const int n_frames)
-: Interleaver_core<T>(size, "DVB_RCS1", false, n_frames)
+::Interleaver_core_ARP_DVB_RCS1(const int size)
+: Interleaver_core<T>(size, "DVB_RCS1", false)
 {
 	switch (size)
 	{

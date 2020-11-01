@@ -36,7 +36,7 @@ private:
 
 public:
 	Modem_SCMA(const int N, const std::string &codebook_path, const bool disable_sig2 = false,
-	           const int n_ite = 1, const int n_frames = 6);
+	           const int n_ite = 1);
 	virtual ~Modem_SCMA() = default;
 
 	virtual Modem_SCMA<B,R,Q,PSI>* clone() const;
@@ -54,6 +54,8 @@ public:
 	static int size_fil(const int N, const std::string &codebook_path);
 
 	void notify_noise_update();
+
+	virtual void set_n_frames(const int n_frames);
 
 protected:
 	void check_noise();

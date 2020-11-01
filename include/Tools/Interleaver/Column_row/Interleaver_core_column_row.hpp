@@ -35,8 +35,8 @@ private:
 	const READ_ORDER read_order;
 
 public:
-	Interleaver_core_column_row(const int size, const int n_cols, const std::string& read_order, const int n_frames = 1);
-	Interleaver_core_column_row(const int size, const int n_cols, const READ_ORDER   read_order, const int n_frames = 1);
+	Interleaver_core_column_row(const int size, const int n_cols, const std::string& read_order);
+	Interleaver_core_column_row(const int size, const int n_cols, const READ_ORDER   read_order);
 	virtual ~Interleaver_core_column_row() = default;
 
 	virtual Interleaver_core_column_row<T>* clone() const;

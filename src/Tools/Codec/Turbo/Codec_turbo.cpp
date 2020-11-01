@@ -26,7 +26,7 @@ Codec_turbo<B,Q>
               const factory::Interleaver       &itl_params,
               const factory::Puncturer_turbo   *pct_params,
               const module::CRC<B>             *crc)
-: Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.n_frames),
+: Codec_SIHO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw),
   trellis(new std::vector<std::vector<int>>())
 {
 	// ----------------------------------------------------------------------------------------------------- exceptions
@@ -43,14 +43,6 @@ Codec_turbo<B,Q>
 		std::stringstream message;
 		message << "'enc_params.N_cw' has to be equal to 'dec_params.N_cw' ('enc_params.N_cw' = " << enc_params.N_cw
 		        << ", 'dec_params.N_cw' = " << dec_params.N_cw << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (enc_params.n_frames != dec_params.n_frames)
-	{
-		std::stringstream message;
-		message << "'enc_params.n_frames' has to be equal to 'dec_params.n_frames' ('enc_params.n_frames' = "
-		        << enc_params.n_frames << ", 'dec_params.n_frames' = " << dec_params.n_frames << ").";
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -82,11 +74,10 @@ Codec_turbo<B,Q>
 	else
 	{
 		factory::Puncturer pctno_params;
-		pctno_params.type     = "NO";
-		pctno_params.K        = enc_params.K;
-		pctno_params.N        = enc_params.N_cw;
-		pctno_params.N_cw     = enc_params.N_cw;
-		pctno_params.n_frames = enc_params.n_frames;
+		pctno_params.type = "NO";
+		pctno_params.K    = enc_params.K;
+		pctno_params.N    = enc_params.N_cw;
+		pctno_params.N_cw = enc_params.N_cw;
 
 		this->set_puncturer(pctno_params.build<B,Q>());
 	}
@@ -94,7 +85,7 @@ Codec_turbo<B,Q>
 	try
 	{
 		std::unique_ptr<module::Encoder_RSC_sys<B>> sub_enc(enc_params.sub1->build<B>(*json_stream));
-		this->set_encoder(enc_params.build<B>(this->get_interleaver_bit(), *sub_enc, *sub_enc));
+		this->set_encoder(enc_params.build<B>(*sub_enc, *sub_enc, this->get_interleaver_bit()));
 	}
 	catch (cannot_allocate const&)
 	{
@@ -111,7 +102,7 @@ Codec_turbo<B,Q>
 		std::unique_ptr<module::Decoder_SISO<B,Q>> sub_dec(dec_params.sub1->build_siso<B,Q>(*trellis,
 		                                                                                    *json_stream,
 		                                                                                    dec_params.n_ite));
-		decoder_turbo.reset(dec_params.build<B,Q>(this->get_interleaver_llr(), *sub_dec, *sub_dec,
+		decoder_turbo.reset(dec_params.build<B,Q>(*sub_dec, *sub_dec, this->get_interleaver_llr(),
 		                                          &this->get_encoder()));
 		this->set_decoder_siho(std::static_pointer_cast<module::Decoder_SIHO<B,Q>>(decoder_turbo));
 	}
@@ -135,16 +126,14 @@ Codec_turbo<B,Q>
 		else if (crc != nullptr && std::unique_ptr<module::CRC<B>>(crc->clone())->get_size() > 0)
 			post_pros.push_back(std::unique_ptr<Post_processing_SISO<B,Q>>(new CRC_checker<B,Q>(
 				*crc,
-				dec_params.crc_start_ite,
-				decoder_turbo->get_simd_inter_frame_level())));
+				dec_params.crc_start_ite)));
 
 		if (dec_params.self_corrected)
 			post_pros.push_back(std::unique_ptr<Post_processing_SISO<B,Q>>(new Self_corrected<B,Q>(
 				dec_params.K,
 				dec_params.n_ite,
 				4,
-				dec_params.n_ite,
-				decoder_turbo->get_simd_inter_frame_level())));
+				dec_params.n_ite)));
 
 		for (auto i = 0; i < (int)post_pros.size(); i++)
 			if (post_pros[i] != nullptr)

@@ -20,7 +20,7 @@ template <typename B = int>
 class Encoder_turbo_DB : public Encoder<B>
 {
 protected:
-	const Interleaver<B> &pi; // the interleaver
+	Interleaver<B> &pi; // the interleaver
 
 	std::shared_ptr<Encoder_RSC_DB<B>> enco_n; // encoder natural order
 	std::shared_ptr<Encoder_RSC_DB<B>> enco_i; // encoder interleaved order
@@ -34,11 +34,13 @@ protected:
 	bool is_codeword(const B *X_N);
 
 public:
-	Encoder_turbo_DB(const int& K, const int& N, const Interleaver<B> &pi,
-	                 const Encoder_RSC_DB<B> &enco_n, const Encoder_RSC_DB<B> &enco_i);
+	Encoder_turbo_DB(const int& K, const int& N, const Encoder_RSC_DB<B> &enco_n, const Encoder_RSC_DB<B> &enco_i,
+	                 Interleaver<B> &pi);
 	virtual ~Encoder_turbo_DB() = default;
 
 	virtual Encoder_turbo_DB<B>* clone() const;
+
+	virtual void set_n_frames(const int n_frames);
 
 protected:
 	virtual void deep_copy(const Encoder_turbo_DB<B> &m);

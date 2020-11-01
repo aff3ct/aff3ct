@@ -41,11 +41,10 @@ void Codec_LDPC
 	auto penc = enc->get_prefix();
 	auto pdec = dec->get_prefix();
 
-	args.erase({penc+"-h-path"           });
-	args.erase({penc+"-h-reorder"        });
-	args.erase({pdec+"-cw-size",   "N"   });
-	args.erase({pdec+"-info-bits", "K"   });
-	args.erase({pdec+"-fra",       "F"   });
+	args.erase({penc+"-h-path"        });
+	args.erase({penc+"-h-reorder"     });
+	args.erase({pdec+"-cw-size",   "N"});
+	args.erase({pdec+"-info-bits", "K"});
 
 	args.add_link({pdec+"-h-path"}, {penc+"-info-bits", "K"});
 	args.add_link({pdec+"-h-path"}, {penc+"-cw-size",   "N"});
@@ -97,17 +96,14 @@ void Codec_LDPC
 	// 	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	// }
 
-	dec->n_frames = enc->n_frames;
-
 	enc->R = (float)enc->K / (float)enc->N_cw;
 	dec->R = (float)dec->K / (float)dec->N_cw;
 
 	if (pct != nullptr)
 	{
-		pct->K        = enc->K;
-		pct->N        = enc->N_cw;
-		pct->N_cw     = enc->N_cw;
-		pct->n_frames = enc->n_frames;
+		pct->K    = enc->K;
+		pct->N    = enc->N_cw;
+		pct->N_cw = enc->N_cw;
 
 		pct->store(vals);
 	}

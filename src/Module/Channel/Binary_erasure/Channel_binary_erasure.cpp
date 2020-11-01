@@ -20,9 +20,8 @@ using namespace aff3ct::module;
 template<typename R>
 Channel_binary_erasure<R>
 ::Channel_binary_erasure(const int N,
-                         const tools::Event_generator<R> &event_generator,
-                         const int n_frames)
-: Channel<R>(N, n_frames),
+                         const tools::Event_generator<R> &event_generator)
+: Channel<R>(N),
   event_generator(event_generator.clone())
 {
 	const std::string name = "Channel_binary_erasure";
@@ -61,9 +60,8 @@ template <typename R>
 Channel_binary_erasure<R>
 ::Channel_binary_erasure(const int N,
                          const tools::Event_generator_implem implem,
-                         const int seed,
-                         const int n_frames)
-: Channel<R>(N, n_frames),
+                         const int seed)
+: Channel<R>(N),
   event_generator(create_event_generator<R>(implem, seed))
 {
 	const std::string name = "Channel_binary_erasure";

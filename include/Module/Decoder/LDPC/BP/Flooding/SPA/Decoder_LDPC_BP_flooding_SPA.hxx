@@ -19,11 +19,10 @@ Decoder_LDPC_BP_flooding_SPA<B,R>
                                const tools::Sparse_matrix &_H,
                                const std::vector<uint32_t> &info_bits_pos,
                                const bool enable_syndrome,
-                               const int syndrome_depth,
-                               const int n_frames)
+                               const int syndrome_depth)
 : Decoder_LDPC_BP_flooding<B,R,tools::Update_rule_SPA<R>>(K, N, n_ite, _H, info_bits_pos,
                                                           tools::Update_rule_SPA<R>((unsigned int)_H.get_cols_max_degree()),
-                                                          enable_syndrome, syndrome_depth, n_frames),
+                                                          enable_syndrome, syndrome_depth),
   values(_H.get_cols_max_degree())
 {
 	const std::string name = "Decoder_LDPC_BP_flooding_SPA";

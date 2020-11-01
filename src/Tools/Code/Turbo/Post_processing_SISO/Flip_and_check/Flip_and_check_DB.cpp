@@ -10,21 +10,20 @@ using namespace aff3ct::tools;
 template <typename B, typename R>
 Flip_and_check_DB<B,R>
 ::Flip_and_check_DB(const int K, const int n_ite, const module::CRC<B> &crc, const int start_crc_check_ite,
-                    const int q, const int m, const int M, const int s,
-                    const int simd_inter_frame_level)
-: CRC_checker_DB<B,R>(crc, start_crc_check_ite, simd_inter_frame_level),
-  K                  (K                                               ),
-  q                  (q                                               ),
-  metric             (K/2 * simd_inter_frame_level                    ),
-  s_tmp              (K * simd_inter_frame_level                      ),
-  tab_flips          ((1 << q) -1, mipp::vector<B>(q, (B)0)           ),
-  symb_sorted        (2 * K                                           )
+                    const int q, const int m, const int M, const int s)
+: CRC_checker_DB<B,R>(crc, start_crc_check_ite),
+  K                  (K                                    ),
+  q                  (q                                    ),
+  metric             (K/2 * this->n_frames                 ),
+  s_tmp              (K * this->n_frames                   ),
+  tab_flips          ((1 << q) -1, mipp::vector<B>(q, (B)0)),
+  symb_sorted        (2 * K                                )
 {
-	if (simd_inter_frame_level != 1)
+	if (this->n_frames != 1)
 	{
 		std::stringstream message;
 		message << "The FNC double binary does not support an inter frame level > 1 "
-		        << "('simd_inter_frame_level' = " << simd_inter_frame_level << ").";
+		        << "('n_frames' = " << this->n_frames << ").";
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -138,7 +137,7 @@ bool Flip_and_check_DB<B,R>
 			s_tmp[2*positions[depth]   ] = ((symb_sorted[4*positions[depth] + tab_flips[pattern][depth]]) >> 1) & 0x1;
 			s_tmp[2*positions[depth] +1] = ((symb_sorted[4*positions[depth] + tab_flips[pattern][depth]])     ) & 0x1;
 		}
-		check_crc = this->crc->check(s_tmp, this->simd_inter_frame_level);
+		check_crc = this->crc->check(s_tmp, this->n_frames);
 		pattern++;
 	}
 	while ((pattern < (int)tab_flips.size()) && !check_crc);
@@ -148,6 +147,33 @@ bool Flip_and_check_DB<B,R>
 		std::copy(s_tmp.begin(), s_tmp.end(), s.begin());
 
 	return check_crc;
+}
+
+template <typename B, typename R>
+void Flip_and_check_DB<B,R>
+::set_n_frames(const int n_frames)
+{
+	if (this->n_frames != 1)
+	{
+		std::stringstream message;
+		message << "The FNC double binary does not support an inter frame level > 1 "
+		        << "('n_frames' = " << n_frames << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	const auto old_n_frames = this->get_n_frames();
+	if (n_frames != old_n_frames)
+	{
+		CRC_checker_DB<B,R>::set_n_frames(n_frames);
+
+		const auto old_metric_size = this->metric.size();
+		const auto new_metric_size = (old_metric_size / old_n_frames) * n_frames;
+		this->metric.resize(new_metric_size);
+
+		const auto old_s_tmp_size = this->s_tmp.size();
+		const auto new_s_tmp_size = (old_s_tmp_size / old_n_frames) * n_frames;
+		this->s_tmp.resize(new_s_tmp_size);
+	}
 }
 
 // ==================================================================================== explicit template instantiation

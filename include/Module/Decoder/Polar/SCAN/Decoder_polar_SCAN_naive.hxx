@@ -19,9 +19,8 @@ namespace module
 template <typename B, typename R,
           tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
 Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
-::Decoder_polar_SCAN_naive(const int &K, const int &N, const int &max_iter, const std::vector<bool> &frozen_bits,
-                           const int n_frames)
-: Decoder_SISO<B,R>(K, N, n_frames, 1),
+::Decoder_polar_SCAN_naive(const int &K, const int &N, const int &max_iter, const std::vector<bool> &frozen_bits)
+: Decoder_SISO<B,R>(K, N, 1),
   m                ((int)std::log2(N)),
   max_iter         (max_iter         ),
   layers_count     (this->m +1       ),
@@ -60,13 +59,6 @@ Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 	{
 		std::stringstream message;
 		message << "'max_iter' has to be greater than 0 ('max_iter' = " << max_iter << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (n_frames != 1)
-	{
-		std::stringstream message;
-		message << "'n_frames' has to be equal to 1 ('n_frames' = " << n_frames << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -300,5 +292,23 @@ void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 		}
 	}
 }
+
+template <typename B, typename R,
+          tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
+void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
+::set_n_frames(const int n_frames)
+{
+	if (n_frames != 1)
+	{
+		std::stringstream message;
+		message << "'n_frames' has to be equal to 1 ('n_frames' = " << n_frames << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+		Decoder_SISO<B,R>::set_n_frames(n_frames);
+}
+
 }
 }

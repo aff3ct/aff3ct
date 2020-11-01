@@ -56,11 +56,10 @@ void CRC
 {
 	auto p = this->get_prefix();
 
-	if(vals.exist({p+"-info-bits",  "K"})) this->K        = vals.to_int({p+"-info-bits",  "K"});
-	if(vals.exist({p+"-fra",        "F"})) this->n_frames = vals.to_int({p+"-fra",        "F"});
-	if(vals.exist({p+"-type", p+"-poly"})) this->type     = vals.at    ({p+"-type", p+"-poly"});
-	if(vals.exist({p+"-implem"         })) this->implem   = vals.at    ({p+"-implem"         });
-	if(vals.exist({p+"-size"           })) this->size     = vals.to_int({p+"-size"           });
+	if(vals.exist({p+"-info-bits",  "K"})) this->K      = vals.to_int({p+"-info-bits",  "K"});
+	if(vals.exist({p+"-type", p+"-poly"})) this->type   = vals.at    ({p+"-type", p+"-poly"});
+	if(vals.exist({p+"-implem"         })) this->implem = vals.at    ({p+"-implem"         });
+	if(vals.exist({p+"-size"           })) this->size   = vals.to_int({p+"-size"           });
 
 	if (this->type != "NO" && !this->type.empty() && !this->size)
 		this->size = module::CRC_polynomial<B>::get_size(this->type);
@@ -95,7 +94,6 @@ void CRC
 	headers[p].push_back(std::make_pair("Implementation", this->implem));
 
 	if (full) headers[p].push_back(std::make_pair("Info. bits (K)", std::to_string(this->K)));
-	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 }
 
 template <typename B>
@@ -106,11 +104,11 @@ module::CRC<B>* CRC
 	{
 		const auto poly = this->type;
 
-		if (this->implem == "STD"  ) return new module::CRC_polynomial      <B>(K, poly, size, n_frames);
-		if (this->implem == "FAST" ) return new module::CRC_polynomial_fast <B>(K, poly, size, n_frames);
-		if (this->implem == "INTER") return new module::CRC_polynomial_inter<B>(K, poly, size, n_frames);
+		if (this->implem == "STD"  ) return new module::CRC_polynomial      <B>(K, poly, size);
+		if (this->implem == "FAST" ) return new module::CRC_polynomial_fast <B>(K, poly, size);
+		if (this->implem == "INTER") return new module::CRC_polynomial_inter<B>(K, poly, size);
 	}
-	else                             return new module::CRC_NO              <B>(K,             n_frames);
+	else                             return new module::CRC_NO              <B>(K            );
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

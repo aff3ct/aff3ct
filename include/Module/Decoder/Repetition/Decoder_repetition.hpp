@@ -25,7 +25,7 @@ protected:
 	mipp::vector<R> par;
 	mipp::vector<R> ext;
 
-	Decoder_repetition(const int& K, const int& N, const bool buffered_encoding = true, const int n_frames = 1);
+	Decoder_repetition(const int& K, const int& N, const bool buffered_encoding = true);
 	virtual ~Decoder_repetition() = default;
 	virtual Decoder_repetition<B,R>* clone() const;
 

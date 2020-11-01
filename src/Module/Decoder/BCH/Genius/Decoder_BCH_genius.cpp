@@ -12,8 +12,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_BCH_genius<B,R>
-::Decoder_BCH_genius(const int K, const int N, const int t, Encoder<B> &encoder, const int n_frames)
-: Decoder_BCH<B,R>(K, N, t, n_frames),
+::Decoder_BCH_genius(const int K, const int N, const int t, Encoder<B> &encoder)
+: Decoder_BCH<B,R>(K, N, t),
   encoder(encoder), YH_N(N)
 {
 	const std::string name = "Decoder_BCH_genius";

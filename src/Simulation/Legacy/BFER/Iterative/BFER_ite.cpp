@@ -204,32 +204,32 @@ void BFER_ite<B,R,Q>
 		source[src::tsk::generate].set_autoalloc(true);
 		auto src_data = (B*)(source[src::sck::generate::U_K].get_dataptr());
 		auto src_bytes = source[src::sck::generate::U_K].get_databytes();
-		auto src_size = (src_bytes / sizeof(B)) / this->params_BFER_ite.src->n_frames;
+		auto src_size = (src_bytes / sizeof(B)) / this->params_BFER_ite.n_frames;
 		this->dumper[tid]->register_data(src_data,
 		                                 (unsigned int)src_size,
 		                                 this->params_BFER_ite.err_track_threshold,
 		                                 "src",
 		                                 false,
-		                                 this->params_BFER_ite.src->n_frames,
+		                                 this->params_BFER_ite.n_frames,
 		                                 {});
 
 		encoder[enc::tsk::encode].set_autoalloc(true);
 		auto enc_data = (B*)(encoder[enc::sck::encode::X_N].get_dataptr());
 		auto enc_bytes = encoder[enc::sck::encode::X_N].get_databytes();
-		auto enc_size = (enc_bytes / sizeof(B)) / this->params_BFER_ite.src->n_frames;
+		auto enc_size = (enc_bytes / sizeof(B)) / this->params_BFER_ite.n_frames;
 		this->dumper[tid]->register_data(enc_data,
 		                                 (unsigned int)enc_size,
 		                                 this->params_BFER_ite.err_track_threshold,
 		                                 "enc",
 		                                 false,
-		                                 this->params_BFER_ite.src->n_frames,
+		                                 this->params_BFER_ite.n_frames,
 		                                 {(unsigned)this->params_BFER_ite.cdc->enc->K});
 
 		this->dumper[tid]->register_data(channel.get_noised_data(),
 		                                 this->params_BFER_ite.err_track_threshold,
 		                                 "chn",
 		                                 true,
-		                                 this->params_BFER_ite.src->n_frames,
+		                                 this->params_BFER_ite.n_frames,
 		                                 {});
 
 		if (interleaver_core[tid]->is_uniform())
@@ -237,7 +237,7 @@ void BFER_ite<B,R,Q>
 			                                 this->params_BFER_ite.err_track_threshold,
 			                                 "itl",
 			                                 false,
-			                                 this->params_BFER_ite.src->n_frames,
+			                                 this->params_BFER_ite.n_frames,
 			                                 {});
 	}
 }
@@ -246,14 +246,18 @@ template <typename B, typename R, typename Q>
 std::unique_ptr<module::Source<B>> BFER_ite<B,R,Q>
 ::build_source(const int tid)
 {
-	return std::unique_ptr<module::Source<B>>(params_BFER_ite.src->build<B>());
+	auto src = std::unique_ptr<module::Source<B>>(params_BFER_ite.src->build<B>());
+	src->set_n_frames(this->params.n_frames);
+	return src;
 }
 
 template <typename B, typename R, typename Q>
 std::unique_ptr<module::CRC<B>> BFER_ite<B,R,Q>
 ::build_crc(const int tid)
 {
-	return std::unique_ptr<module::CRC<B>>(params_BFER_ite.crc->build<B>());
+	auto crc = std::unique_ptr<module::CRC<B>>(params_BFER_ite.crc->build<B>());
+	crc->set_n_frames(this->params.n_frames);
+	return crc;
 }
 
 template <typename B, typename R, typename Q>
@@ -263,7 +267,9 @@ std::unique_ptr<tools::Codec_SISO<B,Q>> BFER_ite<B,R,Q>
 	auto crc = this->params_BFER_ite.crc->type == "NO" ? nullptr : this->crc[tid].get();
 	std::unique_ptr<factory::Codec> params_cdc(params_BFER_ite.cdc->clone());
 	auto param_siso_siho = dynamic_cast<factory::Codec_SISO*>(params_cdc.get());
-	return std::unique_ptr<tools::Codec_SISO<B,Q>>(param_siso_siho->template build<B,Q>(crc));
+	auto cdc = std::unique_ptr<tools::Codec_SISO<B,Q>>(param_siso_siho->template build<B,Q>(crc));
+	cdc->set_n_frames(this->params.n_frames);
+	return cdc;
 }
 
 template <typename B, typename R, typename Q>
@@ -277,7 +283,9 @@ std::unique_ptr<tools ::Interleaver_core<>> BFER_ite<B,R,Q>
 		s_noise << std::setprecision(2) << std::fixed << this->noise->get_value();
 		params_itl->core->path = params_BFER_ite.err_track_path + "_" + s_noise.str() + ".itl";
 	}
-	return std::unique_ptr<tools::Interleaver_core<>>(params_itl->core->build<>());
+	auto itl = std::unique_ptr<tools::Interleaver_core<>>(params_itl->core->build<>());
+	itl->set_n_frames(this->params.n_frames);
+	return itl;
 }
 
 template <typename B, typename R, typename Q>
@@ -285,9 +293,17 @@ std::unique_ptr<module::Modem<B,R,Q>> BFER_ite<B,R,Q>
 ::build_modem(const int tid)
 {
 	if (this->distributions != nullptr)
-		return std::unique_ptr<module::Modem<B,R,Q>>(params_BFER_ite.mdm->build<B,R,Q>(*this->distributions));
+	{
+		auto mdm = std::unique_ptr<module::Modem<B,R,Q>>(params_BFER_ite.mdm->build<B,R,Q>(*this->distributions));
+		mdm->set_n_frames(this->params.n_frames);
+		return mdm;
+	}
 	else
-		return std::unique_ptr<module::Modem<B,R,Q>>(params_BFER_ite.mdm->build<B,R,Q>(this->constellation.get()));
+	{
+		auto mdm = std::unique_ptr<module::Modem<B,R,Q>>(params_BFER_ite.mdm->build<B,R,Q>(this->constellation.get()));
+		mdm->set_n_frames(this->params.n_frames);
+		return mdm;
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -295,11 +311,16 @@ std::unique_ptr<module::Channel<R>> BFER_ite<B,R,Q>
 ::build_channel(const int tid)
 {
 	if (this->distributions != nullptr)
-		return std::unique_ptr<module::Channel<R>>(params_BFER_ite.chn->build<R>(*this->distributions));
+	{
+		auto chn = std::unique_ptr<module::Channel<R>>(params_BFER_ite.chn->build<R>(*this->distributions));
+		chn->set_n_frames(this->params.n_frames);
+		return chn;
+	}
 	else
 	{
-		auto c = std::unique_ptr<module::Channel<R>>(params_BFER_ite.chn->build<R>());
-		return c;
+		auto chn = std::unique_ptr<module::Channel<R>>(params_BFER_ite.chn->build<R>());
+		chn->set_n_frames(this->params.n_frames);
+		return chn;
 	}
 }
 
@@ -307,7 +328,9 @@ template <typename B, typename R, typename Q>
 std::unique_ptr<module::Quantizer<R,Q>> BFER_ite<B,R,Q>
 ::build_quantizer(const int tid)
 {
-	return std::unique_ptr<module::Quantizer<R,Q>>(params_BFER_ite.qnt->build<R,Q>());
+	auto qnt = std::unique_ptr<module::Quantizer<R,Q>>(params_BFER_ite.qnt->build<R,Q>());
+	qnt->set_n_frames(this->params.n_frames);
+	return qnt;
 }
 
 template <typename B, typename R, typename Q>
@@ -316,8 +339,9 @@ std::unique_ptr<module::Coset<B,Q>> BFER_ite<B,R,Q>
 {
 	factory::Coset cst_params;
 	cst_params.size = params_BFER_ite.cdc->N_cw;
-	cst_params.n_frames = params_BFER_ite.src->n_frames;
-	return std::unique_ptr<module::Coset<B,Q>>(cst_params.build_real<B,Q>());
+	auto cst = std::unique_ptr<module::Coset<B,Q>>(cst_params.build_real<B,Q>());
+	cst->set_n_frames(this->params.n_frames);
+	return cst;
 }
 
 template <typename B, typename R, typename Q>
@@ -326,8 +350,9 @@ std::unique_ptr<module::Coset<B,B>> BFER_ite<B,R,Q>
 {
 	factory::Coset cst_params;
 	cst_params.size = params_BFER_ite.coded_monitoring ? params_BFER_ite.cdc->N_cw : params_BFER_ite.cdc->K;
-	cst_params.n_frames = params_BFER_ite.src->n_frames;
-	return std::unique_ptr<module::Coset<B,B>>(cst_params.build_bit<B,B>());
+	auto cst = std::unique_ptr<module::Coset<B,B>>(cst_params.build_bit<B,B>());
+	cst->set_n_frames(this->params.n_frames);
+	return cst;
 }
 
 template <typename B, typename R, typename Q>
@@ -337,8 +362,8 @@ std::unique_ptr<module::Loop_predicate<Q>> BFER_ite<B,R,Q>
 	tools::Predicate_ite p(params_BFER_ite.n_ite);
 	auto loop_ite =  std::unique_ptr<module::Loop_predicate<Q>>(new module::Loop_predicate<Q>(
 		p,
-		params_BFER_ite.cdc->N_cw,
-		params_BFER_ite.src->n_frames));
+		params_BFER_ite.cdc->N_cw));
+	loop_ite->set_n_frames(this->params.n_frames);
 	return loop_ite;
 }
 
@@ -353,8 +378,8 @@ std::unique_ptr<module::Loop_CRC<B,Q>> BFER_ite<B,R,Q>
 		*crc,
 		(size_t)crc->get_size() + (size_t)crc->get_K(),
 		params_BFER_ite.cdc->N_cw,
-		params_BFER_ite.crc_start,
-		params_BFER_ite.src->n_frames));
+		params_BFER_ite.crc_start));
+	loop_crc->set_n_frames(this->params.n_frames);
 	return loop_crc;
 }
 

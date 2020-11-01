@@ -36,9 +36,6 @@ void Quantizer
 		cli::Integer(cli::Positive(), cli::Non_zero()),
 		cli::arg_rank::REQ);
 
-	tools::add_arg(args, p, class_name+"p+fra,F",
-		cli::Integer(cli::Positive(), cli::Non_zero()));
-
 	tools::add_arg(args, p, class_name+"p+type",
 		cli::Text(cli::Including_set("POW2", "CUSTOM")));
 
@@ -62,7 +59,6 @@ void Quantizer
 
 	if(vals.exist({p+"-range"    })) this->range      = vals.to_float({p+"-range"    });
 	if(vals.exist({p+"-size", "N"})) this->size       = vals.to_int  ({p+"-size", "N"});
-	if(vals.exist({p+"-fra",  "F"})) this->n_frames   = vals.to_int  ({p+"-fra",  "F"});
 	if(vals.exist({p+"-dec"      })) this->n_decimals = vals.to_int  ({p+"-dec"      });
 	if(vals.exist({p+"-bits"     })) this->n_bits     = vals.to_int  ({p+"-bits"     });
 	if(vals.exist({p+"-type"     })) this->type       = vals.at      ({p+"-type"     });
@@ -83,7 +79,6 @@ void Quantizer
 	headers[p].push_back(std::make_pair("Type", this->type));
 	headers[p].push_back(std::make_pair("Implementation", this->implem));
 	if (full) headers[p].push_back(std::make_pair("Frame size (N)", std::to_string(this->size)));
-	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 	headers[p].push_back(std::make_pair("Fixed-point config.", quantif));
 }
 
@@ -91,10 +86,10 @@ template <typename R, typename Q>
 module::Quantizer<R,Q>* Quantizer
 ::build() const
 {
-	if (this->type == "POW2"   && this->implem == "STD" ) return new module::Quantizer_pow2     <R,Q>(this->size, this->n_decimals, this->n_bits, this->n_frames);
-	if (this->type == "POW2"   && this->implem == "FAST") return new module::Quantizer_pow2_fast<R,Q>(this->size, this->n_decimals, this->n_bits, this->n_frames);
-	if (this->type == "CUSTOM" && this->implem == "STD" ) return new module::Quantizer_custom   <R,Q>(this->size, this->range,      this->n_bits, this->n_frames);
-	if (this->type == "NO"                              ) return new module::Quantizer_NO       <R,Q>(this->size,                                 this->n_frames);
+	if (this->type == "POW2"   && this->implem == "STD" ) return new module::Quantizer_pow2     <R,Q>(this->size, this->n_decimals, this->n_bits);
+	if (this->type == "POW2"   && this->implem == "FAST") return new module::Quantizer_pow2_fast<R,Q>(this->size, this->n_decimals, this->n_bits);
+	if (this->type == "CUSTOM" && this->implem == "STD" ) return new module::Quantizer_custom   <R,Q>(this->size, this->range,      this->n_bits);
+	if (this->type == "NO"                              ) return new module::Quantizer_NO       <R,Q>(this->size                                );
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

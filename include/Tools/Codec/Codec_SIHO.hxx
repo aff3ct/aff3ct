@@ -10,8 +10,8 @@ namespace tools
 
 template <typename B, typename Q>
 Codec_SIHO<B,Q>
-::Codec_SIHO(const int K, const int N_cw, const int N, const int n_frames)
-: Codec_HIHO<B,Q>(K, N_cw, N, n_frames)
+::Codec_SIHO(const int K, const int N_cw, const int N)
+: Codec_HIHO<B,Q>(K, N_cw, N)
 {
 }
 
@@ -58,6 +58,15 @@ void Codec_SIHO<B,Q>
 {
 	this->decoder_siho = dec;
 	this->set_decoder_hiho(this->decoder_siho);
+}
+
+template <typename B, typename Q>
+void Codec_SIHO<B,Q>
+::set_n_frames(const int n_frames)
+{
+	Codec_HIHO<B,Q>::set_n_frames(n_frames);
+	if (this->decoder_siho != nullptr)
+		this->decoder_siho->set_n_frames(n_frames);
 }
 
 }

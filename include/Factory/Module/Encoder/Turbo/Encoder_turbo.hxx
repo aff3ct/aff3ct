@@ -79,8 +79,7 @@ void Encoder_turbo<E1,E2>
 
 		auto pi = itl->get_prefix();
 
-		args.erase({pi+"-size"    });
-		args.erase({pi+"-fra", "F"});
+		args.erase({pi+"-size"});
 	}
 
 	Encoder_turbo_common::add_args_and_options(args, p, class_name);
@@ -91,7 +90,6 @@ void Encoder_turbo<E1,E2>
 
 	args.erase({ps1+"-info-bits", "K"});
 	args.erase({ps1+"-cw-size",   "N"});
-	args.erase({ps1+"-fra",       "F"});
 	args.erase({ps1+"-seed",      "S"});
 	args.erase({ps1+"-path"          });
 
@@ -103,7 +101,6 @@ void Encoder_turbo<E1,E2>
 
 		args.erase({ps2+"-info-bits", "K"});
 		args.erase({ps2+"-cw-size",   "N"});
-		args.erase({ps2+"-fra",       "F"});
 		args.erase({ps2+"-seed",      "S"});
 		args.erase({ps2+"-path"          });
 	}
@@ -119,12 +116,10 @@ void Encoder_turbo<E1,E2>
 
 	if(vals.exist({p+"-json-path"})) this->json_path = vals.at({p+"-json-path"});
 
-	this->sub1->K        = this->K;
-	this->sub2->K        = this->K;
-	this->sub1->n_frames = this->n_frames;
-	this->sub2->n_frames = this->n_frames;
-	this->sub1->seed     = this->seed;
-	this->sub2->seed     = this->seed;
+	this->sub1->K    = this->K;
+	this->sub2->K    = this->K;
+	this->sub1->seed = this->seed;
+	this->sub2->seed = this->seed;
 
 	sub1->store(vals);
 	sub2->store(vals);
@@ -141,8 +136,7 @@ void Encoder_turbo<E1,E2>
 
 	if (itl != nullptr)
 	{
-		this->itl->core->size     = this->K;
-		this->itl->core->n_frames = this->n_frames;
+		this->itl->core->size = this->K;
 
 		itl->store(vals);
 
@@ -179,17 +173,17 @@ void Encoder_turbo<E1,E2>
 template <class E1, class E2>
 template <typename B>
 module::Encoder_turbo<B>* Encoder_turbo<E1,E2>
-::build(const module::Interleaver<B> &itl,
-        const module::Encoder<B> &enc_n,
-        const module::Encoder<B> &enc_i) const
+::build(const module::Encoder<B> &enc_n,
+        const module::Encoder<B> &enc_i,
+              module::Interleaver<B> &itl) const
 {
 	if (this->sub1->buffered)
 	{
-		if (this->type == "TURBO") return new module::Encoder_turbo       <B>(this->K, this->N_cw, itl, enc_n, enc_i);
+		if (this->type == "TURBO") return new module::Encoder_turbo       <B>(this->K, this->N_cw, enc_n, enc_i, itl);
 	}
 	else if (&enc_n == &enc_i)
 	{
-		if (this->type == "TURBO") return new module::Encoder_turbo_legacy<B>(this->K, this->N_cw, itl, enc_n);
+		if (this->type == "TURBO") return new module::Encoder_turbo_legacy<B>(this->K, this->N_cw, enc_n, itl);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

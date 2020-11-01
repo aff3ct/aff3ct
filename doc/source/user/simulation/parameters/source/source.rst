@@ -83,52 +83,6 @@ Description of the allowed values:
 .. |src-implem_descr_fast| replace:: Fast implementation, only available for the
    ``RAND`` source type.
 
-.. _src-src-fra:
-
-``--src-fra, -F``
-"""""""""""""""""
-
-   :Type: integer
-   :Default: 1
-   :Examples: ``--src-fra 8``
-
-|factory::Source::p+fra,F|
-
-The default behavior is to generate one frame at a time. This parameter enables
-to process more than one frame when the *generate* task (from the source module)
-is called.
-
-The number of frames consumed and produced when a task is executed is called the
-**inter frame level** or |IFL|. Setting the |IFL| in the source module will
-automatically affect the |IFL| level in all the other simulation modules (c.f.
-:numref:`fig_src_fra_inter`).
-
-.. _fig_src_fra_inter:
-
-.. figure:: images/src_fra_inter.svg
-   :figwidth: 70 %
-   :align: center
-
-   3-way inter frame level in the communication chain.
-
-The |IFL| also allows multi-user configurations to be simulated (see
-:numref:`fig_src_fra_multi_user`). This configurations is used when using |SCMA|
-modulation (see the :ref:`mdm-mdm-type` ``SCMA`` parameter).
-
-.. _fig_src_fra_multi_user:
-
-.. figure:: images/src_fra_multi_user.svg
-   :figwidth: 70 %
-   :align: center
-
-   3-way inter frame level with multi-user channel in the communication chain.
-
-.. note:: **For short frames**, increase the |IFL| can **increase the
-  simulation throughput**, it can hide task call overheads.
-
-.. note:: **For large frames**, increase the |IFL| can **decrease the
-  simulation throughput** due the CPU cache size limitation.
-
 .. _src-src-path:
 
 ``--src-path``

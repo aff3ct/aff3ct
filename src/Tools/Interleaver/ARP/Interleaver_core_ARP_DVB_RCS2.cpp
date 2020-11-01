@@ -8,8 +8,8 @@ using namespace aff3ct::tools;
 
 template <typename T>
 Interleaver_core_ARP_DVB_RCS2<T>
-::Interleaver_core_ARP_DVB_RCS2(const int size, const int n_frames)
-: Interleaver_core<T>(size, "DVB_RCS2", false, n_frames)
+::Interleaver_core_ARP_DVB_RCS2(const int size)
+: Interleaver_core<T>(size, "DVB_RCS2", false)
 {
 	switch (size)
 	{
@@ -97,7 +97,7 @@ Interleaver_core_ARP_DVB_RCS2<T>
 			q2 = 0;
 			q3 = 0;
 			break;
-		case 492: // wfm 13	
+		case 492: // wfm 13
 			p  = 31;
 			q0 = 0;
 			q1 = 3;
@@ -152,7 +152,7 @@ Interleaver_core_ARP_DVB_RCS2<T>
 			q1 = 0;
 			q2 = 6;
 			q3 = 2;
-			break;			
+			break;
 		case 1192:
 			p  = 49;
 			q0 = 0;
@@ -187,7 +187,7 @@ Interleaver_core_ARP_DVB_RCS2<T>
 			q1 = 10;
 			q2 = 7;
 			q3 = 1;
-			break;			
+			break;
 		case 1752:
 			p  = 59;
 			q0 = 1;
@@ -201,7 +201,7 @@ Interleaver_core_ARP_DVB_RCS2<T>
 			q1 = 8;
 			q2 = 5;
 			q3 = 1;
-			break;		
+			break;
 		default:
 			std::stringstream message;
 			message << "There is no ARP parameters for 'size' = " << size << " (supported sizes are 56, 64, 152, "

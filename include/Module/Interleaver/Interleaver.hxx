@@ -33,8 +33,8 @@ Socket& Interleaver<D,T>
 
 template <typename D, typename T>
 Interleaver<D,T>
-::Interleaver(const tools::Interleaver_core<T> &core)
-: Module(core.get_n_frames()),
+::Interleaver(tools::Interleaver_core<T> &core)
+: Module(),
   core(core)
 {
 	const std::string name = "Interleaver_" + core.get_name();
@@ -64,6 +64,8 @@ Interleaver<D,T>
 
 		return status_t::SUCCESS;
 	});
+
+	this->set_n_frames(core.get_n_frames());
 }
 
 template <typename D, typename T>
@@ -76,8 +78,8 @@ Interleaver<D,T>* Interleaver<D,T>
 }
 
 template <typename D, typename T>
-const tools::Interleaver_core<T>& Interleaver<D,T>
-::get_core() const
+tools::Interleaver_core<T>& Interleaver<D,T>
+::get_core()
 {
 	return this->core;
 }
@@ -131,7 +133,7 @@ void Interleaver<D,T>
 template <typename D, typename T>
 void Interleaver<D,T>
 ::interleave(const D *nat, D *itl, const int frame_id, const int n_frames,
-           const bool frame_reordering) const
+             const bool frame_reordering) const
 {
 	this->_interleave(nat, itl, core.get_lut(), frame_reordering, n_frames, frame_id);
 }
@@ -170,8 +172,8 @@ void Interleaver<D,T>
 }
 
 template <typename D, typename T>
-void Interleaver<D,T>::
-deinterleave(const D *itl, D *nat, const int frame_id) const
+void Interleaver<D,T>
+::deinterleave(const D *itl, D *nat, const int frame_id) const
 {
 	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
 	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
@@ -197,6 +199,14 @@ void Interleaver<D,T>
               const int  n_frames,
               const int  frame_id) const
 {
+	if (this->get_n_frames() != this->core.get_n_frames())
+	{
+		std::stringstream message;
+		message << "'n_frames' has to be equal to 'core.get_n_frames()' ('n_frames' = "
+		        << this->get_n_frames() << ", 'core.get_n_frames()' = " << this->core.get_n_frames() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (frame_reordering)
 	{
 		if (!this->core.is_uniform())
@@ -256,6 +266,18 @@ void Interleaver<D,T>
 				cur_frame_id = (cur_frame_id +1) % this->n_frames;
 			}
 		}
+	}
+}
+
+template <typename D, typename T>
+void Interleaver<D,T>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Module::set_n_frames(n_frames);
+		core.set_n_frames(n_frames);
 	}
 }
 

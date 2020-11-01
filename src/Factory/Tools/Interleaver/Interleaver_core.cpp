@@ -43,9 +43,6 @@ void Interleaver_core
 		cli::Integer(cli::Positive(), cli::Non_zero()),
 		cli::arg_rank::REQ);
 
-	tools::add_arg(args, p, class_name+"p+fra,F",
-		cli::Integer(cli::Positive(), cli::Non_zero()));
-
 	tools::add_arg(args, p, class_name+"p+type",
 		cli::Text(cli::Including_set("LTE", "CCSDS", "DVB-RCS1", "DVB-RCS2", "RANDOM", "GOLDEN", "USER", "RAND_COL",
 		                             "ROW_COL", "COL_ROW", "NO")));
@@ -73,7 +70,6 @@ void Interleaver_core
 	auto p = this->get_prefix();
 
 	if(vals.exist({p+"-size"      })) this->size       = vals.to_int ({p+"-size"      });
-	if(vals.exist({p+"-fra",   "F"})) this->n_frames   = vals.to_int ({p+"-fra",   "F"});
 	if(vals.exist({p+"-type"      })) this->type       = vals.at     ({p+"-type"      });
 	if(vals.exist({p+"-path"      })) this->path       = vals.to_file({p+"-path"      });
 	if(vals.exist({p+"-cols"      })) this->n_cols     = vals.to_int ({p+"-cols"      });
@@ -89,7 +85,6 @@ void Interleaver_core
 
 	headers[p].push_back(std::make_pair("Type", this->type));
 	if (full) headers[p].push_back(std::make_pair("Size", std::to_string(this->size)));
-	if (full) headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->n_frames)));
 	if (this->type == "USER")
 		headers[p].push_back(std::make_pair("Path", this->path));
 	if (this->type == "RAND_COL" || this->type == "ROW_COL" || this->type == "COL_ROW")
@@ -105,17 +100,17 @@ template <typename T>
 tools::Interleaver_core<T>* Interleaver_core
 ::build() const
 {
-	if (this->type == "LTE"     ) return new tools::Interleaver_core_LTE          <T>(this->size,                                          this->n_frames);
-	if (this->type == "CCSDS"   ) return new tools::Interleaver_core_CCSDS        <T>(this->size,                                          this->n_frames);
-	if (this->type == "DVB-RCS1") return new tools::Interleaver_core_ARP_DVB_RCS1 <T>(this->size,                                          this->n_frames);
-	if (this->type == "DVB-RCS2") return new tools::Interleaver_core_ARP_DVB_RCS2 <T>(this->size,                                          this->n_frames);
-	if (this->type == "RANDOM"  ) return new tools::Interleaver_core_random       <T>(this->size,               this->seed, this->uniform, this->n_frames);
-	if (this->type == "RAND_COL") return new tools::Interleaver_core_random_column<T>(this->size, this->n_cols, this->seed, this->uniform, this->n_frames);
-	if (this->type == "ROW_COL" ) return new tools::Interleaver_core_row_column   <T>(this->size, this->n_cols, this->read_order,          this->n_frames);
-	if (this->type == "COL_ROW" ) return new tools::Interleaver_core_column_row   <T>(this->size, this->n_cols, this->read_order,          this->n_frames);
-	if (this->type == "GOLDEN"  ) return new tools::Interleaver_core_golden       <T>(this->size,               this->seed, this->uniform, this->n_frames);
-	if (this->type == "USER"    ) return new tools::Interleaver_core_user         <T>(this->size, this->path,                              this->n_frames);
-	if (this->type == "NO"      ) return new tools::Interleaver_core_NO           <T>(this->size,                                          this->n_frames);
+	if (this->type == "LTE"     ) return new tools::Interleaver_core_LTE          <T>(this->size                                         );
+	if (this->type == "CCSDS"   ) return new tools::Interleaver_core_CCSDS        <T>(this->size                                         );
+	if (this->type == "DVB-RCS1") return new tools::Interleaver_core_ARP_DVB_RCS1 <T>(this->size                                         );
+	if (this->type == "DVB-RCS2") return new tools::Interleaver_core_ARP_DVB_RCS2 <T>(this->size                                         );
+	if (this->type == "RANDOM"  ) return new tools::Interleaver_core_random       <T>(this->size,               this->seed, this->uniform);
+	if (this->type == "RAND_COL") return new tools::Interleaver_core_random_column<T>(this->size, this->n_cols, this->seed, this->uniform);
+	if (this->type == "ROW_COL" ) return new tools::Interleaver_core_row_column   <T>(this->size, this->n_cols, this->read_order         );
+	if (this->type == "COL_ROW" ) return new tools::Interleaver_core_column_row   <T>(this->size, this->n_cols, this->read_order         );
+	if (this->type == "GOLDEN"  ) return new tools::Interleaver_core_golden       <T>(this->size,               this->seed, this->uniform);
+	if (this->type == "USER"    ) return new tools::Interleaver_core_user         <T>(this->size, this->path                             );
+	if (this->type == "NO"      ) return new tools::Interleaver_core_NO           <T>(this->size                                         );
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

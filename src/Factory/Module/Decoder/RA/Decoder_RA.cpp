@@ -63,8 +63,7 @@ void Decoder_RA
 
 		auto pi = itl->get_prefix();
 
-		args.erase({pi+"-size"    });
-		args.erase({pi+"-fra", "F"});
+		args.erase({pi+"-size"});
 	}
 
 	cli::add_options(args.at({p+"-type", "D"}), 0, "RA");
@@ -83,9 +82,7 @@ void Decoder_RA
 
 	if (itl != nullptr)
 	{
-		this->itl->core->size     = this->N_cw;
-		this->itl->core->n_frames = this->n_frames;
-
+		this->itl->core->size = this->N_cw;
 		itl->store(vals);
 	}
 
@@ -110,7 +107,7 @@ void Decoder_RA
 
 template <typename B, typename Q>
 module::Decoder_SIHO<B,Q>* Decoder_RA
-::build(const module::Interleaver<Q> &itl, module::Encoder<B> *encoder) const
+::build(module::Interleaver<Q> &itl, module::Encoder<B> *encoder) const
 {
 	try
 	{
@@ -120,7 +117,7 @@ module::Decoder_SIHO<B,Q>* Decoder_RA
 	{
 		if (this->type == "RA")
 		{
-			if (this->implem == "STD" ) return new module::Decoder_RA<B,Q>(this->K, this->N_cw, itl, this->n_ite, this->n_frames);
+			if (this->implem == "STD" ) return new module::Decoder_RA<B,Q>(this->K, this->N_cw, itl, this->n_ite);
 		}
 	}
 
@@ -130,11 +127,11 @@ module::Decoder_SIHO<B,Q>* Decoder_RA
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RA::build<B_8 ,Q_8 >(const aff3ct::module::Interleaver<Q_8 >&, module::Encoder<B_8 >*) const;
-template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RA::build<B_16,Q_16>(const aff3ct::module::Interleaver<Q_16>&, module::Encoder<B_16>*) const;
-template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RA::build<B_32,Q_32>(const aff3ct::module::Interleaver<Q_32>&, module::Encoder<B_32>*) const;
-template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RA::build<B_64,Q_64>(const aff3ct::module::Interleaver<Q_64>&, module::Encoder<B_64>*) const;
+template aff3ct::module::Decoder_SIHO<B_8 ,Q_8 >* aff3ct::factory::Decoder_RA::build<B_8 ,Q_8 >(aff3ct::module::Interleaver<Q_8 >&, module::Encoder<B_8 >*) const;
+template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RA::build<B_16,Q_16>(aff3ct::module::Interleaver<Q_16>&, module::Encoder<B_16>*) const;
+template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RA::build<B_32,Q_32>(aff3ct::module::Interleaver<Q_32>&, module::Encoder<B_32>*) const;
+template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RA::build<B_64,Q_64>(aff3ct::module::Interleaver<Q_64>&, module::Encoder<B_64>*) const;
 #else
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_RA::build<B,Q>(const aff3ct::module::Interleaver<Q>&, module::Encoder<B>*) const;
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_RA::build<B,Q>(aff3ct::module::Interleaver<Q>&, module::Encoder<B>*) const;
 #endif
 // ==================================================================================== explicit template instantiation

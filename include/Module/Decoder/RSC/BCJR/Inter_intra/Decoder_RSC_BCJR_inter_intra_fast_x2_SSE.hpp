@@ -20,8 +20,7 @@ class Decoder_RSC_BCJR_inter_intra_fast_x2_SSE : public Decoder_RSC_BCJR_inter_i
 public:
 	Decoder_RSC_BCJR_inter_intra_fast_x2_SSE(const int &K,
 	                                         const std::vector<std::vector<int>> &trellis,
-	                                         const bool buffered_encoding = true,
-	                                         const int n_frames = 1);
+	                                         const bool buffered_encoding = true);
 	virtual ~Decoder_RSC_BCJR_inter_intra_fast_x2_SSE() = default;
 
 	virtual Decoder_RSC_BCJR_inter_intra_fast_x2_SSE<B,R,MAX>* clone() const;

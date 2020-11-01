@@ -266,9 +266,6 @@ void BFER
 		headers[p].push_back(std::make_pair("Bit rate", br_str.str()));
 	}
 
-	if (this->src != nullptr)
-		headers[p].push_back(std::make_pair("Inter frame level", std::to_string(this->src->n_frames)));
-
 	if (this->src != nullptr) { this->src->get_headers(headers, full); }
 	if (this->crc != nullptr) { this->crc->get_headers(headers, full); }
 	if (this->cdc != nullptr) { this->cdc->get_headers(headers, full); }

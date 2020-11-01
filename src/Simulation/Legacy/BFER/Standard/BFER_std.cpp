@@ -120,7 +120,7 @@ void BFER_std<B,R,Q>
 			                                 this->params_BFER_std.err_track_threshold,
 			                                 "itl",
 			                                 false,
-			                                 this->params_BFER_std.src->n_frames,
+			                                 this->params_BFER_std.n_frames,
 			                                 {});
 	}
 	catch (...) { /* do nothing if there is no interleaver */ }
@@ -136,32 +136,32 @@ void BFER_std<B,R,Q>
 		source[src::tsk::generate].set_autoalloc(true);
 		auto src_data = (B*)(source[src::sck::generate::U_K].get_dataptr());
 		auto src_bytes = source[src::sck::generate::U_K].get_databytes();
-		auto src_size = (src_bytes / sizeof(B)) / this->params_BFER_std.src->n_frames;
+		auto src_size = (src_bytes / sizeof(B)) / this->params_BFER_std.n_frames;
 		this->dumper[tid]->register_data(src_data,
 		                                 (unsigned int)src_size,
 		                                 this->params_BFER_std.err_track_threshold,
 		                                 "src",
 		                                 false,
-		                                 this->params_BFER_std.src->n_frames,
+		                                 this->params_BFER_std.n_frames,
 		                                 {});
 
 		encoder[enc::tsk::encode].set_autoalloc(true);
 		auto enc_data = (B*)(encoder[enc::sck::encode::X_N].get_dataptr());
 		auto enc_bytes = encoder[enc::sck::encode::X_N].get_databytes();
-		auto enc_size = (enc_bytes / sizeof(B)) / this->params_BFER_std.src->n_frames;
+		auto enc_size = (enc_bytes / sizeof(B)) / this->params_BFER_std.n_frames;
 		this->dumper[tid]->register_data(enc_data,
 		                                 (unsigned int)enc_size,
 		                                 this->params_BFER_std.err_track_threshold,
 		                                 "enc",
 		                                 false,
-		                                 this->params_BFER_std.src->n_frames,
+		                                 this->params_BFER_std.n_frames,
 		                                 {(unsigned)this->params_BFER_std.cdc->enc->K});
 
 		this->dumper[tid]->register_data(channel.get_noised_data(),
 		                                 this->params_BFER_std.err_track_threshold,
 		                                 "chn",
 		                                 true,
-		                                 this->params_BFER_std.src->n_frames,
+		                                 this->params_BFER_std.n_frames,
 		                                 {});
 	}
 }
@@ -170,14 +170,18 @@ template <typename B, typename R, typename Q>
 std::unique_ptr<module::Source<B>> BFER_std<B,R,Q>
 ::build_source(const int tid)
 {
-	return std::unique_ptr<module::Source<B>>(params_BFER_std.src->build<B>());
+	auto src = std::unique_ptr<module::Source<B>>(params_BFER_std.src->build<B>());
+	src->set_n_frames(this->params.n_frames);
+	return src;
 }
 
 template <typename B, typename R, typename Q>
 std::unique_ptr<module::CRC<B>> BFER_std<B,R,Q>
 ::build_crc(const int tid)
 {
-	return std::unique_ptr<module::CRC<B>>(params_BFER_std.crc->build<B>());
+	auto crc = std::unique_ptr<module::CRC<B>>(params_BFER_std.crc->build<B>());
+	crc->set_n_frames(this->params.n_frames);
+	return crc;
 }
 
 template <typename B, typename R, typename Q>
@@ -199,7 +203,9 @@ std::unique_ptr<tools::Codec_SIHO<B,Q>> BFER_std<B,R,Q>
 
 	auto crc = this->params_BFER_std.crc->type == "NO" ? nullptr : this->crc[tid].get();
 	auto param_siho = dynamic_cast<factory::Codec_SIHO*>(params_cdc.get());
-	return std::unique_ptr<tools::Codec_SIHO<B,Q>>(param_siho->build<B,Q>(crc));
+	auto cdc = std::unique_ptr<tools::Codec_SIHO<B,Q>>(param_siho->build<B,Q>(crc));
+	cdc->set_n_frames(this->params.n_frames);
+	return cdc;
 }
 
 template <typename B, typename R, typename Q>
@@ -207,9 +213,17 @@ std::unique_ptr<module::Modem<B,R,R>> BFER_std<B,R,Q>
 ::build_modem(const int tid)
 {
 	if (this->distributions != nullptr)
-		return std::unique_ptr<module::Modem<B,R,R>>(params_BFER_std.mdm->build<B,R,R>(*this->distributions));
+	{
+		auto mdm = std::unique_ptr<module::Modem<B,R,R>>(params_BFER_std.mdm->build<B,R,R>(*this->distributions));
+		mdm->set_n_frames(this->params.n_frames);
+		return mdm;
+	}
 	else
-		return std::unique_ptr<module::Modem<B,R,R>>(params_BFER_std.mdm->build<B,R,R>(this->constellation.get()));
+	{
+		auto mdm = std::unique_ptr<module::Modem<B,R,R>>(params_BFER_std.mdm->build<B,R,R>(this->constellation.get()));
+		mdm->set_n_frames(this->params.n_frames);
+		return mdm;
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -217,16 +231,26 @@ std::unique_ptr<module::Channel<R>> BFER_std<B,R,Q>
 ::build_channel(const int tid)
 {
 	if (this->distributions != nullptr)
-		return std::unique_ptr<module::Channel<R>>(params_BFER_std.chn->build<R>(*this->distributions));
+	{
+		auto chn = std::unique_ptr<module::Channel<R>>(params_BFER_std.chn->build<R>(*this->distributions));
+		chn->set_n_frames(this->params.n_frames);
+		return chn;
+	}
 	else
-		return std::unique_ptr<module::Channel<R>>(params_BFER_std.chn->build<R>());
+	{
+		auto chn = std::unique_ptr<module::Channel<R>>(params_BFER_std.chn->build<R>());
+		chn->set_n_frames(this->params.n_frames);
+		return chn;
+	}
 }
 
 template <typename B, typename R, typename Q>
 std::unique_ptr<module::Quantizer<R,Q>> BFER_std<B,R,Q>
 ::build_quantizer(const int tid)
 {
-	return std::unique_ptr<module::Quantizer<R,Q>>(params_BFER_std.qnt->build<R,Q>());
+	auto qnt = std::unique_ptr<module::Quantizer<R,Q>>(params_BFER_std.qnt->build<R,Q>());
+	qnt->set_n_frames(this->params.n_frames);
+	return qnt;
 }
 
 template <typename B, typename R, typename Q>
@@ -235,8 +259,9 @@ std::unique_ptr<module::Coset<B,Q>> BFER_std<B,R,Q>
 {
 	factory::Coset cst_params;
 	cst_params.size = params_BFER_std.cdc->N_cw;
-	cst_params.n_frames = params_BFER_std.src->n_frames;
-	return std::unique_ptr<module::Coset<B,Q>>(cst_params.build_real<B,Q>());
+	auto cst = std::unique_ptr<module::Coset<B,Q>>(cst_params.build_real<B,Q>());
+	cst->set_n_frames(this->params.n_frames);
+	return cst;
 }
 
 template <typename B, typename R, typename Q>
@@ -245,8 +270,9 @@ std::unique_ptr<module::Coset<B,B>> BFER_std<B,R,Q>
 {
 	factory::Coset cst_params;
 	cst_params.size = this->params_BFER_std.coded_monitoring ? params_BFER_std.cdc->N_cw : params_BFER_std.cdc->K;
-	cst_params.n_frames = params_BFER_std.src->n_frames;
-	return std::unique_ptr<module::Coset<B,B>>(cst_params.build_bit<B,B>());
+	auto cst = std::unique_ptr<module::Coset<B,B>>(cst_params.build_bit<B,B>());
+	cst->set_n_frames(this->params.n_frames);
+	return cst;
 }
 
 // ==================================================================================== explicit template instantiation

@@ -16,8 +16,8 @@ std::thread::id aff3ct::module::Encoder_LDPC_from_H<B>::master_thread_id = std::
 template <typename B>
 Encoder_LDPC_from_H<B>
 ::Encoder_LDPC_from_H(const int K, const int N, const tools::Sparse_matrix &_H, const std::string& G_method,
-                      const std::string& G_save_path, const bool G_save_path_single_thread, const int n_frames)
-: Encoder_LDPC<B>(K, N, n_frames)
+                      const std::string& G_save_path, const bool G_save_path_single_thread)
+: Encoder_LDPC<B>(K, N)
 {
 	const std::string name = "Encoder_LDPC_from_H";
 	this->set_name(name);

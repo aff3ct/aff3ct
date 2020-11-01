@@ -56,7 +56,7 @@ void LDPC<L,B,R,Q>
 	params_cdc->store(this->arg_vals);
 
 	if (dec_ldpc->simd_strategy == "INTER")
-		this->params.src->n_frames = mipp::N<Q>();
+		this->params.n_frames = mipp::N<Q>();
 
 	if (std::is_same<Q,int8_t>() || std::is_same<Q,int16_t>())
 	{
@@ -65,11 +65,6 @@ void LDPC<L,B,R,Q>
 	}
 
 	L::store_args();
-
-	params_cdc->enc->n_frames = this->params.src->n_frames;
-	if (params_cdc->pct != nullptr)
-	params_cdc->pct->n_frames = this->params.src->n_frames;
-	params_cdc->dec->n_frames = this->params.src->n_frames;
 }
 
 // ==================================================================================== explicit template instantiation

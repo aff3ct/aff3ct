@@ -24,14 +24,13 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_chase_pyndiah<B,R>
 ::Decoder_chase_pyndiah(const int K, const int N, // N includes the parity bit if any
-                        const int n_frames,
                         const Decoder_BCH<B,R> &dec_,
                         const Encoder    <B  > &enc_,
                         const int n_least_reliable_positions_,
                         const int n_test_vectors_,
                         const int n_competitors_,
                         const std::vector<float>& cp_coef)
-: Decoder_SISO<B,R>(K, N, n_frames),
+: Decoder_SISO<B,R>(K, N),
   dec                       (dec_.clone()                                                            ),
   enc                       (enc_.clone()                                                            ),
   N_np                      (dec->get_N()                                                            ),

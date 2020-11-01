@@ -27,8 +27,7 @@ protected:
 	R inv_sigma2;
 
 public:
-	Modem_generic(const int N, const tools::Constellation<R> &cstl, const bool disable_sig2 = false,
-	              const int n_frames = 1);
+	Modem_generic(const int N, const tools::Constellation<R> &cstl, const bool disable_sig2 = false);
 
 	virtual ~Modem_generic() = default;
 

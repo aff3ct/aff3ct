@@ -54,9 +54,9 @@ private:
 
 public:
 	/*
-	 * 'max_n_cf' is the max number of frames to checked after what the simulation shall stop
+	 * 'max_n_trials' is the max number of frames to checked after what the simulation shall stop
 	 */
-	Monitor_MI(const int N, const unsigned max_n_trials, const int n_frames = 1);
+	Monitor_MI(const int N, const unsigned max_n_trials);
 
 	virtual ~Monitor_MI() = default;
 

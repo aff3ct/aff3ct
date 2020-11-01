@@ -21,14 +21,16 @@ protected:
 	const int rep_count; // number of repetitions
 	std::vector<B> U, tmp_X_N;
 
-	const Interleaver<B>& interleaver;
+	Interleaver<B>& interleaver;
 
 public:
-	Encoder_RA(const int& K, const int& N, const Interleaver<B>& interleaver, const int n_frames = 1);
+	Encoder_RA(const int& K, const int& N, Interleaver<B>& interleaver);
 
 	virtual ~Encoder_RA() = default;
 
 	virtual Encoder_RA<B>* clone() const;
+
+	virtual void set_n_frames(const int n_frames);
 
 protected:
 	void _encode(const B *U_K, B *X_N, const int frame_id);

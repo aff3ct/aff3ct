@@ -48,7 +48,7 @@ template <typename B>
 module::Encoder_RS<B>* Encoder_RS
 ::build(const tools::RS_polynomial_generator &GF) const
 {
-	if (this->type == "RS") return new module::Encoder_RS<B>(this->K, this->N_cw, GF, this->n_frames);
+	if (this->type == "RS") return new module::Encoder_RS<B>(this->K, this->N_cw, GF);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }

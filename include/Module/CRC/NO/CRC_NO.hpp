@@ -15,7 +15,7 @@ template <typename B = int>
 class CRC_NO : public CRC<B>
 {
 public:
-	CRC_NO(const int K, const int n_frames = 1);
+	CRC_NO(const int K);
 	virtual ~CRC_NO() = default;
 	virtual CRC_NO<B>* clone() const;
 

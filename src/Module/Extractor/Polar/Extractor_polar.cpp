@@ -7,8 +7,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename Q>
 Extractor_polar<B,Q>
-::Extractor_polar(const int K, const int N, const std::vector<bool>& frozen_bits, const int n_frames)
-: Extractor<B,Q>(K, N, 0, n_frames),
+::Extractor_polar(const int K, const int N, const std::vector<bool>& frozen_bits)
+: Extractor<B,Q>(K, N, 0),
   frozen_bits(frozen_bits), info_bits_pos(K, 0)
 {
 	const std::string name = "Extractor_polar";

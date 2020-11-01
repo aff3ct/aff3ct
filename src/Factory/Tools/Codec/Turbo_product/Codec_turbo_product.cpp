@@ -43,7 +43,6 @@ void Codec_turbo_product
 
 	args.erase({pdes+"-cw-size",   "N"});
 	args.erase({pdes+"-info-bits", "K"});
-	args.erase({pdec+"-fra",       "F"});
 	args.erase({pdec+"-ext",          });
 
 
@@ -53,8 +52,7 @@ void Codec_turbo_product
 
 		auto pi = itl->get_prefix();
 
-		args.erase({pi+"-size"    });
-		args.erase({pi+"-fra", "F"});
+		args.erase({pi+"-size"});
 	}
 }
 
@@ -68,17 +66,15 @@ void Codec_turbo_product
 
 	enc->store(vals);
 
-	dec_tur->sub->K           = enc_tur->sub->K;
-	dec_tur->sub->N_cw        = enc_tur->sub->N_cw;
-	dec_tur->n_frames         = enc_tur->n_frames;
-	dec_tur->parity_extended  = enc_tur->parity_extended;
+	dec_tur->sub->K          = enc_tur->sub->K;
+	dec_tur->sub->N_cw       = enc_tur->sub->N_cw;
+	dec_tur->parity_extended = enc_tur->parity_extended;
 
 	dec->store(vals);
 
 	if (itl != nullptr)
 	{
-		itl->core->n_frames = enc_tur->n_frames;
-		itl->core->type     = "ROW_COL";
+		itl->core->type = "ROW_COL";
 
 		if (enc_tur->parity_extended)
 			itl->core->n_cols = enc_tur->sub->N_cw +1;

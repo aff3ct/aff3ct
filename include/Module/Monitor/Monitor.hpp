@@ -44,7 +44,7 @@ public:
 	 *
 	 * Registers the SIGINT (signal interrupt or ctrl+C) interruption.
 	 */
-	explicit Monitor(int n_frames = 1);
+	explicit Monitor();
 
 	/*!
 	 * \brief Destructor.

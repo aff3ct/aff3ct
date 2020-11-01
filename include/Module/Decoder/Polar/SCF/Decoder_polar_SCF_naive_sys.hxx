@@ -10,8 +10,8 @@ namespace module
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 Decoder_polar_SCF_naive_sys<B,R,F,G,H>
 ::Decoder_polar_SCF_naive_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits,
-                              const CRC<B>& crc, const int n_flips, const int n_frames)
-: Decoder_polar_SCF_naive<B,R,F,G,H>(K, N, frozen_bits, crc, n_flips, n_frames)
+                              const CRC<B>& crc, const int n_flips)
+: Decoder_polar_SCF_naive<B,R,F,G,H>(K, N, frozen_bits, crc, n_flips)
 {
 	const std::string name = "Decoder_polar_SC_naive_sys";
 	this->set_name(name);

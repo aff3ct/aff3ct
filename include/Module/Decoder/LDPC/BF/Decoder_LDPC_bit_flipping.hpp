@@ -48,8 +48,7 @@ protected:
 	                          const std::vector<unsigned> &info_bits_pos,
 	                          const R mwbf_factor = 0.0f,
 	                          const bool enable_syndrome = true,
-	                          const int syndrome_depth = 1,
-	                          const int n_frames = 1);
+	                          const int syndrome_depth = 1);
 	virtual ~Decoder_LDPC_bit_flipping() = default;
 	virtual Decoder_LDPC_bit_flipping<B,R>* clone() const;
 
@@ -63,6 +62,8 @@ protected:
 	bool BF_decode(const R *Y_N, const int frame_id);
 
 	virtual bool BF_process(const R *Y_N, std::vector<R> &V_to_C, std::vector<R> &C_to_V) = 0;
+
+	virtual void set_n_frames(const int n_frames);
 };
 }
 }

@@ -19,7 +19,7 @@ class Encoder_LDPC_DVBS2 : public Encoder_LDPC<B>
 	const tools::dvbs2_values& dvbs2;
 
 public:
-	Encoder_LDPC_DVBS2(const tools::dvbs2_values& dvbs2, const int n_frames = 1);
+	Encoder_LDPC_DVBS2(const tools::dvbs2_values& dvbs2);
 	virtual ~Encoder_LDPC_DVBS2() = default;
 
 	virtual Encoder_LDPC_DVBS2<B>* clone() const;

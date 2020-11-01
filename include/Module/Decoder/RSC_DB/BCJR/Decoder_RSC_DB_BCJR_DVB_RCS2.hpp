@@ -20,8 +20,7 @@ class Decoder_RSC_DB_BCJR_DVB_RCS2 : public Decoder_RSC_DB_BCJR<B,R>
 public:
 	Decoder_RSC_DB_BCJR_DVB_RCS2(const int K,
 	                             const std::vector<std::vector<int>> &trellis,
-	                             const bool buffered_encoding = true,
-	                             const int n_frames = 1);
+	                             const bool buffered_encoding = true);
 	virtual ~Decoder_RSC_DB_BCJR_DVB_RCS2() = default;
 
 	virtual Decoder_RSC_DB_BCJR_DVB_RCS2<B,R,MAX>* clone() const;

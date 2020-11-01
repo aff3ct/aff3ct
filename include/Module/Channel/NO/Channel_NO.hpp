@@ -18,7 +18,7 @@ protected:
 	const bool add_users;
 
 public:
-	Channel_NO(const int N, const bool add_users = false, const int n_frames = 1);
+	Channel_NO(const int N, const bool add_users = false);
 	virtual ~Channel_NO() = default;
 	virtual Channel_NO<R>* clone() const;
 

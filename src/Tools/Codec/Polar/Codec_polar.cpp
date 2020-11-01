@@ -21,7 +21,7 @@ Codec_polar<B,Q>
               const factory::Decoder_polar        &dec_params,
               const factory::Puncturer_polar      *pct_params,
               const module::CRC<B>                *crc)
-: Codec_SISO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.n_frames),
+: Codec_SISO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw),
   adaptive_fb(fb_params.noise == -1.f),
   frozen_bits(new std::vector<bool>(fb_params.N_cw, true)),
   generated_decoder((dec_params.implem.find("_SNR") != std::string::npos)),
@@ -47,14 +47,6 @@ Codec_polar<B,Q>
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (enc_params.n_frames != dec_params.n_frames)
-	{
-		std::stringstream message;
-		message << "'enc_params.n_frames' has to be equal to 'dec_params.n_frames' ('enc_params.n_frames' = "
-		        << enc_params.n_frames << ", 'dec_params.n_frames' = " << dec_params.n_frames << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	// ---------------------------------------------------------------------------------------------------------- tools
 	if (!generated_decoder)
 		// build the frozen bits generator
@@ -73,11 +65,10 @@ Codec_polar<B,Q>
 	if (generated_decoder || !pct_params)
 	{
 		factory::Puncturer pctno_params;
-		pctno_params.type     = "NO";
-		pctno_params.K        = enc_params.K;
-		pctno_params.N        = enc_params.N_cw;
-		pctno_params.N_cw     = enc_params.N_cw;
-		pctno_params.n_frames = enc_params.n_frames;
+		pctno_params.type = "NO";
+		pctno_params.K    = enc_params.K;
+		pctno_params.N    = enc_params.N_cw;
+		pctno_params.N_cw = enc_params.N_cw;
 
 		this->set_puncturer(pctno_params.build<B,Q>());
 	}
@@ -124,8 +115,7 @@ Codec_polar<B,Q>
 
 	this->set_extractor(new module::Extractor_polar<B,Q>(enc_params.K,
 	                                                     enc_params.N_cw,
-	                                                     *frozen_bits,
-	                                                     enc_params.n_frames));
+	                                                     *frozen_bits));
 	fb_extractor = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_extractor());
 
 	// ------------------------------------------------------------------------------------------------- frozen bit gen

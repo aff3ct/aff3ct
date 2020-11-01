@@ -32,22 +32,22 @@ public:
 	                                   const std::vector<bool>& frozen_bits,
 	                                   const std::vector<std::vector<std::function<R(const std::vector<R> &LLRs,
 	                                                                                 const std::vector<B> &bits)>>> &lambdas,
-	                                   const CRC<B>& crc,
-	                                   const int n_frames = 1);
+	                                   const CRC<B>& crc);
 
 	Decoder_polar_MK_ASCL_naive_CA_sys(const int& K,
 	                                   const int& N,
 	                                   const int& L,
 	                                   const tools::Polar_code& code,
 	                                   const std::vector<bool>& frozen_bits,
-	                                   const CRC<B>& crc,
-	                                   const int n_frames = 1);
+	                                   const CRC<B>& crc);
 
 	virtual ~Decoder_polar_MK_ASCL_naive_CA_sys() = default;
 
 	virtual Decoder_polar_MK_ASCL_naive_CA_sys<B,R>* clone() const;
 
 	virtual void notify_noise_update();
+
+	virtual void set_n_frames(const int n_frames);
 
 protected:
 	virtual void deep_copy(const Decoder_polar_MK_ASCL_naive_CA_sys<B,R> &m);

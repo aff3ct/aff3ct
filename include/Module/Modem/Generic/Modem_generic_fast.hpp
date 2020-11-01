@@ -23,8 +23,7 @@ protected:
 	std::vector<std::complex<Q>> cstl_bis;
 
 public:
-	Modem_generic_fast(const int N, const tools::Constellation<R> &cstl, const bool disable_sig2 = false,
-	                   const int n_frames = 1);
+	Modem_generic_fast(const int N, const tools::Constellation<R> &cstl, const bool disable_sig2 = false);
 
 	virtual ~Modem_generic_fast() = default;
 

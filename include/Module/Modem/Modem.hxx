@@ -67,8 +67,8 @@ Socket& Modem<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>
-::Modem(const int N, const int N_mod, const int N_fil, const int n_frames)
-: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_fil), noise(nullptr), enable_filter(false), enable_demodulator(true)
+::Modem(const int N, const int N_mod, const int N_fil)
+: Module(), N(N), N_mod(N_mod), N_fil(N_fil), noise(nullptr), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
 	this->set_name(name);
@@ -100,8 +100,8 @@ Modem<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>
-::Modem(const int N, const int N_mod, const int n_frames)
-: Module(n_frames), N(N), N_mod(N_mod), N_fil(N_mod), noise(nullptr), enable_filter(false), enable_demodulator(true)
+::Modem(const int N, const int N_mod)
+: Module(), N(N), N_mod(N_mod), N_fil(N_mod), noise(nullptr), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
 	this->set_name(name);
@@ -126,8 +126,8 @@ Modem<B,R,Q>
 
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>
-::Modem(const int N, const int n_frames)
-: Module(n_frames), N(N), N_mod(N), N_fil(N), noise(nullptr), enable_filter(false), enable_demodulator(true)
+::Modem(const int N)
+: Module(), N(N), N_mod(N), N_fil(N), noise(nullptr), enable_filter(false), enable_demodulator(true)
 {
 	const std::string name = "Modem";
 	this->set_name(name);

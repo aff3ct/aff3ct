@@ -80,6 +80,8 @@ public:
 
 protected:
 	inline void set_databytes(const size_t databytes);
+
+	inline void set_dataptr(void* dataptr);
 };
 }
 }

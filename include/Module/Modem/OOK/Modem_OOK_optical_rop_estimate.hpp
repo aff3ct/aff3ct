@@ -34,15 +34,13 @@ public:
 	 * The 'ROP_known_bits' positions of the original frame are used for the ROP estimation
 	 */
 	Modem_OOK_optical_rop_estimate(const int N, const std::vector<size_t> &ROP_known_bits,
-	                               const tools::Distributions<R>& dist,
-	                               const int n_frames = 1);
+	                               const tools::Distributions<R>& dist);
 
 	/*
 	 * The 'n_known_bits' first bits are supposed known for the ROP estimation
 	 */
 	Modem_OOK_optical_rop_estimate(const int N, int n_known_bits,
-	                               const tools::Distributions<R>& dist,
-	                               const int n_frames = 1);
+	                               const tools::Distributions<R>& dist);
 	virtual ~Modem_OOK_optical_rop_estimate() = default;
 
 	virtual Modem_OOK_optical_rop_estimate<B,R,Q>* clone() const;

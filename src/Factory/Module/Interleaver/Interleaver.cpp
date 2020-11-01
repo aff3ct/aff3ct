@@ -40,16 +40,16 @@ void Interleaver
 
 template <typename D>
 module::Interleaver<D>* Interleaver
-::build(const tools::Interleaver_core<>& itl_core)
+::build(tools::Interleaver_core<>& itl_core)
 {
 	return new module::Interleaver<D>(itl_core);
 }
 
 // ==================================================================================== explicit template instantiation
-template aff3ct::module::Interleaver<int8_t >* aff3ct::factory::Interleaver::build<int8_t >(const aff3ct::tools::Interleaver_core<>&);
-template aff3ct::module::Interleaver<int16_t>* aff3ct::factory::Interleaver::build<int16_t>(const aff3ct::tools::Interleaver_core<>&);
-template aff3ct::module::Interleaver<int32_t>* aff3ct::factory::Interleaver::build<int32_t>(const aff3ct::tools::Interleaver_core<>&);
-template aff3ct::module::Interleaver<int64_t>* aff3ct::factory::Interleaver::build<int64_t>(const aff3ct::tools::Interleaver_core<>&);
-template aff3ct::module::Interleaver<float  >* aff3ct::factory::Interleaver::build<float  >(const aff3ct::tools::Interleaver_core<>&);
-template aff3ct::module::Interleaver<double >* aff3ct::factory::Interleaver::build<double >(const aff3ct::tools::Interleaver_core<>&);
+template aff3ct::module::Interleaver<int8_t >* aff3ct::factory::Interleaver::build<int8_t >(aff3ct::tools::Interleaver_core<>&);
+template aff3ct::module::Interleaver<int16_t>* aff3ct::factory::Interleaver::build<int16_t>(aff3ct::tools::Interleaver_core<>&);
+template aff3ct::module::Interleaver<int32_t>* aff3ct::factory::Interleaver::build<int32_t>(aff3ct::tools::Interleaver_core<>&);
+template aff3ct::module::Interleaver<int64_t>* aff3ct::factory::Interleaver::build<int64_t>(aff3ct::tools::Interleaver_core<>&);
+template aff3ct::module::Interleaver<float  >* aff3ct::factory::Interleaver::build<float  >(aff3ct::tools::Interleaver_core<>&);
+template aff3ct::module::Interleaver<double >* aff3ct::factory::Interleaver::build<double >(aff3ct::tools::Interleaver_core<>&);
 // ==================================================================================== explicit template instantiation

@@ -19,9 +19,8 @@ using namespace aff3ct::module;
 template <typename R>
 Channel_optical<R>
 ::Channel_optical(const int N,
-                  const tools::User_pdf_noise_generator<R>& pdf_noise_generator,
-                  const int n_frames)
-: Channel<R>(N, n_frames),
+                  const tools::User_pdf_noise_generator<R>& pdf_noise_generator)
+: Channel<R>(N),
   pdf_noise_generator(pdf_noise_generator.clone())
 {
 	const std::string name = "Channel_optical";
@@ -30,8 +29,8 @@ Channel_optical<R>
 
 template <typename R>
 tools::User_pdf_noise_generator<R>* create_user_pdf_noise_generator(const tools::Distributions<R>& dist,
-                                                                   const tools::User_pdf_noise_generator_implem implem,
-                                                                   const int seed)
+                                                                    const tools::User_pdf_noise_generator_implem implem,
+                                                                    const int seed)
 {
 	switch (implem)
 	{
@@ -63,9 +62,8 @@ Channel_optical<R>
 ::Channel_optical(const int N,
                   const tools::Distributions<R>& dist,
                   const tools::User_pdf_noise_generator_implem implem,
-                  const int seed,
-                  const int n_frames)
-: Channel<R>(N, n_frames),
+                  const int seed)
+: Channel<R>(N),
   pdf_noise_generator(create_user_pdf_noise_generator<R>(dist, implem, seed))
 {
 	const std::string name = "Channel_optical";

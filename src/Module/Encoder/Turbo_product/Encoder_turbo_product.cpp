@@ -11,9 +11,9 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_turbo_product<B>
-::Encoder_turbo_product(const Interleaver<B> &pi, const Encoder<B> &enc_r, const Encoder<B> &enc_c, const int n_frames)
-: Encoder<B>(enc_r.get_K() * enc_c.get_K(), pi.get_core().get_size(), n_frames),
-  pi   (pi   ),
+::Encoder_turbo_product(const Encoder<B> &enc_r, const Encoder<B> &enc_c, Interleaver<B> &pi)
+: Encoder<B>(enc_r.get_K() * enc_c.get_K(), pi.get_core().get_size()),
+  pi   (pi           ),
   enc_r(enc_r.clone()),
   enc_c(enc_c.clone()),
 
@@ -71,6 +71,8 @@ Encoder_turbo_product<B>
 		        << ", 'parity_extended' = " << this->parity_extended << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
+
+	this->set_n_frames(pi.get_n_frames());
 }
 
 template <typename B>
@@ -95,6 +97,14 @@ template <typename B>
 void Encoder_turbo_product<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
+	if (this->pi.get_n_frames() != this->get_n_frames())
+	{
+		std::stringstream message;
+		message << "'pi.get_n_frames()' has to be equal to 'n_frames' ('pi.get_n_frames()' = "
+		        << this->pi.get_n_frames() << ", 'n_frames' = " << this->get_n_frames() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	// const int n_cols_K = this->enc_r->get_K();
 	const int n_cols_N = this->enc_r->get_N() + (this->parity_extended ? 1 : 0);
 	const int n_rows_K = this->enc_c->get_K();
@@ -115,7 +125,7 @@ void Encoder_turbo_product<B>
 		}
 	}
 
-	pi.interleave(this->X_N_i.data(), X_N, 0);
+	pi.interleave(this->X_N_i.data(), X_N, frame_id, 1);
 
 	// encode each col
 	int M = n_rows_N - n_rows_K;
@@ -139,7 +149,7 @@ void Encoder_turbo_product<B>
 		U_col_M_off += M;
 	}
 
-	pi.deinterleave(this->X_N_i.data(), X_N, 0);
+	pi.deinterleave(this->X_N_i.data(), X_N, frame_id, 1);
 
 
 	/*
@@ -154,6 +164,18 @@ void Encoder_turbo_product<B>
 			          X_N_mem[j].begin());
 	}
 	*/
+}
+
+template <typename B>
+void Encoder_turbo_product<B>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Encoder<B>::set_n_frames(n_frames);
+		this->pi.set_n_frames(n_frames);
+	}
 }
 
 /*

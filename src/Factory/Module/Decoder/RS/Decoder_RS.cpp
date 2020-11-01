@@ -99,11 +99,11 @@ module::Decoder_SIHO<B,Q>* Decoder_RS
 	{
 		if (this->type == "ALGEBRAIC")
 		{
-			if (this->implem == "STD") return new module::Decoder_RS_std<B,Q>(this->K, this->N_cw, GF, this->n_frames);
+			if (this->implem == "STD") return new module::Decoder_RS_std<B,Q>(this->K, this->N_cw, GF);
 
 			if (encoder)
 			{
-				if (this->implem == "GENIUS") return new module::Decoder_RS_genius<B,Q>(this->K, this->N_cw, GF, *encoder, this->n_frames);
+				if (this->implem == "GENIUS") return new module::Decoder_RS_genius<B,Q>(this->K, this->N_cw, GF, *encoder);
 			}
 		}
 	}

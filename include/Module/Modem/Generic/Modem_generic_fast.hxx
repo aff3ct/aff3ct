@@ -20,8 +20,8 @@ namespace module
 {
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX, tools::proto_max_i<Q> MAXI>
 Modem_generic_fast<B,R,Q,MAX,MAXI>
-::Modem_generic_fast(const int N, const tools::Constellation<R>& _cstl, const bool disable_sig2, const int n_frames)
-: Modem_generic<B,R,Q,MAX>(N, _cstl, disable_sig2, n_frames),
+::Modem_generic_fast(const int N, const tools::Constellation<R>& _cstl, const bool disable_sig2)
+: Modem_generic<B,R,Q,MAX>(N, _cstl, disable_sig2),
   cstl_bis(this->cstl.size())
 {
 	const std::string name = "Modem_generic_fast<" + this->cstl.get_name() + ">";

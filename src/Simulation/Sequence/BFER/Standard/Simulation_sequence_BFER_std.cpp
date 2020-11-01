@@ -36,14 +36,18 @@ template <typename B, typename R, typename Q>
 std::unique_ptr<module::Source<B>> Simulation_sequence_BFER_std<B,R,Q>
 ::build_source()
 {
-	return std::unique_ptr<module::Source<B>>(params_BFER_std.src->build<B>());
+	auto src = std::unique_ptr<module::Source<B>>(params_BFER_std.src->build<B>());
+	src->set_n_frames(this->params.n_frames);
+	return src;
 }
 
 template <typename B, typename R, typename Q>
 std::unique_ptr<module::CRC<B>> Simulation_sequence_BFER_std<B,R,Q>
 ::build_crc()
 {
-	return std::unique_ptr<module::CRC<B>>(params_BFER_std.crc->build<B>());
+	auto crc = std::unique_ptr<module::CRC<B>>(params_BFER_std.crc->build<B>());
+	crc->set_n_frames(this->params.n_frames);
+	return crc;
 }
 
 template <typename B, typename R, typename Q>
@@ -53,7 +57,10 @@ std::unique_ptr<tools::Codec_SIHO<B,Q>> Simulation_sequence_BFER_std<B,R,Q>
 	std::unique_ptr<factory::Codec> params_cdc(params_BFER_std.cdc->clone());
 	auto crc_ptr = this->params_BFER_std.crc->type == "NO" ? nullptr : crc;
 	auto param_siho = dynamic_cast<factory::Codec_SIHO*>(params_cdc.get());
-	return std::unique_ptr<tools::Codec_SIHO<B,Q>>(param_siho->build<B,Q>(crc_ptr));
+
+	auto cdc = std::unique_ptr<tools::Codec_SIHO<B,Q>>(param_siho->build<B,Q>(crc_ptr));
+	cdc->set_n_frames(this->params.n_frames);
+	return cdc;
 }
 
 template <typename B, typename R, typename Q>
@@ -61,9 +68,17 @@ std::unique_ptr<module::Modem<B,R,R>> Simulation_sequence_BFER_std<B,R,Q>
 ::build_modem(const tools::Distributions<R> *distributions, const tools::Constellation<R> *constellation)
 {
 	if (distributions != nullptr)
-		return std::unique_ptr<module::Modem<B,R,R>>(params_BFER_std.mdm->build<B,R,R>(*distributions));
+	{
+		auto mdm = std::unique_ptr<module::Modem<B,R,R>>(params_BFER_std.mdm->build<B,R,R>(*distributions));
+		mdm->set_n_frames(this->params.n_frames);
+		return mdm;
+	}
 	else
-		return std::unique_ptr<module::Modem<B,R,R>>(params_BFER_std.mdm->build<B,R,R>(constellation));
+	{
+		auto mdm =  std::unique_ptr<module::Modem<B,R,R>>(params_BFER_std.mdm->build<B,R,R>(constellation));
+		mdm->set_n_frames(this->params.n_frames);
+		return mdm;
+	}
 }
 
 template <typename B, typename R, typename Q>
@@ -71,16 +86,26 @@ std::unique_ptr<module::Channel<R>> Simulation_sequence_BFER_std<B,R,Q>
 ::build_channel(const tools::Distributions<R> *distributions)
 {
 	if (distributions != nullptr)
-		return std::unique_ptr<module::Channel<R>>(params_BFER_std.chn->build<R>(*distributions));
+	{
+		auto chn = std::unique_ptr<module::Channel<R>>(params_BFER_std.chn->build<R>(*distributions));
+		chn->set_n_frames(this->params.n_frames);
+		return chn;
+	}
 	else
-		return std::unique_ptr<module::Channel<R>>(params_BFER_std.chn->build<R>());
+	{
+		auto chn = std::unique_ptr<module::Channel<R>>(params_BFER_std.chn->build<R>());
+		chn->set_n_frames(this->params.n_frames);
+		return chn;
+	}
 }
 
 template <typename B, typename R, typename Q>
 std::unique_ptr<module::Quantizer<R,Q>> Simulation_sequence_BFER_std<B,R,Q>
 ::build_quantizer()
 {
-	return std::unique_ptr<module::Quantizer<R,Q>>(params_BFER_std.qnt->build<R,Q>());
+	auto qnt = std::unique_ptr<module::Quantizer<R,Q>>(params_BFER_std.qnt->build<R,Q>());
+	qnt->set_n_frames(this->params.n_frames);
+	return qnt;
 }
 
 template <typename B, typename R, typename Q>
@@ -89,8 +114,9 @@ std::unique_ptr<module::Coset<B,Q>> Simulation_sequence_BFER_std<B,R,Q>
 {
 	factory::Coset cst_params;
 	cst_params.size = params_BFER_std.cdc->N_cw;
-	cst_params.n_frames = params_BFER_std.src->n_frames;
-	return std::unique_ptr<module::Coset<B,Q>>(cst_params.build_real<B,Q>());
+	auto cst = std::unique_ptr<module::Coset<B,Q>>(cst_params.build_real<B,Q>());
+	cst->set_n_frames(this->params.n_frames);
+	return cst;
 }
 
 template <typename B, typename R, typename Q>
@@ -99,8 +125,9 @@ std::unique_ptr<module::Coset<B,B>> Simulation_sequence_BFER_std<B,R,Q>
 {
 	factory::Coset cst_params;
 	cst_params.size = this->params_BFER_std.coded_monitoring ? params_BFER_std.cdc->N_cw : params_BFER_std.cdc->K;
-	cst_params.n_frames = params_BFER_std.src->n_frames;
-	return std::unique_ptr<module::Coset<B,B>>(cst_params.build_bit<B,B>());
+	auto cst = std::unique_ptr<module::Coset<B,B>>(cst_params.build_bit<B,B>());
+	cst->set_n_frames(this->params.n_frames);
+	return cst;
 }
 
 template <typename B, typename R, typename Q>
@@ -559,13 +586,13 @@ void Simulation_sequence_BFER_std<B,R,Q>
 			auto &source  = sources.size() ? *sources[tid] : *this->source;
 			auto src_data = (B*)(source[module::src::sck::generate::U_K].get_dataptr());
 			auto src_bytes = source[module::src::sck::generate::U_K].get_databytes();
-			auto src_size = (src_bytes / sizeof(B)) / this->params_BFER_std.src->n_frames;
+			auto src_size = (src_bytes / sizeof(B)) / this->params_BFER_std.n_frames;
 			this->dumper[tid]->register_data(src_data,
 			                                 (unsigned int)src_size,
 			                                 this->params_BFER_std.err_track_threshold,
 			                                 "src",
 			                                 false,
-			                                 this->params_BFER_std.src->n_frames,
+			                                 this->params_BFER_std.n_frames,
 			                                 {});
 		}
 
@@ -575,13 +602,13 @@ void Simulation_sequence_BFER_std<B,R,Q>
 			auto &encoder = encoders.size() ? *encoders[tid] : this->codec->get_encoder();
 			auto enc_data = (B*)(encoder[module::enc::sck::encode::X_N].get_dataptr());
 			auto enc_bytes = encoder[module::enc::sck::encode::X_N].get_databytes();
-			auto enc_size = (enc_bytes / sizeof(B)) / this->params_BFER_std.src->n_frames;
+			auto enc_size = (enc_bytes / sizeof(B)) / this->params_BFER_std.n_frames;
 			this->dumper[tid]->register_data(enc_data,
 			                                 (unsigned int)enc_size,
 			                                 this->params_BFER_std.err_track_threshold,
 			                                 "enc",
 			                                 false,
-			                                 this->params_BFER_std.src->n_frames,
+			                                 this->params_BFER_std.n_frames,
 			                                 {(unsigned)this->params_BFER_std.cdc->enc->K});
 		}
 
@@ -593,7 +620,7 @@ void Simulation_sequence_BFER_std<B,R,Q>
 			                                 this->params_BFER_std.err_track_threshold,
 			                                 "chn",
 			                                 true,
-			                                 this->params_BFER_std.src->n_frames,
+			                                 this->params_BFER_std.n_frames,
 			                                 {});
 		}
 

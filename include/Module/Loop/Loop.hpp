@@ -49,8 +49,7 @@ public:
 	inline Loop(const size_t n_elmts_in,
 	            const std::type_index datatype_in,
 	            const size_t n_elmts_out,
-	            const std::type_index datatype_out,
-	            const int n_frames = 1);
+	            const std::type_index datatype_out);
 	virtual ~Loop() = default;
 
 	inline size_t get_n_elmts_in () const;

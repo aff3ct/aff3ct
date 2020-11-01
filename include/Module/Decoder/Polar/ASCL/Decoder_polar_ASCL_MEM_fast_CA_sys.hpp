@@ -35,19 +35,21 @@ private:
 public:
 	Decoder_polar_ASCL_MEM_fast_CA_sys(const int& K, const int& N, const int& max_L,
 	                                   const std::vector<bool>& frozen_bits,
-	                                   const CRC<B>& crc, const bool is_full_adaptive = true, const int n_frames = 1);
+	                                   const CRC<B>& crc, const bool is_full_adaptive = true);
 
 	Decoder_polar_ASCL_MEM_fast_CA_sys(const int& K, const int& N, const int& max_L,
 	                                   const std::vector<bool>& frozen_bits,
 	                                   const std::vector<tools::Pattern_polar_i*> &polar_patterns,
 	                                   const int idx_r0, const int idx_r1,
-	                                   const CRC<B>& crc, const bool is_full_adaptive = true, const int n_frames = 1);
+	                                   const CRC<B>& crc, const bool is_full_adaptive = true);
 
 	virtual ~Decoder_polar_ASCL_MEM_fast_CA_sys() = default;
 
 	virtual Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>* clone() const;
 
 	virtual void notify_noise_update();
+
+	virtual void set_n_frames(const int n_frames);
 
 protected:
 	virtual void deep_copy(const Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar> &m);

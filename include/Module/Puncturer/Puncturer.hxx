@@ -32,8 +32,8 @@ Socket& Puncturer<B,Q>
 
 template <typename B, typename Q>
 Puncturer<B,Q>
-::Puncturer(const int K, const int N, const int N_cw, const int n_frames)
-: Module(n_frames), K(K), N(N), N_cw(N_cw)
+::Puncturer(const int K, const int N, const int N_cw)
+: Module(), K(K), N(N), N_cw(N_cw)
 {
 	const std::string name = "Puncturer";
 	this->set_name(name);

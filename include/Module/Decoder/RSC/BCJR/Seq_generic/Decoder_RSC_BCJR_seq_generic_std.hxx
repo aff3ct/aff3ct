@@ -16,9 +16,8 @@ template <typename B, typename R, typename RD, tools::proto_max<R> MAX1, tools::
 Decoder_RSC_BCJR_seq_generic_std<B,R,RD,MAX1,MAX2>
 ::Decoder_RSC_BCJR_seq_generic_std(const int &K,
                                    const std::vector<std::vector<int>> &trellis,
-                                   const bool buffered_encoding,
-                                   const int n_frames)
-: Decoder_RSC_BCJR_seq_generic<B,R>(K, trellis, buffered_encoding, n_frames),
+                                   const bool buffered_encoding)
+: Decoder_RSC_BCJR_seq_generic<B,R>(K, trellis, buffered_encoding),
   beta_prev(trellis[0].size()), beta_cur(trellis[0].size())
 {
 	const std::string name = "Decoder_RSC_BCJR_seq_generic_std";

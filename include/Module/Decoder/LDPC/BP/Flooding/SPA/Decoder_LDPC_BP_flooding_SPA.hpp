@@ -27,8 +27,7 @@ public:
 	                             const tools::Sparse_matrix &H,
 	                             const std::vector<uint32_t> &info_bits_pos,
 	                             const bool enable_syndrome = true,
-	                             const int syndrome_depth = 1,
-	                             const int n_frames = 1);
+	                             const int syndrome_depth = 1);
 	virtual ~Decoder_LDPC_BP_flooding_SPA() = default;
 	virtual Decoder_LDPC_BP_flooding_SPA<B,R>* clone() const;
 

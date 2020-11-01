@@ -20,8 +20,7 @@ class Decoder_RSC_BCJR_intra_std : public Decoder_RSC_BCJR_intra<B,R>
 public:
 	Decoder_RSC_BCJR_intra_std(const int &K,
 	                           const std::vector<std::vector<int>> &trellis,
-	                           const bool buffered_encoding = true,
-	                           const int n_frames = 1);
+	                           const bool buffered_encoding = true);
 	virtual ~Decoder_RSC_BCJR_intra_std() = default;
 
 	virtual Decoder_RSC_BCJR_intra_std<B,R,MAX>* clone() const;

@@ -34,7 +34,6 @@ public:
 	std::string implem      = "STD";
 	bool        systematic  = true;
 	bool        hamming     = false;
-	int         n_frames    = 1;
 	int         tail_length = 0;
 	int         flips       = 3;
 	int         seed        = 0;

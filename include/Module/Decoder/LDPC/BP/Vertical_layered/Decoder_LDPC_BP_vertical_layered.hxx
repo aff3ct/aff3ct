@@ -20,16 +20,15 @@ Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>
                                    const std::vector<unsigned> &info_bits_pos,
                                    const Update_rule &up_rule,
                                    const bool enable_syndrome,
-                                   const int syndrome_depth,
-                                   const int n_frames)
-: Decoder_SISO<B,R>(K, N, n_frames, 1                                    ),
-  Decoder_LDPC_BP  (K, N, n_ite, _H, enable_syndrome, syndrome_depth     ),
-  info_bits_pos    (info_bits_pos                                        ),
-  up_rule          (up_rule                                              ),
-  var_nodes        (n_frames, std::vector<R>(N                          )),
-  messages         (n_frames, std::vector<R>(this->H.get_n_connections())),
-  contributions    (this->H.get_cols_max_degree()                        ),
-  messages_offsets (this->H.get_n_cols()                                 )
+                                   const int syndrome_depth)
+: Decoder_SISO<B,R>(K, N, 1                                                    ),
+  Decoder_LDPC_BP  (K, N, n_ite, _H, enable_syndrome, syndrome_depth           ),
+  info_bits_pos    (info_bits_pos                                              ),
+  up_rule          (up_rule                                                    ),
+  var_nodes        (this->n_frames, std::vector<R>(N                          )),
+  messages         (this->n_frames, std::vector<R>(this->H.get_n_connections())),
+  contributions    (this->H.get_cols_max_degree()                              ),
+  messages_offsets (this->H.get_n_cols()                                       )
 {
 	const std::string name = "Decoder_LDPC_BP_vertical_layered<" + this->up_rule.get_name() + ">";
 	this->set_name(name);
@@ -201,5 +200,27 @@ void Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>
 		var_nodes[vv] += msg_acc;
 	}
 }
+
+template <typename B, typename R, class Update_rule>
+void Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Decoder_SISO<B,R>::set_n_frames(n_frames);
+
+		const auto vec_size = this->var_nodes[0].size();
+		const auto old_var_nodes_size = this->var_nodes.size();
+		const auto new_var_nodes_size = (old_var_nodes_size / old_n_frames) * n_frames;
+		this->var_nodes.resize(new_var_nodes_size, std::vector<R>(vec_size));
+
+		const auto vec_size2 = this->messages[0].size();
+		const auto old_messages_size = this->messages.size();
+		const auto new_messages_size = (old_messages_size / old_n_frames) * n_frames;
+		this->messages.resize(new_messages_size, std::vector<R>(vec_size2));
+	}
+}
+
 }
 }

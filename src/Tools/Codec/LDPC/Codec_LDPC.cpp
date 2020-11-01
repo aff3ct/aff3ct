@@ -18,7 +18,7 @@ Codec_LDPC<B,Q>
 ::Codec_LDPC(const factory::Encoder_LDPC   &enc_params,
              const factory::Decoder_LDPC   &dec_params,
                    factory::Puncturer_LDPC *pct_params)
-: Codec_SISO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw, enc_params.n_frames),
+: Codec_SISO<B,Q>(enc_params.K, enc_params.N_cw, pct_params ? pct_params->N : enc_params.N_cw),
   H(new Sparse_matrix()),
   G(new Sparse_matrix()),
   info_bits_pos(new LDPC_matrix_handler::Positions_vector())
@@ -37,14 +37,6 @@ Codec_LDPC<B,Q>
 		std::stringstream message;
 		message << "'enc_params.N_cw' has to be equal to 'dec_params.N_cw' ('enc_params.N_cw' = " << enc_params.N_cw
 		        << ", 'dec_params.N_cw' = " << dec_params.N_cw << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (enc_params.n_frames != dec_params.n_frames)
-	{
-		std::stringstream message;
-		message << "'enc_params.n_frames' has to be equal to 'dec_params.n_frames' ('enc_params.n_frames' = "
-		        << enc_params.n_frames << ", 'dec_params.n_frames' = " << dec_params.n_frames << ").";
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -93,11 +85,10 @@ Codec_LDPC<B,Q>
 	if (pct_params == nullptr)
 	{
 		factory::Puncturer pctno_params;
-		pctno_params.type     = "NO";
-		pctno_params.K        = enc_params.K;
-		pctno_params.N        = enc_params.N_cw;
-		pctno_params.N_cw     = enc_params.N_cw;
-		pctno_params.n_frames = enc_params.n_frames;
+		pctno_params.type = "NO";
+		pctno_params.K    = enc_params.K;
+		pctno_params.N    = enc_params.N_cw;
+		pctno_params.N_cw = enc_params.N_cw;
 
 		this->set_puncturer(pctno_params.build<B,Q>());
 	}
@@ -145,8 +136,7 @@ Codec_LDPC<B,Q>
 
 	this->set_extractor(new module::Extractor_LDPC<B,Q>(enc_params.K,
 	                                                    enc_params.N_cw,
-	                                                    *info_bits_pos,
-	                                                    enc_params.n_frames));
+	                                                    *info_bits_pos));
 
 	try
 	{

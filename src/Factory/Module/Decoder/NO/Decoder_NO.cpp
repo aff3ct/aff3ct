@@ -49,7 +49,7 @@ template <typename B, typename Q>
 module::Decoder_SISO<B,Q>* Decoder_NO
 ::build_siso(module::Encoder<B> *encoder) const
 {
-	if (this->type == "NONE" && this->implem == "HARD_DECISION") return new module::Decoder_NO<B,Q>(this->K, this->n_frames);
+	if (this->type == "NONE" && this->implem == "HARD_DECISION") return new module::Decoder_NO<B,Q>(this->K);
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
@@ -64,7 +64,7 @@ module::Decoder_SIHO<B,Q>* Decoder_NO
 	}
 	catch (tools::cannot_allocate const&)
 	{
-		if (this->type == "NONE" && this->implem == "HARD_DECISION") return new module::Decoder_NO<B,Q>(this->K, this->n_frames);
+		if (this->type == "NONE" && this->implem == "HARD_DECISION") return new module::Decoder_NO<B,Q>(this->K);
 	}
 
 	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);

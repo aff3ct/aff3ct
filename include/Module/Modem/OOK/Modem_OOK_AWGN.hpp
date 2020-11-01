@@ -20,8 +20,7 @@ protected:
 
 public:
 	Modem_OOK_AWGN(const int N,
-	               const bool disable_sig2 = false,
-	               const int n_frames = 1);
+	               const bool disable_sig2 = false);
 	virtual ~Modem_OOK_AWGN() = default;
 
 	virtual Modem_OOK_AWGN<B,R,Q>* clone() const;

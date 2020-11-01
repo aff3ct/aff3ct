@@ -36,9 +36,6 @@ template <class L, typename B, typename R, typename Q>
 void Turbo_DB<L,B,R,Q>
 ::store_args()
 {
-	auto enc_tur = dynamic_cast<factory::Encoder_turbo_DB*>(params_cdc->enc.get());
-	auto dec_tur = dynamic_cast<factory::Decoder_turbo_DB*>(params_cdc->dec.get());
-
 	params_cdc->store(this->arg_vals);
 
 	if (std::is_same<Q,int8_t>())
@@ -53,14 +50,6 @@ void Turbo_DB<L,B,R,Q>
 	}
 
 	L::store_args();
-
-	params_cdc->enc      ->n_frames = this->params.src->n_frames;
-	if (params_cdc->pct != nullptr)
-	params_cdc->pct      ->n_frames = this->params.src->n_frames;
-	params_cdc->dec      ->n_frames = this->params.src->n_frames;
-	params_cdc->itl->core->n_frames = this->params.src->n_frames;
-	enc_tur->sub         ->n_frames = this->params.src->n_frames;
-	dec_tur->sub         ->n_frames = this->params.src->n_frames;
 }
 
 // ==================================================================================== explicit template instantiation
