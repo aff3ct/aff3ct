@@ -174,11 +174,33 @@ void Subsequence
 	const auto old_n_frames = this->get_n_frames();
 	if (old_n_frames != n_frames)
 	{
+		auto &p = *this->tasks[0];
+		auto &lasts = this->get_sequence().get_lasts_tasks()[0];
+		size_t sid = 0;
+		for (auto &last : lasts) for (auto &s : last->sockets)
+		{
+			if (last->get_socket_type(*s) == socket_t::SOUT && s->get_name() != "status")
+			{
+				while (p.get_socket_type(*p.sockets[sid]) != socket_t::SOUT) sid++;
+				p.sockets[sid++]->unbind(*s);
+			}
+		}
+
 		Module::set_n_frames(n_frames);
 
 		if (this->sequence_extern)
 			this->sequence_extern->set_n_frames(n_frames);
 		else
 			this->sequence_cloned->set_n_frames(n_frames);
+
+		sid = 0;
+		for (auto &last : lasts) for (auto &s : last->sockets)
+		{
+			if (last->get_socket_type(*s) == socket_t::SOUT && s->get_name() != "status")
+			{
+				while (p.get_socket_type(*p.sockets[sid]) != socket_t::SOUT) sid++;
+				p.sockets[sid++]->bind(*s);
+			}
+		}
 	}
 }
