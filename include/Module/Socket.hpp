@@ -26,13 +26,13 @@ class Socket : public tools::Interface_reset
 protected:
 	Task &task;
 
-	const std::string          name;
-	const std::type_index      datatype;
-	      size_t               databytes;
-	      bool                 fast;
-	      void*                dataptr;
-	      std::vector<Socket*> bound_sockets;
-	      Socket*              bound_socket;
+	std::string          name;
+	std::type_index      datatype;
+	size_t               databytes;
+	bool                 fast;
+	void*                dataptr;
+	std::vector<Socket*> bound_sockets;
+	Socket*              bound_socket;
 
 public:
 	inline Socket(Task &task, const std::string &name, const std::type_index datatype, const size_t databytes,
@@ -79,6 +79,10 @@ public:
 	inline size_t unbind(Socket& s_out);
 
 protected:
+	inline void set_name(const std::string &name);
+
+	inline void set_datatype(const std::type_index datatype);
+
 	inline void set_databytes(const size_t databytes);
 
 	inline void set_dataptr(void* dataptr);
