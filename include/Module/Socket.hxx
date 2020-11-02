@@ -381,16 +381,43 @@ void Socket
 {
 	if (bound_sockets.size() != 0 || bound_socket != nullptr)
 	{
+		std::stringstream bound_sockets_str;
+		if (bound_sockets.size() != 0)
+		{
+			bound_sockets_str << ", 'bound_sockets' = [";
+
+			for (size_t bs = 0; bs < bound_sockets.size(); bs++)
+			{
+				bound_sockets_str << "{" << "'name'"      << " = " << bound_sockets[bs]->get_name()      << ", "
+				                         << "'databytes'" << " = " << bound_sockets[bs]->get_databytes() << ", "
+				                         << "'task.name'" << " = " << bound_sockets[bs]->get_task().get_name()
+				                  << "}";
+				if (bs < bound_sockets.size() -1)
+					bound_sockets_str << ", ";
+			}
+
+			bound_sockets_str << "]";
+		}
+		else if (bound_socket != nullptr)
+		{
+			bound_sockets_str << ", 'bound_socket' = ";
+			bound_sockets_str << "{" << "'name'"      << " = " << bound_socket->get_name()      << ", "
+			                         << "'databytes'" << " = " << bound_socket->get_databytes() << ", "
+			                         << "'task.name'" << " = " << bound_socket->get_task().get_name()
+			                  << "}";
+		}
+
 		std::stringstream message;
 		message << "The current socket is already bound, it is impossible to set new databytes ("
-		        << "'cur_databytes'"    << " = " << get_databytes() << ", "
-		        << "'new_databytes'"    << " = " << databytes       << ", "
-		        << "'name'"             << " = " << get_name()      << ", "
-		        << "'task.name'"        << " = " << task.get_name()
-//		        << "'task.module.name'" << " = " << task.get_module_name()
+		        << "'databytes'"     << " = " << get_databytes() << ", "
+		        << "'new_databytes'" << " = " << databytes       << ", "
+		        << "'name'"          << " = " << get_name()      << ", "
+		        << "'task.name'"     << " = " << task.get_name()
+		        << bound_sockets_str.str()
 		        << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
+
 	this->databytes = databytes;
 }
 
@@ -399,16 +426,44 @@ void Socket
 {
 	if (bound_sockets.size() != 0 || bound_socket != nullptr)
 	{
+		std::stringstream bound_sockets_str;
+		if (bound_sockets.size() != 0)
+		{
+			bound_sockets_str << ", 'bound_sockets' = [";
+
+			for (size_t bs = 0; bs < bound_sockets.size(); bs++)
+			{
+				bound_sockets_str << "{" << "'name'"      << " = " << bound_sockets[bs]->get_name()            << ", "
+				                         << "'databytes'" << " = " << bound_sockets[bs]->get_databytes()       << ", "
+				                         << "'task.name'" << " = " << bound_sockets[bs]->get_task().get_name()
+				                  << "}";
+				if (bs < bound_sockets.size() -1)
+					bound_sockets_str << ", ";
+			}
+
+			bound_sockets_str << "]";
+		}
+		else if (bound_socket != nullptr)
+		{
+			bound_sockets_str << ", 'bound_socket' = ";
+			bound_sockets_str << "{" << "'name'"      << " = " << bound_socket->get_name()            << ", "
+			                         << "'databytes'" << " = " << bound_socket->get_databytes()       << ", "
+			                         << "'task.name'" << " = " << bound_socket->get_task().get_name()
+			                  << "}";
+		}
+
 		std::stringstream message;
 		message << "The current socket is already bound, it is impossible to set new dataptr ("
-		        << "'cur_dataptr'"      << " = " << get_dataptr()   << ", "
-		        << "'new_dataptr'"      << " = " << dataptr         << ", "
-		        << "'name'"             << " = " << get_name()      << ", "
-		        << "'task.name'"        << " = " << task.get_name()
-//		        << "'task.module.name'" << " = " << task.get_module_name()
+		        << "'dataptr'"     << " = " << get_dataptr()   << ", "
+		        << "'new_dataptr'" << " = " << dataptr         << ", "
+		        << "'databytes'"   << " = " << get_databytes() << ", "
+		        << "'name'"        << " = " << get_name()      << ", "
+		        << "'task.name'"   << " = " << task.get_name()
+		        << bound_sockets_str.str()
 		        << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
+
 	this->dataptr = dataptr;
 }
 

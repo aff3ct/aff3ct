@@ -725,6 +725,12 @@ void Pipeline
 void Pipeline
 ::bind_adaptors()
 {
+	this->_bind_adaptors(true);
+}
+
+void Pipeline
+::_bind_adaptors(const bool bind_adaptors)
+{
 	if (!this->bound_adaptors)
 	{
 		for (size_t sta = 0; sta < this->stages.size(); sta++)
@@ -799,12 +805,15 @@ void Pipeline
 			sck_in->unbind(*sck_out);
 		}
 
-		for (auto &bind : this->adaptors_binds)
+		if (bind_adaptors)
 		{
-			auto sck_out  = std::get<0>(bind);
-			auto sck_in   = std::get<1>(bind);
-			auto priority = std::get<2>(bind);
-			sck_in->bind(*sck_out, priority);
+			for (auto &bind : this->adaptors_binds)
+			{
+				auto sck_out  = std::get<0>(bind);
+				auto sck_in   = std::get<1>(bind);
+				auto priority = std::get<2>(bind);
+				sck_in->bind(*sck_out, priority);
+			}
 		}
 
 		this->bound_adaptors = true;
@@ -813,6 +822,12 @@ void Pipeline
 
 void Pipeline
 ::unbind_adaptors()
+{
+	this->_unbind_adaptors(true);
+}
+
+void Pipeline
+::_unbind_adaptors(const bool bind_orphans)
 {
 	if (this->bound_adaptors)
 	{
@@ -863,7 +878,7 @@ void Pipeline
 		}
 
 		// ------------------------------------------------------------------------------------------------------------
-		// ---------------------------------------------------------------------------------------------- bind adaptors
+		// -------------------------------------------------------------------------------------------- unbind adaptors
 		// ------------------------------------------------------------------------------------------------------------
 		for (auto &bind : this->adaptors_binds)
 		{
@@ -872,12 +887,15 @@ void Pipeline
 			sck_in->unbind(*sck_out);
 		}
 
-		for (auto &bind : this->sck_orphan_binds)
+		if (bind_orphans)
 		{
-			auto sck_out  = std::get<0>(bind.first);
-			auto priority = std::get<4>(bind.first);
-			auto sck_in   = std::get<0>(bind.second);
-			sck_in->bind(*sck_out, priority);
+			for (auto &bind : this->sck_orphan_binds)
+			{
+				auto sck_out  = std::get<0>(bind.first);
+				auto priority = std::get<4>(bind.first);
+				auto sck_in   = std::get<0>(bind.second);
+				sck_in->bind(*sck_out, priority);
+			}
 		}
 
 		this->bound_adaptors = false;
@@ -962,7 +980,7 @@ void Pipeline
 				m->cancel_waiting();
 	};
 
-	std::vector<std::thread> threads;;
+	std::vector<std::thread> threads;
 	for (size_t s = 0; s < stages.size() -1; s++)
 	{
 		auto &stage = stages[s];
@@ -1158,4 +1176,61 @@ void Pipeline
 	}
 
 	stream << "}" << std::endl;
+}
+
+bool Pipeline
+::is_bound_adaptors() const
+{
+	return this->bound_adaptors;
+}
+
+int Pipeline
+::get_n_frames() const
+{
+	const auto n_frames = this->stages[0]->get_n_frames();
+
+	for (auto &sta : this->stages)
+		if (sta->get_n_frames() != n_frames)
+		{
+			std::stringstream message;
+			message << "All the stages/sequences do not have the same 'n_frames' value ('sta->get_n_frames()' = "
+			        << sta->get_n_frames() << ", 'n_frames' = " << n_frames << ").";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+		}
+
+	return n_frames;
+}
+
+void Pipeline
+::set_n_frames(const int n_frames)
+{
+	const auto save_bound_adaptors = this->is_bound_adaptors();
+	if (!save_bound_adaptors)
+		this->bind_adaptors();
+	this->_unbind_adaptors(false);
+
+	// set the new "n_frames" val in the sequences
+	for (auto &sta : this->stages)
+		sta->set_n_frames(n_frames);
+
+	// set the new "n_frames" val in the adaptors
+	for (auto &adps : this->adaptors)
+	{
+		for (auto &adp : adps.first)
+			adp->set_n_frames(n_frames);
+		for (auto &adp : adps.second)
+			adp->set_n_frames(n_frames);
+	}
+
+	// bind orphans to complete the unbind of the adaptors
+	for (auto &bind : this->sck_orphan_binds)
+	{
+		auto sck_out  = std::get<0>(bind.first);
+		auto priority = std::get<4>(bind.first);
+		auto sck_in   = std::get<0>(bind.second);
+		sck_in->bind(*sck_out, priority);
+	}
+
+	if (save_bound_adaptors)
+		this->bind_adaptors();
 }

@@ -134,10 +134,17 @@ public:
 
 	void bind_adaptors();
 	void unbind_adaptors();
+	bool is_bound_adaptors() const;
+
+	int get_n_frames() const;
+	void set_n_frames(const int n_frames);
 
 protected:
 	void create_adaptors(const std::vector<size_t> &synchro_buffer_sizes = {},
 	                     const std::vector<bool> &synchro_active_waiting = {});
+
+	void _bind_adaptors(const bool bind_adaptors = true);
+	void _unbind_adaptors(const bool bind_orphans = true);
 private:
 	template <class TA>
 	void init(const std::vector<TA*> &firsts,
