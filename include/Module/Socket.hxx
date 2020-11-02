@@ -144,7 +144,7 @@ void Socket
 //			        << "'s_out.task.module.name'" << " = " << s_out.task.get_module_name()   << ", "
 			        << "'datatype'"               << " = " << type_to_string[this->datatype] << ", "
 			        << "'name'"                   << " = " << get_name()                     << ", "
-			        << "'task.name'"              << " = " << task.get_name()                << ", "
+			        << "'task.name'"              << " = " << task.get_name()              /*<< ", "*/
 //			        << "'task.module.name'"       << " = " << task.get_module_name()
 			        << ").";
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
@@ -160,7 +160,7 @@ void Socket
 //			        << "'s_out.task.module.name'" << " = " << s_out.task.get_module_name() << ", "
 			        << "'databytes'"              << " = " << this->databytes              << ", "
 			        << "'name'"                   << " = " << get_name()                   << ", "
-			        << "'task.name'"              << " = " << task.get_name()              << ", "
+			        << "'task.name'"              << " = " << task.get_name()            /*<< ", "*/
 //			        << "'task.module.name'"       << " = " << task.get_module_name()
 			        << ").";
 
@@ -192,7 +192,7 @@ void Socket
 //		        << "'s_out.task.module.name'"         << " = " << s_out.task.get_module_name()               << ", "
 		        << "'databytes'"                      << " = " << this->databytes                            << ", "
 		        << "'name'"                           << " = " << get_name()                                 << ", "
-		        << "'task.name'"                      << " = " << task.get_name()                            << ", "
+		        << "'task.name'"                      << " = " << task.get_name()                          /*<< ", "*/
 //		        << "'task.module.name'"               << " = " << task.get_module_name()
 		        << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
@@ -210,7 +210,7 @@ void Socket
 //		        << "'s_out.task.module.name'" << " = " << s_out.task.get_module_name() << ", "
 		        << "'databytes'"              << " = " << this->databytes              << ", "
 		        << "'name'"                   << " = " << get_name()                   << ", "
-		        << "'task.name'"              << " = " << task.get_name()              << ", "
+		        << "'task.name'"              << " = " << task.get_name()            /*<< ", "*/
 //		        << "'task.module.name'"       << " = " << task.get_module_name()
 		        << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
@@ -331,7 +331,7 @@ size_t Socket
 //		        << "'s_out.task.module.name'"         << " = " << s_out.task.get_module_name() << ", "
 		        << "'databytes'"                      << " = " << this->databytes              << ", "
 		        << "'name'"                           << " = " << get_name()                   << ", "
-		        << "'task.name'"                      << " = " << task.get_name()              << ", "
+		        << "'task.name'"                      << " = " << task.get_name()            /*<< ", "*/
 //		        << "'task.module.name'"               << " = " << task.get_module_name()
 		        << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
@@ -351,7 +351,7 @@ size_t Socket
 //		        << "'s_out.task.module.name'"         << " = " << s_out.task.get_module_name()               << ", "
 		        << "'databytes'"                      << " = " << this->databytes                            << ", "
 		        << "'name'"                           << " = " << get_name()                                 << ", "
-		        << "'task.name'"                      << " = " << task.get_name()                            << ", "
+		        << "'task.name'"                      << " = " << task.get_name()                          /*<< ", "*/
 //		        << "'task.module.name'"               << " = " << task.get_module_name()
 		        << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
@@ -376,7 +376,7 @@ size_t Socket
 //		        << "'s_out.task.module.name'"         << " = " << s_out.task.get_module_name() << ", "
 		        << "'databytes'"                      << " = " << this->databytes              << ", "
 		        << "'name'"                           << " = " << get_name()                   << ", "
-		        << "'task.name'"                      << " = " << task.get_name()              << ", "
+		        << "'task.name'"                      << " = " << task.get_name()            /*<< ", "*/
 //		        << "'task.module.name'"               << " = " << task.get_module_name()
 		        << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
@@ -564,8 +564,8 @@ void Socket
 
 				for (size_t bs = 0; bs < bound_sockets.size(); bs++)
 				{
-					bound_sockets_str << "{" << "'name'"      << " = " << bound_sockets[bs]->get_name()            << ", "
-					                         << "'databytes'" << " = " << bound_sockets[bs]->get_databytes()       << ", "
+					bound_sockets_str << "{" << "'name'"      << " = " << bound_sockets[bs]->get_name()      << ", "
+					                         << "'databytes'" << " = " << bound_sockets[bs]->get_databytes() << ", "
 					                         << "'task.name'" << " = " << bound_sockets[bs]->get_task().get_name()
 					                  << "}";
 					if (bs < bound_sockets.size() -1)
@@ -577,8 +577,8 @@ void Socket
 			else if (bound_socket != nullptr)
 			{
 				bound_sockets_str << ", 'bound_socket' = ";
-				bound_sockets_str << "{" << "'name'"      << " = " << bound_socket->get_name()            << ", "
-				                         << "'databytes'" << " = " << bound_socket->get_databytes()       << ", "
+				bound_sockets_str << "{" << "'name'"      << " = " << bound_socket->get_name()      << ", "
+				                         << "'databytes'" << " = " << bound_socket->get_databytes() << ", "
 				                         << "'task.name'" << " = " << bound_socket->get_task().get_name()
 				                  << "}";
 			}
