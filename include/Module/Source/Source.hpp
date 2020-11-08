@@ -71,9 +71,9 @@ public:
 	 * \param U_K: a vector of bits to fill.
 	 */
 	template <class A = std::allocator<B>>
-	void generate(std::vector<B,A>& U_K, const int frame_id = -1);
+	void generate(std::vector<B,A>& U_K, const int frame_id = -1, const bool managed_memory = true);
 
-	virtual void generate(B *U_K, const int frame_id = -1);
+	void generate(B *U_K, const int frame_id = -1, const bool managed_memory = true);
 
 	virtual void set_seed(const int seed);
 

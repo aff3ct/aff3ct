@@ -20,7 +20,7 @@ Decoder_LDPC_bit_flipping_hard<B,R>
                            const std::vector<unsigned> &info_bits_pos,
                            const bool enable_syndrome,
                            const int syndrome_depth)
-: Decoder_SIHO<B,R>(K, N, 1             ),
+: Decoder_SIHO<B,R>(K, N                ),
   n_ite            (n_ite               ),
   enable_syndrome  (enable_syndrome     ),
   syndrome_depth   (syndrome_depth      ),

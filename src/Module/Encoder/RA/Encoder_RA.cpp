@@ -11,8 +11,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_RA<B>
-::Encoder_RA(const int& K, const int& N, Interleaver<B>& interleaver)
- : Encoder<B>(K, N), rep_count(N/K), U(N), tmp_X_N(N), interleaver(interleaver)
+::Encoder_RA(const int& K, const int& N, const Interleaver<B>& interleaver)
+ : Encoder<B>(K, N), rep_count(N/K), U(N), tmp_X_N(N), interleaver(interleaver.clone())
 {
 	const std::string name = "Encoder_RA";
 	this->set_name(name);
@@ -36,7 +36,7 @@ Encoder_RA<B>
 	for (auto k = 0; k < this->K; k++)
 		this->info_bits_pos[k] = rep_count * k;
 
-	this->set_n_frames(interleaver.get_n_frames());
+	this->set_n_frames(this->interleaver->get_n_frames());
 }
 
 template <typename B>
@@ -52,20 +52,12 @@ template <typename B>
 void Encoder_RA<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
-	if (this->interleaver.get_n_frames() != this->get_n_frames())
-	{
-		std::stringstream message;
-		message << "'interleaver.get_n_frames()' has to be equal to 'n_frames' ('interleaver.get_n_frames()' = "
-		        << this->interleaver.get_n_frames() << ", 'n_frames' = " << this->get_n_frames() << ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	// repetition
 	for (auto i = 0; i < this->K; i++)
 		for (auto j = 0; j < rep_count; j++)
 			U[i * rep_count +j] = U_K[i];
 
-	interleaver.interleave(U.data(), tmp_X_N.data(), frame_id);
+	this->interleaver->interleave(U.data(), tmp_X_N.data(), frame_id, false);
 
 	// accumulation
 	for (auto i = 1; i < this->N; i++)
@@ -82,7 +74,7 @@ void Encoder_RA<B>
 	if (old_n_frames != n_frames)
 	{
 		Encoder<B>::set_n_frames(n_frames);
-		this->interleaver.set_n_frames(n_frames);
+		this->interleaver->set_n_frames(n_frames);
 	}
 }
 

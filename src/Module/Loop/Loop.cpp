@@ -26,21 +26,26 @@ void Loop
 	this->n_calls = 0;
 }
 
+// bool Loop
+// ::stop(const int8_t *in, const int frame_id, const bool managed_memory)
+// {
+// 	(*this)[lop::sck::stop::in].bind(in);
+// 	return (*this)[lop::tsk::stop].exec(frame_id, managed_memory);
+// }
+
 bool Loop
-::stop(const int8_t *in, const int frame_id)
+::_stop(const int8_t *in, const int frame_id)
 {
 	this->n_calls++;
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
 
-	auto ret_val = this->_stop(in + f_start * this->n_bytes_in, f_start);
-	for (auto f = f_start+1; f < f_stop; f++)
-		ret_val &= this->_stop(in + f * this->n_bytes_in, f);
+	auto ret_val = this->__stop(in + 0 * this->n_bytes_in, 0);
+	for (auto f = 1; f < this->get_n_frames(); f++)
+		ret_val &= this->__stop(in + f * this->n_bytes_in, f);
 	return ret_val;
 }
 
 bool Loop
-::_stop(const int8_t *in, const int frame_id)
+::__stop(const int8_t *in, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }

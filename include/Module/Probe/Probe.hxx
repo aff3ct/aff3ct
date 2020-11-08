@@ -40,10 +40,14 @@ Probe<T>
 
 	auto &p1 = this->create_task("probe");
 	auto p1s_in = this->template create_socket_in<T>(p1, "in", this->size);
-	this->create_codelet(p1, [p1s_in](Module &m, Task &t) -> int
+	this->create_codelet(p1, [p1s_in](Module &m, Task &t, const int frame_id) -> int
 	{
-		static_cast<Probe<T>&>(m).probe(static_cast<const T*>(t[p1s_in].get_dataptr()));
-		return 0;
+		auto &prb = static_cast<Probe<T>&>(m);
+
+		prb._probe(static_cast<const T*>(t[p1s_in].get_dataptr()),
+		           frame_id);
+
+		return status_t::SUCCESS;
 	});
 
 	AProbe::set_n_frames(n_frames);
@@ -61,28 +65,18 @@ void Probe<T>
 template <typename T>
 template <class AT>
 void Probe<T>
-::probe(const std::vector<T,AT>& in, const int frame_id)
+::probe(const std::vector<T,AT>& in, const int frame_id, const bool managed_memory)
 {
-	if (this->size * this->n_frames != (int)in.size())
-	{
-		std::stringstream message;
-		message << "'in.size()' has to be equal to 'size' * 'n_frames' ('in.size()' = " << in.size()
-		        << ", 'size' = " << this->size << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	this->probe(in.data(), frame_id);
+	(*this)[prb::sck::probe::in].bind(in);
+	(*this)[prb::tsk::probe].exec(frame_id, managed_memory);
 }
 
 template <typename T>
 void Probe<T>
-::probe(const T *in, const int frame_id)
+::probe(const T *in, const int frame_id, const bool managed_memory)
 {
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
-	for (auto f = f_start; f < f_stop; f++)
-		this->_probe(in + f * this->size, f);
+	(*this)[prb::sck::probe::in].bind(in);
+	(*this)[prb::tsk::probe].exec(frame_id, managed_memory);
 }
 
 template <typename T>

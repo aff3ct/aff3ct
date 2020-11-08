@@ -52,20 +52,17 @@ void Loop_CRC<I,O>
 
 template <typename I, typename O>
 bool Loop_CRC<I,O>
-::stop(const int8_t *in, const int frame_id)
+::_stop(const int8_t *in, const int frame_id)
 {
-	// this->n_calls++; // is performed into 'Loop_predicate<O>::stop' function
-	if (Loop_predicate<O>::stop(in, frame_id))
+	// this->n_calls++; // is performed into 'Loop_predicate<O>::_stop' function
+	if (Loop_predicate<O>::_stop(in, frame_id))
 		return true;
 
 	if (Loop::get_n_calls() > crc_ite_start)
 	{
-		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
-		auto ret_val = this->_stop(in + f_start * this->n_bytes_in, f_start);
-		for (auto f = f_start+1; f < f_stop; f++)
-			ret_val &= this->_stop(in + f * this->n_bytes_in, f);
+		auto ret_val = this->__stop(in + 0 * this->n_bytes_in, 0);
+		for (auto f = 1; f < this->get_n_frames(); f++)
+			ret_val &= this->__stop(in + f * this->n_bytes_in, f);
 
 		return ret_val;
 	}
@@ -75,7 +72,7 @@ bool Loop_CRC<I,O>
 
 template <typename I, typename O>
 bool Loop_CRC<I,O>
-::_stop(const int8_t *in, const int frame_id)
+::__stop(const int8_t *in, const int frame_id)
 {
 	return this->crc->check((const I*)in, 1, 0) ? true : false;
 }

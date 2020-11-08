@@ -30,12 +30,12 @@ public:
 	virtual ~Loop_CRC() = default;
 	virtual Loop_CRC<I,O>* clone() const;
 
-	virtual bool stop(const int8_t *in, const int frame_id = -1);
-
 protected:
 	virtual void deep_copy(const Loop_CRC<I,O> &m);
 
 	virtual bool _stop(const int8_t *in, const int frame_id);
+
+	virtual bool __stop(const int8_t *in, const int frame_id);
 };
 }
 }

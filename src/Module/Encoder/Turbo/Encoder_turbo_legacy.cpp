@@ -10,9 +10,8 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_turbo_legacy<B>
-::Encoder_turbo_legacy(const int& K, const int& N, const Encoder<B> &sub_enc, Interleaver<B> &pi)
+::Encoder_turbo_legacy(const int& K, const int& N, const Encoder<B> &sub_enc, const Interleaver<B> &pi)
 : Encoder_turbo<B>(K, N, sub_enc, sub_enc, pi),
-  pi(pi),
   sub_enc(sub_enc.clone()),
   X_N_n((2 * (K + sub_enc.tail_length()/2))*sub_enc.get_n_frames()),
   X_N_i((2 * (K + sub_enc.tail_length()/2))*sub_enc.get_n_frames())
@@ -71,17 +70,9 @@ template <typename B>
 void Encoder_turbo_legacy<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
-	if (this->pi.get_n_frames() != this->get_n_frames())
-	{
-		std::stringstream message;
-		message << "'pi.get_n_frames()' has to be equal to 'n_frames' ('pi.get_n_frames()' = "
-		        << this->pi.get_n_frames() << ", 'n_frames' = " << this->get_n_frames() << ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	pi.interleave  (U_K - frame_id * this->K, this->U_K_i.data(), frame_id);
-	sub_enc->encode(U_K - frame_id * this->K,       X_N_n.data(), frame_id);
-	sub_enc->encode(this->U_K_i.data(),             X_N_i.data(), frame_id);
+	this->pi->interleave(U_K - frame_id * this->K, this->U_K_i.data(), frame_id);
+	sub_enc->encode     (U_K - frame_id * this->K,       X_N_n.data(), frame_id);
+	sub_enc->encode     (this->U_K_i.data(),             X_N_i.data(), frame_id);
 
 	const auto off1 = ((3*this->K + (2 * sub_enc->tail_length())) * frame_id) - (frame_id * this->N);
 	const auto off2 =  (2*this->K + (1 * sub_enc->tail_length())) * frame_id;
@@ -141,7 +132,7 @@ bool Encoder_turbo_legacy<B>
 	if (!sub_enc->is_codeword(X_N_n.data()))
 		return false;
 
-	pi.interleave(U_K_n.data(), this->U_K_i.data());
+	this->pi->interleave(U_K_n.data(), this->U_K_i.data(), 0, false);
 
 	for (auto i = 0; i < this->K; i++)
 		X_N_i[2*i +0] = this->U_K_i[i];
@@ -170,7 +161,7 @@ void Encoder_turbo_legacy<B>
 		this->X_N_i.resize(new_X_N_i_size);
 
 		this->sub_enc->set_n_frames(n_frames);
-		this->pi.set_n_frames(n_frames);
+		this->pi     ->set_n_frames(n_frames);
 	}
 }
 

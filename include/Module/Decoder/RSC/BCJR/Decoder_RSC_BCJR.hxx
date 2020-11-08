@@ -19,17 +19,16 @@ template <typename B, typename R>
 Decoder_RSC_BCJR<B,R>
 ::Decoder_RSC_BCJR(const int K,
                    const std::vector<std::vector<int>> &trellis,
-                   const bool buffered_encoding,
-                   const int simd_inter_frame_level)
-: Decoder_SISO<B,R>(K, 2*(K + (int)std::log2(trellis[0].size())), simd_inter_frame_level),
+                   const bool buffered_encoding)
+: Decoder_SISO<B,R>(K, 2*(K + (int)std::log2(trellis[0].size()))),
   n_states((int)trellis[0].size()),
   n_ff((int)std::log2(n_states)),
   buffered_encoding(buffered_encoding),
   trellis(trellis),
-  sys((K+n_ff) * simd_inter_frame_level + mipp::nElReg<R>()),
-  par((K+n_ff) * simd_inter_frame_level + mipp::nElReg<R>()),
-  ext( K       * simd_inter_frame_level + mipp::nElReg<R>()),
-  s  ( K       * simd_inter_frame_level + mipp::nElReg<B>())
+  sys((K+n_ff) * this->get_n_frames_per_wave() + mipp::nElReg<R>()),
+  par((K+n_ff) * this->get_n_frames_per_wave() + mipp::nElReg<R>()),
+  ext( K       * this->get_n_frames_per_wave() + mipp::nElReg<R>()),
+  s  ( K       * this->get_n_frames_per_wave() + mipp::nElReg<B>())
 {
 	const std::string name = "Decoder_RSC_BCJR";
 	this->set_name(name);
@@ -39,6 +38,22 @@ Decoder_RSC_BCJR<B,R>
 		std::stringstream message;
 		message << "'n_states' has to be a power of 2 ('n_states' = " << n_states << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+}
+
+template <typename B, typename R>
+void Decoder_RSC_BCJR<B,R>
+::set_n_frames_per_wave(const int n_frames_per_wave)
+{
+	const auto old_n_frames_per_wave = this->get_n_frames_per_wave();
+	if (old_n_frames_per_wave != n_frames_per_wave)
+	{
+		Decoder_SISO<B,R>::set_n_frames_per_wave(n_frames_per_wave);
+
+		this->sys.resize((this->K+n_ff) * this->get_n_frames_per_wave() + mipp::nElReg<R>());
+		this->par.resize((this->K+n_ff) * this->get_n_frames_per_wave() + mipp::nElReg<R>());
+		this->ext.resize( this->K       * this->get_n_frames_per_wave() + mipp::nElReg<R>());
+		this->s  .resize( this->K       * this->get_n_frames_per_wave() + mipp::nElReg<B>());
 	}
 }
 
@@ -63,7 +78,7 @@ void Decoder_RSC_BCJR<B,R>
 	if (buffered_encoding)
 	{
 		const auto tail     = this->tail_length();
-		const auto n_frames = Decoder_SIHO<B,R>::get_simd_inter_frame_level();
+		const auto n_frames = this->get_n_frames_per_wave();
 
 		if (n_frames == 1)
 		{
@@ -86,7 +101,7 @@ void Decoder_RSC_BCJR<B,R>
 	}
 	else
 	{
-		const auto n_frames = this->get_simd_inter_frame_level();
+		const auto n_frames = this->get_n_frames_per_wave();
 
 		// reordering
 		for (auto i = 0; i < this->K + n_ff; i++)
@@ -109,12 +124,12 @@ int Decoder_RSC_BCJR<B,R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	auto status = this->_decode_siso(sys.data(), par.data(), ext.data(), frame_id);
+	auto status = this->_decode_siso_alt(sys.data(), par.data(), ext.data(), frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
-	for (auto i = 0; i < this->K * this->simd_inter_frame_level; i += mipp::nElReg<R>())
+	for (auto i = 0; i < this->K * this->get_n_frames_per_wave(); i += mipp::nElReg<R>())
 	{
 		const auto r_post = mipp::Reg<R>(&ext[i]) + mipp::Reg<R>(&sys[i]);
 
@@ -139,13 +154,13 @@ template <typename B, typename R>
 void Decoder_RSC_BCJR<B,R>
 ::_store(B *V_K) const
 {
-	if (this->get_simd_inter_frame_level() == 1)
+	if (this->get_n_frames_per_wave() == 1)
 	{
 		std::copy(s.begin(), s.begin() + this->K, V_K);
 	}
 	else // inter frame => output reordering
 	{
-		const auto n_frames = this->get_simd_inter_frame_level();
+		const auto n_frames = this->get_n_frames_per_wave();
 
 		std::vector<B*> frames(n_frames);
 		for (auto f = 0; f < n_frames; f++)

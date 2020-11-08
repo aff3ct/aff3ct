@@ -27,26 +27,22 @@ template <typename B = int, typename R = float>
 class Decoder_SISO : public Decoder_SIHO<B,R>
 {
 public:
-	inline Task&   operator[](const dec::tsk                 t);
-	inline Socket& operator[](const dec::sck::decode_hiho    s);
-	inline Socket& operator[](const dec::sck::decode_hiho_cw s);
-	inline Socket& operator[](const dec::sck::decode_siho    s);
-	inline Socket& operator[](const dec::sck::decode_siho_cw s);
-	inline Socket& operator[](const dec::sck::decode_siso    s);
-
-private:
-	std::vector<R> Y_N1;
-	std::vector<R> Y_N2;
+	inline Task&   operator[](const dec::tsk                  t);
+	inline Socket& operator[](const dec::sck::decode_hiho     s);
+	inline Socket& operator[](const dec::sck::decode_hiho_cw  s);
+	inline Socket& operator[](const dec::sck::decode_siho     s);
+	inline Socket& operator[](const dec::sck::decode_siho_cw  s);
+	inline Socket& operator[](const dec::sck::decode_siso     s);
+	inline Socket& operator[](const dec::sck::decode_siso_alt s);
 
 public:
 	/*!
 	 * \brief Constructor.
 	 *
-	 * \param K:                      number of information bits in the frame.
-	 * \param N:                      size of one frame.
-	 * \param simd_inter_frame_level: number of frames absorbed by the SIMD instructions.
+	 * \param K: number of information bits in the frame.
+	 * \param N: size of one frame.
 	 */
-	Decoder_SISO(const int K, const int N, const int simd_inter_frame_level = 1);
+	Decoder_SISO(const int K, const int N);
 
 	/*!
 	 * \brief Destructor.
@@ -56,6 +52,18 @@ public:
 	virtual Decoder_SISO<B,R>* clone() const;
 
 	/*!
+	 * \brief Decodes a given noisy codeword.
+	 *
+	 * \param Y_N1: a completely noisy codeword from the channel.
+	 * \param Y_N2: an extrinsic information about all the bits in the frame.
+	 */
+	template <class A = std::allocator<R>>
+	int decode_siso(const std::vector<R,A> &Y_N1, std::vector<R,A> &Y_N2, const int frame_id = -1,
+	                const bool managed_memory = true);
+
+	int decode_siso(const R *Y_N1, R *Y_N2, const int frame_id = -1, const bool managed_memory = true);
+
+	/*!
 	 * \brief Decodes a given noisy codeword. This prototype supposes that the encoded frame is systematic, can't be
 	 *        used otherwise.
 	 *
@@ -63,22 +71,17 @@ public:
 	 * \param par: parity LLRs from the channel.
 	 * \param ext: extrinsic information about the systematic bits.
 	 */
+	// template <class A = std::allocator<R>>
+	// int decode_siso(const std::vector<R,A> &sys, const std::vector<R,A> &par, std::vector<R,A> &ext,
+	//                  const int n_frames = -1, const int frame_id = -1);
+
+	// virtual int decode_siso(const R *sys, const R *par, R *ext, const int n_frames = -1, const int frame_id = -1);
+
 	template <class A = std::allocator<R>>
-	int decode_siso(const std::vector<R,A> &sys, const std::vector<R,A> &par, std::vector<R,A> &ext,
-	                 const int n_frames = -1, const int frame_id = -1);
+	int decode_siso_alt(const std::vector<R,A> &sys, const std::vector<R,A> &par, std::vector<R,A> &ext,
+	                    const int frame_id = -1, const bool managed_memory = true);
 
-	virtual int decode_siso(const R *sys, const R *par, R *ext, const int n_frames = -1, const int frame_id = -1);
-
-	/*!
-	 * \brief Decodes a given noisy codeword.
-	 *
-	 * \param Y_N1: a completely noisy codeword from the channel.
-	 * \param Y_N2: an extrinsic information about all the bits in the frame.
-	 */
-	template <class A = std::allocator<R>>
-	int decode_siso(const std::vector<R,A> &Y_N1, std::vector<R,A> &Y_N2, const int frame_id = -1);
-
-	virtual int decode_siso(const R *Y_N1, R *Y_N2, const int frame_id = -1);
+	int decode_siso_alt(const R *sys, const R *par, R *ext, const int frame_id = -1, const bool managed_memory = true);
 
 	/*!
 	 * \brief Gets the number of tail bits.
@@ -87,12 +90,10 @@ public:
 	 */
 	virtual int tail_length() const;
 
-	virtual void set_n_frames(const int n_frames);
-
 protected:
-	virtual int _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);
-
 	virtual int _decode_siso(const R *Y_N1, R *Y_N2, const int frame_id);
+
+	virtual int _decode_siso_alt(const R *sys, const R *par, R *ext, const int frame_id);
 };
 }
 }

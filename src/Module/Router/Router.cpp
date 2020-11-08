@@ -21,19 +21,23 @@ size_t Router
 }
 
 size_t Router
-::route(const int8_t *in, const int frame_id)
+::route(const int8_t *in, const int frame_id, const bool managed_memory)
 {
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
-	auto ret_val = this->_route(in + f_start * this->n_bytes_in, f_start);
-	for (auto f = f_start+1; f < f_stop; f++)
-		ret_val = this->select_route_inter(ret_val, this->_route(in + f * this->n_bytes_in, f));
-	return ret_val;
+	(*this)[rtr::sck::route::in].bind(in);
+	return (size_t)(*this)[rtr::tsk::route].exec(frame_id, managed_memory);
 }
 
 size_t Router
 ::_route(const int8_t *in, const int frame_id)
+{
+	auto ret_val = this->__route(in + 0 * this->n_bytes_in, 0);
+	for (auto f = 1; f < this->get_n_frames(); f++)
+		ret_val = this->select_route_inter(ret_val, this->__route(in + f * this->n_bytes_in, f));
+	return ret_val;
+}
+
+size_t Router
+::__route(const int8_t *in, const int frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }

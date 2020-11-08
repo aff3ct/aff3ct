@@ -42,7 +42,7 @@ protected:
 	virtual void _load            (const R *Y_N                                          );
 	virtual void _store           (              B *V_K                                  ) const;
 	virtual int  _decode_siho     (const R *Y_N, B *V_K,               const int frame_id);
-	virtual int  _decode_siso     (const R *sys, const R *par, R *ext, const int frame_id);
+	virtual int  _decode_siso_alt (const R *sys, const R *par, R *ext, const int frame_id);
 	        void __init_alpha_beta(                                                      );
 	        void __save_alpha_beta(                                                      );
 	virtual void __fwd_recursion  (const R *sys, const R *par                            ) = 0;

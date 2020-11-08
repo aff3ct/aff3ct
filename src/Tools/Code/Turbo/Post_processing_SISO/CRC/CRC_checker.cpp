@@ -54,7 +54,7 @@ bool CRC_checker<B,R>
 		for (auto i = loop_size1 * mipp::nElReg<R>(); i < loop_size2; i++)
 			s[i] = (sys[i] + ext[i]) < 0;
 
-		return crc->check(s, this->n_frames);
+		return crc->check(s);
 	}
 
 	return false;

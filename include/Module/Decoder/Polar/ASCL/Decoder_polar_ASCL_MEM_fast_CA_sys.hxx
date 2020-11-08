@@ -68,7 +68,7 @@ void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 	sc_decoder->_decode_siho(Y_N, V_K, frame_id);
 
 	// check the CRC
-	auto crc_decode_result = this->crc->check(V_K, this->get_simd_inter_frame_level());
+	auto crc_decode_result = this->crc->check(V_K, frame_id);
 
 	// delete the path if the CRC result is negative
 	if (!crc_decode_result && L_max > 1)
@@ -83,7 +83,7 @@ void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 				this->init_buffers();
 				this->recursive_decode(Y_N, off_l, off_s, this->m, first_node_id);
 			}
-			while (!this->select_best_path() && this->L < L_max);
+			while (!this->select_best_path(frame_id) && this->L < L_max);
 		}
 		else // partial adaptive mode
 		{
@@ -92,7 +92,7 @@ void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 			this->L = this->L_max;
 			this->init_buffers();
 			this->recursive_decode(Y_N, off_l, off_s, this->m, first_node_id);
-			this->select_best_path();
+			this->select_best_path(frame_id);
 		}
 	}
 }

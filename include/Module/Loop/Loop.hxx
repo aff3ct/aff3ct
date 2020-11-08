@@ -39,6 +39,7 @@ Loop
 	const std::string name = "Loop";
 	this->set_name(name);
 	this->set_short_name(name);
+	this->set_single_wave(true);
 
 	if (n_elmts_in == 0)
 	{
@@ -90,13 +91,15 @@ Loop
 		}
 	}
 
-	this->create_codelet(p, [](Module &m, Task &t) -> int
+	this->create_codelet(p, [](Module &m, Task &t, const int frame_id) -> int
 	{
-		auto &l = static_cast<Loop&>(m);
-		auto n_calls = l.get_n_calls();
-		auto stop = (int)l.stop(static_cast<int8_t*>(t[n_calls ? 1 : 0].get_dataptr()));
+		auto &lop = static_cast<Loop&>(m);
 
-		// I have to find a trick to avoid those copies
+		auto n_calls = lop.get_n_calls();
+		auto stop = (int)lop._stop(static_cast<int8_t*>(t[n_calls ? 1 : 0].get_dataptr()),
+		                           frame_id);
+
+		// TODO: find a trick to avoid those copies (tips: use processes in the sequence)
 		if (stop && n_calls == 0)
 			std::copy((int8_t*)t[2].get_dataptr(),
 			          (int8_t*)t[2].get_dataptr() + t[2].get_databytes(),
@@ -152,20 +155,13 @@ size_t Loop
 	return this->n_calls;
 }
 
-template <class A>
-bool Loop
-::stop(const std::vector<int8_t,A>& in, const int frame_id)
-{
-	if (this->n_bytes_in * (size_t)this->n_frames != in.size())
-	{
-		std::stringstream message;
-		message << "'in.size()' has to be equal to 'n_bytes_in' * 'n_frames' ('in.size()' = " << in.size()
-		        << ", 'n_bytes_in' = " << this->n_bytes_in << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	this->stop(in.data(), frame_id);
-}
+// template <class A>
+// bool Loop
+// ::stop(const std::vector<int8_t,A>& in, const int frame_id, const bool managed_memory)
+// {
+// 	(*this)[lop::sck::stop::in1].bind(in);
+// 	return (*this)[lop::tsk::stop].exec(frame_id, managed_memory);
+// }
 
 }
 }

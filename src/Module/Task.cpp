@@ -27,7 +27,7 @@ Task
   debug_limit(-1),
   debug_precision(2),
   debug_frame_max(-1),
-  codelet([](Module &m, Task &t) -> int { throw tools::unimplemented_error(__FILE__, __LINE__, __func__); return 0; }),
+  codelet([](Module &m, Task &t, const int frame_id) -> int { throw tools::unimplemented_error(__FILE__, __LINE__, __func__); return 0; }),
   status(module.get_n_frames()),
   n_calls(0),
   duration_total(std::chrono::nanoseconds(0)),
@@ -67,21 +67,12 @@ void Task
 ::set_stats(const bool stats)
 {
 	this->stats = stats;
-
-	if (this->stats)
-		this->set_fast(false);
 }
 
 void Task
 ::set_fast(const bool fast)
 {
 	this->fast = fast;
-	if (this->fast)
-	{
-		this->set_debug(false);
-		this->set_stats(false);
-	}
-
 	for (size_t i = 0; i < sockets.size(); i++)
 		sockets[i]->set_fast(this->fast);
 }
@@ -90,9 +81,6 @@ void Task
 ::set_debug(const bool debug)
 {
 	this->debug = debug;
-
-	if (this->debug)
-		this->set_fast(false);
 }
 
 void Task
@@ -209,20 +197,128 @@ static inline void display_data(const T *data,
 }
 
 int Task
-::exec()
+::_exec(const int frame_id, const bool managed_memory)
 {
-	if (fast)
+	const auto n_frames               = this->get_module().get_n_frames();
+	const auto n_frames_per_wave      = this->get_module().get_n_frames_per_wave();
+	const auto n_waves                = this->get_module().get_n_waves();
+	const auto n_frames_per_wave_rest = this->get_module().get_n_frames_per_wave_rest();
+
+	auto exec_status = status_t::SUCCESS;
+	if ((managed_memory == false && frame_id >= 0)        ||
+		(frame_id == -1 && n_frames_per_wave == n_frames) ||
+		(frame_id ==  0 && n_frames_per_wave == 1)        ||
+		(frame_id ==  0 && n_waves > 1)                   ||
+		(frame_id ==  0 && n_frames_per_wave_rest == 0))
 	{
-		auto exec_status = this->codelet(*this->module, *this);
+		exec_status = (status_t)this->codelet(*this->module, *this, frame_id == -1 ? 0 : frame_id);
+	}
+	else
+	{
+		// save the initial dataptr of the sockets
+		for (size_t sid = 0; sid < this->sockets.size() -1; sid++)
+			sockets_dataptr_init[sid] = (int8_t*)this->sockets[sid]->get_dataptr();
+
+		if (frame_id > 0 && managed_memory == true && n_frames_per_wave > 1)
+		{
+			const auto w = (frame_id % n_frames) / n_frames_per_wave;
+			const auto w_pos = frame_id % n_frames_per_wave;
+
+			for (size_t sid = 0; sid < this->sockets.size() -1; sid++)
+			{
+				if (socket_type[sid] == socket_t::SIN || socket_type[sid] == socket_t::SIN_SOUT)
+					std::copy(sockets_dataptr_init[sid] + ((frame_id % n_frames) + 0) * sockets_databytes_per_frame[sid],
+					          sockets_dataptr_init[sid] + ((frame_id % n_frames) + 1) * sockets_databytes_per_frame[sid],
+					          sockets_data[sid].begin() + w_pos                       * sockets_databytes_per_frame[sid]);
+				this->sockets[sid]->dataptr = (void*)sockets_data[sid].data();
+			}
+
+			exec_status = (status_t)this->codelet(*this->module, *this, w * n_frames_per_wave);
+
+			for (size_t sid = 0; sid < this->sockets.size() -1; sid++)
+				if (socket_type[sid] == socket_t::SOUT || socket_type[sid] == socket_t::SIN_SOUT)
+					std::copy(sockets_data[sid].begin() + (w_pos + 0)           * sockets_databytes_per_frame[sid],
+					          sockets_data[sid].begin() + (w_pos + 1)           * sockets_databytes_per_frame[sid],
+					          sockets_dataptr_init[sid] + (frame_id % n_frames) * sockets_databytes_per_frame[sid]);
+		}
+		else // if (frame_id < 0 || n_frames_per_wave == 1)
+		{
+			const auto w_start = (frame_id < 0) ? 0 : frame_id % n_waves;
+			const auto w_stop  = (frame_id < 0) ? n_waves : w_start +1;
+
+			auto w = 0;
+			for (w = w_start; w < w_stop -1 && exec_status != status_t::FAILURE_STOP; w++)
+			{
+				for (size_t sid = 0; sid < this->sockets.size() -1; sid++)
+					this->sockets[sid]->dataptr = (void*)(sockets_dataptr_init[sid] +
+					                                      w * n_frames_per_wave * sockets_databytes_per_frame[sid]);
+
+				exec_status = (status_t)this->codelet(*this->module, *this, w * n_frames_per_wave);
+			}
+
+			if (exec_status != status_t::FAILURE_STOP)
+			{
+				if (n_frames_per_wave_rest == 0)
+				{
+					for (size_t sid = 0; sid < this->sockets.size() -1; sid++)
+						this->sockets[sid]->dataptr = (void*)(sockets_dataptr_init[sid] +
+						                                      w * n_frames_per_wave * sockets_databytes_per_frame[sid]);
+
+					exec_status = (status_t)this->codelet(*this->module, *this, w * n_frames_per_wave);
+				}
+				else
+				{
+					for (size_t sid = 0; sid < this->sockets.size() -1; sid++)
+					{
+						if (socket_type[sid] == socket_t::SIN || socket_type[sid] == socket_t::SIN_SOUT)
+							std::copy(sockets_dataptr_init[sid] + w * n_frames_per_wave * sockets_databytes_per_frame[sid],
+							          sockets_dataptr_init[sid] +     n_frames          * sockets_databytes_per_frame[sid],
+							          sockets_data[sid].begin());
+						this->sockets[sid]->dataptr = (void*)sockets_data[sid].data();
+					}
+
+					exec_status = (status_t)this->codelet(*this->module, *this, w * n_frames_per_wave);
+
+					for (size_t sid = 0; sid < this->sockets.size() -1; sid++)
+						if (socket_type[sid] == socket_t::SOUT || socket_type[sid] == socket_t::SIN_SOUT)
+							std::copy(sockets_data[sid].begin(),
+							          sockets_data[sid].begin() + n_frames_per_wave_rest * sockets_databytes_per_frame[sid],
+							          sockets_dataptr_init[sid] + w * n_frames_per_wave  * sockets_databytes_per_frame[sid]);
+				}
+			}
+		}
+
+		// restore the initial dataptr of the sockets
+		for (size_t sid = 0; sid < this->sockets.size() -1; sid++)
+			this->sockets[sid]->dataptr = (void*)sockets_dataptr_init[sid];
+	}
+
+	return (int)(exec_status == status_t::FAILURE_STOP ? status_t::FAILURE : exec_status);
+}
+
+int Task
+::exec(const int frame_id, const bool managed_memory)
+{
+	if (this->is_fast() && !this->is_debug() && !this->is_stats())
+	{
+		auto exec_status = this->_exec(frame_id, managed_memory);
 		this->n_calls++;
 		((int*)this->sockets.back()->get_dataptr())[0] = exec_status;
 		return exec_status;
 	}
 
-	if (can_exec())
+	if (frame_id != -1 && frame_id >= this->get_module().get_n_frames())
+	{
+		std::stringstream message;
+		message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = "
+		        << frame_id << ", 'n_frames' = " << this->get_module().get_n_frames() << ").";
+		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	if (this->is_fast() || this->can_exec())
 	{
 		size_t max_n_chars = 0;
-		if (debug)
+		if (this->is_debug())
 		{
 			auto n_fra = (size_t)this->module->get_n_frames();
 
@@ -274,10 +370,10 @@ int Task
 		}
 
 		int exec_status;
-		if (stats)
+		if (this->is_stats())
 		{
 			auto t_start = std::chrono::steady_clock::now();
-			exec_status = this->codelet(*this->module, *this);
+			exec_status = this->_exec(frame_id, managed_memory);
 			auto duration = std::chrono::steady_clock::now() - t_start;
 
 			this->duration_total += duration;
@@ -293,11 +389,13 @@ int Task
 			}
 		}
 		else
-			exec_status = this->codelet(*this->module, *this);
+		{
+			exec_status = this->_exec(frame_id, managed_memory);
+		}
 		((int*)this->sockets.back()->get_dataptr())[0] = exec_status;
 		this->n_calls++;
 
-		if (debug)
+		if (this->is_debug())
 		{
 			auto n_fra = (size_t)this->module->get_n_frames();
 			for (auto& s : sockets)
@@ -394,6 +492,12 @@ Socket& Task
 
 	sockets.push_back(std::move(s));
 
+	this->sockets_dataptr_init.push_back(nullptr);
+	this->sockets_databytes_per_frame.push_back(sockets.back()->get_databytes() / this->get_module().get_n_frames());
+	this->sockets_data.push_back(std::vector<int8_t>((this->get_module().get_n_frames_per_wave() > 1) ?
+	                                                  this->sockets_databytes_per_frame.back() *
+	                                                  this->get_module().get_n_frames_per_wave() : 0));
+
 	return *sockets.back();
 }
 
@@ -437,7 +541,7 @@ size_t Task
 }
 
 void Task
-::create_codelet(std::function<int(Module &m, Task& t)> &codelet)
+::create_codelet(std::function<int(Module &m, Task& t, const int frame_id)> &codelet)
 {
 	this->codelet = codelet;
 
@@ -467,6 +571,20 @@ void Task
 				sout_id++;
 			}
 		}
+		s_id++;
+	}
+}
+
+void Task
+::update_n_frames_per_wave(const size_t old_n_frames_per_wave, const size_t new_n_frames_per_wave)
+{
+	size_t s_id = 0;
+	for (auto &s : this->sockets)
+	{
+		if (s->get_name() != "status")
+			this->sockets_data[s_id].resize((new_n_frames_per_wave > 1) ?
+			                                 this->sockets_databytes_per_frame[s_id] * new_n_frames_per_wave :
+			                                 0);
 		s_id++;
 	}
 }

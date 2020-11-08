@@ -45,7 +45,7 @@ public:
 
 protected:
 	virtual void deep_copy(const Decoder_polar_MK_SCL_naive_CA<B,R>& m);
-	virtual void select_best_path();
+	virtual void select_best_path(const int frame_id);
 };
 }
 }

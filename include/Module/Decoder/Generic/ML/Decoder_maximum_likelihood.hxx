@@ -12,7 +12,7 @@ namespace module
 template <typename B, typename R>
 Decoder_maximum_likelihood<B,R>
 ::Decoder_maximum_likelihood(const int K, const int N, const Encoder<B> &encoder)
-: Decoder_SIHO<B,R>(K, N, 1),
+: Decoder_SIHO<B,R>(K, N),
   encoder(encoder.clone()),
   U_K(K+7), // +7 to avoid segmentation fault when casting B to uint64_t
   X_N(N+7), // +7 to avoid segmentation fault when casting B to uint64_t

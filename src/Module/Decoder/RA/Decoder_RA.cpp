@@ -11,8 +11,8 @@ using namespace aff3ct::module;
 
 template <typename B, typename R>
 Decoder_RA<B, R>
-::Decoder_RA(const int& K, const int& N, Interleaver<R>& interleaver, int max_iter)
-: Decoder_SIHO<B,R>(K, N, 1),
+::Decoder_RA(const int& K, const int& N, const Interleaver<R>& interleaver, int max_iter)
+: Decoder_SIHO<B,R>(K, N),
   rep_count(N/K),
   max_iter(max_iter),
   Fw(N),
@@ -24,7 +24,7 @@ Decoder_RA<B, R>
   U(K),
   Xd(2),
   Xu(2),
-  interleaver(interleaver)
+  interleaver(interleaver.clone())
 {
 	const std::string name = "Decoder_RA";
 	this->set_name(name);
@@ -72,14 +72,6 @@ template <typename B, typename R>
 int Decoder_RA<B, R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	if (this->interleaver.get_n_frames() != this->get_n_frames())
-	{
-		std::stringstream message;
-		message << "'interleaver.get_n_frames()' has to be equal to 'n_frames' ('interleaver.get_n_frames()' = "
-		        << this->interleaver.get_n_frames() << ", 'n_frames' = " << this->get_n_frames() << ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	//set F, B and Td at 0
 	for (auto i = 0; i < this->N; i++)
@@ -115,7 +107,7 @@ int Decoder_RA<B, R>
 			Tu[i] = check_node(Fw[i - 1] + Y_N[i - 1], Bw[i] + Y_N[i]);
 
 		// Deinterleave
-		interleaver.deinterleave(Tu.data(), Wu.data(), frame_id);
+		interleaver->deinterleave(Tu.data(), Wu.data(), frame_id, false);
 
 		// U computation
 		R tmp;
@@ -130,7 +122,7 @@ int Decoder_RA<B, R>
 		}
 
 		// Interleaving
-		interleaver.interleave(Wd.data(), Td.data(), frame_id);
+		interleaver->interleave(Wd.data(), Td.data(), frame_id, false);
 	}
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
@@ -180,7 +172,7 @@ void Decoder_RA<B, R>
 	if (old_n_frames != n_frames)
 	{
 		Decoder_SIHO<B,R>::set_n_frames(n_frames);
-		this->interleaver.set_n_frames(n_frames);
+		this->interleaver->set_n_frames(n_frames);
 	}
 }
 

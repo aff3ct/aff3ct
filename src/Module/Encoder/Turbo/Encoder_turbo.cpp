@@ -12,9 +12,10 @@ using namespace aff3ct::module;
 
 template <typename B>
 Encoder_turbo<B>
-::Encoder_turbo(const int& K, const int& N, const Encoder<B> &enco_n, const Encoder<B> &enco_i, Interleaver<B> &pi)
+::Encoder_turbo(const int& K, const int& N, const Encoder<B> &enco_n, const Encoder<B> &enco_i,
+                const Interleaver<B> &pi)
 : Encoder<B>(K, N),
-  pi        (pi),
+  pi        (pi.clone()),
   enco_n    (enco_n.clone()),
   enco_i    (enco_i.clone()),
   U_K_i     (K * enco_n.get_n_frames()),
@@ -89,15 +90,7 @@ template <typename B>
 void Encoder_turbo<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
-	if (this->pi.get_n_frames() != this->get_n_frames())
-	{
-		std::stringstream message;
-		message << "'pi.get_n_frames()' has to be equal to 'n_frames' ('pi.get_n_frames()' = "
-		        << this->pi.get_n_frames() << ", 'n_frames' = " << this->get_n_frames() << ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	pi.interleave(U_K - frame_id * this->K, U_K_i.data(), frame_id);
+	pi->interleave(U_K - frame_id * this->K, U_K_i.data(), frame_id);
 
 	enco_n->encode(U_K - frame_id * this->K, X_N_tmp.data(), frame_id);
 
@@ -120,7 +113,7 @@ bool Encoder_turbo<B>
 		return false;
 
 	const auto *U_K_n = X_N;
-	pi.interleave(U_K_n, U_K_i.data());
+	pi->interleave(U_K_n, U_K_i.data(), 0, false);
 
 	std::copy(U_K_i  .begin(),
 	          U_K_i  .begin() + enco_i->get_K(),
@@ -154,7 +147,7 @@ void Encoder_turbo<B>
 
 		this->enco_n->set_n_frames(n_frames);
 		this->enco_i->set_n_frames(n_frames);
-		this->pi.set_n_frames(n_frames);
+		this->pi    ->set_n_frames(n_frames);
 	}
 }
 

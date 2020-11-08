@@ -21,7 +21,7 @@ Decoder_polar_MK_SCL_naive<B,R>
                              const std::vector<bool>& frozen_bits,
                              const std::vector<std::vector<std::function<R(const std::vector<R> &LLRs,
                                                                            const std::vector<B> &bits)>>> &lambdas)
-: Decoder_SIHO<B,R>(K, N, 1),
+: Decoder_SIHO<B,R>(K, N),
   metric_init(std::numeric_limits<R>::min()),
   L(L),
   code(code),
@@ -211,7 +211,7 @@ void Decoder_polar_MK_SCL_naive<B,R>
 
 template <typename B, typename R>
 void Decoder_polar_MK_SCL_naive<B,R>
-::_decode()
+::_decode(const int frame_id)
 {
 	std::set<int> last_active_paths;
 	int cur_path;
@@ -326,7 +326,7 @@ void Decoder_polar_MK_SCL_naive<B,R>
 			this->recursive_propagate_sums(leaves_array[path][leaf_index]);
 	}
 
-	this->select_best_path();
+	this->select_best_path(frame_id);
 }
 
 template <typename B, typename R>
@@ -338,7 +338,7 @@ int Decoder_polar_MK_SCL_naive<B,R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_decode();
+	this->_decode(frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -361,7 +361,7 @@ int Decoder_polar_MK_SCL_naive<B,R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_decode();
+	this->_decode(frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -526,7 +526,7 @@ void Decoder_polar_MK_SCL_naive<B,R>
 
 template <typename B, typename R>
 void Decoder_polar_MK_SCL_naive<B,R>
-::select_best_path()
+::select_best_path(const int frame_id)
 {
 	int best_path = 0;
 	if (active_paths.size() >= 1)

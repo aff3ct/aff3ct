@@ -18,6 +18,7 @@ Decoder_BCH_genius<B,R>
 {
 	const std::string name = "Decoder_BCH_genius";
 	this->set_name(name);
+	this->set_n_frames(encoder.get_n_frames());
 
 	if (!encoder.is_memorizing())
 	{
@@ -82,7 +83,7 @@ int Decoder_BCH_genius<B,R>
 }
 
 template <typename B, typename R>
-int  Decoder_BCH_genius<B,R>
+int Decoder_BCH_genius<B,R>
 ::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
 {
 	tools::hard_decide(Y_N, this->YH_N.data(), this->N);
@@ -90,6 +91,18 @@ int  Decoder_BCH_genius<B,R>
 	auto status = this->_decode_hiho_cw(this->YH_N.data(), V_N, frame_id);
 
 	return status;
+}
+
+template <typename B, typename R>
+void Decoder_BCH_genius<B,R>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Decoder_BCH<B,R>::set_n_frames(n_frames);
+		this->encoder.set_n_frames(n_frames);
+	}
 }
 
 // ==================================================================================== explicit template instantiation

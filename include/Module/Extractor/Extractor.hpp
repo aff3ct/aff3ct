@@ -53,25 +53,28 @@ public:
 	virtual Extractor<B,Q>* clone() const;
 
 	template <class A = std::allocator<Q>>
-	void get_sys_llr(const std::vector<Q,A> &Y_N, std::vector<Q,A> &Y_K, const int frame_id = -1);
+	void get_sys_llr(const std::vector<Q,A> &Y_N, std::vector<Q,A> &Y_K, const int frame_id = -1,
+	                 const bool managed_memory = true);
 
-	virtual void get_sys_llr(const Q *Y_N, Q *Y_K, const int frame_id = -1);
+	void get_sys_llr(const Q *Y_N, Q *Y_K, const int frame_id = -1, const bool managed_memory = true);
 
 	template <class AQ = std::allocator<Q>, class AB = std::allocator<B>>
-	void get_sys_bit(const std::vector<Q,AQ> &Y_N, std::vector<B,AB> &V_K, const int frame_id = -1);
+	void get_sys_bit(const std::vector<Q,AQ> &Y_N, std::vector<B,AB> &V_K, const int frame_id = -1,
+	                 const bool managed_memory = true);
 
-	virtual void get_sys_bit(const Q *Y_N, B *V_K, const int frame_id = -1);
+	void get_sys_bit(const Q *Y_N, B *V_K, const int frame_id = -1, const bool managed_memory = true);
 
 	template <class A = std::allocator<Q>>
 	void get_sys_and_par_llr(const std::vector<Q,A> &Y_N, std::vector<Q,A> &sys, std::vector<Q,A> &par,
-	                         const int frame_id = -1);
+	                         const int frame_id = -1, const bool managed_memory = true);
 
-	virtual void get_sys_and_par_llr(const Q *Y_N, Q *sys, Q *par, const int frame_id = -1);
+	void get_sys_and_par_llr(const Q *Y_N, Q *sys, Q *par, const int frame_id = -1, const bool managed_memory = true);
 
 	template <class A = std::allocator<Q>>
-	void add_sys_and_ext_llr(const std::vector<Q,A> &ext, std::vector<Q,A> &Y_N, const int frame_id = -1);
+	void add_sys_and_ext_llr(const std::vector<Q,A> &ext, std::vector<Q,A> &Y_N, const int frame_id = -1,
+	                         const bool managed_memory = true);
 
-	virtual void add_sys_and_ext_llr(const Q *ext, Q *Y_N, const int frame_id = -1);
+	void add_sys_and_ext_llr(const Q *ext, Q *Y_N, const int frame_id = -1, const bool managed_memory = true);
 
 protected:
 	virtual const std::vector<uint32_t>& get_info_bits_pos() = 0;

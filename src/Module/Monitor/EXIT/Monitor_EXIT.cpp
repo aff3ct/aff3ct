@@ -17,16 +17,20 @@ Monitor_EXIT<B,R>
 {
 	const std::string name = "Monitor_EXIT";
 	this->set_name(name);
+	this->set_single_wave(true);
 
 	auto &p = this->create_task("check_mutual_info", (int)mnt::tsk::check_mutual_info);
 	auto ps_bits   = this->template create_socket_in<B>(p, "bits",   get_N());
 	auto ps_llrs_a = this->template create_socket_in<R>(p, "llrs_a", get_N());
 	auto ps_llrs_e = this->template create_socket_in<R>(p, "llrs_e", get_N());
-	this->create_codelet(p, [ps_bits, ps_llrs_a, ps_llrs_e](Module &m, Task &t) -> int
+	this->create_codelet(p, [ps_bits, ps_llrs_a, ps_llrs_e](Module &m, Task &t, const int frame_id) -> int
 	{
-		static_cast<Monitor_EXIT<B,R>&>(m).check_mutual_info(static_cast<B*>(t[ps_bits  ].get_dataptr()),
-		                                                     static_cast<R*>(t[ps_llrs_a].get_dataptr()),
-		                                                     static_cast<R*>(t[ps_llrs_e].get_dataptr()));
+		auto &mnt = static_cast<Monitor_EXIT<B,R>&>(m);
+
+		mnt._check_mutual_info(static_cast<B*>(t[ps_bits  ].get_dataptr()),
+		                       static_cast<R*>(t[ps_llrs_a].get_dataptr()),
+		                       static_cast<R*>(t[ps_llrs_e].get_dataptr()),
+		                       frame_id);
 
 		return status_t::SUCCESS;
 	});
@@ -82,12 +86,19 @@ bool Monitor_EXIT<B,R>
 
 template <typename B, typename R>
 void Monitor_EXIT<B,R>
-::check_mutual_info(const B *bits, const R *llrs_a, const R *llrs_e, const int frame_id)
+::check_mutual_info(const B *bits, const R *llrs_a, const R *llrs_e, const int frame_id, const bool managed_memory)
 {
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % get_n_frames();
-	const auto f_stop  = (frame_id < 0) ? get_n_frames() : f_start +1;
+	(*this)[mnt::sck::check_mutual_info::bits].bind(bits);
+	(*this)[mnt::sck::check_mutual_info::llrs_a].bind(llrs_a);
+	(*this)[mnt::sck::check_mutual_info::llrs_e].bind(llrs_e);
+	(*this)[mnt::tsk::check_mutual_info].exec(frame_id, managed_memory);
+}
 
-	for (auto f = f_start; f < f_stop; f++)
+template <typename B, typename R>
+void Monitor_EXIT<B,R>
+::_check_mutual_info(const B *bits, const R *llrs_a, const R *llrs_e, const int frame_id)
+{
+	for (auto f = 0; f < this->get_n_frames(); f++)
 	{
 		this->_check_mutual_info_avg(bits   + f * get_N(),
 		                             llrs_a + f * get_N(),

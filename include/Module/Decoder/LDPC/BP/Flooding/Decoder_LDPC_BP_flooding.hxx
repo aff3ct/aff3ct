@@ -19,7 +19,7 @@ Decoder_LDPC_BP_flooding<B,R,Update_rule>
                            const Update_rule &up_rule,
                            const bool enable_syndrome,
                            const int syndrome_depth)
-: Decoder_SISO<B,R>(K, N, 1                                                    ),
+: Decoder_SISO<B,R>(K, N                                                       ),
   Decoder_LDPC_BP  (K, N, n_ite, _H, enable_syndrome, syndrome_depth           ),
   info_bits_pos    (info_bits_pos                                              ),
   up_rule          (up_rule                                                    ),

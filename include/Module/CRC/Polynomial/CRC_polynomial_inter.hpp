@@ -17,14 +17,20 @@ namespace module
 template <typename B = int>
 class CRC_polynomial_inter : public CRC_polynomial<B>
 {
+protected:
+	std::vector<B> buff_crc_inter;
+
 public:
 	CRC_polynomial_inter(const int K, const std::string &poly_key, const int size);
 	virtual ~CRC_polynomial_inter() = default;
 	virtual CRC_polynomial_inter<B>* clone() const;
 
-	virtual bool check(const B *V_K, const int n_frames = -1, const int frame_id = -1); using CRC<B>::check;
-
 protected:
+	virtual void _build       (const B *U_K1, B *U_K2, const int frame_id);
+	virtual bool _check       (const B *V_K          , const int frame_id);
+	virtual bool _check_packed(const B *V_K          , const int frame_id);
+	virtual void _extract     (const B *V_K1, B *V_K2, const int frame_id);
+
 	void _generate_INTER(const B *U_in,
 	                           B *U_out,
 	                     const int off_in,

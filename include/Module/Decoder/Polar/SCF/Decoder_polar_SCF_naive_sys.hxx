@@ -45,7 +45,7 @@ void Decoder_polar_SCF_naive_sys<B,R,F,G,H>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 bool Decoder_polar_SCF_naive_sys<B,R,F,G,H>
-::check_crc()
+::check_crc(const int frame_id)
 {
 	std::vector<B> U_test;
 	U_test.clear();
@@ -54,7 +54,7 @@ bool Decoder_polar_SCF_naive_sys<B,R,F,G,H>
 		if (!this->frozen_bits[i])
 			U_test.push_back(this->polar_tree.get_root()->get_c()->s[i]);
 
-	return this->crc->check(U_test, this->get_simd_inter_frame_level());
+	return this->crc->check(U_test, frame_id);
 }
 }
 }

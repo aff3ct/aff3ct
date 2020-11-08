@@ -46,7 +46,7 @@ public:
 
 	// builder
 	template <typename B = int>
-	module::Encoder_RA<B>* build(module::Interleaver<B> &itl) const;
+	module::Encoder_RA<B>* build(const module::Interleaver<B> &itl) const;
 };
 }
 }

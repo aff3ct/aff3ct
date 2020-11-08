@@ -175,7 +175,7 @@ template <typename B>
 module::Encoder_turbo<B>* Encoder_turbo<E1,E2>
 ::build(const module::Encoder<B> &enc_n,
         const module::Encoder<B> &enc_i,
-              module::Interleaver<B> &itl) const
+        const module::Interleaver<B> &itl) const
 {
 	if (this->sub1->buffered)
 	{

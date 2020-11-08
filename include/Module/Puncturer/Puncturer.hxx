@@ -77,10 +77,13 @@ Puncturer<B,Q>
 	auto &p1 = this->create_task("puncture");
 	auto p1s_X_N1 = this->template create_socket_in <B>(p1, "X_N1", this->N_cw);
 	auto p1s_X_N2 = this->template create_socket_out<B>(p1, "X_N2", this->N   );
-	this->create_codelet(p1, [p1s_X_N1, p1s_X_N2](Module &m, Task &t) -> int
+	this->create_codelet(p1, [p1s_X_N1, p1s_X_N2](Module &m, Task &t, const int frame_id) -> int
 	{
-		static_cast<Puncturer<B,Q>&>(m).puncture(static_cast<B*>(t[p1s_X_N1].get_dataptr()),
-		                                         static_cast<B*>(t[p1s_X_N2].get_dataptr()));
+		auto &pct = static_cast<Puncturer<B,Q>&>(m);
+
+		pct._puncture(static_cast<B*>(t[p1s_X_N1].get_dataptr()),
+		              static_cast<B*>(t[p1s_X_N2].get_dataptr()),
+		              frame_id);
 
 		return status_t::SUCCESS;
 	});
@@ -88,10 +91,13 @@ Puncturer<B,Q>
 	auto &p2 = this->create_task("depuncture");
 	auto p2s_Y_N1 = this->template create_socket_in <Q>(p2, "Y_N1", this->N   );
 	auto p2s_Y_N2 = this->template create_socket_out<Q>(p2, "Y_N2", this->N_cw);
-	this->create_codelet(p2, [p2s_Y_N1, p2s_Y_N2](Module &m, Task &t) -> int
+	this->create_codelet(p2, [p2s_Y_N1, p2s_Y_N2](Module &m, Task &t, const int frame_id) -> int
 	{
-		static_cast<Puncturer<B,Q>&>(m).depuncture(static_cast<Q*>(t[p2s_Y_N1].get_dataptr()),
-		                                           static_cast<Q*>(t[p2s_Y_N2].get_dataptr()));
+		auto &pct = static_cast<Puncturer<B,Q>&>(m);
+
+		pct._depuncture(static_cast<Q*>(t[p2s_Y_N1].get_dataptr()),
+		                static_cast<Q*>(t[p2s_Y_N2].get_dataptr()),
+		                frame_id);
 
 		return status_t::SUCCESS;
 	});
@@ -128,91 +134,39 @@ int Puncturer<B,Q>
 template <typename B, typename Q>
 template <class A>
 void Puncturer<B,Q>
-::puncture(const std::vector<B,A>& X_N1, std::vector<B,A>& X_N2, const int frame_id) const
+::puncture(const std::vector<B,A>& X_N1, std::vector<B,A>& X_N2, const int frame_id, const bool managed_memory) const
 {
-	if (this->N_cw * this->n_frames != (int)X_N1.size())
-	{
-		std::stringstream message;
-		message << "'X_N1.size()' has to be equal to 'N_cw' * 'n_frames' ('X_N1.size()' = " << X_N1.size()
-		        << ", 'N_cw' = " << this->N_cw << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (this->N * this->n_frames != (int)X_N2.size())
-	{
-		std::stringstream message;
-		message << "'X_N2.size()' has to be equal to 'N' * 'n_frames' ('X_N2.size()' = " << X_N2.size()
-		        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (frame_id != -1 && frame_id >= this->n_frames)
-	{
-		std::stringstream message;
-		message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = "
-		        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	this->puncture(X_N1.data(), X_N2.data(), frame_id);
+	(*this)[pct::sck::puncture::X_N1].bind(X_N1);
+	(*this)[pct::sck::puncture::X_N2].bind(X_N2);
+	(*this)[pct::tsk::puncture].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename Q>
 void Puncturer<B,Q>
-::puncture(const B *X_N1, B *X_N2, const int frame_id) const
+::puncture(const B *X_N1, B *X_N2, const int frame_id, const bool managed_memory) const
 {
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
-	for (auto f = f_start; f < f_stop; f++)
-		this->_puncture(X_N1 + f * this->N_cw,
-		                X_N2 + f * this->N,
-		                f);
+	(*this)[pct::sck::puncture::X_N1].bind(X_N1);
+	(*this)[pct::sck::puncture::X_N2].bind(X_N2);
+	(*this)[pct::tsk::puncture].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename Q>
 template <class A>
 void Puncturer<B,Q>
-::depuncture(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame_id) const
+::depuncture(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame_id, const bool managed_memory) const
 {
-	if (this->N * this->n_frames != (int)Y_N1.size())
-	{
-		std::stringstream message;
-		message << "'Y_N1.size()' has to be equal to 'N' * 'n_frames' ('Y_N1.size()' = " << Y_N1.size()
-		        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (this->N_cw * this->n_frames != (int)Y_N2.size())
-	{
-		std::stringstream message;
-		message << "'Y_N2.size()' has to be equal to 'N_cw' * 'n_frames' ('Y_N2.size()' = " << Y_N2.size()
-		        << ", 'N_cw' = " << this->N_cw << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (frame_id != -1 && frame_id >= this->n_frames)
-	{
-		std::stringstream message;
-		message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = "
-		        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	this->depuncture(Y_N1.data(), Y_N2.data(), frame_id);
+	(*this)[pct::sck::depuncture::Y_N1].bind(Y_N1);
+	(*this)[pct::sck::depuncture::Y_N2].bind(Y_N2);
+	(*this)[pct::tsk::depuncture].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename Q>
 void Puncturer<B,Q>
-::depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id) const
+::depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id, const bool managed_memory) const
 {
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
-	for (auto f = f_start; f < f_stop; f++)
-		this->_depuncture(Y_N1 + f * this->N,
-		                  Y_N2 + f * this->N_cw,
-		                  f);
+	(*this)[pct::sck::depuncture::Y_N1].bind(Y_N1);
+	(*this)[pct::sck::depuncture::Y_N2].bind(Y_N2);
+	(*this)[pct::tsk::depuncture].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename Q>

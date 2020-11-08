@@ -31,10 +31,6 @@ public:
 	bool get_last_is_codeword(const int frame_id = -1) const;
 
 	virtual void set_n_frames(const int n_frames);
-
-protected:
-	Decoder_BCH(const int K, const int N, const int t, const int simd_inter_frame_level);
-
 };
 }
 }

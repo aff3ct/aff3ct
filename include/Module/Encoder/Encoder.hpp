@@ -46,19 +46,12 @@ public:
 	inline Socket& operator[](const enc::sck::encode s);
 
 protected:
-	      int             n_inter_frame_rest;
+	const int             K;             /*!< Number of information bits in one frame */
+	const int             N;             /*!< Size of one frame (= number of bits in one frame) */
+	      bool            sys;           /*!< Is the generated codeword systematic ? */
+	      bool            memorizing;    /*!< If true, keep the last encoded frame(s) in memory */
+	std::vector<uint32_t> info_bits_pos; /*!< Positions of the information bits in the codeword */
 
-	const int             K;                      /*!< Number of information bits in one frame */
-	const int             N;                      /*!< Size of one frame (= number of bits in one frame) */
-	const int             simd_inter_frame_level; /*!< Number of frames absorbed by the SIMD instructions. */
-	      int             n_enc_waves;
-
-	      bool            sys;                    /*!< Is the generated codeword systematic ? */
-	      bool            memorizing;             /*!< If true, keep the last encoded frame(s) in memory */
-	std::vector<uint32_t> info_bits_pos;          /*!< Positions of the information bits in the codeword */
-
-	std::vector<B> U_K;
-	std::vector<B> X_N;
 	std::vector<std::vector<B>> U_K_mem;
 	std::vector<std::vector<B>> X_N_mem;
 
@@ -69,7 +62,7 @@ public:
 	 * \param K: number of information bits in the frame.
 	 * \param N: size of one frame.
 	 */
-	Encoder(const int K, const int N, const int simd_inter_frame_level = 1);
+	Encoder(const int K, const int N);
 
 	/*!
 	 * \brief Destructor.
@@ -99,9 +92,10 @@ public:
 	 * \param X_N: an encoded frame with redundancy added (parity bits).
 	 */
 	template <class A = std::allocator<B>>
-	void encode(const std::vector<B,A>& U_K, std::vector<B,A>& X_N, const int frame_id = -1);
+	void encode(const std::vector<B,A>& U_K, std::vector<B,A>& X_N, const int frame_id = -1,
+	            const bool managed_memory = true);
 
-	virtual void encode(const B *U_K, B *X_N, const int frame_id = -1);
+	void encode(const B *U_K, B *X_N, const int frame_id = -1, const bool managed_memory = true);
 
 	template <class A = std::allocator<B>>
 	bool is_codeword(const std::vector<B,A>& X_N);

@@ -66,9 +66,11 @@ public:
 	void check_mutual_info(const std::vector<B,AB>& bits,
 	                       const std::vector<R,AR>& llrs_a,
 	                       const std::vector<R,AR>& llrs_e,
-	                       const int frame_id = -1);
+	                       const int frame_id = -1,
+	                       const bool managed_memory = true);
 
-	virtual void check_mutual_info(const B *bits, const R *llrs_a, const R *llrs_e, const int frame_id = -1);
+	void check_mutual_info(const B *bits, const R *llrs_a, const R *llrs_e, const int frame_id = -1,
+	                       const bool managed_memory = true);
 
 	virtual bool is_done() const;
 	bool n_trials_achieved() const;
@@ -100,7 +102,8 @@ public:
 protected:
 	const Attributes& get_attributes() const;
 
-	virtual void _check_mutual_info_avg  (const B *bits, const R *llrs_a, const int frame_id);
+	virtual void _check_mutual_info(const B *bits, const R *llrs_a, const R *llrs_e, const int frame_id);
+	virtual void _check_mutual_info_avg(const B *bits, const R *llrs_a, const int frame_id);
 	virtual R _check_mutual_info_histo() const;
 };
 }

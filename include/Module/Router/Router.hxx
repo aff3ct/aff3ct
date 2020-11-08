@@ -39,6 +39,7 @@ Router
 	const std::string name = "Router";
 	this->set_name(name);
 	this->set_short_name(name);
+	this->set_single_wave(true);
 
 	if (n_elmts_in == 0)
 	{
@@ -94,9 +95,14 @@ Router
 		}
 	}
 
-	this->create_codelet(p, [ps_in](Module &m, Task &t) -> int
+	this->create_codelet(p, [ps_in](Module &m, Task &t, const int frame_id) -> int
 	{
-		return (int)static_cast<Router&>(m).route(static_cast<int8_t*>(t[ps_in].get_dataptr()));
+		auto &rtr = static_cast<Router&>(m);
+
+		auto ret = rtr._route(static_cast<int8_t*>(t[ps_in].get_dataptr()),
+		                      frame_id);
+
+		return (int)ret;
 	});
 }
 
@@ -144,17 +150,10 @@ std::type_index Router
 
 template <class A>
 size_t Router
-::route(const std::vector<int8_t,A>& in, const int frame_id)
+::route(const std::vector<int8_t,A>& in, const int frame_id, const bool managed_memory)
 {
-	if (this->n_bytes_in * this->n_frames != (int)in.size())
-	{
-		std::stringstream message;
-		message << "'in.size()' has to be equal to 'n_bytes_in' * 'n_frames' ('in.size()' = " << in.size()
-		        << ", 'n_bytes_in' = " << this->n_bytes_in << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	this->route(in.data(), frame_id);
+	(*this)[rtr::sck::route::in].bind(in);
+	return (size_t)(*this)[rtr::tsk::route].exec(frame_id, managed_memory);
 }
 
 }

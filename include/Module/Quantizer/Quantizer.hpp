@@ -72,9 +72,10 @@ public:
 	 * \param Y_N2: a vector of quantized data (fixed-point representation).
 	 */
 	template <class AR = std::allocator<R>, class AQ = std::allocator<Q>>
-	void process(const std::vector<R,AR>& Y_N1, std::vector<Q,AQ>& Y_N2, const int frame_id = -1);
+	void process(const std::vector<R,AR>& Y_N1, std::vector<Q,AQ>& Y_N2, const int frame_id = -1,
+	             const bool managed_memory = true);
 
-	virtual void process(const R *Y_N1, Q *Y_N2, const int frame_id = -1);
+	void process(const R *Y_N1, Q *Y_N2, const int frame_id = -1, const bool managed_memory = true);
 
 protected:
 	virtual void _process(const R *Y_N1, Q *Y_N2, const int frame_id);

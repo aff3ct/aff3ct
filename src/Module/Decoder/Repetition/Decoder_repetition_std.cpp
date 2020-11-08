@@ -25,7 +25,7 @@ Decoder_repetition_std<B,R>* Decoder_repetition_std<B,R>
 
 template <typename B, typename R>
 int Decoder_repetition_std<B,R>
-::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
+::_decode_siso_alt(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	for (auto i = 0; i < this->K; i++)
 	{

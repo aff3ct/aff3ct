@@ -81,9 +81,10 @@ public:
 	 * \param X_N2: a punctured codeword (corresponding to the frame size).
 	 */
 	template <class A = std::allocator<B>>
-	void puncture(const std::vector<B,A>& X_N1, std::vector<B,A>& X_N2, const int frame_id = -1) const;
+	void puncture(const std::vector<B,A>& X_N1, std::vector<B,A>& X_N2, const int frame_id = -1,
+	              const bool managed_memory = true) const;
 
-	virtual void puncture(const B *X_N1, B *X_N2, const int frame_id = -1) const;
+	void puncture(const B *X_N1, B *X_N2, const int frame_id = -1, const bool managed_memory = true) const;
 
 	/*!
 	 * \brief Depunctures a codeword.
@@ -92,9 +93,10 @@ public:
 	 * \param Y_N2: a noised and complete/valid codeword.
 	 */
 	template <class A = std::allocator<Q>>
-	void depuncture(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame_id = -1) const;
+	void depuncture(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame_id = -1,
+	                const bool managed_memory = true) const;
 
-	virtual void depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id = -1) const;
+	void depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id = -1, const bool managed_memory = true) const;
 
 protected:
 	virtual void _puncture(const B *X_N1, B *X_N2, const int frame_id) const;

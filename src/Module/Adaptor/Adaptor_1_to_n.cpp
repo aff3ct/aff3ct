@@ -19,16 +19,13 @@ void Adaptor_1_to_n
 {
 	this->wait_push();
 
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
 	for (size_t s = 0; s < this->n_sockets; s++)
 	{
 		int8_t* out = (int8_t*)this->get_empty_buffer(s);
 
-		std::copy(in[s] + f_start * this->n_bytes[s],
-		          in[s] + f_stop  * this->n_bytes[s],
-		          out   + f_start * this->n_bytes[s]);
+		std::copy(in[s] + 0                    * this->n_bytes[s],
+		          in[s] + this->get_n_frames() * this->n_bytes[s],
+		          out   + 0                    * this->n_bytes[s]);
 	}
 
 	this->wake_up_puller();
@@ -39,16 +36,13 @@ void Adaptor_1_to_n
 {
 	this->wait_pull();
 
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
 	for (size_t s = 0; s < this->n_sockets; s++)
 	{
 		const int8_t* in = (const int8_t*)this->get_filled_buffer(s);
 
-		std::copy(in     + f_start * this->n_bytes[s],
-		          in     + f_stop  * this->n_bytes[s],
-		          out[s] + f_start * this->n_bytes[s]);
+		std::copy(in     + 0                    * this->n_bytes[s],
+		          in     + this->get_n_frames() * this->n_bytes[s],
+		          out[s] + 0                    * this->n_bytes[s]);
 	}
 
 	this->wake_up_pusher();

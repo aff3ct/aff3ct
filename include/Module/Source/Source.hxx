@@ -41,9 +41,12 @@ Source<B>
 
 	auto &p = this->create_task("generate");
 	auto ps_U_K = this->template create_socket_out<B>(p, "U_K", this->K);
-	this->create_codelet(p, [ps_U_K](Module &m, Task &t) -> int
+	this->create_codelet(p, [ps_U_K](Module &m, Task &t, const int frame_id) -> int
 	{
-		static_cast<Source<B>&>(m).generate(static_cast<B*>(t[ps_U_K].get_dataptr()));
+		auto &src = static_cast<Source<B>&>(m);
+
+		src._generate(static_cast<B*>(t[ps_U_K].get_dataptr()),
+		              frame_id);
 
 		return status_t::SUCCESS;
 	});
@@ -66,28 +69,18 @@ int Source<B>
 template <typename B>
 template <class A>
 void Source<B>
-::generate(std::vector<B,A>& U_K, const int frame_id)
+::generate(std::vector<B,A>& U_K, const int frame_id, const bool managed_memory)
 {
-	if (this->K * this->n_frames != (int)U_K.size())
-	{
-		std::stringstream message;
-		message << "'U_K.size()' has to be equal to 'K' * 'n_frames' ('U_K.size()' = " << U_K.size()
-		        << ", 'K' = " << this->K << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	this->generate(U_K.data(), frame_id);
+	(*this)[src::sck::generate::U_K].bind(U_K);
+	(*this)[src::tsk::generate].exec(frame_id, managed_memory);
 }
 
 template <typename B>
 void Source<B>
-::generate(B *U_K, const int frame_id)
+::generate(B *U_K, const int frame_id, const bool managed_memory)
 {
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
-	for (auto f = f_start; f < f_stop; f++)
-		this->_generate(U_K + f * this->K, f);
+	(*this)[src::sck::generate::U_K].bind(U_K);
+	(*this)[src::tsk::generate].exec(frame_id, managed_memory);
 }
 template <typename B>
 void Source<B>

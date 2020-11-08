@@ -16,7 +16,7 @@ Decoder_LDPC_BP_flooding_Gallager_A<B,R>
 ::Decoder_LDPC_BP_flooding_Gallager_A(const int K, const int N, const int n_ite, const tools::Sparse_matrix &_H,
                                       const std::vector<unsigned> &info_bits_pos, const bool transform_HY_N,
                                       const bool enable_syndrome, const int syndrome_depth)
-: Decoder_SIHO<B,R>(K, N, 1                                         ),
+: Decoder_SIHO<B,R>(K, N                                            ),
   Decoder_LDPC_BP  (K, N, n_ite, _H, enable_syndrome, syndrome_depth),
   transform_HY_N   (transform_HY_N                                  ),
   info_bits_pos    (info_bits_pos                                   ),

@@ -56,7 +56,7 @@ public:
 	template <typename B = int>
 	module::Encoder_turbo<B>* build(const module::Encoder<B>     &enc_n,
 	                                const module::Encoder<B>     &enc_i,
-	                                      module::Interleaver<B> &itl) const;
+	                                const module::Interleaver<B> &itl) const;
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

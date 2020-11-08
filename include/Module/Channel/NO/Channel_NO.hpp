@@ -22,7 +22,8 @@ public:
 	virtual ~Channel_NO() = default;
 	virtual Channel_NO<R>* clone() const;
 
-	void add_noise(const R *X_N, R *Y_N, const int frame_id = -1); using Channel<R>::add_noise;
+protected:
+	void _add_noise(const R *X_N, R *Y_N, const int frame_id);
 };
 }
 }

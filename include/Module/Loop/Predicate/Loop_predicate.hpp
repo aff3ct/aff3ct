@@ -31,13 +31,13 @@ public:
 
 	virtual void reset();
 
-	virtual bool stop(const int8_t *in, const int frame_id = -1);
-
 protected:
 	Loop_predicate(const tools::Predicate &predicate,
 	               const size_t n_elmts_in,
 	               const std::type_index datatype_in,
 	               const size_t n_elmts_out);
+
+	virtual bool _stop(const int8_t *in, const int frame_id);
 
 	virtual void deep_copy(const Loop_predicate<O> &m);
 };

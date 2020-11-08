@@ -65,9 +65,10 @@ public:
 	bool equivalent(const Monitor_MI<B,R>& m, bool do_throw = false) const; // check if this monitor and "m" have equivalent construction arguments
 	                                                                        // and then can be merged by "collect" or "copy" methods
 	template <class AB = std::allocator<B>, class AR = std::allocator<R>>
-	R get_mutual_info(const std::vector<B,AB>& X, const std::vector<R,AR>& Y, const int frame_id = -1);
+	R get_mutual_info(const std::vector<B,AB>& X, const std::vector<R,AR>& Y, const int frame_id = -1,
+	                  const bool managed_memory = true);
 
-	virtual R get_mutual_info(const B *X, const R *Y, const int frame_id = -1);
+	virtual R get_mutual_info(const B *X, const R *Y, const int frame_id = -1, const bool managed_memory = true);
 
 	bool n_trials_limit_achieved() const;
 	virtual bool is_done() const;
@@ -108,6 +109,8 @@ protected:
 	const Attributes& get_attributes() const;
 
 	virtual R _get_mutual_info(const B *X, const R *Y, const int frame_id);
+
+	virtual R __get_mutual_info(const B *X, const R *Y, const int frame_id);
 
 	void add_MI_value(const R mi);
 };

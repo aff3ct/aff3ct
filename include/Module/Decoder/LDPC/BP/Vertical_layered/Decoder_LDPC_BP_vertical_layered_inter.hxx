@@ -25,13 +25,13 @@ Decoder_LDPC_BP_vertical_layered_inter<B,R,Update_rule>
                                          const Update_rule &up_rule,
                                          const bool enable_syndrome,
                                          const int syndrome_depth)
-: Decoder_SISO<B,R>(K, N, mipp::N<R>()                                                                 ),
+: Decoder_SISO<B,R>(K, N                                                                               ),
   Decoder_LDPC_BP  (K, N, n_ite, _H, enable_syndrome, syndrome_depth                                   ),
   info_bits_pos    (info_bits_pos                                                                      ),
   up_rule          (up_rule                                                                            ),
   sat_val          ((R)((1 << ((sizeof(R) * 8 -2) - (int)std::log2(this->H.get_rows_max_degree()))) -1)),
-  var_nodes        (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(N)                                   ),
-  messages         (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(this->H.get_n_connections())         ),
+  var_nodes        (this->get_n_waves(), mipp::vector<mipp::Reg<R>>(N)                                 ),
+  messages         (this->get_n_waves(), mipp::vector<mipp::Reg<R>>(this->H.get_n_connections())       ),
   contributions    (this->H.get_cols_max_degree()                                                      ),
   messages_offsets (this->H.get_n_cols()                                                               ),
   Y_N_reorderered  (N                                                                                  ),
@@ -39,6 +39,7 @@ Decoder_LDPC_BP_vertical_layered_inter<B,R,Update_rule>
 {
 	const std::string name = "Decoder_LDPC_BP_vertical_layered_inter<" + this->up_rule.get_name() + ">";
 	this->set_name(name);
+	this->set_n_frames_per_wave(mipp::N<R>());
 
 	tools::check_LUT(info_bits_pos, "info_bits_pos", (size_t)K);
 
@@ -330,14 +331,10 @@ void Decoder_LDPC_BP_vertical_layered_inter<B,R,Update_rule>
 		Decoder_SISO<B,R>::set_n_frames(n_frames);
 
 		const auto vec_size = this->var_nodes[0].size();
-		const auto old_var_nodes_size = this->var_nodes.size();
-		const auto new_var_nodes_size = (old_var_nodes_size / old_n_frames) * n_frames;
-		this->var_nodes.resize(new_var_nodes_size, mipp::vector<mipp::Reg<R>>(vec_size));
+		this->var_nodes.resize(this->get_n_waves(), mipp::vector<mipp::Reg<R>>(vec_size));
 
 		const auto vec_size2 = this->messages[0].size();
-		const auto old_messages_size = this->messages.size();
-		const auto new_messages_size = (old_messages_size / old_n_frames) * n_frames;
-		this->messages.resize(new_messages_size, mipp::vector<mipp::Reg<R>>(vec_size2));
+		this->messages.resize(this->get_n_waves(), mipp::vector<mipp::Reg<R>>(vec_size2));
 	}
 }
 

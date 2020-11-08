@@ -21,6 +21,7 @@ Decoder_RS_genius<B,R>
 {
 	const std::string name = "Decoder_RS_genius";
 	this->set_name(name);
+	this->set_n_frames(this->encoder.get_n_frames());
 
 	if (!encoder.is_memorizing())
 	{
@@ -115,6 +116,18 @@ int Decoder_RS_genius<B,R>
 	auto status = this->_decode_hiho_cw(this->YH_Nb.data(), V_N, frame_id);
 
 	return status;
+}
+
+template <typename B, typename R>
+void Decoder_RS_genius<B,R>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Decoder_RS<B,R>::set_n_frames(n_frames);
+		this->encoder.set_n_frames(n_frames);
+	}
 }
 
 // ==================================================================================== explicit template instantiation

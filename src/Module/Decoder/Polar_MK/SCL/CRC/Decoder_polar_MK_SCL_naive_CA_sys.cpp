@@ -54,7 +54,7 @@ Decoder_polar_MK_SCL_naive_CA_sys<B,R>* Decoder_polar_MK_SCL_naive_CA_sys<B,R>
 
 template <typename B, typename R>
 void Decoder_polar_MK_SCL_naive_CA_sys<B,R>
-::select_best_path()
+::select_best_path(const int frame_id)
 {
 	std::vector<B> U_test;
 	std::set<int> active_paths_before_crc = this->active_paths;
@@ -65,12 +65,12 @@ void Decoder_polar_MK_SCL_naive_CA_sys<B,R>
 		for (auto i = 0 ; i < this->N ; i++)
 			if (!this->frozen_bits[i]) U_test.push_back(this->polar_trees[path].get_root()->get_c()->s[i]);
 
-		bool decode_result = this->crc->check(U_test, this->get_simd_inter_frame_level());
+		bool decode_result = this->crc->check(U_test, frame_id);
 		if (!decode_result)
 			this->active_paths.erase(path);
 	}
 
-	this->Decoder_polar_MK_SCL_naive<B,R>::select_best_path();
+	this->Decoder_polar_MK_SCL_naive<B,R>::select_best_path(frame_id);
 }
 
 template <typename B, typename R>

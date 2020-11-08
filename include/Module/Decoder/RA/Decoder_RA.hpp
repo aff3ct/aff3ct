@@ -6,6 +6,7 @@
 #define DECODER_RA
 
 #include <vector>
+#include <memory>
 #include <mipp.h>
 
 #include "Module/Interleaver/Interleaver.hpp"
@@ -26,10 +27,10 @@ protected:
 	std::vector<R> Tu, Td, Wu, Wd, U;
 	std::vector<mipp::vector<R>> Xd, Xu;
 
-	Interleaver<R>& interleaver;
+	std::shared_ptr<Interleaver<R>> interleaver;
 
 public:
-	Decoder_RA(const int& K, const int& N, Interleaver<R>& interleaver, int max_iter = 10);
+	Decoder_RA(const int& K, const int& N, const Interleaver<R>& interleaver, int max_iter = 10);
 	virtual ~Decoder_RA() = default;
 	virtual Decoder_RA<B,R>* clone() const;
 

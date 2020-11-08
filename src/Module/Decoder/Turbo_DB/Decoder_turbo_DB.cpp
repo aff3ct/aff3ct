@@ -16,10 +16,10 @@ Decoder_turbo_DB<B,R>
                    const int& n_ite,
                    const Decoder_RSC_DB_BCJR<B,R> &siso_n,
                    const Decoder_RSC_DB_BCJR<B,R> &siso_i,
-                         Interleaver<R> &pi)
-: Decoder_SIHO<B,R>(K, N, 1),
+                   const Interleaver<R> &pi)
+: Decoder_SIHO<B,R>(K, N),
   n_ite            (n_ite),
-  pi               (pi),
+  pi               (pi.clone()),
   siso_n           (siso_n.clone()),
   siso_i           (siso_i.clone()),
   l_cpy            (2 * K),
@@ -37,6 +37,7 @@ Decoder_turbo_DB<B,R>
 {
 	const std::string name = "Decoder_turbo_DB";
 	this->set_name(name);
+	this->set_n_frames(siso_n.get_n_frames());
 
 	if (K % 2)
 	{
@@ -92,24 +93,22 @@ Decoder_turbo_DB<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (siso_n.get_simd_inter_frame_level() != 1)
+	if (siso_n.get_n_frames_per_wave() != 1)
 	{
 		std::stringstream message;
-		message << "'siso_n.get_simd_inter_frame_level()' has to be equal to 1 "
-		        << "('siso_n.get_simd_inter_frame_level()' = " << siso_n.get_simd_inter_frame_level() << ").";
+		message << "'siso_n.get_n_frames_per_wave()' has to be equal to 1 "
+		        << "('siso_n.get_n_frames_per_wave()' = " << siso_n.get_n_frames_per_wave() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (siso_n.get_simd_inter_frame_level() != siso_i.get_simd_inter_frame_level())
+	if (siso_n.get_n_frames_per_wave() != siso_i.get_n_frames_per_wave())
 	{
 		std::stringstream message;
-		message << "'siso_n.get_simd_inter_frame_level()' has to be equal to 'siso_i.get_simd_inter_frame_level()' "
-		        << "('siso_n.get_simd_inter_frame_level()' = " << siso_n.get_simd_inter_frame_level()
-		        << ", 'siso_i.get_simd_inter_frame_level()' = " << siso_i.get_simd_inter_frame_level() << ").";
+		message << "'siso_n.get_n_frames_per_wave()' has to be equal to 'siso_i.get_n_frames_per_wave()' "
+		        << "('siso_n.get_n_frames_per_wave()' = " << siso_n.get_n_frames_per_wave()
+		        << ", 'siso_i.get_n_frames_per_wave()' = " << siso_i.get_n_frames_per_wave() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-
-	this->set_n_frames(siso_n.get_n_frames());
 }
 
 template <typename B, typename R>
@@ -138,8 +137,8 @@ void Decoder_turbo_DB<B,R>
 ::add_post_processing(const tools::Post_processing_SISO<B,R> &post_processing)
 {
 	this->post_processings.push_back(std::shared_ptr<tools::Post_processing_SISO<B,R>>(post_processing.clone()));
-	if (this->post_processings.back()->get_n_frames() != this->get_simd_inter_frame_level())
-		this->post_processings.back()->set_n_frames(this->get_simd_inter_frame_level());
+	if (this->post_processings.back()->get_n_frames() != this->get_n_frames_per_wave())
+		this->post_processings.back()->set_n_frames(this->get_n_frames_per_wave());
 }
 
 template <typename B, typename R>
@@ -178,7 +177,7 @@ void Decoder_turbo_DB<B,R>
 		std::swap(l_cpy[i+1], l_cpy[i+2]);
 	for (auto i = 0; i < this->K; i += 2)
 	{
-		const auto l = pi.get_core().get_lut_inv()[i >> 1];
+		const auto l = pi->get_core().get_lut_inv()[i >> 1];
 		for (auto bps = 0; bps < 2; bps++) this->l_si[2 * (i +0) + bps] = l_cpy[(4 * l + 0) + bps];
 		for (auto bps = 0; bps < 2; bps++) this->l_si[2 * (i +1) + bps] = l_cpy[(4 * l + 2) + bps];
 	}
@@ -190,20 +189,11 @@ template <typename B, typename R>
 int Decoder_turbo_DB<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	if (this->pi.get_n_frames() != this->get_n_frames())
-	{
-		std::stringstream message;
-		message << "'pi.get_n_frames()' has to be equal to 'n_frames' ('pi.get_n_frames()' = "
-		        << this->pi.get_n_frames() << ", 'n_frames' = " << this->get_n_frames() << ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	const auto n_frames = this->get_simd_inter_frame_level();
 
 	// iterative turbo decoding process
 	bool stop = false;
@@ -215,7 +205,7 @@ int Decoder_turbo_DB<B,R>
 			this->l_sen[i] = this->l_sn[i] + this->l_e1n[i];
 
 		// SISO in the natural domain
-		this->siso_n->decode_siso(this->l_sen.data(), this->l_pn.data(), this->l_e2n.data(), n_frames);
+		this->siso_n->decode_siso_alt(this->l_sen.data(), this->l_pn.data(), this->l_e2n.data(), frame_id, false);
 
 		for (auto &pp : this->post_processings)
 		{
@@ -231,7 +221,7 @@ int Decoder_turbo_DB<B,R>
 				std::swap(l_cpy[i+1], l_cpy[i+2]);
 			for (auto i = 0; i < this->K; i += 2)
 			{
-				const auto l = pi.get_core().get_lut_inv()[i >> 1];
+				const auto l = pi->get_core().get_lut_inv()[i >> 1];
 				for (auto bps = 0; bps < 2; bps++) this->l_e1i[2 * (i +0) + bps] = l_cpy[(4 * l + 0) + bps];
 				for (auto bps = 0; bps < 2; bps++) this->l_e1i[2 * (i +1) + bps] = l_cpy[(4 * l + 2) + bps];
 			}
@@ -241,7 +231,7 @@ int Decoder_turbo_DB<B,R>
 				this->l_sei[i] = this->l_si[i] + this->l_e1i[i];
 
 			// SISO in the interleaved domain
-			this->siso_i->decode_siso(this->l_sei.data(), this->l_pi.data(), this->l_e2i.data(), n_frames);
+			this->siso_i->decode_siso_alt(this->l_sei.data(), this->l_pi.data(), this->l_e2i.data(), frame_id, false);
 
 			for (auto &pp : this->post_processings)
 			{
@@ -257,7 +247,7 @@ int Decoder_turbo_DB<B,R>
 			// make the deinterleaving
 			for (auto i = 0; i < this->K; i += 2)
 			{
-				const auto l = pi.get_core().get_lut()[i >> 1];
+				const auto l = pi->get_core().get_lut()[i >> 1];
 				for (auto bps = 0; bps < 2; bps++) this->l_e1n[2 * (i +0) + bps] = l_e2i[(4 * l + 0) + bps];
 				for (auto bps = 0; bps < 2; bps++) this->l_e1n[2 * (i +1) + bps] = l_e2i[(4 * l + 2) + bps];
 			}
@@ -313,7 +303,7 @@ void Decoder_turbo_DB<B,R>
 		Decoder_SIHO<B,R>::set_n_frames(n_frames);
 		this->siso_n->set_n_frames(n_frames);
 		this->siso_i->set_n_frames(n_frames);
-		this->pi.set_n_frames(n_frames);
+		this->pi->set_n_frames(n_frames);
 	}
 }
 

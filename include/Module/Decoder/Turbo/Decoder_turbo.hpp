@@ -25,7 +25,7 @@ protected:
 	const int  n_ite; // number of iterations
 	const bool buffered_encoding;
 
-	Interleaver<R> &pi;
+	std::shared_ptr<Interleaver<R>> pi;
 	std::shared_ptr<Decoder_SISO<B,R>> siso_n;
 	std::shared_ptr<Decoder_SISO<B,R>> siso_i;
 
@@ -49,7 +49,7 @@ public:
 	              const int& n_ite,
 	              const Decoder_SISO<B,R> &siso_n,
 	              const Decoder_SISO<B,R> &siso_i,
-	                    Interleaver<R> &pi,
+	              const Interleaver<R> &pi,
 	              const bool buffered_encoding = true);
 
 	virtual ~Decoder_turbo() = default;

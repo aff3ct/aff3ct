@@ -67,9 +67,9 @@ public:
 	 * \param V : a vector of data to consume.
 	 */
 	template <class A = std::allocator<B>>
-	void send(const std::vector<B,A>& V, const int frame_id = -1);
+	void send(const std::vector<B,A>& V, const int frame_id = -1, const bool managed_memory = true);
 
-	virtual void send(const B *V, const int frame_id = -1);
+	void send(const B *V, const int frame_id = -1, const bool managed_memory = true);
 
 	virtual void reset();
 

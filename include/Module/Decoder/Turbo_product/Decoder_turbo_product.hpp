@@ -38,7 +38,7 @@ protected:
 	const std::vector<float> alpha;
 	const std::vector<float> beta;
 
-	Interleaver<R> &pi;
+	std::shared_ptr<Interleaver<R>> pi;
 	std::shared_ptr<Decoder_chase_pyndiah<B,R>> cp_r; // row decoder
 	std::shared_ptr<Decoder_chase_pyndiah<B,R>> cp_c; // col decoder
 
@@ -54,7 +54,7 @@ public:
 	                      const std::vector<float>& alpha,
 	                      const Decoder_chase_pyndiah<B,R> &cp_r,
 	                      const Decoder_chase_pyndiah<B,R> &cp_c,
-	                            Interleaver<R> &pi,
+	                      const Interleaver<R> &pi,
 	                      const std::vector<float>& beta = {});
 	virtual ~Decoder_turbo_product() = default;
 

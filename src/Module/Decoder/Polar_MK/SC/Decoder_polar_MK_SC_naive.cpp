@@ -25,7 +25,7 @@ Decoder_polar_MK_SC_naive<B,R>
                             const std::vector<bool>& frozen_bits,
                             const std::vector<std::vector<std::function<R(const std::vector<R> &LLRs,
                                                                           const std::vector<B> &bits)>>> &lambdas)
-: Decoder_SIHO<B,R>(K, N, 1),
+: Decoder_SIHO<B,R>(K, N),
   code(code),
   frozen_bits(frozen_bits),
   polar_tree(gen_sequence(code)),

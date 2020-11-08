@@ -41,7 +41,7 @@ bool CRC_checker_DB<B,R>
 			s[i  ] = (std::max(apost[2*i+2], apost[2*i+3]) - std::max(apost[2*i+0], apost[2*i+1])) > 0;
 			s[i+1] = (std::max(apost[2*i+1], apost[2*i+3]) - std::max(apost[2*i+0], apost[2*i+2])) > 0;
 		}
-		return this->crc->check(s, this->n_frames);
+		return this->crc->check(s);
 	}
 
 	return false;

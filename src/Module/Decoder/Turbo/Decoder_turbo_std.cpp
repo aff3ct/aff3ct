@@ -13,7 +13,7 @@ Decoder_turbo_std<B,R>
                     const int& n_ite,
                     const Decoder_SISO<B,R> &siso_n,
                     const Decoder_SISO<B,R> &siso_i,
-                          Interleaver<R> &pi,
+                    const Interleaver<R> &pi,
                     const bool buffered_encoding)
 : Decoder_turbo<B,R>(K, N, n_ite, siso_n, siso_i, pi, buffered_encoding)
 {
@@ -34,20 +34,12 @@ template <typename B, typename R>
 int Decoder_turbo_std<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {
-	if (this->pi.get_n_frames() != this->get_n_frames())
-	{
-		std::stringstream message;
-		message << "'pi.get_n_frames()' has to be equal to 'n_frames' ('pi.get_n_frames()' = "
-		        << this->pi.get_n_frames() << ", 'n_frames' = " << this->get_n_frames() << ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N, frame_id);
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	const auto n_frames = this->get_simd_inter_frame_level();
+	const auto n_frames = this->get_n_frames_per_wave();
 	const auto tail_n_2 = this->siso_n->tail_length() / 2;
 	const auto tail_i_2 = this->siso_i->tail_length() / 2;
 
@@ -64,7 +56,7 @@ int Decoder_turbo_std<B,R>
 			this->l_sen[i] = this->l_sn[i];
 
 		// SISO in the natural domain
-		this->siso_n->decode_siso(this->l_sen.data(), this->l_pn.data(), this->l_e2n.data(), n_frames);
+		this->siso_n->decode_siso_alt(this->l_sen.data(), this->l_pn.data(), this->l_e2n.data(), frame_id, false);
 
 		for (auto &pp : this->post_processings)
 		{
@@ -75,7 +67,10 @@ int Decoder_turbo_std<B,R>
 		if (!stop)
 		{
 			// make the interleaving
-			this->pi.interleave(this->l_e2n.data(), this->l_e1i.data(), frame_id, n_frames, n_frames > 1);
+			if (n_frames > 1)
+				this->pi->interleave_reordering(this->l_e2n.data(), this->l_e1i.data(), frame_id, false);
+			else
+				this->pi->interleave(this->l_e2n.data(), this->l_e1i.data(), frame_id, false);
 
 			// sys + ext
 			for (auto i = 0; i < this->K * n_frames; i++)
@@ -85,7 +80,7 @@ int Decoder_turbo_std<B,R>
 				this->l_sei[i] = this->l_si[i];
 
 			// SISO in the interleave domain
-			this->siso_i->decode_siso(this->l_sei.data(), this->l_pi.data(), this->l_e2i.data(), n_frames);
+			this->siso_i->decode_siso_alt(this->l_sei.data(), this->l_pi.data(), this->l_e2i.data(), frame_id, false);
 
 			for (auto &pp : this->post_processings)
 			{
@@ -99,7 +94,10 @@ int Decoder_turbo_std<B,R>
 					this->l_e2i[i] += this->l_sei[i];
 
 			// make the deinterleaving
-			this->pi.deinterleave(this->l_e2i.data(), this->l_e1n.data(), frame_id, n_frames, n_frames > 1);
+			if (n_frames > 1)
+				this->pi->deinterleave_reordering(this->l_e2i.data(), this->l_e1n.data(), frame_id, false);
+			else
+				this->pi->deinterleave(this->l_e2i.data(), this->l_e1n.data(), frame_id, false);
 
 			// compute the hard decision only if we are in the last iteration
 			if (ite == this->n_ite || stop)

@@ -91,7 +91,7 @@ protected:
 
 	virtual inline void init_buffers    (                             );
 	        inline void delete_path     (int path_id                  );
-	virtual inline int  select_best_path(                             );
+	virtual inline int  select_best_path(const int frame_id           );
 	        inline int  up_ref_array_idx(const int path, const int r_d); // return the array
 
 private:

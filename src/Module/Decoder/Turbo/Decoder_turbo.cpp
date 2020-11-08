@@ -16,28 +16,38 @@ Decoder_turbo<B,R>
                 const int& n_ite,
                 const Decoder_SISO<B,R> &siso_n,
                 const Decoder_SISO<B,R> &siso_i,
-                      Interleaver<R> &pi,
+                const Interleaver<R> &pi,
                 const bool buffered_encoding)
-: Decoder_SIHO<B,R>(K, N, siso_n.get_simd_inter_frame_level()),
+: Decoder_SIHO<B,R>(K, N),
   n_ite(n_ite),
   buffered_encoding(buffered_encoding),
-  pi(pi),
+  pi(pi.clone()),
   siso_n(dynamic_cast<Decoder_SISO<B,R>*>(siso_n.clone())),
   siso_i(dynamic_cast<Decoder_SISO<B,R>*>(siso_i.clone())),
-  l_sn ((K                                                        + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_si ((K                                                        + (siso_i.tail_length() / 2)) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_sen((K                                                        + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_sei((K                                                        + (siso_i.tail_length() / 2)) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_pn (((N - (siso_n.tail_length() + siso_i.tail_length()) -K)/2 + (siso_n.tail_length() / 2)) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_pi (((N - (siso_n.tail_length() + siso_i.tail_length()) -K)/2 + (siso_i.tail_length() / 2)) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_e1n((K                                                                                    ) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_e2n((K                                                                                    ) * siso_n.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_e1i((K                                                                                    ) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  l_e2i((K                                                                                    ) * siso_i.get_simd_inter_frame_level() + mipp::nElReg<R>()),
-  s    ((K                                                                                    ) * siso_n.get_simd_inter_frame_level())
+  l_sn ((K                                                        + (siso_n.tail_length() / 2)) * siso_n.get_n_frames_per_wave() + mipp::nElReg<R>()),
+  l_si ((K                                                        + (siso_i.tail_length() / 2)) * siso_i.get_n_frames_per_wave() + mipp::nElReg<R>()),
+  l_sen((K                                                        + (siso_n.tail_length() / 2)) * siso_n.get_n_frames_per_wave() + mipp::nElReg<R>()),
+  l_sei((K                                                        + (siso_i.tail_length() / 2)) * siso_i.get_n_frames_per_wave() + mipp::nElReg<R>()),
+  l_pn (((N - (siso_n.tail_length() + siso_i.tail_length()) -K)/2 + (siso_n.tail_length() / 2)) * siso_n.get_n_frames_per_wave() + mipp::nElReg<R>()),
+  l_pi (((N - (siso_n.tail_length() + siso_i.tail_length()) -K)/2 + (siso_i.tail_length() / 2)) * siso_i.get_n_frames_per_wave() + mipp::nElReg<R>()),
+  l_e1n((K                                                                                    ) * siso_n.get_n_frames_per_wave() + mipp::nElReg<R>()),
+  l_e2n((K                                                                                    ) * siso_n.get_n_frames_per_wave() + mipp::nElReg<R>()),
+  l_e1i((K                                                                                    ) * siso_i.get_n_frames_per_wave() + mipp::nElReg<R>()),
+  l_e2i((K                                                                                    ) * siso_i.get_n_frames_per_wave() + mipp::nElReg<R>()),
+  s    ((K                                                                                    ) * siso_n.get_n_frames_per_wave())
 {
 	const std::string name = "Decoder_turbo";
 	this->set_name(name);
+	this->set_n_frames(siso_n.get_n_frames());
+	this->set_n_frames_per_wave(siso_n.get_n_frames_per_wave());
+	this->pi->set_n_frames_per_wave(siso_n.get_n_frames_per_wave());
+
+	(*this->siso_n.get())[dec::tsk::decode_siso_alt        ].set_fast(true);
+	(*this->siso_i.get())[dec::tsk::decode_siso_alt        ].set_fast(true);
+	(*this->pi    .get())[itl::tsk::interleave             ].set_fast(true);
+	(*this->pi    .get())[itl::tsk::deinterleave           ].set_fast(true);
+	(*this->pi    .get())[itl::tsk::interleave_reordering  ].set_fast(true);
+	(*this->pi    .get())[itl::tsk::deinterleave_reordering].set_fast(true);
 
 	if (siso_n.get_K() != K)
 	{
@@ -95,16 +105,14 @@ Decoder_turbo<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (siso_n.get_simd_inter_frame_level() != siso_i.get_simd_inter_frame_level())
+	if (siso_n.get_n_frames_per_wave() != siso_i.get_n_frames_per_wave())
 	{
 		std::stringstream message;
-		message << "'siso_n.get_simd_inter_frame_level()' has to be equal to 'siso_i.get_simd_inter_frame_level()' "
-		        << "('siso_n.get_simd_inter_frame_level()' = " << siso_n.get_simd_inter_frame_level()
-		        << ", 'siso_i.get_simd_inter_frame_level()' = " << siso_i.get_simd_inter_frame_level() << ").";
+		message << "'siso_n.get_n_frames_per_wave()' has to be equal to 'siso_i.get_n_frames_per_wave()' "
+		        << "('siso_n.get_n_frames_per_wave()' = " << siso_n.get_n_frames_per_wave()
+		        << ", 'siso_i.get_n_frames_per_wave()' = " << siso_i.get_n_frames_per_wave() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-
-	this->set_n_frames(siso_n.get_n_frames());
 }
 
 template <typename B, typename R>
@@ -131,8 +139,8 @@ void Decoder_turbo<B,R>
 ::add_post_processing(const tools::Post_processing_SISO<B,R> &post_processing)
 {
 	this->post_processings.push_back(std::shared_ptr<tools::Post_processing_SISO<B,R>>(post_processing.clone()));
-	if (this->post_processings.back()->get_n_frames() != this->get_simd_inter_frame_level())
-		this->post_processings.back()->set_n_frames(this->get_simd_inter_frame_level());
+	if (this->post_processings.back()->get_n_frames() != this->get_n_frames_per_wave())
+		this->post_processings.back()->set_n_frames(this->get_n_frames_per_wave());
 }
 
 template <typename B, typename R>
@@ -149,17 +157,17 @@ template <typename B, typename R>
 void Decoder_turbo<B,R>
 ::buffered_load(const R *Y_N, const int frame_id)
 {
-	if (this->get_simd_inter_frame_level() == 1)
+	if (this->get_n_frames_per_wave() == 1)
 	{
 		std::copy(Y_N                                            , Y_N + siso_n->get_K() + siso_n->tail_length()/2, l_sn.begin()          );
 		std::copy(Y_N + siso_n->get_K() + siso_n->tail_length()/2, Y_N + siso_n->get_N(),                           l_pn.begin()          );
 		std::copy(Y_N + siso_n->get_N(),                           Y_N + siso_n->get_N() + siso_i->tail_length()/2, l_si.begin() + this->K);
 		std::copy(Y_N + siso_n->get_N() + siso_i->tail_length()/2, Y_N + this->N                                  , l_pi.begin()          );
-		pi.interleave(l_sn.data(), l_si.data(), frame_id, 1);
+		pi->interleave(l_sn.data(), l_si.data(), frame_id, false);
 	}
 	else
 	{
-		const auto n_frames = this->get_simd_inter_frame_level();
+		const auto n_frames = this->get_n_frames_per_wave();
 
 		std::vector<const R*> frames(n_frames);
 		for (auto f = 0; f < n_frames; f++)
@@ -178,7 +186,7 @@ void Decoder_turbo<B,R>
 			frames[f] = Y_N + f*this->N + siso_n->get_N() + siso_i->tail_length()/2;
 		tools::Reorderer<R>::apply(frames, l_pi.data(), siso_i->get_K() + siso_i->tail_length()/2);
 
-		pi.interleave(l_sn.data(), l_si.data(), frame_id, this->get_simd_inter_frame_level(), true);
+		pi->interleave_reordering(l_sn.data(), l_si.data(), frame_id, false);
 	}
 	std::fill(l_e1n.begin(), l_e1n.end(), (R)0);
 }
@@ -190,7 +198,7 @@ void Decoder_turbo<B,R>
 	const auto tail_n = siso_n->tail_length();
 	const auto tail_i = siso_i->tail_length();
 
-	if (this->get_simd_inter_frame_level() == 1)
+	if (this->get_n_frames_per_wave() == 1)
 	{
 		for (auto i = 0; i < this->K; i++)
 		{
@@ -198,7 +206,7 @@ void Decoder_turbo<B,R>
 			l_pn[i] = Y_N[i*3 +1];
 			l_pi[i] = Y_N[i*3 +2];
 		}
-		pi.interleave(l_sn.data(), l_si.data(), frame_id, this->get_simd_inter_frame_level());
+		pi->interleave(l_sn.data(), l_si.data(), frame_id, false);
 
 		// tails bit in the natural domain
 		for (auto i = 0; i < tail_n/2; i++)
@@ -216,7 +224,7 @@ void Decoder_turbo<B,R>
 	}
 	else // inter frame => input reordering
 	{
-		const auto n_frames = this->get_simd_inter_frame_level();
+		const auto n_frames = this->get_n_frames_per_wave();
 
 		for (auto i = 0; i < this->K; i++)
 		{
@@ -227,7 +235,7 @@ void Decoder_turbo<B,R>
 				l_pi[i*n_frames +j] = Y_N[j*((this->K*3) + tail_n + tail_i) + i * 3 +2];
 			}
 		}
-		pi.interleave(l_sn.data(), l_si.data(), frame_id, this->get_simd_inter_frame_level(), true);
+		pi->interleave_reordering(l_sn.data(), l_si.data(), frame_id, false);
 
 		// tails bit in the natural domain
 		for (auto i = 0; i < tail_n/2; i++)
@@ -257,13 +265,13 @@ template <typename B, typename R>
 void Decoder_turbo<B,R>
 ::_store(B *V_K) const
 {
-	if (this->get_simd_inter_frame_level() == 1)
+	if (this->get_n_frames_per_wave() == 1)
 	{
 		std::copy(s.data(), s.data() + this->K, V_K);
 	}
 	else // inter frame => output reordering
 	{
-		const auto n_frames = this->get_simd_inter_frame_level();
+		const auto n_frames = this->get_n_frames_per_wave();
 
 		std::vector<B*> frames(n_frames);
 		for (auto f = 0; f < n_frames; f++)
@@ -282,7 +290,7 @@ void Decoder_turbo<B,R>
 		Decoder_SIHO<B,R>::set_n_frames(n_frames);
 		this->siso_n->set_n_frames(n_frames);
 		this->siso_i->set_n_frames(n_frames);
-		this->pi.set_n_frames(n_frames);
+		this->pi->set_n_frames(n_frames);
 	}
 }
 

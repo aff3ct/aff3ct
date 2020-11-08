@@ -30,7 +30,7 @@ public:
 
 protected:
 	void _store   (B *V, bool coded = false) const;
-	bool check_crc(                        );
+	bool check_crc(const int frame_id      );
 };
 }
 }

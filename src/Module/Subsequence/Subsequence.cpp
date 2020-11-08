@@ -30,6 +30,7 @@ void Subsequence
 	const std::string name = "Subsequence";
 	this->set_name(name);
 	this->set_short_name(name);
+	this->set_single_wave(true);
 
 	auto &sequence = this->get_sequence();
 
@@ -105,11 +106,11 @@ void Subsequence
 		}
 	}
 
-	this->create_codelet(p, [](Module &m, Task &t) -> int
+	this->create_codelet(p, [](Module &m, Task &t, const int frame_id) -> int
 	{
-		auto &c = static_cast<Subsequence&>(m);
+		auto &ss = static_cast<Subsequence&>(m);
 
-		auto &firsts = c.get_sequence().get_firsts_tasks()[0];
+		auto &firsts = ss.get_sequence().get_firsts_tasks()[0];
 		size_t sid = 0;
 		for (auto &first : firsts) for (auto &s : first->sockets)
 		{
@@ -120,7 +121,7 @@ void Subsequence
 			}
 		}
 
-		return c.get_sequence().exec();
+		return ss.get_sequence().exec(-1); // execute all frames
 	});
 }
 

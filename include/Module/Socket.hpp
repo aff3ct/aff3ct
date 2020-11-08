@@ -59,10 +59,16 @@ public:
 	inline void operator()(Socket &s_out, const int priority = -1);
 
 	template <typename T, class A = std::allocator<T>>
+	inline void bind(const std::vector<T,A> &vector);
+
+	template <typename T, class A = std::allocator<T>>
 	inline void bind(std::vector<T,A> &vector);
 
 	template <typename T, class A = std::allocator<T>>
 	inline void operator()(std::vector<T,A> &vector);
+
+	template <typename T>
+	inline void bind(const T *array);
 
 	template <typename T>
 	inline void bind(T *array);

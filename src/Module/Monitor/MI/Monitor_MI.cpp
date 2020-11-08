@@ -17,6 +17,7 @@ Monitor_MI<B,R>
 {
 	const std::string name = "Monitor_MI";
 	this->set_name(name);
+	this->set_single_wave(true);
 
 	if (N <= 0)
 	{
@@ -28,10 +29,15 @@ Monitor_MI<B,R>
 	auto &p = this->create_task("get_mutual_info", (int)mnt::tsk::get_mutual_info);
 	auto ps_X = this->template create_socket_in<B>(p, "X", get_N());
 	auto ps_Y = this->template create_socket_in<R>(p, "Y", get_N());
-	this->create_codelet(p, [ps_X, ps_Y](Module &m, Task &t) -> int
+	this->create_codelet(p, [ps_X, ps_Y](Module &m, Task &t, const int frame_id) -> int
 	{
-		return (int)static_cast<Monitor_MI<B,R>&>(m).get_mutual_info(static_cast<B*>(t[ps_X].get_dataptr()),
-		                                                             static_cast<R*>(t[ps_Y].get_dataptr()));
+		auto &mnt = static_cast<Monitor_MI<B,R>&>(m);
+
+		auto ret = mnt._get_mutual_info(static_cast<B*>(t[ps_X].get_dataptr()),
+		                                static_cast<R*>(t[ps_Y].get_dataptr()),
+		                                frame_id);
+
+		return (int)ret;
 	});
 
 	reset();
@@ -94,26 +100,32 @@ bool Monitor_MI<B,R>
 
 template <typename B, typename R>
 R Monitor_MI<B,R>
-::get_mutual_info(const B *X, const R *Y, const int frame_id)
+::get_mutual_info(const B *X, const R *Y, const int frame_id, const bool managed_memory)
 {
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % get_n_frames();
-	const auto f_stop  = (frame_id < 0) ? get_n_frames() : f_start +1;
+	(*this)[mnt::sck::get_mutual_info::X].bind(X);
+	(*this)[mnt::sck::get_mutual_info::Y].bind(Y);
+	return (R)(*this)[mnt::tsk::get_mutual_info].exec(frame_id, managed_memory);
+}
 
+template <typename B, typename R>
+R Monitor_MI<B,R>
+::_get_mutual_info(const B *X, const R *Y, const int frame_id)
+{
 	R loc_MI_sum = 0;
-	for (auto f = f_start; f < f_stop; f++)
-		loc_MI_sum += this->_get_mutual_info(X + f * get_N(), Y + f * get_N(), f);
+	for (auto f = 0; f < this->get_n_frames(); f++)
+		loc_MI_sum += this->__get_mutual_info(X + f * get_N(), Y + f * get_N(), f);
 
 	this->callback_check.notify();
 
 	if (this->n_trials_limit_achieved())
 		this->callback_n_trials_limit_achieved.notify();
 
-	return loc_MI_sum / (R)(f_stop - f_start) * 10000; // return the mut info computed now %10000 instead of %100
+	return loc_MI_sum / (R)(this->get_n_frames()) * 10000; // return the mut info computed now %10000 instead of %100
 }
 
 template <typename B, typename R>
 R Monitor_MI<B,R>
-::_get_mutual_info(const B *X, const R *Y, const int frame_id)
+::__get_mutual_info(const B *X, const R *Y, const int frame_id)
 {
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, "The _get_mutual_info() function does not support this "
 	                                                         "type.");
@@ -127,7 +139,7 @@ namespace module
 #if defined(AFF3CT_MULTI_PREC) | defined (AFF3CT_32BIT_PREC)
 template <>
 R_32 Monitor_MI<B_32,R_32>
-::_get_mutual_info(const B_32 *X, const R_32 *Y, const int frame_id)
+::__get_mutual_info(const B_32 *X, const R_32 *Y, const int frame_id)
 {
 	auto mi = tools::mutual_info_histo(X, Y, get_N());
 	this->add_MI_value(mi);
@@ -138,7 +150,7 @@ R_32 Monitor_MI<B_32,R_32>
 #if defined(AFF3CT_MULTI_PREC) | defined (AFF3CT_64BIT_PREC)
 template <>
 R_64 Monitor_MI<B_64,R_64>
-::_get_mutual_info(const B_64 *X, const R_64 *Y, const int frame_id)
+::__get_mutual_info(const B_64 *X, const R_64 *Y, const int frame_id)
 {
 	auto mi = tools::mutual_info_histo(X, Y, get_N());
 	this->add_MI_value(mi);
@@ -162,8 +174,6 @@ void Monitor_MI<B,R>
 		this->mutinfo_hist.add_value(mi);
 }
 
-
-
 template <typename B, typename R>
 bool Monitor_MI<B,R>
 ::n_trials_limit_achieved() const
@@ -177,9 +187,6 @@ bool Monitor_MI<B,R>
 {
 	return n_trials_limit_achieved();
 }
-
-
-
 
 template <typename B, typename R>
 const typename Monitor_MI<B,R>::Attributes& Monitor_MI<B,R>

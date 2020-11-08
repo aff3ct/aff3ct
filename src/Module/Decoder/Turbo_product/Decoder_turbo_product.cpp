@@ -14,13 +14,13 @@ Decoder_turbo_product<B,R>
                         const std::vector<float>& alpha,
                         const Decoder_chase_pyndiah<B,R> &cp_r,
                         const Decoder_chase_pyndiah<B,R> &cp_c,
-                              Interleaver<R>& pi,
+                        const Interleaver<R>& pi,
                         const std::vector<float>& beta)
-: Decoder_SISO<B,R>(cp_r.get_K() * cp_c.get_K(), pi.get_core().get_size(), 1),
+: Decoder_SISO<B,R>(cp_r.get_K() * cp_c.get_K(), pi.get_core().get_size()),
   n_ite(n_ite),
   alpha(alpha),
   beta (beta ),
-  pi   (pi   ),
+  pi   (pi.clone()),
   cp_r (cp_r.clone()),
   cp_c (cp_c.clone()),
 
@@ -65,12 +65,12 @@ Decoder_turbo_product<B,R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (cp_r.get_simd_inter_frame_level() != cp_c.get_simd_inter_frame_level())
+	if (cp_r.get_n_frames_per_wave() != cp_c.get_n_frames_per_wave())
 	{
 		std::stringstream message;
-		message << "'cp_r.get_simd_inter_frame_level()' has to be equal to 'cp_c.get_simd_inter_frame_level()' "
-		        << "('cp_r.get_simd_inter_frame_level()' = " << cp_r.get_simd_inter_frame_level()
-		        << ", 'cp_c.get_simd_inter_frame_level()' = " << cp_c.get_simd_inter_frame_level() << ").";
+		message << "'cp_r.get_n_frames_per_wave()' has to be equal to 'cp_c.get_n_frames_per_wave()' "
+		        << "('cp_r.get_n_frames_per_wave()' = " << cp_r.get_n_frames_per_wave()
+		        << ", 'cp_c.get_n_frames_per_wave()' = " << cp_c.get_n_frames_per_wave() << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -107,7 +107,7 @@ Decoder_turbo_product<B,R>
 		this->cp_c->clear_beta();
 	}
 
-	this->set_n_frames(this->pi.get_n_frames());
+	this->set_n_frames(this->pi->get_n_frames());
 }
 
 template <typename B, typename R>
@@ -201,22 +201,14 @@ template <typename B, typename R>
 int Decoder_turbo_product<B,R>
 ::_decode(const R *Y_N_cha, const int frame_id, int return_K_siso)
 {
-	if (this->pi.get_n_frames() != this->get_n_frames())
-	{
-		std::stringstream message;
-		message << "'pi.get_n_frames()' has to be equal to 'n_frames' ('pi.get_n_frames()' = "
-		        << this->pi.get_n_frames() << ", 'n_frames' = " << this->get_n_frames() << ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	const int n_cols = cp_r->get_N();
 	const int n_rows = cp_c->get_N();
 
-	pi.interleave(Y_N_cha, Y_N_cha_i.data(), frame_id, 1); // interleave data from the channel
+	pi->interleave(Y_N_cha, Y_N_cha_i.data(), frame_id, false); // interleave data from the channel
 
 	for (int i = 0; i < n_ite; i++)
 	{
-		pi.interleave(Y_N_i.data(), Y_N_pi.data(), frame_id, 1); // columns becomes rows
+		pi->interleave(Y_N_i.data(), Y_N_pi.data(), frame_id, false); // columns becomes rows
 
 		if (beta.size())
 		{
@@ -239,7 +231,7 @@ int Decoder_turbo_product<B,R>
 			}
 		}
 
-		pi.deinterleave(Y_N_pi.data(), Y_N_i.data(), frame_id, 1); // rows go back as columns
+		pi->deinterleave(Y_N_pi.data(), Y_N_i.data(), frame_id, false); // rows go back as columns
 
 		// decode each row
 		if (i < (n_ite -1) || return_K_siso >= 2)
@@ -286,7 +278,7 @@ void Decoder_turbo_product<B,R>
 	if (old_n_frames != n_frames)
 	{
 		Decoder_SISO<B,R>::set_n_frames(n_frames);
-		this->pi.set_n_frames(n_frames);
+		this->pi->set_n_frames(n_frames);
 	}
 }
 

@@ -66,7 +66,7 @@ int Decoder_polar_MK_ASCL_naive_CA_sys<B,R>
 	sc_decoder->_decode_siho(Y_N, V_K, frame_id);
 
 	// check the CRC
-	auto crc_decode_result = this->crc->check(V_K, this->get_simd_inter_frame_level());
+	auto crc_decode_result = this->crc->check(V_K, frame_id);
 
 	if (!crc_decode_result)
 		Decoder_polar_MK_SCL_naive_CA_sys<B,R>::_decode_siho(Y_N, V_K, frame_id);
@@ -81,7 +81,7 @@ int Decoder_polar_MK_ASCL_naive_CA_sys<B,R>
 	sc_decoder->_decode_siho(Y_N, V_N, frame_id);
 
 	// check the CRC
-	auto crc_decode_result = this->crc->check(V_N, this->get_simd_inter_frame_level());
+	auto crc_decode_result = this->crc->check(V_N, frame_id);
 
 	if (!crc_decode_result)
 		Decoder_polar_MK_SCL_naive_CA_sys<B,R>::_decode_siho_cw(Y_N, V_N, frame_id);

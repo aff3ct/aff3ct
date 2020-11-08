@@ -16,7 +16,7 @@ Decoder_RSC_DB_BCJR<B,R>
 ::Decoder_RSC_DB_BCJR(const int K,
                       const std::vector<std::vector<int>> &trellis,
                       const bool buffered_encoding)
-: Decoder_SISO<B,R>(K, 2 * K, 1                             ),
+: Decoder_SISO<B,R>(K, 2 * K                                ),
   n_states         ((int)trellis[0].size()/4                ),
   n_ff             ((int)std::log2(n_states)                ),
   buffered_encoding(buffered_encoding                       ),
@@ -96,7 +96,7 @@ int Decoder_RSC_DB_BCJR<B,R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	auto status = this->_decode_siso(sys.data(), par.data(), ext.data(), frame_id);
+	auto status = this->_decode_siso_alt(sys.data(), par.data(), ext.data(), frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -127,7 +127,7 @@ void Decoder_RSC_DB_BCJR<B,R>
 
 template <typename B, typename R>
 int Decoder_RSC_DB_BCJR<B,R>
-::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
+::_decode_siso_alt(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	__init_alpha_beta();
 	__fwd_recursion(sys, par);

@@ -9,13 +9,10 @@ using namespace aff3ct;
 using namespace aff3ct::module;
 
 Decoder
-::Decoder(const int K, const int N, const int simd_inter_frame_level)
+::Decoder(const int K, const int N)
 : Module(),
-  n_inter_frame_rest(this->n_frames % simd_inter_frame_level),
   K(K),
   N(N),
-  simd_inter_frame_level(simd_inter_frame_level),
-  n_dec_waves((int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level)),
   auto_reset(true),
   mask(std::numeric_limits<int>::max())
 {
@@ -34,14 +31,6 @@ Decoder
 	{
 		std::stringstream message;
 		message << "'N' has to be greater than 0 ('N' = " << N << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (simd_inter_frame_level <= 0)
-	{
-		std::stringstream message;
-		message << "'simd_inter_frame_level' has to be greater than 0 ('simd_inter_frame_level' = "
-		        << simd_inter_frame_level << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
@@ -73,18 +62,6 @@ int Decoder
 	return this->N;
 }
 
-int Decoder
-::get_simd_inter_frame_level() const
-{
-	return this->simd_inter_frame_level;
-}
-
-int Decoder
-::get_n_dec_waves() const
-{
-	return this->n_dec_waves;
-}
-
 bool Decoder
 ::is_auto_reset() const
 {
@@ -108,9 +85,9 @@ void Decoder
 {
 	if (frame_id < 0)
 	{
-		for (auto w = 0; w < this->get_n_dec_waves(); w++)
+		for (auto w = 0; w < this->get_n_waves(); w++)
 		{
-			auto fid = w * this->get_simd_inter_frame_level();
+			auto fid = w * this->get_n_frames_per_wave();
 			this->_reset(fid);
 		}
 	}
@@ -136,17 +113,4 @@ void Decoder
 ::set_seed(const int seed)
 {
 	// do nothing in the general case, this method has to be overrided
-}
-
-void Decoder
-::set_n_frames(const int n_frames)
-{
-	const auto old_n_frames = this->get_n_frames();
-	if (old_n_frames != n_frames)
-	{
-		Module::set_n_frames(n_frames);
-
-		this->n_inter_frame_rest = n_frames % this->simd_inter_frame_level;
-		this->n_dec_waves = (int)std::ceil((float)this->n_frames / (float)simd_inter_frame_level);
-	}
 }

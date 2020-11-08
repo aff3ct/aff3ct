@@ -57,9 +57,9 @@ public:
 	virtual ~Probe() = default;
 
 	template <class AT = std::allocator<T>>
-	void probe(const std::vector<T,AT>& in, const int frame_id = -1);
+	void probe(const std::vector<T,AT>& in, const int frame_id = -1, const bool managed_memory = true);
 
-	virtual void probe(const T *in, const int frame_id = -1);
+	void probe(const T *in, const int frame_id = -1, const bool managed_memory = true);
 
 	virtual std::type_index get_datatype() const = 0;
 

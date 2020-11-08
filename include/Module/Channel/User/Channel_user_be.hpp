@@ -32,8 +32,6 @@ public:
 	virtual ~Channel_user_be() = default;
 	virtual Channel_user_be<R>* clone() const;
 
-	virtual void  add_noise(const R *X_N, R *Y_N, const int frame_id = -1);
-
 protected:
 	virtual void _add_noise(const R *X_N, R *Y_N, const int frame_id = -1);
 };

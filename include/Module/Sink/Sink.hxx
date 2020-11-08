@@ -41,9 +41,12 @@ Sink<B>
 
 	auto &p1 = this->create_task("send");
 	auto p1s_V = this->template create_socket_in <B>(p1, "V", K);
-	this->create_codelet(p1, [p1s_V](Module& m, Task& t) -> int
+	this->create_codelet(p1, [p1s_V](Module& m, Task& t, const int frame_id) -> int
 	{
-		static_cast<Sink<B>&>(m).send(static_cast<B*>(t[p1s_V].get_dataptr()));
+		auto &snk = static_cast<Sink<B>&>(m);
+
+		snk._send(static_cast<B*>(t[p1s_V].get_dataptr()),
+		          frame_id);
 
 		return status_t::SUCCESS;
 	});
@@ -59,28 +62,18 @@ Sink<B>* Sink<B>
 template <typename B>
 template <class A>
 void Sink<B>
-::send(const std::vector<B,A>& V, const int frame_id)
+::send(const std::vector<B,A>& V, const int frame_id, const bool managed_memory)
 {
-	if (this->K * this->n_frames != (int)V.size())
-	{
-		std::stringstream message;
-		message << "'V.size()' has to be equal to 'K' * 'n_frames' ('V.size()' = " << V.size()
-		        << ", 'K' = " << this->K << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	this->send(V.data(), frame_id);
+	(*this)[snk::sck::send::V].bind(V);
+	(*this)[snk::tsk::send].exec(frame_id, managed_memory);
 }
 
 template <typename B>
 void Sink<B>
-::send(const B *V, const int frame_id)
+::send(const B *V, const int frame_id, const bool managed_memory)
 {
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
-	for (auto f = f_start; f < f_stop; f++)
-		this->_send(V + f * this->K, f);
+	(*this)[snk::sck::send::V].bind(V);
+	(*this)[snk::tsk::send].exec(frame_id, managed_memory);
 }
 
 template <typename B>

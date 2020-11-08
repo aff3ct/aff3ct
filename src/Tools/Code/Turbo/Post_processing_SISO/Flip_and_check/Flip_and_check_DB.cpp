@@ -137,7 +137,7 @@ bool Flip_and_check_DB<B,R>
 			s_tmp[2*positions[depth]   ] = ((symb_sorted[4*positions[depth] + tab_flips[pattern][depth]]) >> 1) & 0x1;
 			s_tmp[2*positions[depth] +1] = ((symb_sorted[4*positions[depth] + tab_flips[pattern][depth]])     ) & 0x1;
 		}
-		check_crc = this->crc->check(s_tmp, this->n_frames);
+		check_crc = this->crc->check(s_tmp);
 		pattern++;
 	}
 	while ((pattern < (int)tab_flips.size()) && !check_crc);

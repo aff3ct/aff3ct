@@ -62,15 +62,15 @@ public:
 	inline size_t get_n_outputs() const;
 
 	template <class A = std::allocator<int8_t>>
-	size_t route(const std::vector<int8_t,A>& in, const int frame_id = -1);
+	size_t route(const std::vector<int8_t,A>& in, const int frame_id = -1, const bool managed_memory = true);
 
-	virtual size_t route(const int8_t *in, const int frame_id = -1);
+	size_t route(const int8_t *in, const int frame_id = -1, const bool managed_memory = true);
 
 	virtual void reset();
 
 protected:
 	virtual size_t _route(const int8_t *in, const int frame_id);
-
+	virtual size_t __route(const int8_t *in, const int frame_id);
 	virtual size_t select_route_inter(const size_t a, const size_t b);
 
 private:

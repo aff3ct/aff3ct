@@ -18,7 +18,7 @@ namespace module
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 Decoder_polar_SCL_naive<B,R,F,G>
 ::Decoder_polar_SCL_naive(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits)
-: Decoder_SIHO<B,R>(K, N, 1),
+: Decoder_SIHO<B,R>(K, N),
   m((int)std::log2(N)),
   metric_init(std::numeric_limits<R>::min()),
   frozen_bits(frozen_bits),
@@ -146,7 +146,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
-::_decode()
+::_decode(const int frame_id)
 {
 	std::set<int> last_active_paths;
 	int cur_path;
@@ -260,7 +260,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 			this->propagate_sums(leaves_array[path][leaf_index]);
 	}
 
-	this->select_best_path();
+	this->select_best_path(frame_id);
 }
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
@@ -272,7 +272,7 @@ int Decoder_polar_SCL_naive<B,R,F,G>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_decode();
+	this->_decode(frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -295,7 +295,7 @@ int Decoder_polar_SCL_naive<B,R,F,G>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	this->_decode();
+	this->_decode(frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
@@ -412,7 +412,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
-::select_best_path()
+::select_best_path(const int frame_id)
 {
 	int best_path = 0;
 	if (active_paths.size() >= 1)

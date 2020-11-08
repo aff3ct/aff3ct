@@ -37,9 +37,9 @@ public:
 
 	void set_seed(const int seed);
 
-	void add_noise(const R *X_N, R *Y_N, const int frame_id = -1); using Channel<R>::add_noise;
-
 protected:
+	void _add_noise(const R *X_N, R *Y_N, const int frame_id);
+
 	virtual void deep_copy(const Channel_AWGN_LLR<R>& m);
 
 	virtual void check_noise();

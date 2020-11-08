@@ -157,10 +157,13 @@ void Modem<B,R,Q>
 	auto &p1 = this->create_task("modulate");
 	auto p1s_X_N1 = this->template create_socket_in <B>(p1, "X_N1", this->N    );
 	auto p1s_X_N2 = this->template create_socket_out<R>(p1, "X_N2", this->N_mod);
-	this->create_codelet(p1, [p1s_X_N1, p1s_X_N2](Module &m, Task &t) -> int
+	this->create_codelet(p1, [p1s_X_N1, p1s_X_N2](Module &m, Task &t, const int frame_id) -> int
 	{
-		static_cast<Modem<B,R,Q>&>(m).modulate(static_cast<B*>(t[p1s_X_N1].get_dataptr()),
-		                                       static_cast<R*>(t[p1s_X_N2].get_dataptr()));
+		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
+
+		mdm._modulate(static_cast<B*>(t[p1s_X_N1].get_dataptr()),
+		              static_cast<R*>(t[p1s_X_N2].get_dataptr()),
+		              frame_id);
 
 		return status_t::SUCCESS;
 	});
@@ -168,10 +171,13 @@ void Modem<B,R,Q>
 	auto &p7 = this->create_task("tmodulate");
 	auto p7s_X_N1 = this->template create_socket_in <Q>(p7, "X_N1", this->N    );
 	auto p7s_X_N2 = this->template create_socket_out<R>(p7, "X_N2", this->N_mod);
-	this->create_codelet(p7, [p7s_X_N1, p7s_X_N2](Module &m, Task &t) -> int
+	this->create_codelet(p7, [p7s_X_N1, p7s_X_N2](Module &m, Task &t, const int frame_id) -> int
 	{
-		static_cast<Modem<B,R,Q>&>(m).tmodulate(static_cast<Q*>(t[p7s_X_N1].get_dataptr()),
-		                                        static_cast<R*>(t[p7s_X_N2].get_dataptr()));
+		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
+
+		mdm._tmodulate(static_cast<Q*>(t[p7s_X_N1].get_dataptr()),
+		               static_cast<R*>(t[p7s_X_N2].get_dataptr()),
+		               frame_id);
 
 		return status_t::SUCCESS;
 	});
@@ -179,10 +185,13 @@ void Modem<B,R,Q>
 	auto &p2 = this->create_task("filter");
 	auto p2s_Y_N1 = this->template create_socket_in <R>(p2, "Y_N1", this->N_mod);
 	auto p2s_Y_N2 = this->template create_socket_out<R>(p2, "Y_N2", this->N_fil);
-	this->create_codelet(p2, [p2s_Y_N1, p2s_Y_N2](Module &m, Task &t) -> int
+	this->create_codelet(p2, [p2s_Y_N1, p2s_Y_N2](Module &m, Task &t, const int frame_id) -> int
 	{
-		static_cast<Modem<B,R,Q>&>(m).filter(static_cast<R*>(t[p2s_Y_N1].get_dataptr()),
-		                                     static_cast<R*>(t[p2s_Y_N2].get_dataptr()));
+		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
+
+		mdm._filter(static_cast<R*>(t[p2s_Y_N1].get_dataptr()),
+		            static_cast<R*>(t[p2s_Y_N2].get_dataptr()),
+		            frame_id);
 
 		return status_t::SUCCESS;
 	});
@@ -190,10 +199,13 @@ void Modem<B,R,Q>
 	auto &p3 = this->create_task("demodulate");
 	auto p3s_Y_N1 = this->template create_socket_in <Q>(p3, "Y_N1", this->N_fil);
 	auto p3s_Y_N2 = this->template create_socket_out<Q>(p3, "Y_N2", this->N    );
-	this->create_codelet(p3, [p3s_Y_N1, p3s_Y_N2](Module &m, Task &t) -> int
+	this->create_codelet(p3, [p3s_Y_N1, p3s_Y_N2](Module &m, Task &t, const int frame_id) -> int
 	{
-		static_cast<Modem<B,R,Q>&>(m).demodulate(static_cast<Q*>(t[p3s_Y_N1].get_dataptr()),
-		                                         static_cast<Q*>(t[p3s_Y_N2].get_dataptr()));
+		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
+
+		mdm._demodulate(static_cast<Q*>(t[p3s_Y_N1].get_dataptr()),
+		                static_cast<Q*>(t[p3s_Y_N2].get_dataptr()),
+		                frame_id);
 
 		return status_t::SUCCESS;
 	});
@@ -202,11 +214,14 @@ void Modem<B,R,Q>
 	auto p4s_Y_N1 = this->template create_socket_in <Q>(p4, "Y_N1", this->N_fil);
 	auto p4s_Y_N2 = this->template create_socket_in <Q>(p4, "Y_N2", this->N    );
 	auto p4s_Y_N3 = this->template create_socket_out<Q>(p4, "Y_N3", this->N    );
-	this->create_codelet(p4, [p4s_Y_N1, p4s_Y_N2, p4s_Y_N3](Module &m, Task &t) -> int
+	this->create_codelet(p4, [p4s_Y_N1, p4s_Y_N2, p4s_Y_N3](Module &m, Task &t, const int frame_id) -> int
 	{
-		static_cast<Modem<B,R,Q>&>(m).tdemodulate(static_cast<Q*>(t[p4s_Y_N1].get_dataptr()),
-		                                          static_cast<Q*>(t[p4s_Y_N2].get_dataptr()),
-		                                          static_cast<Q*>(t[p4s_Y_N3].get_dataptr()));
+		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
+
+		mdm._tdemodulate(static_cast<Q*>(t[p4s_Y_N1].get_dataptr()),
+		                 static_cast<Q*>(t[p4s_Y_N2].get_dataptr()),
+		                 static_cast<Q*>(t[p4s_Y_N3].get_dataptr()),
+		                 frame_id);
 
 		return status_t::SUCCESS;
 	});
@@ -215,11 +230,14 @@ void Modem<B,R,Q>
 	auto p5s_H_N  = this->template create_socket_in <R>(p5, "H_N",  this->N_fil);
 	auto p5s_Y_N1 = this->template create_socket_in <Q>(p5, "Y_N1", this->N_fil);
 	auto p5s_Y_N2 = this->template create_socket_out<Q>(p5, "Y_N2", this->N    );
-	this->create_codelet(p5, [p5s_H_N, p5s_Y_N1, p5s_Y_N2](Module &m, Task &t) -> int
+	this->create_codelet(p5, [p5s_H_N, p5s_Y_N1, p5s_Y_N2](Module &m, Task &t, const int frame_id) -> int
 	{
-		static_cast<Modem<B,R,Q>&>(m).demodulate_wg(static_cast<R*>(t[p5s_H_N ].get_dataptr()),
-		                                            static_cast<Q*>(t[p5s_Y_N1].get_dataptr()),
-		                                            static_cast<Q*>(t[p5s_Y_N2].get_dataptr()));
+		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
+
+		mdm._demodulate_wg(static_cast<R*>(t[p5s_H_N ].get_dataptr()),
+		                   static_cast<Q*>(t[p5s_Y_N1].get_dataptr()),
+		                   static_cast<Q*>(t[p5s_Y_N2].get_dataptr()),
+		                   frame_id);
 
 		return status_t::SUCCESS;
 	});
@@ -229,12 +247,15 @@ void Modem<B,R,Q>
 	auto p6s_Y_N1 = this->template create_socket_in <Q>(p6, "Y_N1", this->N_fil);
 	auto p6s_Y_N2 = this->template create_socket_in <Q>(p6, "Y_N2", this->N    );
 	auto p6s_Y_N3 = this->template create_socket_out<Q>(p6, "Y_N3", this->N    );
-	this->create_codelet(p6, [p6s_H_N, p6s_Y_N1, p6s_Y_N2, p6s_Y_N3](Module &m, Task &t) -> int
+	this->create_codelet(p6, [p6s_H_N, p6s_Y_N1, p6s_Y_N2, p6s_Y_N3](Module &m, Task &t, const int frame_id) -> int
 	{
-		static_cast<Modem<B,R,Q>&>(m).tdemodulate_wg(static_cast<R*>(t[p6s_H_N ].get_dataptr()),
-		                                             static_cast<Q*>(t[p6s_Y_N1].get_dataptr()),
-		                                             static_cast<Q*>(t[p6s_Y_N2].get_dataptr()),
-		                                             static_cast<Q*>(t[p6s_Y_N3].get_dataptr()));
+		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
+
+		mdm._tdemodulate_wg(static_cast<R*>(t[p6s_H_N ].get_dataptr()),
+		                    static_cast<Q*>(t[p6s_Y_N1].get_dataptr()),
+		                    static_cast<Q*>(t[p6s_Y_N2].get_dataptr()),
+		                    static_cast<Q*>(t[p6s_Y_N3].get_dataptr()),
+		                    frame_id);
 
 		return status_t::SUCCESS;
 	});
@@ -308,241 +329,121 @@ const tools::Noise<>& Modem<B,R,Q>
 template <typename B, typename R, typename Q>
 template <class AB, class AR>
 void Modem<B,R,Q>
-::modulate(const std::vector<B,AB>& X_N1, std::vector<R,AR>& X_N2, const int frame_id)
+::modulate(const std::vector<B,AB>& X_N1, std::vector<R,AR>& X_N2, const int frame_id, const bool managed_memory)
 {
-	if (this->N * this->n_frames != (int)X_N1.size())
-	{
-		std::stringstream message;
-		message << "'X_N1.size()' has to be equal to 'N' * 'n_frames' ('X_N1.size()' = " << X_N1.size()
-		        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (this->N_mod * this->n_frames != (int)X_N2.size())
-	{
-		std::stringstream message;
-		message << "'X_N2.size()' has to be equal to 'N_mod' * 'n_frames' ('X_N2.size()' = " << X_N2.size()
-		        << ", 'N_mod' = " << this->N_mod << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	this->modulate(X_N1.data(), X_N2.data(), frame_id);
+	(*this)[mdm::sck::modulate::X_N1].bind(X_N1);
+	(*this)[mdm::sck::modulate::X_N2].bind(X_N2);
+	(*this)[mdm::tsk::modulate].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::modulate(const B *X_N1, R *X_N2, const int frame_id)
+::modulate(const B *X_N1, R *X_N2, const int frame_id, const bool managed_memory)
 {
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
-	for (auto f = f_start; f < f_stop; f++)
-		this->_modulate(X_N1 + f * this->N,
-		                X_N2 + f * this->N_mod,
-		                f);
+	(*this)[mdm::sck::modulate::X_N1].bind(X_N1);
+	(*this)[mdm::sck::modulate::X_N2].bind(X_N2);
+	(*this)[mdm::tsk::modulate].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
 template <class AQ, class AR>
 void Modem<B,R,Q>
-::tmodulate(const std::vector<Q,AQ>& X_N1, std::vector<R,AR>& X_N2, const int frame_id)
+::tmodulate(const std::vector<Q,AQ>& X_N1, std::vector<R,AR>& X_N2, const int frame_id, const bool managed_memory)
 {
-	if (this->N * this->n_frames != (int)X_N1.size())
-	{
-		std::stringstream message;
-		message << "'X_N1.size()' has to be equal to 'N' * 'n_frames' ('X_N1.size()' = " << X_N1.size()
-		        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (this->N_mod * this->n_frames != (int)X_N2.size())
-	{
-		std::stringstream message;
-		message << "'X_N2.size()' has to be equal to 'N_mod' * 'n_frames' ('X_N2.size()' = " << X_N2.size()
-		        << ", 'N_mod' = " << this->N_mod << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	this->tmodulate(X_N1.data(), X_N2.data(), frame_id);
+	(*this)[mdm::sck::tmodulate::X_N1].bind(X_N1);
+	(*this)[mdm::sck::tmodulate::X_N2].bind(X_N2);
+	(*this)[mdm::tsk::tmodulate].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::tmodulate(const Q *X_N1, R *X_N2, const int frame_id)
+::tmodulate(const Q *X_N1, R *X_N2, const int frame_id, const bool managed_memory)
 {
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
-	for (auto f = f_start; f < f_stop; f++)
-		this->_tmodulate(X_N1 + f * this->N,
-		                 X_N2 + f * this->N_mod,
-		                 f);
+	(*this)[mdm::sck::tmodulate::X_N1].bind(X_N1);
+	(*this)[mdm::sck::tmodulate::X_N2].bind(X_N2);
+	(*this)[mdm::tsk::tmodulate].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
 template <class A>
 void Modem<B,R,Q>
-::filter(const std::vector<R,A>& Y_N1, std::vector<R,A>& Y_N2, const int frame_id)
+::filter(const std::vector<R,A>& Y_N1, std::vector<R,A>& Y_N2, const int frame_id, const bool managed_memory)
 {
-	if (this->N_mod * this->n_frames != (int)Y_N1.size())
-	{
-		std::stringstream message;
-		message << "'Y_N1.size()' has to be equal to 'N_mod' * 'n_frames' ('Y_N1.size()' = " << Y_N1.size()
-		        << ", 'N_mod' = " << this->N_mod << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (this->N_fil * this->n_frames != (int)Y_N2.size())
-	{
-		std::stringstream message;
-		message << "'Y_N2.size()' has to be equal to 'N_fil' * 'n_frames' ('Y_N2.size()' = " << Y_N2.size()
-		        << ", 'N_fil' = " << this->N_fil << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	this->filter(Y_N1.data(), Y_N2.data(), frame_id);
+	(*this)[mdm::sck::filter::Y_N1].bind(Y_N1);
+	(*this)[mdm::sck::filter::Y_N2].bind(Y_N2);
+	(*this)[mdm::tsk::filter].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::filter(const R *Y_N1, R *Y_N2, const int frame_id)
+::filter(const R *Y_N1, R *Y_N2, const int frame_id, const bool managed_memory)
 {
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
-	for (auto f = f_start; f < f_stop; f++)
-		this->_filter(Y_N1 + f * this->N_mod,
-		              Y_N2 + f * this->N_fil,
-		              f);
+	(*this)[mdm::sck::filter::Y_N1].bind(Y_N1);
+	(*this)[mdm::sck::filter::Y_N2].bind(Y_N2);
+	(*this)[mdm::tsk::filter].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
 template <class A>
 void Modem<B,R,Q>
-::demodulate(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame_id)
+::demodulate(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame_id, const bool managed_memory)
 {
-	if (this->N_fil * this->n_frames != (int)Y_N1.size())
-	{
-		std::stringstream message;
-		message << "'Y_N1.size()' has to be equal to 'N_fil' * 'n_frames' ('Y_N1.size()' = " << Y_N1.size()
-		        << ", 'N_fil' = " << this->N_fil << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (this->N * this->n_frames != (int)Y_N2.size())
-	{
-		std::stringstream message;
-		message << "'Y_N2.size()' has to be equal to 'N' * 'n_frames' ('Y_N2.size()' = " << Y_N2.size()
-		        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	this->demodulate(Y_N1.data(), Y_N2.data(), frame_id);
+	(*this)[mdm::sck::demodulate::Y_N1].bind(Y_N1);
+	(*this)[mdm::sck::demodulate::Y_N2].bind(Y_N2);
+	(*this)[mdm::tsk::demodulate].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
+::demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id, const bool managed_memory)
 {
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
-	for (auto f = f_start; f < f_stop; f++)
-		this->_demodulate(Y_N1 + f * this->N_fil,
-		                  Y_N2 + f * this->N,
-		                  f);
+	(*this)[mdm::sck::demodulate::Y_N1].bind(Y_N1);
+	(*this)[mdm::sck::demodulate::Y_N2].bind(Y_N2);
+	(*this)[mdm::tsk::demodulate].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
 template <class AQ, class AR>
 void Modem<B,R,Q>
-::demodulate_wg(const std::vector<R,AR>& H_N, const std::vector<Q,AQ>& Y_N1, std::vector<Q,AQ>& Y_N2, const int frame_id)
+::demodulate_wg(const std::vector<R,AR>& H_N, const std::vector<Q,AQ>& Y_N1, std::vector<Q,AQ>& Y_N2,
+                const int frame_id, const bool managed_memory)
 {
-	if (this->N_fil * this->n_frames != (int)Y_N1.size())
-	{
-		std::stringstream message;
-		message << "'Y_N1.size()' has to be equal to 'N_fil' * 'n_frames' ('Y_N1.size()' = " << Y_N1.size()
-		        << ", 'N_fil' = " << this->N_fil << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (this->N_fil * this->n_frames != (int)H_N.size())
-	{
-		std::stringstream message;
-		message << "'H_N.size()' has to be equal to 'N_fil' * 'n_frames' ('H_N.size()' = " << H_N.size()
-		        << ", 'N_fil' = " << this->N_fil << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (this->N * this->n_frames != (int)Y_N2.size())
-	{
-		std::stringstream message;
-		message << "'Y_N2.size()' has to be equal to 'N' * 'n_frames' ('Y_N2.size()' = " << Y_N2.size()
-		        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	this->demodulate_wg(H_N.data(), Y_N1.data(), Y_N2.data(), frame_id);
+	(*this)[mdm::sck::demodulate_wg::H_N].bind(H_N);
+	(*this)[mdm::sck::demodulate_wg::Y_N1].bind(Y_N1);
+	(*this)[mdm::sck::demodulate_wg::Y_N2].bind(Y_N2);
+	(*this)[mdm::tsk::demodulate_wg].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
+::demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id, const bool managed_memory)
 {
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
-	for (auto f = f_start; f < f_stop; f++)
-		this->_demodulate_wg(H_N  + f * this->N_fil,
-		                     Y_N1 + f * this->N_fil,
-		                     Y_N2 + f * this->N,
-		                     f);
+	(*this)[mdm::sck::demodulate_wg::H_N].bind(H_N);
+	(*this)[mdm::sck::demodulate_wg::Y_N1].bind(Y_N1);
+	(*this)[mdm::sck::demodulate_wg::Y_N2].bind(Y_N2);
+	(*this)[mdm::tsk::demodulate_wg].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
 template <class A>
 void Modem<B,R,Q>
-::tdemodulate(const std::vector<Q,A>& Y_N1, const std::vector<Q,A>& Y_N2, std::vector<Q,A>& Y_N3, const int frame_id)
+::tdemodulate(const std::vector<Q,A>& Y_N1, const std::vector<Q,A>& Y_N2, std::vector<Q,A>& Y_N3, const int frame_id,
+              const bool managed_memory)
 {
-	if (this->N_fil * this->n_frames != (int)Y_N1.size())
-	{
-		std::stringstream message;
-		message << "'Y_N1.size()' has to be equal to 'N_fil' * 'n_frames' ('Y_N1.size()' = " << Y_N1.size()
-		        << ", 'N_fil' = " << this->N_fil << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (this->N * this->n_frames != (int)Y_N2.size())
-	{
-		std::stringstream message;
-		message << "'Y_N2.size()' has to be equal to 'N' * 'n_frames' ('Y_N2.size()' = " << Y_N2.size()
-		        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (this->N * this->n_frames != (int)Y_N3.size())
-	{
-		std::stringstream message;
-		message << "'Y_N3.size()' has to be equal to 'N' * 'n_frames' ('Y_N3.size()' = " << Y_N3.size()
-		        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ".";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	this->tdemodulate(Y_N1.data(), Y_N2.data(), Y_N3.data(), frame_id);
+	(*this)[mdm::sck::tdemodulate::Y_N1].bind(Y_N1);
+	(*this)[mdm::sck::tdemodulate::Y_N2].bind(Y_N2);
+	(*this)[mdm::sck::tdemodulate::Y_N3].bind(Y_N3);
+	(*this)[mdm::tsk::tdemodulate].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
+::tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id, const bool managed_memory)
 {
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
-	for (auto f = f_start; f < f_stop; f++)
-		this->_tdemodulate(Y_N1 + f * this->N_fil,
-		                   Y_N2 + f * this->N,
-		                   Y_N3 + f * this->N,
-		                   f);
+	(*this)[mdm::sck::tdemodulate::Y_N1].bind(Y_N1);
+	(*this)[mdm::sck::tdemodulate::Y_N2].bind(Y_N2);
+	(*this)[mdm::sck::tdemodulate::Y_N3].bind(Y_N3);
+	(*this)[mdm::tsk::tdemodulate].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
@@ -550,56 +451,24 @@ template <class AQ, class AR>
 void Modem<B,R,Q>
 ::tdemodulate_wg(const std::vector<R,AR>& H_N,  const std::vector<Q,AQ>& Y_N1,
                  const std::vector<Q,AQ>& Y_N2,       std::vector<Q,AQ>& Y_N3,
-                 const int frame_id)
+                 const int frame_id, const bool managed_memory)
 {
-	if (this->N_fil * this->n_frames != (int)Y_N1.size())
-	{
-		std::stringstream message;
-		message << "'Y_N1.size()' has to be equal to 'N_fil' * 'n_frames' ('Y_N1.size()' = " << Y_N1.size()
-		        << ", 'N_fil' = " << this->N_fil << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (this->N_fil * this->n_frames != (int)H_N.size())
-	{
-		std::stringstream message;
-		message << "'H_N.size()' has to be equal to 'N_fil' * 'n_frames' ('H_N.size()' = " << H_N.size()
-		        << ", 'N_fil' = " << this->N_fil << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (this->N * this->n_frames != (int)Y_N2.size())
-	{
-		std::stringstream message;
-		message << "'Y_N2.size()' has to be equal to 'N' * 'n_frames' ('Y_N2.size()' = " << Y_N2.size()
-		        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (this->N * this->n_frames != (int)Y_N3.size())
-	{
-		std::stringstream message;
-		message << "'Y_N3.size()' has to be equal to 'N' * 'n_frames' ('Y_N3.size()' = " << Y_N3.size()
-		        << ", 'N' = " << this->N << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	this->tdemodulate_wg(H_N.data(), Y_N1.data(), Y_N2.data(), Y_N3.data(), frame_id);
+	(*this)[mdm::sck::tdemodulate_wg::H_N].bind(H_N);
+	(*this)[mdm::sck::tdemodulate_wg::Y_N1].bind(Y_N1);
+	(*this)[mdm::sck::tdemodulate_wg::Y_N2].bind(Y_N2);
+	(*this)[mdm::sck::tdemodulate_wg::Y_N3].bind(Y_N3);
+	(*this)[mdm::tsk::tdemodulate_wg].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
+::tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id, const bool managed_memory)
 {
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
-	for (auto f = f_start; f < f_stop; f++)
-		this->_tdemodulate_wg(H_N  + f * this->N_fil,
-		                      Y_N1 + f * this->N_fil,
-		                      Y_N2 + f * this->N,
-		                      Y_N3 + f * this->N,
-		                      f);
+	(*this)[mdm::sck::tdemodulate_wg::H_N].bind(H_N);
+	(*this)[mdm::sck::tdemodulate_wg::Y_N1].bind(Y_N1);
+	(*this)[mdm::sck::tdemodulate_wg::Y_N2].bind(Y_N2);
+	(*this)[mdm::sck::tdemodulate_wg::Y_N3].bind(Y_N3);
+	(*this)[mdm::tsk::tdemodulate_wg].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>

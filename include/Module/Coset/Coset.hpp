@@ -76,9 +76,9 @@ public:
 	 */
 	template <class AB = std::allocator<B>, class AD = std::allocator<D>>
 	void apply(const std::vector<B,AB>& ref, const std::vector<D,AD> &in, std::vector<D,AD> &out,
-	           const int frame_id = -1);
+	           const int frame_id = -1, const bool managed_memory = true);
 
-	virtual void apply(const B *ref, const D *in, D *out, const int frame_id = -1);
+	void apply(const B *ref, const D *in, D *out, const int frame_id = -1, const bool managed_memory = true);
 
 protected:
 	virtual void _apply(const B *ref, const D *in, D *out, const int frame_id);

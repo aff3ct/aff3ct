@@ -25,19 +25,20 @@ namespace module
 template <typename R = float>
 class Channel_user : public Channel<R>
 {
+protected:
+	const bool add_users;
+
 public:
 	Channel_user(const int N, const std::string &filename, const bool add_users = false);
 	virtual ~Channel_user() = default;
 	virtual Channel_user<R>* clone() const;
-
-	virtual void add_noise(const R *X_N, R *Y_N, const int frame_id = -1);  using Channel<R>::add_noise;
 
 	static void read_noise_file(const std::string &filename, const int N, std::vector<std::vector<R>>& noise_buffer);
 	static void read_as_text   (const std::string &filename, const int N, std::vector<std::vector<R>>& noise_buffer);
 	static void read_as_binary (const std::string &filename, const int N, std::vector<std::vector<R>>& noise_buffer);
 
 protected:
-	const bool add_users;
+	virtual void _add_noise(const R *X_N, R *Y_N, const int frame_id);
 
 	virtual void set_noise(const int frame_id);
 

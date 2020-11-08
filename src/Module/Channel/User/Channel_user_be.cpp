@@ -27,13 +27,6 @@ Channel_user_be<R>* Channel_user_be<R>
 
 template <typename R>
 void Channel_user_be<R>
-::add_noise(const R *X_N, R *Y_N, const int frame_id)
-{
-	Channel<R>::add_noise(X_N, Y_N, frame_id);
-}
-
-template <typename R>
-void Channel_user_be<R>
 ::_add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
 	const mipp::Reg<R> r_erased = tools::unknown_symbol_val<R>();

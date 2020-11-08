@@ -23,38 +23,26 @@ Channel_user<R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "'filename' should not be empty.");
 
 	read_noise_file(filename, this->N, this->noise_buff);
+
+	if (add_users)
+		this->set_single_wave(true);
 }
 
 template <typename R>
 void Channel_user<R>
-::add_noise(const R *X_N, R *Y_N, const int frame_id)
+::_add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
-	if (this->add_users && this->n_frames > 1)
+	if (this->add_users && this->n_frames > 1) // n_frames_per_wave = n_frames
 	{
-		if (frame_id != -1)
-		{
-			std::stringstream message;
-			message << "'frame_id' has to be equal to -1 ('frame_id' = " << frame_id << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
 		this->set_noise(0);
-
 		std::copy(this->noised_data.data(), this->noised_data.data() + this->N, Y_N);
 	}
-	else
+	else // n_frames_per_wave = 1
 	{
-		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start + 1;
-
-		for (auto f = f_start; f < f_stop; f++)
-		{
-			this->set_noise(f);
-
-			std::copy(this->noised_data.data() +  f      * this->N,
-			          this->noised_data.data() + (f + 1) * this->N,
-			          Y_N + f * this->N);
-		}
+		this->set_noise(frame_id);
+		std::copy(this->noised_data.data() + (frame_id + 0) * this->N,
+		          this->noised_data.data() + (frame_id + 1) * this->N,
+		          Y_N);
 	}
 }
 

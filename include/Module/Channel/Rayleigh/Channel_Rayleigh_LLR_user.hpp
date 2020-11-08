@@ -52,11 +52,11 @@ public:
 
 	void set_seed(const int seed);
 
-	virtual void add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id = -1); using Channel<R>::add_noise_wg;
-
 	virtual void set_n_frames(const int n_frames);
 
 protected:
+	virtual void _add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id);
+
 	virtual void deep_copy(const Channel_Rayleigh_LLR_user<R>& m);
 
 	void read_gains(const std::string& gains_filename);

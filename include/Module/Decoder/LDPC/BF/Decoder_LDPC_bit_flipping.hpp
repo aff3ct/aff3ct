@@ -30,7 +30,6 @@ protected:
 
 	const std::vector<unsigned> &info_bits_pos;
 
-
 	std::vector<unsigned char> n_variables_per_parity;
 	std::vector<unsigned char> n_parities_per_variable;
 	std::vector<unsigned int > transpose;

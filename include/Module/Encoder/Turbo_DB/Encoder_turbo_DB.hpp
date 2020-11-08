@@ -20,7 +20,7 @@ template <typename B = int>
 class Encoder_turbo_DB : public Encoder<B>
 {
 protected:
-	Interleaver<B> &pi; // the interleaver
+	std::shared_ptr<Interleaver<B>> pi; // the interleaver
 
 	std::shared_ptr<Encoder_RSC_DB<B>> enco_n; // encoder natural order
 	std::shared_ptr<Encoder_RSC_DB<B>> enco_i; // encoder interleaved order
@@ -35,7 +35,7 @@ protected:
 
 public:
 	Encoder_turbo_DB(const int& K, const int& N, const Encoder_RSC_DB<B> &enco_n, const Encoder_RSC_DB<B> &enco_i,
-	                 Interleaver<B> &pi);
+	                 const Interleaver<B> &pi);
 	virtual ~Encoder_turbo_DB() = default;
 
 	virtual Encoder_turbo_DB<B>* clone() const;

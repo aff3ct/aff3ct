@@ -27,14 +27,14 @@ protected:
 	virtual ~Decoder_RSC_BCJR_inter_intra() = default;
 	virtual Decoder_RSC_BCJR_inter_intra<B,R>* clone() const;
 
-public:
-	int decode_siso(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext,
-	                const int n_frames = -1);
+// public:
+// 	int decode_siso(const mipp::vector<R> &sys, const mipp::vector<R> &par, mipp::vector<R> &ext,
+// 	                const int n_frames = -1);
 
 protected:
 	void _load (const R *Y_N);
 	void _store(      B *V_K) const;
-	int  _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);
+	int  _decode_siso_alt(const R *sys, const R *par, R *ext, const int frame_id);
 
 	virtual void compute_gamma   (const R *sys, const R *par) = 0;
 	virtual void compute_alpha   (                          ) = 0;

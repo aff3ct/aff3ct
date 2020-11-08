@@ -68,17 +68,17 @@ void Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 bool Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
-::crc_check(mipp::vector<B> &s)
+::crc_check(mipp::vector<B> &s, const int frame_id)
 {
 	tools::fb_extract(this->polar_patterns.get_leaves_pattern_types(), s.data(), U_test.data());
 
 	// check the CRC
-	return crc->check(U_test, this->get_simd_inter_frame_level());
+	return crc->check(U_test, frame_id);
 }
 
 template <typename B, typename R, class API_polar>
 int Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
-::select_best_path()
+::select_best_path(const int frame_id)
 {
 	std::sort(this->paths.begin(), this->paths.begin() + this->n_active_paths,
 		[this](int x, int y){
@@ -86,7 +86,7 @@ int Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>
 		});
 
 	auto i = 0;
-	while (i < this->n_active_paths && !crc_check(this->s[this->paths[i]])) i++;
+	while (i < this->n_active_paths && !crc_check(this->s[this->paths[i]], frame_id)) i++;
 
 	this->best_path = (i == this->n_active_paths) ? this->paths[0] : this->paths[i];
 	fast_store = i != this->n_active_paths;

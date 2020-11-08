@@ -40,7 +40,7 @@ void Simulation_legacy
 							t->set_debug_frame_max((uint32_t)params.debug_frame_max);
 					}
 
-					if (!t->is_stats() && !t->is_debug())
+					// if (!t->is_stats() && !t->is_debug())
 						t->set_fast(true);
 				}
 }

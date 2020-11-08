@@ -60,15 +60,17 @@ public:
 	inline std::type_index get_datatype_out() const;
 	inline size_t get_n_calls    () const;
 
-	template <class A = std::allocator<int8_t>>
-	bool stop(const std::vector<int8_t,A>& in, const int frame_id = -1);
+	// template <class A = std::allocator<int8_t>>
+	// bool stop(const std::vector<int8_t,A>& in, const int frame_id = -1, const bool managed_memory = true);
 
-	virtual bool stop(const int8_t *in, const int frame_id = -1);
+	// virtual bool stop(const int8_t *in, const int frame_id = -1, const bool managed_memory = true);
 
 	virtual void reset();
 
 protected:
 	virtual bool _stop(const int8_t *in, const int frame_id);
+
+	virtual bool __stop(const int8_t *in, const int frame_id);
 
 private:
 	static size_t compute_bytes(const size_t n_elmts, const std::type_index type);

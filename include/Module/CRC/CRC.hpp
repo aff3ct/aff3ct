@@ -20,13 +20,14 @@ namespace module
 {
 	namespace crc
 	{
-		enum class tsk : size_t { build, extract, check, SIZE };
+		enum class tsk : size_t { build, extract, check, check_packed, SIZE };
 
 		namespace sck
 		{
-			enum class build   : size_t { U_K1, U_K2, status };
-			enum class extract : size_t { V_K1, V_K2, status };
-			enum class check   : size_t { V_K       , status };
+			enum class build        : size_t { U_K1, U_K2, status };
+			enum class extract      : size_t { V_K1, V_K2, status };
+			enum class check        : size_t { V_K       , status };
+			enum class check_packed : size_t { V_K       , status };
 		}
 	}
 
@@ -81,14 +82,16 @@ public:
 	 *        vector).
 	 */
 	template <class A = std::allocator<B>>
-	void build(const std::vector<B,A>& U_K1, std::vector<B,A>& U_K2, const int frame_id = -1);
+	void build(const std::vector<B,A>& U_K1, std::vector<B,A>& U_K2, const int frame_id = -1,
+	           const bool managed_memory = true);
 
-	virtual void build(const B *U_K1, B *U_K2, const int frame_id = -1);
+	void build(const B *U_K1, B *U_K2, const int frame_id = -1, const bool managed_memory = true);
 
 	template <class A = std::allocator<B>>
-	void extract(const std::vector<B,A>& V_K1, std::vector<B,A>& V_K2, const int frame_id = -1);
+	void extract(const std::vector<B,A>& V_K1, std::vector<B,A>& V_K2, const int frame_id = -1,
+	             const bool managed_memory = true);
 
-	virtual void extract(const B *V_K1, B *V_K2, const int frame_id = -1);
+	void extract(const B *V_K1, B *V_K2, const int frame_id = -1, const bool managed_memory = true);
 
 	/*!
 	 * \brief Checks if the CRC is verified or not.
@@ -99,10 +102,13 @@ public:
 	 *
 	 * \return true if the CRC is verified, false otherwise.
 	 */
+	// template <class A = std::allocator<B>>
+	// bool check(const std::vector<B,A>& V_K, const int n_frames = -1, const int frame_id = -1);
 	template <class A = std::allocator<B>>
-	bool check(const std::vector<B,A>& V_K, const int n_frames = -1, const int frame_id = -1);
+	bool check(const std::vector<B,A>& V_K, const int frame_id = -1, const bool managed_memory = true);
 
-	virtual bool check(const B *V_K, const int n_frames = -1, const int frame_id = -1);
+	// virtual bool check(const B *V_K, const int n_frames = -1, const int frame_id = -1);
+	bool check(const B *V_K, const int frame_id = -1, const bool managed_memory = true);
 
 	/*!
 	 * \brief Checks if the CRC is verified or not (works on packed bits).
@@ -113,10 +119,13 @@ public:
 	 *
 	 * \return true if the CRC is verified, false otherwise.
 	 */
+	// template <class A = std::allocator<B>>
+	// bool check_packed(const std::vector<B,A>& V_K, const int n_frames = -1, const int frame_id = -1);
 	template <class A = std::allocator<B>>
-	bool check_packed(const std::vector<B,A>& V_K, const int n_frames = -1, const int frame_id = -1);
+	bool check_packed(const std::vector<B,A>& V_K, const int frame_id = -1, const bool managed_memory = true);
 
-	bool check_packed(const B *V_K, const int n_frames = -1, const int frame_id = -1);
+	// bool check_packed(const B *V_K, const int n_frames = -1, const int frame_id = -1);
+	bool check_packed(const B *V_K, const int frame_id = -1, const bool managed_memory = true);
 
 protected:
 	virtual void _build(const B *U_K1, B *U_K2, const int frame_id);

@@ -47,7 +47,7 @@ void Router_CRC<I,O>
 
 template <typename I, typename O>
 size_t Router_CRC<I,O>
-::_route(const int8_t *in, const int frame_id)
+::__route(const int8_t *in, const int frame_id)
 {
 	return this->crc->check((const I*)in) ? 1 : 0;
 }

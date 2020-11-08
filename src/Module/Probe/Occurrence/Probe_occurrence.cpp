@@ -11,16 +11,14 @@ Probe_occurrence<T>
 {
 	const std::string name = "Probe_occurrence<" + col_name + ">";
 	this->set_name(name);
+	this->set_single_wave(true);
 }
 
 template <typename T>
 void Probe_occurrence<T>
-::probe(const T *in, const int frame_id)
+::_probe(const T *in, const int frame_id)
 {
-	const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-	const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
-
-	for (auto f = f_start; f < f_stop; f++)
+	for (auto f = 0; f < this->get_n_frames(); f++)
 	{
 		this->reporter.probe(this->col_name, (void*)&occurrences, frame_id);
 		this->occurrences++;

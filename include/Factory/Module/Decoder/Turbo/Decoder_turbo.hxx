@@ -214,7 +214,7 @@ template <typename B, typename Q>
 module::Decoder_turbo<B,Q>* Decoder_turbo<D1,D2>
 ::build(const module::Decoder_SISO<B,Q> &siso_n,
         const module::Decoder_SISO<B,Q> &siso_i,
-              module::Interleaver<Q>    &itl,
+        const module::Interleaver<Q>    &itl,
               module::Encoder<B>        *encoder) const
 {
 	if (this->type == "TURBO")

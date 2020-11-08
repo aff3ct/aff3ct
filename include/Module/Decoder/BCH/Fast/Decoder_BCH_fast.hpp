@@ -37,11 +37,12 @@ protected:
 	const std::vector<B>& alpha_to; // log table of GF(2**m)
 	const std::vector<B>& index_of; // antilog table of GF(2**m)
 
-
 public:
 	Decoder_BCH_fast(const int& K, const int& N, const tools::BCH_polynomial_generator<B> &GF);
 	virtual ~Decoder_BCH_fast() = default;
 	virtual Decoder_BCH_fast<B,R>* clone() const;
+
+	virtual void set_n_frames(const int n_frames);
 
 protected:
 	virtual int  _decode        (                      const int frame_id);

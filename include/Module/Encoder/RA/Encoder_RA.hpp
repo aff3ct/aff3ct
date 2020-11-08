@@ -6,6 +6,7 @@
 #define ENCODER_RA_HPP_
 
 #include <vector>
+#include <memory>
 
 #include "Module/Interleaver/Interleaver.hpp"
 #include "Module/Encoder/Encoder.hpp"
@@ -21,10 +22,10 @@ protected:
 	const int rep_count; // number of repetitions
 	std::vector<B> U, tmp_X_N;
 
-	Interleaver<B>& interleaver;
+	std::shared_ptr<Interleaver<B>> interleaver;
 
 public:
-	Encoder_RA(const int& K, const int& N, Interleaver<B>& interleaver);
+	Encoder_RA(const int& K, const int& N, const Interleaver<B>& interleaver);
 
 	virtual ~Encoder_RA() = default;
 

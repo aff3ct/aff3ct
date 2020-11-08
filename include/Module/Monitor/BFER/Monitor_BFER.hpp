@@ -75,7 +75,8 @@ public:
 	template <class A = std::allocator<B>>
 	int check_errors(const std::vector<B,A>& U,
 	                 const std::vector<B,A>& V,
-	                 const int frame_id = -1);
+	                 const int frame_id = -1,
+	                 const bool managed_memory = true);
 
 	template <class A = std::allocator<B>>
 	int check_errors2(const std::vector<B,A    >& U,
@@ -85,20 +86,23 @@ public:
 	                        std::vector<int64_t>& FE,
 	                        std::vector<float  >& BER,
 	                        std::vector<float  >& FER,
-	                  const int frame_id = -1);
+	                  const int frame_id = -1,
+	                  const bool managed_memory = true);
 
-	virtual int check_errors(const B *U,
-	                         const B *V,
-	                         const int frame_id = -1);
+	int check_errors(const B *U,
+	                 const B *V,
+	                 const int frame_id = -1,
+	                 const bool managed_memory = true);
 
-	virtual int check_errors2(const B       *U,
-	                          const B       *V,
-	                                int64_t *FRA,
-	                                int32_t *BE,
-	                                int32_t *FE,
-	                                float   *BER,
-	                                float   *FER,
-	                          const int frame_id = -1);
+	int check_errors2(const B       *U,
+	                  const B       *V,
+	                        int64_t *FRA,
+	                        int32_t *BE,
+	                        int32_t *FE,
+	                        float   *BER,
+	                        float   *FER,
+	                  const int frame_id = -1,
+	                  const bool managed_memory = true);
 
 	bool    fe_limit_achieved() const;
 	bool frame_limit_achieved() const;
@@ -144,6 +148,17 @@ protected:
 	const Attributes& get_attributes() const;
 
 	virtual int _check_errors(const B *U, const B *V, const int frame_id);
+
+	virtual int _check_errors2(const B       *U,
+	                           const B       *V,
+	                                 int64_t *FRA,
+	                                 int32_t *BE,
+	                                 int32_t *FE,
+	                                 float   *BER,
+	                                 float   *FER,
+	                           const int frame_id);
+
+	virtual int __check_errors(const B *U, const B *V, const int frame_id);
 };
 }
 }

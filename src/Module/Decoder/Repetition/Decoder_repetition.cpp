@@ -12,7 +12,7 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_repetition<B,R>
 ::Decoder_repetition(const int& K, const int& N, const bool buffered_encoding)
-: Decoder_SISO<B,R>(K, N, 1),
+: Decoder_SISO<B,R>(K, N),
   rep_count((N/K) -1), buffered_encoding(buffered_encoding), sys(K), par(K * rep_count), ext(K)
 {
 	const std::string name = "Decoder_repetition";
@@ -66,7 +66,7 @@ int Decoder_repetition<B,R>
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
-	auto status = this->_decode_siso(sys.data(), par.data(), ext.data(), frame_id);
+	auto status = this->_decode_siso_alt(sys.data(), par.data(), ext.data(), frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE

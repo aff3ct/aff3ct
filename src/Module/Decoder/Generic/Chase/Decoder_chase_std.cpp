@@ -13,7 +13,7 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_chase_std<B,R>
 ::Decoder_chase_std(const int K, const int N, const Encoder<B> &encoder, const uint32_t max_flips, const bool hamming)
-: Decoder_SIHO<B,R>(K, N, 1),
+: Decoder_SIHO<B,R>(K, N),
   encoder(encoder.clone()),
   best_X_N(N),
   less_reliable_llrs(N),

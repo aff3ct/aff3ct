@@ -29,9 +29,10 @@ public:
 
 	virtual std::type_index get_datatype() const;
 
-	virtual void probe(const T *in, const int frame_id);
-
 	virtual void reset();
+
+protected:
+	virtual void _probe(const T *in, const int frame_id);
 };
 }
 }

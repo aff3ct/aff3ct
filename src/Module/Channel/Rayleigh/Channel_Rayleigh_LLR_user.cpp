@@ -46,6 +46,8 @@ Channel_Rayleigh_LLR_user<R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Argument 'gain_occurrences' must be strictly positive.");
 
 	read_gains(gains_filename);
+
+	this->set_single_wave(true);
 }
 
 template <typename R>
@@ -104,6 +106,8 @@ Channel_Rayleigh_LLR_user<R>
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Argument 'gain_occurrences' must be strictly positive.");
 
 	read_gains(gains_filename);
+
+	this->set_single_wave(true);
 }
 
 template <typename R>
@@ -161,42 +165,35 @@ void Channel_Rayleigh_LLR_user<R>
 
 template <typename R>
 void Channel_Rayleigh_LLR_user<R>
-::add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id)
+::_add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id)
 {
-	this->check_noise();
-
-	if (frame_id != -1)
+	if (add_users && this->n_frames > 1)
 	{
-		std::stringstream message;
-		message << "'frame_id' has to be equal to -1 ('frame_id' = " << frame_id << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	// get all the needed gains from the stock
-	for (unsigned i = 0; i < gains.size(); ++i)
-	{
-		gains[i] = gains_stock[gain_index];
-
-		current_gain_occur++;
-		if(current_gain_occur >= gain_occur)
+		// get all the needed gains from the stock
+		for (unsigned i = 0; i < gains.size(); ++i)
 		{
-			current_gain_occur = 0;
-			gain_index++;
+			gains[i] = gains_stock[gain_index];
 
-			if(gain_index >= gains_stock.size())
-				gain_index = 0;
+			current_gain_occur++;
+			if(current_gain_occur >= gain_occur)
+			{
+				current_gain_occur = 0;
+				gain_index++;
+
+				if(gain_index >= gains_stock.size())
+					gain_index = 0;
+			}
 		}
-	}
 
-	// generate the noise
-	gaussian_generator->generate(this->noised_data, (R)this->noise->get_value()); // trow if noise is not SIGMA type
+		// generate the noise
+		gaussian_generator->generate(this->noised_data, (R)this->noise->get_value()); // trow if noise is not SIGMA type
 
-	// use the noise and the gain to modify the signal
-	for (auto i = 0; i < this->N * this->n_frames; i++)
-	{
-		H_N[i] = this->gains[i];
-
-		Y_N[i] = X_N[i] * H_N[i] + this->noised_data[i];
+		// use the noise and the gain to modify the signal
+		for (auto i = 0; i < this->N * this->n_frames; i++)
+		{
+			H_N[i] = this->gains[i];
+			Y_N[i] = X_N[i] * H_N[i] + this->noised_data[i];
+		}
 	}
 }
 

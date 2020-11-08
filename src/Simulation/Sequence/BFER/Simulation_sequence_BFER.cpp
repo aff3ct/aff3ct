@@ -144,7 +144,7 @@ void Simulation_sequence_BFER<B,R>
 				if (params.debug_frame_max)
 					tsk->set_debug_frame_max((uint32_t)this->params.debug_frame_max);
 			}
-			if (!tsk->is_stats() && !tsk->is_debug())
+			// if (!tsk->is_stats() && !tsk->is_debug())
 				tsk->set_fast(true);
 		}
 }

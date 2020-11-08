@@ -127,9 +127,10 @@ public:
 	 * \param X_N2: a vector of modulated bits or symbols.
 	 */
 	template <class AB = std::allocator<B>, class AR = std::allocator<R>>
-	void modulate(const std::vector<B,AB>& X_N1, std::vector<R,AR>& X_N2, const int frame_id = -1);
+	void modulate(const std::vector<B,AB>& X_N1, std::vector<R,AR>& X_N2, const int frame_id = -1,
+	              const bool managed_memory = true);
 
-	virtual void modulate(const B *X_N1, R *X_N2, const int frame_id = -1);
+	void modulate(const B *X_N1, R *X_N2, const int frame_id = -1, const bool managed_memory = true);
 
 	/*!
 	 * \brief soft Modulates a vector of LLRs.
@@ -138,9 +139,10 @@ public:
 	 * \param X_N2: a vector of soft symbols.
 	 */
 	template <class AQ = std::allocator<Q>, class AR = std::allocator<R>>
-	void tmodulate(const std::vector<Q,AQ>& X_N1, std::vector<R,AR>& X_N2, const int frame_id = -1);
+	void tmodulate(const std::vector<Q,AQ>& X_N1, std::vector<R,AR>& X_N2, const int frame_id = -1,
+	               const bool managed_memory = true);
 
-	virtual void tmodulate(const Q *X_N1, R *X_N2, const int frame_id = -1);
+	void tmodulate(const Q *X_N1, R *X_N2, const int frame_id = -1, const bool managed_memory = true);
 
 	/*!
 	 * \brief Filters a vector of noised and modulated bits/symbols.
@@ -151,9 +153,10 @@ public:
 	 * \param Y_N2: a filtered vector.
 	 */
 	template <class A = std::allocator<R>>
-	void filter(const std::vector<R,A>& Y_N1, std::vector<R,A>& Y_N2, const int frame_id = -1);
+	void filter(const std::vector<R,A>& Y_N1, std::vector<R,A>& Y_N2, const int frame_id = -1,
+	            const bool managed_memory = true);
 
-	virtual void filter(const R *Y_N1, R *Y_N2, const int frame_id = -1);
+	void filter(const R *Y_N1, R *Y_N2, const int frame_id = -1, const bool managed_memory = true);
 
 	/*!
 	 * \brief Demodulates a vector of noised and modulated bits/symbols (after the filtering process if required).
@@ -162,9 +165,10 @@ public:
 	 * \param Y_N2: a demodulated vector.
 	 */
 	template <class A = std::allocator<Q>>
-	void demodulate(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame_id = -1);
+	void demodulate(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame_id = -1,
+	                const bool managed_memory = true);
 
-	virtual void demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id = -1);
+	void demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id = -1, const bool managed_memory = true);
 
 	/*!
 	 * \brief Demodulates a vector of noised and modulated bits/symbols (after the filtering process if required).
@@ -175,9 +179,9 @@ public:
 	 */
 	template <class AQ = std::allocator<Q>, class AR = std::allocator<R>>
 	void demodulate_wg(const std::vector<R,AR>& H_N, const std::vector<Q,AQ>& Y_N1, std::vector<Q,AQ>& Y_N2,
-	                   const int frame_id = -1);
+	                   const int frame_id = -1, const bool managed_memory = true);
 
-	virtual void demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id = -1);
+	void demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id = -1, const bool managed_memory = true);
 
 	/*!
 	 * \brief Demodulates a vector of noised and modulated bits/symbols (after the filtering process if required).
@@ -192,9 +196,9 @@ public:
 	 */
 	template <class A = std::allocator<Q>>
 	void tdemodulate(const std::vector<Q,A>& Y_N1, const std::vector<Q,A>& Y_N2, std::vector<Q,A>& Y_N3,
-	                 const int frame_id = -1);
+	                 const int frame_id = -1, const bool managed_memory = true);
 
-	virtual void tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id = -1);
+	void tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id = -1, const bool managed_memory = true);
 
 	/*!
 	 * \brief Demodulates a vector of noised and modulated bits/symbols (after the filtering process if required).
@@ -211,9 +215,10 @@ public:
 	template <class AQ = std::allocator<Q>, class AR = std::allocator<R>>
 	void tdemodulate_wg(const std::vector<R,AR>& H_N,  const std::vector<Q,AQ>& Y_N1,
 	                    const std::vector<Q,AQ>& Y_N2,       std::vector<Q,AQ>& Y_N3,
-	                    const int frame_id = -1);
+	                    const int frame_id = -1, const bool managed_memory = true);
 
-	virtual void tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id = -1);
+	void tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id = -1,
+	                    const bool managed_memory = true);
 
 	/*!
 	 * \brief Gets the vector size after the modulation (considering a given frame size).

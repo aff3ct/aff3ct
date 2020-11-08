@@ -30,8 +30,7 @@ protected:
 
 	Decoder_RSC_BCJR(const int K,
 	                 const std::vector<std::vector<int>> &trellis,
-	                 const bool buffered_encoding = true,
-	                 const int simd_inter_frame_level = 1);
+	                 const bool buffered_encoding = true);
 	virtual ~Decoder_RSC_BCJR() = default;
 	virtual Decoder_RSC_BCJR<B,R>* clone() const;
 
@@ -39,6 +38,8 @@ public:
 	virtual int tail_length() const;
 
 protected:
+	virtual void set_n_frames_per_wave(const int n_frames_per_wave);
+
 	virtual void _load       (const R *Y_N                            );
 	        int  _decode_siho(const R *Y_N, B *V_K, const int frame_id);
 	virtual void _store      (              B *V_K                    ) const;

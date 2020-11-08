@@ -21,20 +21,21 @@ Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
                                                 const R offset,
                                                 const bool enable_syndrome,
                                                 const int syndrome_depth)
-: Decoder_SISO<B,R>(K, N, mipp::N<R>()                                                                 ),
+: Decoder_SISO<B,R>(K, N                                                                               ),
   Decoder_LDPC_BP  (K, N, n_ite, _H, enable_syndrome, syndrome_depth                                   ),
   normalize_factor (normalize_factor                                                                   ),
   offset           (offset                                                                             ),
   contributions    (this->H.get_cols_max_degree()                                                      ),
   saturation       ((R)((1 << ((sizeof(R) * 8 -2) - (int)std::log2(this->H.get_rows_max_degree()))) -1)),
   info_bits_pos    (info_bits_pos                                                                      ),
-  var_nodes        (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(N)                                   ),
-  branches         (this->n_dec_waves, mipp::vector<mipp::Reg<R>>(this->H.get_n_connections())         ),
+  var_nodes        (this->get_n_waves(), mipp::vector<mipp::Reg<R>>(N)                                 ),
+  branches         (this->get_n_waves(), mipp::vector<mipp::Reg<R>>(this->H.get_n_connections())       ),
   Y_N_reorderered  (N                                                                                  ),
   V_reorderered    (N                                                                                  )
 {
 	const std::string name = "Decoder_LDPC_BP_horizontal_layered_ONMS_inter";
 	this->set_name(name);
+	this->set_n_frames_per_wave(mipp::N<R>());
 
 	tools::check_LUT(info_bits_pos, "info_bits_pos", (size_t)K);
 
@@ -64,7 +65,7 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 ::_reset(const int frame_id)
 {
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 	const auto zero = mipp::Reg<R>((R)0);
 	std::fill(this->branches [cur_wave].begin(), this->branches [cur_wave].end(), zero);
 	std::fill(this->var_nodes[cur_wave].begin(), this->var_nodes[cur_wave].end(), zero);
@@ -74,7 +75,7 @@ template <typename B, typename R>
 void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 ::_load(const R *Y_N, const int frame_id)
 {
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 
 	std::vector<const R*> frames(mipp::N<R>());
 	for (auto f = 0; f < mipp::N<R>(); f++) frames[f] = Y_N + f * this->N;
@@ -118,7 +119,7 @@ int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 	}
 
 	// prepare for next round by processing extrinsic information
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 	for (auto v = 0; v < this->N; v++)
 		this->var_nodes[cur_wave][v] -= Y_N_reorderered[v];
 
@@ -167,7 +168,7 @@ int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 	const auto zero = mipp::Reg<R>((R)0);
 	for (auto i = 0; i < this->K; i++)
 	{
@@ -225,7 +226,7 @@ int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 	const auto zero = mipp::Reg<R>((R)0);
 	for (auto v = 0; v < this->N; v++)
 		V_reorderered[v] = mipp::cast<R,B>(this->var_nodes[cur_wave][v]) >> (sizeof(B) * 8 - 1);
@@ -247,7 +248,7 @@ template <int F>
 int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 ::_decode(const int frame_id)
 {
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 
 	auto cur_syndrome_depth = 0;
 	int packed_synd = 0;
@@ -358,7 +359,7 @@ template <typename B, typename R>
 bool Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 ::_check_syndrome(const int frame_id)
 {
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 	const auto zero = mipp::Msk<mipp::N<B>()>(false);
 	auto syndrome = zero;
 
@@ -386,7 +387,7 @@ template <typename B, typename R>
 int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 ::_check_syndrome_status(const int frame_id)
 {
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 	const auto zero = mipp::Msk<mipp::N<B>()>(false);
 	auto syndrome = zero;
 
@@ -433,14 +434,10 @@ void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 		Decoder_SISO<B,R>::set_n_frames(n_frames);
 
 		const auto vec_size = this->var_nodes[0].size();
-		const auto old_var_nodes_size = this->var_nodes.size();
-		const auto new_var_nodes_size = (old_var_nodes_size / old_n_frames) * n_frames;
-		this->var_nodes.resize(new_var_nodes_size, mipp::vector<mipp::Reg<R>>(vec_size));
+		this->var_nodes.resize(this->get_n_waves(), mipp::vector<mipp::Reg<R>>(vec_size));
 
 		const auto vec_size2 = this->branches[0].size();
-		const auto old_branches_size = this->branches.size();
-		const auto new_branches_size = (old_branches_size / old_n_frames) * n_frames;
-		this->branches.resize(new_branches_size, mipp::vector<mipp::Reg<R>>(vec_size2));
+		this->branches.resize(this->get_n_waves(), mipp::vector<mipp::Reg<R>>(vec_size2));
 	}
 }
 

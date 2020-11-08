@@ -12,9 +12,9 @@ using namespace aff3ct::module;
 template <typename B>
 Encoder_turbo_DB<B>
 ::Encoder_turbo_DB(const int& K, const int& N, const Encoder_RSC_DB<B> &enco_n, const Encoder_RSC_DB<B> &enco_i,
-                   Interleaver<B> &pi)
+                   const Interleaver<B> &pi)
 : Encoder<B>(K, N),
-  pi(pi),
+  pi(pi.clone()),
   enco_n(enco_n.clone()),
   enco_i(enco_i.clone()),
   U_K_cpy(K * enco_n.get_n_frames()),
@@ -98,14 +98,6 @@ template <typename B>
 void Encoder_turbo_DB<B>
 ::_encode(const B *U_K, B *X_N, const int frame_id)
 {
-	if (this->pi.get_n_frames() != this->get_n_frames())
-	{
-		std::stringstream message;
-		message << "'pi.get_n_frames()' has to be equal to 'n_frames' ('pi.get_n_frames()' = "
-		        << this->pi.get_n_frames() << ", 'n_frames' = " << this->get_n_frames() << ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	std::copy(U_K, U_K + this->K, U_K_cpy.begin() + frame_id * this->K);
 
 	for (auto i = 0; i < this->K; i+=4)
@@ -113,7 +105,7 @@ void Encoder_turbo_DB<B>
 
 	for (auto i = 0; i < this->K; i += 2)
 	{
-		const auto l = pi.get_core().get_lut_inv()[i >> 1];
+		const auto l = pi->get_core().get_lut_inv()[i >> 1];
 		U_K_i[frame_id * this->K + i +0] = U_K_cpy[frame_id * this->K + l * 2 +0];
 		U_K_i[frame_id * this->K + i +1] = U_K_cpy[frame_id * this->K + l * 2 +1];
 	}
@@ -168,7 +160,7 @@ bool Encoder_turbo_DB<B>
 
 	for (auto i = 0; i < this->K; i += 2)
 	{
-		const auto l = pi.get_core().get_lut_inv()[i >> 1];
+		const auto l = pi->get_core().get_lut_inv()[i >> 1];
 		U_K_i[i +0] = U_K_n[l * 2 +0];
 		U_K_i[i +1] = U_K_n[l * 2 +1];
 	}
@@ -210,7 +202,7 @@ void Encoder_turbo_DB<B>
 
 		this->enco_n->set_n_frames(n_frames);
 		this->enco_i->set_n_frames(n_frames);
-		this->pi.set_n_frames(n_frames);
+		this->pi    ->set_n_frames(n_frames);
 	}
 }
 

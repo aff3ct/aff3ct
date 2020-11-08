@@ -42,9 +42,9 @@ public:
 
 	void set_seed(const int seed);
 
+protected:
 	void _add_noise(const R *X_N, R *Y_N, const int frame_id = -1);
 
-protected:
 	virtual void deep_copy(const Channel_optical<R>& m);
 
 	virtual void check_noise();

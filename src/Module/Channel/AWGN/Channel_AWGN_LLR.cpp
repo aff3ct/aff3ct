@@ -27,6 +27,9 @@ Channel_AWGN_LLR<R>
 {
 	const std::string name = "Channel_AWGN_LLR";
 	this->set_name(name);
+
+	if (add_users)
+		this->set_single_wave(true);
 }
 
 template <typename R>
@@ -69,6 +72,9 @@ Channel_AWGN_LLR<R>
 {
 	const std::string name = "Channel_AWGN_LLR";
 	this->set_name(name);
+
+	if (add_users)
+		this->set_single_wave(true);
 }
 
 template <typename R>
@@ -97,19 +103,10 @@ void Channel_AWGN_LLR<R>
 
 template <typename R>
 void Channel_AWGN_LLR<R>
-::add_noise(const R *X_N, R *Y_N, const int frame_id)
+::_add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
-	this->check_noise();
-
-	if (add_users && this->n_frames > 1)
+	if (add_users && this->n_frames > 1) // n_frames_per_wave = n_frames
 	{
-		if (frame_id != -1)
-		{
-			std::stringstream message;
-			message << "'frame_id' has to be equal to -1 ('frame_id' = " << frame_id << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
 		gaussian_generator->generate(this->noised_data.data(), this->N, (R)this->noise->get_value());
 
 		std::fill(Y_N, Y_N + this->N, (R)0);
@@ -120,19 +117,12 @@ void Channel_AWGN_LLR<R>
 		for (auto i = 0; i < this->N; i++)
 			Y_N[i] += this->noised_data[i];
 	}
-	else
+	else // n_frames_per_wave = 1
 	{
-		const auto f_start = (frame_id < 0) ? 0 : frame_id % this->n_frames;
-		const auto f_stop  = (frame_id < 0) ? this->n_frames : f_start +1;
+		gaussian_generator->generate(this->noised_data.data() + frame_id * this->N, this->N, (R)this->noise->get_value());
 
-		if (frame_id < 0)
-			gaussian_generator->generate(this->noised_data, (R)this->noise->get_value());
-		else
-			gaussian_generator->generate(this->noised_data.data() + f_start * this->N, this->N, (R)this->noise->get_value());
-
-		for (auto f = f_start; f < f_stop; f++)
-			for (auto n = 0; n < this->N; n++)
-				Y_N[f * this->N +n] = X_N[f * this->N +n] + this->noised_data[f * this->N +n];
+		for (auto n = 0; n < this->N; n++)
+			Y_N[n] = X_N[n] + this->noised_data[frame_id * this->N +n];
 	}
 }
 

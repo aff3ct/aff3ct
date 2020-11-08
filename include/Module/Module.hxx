@@ -42,5 +42,29 @@ int Module
 	return n_frames;
 }
 
+int Module
+::get_n_frames_per_wave() const
+{
+	return n_frames_per_wave;
+}
+
+int Module
+::get_n_waves() const
+{
+	return n_waves;
+}
+
+int Module
+::get_n_frames_per_wave_rest() const
+{
+	return this->n_frames_per_wave_rest;
+}
+
+bool Module
+::is_single_wave() const
+{
+	return single_wave;
+}
+
 }
 }

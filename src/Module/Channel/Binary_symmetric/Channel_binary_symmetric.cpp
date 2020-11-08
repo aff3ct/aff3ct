@@ -96,8 +96,6 @@ template <typename R>
 void Channel_binary_symmetric<R>
 ::_add_noise(const R *X_N, R *Y_N, const int frame_id)
 {
-	this->check_noise();
-
 	auto event_draw = (E*)(this->noised_data.data() + this->N * frame_id);
 
 	const auto event_probability = (R)this->noise->get_value();

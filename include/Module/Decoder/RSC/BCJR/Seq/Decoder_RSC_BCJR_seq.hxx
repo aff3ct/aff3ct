@@ -77,7 +77,7 @@ Decoder_RSC_BCJR_seq<B,R>
 ::Decoder_RSC_BCJR_seq(const int &K,
                        const std::vector<std::vector<int>> &trellis,
                        const bool buffered_encoding)
-: Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, 1)
+: Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding)
 {
 	const std::string name = "Decoder_RSC_BCJR_seq";
 	this->set_name(name);

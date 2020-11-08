@@ -29,6 +29,9 @@ namespace module
 template <typename B = int, typename R = float>
 class Decoder_SIHO : public Decoder_HIHO<B>
 {
+protected:
+	std::vector<R> Y_N;
+
 public:
 	inline Task&   operator[](const dec::tsk                 t);
 	inline Socket& operator[](const dec::sck::decode_hiho    s);
@@ -36,19 +39,14 @@ public:
 	inline Socket& operator[](const dec::sck::decode_siho    s);
 	inline Socket& operator[](const dec::sck::decode_siho_cw s);
 
-private:
-	std::vector<R> Y_N;
-	std::vector<B> V_KN;
-
 public:
 	/*!
 	 * \brief Constructor.
 	 *
-	 * \param K:                      number of information bits in the frame.
-	 * \param N:                      size of one frame.
-	 * \param simd_inter_frame_level: number of frames absorbed by the SIMD instructions.
+	 * \param K: number of information bits in the frame.
+	 * \param N: size of one frame.
 	 */
-	Decoder_SIHO(const int K, const int N, const int simd_inter_frame_level = 1);
+	Decoder_SIHO(const int K, const int N);
 
 	/*!
 	 * \brief Destructor.
@@ -64,18 +62,20 @@ public:
 	 * \param V_K: a decoded codeword (only the information bits).
 	 */
 	template <class AR = std::allocator<R>, class AB = std::allocator<B>>
-	int decode_siho(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_K, const int frame_id = -1);
+	int decode_siho(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_K, const int frame_id = -1,
+	                const bool managed_memory = true);
 
-	virtual int decode_siho(const R *Y_N, B *V_K, const int frame_id = -1);
+	int decode_siho(const R *Y_N, B *V_K, const int frame_id = -1, const bool managed_memory = true);
 
 	template <class AR = std::allocator<R>, class AB = std::allocator<B>>
-	int decode_siho_cw(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_N, const int frame_id = -1);
+	int decode_siho_cw(const std::vector<R,AR>& Y_N, std::vector<B,AB>& V_N, const int frame_id = -1,
+	                   const bool managed_memory = true);
 
-	virtual int decode_siho_cw(const R *Y_N, B *V_N, const int frame_id = -1);
-
-	virtual void set_n_frames(const int n_frames);
+	int decode_siho_cw(const R *Y_N, B *V_N, const int frame_id = -1, const bool managed_memory = true);
 
 protected:
+	virtual void set_n_frames_per_wave(const int n_frames_per_wave);
+
 	virtual int _decode_siho(const R *Y_N, B *V_K, const int frame_id);
 
 	virtual int _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id);

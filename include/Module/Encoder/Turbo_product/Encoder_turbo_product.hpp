@@ -19,7 +19,7 @@ template <typename B = int>
 class Encoder_turbo_product : public Encoder<B>
 {
 protected:
-	Interleaver<B> &pi; // the interleaver
+	std::shared_ptr<Interleaver<B>> pi; // the interleaver
 
 	std::shared_ptr<Encoder<B>> enc_r; // row encoder
 	std::shared_ptr<Encoder<B>> enc_c; // col encoder
@@ -29,7 +29,7 @@ protected:
 	std::vector<B> X_N_i; // internal buffer in the interleaved domain
 
 public:
-	Encoder_turbo_product(const Encoder<B> &enc_r, const Encoder<B> &enc_c, Interleaver<B> &pi);
+	Encoder_turbo_product(const Encoder<B> &enc_r, const Encoder<B> &enc_c, const Interleaver<B> &pi);
 	virtual ~Encoder_turbo_product() = default;
 	virtual Encoder_turbo_product<B>* clone() const;
 

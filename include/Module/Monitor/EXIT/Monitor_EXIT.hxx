@@ -29,41 +29,13 @@ void Monitor_EXIT<B,R>
 ::check_mutual_info(const std::vector<B,AB>& bits,
                     const std::vector<R,AR>& llrs_a,
                     const std::vector<R,AR>& llrs_e,
-                    const int frame_id)
+                    const int frame_id,
+                    const bool managed_memory)
 {
-	if ((int)bits.size() != this->size * this->n_frames)
-	{
-		std::stringstream message;
-		message << "'bits.size()' has to be equal to 'size' * 'n_frames' ('bits.size()' = " << bits.size()
-		        << ", 'size' = " << this->size << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if ((int)llrs_a.size() != this->size * this->n_frames)
-	{
-		std::stringstream message;
-		message << "'llrs_a.size()' has to be equal to 'size' * 'n_frames' ('llrs_a.size()' = " << llrs_a.size()
-		        << ", 'size' = " << this->size << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if ((int)llrs_e.size() != this->size * this->n_frames)
-	{
-		std::stringstream message;
-		message << "'llrs_e.size()' has to be equal to 'size' * 'n_frames' ('llrs_e.size()' = " << llrs_e.size()
-		        << ", 'size' = " << this->size << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	if (frame_id != -1 && frame_id >= this->n_frames)
-	{
-		std::stringstream message;
-		message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = "
-		        << frame_id << ", 'n_frames' = " << this->n_frames << ").";
-		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	return this->check_mutual_info(bits.data(), llrs_a.data(), llrs_e.data(), frame_id);
+	(*this)[mnt::sck::check_mutual_info::bits].bind(bits);
+	(*this)[mnt::sck::check_mutual_info::llrs_a].bind(llrs_a);
+	(*this)[mnt::sck::check_mutual_info::llrs_e].bind(llrs_e);
+	(*this)[mnt::tsk::check_mutual_info].exec(frame_id, managed_memory);
 }
 }
 }

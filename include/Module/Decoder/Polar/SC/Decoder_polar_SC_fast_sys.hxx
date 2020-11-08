@@ -121,11 +121,11 @@ struct Decoder_polar_SC_fast_sys_static<B,R,API_polar,0>
 template <typename B, typename R, class API_polar>
 Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits)
-: Decoder_SIHO<B,R>(K, N, API_polar::get_n_frames()),
+: Decoder_SIHO<B,R>(K, N),
   m                ((int)std::log2(N)),
-  l                (2 * N * this->simd_inter_frame_level + mipp::nElReg<R>()   ),
-  s                (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>(), 0),
-  s_bis            (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>()   ),
+  l                (2 * N * API_polar::get_n_frames() + mipp::nElReg<R>()   ),
+  s                (1 * N * API_polar::get_n_frames() + mipp::nElReg<B>(), 0),
+  s_bis            (1 * N * API_polar::get_n_frames() + mipp::nElReg<B>()   ),
   frozen_bits      (frozen_bits),
   polar_patterns   (frozen_bits,
                     {new tools::Pattern_polar_std,
@@ -141,6 +141,7 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 {
 	const std::string name = "Decoder_polar_SC_fast_sys";
 	this->set_name(name);
+	this->set_n_frames_per_wave(API_polar::get_n_frames());
 
 	static_assert(sizeof(B) == sizeof(R), "");
 
@@ -174,16 +175,17 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::Decoder_polar_SC_fast_sys(const int& K, const int& N, const std::vector<bool>& frozen_bits,
                             const std::vector<tools::Pattern_polar_i*> &polar_patterns,
                             const int idx_r0, const int idx_r1)
-: Decoder_SIHO<B,R>(K, N, API_polar::get_n_frames()),
+: Decoder_SIHO<B,R>(K, N),
   m                ((int)std::log2(N)),
-  l                (2 * N * this->simd_inter_frame_level + mipp::nElReg<R>()   ),
-  s                (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>(), 0),
-  s_bis            (1 * N * this->simd_inter_frame_level + mipp::nElReg<B>()   ),
+  l                (2 * N * API_polar::get_n_frames() + mipp::nElReg<R>()   ),
+  s                (1 * N * API_polar::get_n_frames() + mipp::nElReg<B>(), 0),
+  s_bis            (1 * N * API_polar::get_n_frames() + mipp::nElReg<B>()   ),
   frozen_bits      (frozen_bits),
   polar_patterns   (frozen_bits, polar_patterns, idx_r0, idx_r1)
 {
 	const std::string name = "Decoder_polar_SC_fast_sys";
 	this->set_name(name);
+	this->set_n_frames_per_wave(API_polar::get_n_frames());
 
 	static_assert(sizeof(B) == sizeof(R), "");
 

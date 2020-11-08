@@ -75,7 +75,7 @@ void Loop_predicate<O>
 
 template <typename O>
 bool Loop_predicate<O>
-::stop(const int8_t *in, const int frame_id)
+::_stop(const int8_t *in, const int frame_id)
 {
 	this->n_calls++;
 	return (*this->predicate)();

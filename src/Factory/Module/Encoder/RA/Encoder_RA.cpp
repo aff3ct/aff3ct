@@ -90,7 +90,7 @@ void Encoder_RA
 
 template <typename B>
 module::Encoder_RA<B>* Encoder_RA
-::build(module::Interleaver<B> &itl) const
+::build(const module::Interleaver<B> &itl) const
 {
 	if (this->type == "RA") return new module::Encoder_RA<B>(this->K, this->N_cw, itl);
 
@@ -100,11 +100,11 @@ module::Encoder_RA<B>* Encoder_RA
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC
-template aff3ct::module::Encoder_RA<B_8 >* aff3ct::factory::Encoder_RA::build<B_8 >(aff3ct::module::Interleaver<B_8 >&) const;
-template aff3ct::module::Encoder_RA<B_16>* aff3ct::factory::Encoder_RA::build<B_16>(aff3ct::module::Interleaver<B_16>&) const;
-template aff3ct::module::Encoder_RA<B_32>* aff3ct::factory::Encoder_RA::build<B_32>(aff3ct::module::Interleaver<B_32>&) const;
-template aff3ct::module::Encoder_RA<B_64>* aff3ct::factory::Encoder_RA::build<B_64>(aff3ct::module::Interleaver<B_64>&) const;
+template aff3ct::module::Encoder_RA<B_8 >* aff3ct::factory::Encoder_RA::build<B_8 >(const aff3ct::module::Interleaver<B_8 >&) const;
+template aff3ct::module::Encoder_RA<B_16>* aff3ct::factory::Encoder_RA::build<B_16>(const aff3ct::module::Interleaver<B_16>&) const;
+template aff3ct::module::Encoder_RA<B_32>* aff3ct::factory::Encoder_RA::build<B_32>(const aff3ct::module::Interleaver<B_32>&) const;
+template aff3ct::module::Encoder_RA<B_64>* aff3ct::factory::Encoder_RA::build<B_64>(const aff3ct::module::Interleaver<B_64>&) const;
 #else
-template aff3ct::module::Encoder_RA<B>* aff3ct::factory::Encoder_RA::build<B>(aff3ct::module::Interleaver<B>&) const;
+template aff3ct::module::Encoder_RA<B>* aff3ct::factory::Encoder_RA::build<B>(const aff3ct::module::Interleaver<B>&) const;
 #endif
 // ==================================================================================== explicit template instantiation

@@ -14,7 +14,7 @@ Decoder_LDPC_BP_peeling<B,R>::Decoder_LDPC_BP_peeling(const int K, const int N, 
                                                       const tools::Sparse_matrix &_H,
                                                       const std::vector<unsigned> &info_bits_pos,
                                                       const bool enable_syndrome, const int syndrome_depth)
-: Decoder_SIHO<B,R>(K, N, 1),
+: Decoder_SIHO<B,R>(K, N),
   Decoder_LDPC_BP  (K, N, n_ite, _H, enable_syndrome, syndrome_depth),
   info_bits_pos    (info_bits_pos       ),
   var_nodes        (N                   ),

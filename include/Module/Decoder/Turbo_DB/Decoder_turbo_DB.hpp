@@ -25,7 +25,7 @@ class Decoder_turbo_DB : public Decoder_SIHO<B,R>
 protected:
 	const int n_ite; // number of iterations
 
-	Interleaver<R> &pi;
+	std::shared_ptr<Interleaver<R>> pi;
 	std::shared_ptr<Decoder_RSC_DB_BCJR<B,R>> siso_n;
 	std::shared_ptr<Decoder_RSC_DB_BCJR<B,R>> siso_i;
 
@@ -52,7 +52,7 @@ public:
 	                 const int& n_ite,
 	                 const Decoder_RSC_DB_BCJR<B,R> &siso_n,
 	                 const Decoder_RSC_DB_BCJR<B,R> &siso_i,
-	                       Interleaver<R> &pi);
+	                 const Interleaver<R> &pi);
 	virtual ~Decoder_turbo_DB() = default;
 	virtual Decoder_turbo_DB<B,R>* clone() const;
 

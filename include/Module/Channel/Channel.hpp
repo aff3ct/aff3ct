@@ -90,9 +90,10 @@ public:
 	 * \param Y_N: a noisy signal.
 	 */
 	template <class A = std::allocator<R>>
-	void add_noise(const std::vector<R,A>& X_N, std::vector<R,A>& Y_N, const int frame_id = -1);
+	void add_noise(const std::vector<R,A>& X_N, std::vector<R,A>& Y_N, const int frame_id = -1,
+	               const bool managed_memory = true);
 
-	virtual void add_noise(const R *X_N, R *Y_N, const int frame_id = -1);
+	void add_noise(const R *X_N, R *Y_N, const int frame_id = -1, const bool managed_memory = true);
 
 	/*!
 	 * \brief Adds the noise to a perfectly clear signal.
@@ -102,9 +103,10 @@ public:
 	 * \param Y_N: a noisy signal.
 	 */
 	template <class A = std::allocator<R>>
-	void add_noise_wg(const std::vector<R,A>& X_N, std::vector<R,A>& H_N, std::vector<R,A>& Y_N, const int frame_id = -1);
+	void add_noise_wg(const std::vector<R,A>& X_N, std::vector<R,A>& H_N, std::vector<R,A>& Y_N,
+	                  const int frame_id = -1, const bool managed_memory = true);
 
-	virtual void add_noise_wg(const R *X_N, R *Y_N, R *H_N, const int frame_id = -1);
+	void add_noise_wg(const R *X_N, R *Y_N, R *H_N, const int frame_id = -1, const bool managed_memory = true);
 
 	virtual void notify_noise_update();
 

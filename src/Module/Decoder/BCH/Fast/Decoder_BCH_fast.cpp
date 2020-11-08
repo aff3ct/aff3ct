@@ -17,7 +17,7 @@ using namespace aff3ct::module;
 template <typename B, typename R>
 Decoder_BCH_fast<B,R>
 ::Decoder_BCH_fast(const int& K, const int& N, const tools::BCH_polynomial_generator<B> &GF_poly)
-: Decoder_BCH<B,R>(K, N, GF_poly.get_t(), mipp::N<R>()                     ),
+: Decoder_BCH<B,R>(K, N, GF_poly.get_t()                                   ),
   t2              (2 * this->t                                             ),
   YH_N            (this->N * mipp::N<B>()                                  ),
   Y_N_reorderered (this->N,                              mipp::Reg<B>((B)0)),
@@ -34,6 +34,7 @@ Decoder_BCH_fast<B,R>
 {
 	const std::string name = "Decoder_BCH_fast";
 	this->set_name(name);
+	this->set_n_frames_per_wave(mipp::N<B>());
 
 	if ((this->N - this->K) != GF_poly.get_n_rdncy())
 	{
@@ -373,6 +374,20 @@ int Decoder_BCH_fast<B,R>
 	auto status = this->_decode_hiho_cw(this->YH_N.data(), V_N, frame_id);
 
 	return status;
+}
+
+template <typename B, typename R>
+void Decoder_BCH_fast<B,R>
+::set_n_frames(const int n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Decoder_BCH<B,R>::set_n_frames(n_frames);
+
+		// in case where only the last frame_id is called to prevent memory leak
+		this->last_is_codeword.resize(this->n_frames + mipp::N<B>());
+	}
 }
 
 // ==================================================================================== explicit template instantiation

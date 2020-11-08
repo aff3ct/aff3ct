@@ -54,7 +54,7 @@ Decoder_RSC_BCJR_intra<B,R>
 ::Decoder_RSC_BCJR_intra(const int &K,
                          const std::vector<std::vector<int>> &trellis,
                          const bool buffered_encoding)
-: Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding, 1),
+: Decoder_RSC_BCJR<B,R>(K, trellis, buffered_encoding),
   alpha(8 * (K +4) + 1 * mipp::N<R>()),
   gamma(2 * (K +3) + 2 * mipp::N<R>())
 {
@@ -90,7 +90,7 @@ Decoder_RSC_BCJR_intra<B,R>* Decoder_RSC_BCJR_intra<B,R>
 
 template <typename B, typename R>
 int Decoder_RSC_BCJR_intra<B,R>
-::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
+::_decode_siso_alt(const R *sys, const R *par, R *ext, const int frame_id)
 {
 	if (!mipp::isAligned(sys))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'sys' is misaligned memory.");

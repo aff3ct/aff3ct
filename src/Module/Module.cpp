@@ -1,3 +1,4 @@
+#include <cmath>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
@@ -8,7 +9,13 @@ using namespace aff3ct::module;
 
 Module
 ::Module()
-: n_frames(1), name("Module"), short_name("Module")
+: n_frames(1),
+  n_frames_per_wave(1),
+  n_waves(1),
+  n_frames_per_wave_rest(0),
+  single_wave(false),
+  name("Module"),
+  short_name("Module")
 #ifdef AFF3CT_SYSTEMC_MODULE
 , sc(*this)
 #endif
@@ -69,9 +76,56 @@ void Module
 		}
 
 		for (auto &t : tasks)
-			t->update_n_frames((size_t)this->get_n_frames(), (size_t)n_frames);
+			t->update_n_frames((size_t)old_n_frames, (size_t)n_frames);
 		this->n_frames = n_frames;
+
+		if (this->is_single_wave())
+		{
+			for (auto &t : tasks)
+				t->update_n_frames_per_wave((size_t)old_n_frames, (size_t)n_frames);
+			this->n_frames_per_wave = n_frames;
+		}
+
+		this->n_frames_per_wave_rest = this->get_n_frames() % this->get_n_frames_per_wave();
+		this->n_waves = (int)std::ceil((float)this->get_n_frames() / (float)this->get_n_frames_per_wave());
 	}
+}
+
+void Module
+::set_n_frames_per_wave(const int n_frames_per_wave)
+{
+	if (this->is_single_wave())
+	{
+		std::stringstream message;
+		message << "The module is configured in 'single_wave' mode, it is not possible to set the number of frames per "
+		        << "wave.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	const auto old_n_frames_per_wave = this->get_n_frames_per_wave();
+	if (old_n_frames_per_wave != n_frames_per_wave)
+	{
+		if (n_frames_per_wave <= 0)
+		{
+			std::stringstream message;
+			message << "'n_frames_per_wave' has to be greater than 0 ('n_frames_per_wave' = " << n_frames_per_wave
+			        << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+
+		for (auto &t : tasks)
+			t->update_n_frames_per_wave((size_t)old_n_frames_per_wave, (size_t)n_frames_per_wave);
+		this->n_frames_per_wave = n_frames_per_wave;
+		this->n_frames_per_wave_rest = this->get_n_frames() % this->get_n_frames_per_wave();
+		this->n_waves = (int)std::ceil((float)this->get_n_frames() / (float)this->get_n_frames_per_wave());
+	}
+}
+
+void Module
+::set_single_wave(const bool enable_single_wave)
+{
+	this->single_wave = enable_single_wave;
+	this->set_n_frames(this->n_frames);
 }
 
 void Module
@@ -144,7 +198,7 @@ Task& Module
 }
 
 void Module
-::create_codelet(Task& task, std::function<int(Module &m, Task &t)> codelet)
+::create_codelet(Task& task, std::function<int(Module &m, Task &t, const int frame_id)> codelet)
 {
 	task.create_codelet(codelet);
 }

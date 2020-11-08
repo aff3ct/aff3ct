@@ -26,6 +26,7 @@ class Socket;
 
 enum status_t : int { SUCCESS = 0,
                       FAILURE = 1,
+                      FAILURE_STOP = -1,
                       SKIPPED = std::numeric_limits<int>::min() };
 
 enum class socket_t : uint8_t { SIN, SIN_SOUT, SOUT };
@@ -48,7 +49,7 @@ protected:
 	int32_t debug_limit;
 	uint8_t debug_precision;
 	int32_t debug_frame_max;
-	std::function<int(Module &m, Task& t)> codelet;
+	std::function<int(Module &m, Task& t, const int frame_id)> codelet;
 
 	std::vector<int> status;
 	std::vector<mipp::vector<uint8_t>> out_buffers;
@@ -67,6 +68,11 @@ protected:
 
 	Socket* last_input_socket;
 	std::vector<socket_t> socket_type;
+
+	// precomputed values to speedup the task execution
+	std::vector            <int8_t*>  sockets_dataptr_init;
+	std::vector            <size_t >  sockets_databytes_per_frame;
+	std::vector<std::vector<int8_t >> sockets_data;
 
 public:
 	std::vector<std::shared_ptr<Socket>> sockets;
@@ -115,7 +121,7 @@ public:
 	const std::vector<std::chrono::nanoseconds>& get_timers_min    () const;
 	const std::vector<std::chrono::nanoseconds>& get_timers_max    () const;
 
-	int exec();
+	int exec(const int frame_id = -1, const bool managed_memory = true);
 
 	inline Socket& operator[](const size_t id);
 
@@ -124,6 +130,8 @@ public:
 	Task* clone() const;
 
 protected:
+	int _exec(const int frame_id = -1, const bool managed_memory = true);
+
 	void register_timer(const std::string &key);
 
 	template <typename T>
@@ -135,9 +143,11 @@ protected:
 	template <typename T>
 	size_t create_socket_out(const std::string &name, const size_t n_elmts, const bool hack_status = false);
 
-	void create_codelet(std::function<int(Module &m, Task& t)> &codelet);
+	void create_codelet(std::function<int(Module &m, Task& t, const int frame_id)> &codelet);
 
 	void update_n_frames(const size_t old_n_frames, const size_t new_n_frames);
+
+	void update_n_frames_per_wave(const size_t old_n_frames_per_wave, const size_t new_n_frames_per_wave);
 
 private:
 	template <typename T>

@@ -33,19 +33,14 @@ public:
 	inline Socket& operator[](const dec::sck::decode_hiho    s);
 	inline Socket& operator[](const dec::sck::decode_hiho_cw s);
 
-private:
-	std::vector<B> Y_N;
-	std::vector<B> V_KN;
-
 public:
 	/*!
 	 * \brief Constructor.
 	 *
-	 * \param K:                      number of information bits in the frame.
-	 * \param N:                      size of one frame.
-	 * \param simd_inter_frame_level: number of frames absorbed by the SIMD instructions.
+	 * \param K: number of information bits in the frame.
+	 * \param N: size of one frame.
 	 */
-	Decoder_HIHO(const int K, const int N, const int simd_inter_frame_level = 1);
+	Decoder_HIHO(const int K, const int N);
 
 	/*!
 	 * \brief Destructor.
@@ -61,16 +56,16 @@ public:
 	 * \param V_K: a decoded codeword (only the information bits).
 	 */
 	template <class A = std::allocator<B>>
-	int decode_hiho(const std::vector<B,A>& Y_N, std::vector<B,A>& V_K, const int frame_id = -1);
+	int decode_hiho(const std::vector<B,A>& Y_N, std::vector<B,A>& V_K, const int frame_id = -1,
+	                const bool managed_memory = true);
 
-	virtual int decode_hiho(const B *Y_N, B *V_K, const int frame_id = -1);
+	int decode_hiho(const B *Y_N, B *V_K, const int frame_id = -1, const bool managed_memory = true);
 
 	template <class A = std::allocator<B>>
-	int decode_hiho_cw(const std::vector<B,A>& Y_N, std::vector<B,A>& V_N, const int frame_id = -1);
+	int decode_hiho_cw(const std::vector<B,A>& Y_N, std::vector<B,A>& V_N, const int frame_id = -1,
+	                   const bool managed_memory = true);
 
-	virtual int decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id = -1);
-
-	virtual void set_n_frames(const int n_frames);
+	int decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id = -1, const bool managed_memory = true);
 
 protected:
 	virtual int _decode_hiho(const B *Y_N, B *V_K, const int frame_id);

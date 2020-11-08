@@ -29,8 +29,8 @@ Decoder_polar_SCF_naive<B,R,F,G,H>
 	if (this->crc->get_size() > K)
 	{
 		std::stringstream message;
-		message << "'crc->get_size()' has to be equal or smaller than 'K' ('crc->get_size()' = " << this->crc->get_size()
-		        << ", 'K' = " << K << ").";
+		message << "'crc->get_size()' has to be equal or smaller than 'K' ('crc->get_size()' = "
+		        << this->crc->get_size() << ", 'K' = " << K << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 }
@@ -129,7 +129,7 @@ int Decoder_polar_SCF_naive<B,R,F,G,H>
 	                  {return std::abs(leaves[a]->get_c()->lambda[0]) < std::abs(leaves[b]->get_c()->lambda[0]);}
 	                 );
 
-	decode_result = this->check_crc();
+	decode_result = this->check_crc(frame_id);
 
 	while ((n_ite < n_flips) && (!decode_result))
 	{
@@ -137,7 +137,7 @@ int Decoder_polar_SCF_naive<B,R,F,G,H>
 
 		this->recursive_decode(this->polar_tree.get_root());
 
-		decode_result = this->check_crc();
+		decode_result = this->check_crc(frame_id);
 
 		n_ite ++;
 	}
@@ -188,7 +188,7 @@ int Decoder_polar_SCF_naive<B,R,F,G,H>
 	                  {return std::abs(leaves[a]->get_c()->lambda[0]) < std::abs(leaves[b]->get_c()->lambda[0]);}
 	                 );
 
-	decode_result = check_crc();
+	decode_result = check_crc(frame_id);
 
 	while ((n_ite < n_flips) && (!decode_result))
 	{
@@ -196,7 +196,7 @@ int Decoder_polar_SCF_naive<B,R,F,G,H>
 
 		this->recursive_decode(this->polar_tree.get_root());
 
-		decode_result = check_crc();
+		decode_result = check_crc(frame_id);
 
 		n_ite ++;
 	}
@@ -215,7 +215,7 @@ int Decoder_polar_SCF_naive<B,R,F,G,H>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 bool Decoder_polar_SCF_naive<B,R,F,G,H>
-::check_crc()
+::check_crc(const int frame_id)
 {
 	auto &leaves = this->polar_tree.get_leaves();
 
@@ -224,7 +224,7 @@ bool Decoder_polar_SCF_naive<B,R,F,G,H>
 	for (auto leaf = 0 ; leaf < this->N ; leaf++)
 		if (!this->frozen_bits[leaf])
 			U_test.push_back(leaves[leaf]->get_c()->s[0]);
-	return this->crc->check(U_test, this->get_simd_inter_frame_level());
+	return this->crc->check(U_test, frame_id);
 }
 }
 }

@@ -20,7 +20,7 @@ template <typename B, typename R,
           tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
 Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 ::Decoder_polar_SCAN_naive(const int &K, const int &N, const int &max_iter, const std::vector<bool> &frozen_bits)
-: Decoder_SISO<B,R>(K, N, 1),
+: Decoder_SISO<B,R>(K, N),
   m                ((int)std::log2(N)),
   max_iter         (max_iter         ),
   layers_count     (this->m +1       ),

@@ -12,12 +12,13 @@ using namespace aff3ct::module;
 template <typename B>
 Encoder_BCH_inter<B>
 ::Encoder_BCH_inter(const int& K, const int& N, const tools::BCH_polynomial_generator<B>& GF_poly)
-: Encoder_BCH<B>(K, N, GF_poly, true, mipp::N<B>()),
+: Encoder_BCH<B>(K, N, GF_poly),
   U_K_reordered(this->K       * mipp::N<B>()),
   par_reordered(this->n_rdncy * mipp::N<B>())
 {
 	const std::string name = "Encoder_BCH_inter";
 	this->set_name(name);
+	this->set_n_frames_per_wave(mipp::N<B>());
 }
 
 template <typename B>

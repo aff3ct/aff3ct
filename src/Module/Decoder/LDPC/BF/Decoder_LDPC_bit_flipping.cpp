@@ -22,7 +22,7 @@ Decoder_LDPC_bit_flipping<B,R>
                             const R mwbf_factor,
                             const bool enable_syndrome,
                             const int syndrome_depth)
-: Decoder_SISO<B,R>(K, N, 1                                         ),
+: Decoder_SISO<B,R>(K, N                                            ),
   n_ite            (n_ite                                           ),
   n_V_nodes        (N                                               ), // same as N but more explicit
   n_C_nodes        ((int)H.get_n_cols()                             ),

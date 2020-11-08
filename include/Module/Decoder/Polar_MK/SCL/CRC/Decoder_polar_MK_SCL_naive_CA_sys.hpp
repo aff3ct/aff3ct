@@ -42,7 +42,7 @@ public:
 	virtual Decoder_polar_MK_SCL_naive_CA_sys<B,R>* clone() const;
 
 protected:
-	virtual void select_best_path();
+	virtual void select_best_path(const int frame_id);
 	virtual void _store(B *V, bool coded = false) const;
 };
 }
