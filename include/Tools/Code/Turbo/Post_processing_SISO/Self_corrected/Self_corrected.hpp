@@ -45,7 +45,7 @@ public:
 
 	virtual Self_corrected<B,R>* clone() const;
 
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 
 private:
 	void collect (const int ite, const mipp::vector<R> &cur_ext, std::vector<mipp::vector<R>> &ext_hist);

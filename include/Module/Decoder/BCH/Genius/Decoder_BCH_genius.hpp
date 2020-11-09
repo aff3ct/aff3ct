@@ -25,14 +25,14 @@ public:
 	Decoder_BCH_genius(const int K, const int N, const int t, Encoder<B> &encoder);
 	virtual ~Decoder_BCH_genius() = default;
 
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 
 protected:
-	virtual int _decode        (      B *Y_N,         const int frame_id);
-	virtual int _decode_hiho   (const B *Y_N, B *V_K, const int frame_id);
-	virtual int _decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id);
-	virtual int _decode_siho   (const R *Y_N, B *V_K, const int frame_id);
-	virtual int _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id);
+	virtual int _decode        (      B *Y_N,         const size_t frame_id);
+	virtual int _decode_hiho   (const B *Y_N, B *V_K, const size_t frame_id);
+	virtual int _decode_hiho_cw(const B *Y_N, B *V_N, const size_t frame_id);
+	virtual int _decode_siho   (const R *Y_N, B *V_K, const size_t frame_id);
+	virtual int _decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id);
 };
 }
 }

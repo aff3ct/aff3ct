@@ -34,13 +34,13 @@ public:
 	static std::string get_name (const std::string &poly_key);
 	static unsigned    get_value(const std::string &poly_key);
 
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 
 protected:
-	virtual void _build       (const B *U_K1, B *U_K2, const int frame_id);
-	virtual void _extract     (const B *V_K1, B *V_K2, const int frame_id);
-	virtual bool _check       (const B *V_K          , const int frame_id);
-	virtual bool _check_packed(const B *V_K          , const int frame_id);
+	virtual void _build       (const B *U_K1, B *U_K2, const size_t frame_id);
+	virtual void _extract     (const B *V_K1, B *V_K2, const size_t frame_id);
+	virtual bool _check       (const B *V_K          , const size_t frame_id);
+	virtual bool _check_packed(const B *V_K          , const size_t frame_id);
 
 	void _generate(const B *U_in,
 	                     B *U_out,

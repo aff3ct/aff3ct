@@ -29,7 +29,7 @@ public:
 
 	virtual module::Decoder_HIHO<B>& get_decoder_hiho();
 
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 
 protected:
 	virtual void deep_copy(const Codec_HIHO<B,Q> &t);

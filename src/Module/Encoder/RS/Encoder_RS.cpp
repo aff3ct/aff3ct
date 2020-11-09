@@ -89,7 +89,7 @@ void Encoder_RS<B>
 
 template <typename B>
 void Encoder_RS<B>
-::_encode(const B *U_K, B *X_N, const int frame_id)
+::_encode(const B *U_K, B *X_N, const size_t frame_id)
 {
 	tools::Bit_packer::pack(U_K, this->packed_U_K.data(), this->K, 1, false, this->m);
 

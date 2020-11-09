@@ -50,7 +50,7 @@ public:
 	virtual void reset();
 
 protected:
-	virtual void _send(const B *V, const int frame_id);
+	virtual void _send(const B *V, const size_t frame_id);
 };
 
 }

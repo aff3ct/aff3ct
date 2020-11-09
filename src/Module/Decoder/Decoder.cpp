@@ -85,15 +85,15 @@ void Decoder
 {
 	if (frame_id < 0)
 	{
-		for (auto w = 0; w < this->get_n_waves(); w++)
+		for (size_t w = 0; w < this->get_n_waves(); w++)
 		{
 			auto fid = w * this->get_n_frames_per_wave();
 			this->_reset(fid);
 		}
 	}
-	else if (frame_id < this->get_n_frames())
+	else if ((size_t)frame_id < this->get_n_frames())
 	{
-		this->_reset(frame_id);
+		this->_reset((size_t)frame_id);
 	}
 	else
 	{
@@ -105,7 +105,7 @@ void Decoder
 }
 
 void Decoder
-::_reset(const int frame_id)
+::_reset(const size_t frame_id)
 {
 }
 

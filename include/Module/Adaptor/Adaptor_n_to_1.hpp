@@ -55,8 +55,8 @@ public:
 	void cancel_waiting();
 
 protected:
-	virtual void push_n(const std::vector<const int8_t*> &in,  const int frame_id = -1);
-	virtual void pull_1(const std::vector<      int8_t*> &out, const int frame_id = -1);
+	virtual void push_n(const std::vector<const int8_t*> &in,  const size_t frame_id);
+	virtual void pull_1(const std::vector<      int8_t*> &out, const size_t frame_id);
 
 	void wait_push();
 	void wait_pull();

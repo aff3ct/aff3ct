@@ -44,7 +44,7 @@ protected:
 
 	std::vector<std::shared_ptr<tools::Post_processing_SISO<B,R>>> post_processings;
 
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 
 public:
 	Decoder_turbo_DB(const int& K,
@@ -60,9 +60,9 @@ public:
 
 protected:
 	virtual void deep_copy(const Decoder_turbo_DB<B,R> &m);
-	virtual int  _decode_siho(const R *Y_N, B *V_K, const int frame_id);
-	virtual void _load       (const R *Y_N                            );
-	virtual void _store      (              B *V_K                    ) const;
+	virtual int  _decode_siho(const R *Y_N, B *V_K, const size_t frame_id);
+	virtual void _load       (const R *Y_N                               );
+	virtual void _store      (              B *V_K                       ) const;
 };
 }
 }

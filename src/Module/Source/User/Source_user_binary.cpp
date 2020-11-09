@@ -53,7 +53,7 @@ bool Source_user_binary<B>
 
 template <typename B>
 void Source_user_binary<B>
-::_generate(B *U_K, const int frame_id)
+::_generate(B *U_K, const size_t frame_id)
 {
 	if (this->is_over())
 		std::fill(U_K, U_K + this->K, (B)0);

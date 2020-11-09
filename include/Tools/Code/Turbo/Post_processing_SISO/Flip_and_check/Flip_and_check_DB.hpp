@@ -47,7 +47,7 @@ public:
 	                  mipp::vector<R>& ext,
 	                  mipp::vector<B>& s);
 
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 
 private:
 	bool apply_flip_and_check(const mipp::vector<R>& sys, const mipp::vector<R>& ext, mipp::vector<B>& s);

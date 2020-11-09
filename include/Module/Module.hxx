@@ -9,10 +9,10 @@ namespace module
 Task& Module
 ::operator[](const size_t id)
 {
-	assert(id < tasks_with_nullptr.size());
-	assert(tasks_with_nullptr[id] != nullptr);
+	assert(id < this->tasks_with_nullptr.size());
+	assert(this->tasks_with_nullptr[id] != nullptr);
 
-	return *tasks_with_nullptr[id];
+	return *this->tasks_with_nullptr[id];
 }
 
 template <typename T>
@@ -36,25 +36,25 @@ inline size_t Module
 	return task.template create_socket_out<T>(name, n_elmts * this->n_frames);
 }
 
-int Module
+size_t Module
 ::get_n_frames() const
 {
-	return n_frames;
+	return this->n_frames;
 }
 
-int Module
+size_t Module
 ::get_n_frames_per_wave() const
 {
-	return n_frames_per_wave;
+	return this->n_frames_per_wave;
 }
 
-int Module
+size_t Module
 ::get_n_waves() const
 {
-	return n_waves;
+	return this->n_waves;
 }
 
-int Module
+size_t Module
 ::get_n_frames_per_wave_rest() const
 {
 	return this->n_frames_per_wave_rest;

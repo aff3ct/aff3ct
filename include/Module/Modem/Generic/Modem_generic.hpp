@@ -43,26 +43,26 @@ public:
 protected:
 	void check_noise();
 
-	virtual void   _tmodulate   (              const Q *X_N1,                 R *X_N2, const int frame_id);
-	virtual void   _modulate    (              const B *X_N1,                 R *X_N2, const int frame_id);
-	virtual void     _filter    (              const R *Y_N1,                 R *Y_N2, const int frame_id);
-	virtual void _demodulate    (              const Q *Y_N1,                 Q *Y_N2, const int frame_id);
-	virtual void _demodulate_wg (const R *H_N, const Q *Y_N1,                 Q *Y_N2, const int frame_id);
-	virtual void _tdemodulate   (              const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const int frame_id);
-	virtual void _tdemodulate_wg(const R *H_N, const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const int frame_id);
+	virtual void   _tmodulate   (              const Q *X_N1,                 R *X_N2, const size_t frame_id);
+	virtual void   _modulate    (              const B *X_N1,                 R *X_N2, const size_t frame_id);
+	virtual void     _filter    (              const R *Y_N1,                 R *Y_N2, const size_t frame_id);
+	virtual void _demodulate    (              const Q *Y_N1,                 Q *Y_N2, const size_t frame_id);
+	virtual void _demodulate_wg (const R *H_N, const Q *Y_N1,                 Q *Y_N2, const size_t frame_id);
+	virtual void _tdemodulate   (              const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const size_t frame_id);
+	virtual void _tdemodulate_wg(const R *H_N, const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const size_t frame_id);
 
-	virtual void   _tmodulate_complex   (              const Q *X_N1,                 R *X_N2, const int frame_id);
-	virtual void   _tmodulate_real      (              const Q *X_N1,                 R *X_N2, const int frame_id);
-	virtual void   _modulate_complex    (              const B *X_N1,                 R *X_N2, const int frame_id);
-	virtual void   _modulate_real       (              const B *X_N1,                 R *X_N2, const int frame_id);
-	virtual void _demodulate_complex    (              const Q *Y_N1,                 Q *Y_N2, const int frame_id);
-	virtual void _demodulate_real       (              const Q *Y_N1,                 Q *Y_N2, const int frame_id);
-	virtual void _demodulate_wg_complex (const R *H_N, const Q *Y_N1,                 Q *Y_N2, const int frame_id);
-	virtual void _demodulate_wg_real    (const R *H_N, const Q *Y_N1,                 Q *Y_N2, const int frame_id);
-	virtual void _tdemodulate_complex   (              const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const int frame_id);
-	virtual void _tdemodulate_real      (              const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const int frame_id);
-	virtual void _tdemodulate_wg_complex(const R *H_N, const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const int frame_id);
-	virtual void _tdemodulate_wg_real   (const R *H_N, const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const int frame_id);
+	virtual void   _tmodulate_complex   (              const Q *X_N1,                 R *X_N2, const size_t frame_id);
+	virtual void   _tmodulate_real      (              const Q *X_N1,                 R *X_N2, const size_t frame_id);
+	virtual void   _modulate_complex    (              const B *X_N1,                 R *X_N2, const size_t frame_id);
+	virtual void   _modulate_real       (              const B *X_N1,                 R *X_N2, const size_t frame_id);
+	virtual void _demodulate_complex    (              const Q *Y_N1,                 Q *Y_N2, const size_t frame_id);
+	virtual void _demodulate_real       (              const Q *Y_N1,                 Q *Y_N2, const size_t frame_id);
+	virtual void _demodulate_wg_complex (const R *H_N, const Q *Y_N1,                 Q *Y_N2, const size_t frame_id);
+	virtual void _demodulate_wg_real    (const R *H_N, const Q *Y_N1,                 Q *Y_N2, const size_t frame_id);
+	virtual void _tdemodulate_complex   (              const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const size_t frame_id);
+	virtual void _tdemodulate_real      (              const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const size_t frame_id);
+	virtual void _tdemodulate_wg_complex(const R *H_N, const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const size_t frame_id);
+	virtual void _tdemodulate_wg_real   (const R *H_N, const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const size_t frame_id);
 
 };
 }

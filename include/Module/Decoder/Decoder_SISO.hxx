@@ -72,7 +72,7 @@ Decoder_SISO<B,R>
 	auto &p1 = this->create_task("decode_siso", (int)dec::tsk::decode_siso);
 	auto p1s_Y_N1 = this->template create_socket_in <R>(p1, "Y_N1", this->N);
 	auto p1s_Y_N2 = this->template create_socket_out<R>(p1, "Y_N2", this->N);
-	this->create_codelet(p1, [p1s_Y_N1, p1s_Y_N2](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p1, [p1s_Y_N1, p1s_Y_N2](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &dec = static_cast<Decoder_SISO<B,R>&>(m);
 
@@ -90,7 +90,7 @@ Decoder_SISO<B,R>
 	auto p2s_sys = this->template create_socket_in <R>(p2, "sys", this->K + this->tail_length() / 2);
 	auto p2s_par = this->template create_socket_in <R>(p2, "par", this->K + this->tail_length() / 2);
 	auto p2s_ext = this->template create_socket_out<R>(p2, "ext", this->K);
-	this->create_codelet(p2, [p2s_sys, p2s_par, p2s_ext](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p2, [p2s_sys, p2s_par, p2s_ext](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &dec = static_cast<Decoder_SISO<B,R>&>(m);
 
@@ -357,14 +357,14 @@ int Decoder_SISO<B,R>
 
 template <typename B, typename R>
 int Decoder_SISO<B,R>
-::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
+::_decode_siso(const R *Y_N1, R *Y_N2, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R>
 int Decoder_SISO<B,R>
-::_decode_siso_alt(const R *sys, const R *par, R *ext, const int frame_id)
+::_decode_siso_alt(const R *sys, const R *par, R *ext, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }

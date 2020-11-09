@@ -67,7 +67,7 @@ Decoder_LDPC_bit_flipping_hard<B,R>* Decoder_LDPC_bit_flipping_hard<B,R>
 
 template <typename B, typename R>
 int Decoder_LDPC_bit_flipping_hard<B,R>
-::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
+::_decode_hiho(const B *Y_N, B *V_K, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
 	std::copy(Y_N, Y_N + this->N, var_nodes.data());
@@ -89,7 +89,7 @@ int Decoder_LDPC_bit_flipping_hard<B,R>
 
 template <typename B, typename R>
 int Decoder_LDPC_bit_flipping_hard<B,R>
-::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
+::_decode_hiho_cw(const B *Y_N, B *V_N, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
 	std::copy(Y_N, Y_N + this->N, var_nodes.data());
@@ -111,7 +111,7 @@ int Decoder_LDPC_bit_flipping_hard<B,R>
 
 template <typename B, typename R>
 int Decoder_LDPC_bit_flipping_hard<B,R>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
 	tools::hard_decide(Y_N, YH_N.data(), this->N);
@@ -135,7 +135,7 @@ int Decoder_LDPC_bit_flipping_hard<B,R>
 
 template <typename B, typename R>
 int Decoder_LDPC_bit_flipping_hard<B,R>
-::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now();  // ---------------------------------------------------------- LOAD
 	tools::hard_decide(Y_N, YH_N.data(), this->N);
@@ -159,7 +159,7 @@ int Decoder_LDPC_bit_flipping_hard<B,R>
 
 template<typename B, typename R>
 void Decoder_LDPC_bit_flipping_hard<B,R>
-::_store(B *V_K, const int frame_id)
+::_store(B *V_K, const size_t frame_id)
 {
 	for (auto i = 0; i < this->K; i++)
 		V_K[i] = this->var_nodes[this->info_bits_pos[i]];
@@ -167,14 +167,14 @@ void Decoder_LDPC_bit_flipping_hard<B,R>
 
 template<typename B, typename R>
 void Decoder_LDPC_bit_flipping_hard<B,R>
-::_store_cw(B *V_N, const int frame_id)
+::_store_cw(B *V_N, const size_t frame_id)
 {
 	std::copy(this->var_nodes.begin(), this->var_nodes.end(), V_N);
 }
 
 template <typename B, typename R>
 bool Decoder_LDPC_bit_flipping_hard<B,R>
-::decode(const B *Y_N, const int frame_id)
+::decode(const B *Y_N, const size_t frame_id)
 {
 	this->cur_syndrome_depth = 0;
 	bool synd = false;

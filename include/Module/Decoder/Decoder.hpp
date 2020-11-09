@@ -70,7 +70,7 @@ public:
 	virtual void set_seed(const int seed);
 
 protected:
-	virtual void _reset(const int frame_id);
+	virtual void _reset(const size_t frame_id);
 };
 }
 }

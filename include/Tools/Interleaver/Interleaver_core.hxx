@@ -63,7 +63,7 @@ int Interleaver_core<T>
 }
 
 template <typename T>
-int Interleaver_core<T>
+size_t Interleaver_core<T>
 ::get_n_frames() const
 {
 	return n_frames;
@@ -71,7 +71,7 @@ int Interleaver_core<T>
 
 template <typename T>
 void Interleaver_core<T>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	if (n_frames <= 0)
 	{
@@ -137,7 +137,7 @@ void Interleaver_core<T>
 
 	if (uniform)
 	{
-		for (auto f = 1; f < this->n_frames; f++)
+		for (size_t f = 1; f < this->n_frames; f++)
 		{
 			const auto off = f * this->size;
 
@@ -149,7 +149,7 @@ void Interleaver_core<T>
 	}
 	else
 	{
-		for (auto f = 1; f < this->n_frames; f++)
+		for (size_t f = 1; f < this->n_frames; f++)
 		{
 			std::copy(pi    .data(), pi    .data() + size, pi    .data() + f * size);
 			std::copy(pi_inv.data(), pi_inv.data() + size, pi_inv.data() + f * size);

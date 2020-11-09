@@ -38,11 +38,11 @@ public:
 	virtual int tail_length() const;
 
 protected:
-	virtual void set_n_frames_per_wave(const int n_frames_per_wave);
+	virtual void set_n_frames_per_wave(const size_t n_frames_per_wave);
 
-	virtual void _load       (const R *Y_N                            );
-	        int  _decode_siho(const R *Y_N, B *V_K, const int frame_id);
-	virtual void _store      (              B *V_K                    ) const;
+	virtual void _load       (const R *Y_N                               );
+	        int  _decode_siho(const R *Y_N, B *V_K, const size_t frame_id);
+	virtual void _store      (              B *V_K                       ) const;
 };
 }
 }

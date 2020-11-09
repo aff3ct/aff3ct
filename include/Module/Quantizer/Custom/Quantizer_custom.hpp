@@ -29,7 +29,7 @@ public:
 	virtual Quantizer_custom<R,Q>* clone() const;
 
 protected:
-	void _process(const R *Y_N1, Q *Y_N2, const int frame_id);
+	void _process(const R *Y_N1, Q *Y_N2, const size_t frame_id);
 };
 }
 }

@@ -39,7 +39,7 @@ Encoder_repetition_sys<B>* Encoder_repetition_sys<B>
 
 template <typename B>
 void Encoder_repetition_sys<B>
-::_encode(const B *U_K, B *X_N, const int frame_id)
+::_encode(const B *U_K, B *X_N, const size_t frame_id)
 {
 	// repetition
 	if (buffered_encoding)

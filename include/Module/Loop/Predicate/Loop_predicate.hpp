@@ -37,7 +37,7 @@ protected:
 	               const std::type_index datatype_in,
 	               const size_t n_elmts_out);
 
-	virtual bool _stop(const int8_t *in, const int frame_id);
+	virtual bool _stop(const int8_t *in, const size_t frame_id);
 
 	virtual void deep_copy(const Loop_predicate<O> &m);
 };

@@ -91,9 +91,9 @@ public:
 	virtual int tail_length() const;
 
 protected:
-	virtual int _decode_siso(const R *Y_N1, R *Y_N2, const int frame_id);
+	virtual int _decode_siso(const R *Y_N1, R *Y_N2, const size_t frame_id);
 
-	virtual int _decode_siso_alt(const R *sys, const R *par, R *ext, const int frame_id);
+	virtual int _decode_siso_alt(const R *sys, const R *par, R *ext, const size_t frame_id);
 };
 }
 }

@@ -22,7 +22,7 @@ public:
 	virtual Coset_bit<B,D>* clone() const;
 
 protected:
-	void _apply(const B *ref, const D *in, D *out, const int frame_id);
+	void _apply(const B *ref, const D *in, D *out, const size_t frame_id);
 };
 }
 }

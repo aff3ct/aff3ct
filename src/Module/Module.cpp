@@ -57,50 +57,44 @@ Module* Module
 }
 
 void Module
-::_set_n_frames(const int n_frames)
+::_set_n_frames(const size_t n_frames)
 {
+	if (n_frames == 0)
+	{
+		std::stringstream message;
+		message << "'n_frames' has to be greater than 0 ('n_frames' = " << n_frames << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	const auto old_n_frames = this->get_n_frames();
-	if (old_n_frames != n_frames)
-	{
-		if (n_frames <= 0)
-		{
-			std::stringstream message;
-			message << "'n_frames' has to be greater than 0 ('n_frames' = " << n_frames << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		for (auto &t : tasks)
-			t->update_n_frames((size_t)old_n_frames, (size_t)n_frames);
-		this->n_frames = n_frames;
-		this->n_frames_per_wave_rest = this->get_n_frames() % this->get_n_frames_per_wave();
-		this->n_waves = (int)std::ceil((float)this->get_n_frames() / (float)this->get_n_frames_per_wave());
-	}
+	for (auto &t : tasks)
+		t->update_n_frames((size_t)old_n_frames, (size_t)n_frames);
+	this->n_frames = n_frames;
+	this->n_frames_per_wave_rest = this->get_n_frames() % this->get_n_frames_per_wave();
+	this->n_waves = (size_t)std::ceil((float)this->get_n_frames() / (float)this->get_n_frames_per_wave());
 }
 
 void Module
-::_set_n_frames_per_wave(const int n_frames_per_wave)
+::_set_n_frames_per_wave(const size_t n_frames_per_wave)
 {
+	if (n_frames_per_wave == 0)
+	{
+		std::stringstream message;
+		message << "'n_frames_per_wave' has to be greater than 0 ('n_frames_per_wave' = " << n_frames_per_wave
+		        << ").";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	const auto old_n_frames_per_wave = this->get_n_frames_per_wave();
-	if (old_n_frames_per_wave != n_frames_per_wave)
-	{
-		if (n_frames_per_wave <= 0)
-		{
-			std::stringstream message;
-			message << "'n_frames_per_wave' has to be greater than 0 ('n_frames_per_wave' = " << n_frames_per_wave
-			        << ").";
-			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		for (auto &t : tasks)
-			t->update_n_frames_per_wave((size_t)old_n_frames_per_wave, (size_t)n_frames_per_wave);
-		this->n_frames_per_wave = n_frames_per_wave;
-		this->n_frames_per_wave_rest = this->get_n_frames() % this->get_n_frames_per_wave();
-		this->n_waves = (int)std::ceil((float)this->get_n_frames() / (float)this->get_n_frames_per_wave());
-	}
+	for (auto &t : tasks)
+		t->update_n_frames_per_wave((size_t)old_n_frames_per_wave, (size_t)n_frames_per_wave);
+	this->n_frames_per_wave = n_frames_per_wave;
+	this->n_frames_per_wave_rest = this->get_n_frames() % this->get_n_frames_per_wave();
+	this->n_waves = (size_t)std::ceil((float)this->get_n_frames() / (float)this->get_n_frames_per_wave());
 }
 
 void Module
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 #ifdef AFF3CT_SYSTEMC_MODULE
 	std::stringstream message;
@@ -108,13 +102,15 @@ void Module
 	throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 #endif
 
-	this->_set_n_frames(n_frames);
-	if (this->is_single_wave())
-		this->_set_n_frames_per_wave(n_frames);
+	if (this->get_n_frames() != n_frames)
+		this->_set_n_frames(n_frames);
+
+	if (this->is_single_wave() && this->get_n_frames_per_wave() != n_frames)
+		this->set_n_frames_per_wave(n_frames);
 }
 
 void Module
-::set_n_frames_per_wave(const int n_frames_per_wave)
+::set_n_frames_per_wave(const size_t n_frames_per_wave)
 {
 #ifdef AFF3CT_SYSTEMC_MODULE
 	std::stringstream message;
@@ -122,9 +118,11 @@ void Module
 	throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 #endif
 
-	this->_set_n_frames_per_wave(n_frames_per_wave);
-	if (this->is_single_wave())
-		this->_set_n_frames(n_frames_per_wave);
+	if (this->get_n_frames_per_wave() != n_frames_per_wave)
+		this->_set_n_frames_per_wave(n_frames_per_wave);
+
+	if (this->is_single_wave() && this->get_n_frames() != n_frames_per_wave)
+		this->set_n_frames(n_frames_per_wave);
 }
 
 void Module
@@ -211,7 +209,7 @@ Task& Module
 }
 
 void Module
-::create_codelet(Task& task, std::function<int(Module &m, Task &t, const int frame_id)> codelet)
+::create_codelet(Task& task, std::function<int(Module &m, Task &t, const size_t frame_id)> codelet)
 {
 	task.create_codelet(codelet);
 }

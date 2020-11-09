@@ -56,7 +56,7 @@ Interleaver_core_row_column<T>* Interleaver_core_row_column<T>
 
 template <typename T>
 void Interleaver_core_row_column<T>
-::gen_lut(T *lut, const int frame_id)
+::gen_lut(T *lut, const size_t frame_id)
 {
 	T idx = 0;
 	switch (read_order)

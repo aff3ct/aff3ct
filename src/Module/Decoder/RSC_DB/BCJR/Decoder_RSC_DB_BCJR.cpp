@@ -89,7 +89,7 @@ void Decoder_RSC_DB_BCJR<B,R>
 
 template <typename B, typename R>
 int Decoder_RSC_DB_BCJR<B,R>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	_load(Y_N);
@@ -127,7 +127,7 @@ void Decoder_RSC_DB_BCJR<B,R>
 
 template <typename B, typename R>
 int Decoder_RSC_DB_BCJR<B,R>
-::_decode_siso_alt(const R *sys, const R *par, R *ext, const int frame_id)
+::_decode_siso_alt(const R *sys, const R *par, R *ext, const size_t frame_id)
 {
 	__init_alpha_beta();
 	__fwd_recursion(sys, par);

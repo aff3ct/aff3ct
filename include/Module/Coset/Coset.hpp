@@ -81,7 +81,7 @@ public:
 	void apply(const B *ref, const D *in, D *out, const int frame_id = -1, const bool managed_memory = true);
 
 protected:
-	virtual void _apply(const B *ref, const D *in, D *out, const int frame_id);
+	virtual void _apply(const B *ref, const D *in, D *out, const size_t frame_id);
 };
 }
 }

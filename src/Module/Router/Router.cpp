@@ -28,16 +28,16 @@ size_t Router
 }
 
 size_t Router
-::_route(const int8_t *in, const int frame_id)
+::_route(const int8_t *in, const size_t frame_id)
 {
 	auto ret_val = this->__route(in + 0 * this->n_bytes_in, 0);
-	for (auto f = 1; f < this->get_n_frames(); f++)
+	for (size_t f = 1; f < this->get_n_frames(); f++)
 		ret_val = this->select_route_inter(ret_val, this->__route(in + f * this->n_bytes_in, f));
 	return ret_val;
 }
 
 size_t Router
-::__route(const int8_t *in, const int frame_id)
+::__route(const int8_t *in, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }

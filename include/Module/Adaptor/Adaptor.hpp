@@ -68,7 +68,7 @@ public:
 	void reset();
 	virtual ~Adaptor();
 	virtual Adaptor* clone() const;
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 
 protected:
 	inline Adaptor(const size_t n_elmts,

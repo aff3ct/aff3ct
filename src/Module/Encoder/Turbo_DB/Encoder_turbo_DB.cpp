@@ -97,7 +97,7 @@ void Encoder_turbo_DB<B>
 // [   AB   ][  WnWi  ][  YnYi  ]
 template <typename B>
 void Encoder_turbo_DB<B>
-::_encode(const B *U_K, B *X_N, const int frame_id)
+::_encode(const B *U_K, B *X_N, const size_t frame_id)
 {
 	std::copy(U_K, U_K + this->K, U_K_cpy.begin() + frame_id * this->K);
 
@@ -182,7 +182,7 @@ bool Encoder_turbo_DB<B>
 
 template <typename B>
 void Encoder_turbo_DB<B>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
 	if (old_n_frames != n_frames)

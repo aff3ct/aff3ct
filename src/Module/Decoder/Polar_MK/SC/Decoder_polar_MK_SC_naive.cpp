@@ -181,7 +181,7 @@ void Decoder_polar_MK_SC_naive<B,R>
 
 template <typename B, typename R>
 int Decoder_polar_MK_SC_naive<B,R>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
@@ -204,7 +204,7 @@ int Decoder_polar_MK_SC_naive<B,R>
 
 template <typename B, typename R>
 int Decoder_polar_MK_SC_naive<B,R>
-::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);

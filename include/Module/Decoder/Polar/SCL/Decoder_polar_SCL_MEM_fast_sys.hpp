@@ -75,11 +75,11 @@ public:
 	virtual void notify_noise_update();
 
 protected:
-	virtual void _decode        (const R *Y_N                            );
-	        int  _decode_siho   (const R *Y_N, B *V_K, const int frame_id);
-	        int  _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id);
-	virtual void _store         (              B *V_K                    ) const;
-	virtual void _store_cw      (              B *V_N                    ) const;
+	virtual void _decode        (const R *Y_N                               );
+	        int  _decode_siho   (const R *Y_N, B *V_K, const size_t frame_id);
+	        int  _decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id);
+	virtual void _store         (              B *V_K                       ) const;
+	virtual void _store_cw      (              B *V_N                       ) const;
 
 	inline void recursive_decode(const R *Y_N, const int off_l, const int off_s, const int rev_depth, int &node_id);
 
@@ -100,7 +100,7 @@ protected:
 
 	virtual inline void init_buffers    (                          );
 	        inline void delete_path     (int path_id, const int r_d);
-	virtual inline int  select_best_path(const int frame_id        );
+	virtual inline int  select_best_path(const size_t frame_id     );
 
 private:
 	inline void erase_bad_paths(const int r_d);

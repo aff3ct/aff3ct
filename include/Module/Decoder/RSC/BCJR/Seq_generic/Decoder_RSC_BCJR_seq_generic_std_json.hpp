@@ -34,7 +34,7 @@ public:
 	virtual ~Decoder_RSC_BCJR_seq_generic_std_json() = default;
 
 protected:
-	virtual int _decode_siso_alt(const R *sys, const R *par, R *ext, const int frame_id);
+	virtual int _decode_siso_alt(const R *sys, const R *par, R *ext, const size_t frame_id);
 	void compute_ext(const R *sys, R *ext);
 };
 }

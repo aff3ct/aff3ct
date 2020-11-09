@@ -95,7 +95,7 @@ Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>* Decoder_LDPC_BP_flooding_inter<
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
-::_reset(const int frame_id)
+::_reset(const size_t frame_id)
 {
 	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 	const auto zero = mipp::Reg<R>((R)0);
@@ -104,7 +104,7 @@ void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 
 template <typename B, typename R, class Update_rule>
 int Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
-::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
+::_decode_siso(const R *Y_N1, R *Y_N2, const size_t frame_id)
 {
 	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 
@@ -130,7 +130,7 @@ int Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 
 template <typename B, typename R, class Update_rule>
 int Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	const auto cur_wave = frame_id / this->simd_inter_frame_level;
@@ -168,7 +168,7 @@ int Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 
 template <typename B, typename R, class Update_rule>
 int Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
-::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
@@ -202,7 +202,7 @@ int Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 
 template <typename B, typename R, class Update_rule>
 int Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
-::_decode(const mipp::Reg<R> *Y_N, const int cur_wave)
+::_decode(const mipp::Reg<R> *Y_N, const size_t cur_wave)
 {
 	this->up_rule.begin_decoding(this->n_ite);
 
@@ -385,7 +385,7 @@ int Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
 	if (old_n_frames != n_frames)

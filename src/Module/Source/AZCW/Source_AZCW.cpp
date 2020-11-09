@@ -24,7 +24,7 @@ Source_AZCW<B>* Source_AZCW<B>
 
 template <typename B>
 void Source_AZCW<B>
-::_generate(B *U_K, const int frame_id)
+::_generate(B *U_K, const size_t frame_id)
 {
 	std::fill(U_K, U_K + this->K, 0);
 }

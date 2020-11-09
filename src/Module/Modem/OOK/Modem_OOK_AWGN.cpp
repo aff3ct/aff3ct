@@ -46,7 +46,7 @@ void Modem_OOK_AWGN<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_OOK_AWGN<B,R,Q>
-::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
+::_demodulate(const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	if (disable_sig2)
 		for (auto i = 0; i < this->N_fil; i++)
@@ -66,7 +66,7 @@ void Modem_OOK_AWGN<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_OOK_AWGN<B,R,Q>
-::_demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
+::_demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	if (disable_sig2)
 		for (auto i = 0; i < this->N_fil; i++)
@@ -91,14 +91,14 @@ void Modem_OOK_AWGN<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_OOK_AWGN<B,R,Q>
-::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
+::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
 	this->_demodulate(Y_N1,Y_N3,frame_id);
 }
 
 template <typename B, typename R, typename Q>
 void Modem_OOK_AWGN<B,R,Q>
-::_tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
+::_tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
 	this->_demodulate_wg(H_N, Y_N1, Y_N3, frame_id);
 }

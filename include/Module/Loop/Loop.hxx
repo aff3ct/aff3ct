@@ -91,7 +91,7 @@ Loop
 		}
 	}
 
-	this->create_codelet(p, [](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p, [](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &lop = static_cast<Loop&>(m);
 

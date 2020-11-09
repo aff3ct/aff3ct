@@ -37,8 +37,8 @@ public:
 	virtual void set_seed(const int seed);
 
 protected:
-	virtual void cn_process(const B *VN,  B *CN,              const int frame_id);
-	virtual void vn_process(const B *Y_N, B *VN, const B *CN, const int frame_id);
+	virtual void cn_process(const B *VN,  B *CN,              const size_t frame_id);
+	virtual void vn_process(const B *Y_N, B *VN, const B *CN, const size_t frame_id);
 };
 
 template <typename B = int, typename R = float>

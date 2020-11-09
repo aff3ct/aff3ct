@@ -25,7 +25,7 @@ Interleaver_core_random<T>* Interleaver_core_random<T>
 
 template <typename T>
 void Interleaver_core_random<T>
-::gen_lut(T *lut, const int frame_id)
+::gen_lut(T *lut, const size_t frame_id)
 {
 	std::iota   (lut, lut + this->get_size(), 0);
 	std::shuffle(lut, lut + this->get_size(), rd_engine);

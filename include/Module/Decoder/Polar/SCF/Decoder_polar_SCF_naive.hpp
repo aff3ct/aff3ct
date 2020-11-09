@@ -39,9 +39,9 @@ public:
 protected:
 	virtual void deep_copy(const Decoder_polar_SCF_naive<B,R,F,G,H>& m);
 
-	virtual bool check_crc       (const int frame_id                                   );
-	        int  _decode_siho    (const R *Y_N, B *V_K, const int frame_id             );
-	        int  _decode_siho_cw (const R *Y_N, B *V_N, const int frame_id             );
+	virtual bool check_crc       (const size_t frame_id                                );
+	        int  _decode_siho    (const R *Y_N, B *V_K, const size_t frame_id          );
+	        int  _decode_siho_cw (const R *Y_N, B *V_N, const size_t frame_id          );
             void recursive_decode(const tools::Binary_node<Contents_SC<B,R>>* node_curr);
 };
 }

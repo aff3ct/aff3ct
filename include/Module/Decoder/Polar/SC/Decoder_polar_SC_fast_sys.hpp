@@ -61,12 +61,12 @@ public:
 	virtual void notify_noise_update();
 
 protected:
-	        void _load          (const R *Y_N                            );
-	virtual void _decode        (                                        );
-	        int  _decode_siho   (const R *Y_N, B *V_K, const int frame_id);
-	        int  _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id);
-	        void _store         (              B *V_K                    );
-	        void _store_cw      (              B *V_N                    );
+	        void _load          (const R *Y_N                               );
+	virtual void _decode        (                                           );
+	        int  _decode_siho   (const R *Y_N, B *V_K, const size_t frame_id);
+	        int  _decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id);
+	        void _store         (              B *V_K                       );
+	        void _store_cw      (              B *V_N                       );
 
 	virtual void recursive_decode(const int off_l, const int off_s, const int reverse_depth, int &node_id);
 };

@@ -104,7 +104,7 @@ void Adaptor_n_to_1
 	for (size_t s = 0; s < this->n_sockets; s++)
 		p1s_in.push_back(create_socket_in(p1, this->n_elmts[s], this->datatype[s], "in" + std::to_string(s+1)));
 
-	this->create_codelet(p1, [p1s_in](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p1, [p1s_in](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &adp = static_cast<Adaptor_n_to_1&>(m);
 		if (adp.is_no_copy_push())
@@ -129,7 +129,7 @@ void Adaptor_n_to_1
 	for (size_t s = 0; s < this->n_sockets; s++)
 		p2s_out.push_back(create_socket_out(p2, this->n_elmts[s], this->datatype[s], "out" + std::to_string(s+1)));
 
-	this->create_codelet(p2, [p2s_out](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p2, [p2s_out](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &adp = static_cast<Adaptor_n_to_1&>(m);
 		if (adp.is_no_copy_pull())

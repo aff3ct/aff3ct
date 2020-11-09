@@ -30,13 +30,13 @@ public:
 	virtual Modem_generic_fast<B,R,Q,MAX,MAXI>* clone() const;
 
 protected:
-	void _demodulate_complex    (              const Q *Y_N1,                 Q *Y_N2, const int frame_id);
-	void _demodulate_wg_complex (const R *H_N, const Q *Y_N1,                 Q *Y_N2, const int frame_id);
-	void _demodulate_real       (              const Q *Y_N1,                 Q *Y_N2, const int frame_id);
-	void _demodulate_wg_real    (const R *H_N, const Q *Y_N1,                 Q *Y_N2, const int frame_id);
+	void _demodulate_complex    (              const Q *Y_N1,                 Q *Y_N2, const size_t frame_id);
+	void _demodulate_wg_complex (const R *H_N, const Q *Y_N1,                 Q *Y_N2, const size_t frame_id);
+	void _demodulate_real       (              const Q *Y_N1,                 Q *Y_N2, const size_t frame_id);
+	void _demodulate_wg_real    (const R *H_N, const Q *Y_N1,                 Q *Y_N2, const size_t frame_id);
 
-	void _tdemodulate           (              const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const int frame_id);
-	void _tdemodulate_wg        (const R *H_N, const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const int frame_id);
+	void _tdemodulate           (              const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const size_t frame_id);
+	void _tdemodulate_wg        (const R *H_N, const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const size_t frame_id);
 };
 }
 }

@@ -89,7 +89,7 @@ int Encoder_turbo<B>
 
 template <typename B>
 void Encoder_turbo<B>
-::_encode(const B *U_K, B *X_N, const int frame_id)
+::_encode(const B *U_K, B *X_N, const size_t frame_id)
 {
 	pi->interleave(U_K - frame_id * this->K, U_K_i.data(), frame_id);
 
@@ -131,7 +131,7 @@ bool Encoder_turbo<B>
 
 template <typename B>
 void Encoder_turbo<B>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
 	if (old_n_frames != n_frames)

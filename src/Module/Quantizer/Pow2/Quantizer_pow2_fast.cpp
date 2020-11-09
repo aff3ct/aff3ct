@@ -158,7 +158,7 @@ Quantizer_pow2_fast<R,Q>* Quantizer_pow2_fast<R,Q>
 
 template<typename R, typename Q>
 void Quantizer_pow2_fast<R,Q>
-::_process(const R *Y_N1, Q *Y_N2, const int frame_id)
+::_process(const R *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	std::string message = "Supports only 'float' to 'short' and 'float' to 'signed char' conversions.";
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, message);
@@ -170,7 +170,7 @@ namespace module
 {
 template<>
 void Quantizer_pow2_fast<float,short>
-::_process(const float *Y_N1, short *Y_N2, const int frame_id)
+::_process(const float *Y_N1, short *Y_N2, const size_t frame_id)
 {
 	if (!mipp::isAligned(Y_N1))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N1' is misaligned memory.");
@@ -208,7 +208,7 @@ namespace module
 {
 template<>
 void Quantizer_pow2_fast<float,signed char>
-::_process(const float *Y_N1, signed char *Y_N2, const int frame_id)
+::_process(const float *Y_N1, signed char *Y_N2, const size_t frame_id)
 {
 	if (!mipp::isAligned(Y_N1))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N1' is misaligned memory.");

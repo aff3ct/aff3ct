@@ -38,7 +38,7 @@ void Modem_OOK_BEC<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_OOK_BEC<B,R,Q>
-::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
+::_demodulate(const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	auto sign = tools::unknown_llr_val<Q>();
 	for (auto i = 0; i < this->N_fil; i++)

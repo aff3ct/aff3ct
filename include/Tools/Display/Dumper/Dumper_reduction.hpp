@@ -25,7 +25,7 @@ public:
 	virtual ~Dumper_reduction() = default;
 
 	virtual void dump (const std::string& base_path);
-	virtual void add  (const int frame_id = 0      );
+	virtual void add  (const size_t frame_id = 0   );
 	virtual void clear(                            );
 
 private:

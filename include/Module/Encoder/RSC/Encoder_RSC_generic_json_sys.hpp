@@ -31,7 +31,7 @@ public:
 
 	std::vector<std::vector<int>> get_trellis();
 
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 
 protected:
 	int inner_encode(const int bit_sys, int &state);

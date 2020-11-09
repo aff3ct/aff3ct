@@ -27,9 +27,9 @@ public:
 	virtual CRC_polynomial_fast<B>* clone() const;
 
 protected:
-	virtual void _build       (const B *U_K1, B *U_K2, const int frame_id);
-	virtual bool _check       (const B *V_K          , const int frame_id);
-	virtual bool _check_packed(const B *V_K          , const int frame_id);
+	virtual void _build       (const B *U_K1, B *U_K2, const size_t frame_id);
+	virtual bool _check       (const B *V_K          , const size_t frame_id);
+	virtual bool _check_packed(const B *V_K          , const size_t frame_id);
 
 private:
 	inline unsigned compute_crc_v1(const void* data, const int n_bits);

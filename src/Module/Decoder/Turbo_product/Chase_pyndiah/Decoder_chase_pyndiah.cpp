@@ -153,7 +153,7 @@ void Decoder_chase_pyndiah<B,R>
 
 template <typename B, typename R>
 int Decoder_chase_pyndiah<B,R>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
 {
 	auto status = decode_chase(Y_N, frame_id);
 
@@ -168,7 +168,7 @@ int Decoder_chase_pyndiah<B,R>
 
 template <typename B, typename R>
 int Decoder_chase_pyndiah<B,R>
-::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id)
 {
 	auto status = decode_chase(Y_N, frame_id);
 
@@ -181,7 +181,7 @@ int Decoder_chase_pyndiah<B,R>
 
 template <typename B, typename R>
 int Decoder_chase_pyndiah<B,R>
-::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
+::_decode_siso(const R *Y_N1, R *Y_N2, const size_t frame_id)
 {
 	auto status = decode_chase(Y_N1, frame_id);
 
@@ -200,7 +200,7 @@ int Decoder_chase_pyndiah<B,R>
 
 template <typename B, typename R>
 int Decoder_chase_pyndiah<B,R>
-::decode_chase(const R *Y_N, const int frame_id)
+::decode_chase(const R *Y_N, const size_t frame_id)
 {
 	tools::hard_decide(Y_N, hard_Y_N.data(), this->N);
 
@@ -302,7 +302,7 @@ void Decoder_chase_pyndiah<B,R>
 
 template <typename B, typename R>
 void Decoder_chase_pyndiah<B,R>
-::compute_test_vectors(const int frame_id)
+::compute_test_vectors(const size_t frame_id)
 {
 	int dec_offset = frame_id * N_np; // dec add automaticaly an address offset to process the frame_id-th frame
 	                                  // hard_Y_N. But there is only one frame so we need to substract a forecast

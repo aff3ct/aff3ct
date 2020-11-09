@@ -108,9 +108,9 @@ public:
 protected:
 	const Attributes& get_attributes() const;
 
-	virtual R _get_mutual_info(const B *X, const R *Y, const int frame_id);
+	virtual R _get_mutual_info(const B *X, const R *Y, const size_t frame_id);
 
-	virtual R __get_mutual_info(const B *X, const R *Y, const int frame_id);
+	virtual R __get_mutual_info(const B *X, const R *Y, const size_t frame_id);
 
 	void add_MI_value(const R mi);
 };

@@ -23,7 +23,7 @@ public:
 protected:
 	void check_noise();
 
-	void _demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id);
+	void _demodulate(const Q *Y_N1, Q *Y_N2, const size_t frame_id);
 };
 }
 }

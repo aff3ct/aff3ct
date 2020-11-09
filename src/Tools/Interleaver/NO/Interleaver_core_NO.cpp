@@ -23,7 +23,7 @@ Interleaver_core_NO<T>* Interleaver_core_NO<T>
 
 template <typename T>
 void Interleaver_core_NO<T>
-::gen_lut(T *lut, const int frame_id)
+::gen_lut(T *lut, const size_t frame_id)
 {
 	std::iota(lut, lut + this->get_size(), 0);
 }

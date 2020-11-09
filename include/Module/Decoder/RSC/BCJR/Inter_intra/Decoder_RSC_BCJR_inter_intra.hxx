@@ -129,7 +129,7 @@ void Decoder_RSC_BCJR_inter_intra<B,R>
 
 template <typename B, typename R>
 int Decoder_RSC_BCJR_inter_intra<B,R>
-::_decode_siso_alt(const R *sys, const R *par, R *ext, const int frame_id)
+::_decode_siso_alt(const R *sys, const R *par, R *ext, const size_t frame_id)
 {
 	if (!mipp::isAligned(sys))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'sys' is misaligned memory.");

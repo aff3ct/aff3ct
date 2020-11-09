@@ -110,12 +110,12 @@ public:
 
 	virtual void notify_noise_update();
 
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 
 protected:
-	virtual void _add_noise(const R *X_N, R *Y_N, const int frame_id);
+	virtual void _add_noise(const R *X_N, R *Y_N, const size_t frame_id);
 
-	virtual void _add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id);
+	virtual void _add_noise_wg(const R *X_N, R *H_N, R *Y_N, const size_t frame_id);
 
 	virtual void check_noise(); // check that the noise has the expected type
 };

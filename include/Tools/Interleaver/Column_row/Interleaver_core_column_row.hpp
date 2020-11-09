@@ -42,7 +42,7 @@ public:
 	virtual Interleaver_core_column_row<T>* clone() const;
 
 protected:
-	void gen_lut(T *lut, const int frame_id);
+	void gen_lut(T *lut, const size_t frame_id);
 };
 }
 }

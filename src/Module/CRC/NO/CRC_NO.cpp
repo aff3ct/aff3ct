@@ -32,28 +32,28 @@ int CRC_NO<B>
 
 template <typename B>
 void CRC_NO<B>
-::_build(const B *U_K1, B *U_K2, const int frame_id)
+::_build(const B *U_K1, B *U_K2, const size_t frame_id)
 {
 	std::copy(U_K1, U_K1 + this->K, U_K2);
 }
 
 template <typename B>
 void CRC_NO<B>
-::_extract(const B *V_K1, B *V_K2, const int frame_id)
+::_extract(const B *V_K1, B *V_K2, const size_t frame_id)
 {
 	std::copy(V_K1, V_K1 + this->K, V_K2);
 }
 
 template <typename B>
 bool CRC_NO<B>
-::_check(const B *V_K, const int frame_id)
+::_check(const B *V_K, const size_t frame_id)
 {
 	return false;
 }
 
 template <typename B>
 bool CRC_NO<B>
-::_check_packed(const B *V_K, const int frame_id)
+::_check_packed(const B *V_K, const size_t frame_id)
 {
 	return false;
 }

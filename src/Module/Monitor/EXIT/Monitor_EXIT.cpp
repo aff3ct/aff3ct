@@ -23,7 +23,7 @@ Monitor_EXIT<B,R>
 	auto ps_bits   = this->template create_socket_in<B>(p, "bits",   get_N());
 	auto ps_llrs_a = this->template create_socket_in<R>(p, "llrs_a", get_N());
 	auto ps_llrs_e = this->template create_socket_in<R>(p, "llrs_e", get_N());
-	this->create_codelet(p, [ps_bits, ps_llrs_a, ps_llrs_e](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p, [ps_bits, ps_llrs_a, ps_llrs_e](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &mnt = static_cast<Monitor_EXIT<B,R>&>(m);
 
@@ -96,9 +96,9 @@ void Monitor_EXIT<B,R>
 
 template <typename B, typename R>
 void Monitor_EXIT<B,R>
-::_check_mutual_info(const B *bits, const R *llrs_a, const R *llrs_e, const int frame_id)
+::_check_mutual_info(const B *bits, const R *llrs_a, const R *llrs_e, const size_t frame_id)
 {
-	for (auto f = 0; f < this->get_n_frames(); f++)
+	for (size_t f = 0; f < this->get_n_frames(); f++)
 	{
 		this->_check_mutual_info_avg(bits   + f * get_N(),
 		                             llrs_a + f * get_N(),
@@ -115,7 +115,7 @@ void Monitor_EXIT<B,R>
 
 template <typename B, typename R>
 void Monitor_EXIT<B,R>
-::_check_mutual_info_avg(const B *bits, const R *llrs_a, const int frame_id)
+::_check_mutual_info_avg(const B *bits, const R *llrs_a, const size_t frame_id)
 {
 	for (int j = 0; j < get_N(); j++)
 	{

@@ -136,8 +136,8 @@ public:
 	void unbind_adaptors();
 	bool is_bound_adaptors() const;
 
-	int get_n_frames() const;
-	void set_n_frames(const int n_frames);
+	size_t get_n_frames() const;
+	void set_n_frames(const size_t n_frames);
 
 protected:
 	void create_adaptors(const std::vector<size_t> &synchro_buffer_sizes = {},

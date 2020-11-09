@@ -41,7 +41,7 @@ public:
 
 	tools::Sequence& get_sequence();
 
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 
 protected:
 	virtual void deep_copy(const Subsequence& m);

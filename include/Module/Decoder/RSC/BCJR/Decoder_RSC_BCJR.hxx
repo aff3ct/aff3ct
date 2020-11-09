@@ -43,7 +43,7 @@ Decoder_RSC_BCJR<B,R>
 
 template <typename B, typename R>
 void Decoder_RSC_BCJR<B,R>
-::set_n_frames_per_wave(const int n_frames_per_wave)
+::set_n_frames_per_wave(const size_t n_frames_per_wave)
 {
 	const auto old_n_frames_per_wave = this->get_n_frames_per_wave();
 	if (old_n_frames_per_wave != n_frames_per_wave)
@@ -90,11 +90,11 @@ void Decoder_RSC_BCJR<B,R>
 			const auto frame_size = 2*this->K + tail;
 
 			std::vector<const R*> frames(n_frames);
-			for (auto f = 0; f < n_frames; f++)
+			for (size_t f = 0; f < n_frames; f++)
 				frames[f] = Y_N + f*frame_size;
 			tools::Reorderer<R>::apply(frames, sys.data(), this->K + tail/2);
 
-			for (auto f = 0; f < n_frames; f++)
+			for (size_t f = 0; f < n_frames; f++)
 				frames[f] = Y_N + f*frame_size + this->K + tail/2;
 			tools::Reorderer<R>::apply(frames, par.data(), this->K + tail/2);
 		}
@@ -106,7 +106,7 @@ void Decoder_RSC_BCJR<B,R>
 		// reordering
 		for (auto i = 0; i < this->K + n_ff; i++)
 		{
-			for (auto f = 0; f < n_frames; f++)
+			for (size_t f = 0; f < n_frames; f++)
 			{
 				sys[(i*n_frames) +f] = Y_N[f*2*(this->K +n_ff) + i*2 +0];
 				par[(i*n_frames) +f] = Y_N[f*2*(this->K +n_ff) + i*2 +1];
@@ -117,7 +117,7 @@ void Decoder_RSC_BCJR<B,R>
 
 template <typename B, typename R>
 int Decoder_RSC_BCJR<B,R>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	_load(Y_N);
@@ -129,7 +129,7 @@ int Decoder_RSC_BCJR<B,R>
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
-	for (auto i = 0; i < this->K * this->get_n_frames_per_wave(); i += mipp::nElReg<R>())
+	for (size_t i = 0; i < this->K * this->get_n_frames_per_wave(); i += mipp::nElReg<R>())
 	{
 		const auto r_post = mipp::Reg<R>(&ext[i]) + mipp::Reg<R>(&sys[i]);
 
@@ -163,7 +163,7 @@ void Decoder_RSC_BCJR<B,R>
 		const auto n_frames = this->get_n_frames_per_wave();
 
 		std::vector<B*> frames(n_frames);
-		for (auto f = 0; f < n_frames; f++)
+		for (size_t f = 0; f < n_frames; f++)
 			frames[f] = V_K + f*this->K;
 		tools::Reorderer<B>::apply_rev(s.data(), frames, this->K);
 	}

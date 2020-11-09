@@ -34,18 +34,18 @@ void Loop
 // }
 
 bool Loop
-::_stop(const int8_t *in, const int frame_id)
+::_stop(const int8_t *in, const size_t frame_id)
 {
 	this->n_calls++;
 
 	auto ret_val = this->__stop(in + 0 * this->n_bytes_in, 0);
-	for (auto f = 1; f < this->get_n_frames(); f++)
+	for (size_t f = 1; f < this->get_n_frames(); f++)
 		ret_val &= this->__stop(in + f * this->n_bytes_in, f);
 	return ret_val;
 }
 
 bool Loop
-::__stop(const int8_t *in, const int frame_id)
+::__stop(const int8_t *in, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }

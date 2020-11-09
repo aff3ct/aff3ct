@@ -65,11 +65,11 @@ Encoder<B>
 	auto &p = this->create_task("encode");
 	auto ps_U_K = this->template create_socket_in <B>(p, "U_K", this->K);
 	auto ps_X_N = this->template create_socket_out<B>(p, "X_N", this->N);
-	this->create_codelet(p, [ps_U_K, ps_X_N](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p, [ps_U_K, ps_X_N](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &enc = static_cast<Encoder<B>&>(m);
 		if (enc.is_memorizing())
-			for (auto f = 0; f < enc.get_n_frames_per_wave(); f++)
+			for (size_t f = 0; f < enc.get_n_frames_per_wave(); f++)
 				std::copy(static_cast<B*>(t[ps_U_K].get_dataptr()) + (f +0) * enc.K,
 				          static_cast<B*>(t[ps_U_K].get_dataptr()) + (f +1) * enc.K,
 				          enc.U_K_mem[frame_id + f].begin());
@@ -79,7 +79,7 @@ Encoder<B>
 		            frame_id);
 
 		if (enc.is_memorizing())
-			for (auto f = 0; f < enc.get_n_frames_per_wave(); f++)
+			for (size_t f = 0; f < enc.get_n_frames_per_wave(); f++)
 				std::copy(static_cast<B*>(t[ps_X_N].get_dataptr()) + (f +0) * enc.N,
 				          static_cast<B*>(t[ps_X_N].get_dataptr()) + (f +1) * enc.N,
 				          enc.X_N_mem[frame_id + f].begin());
@@ -135,7 +135,7 @@ void Encoder<B>
 	{
 		if (!this->U_K_mem[0].size())
 		{
-			for (auto f = 0; f < this->n_frames; f++)
+			for (size_t f = 0; f < this->n_frames; f++)
 			{
 				this->U_K_mem[f].resize(this->K);
 				std::fill(this->U_K_mem[f].begin(), this->U_K_mem[f].end(), (B)0);
@@ -143,7 +143,7 @@ void Encoder<B>
 		}
 		if (!this->X_N_mem[0].size())
 		{
-			for (auto f = 0; f < this->n_frames; f++)
+			for (size_t f = 0; f < this->n_frames; f++)
 			{
 				this->X_N_mem[f].resize(this->N);
 				std::fill(this->X_N_mem[f].begin(), this->X_N_mem[f].end(), (B)0);
@@ -154,14 +154,14 @@ void Encoder<B>
 
 template <typename B>
 const std::vector<B>& Encoder<B>
-::get_U_K(const int frame_id) const
+::get_U_K(const size_t frame_id) const
 {
 	return this->U_K_mem[frame_id % this->n_frames];
 }
 
 template <typename B>
 const std::vector<B>& Encoder<B>
-::get_X_N(const int frame_id) const
+::get_X_N(const size_t frame_id) const
 {
 	return this->X_N_mem[frame_id % this->n_frames];
 }
@@ -224,7 +224,7 @@ int Encoder<B>
 
 template <typename B>
 void Encoder<B>
-::_encode(const B *U_K, B *X_N, const int frame_id)
+::_encode(const B *U_K, B *X_N, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
@@ -245,7 +245,7 @@ void Encoder<B>
 
 template <typename B>
 void Encoder<B>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
 	if (old_n_frames != n_frames)

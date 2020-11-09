@@ -84,7 +84,7 @@ Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>* Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 template <typename B, typename R,
           tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
 void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
-::_reset(const int frame_id)
+::_reset(const size_t frame_id)
 {
 	// init feedback graph (special case for the left most stage)
 	for (auto i = 0; i < this->N; i++)
@@ -154,7 +154,7 @@ void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 template <typename B, typename R,
           tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
 int Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
@@ -178,7 +178,7 @@ int Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 template <typename B, typename R,
           tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
 int Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
-::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
@@ -202,7 +202,7 @@ int Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 template <typename B, typename R,
           tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
 int Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
-::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
+::_decode_siso(const R *Y_N1, R *Y_N2, const size_t frame_id)
 {
 	// ----------------------------------------------------------------------------------------------------------- LOAD
 	this->_load(Y_N1);
@@ -296,7 +296,7 @@ void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 template <typename B, typename R,
           tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
 void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	if (n_frames != 1)
 	{

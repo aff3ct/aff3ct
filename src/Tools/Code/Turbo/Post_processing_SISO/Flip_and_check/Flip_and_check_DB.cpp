@@ -151,7 +151,7 @@ bool Flip_and_check_DB<B,R>
 
 template <typename B, typename R>
 void Flip_and_check_DB<B,R>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	if (this->n_frames != 1)
 	{

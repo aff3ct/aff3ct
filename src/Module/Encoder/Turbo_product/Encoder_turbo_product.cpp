@@ -56,7 +56,7 @@ Encoder_turbo_product<B>
 
 	int par = this->parity_extended ? 1 : 0;
 
-	if (enc_r.get_N() + par != enc_c.get_n_frames())
+	if ((size_t)(enc_r.get_N() + par) != enc_c.get_n_frames())
 	{
 		std::stringstream message;
 		message << "'enc_r.get_K() + par' has to be equal to 'enc_c.get_n_frames()' ('enc_r.get_K()' = "
@@ -65,7 +65,7 @@ Encoder_turbo_product<B>
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	if (enc_c.get_N() + par != enc_r.get_n_frames())
+	if ((size_t)(enc_c.get_N() + par) != enc_r.get_n_frames())
 	{
 		std::stringstream message;
 		message << "'enc_c.get_K() + par' has to be equal to 'enc_r.get_n_frames()' ('enc_c.get_K()' = "
@@ -96,7 +96,7 @@ void Encoder_turbo_product<B>
 
 template <typename B>
 void Encoder_turbo_product<B>
-::_encode(const B *U_K, B *X_N, const int frame_id)
+::_encode(const B *U_K, B *X_N, const size_t frame_id)
 {
 	// const int n_cols_K = this->enc_r->get_K();
 	const int n_cols_N = this->enc_r->get_N() + (this->parity_extended ? 1 : 0);
@@ -160,7 +160,7 @@ void Encoder_turbo_product<B>
 
 template <typename B>
 void Encoder_turbo_product<B>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
 	if (old_n_frames != n_frames)

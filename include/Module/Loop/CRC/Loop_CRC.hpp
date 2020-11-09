@@ -33,9 +33,9 @@ public:
 protected:
 	virtual void deep_copy(const Loop_CRC<I,O> &m);
 
-	virtual bool _stop(const int8_t *in, const int frame_id);
+	virtual bool _stop(const int8_t *in, const size_t frame_id);
 
-	virtual bool __stop(const int8_t *in, const int frame_id);
+	virtual bool __stop(const int8_t *in, const size_t frame_id);
 };
 }
 }

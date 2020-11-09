@@ -131,7 +131,7 @@ void Decoder_turbo_product<B,R>
 
 template <typename B, typename R>
 int Decoder_turbo_product<B, R>
-::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
+::_decode_siso(const R *Y_N1, R *Y_N2, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	std::copy(Y_N1, Y_N1 + this->N, Y_N_i.data());
@@ -154,7 +154,7 @@ int Decoder_turbo_product<B, R>
 
 template <typename B, typename R>
 int Decoder_turbo_product<B, R>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	std::copy(Y_N, Y_N + this->N, Y_N_i.data());
@@ -177,7 +177,7 @@ int Decoder_turbo_product<B, R>
 
 template <typename B, typename R>
 int Decoder_turbo_product<B, R>
-::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	std::copy(Y_N, Y_N + this->N, Y_N_i.data());
@@ -200,7 +200,7 @@ int Decoder_turbo_product<B, R>
 
 template <typename B, typename R>
 int Decoder_turbo_product<B,R>
-::_decode(const R *Y_N_cha, const int frame_id, int return_K_siso)
+::_decode(const R *Y_N_cha, const size_t frame_id, int return_K_siso)
 {
 	const int n_cols = cp_r->get_N();
 	const int n_rows = cp_c->get_N();
@@ -273,7 +273,7 @@ int Decoder_turbo_product<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo_product<B,R>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
 	if (old_n_frames != n_frames)

@@ -29,7 +29,7 @@ Monitor_MI<B,R>
 	auto &p = this->create_task("get_mutual_info", (int)mnt::tsk::get_mutual_info);
 	auto ps_X = this->template create_socket_in<B>(p, "X", get_N());
 	auto ps_Y = this->template create_socket_in<R>(p, "Y", get_N());
-	this->create_codelet(p, [ps_X, ps_Y](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p, [ps_X, ps_Y](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &mnt = static_cast<Monitor_MI<B,R>&>(m);
 
@@ -109,10 +109,10 @@ R Monitor_MI<B,R>
 
 template <typename B, typename R>
 R Monitor_MI<B,R>
-::_get_mutual_info(const B *X, const R *Y, const int frame_id)
+::_get_mutual_info(const B *X, const R *Y, const size_t frame_id)
 {
 	R loc_MI_sum = 0;
-	for (auto f = 0; f < this->get_n_frames(); f++)
+	for (size_t f = 0; f < this->get_n_frames(); f++)
 		loc_MI_sum += this->__get_mutual_info(X + f * get_N(), Y + f * get_N(), f);
 
 	this->callback_check.notify();
@@ -125,7 +125,7 @@ R Monitor_MI<B,R>
 
 template <typename B, typename R>
 R Monitor_MI<B,R>
-::__get_mutual_info(const B *X, const R *Y, const int frame_id)
+::__get_mutual_info(const B *X, const R *Y, const size_t frame_id)
 {
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, "The _get_mutual_info() function does not support this "
 	                                                         "type.");
@@ -139,7 +139,7 @@ namespace module
 #if defined(AFF3CT_MULTI_PREC) | defined (AFF3CT_32BIT_PREC)
 template <>
 R_32 Monitor_MI<B_32,R_32>
-::__get_mutual_info(const B_32 *X, const R_32 *Y, const int frame_id)
+::__get_mutual_info(const B_32 *X, const R_32 *Y, const size_t frame_id)
 {
 	auto mi = tools::mutual_info_histo(X, Y, get_N());
 	this->add_MI_value(mi);
@@ -150,7 +150,7 @@ R_32 Monitor_MI<B_32,R_32>
 #if defined(AFF3CT_MULTI_PREC) | defined (AFF3CT_64BIT_PREC)
 template <>
 R_64 Monitor_MI<B_64,R_64>
-::__get_mutual_info(const B_64 *X, const R_64 *Y, const int frame_id)
+::__get_mutual_info(const B_64 *X, const R_64 *Y, const size_t frame_id)
 {
 	auto mi = tools::mutual_info_histo(X, Y, get_N());
 	this->add_MI_value(mi);

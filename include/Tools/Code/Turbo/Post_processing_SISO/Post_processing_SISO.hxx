@@ -55,7 +55,7 @@ void Post_processing_SISO<B,R>
 }
 
 template <typename B, typename R>
-int Post_processing_SISO<B,R>
+size_t Post_processing_SISO<B,R>
 ::get_n_frames() const
 {
 	return this->n_frames;
@@ -63,7 +63,7 @@ int Post_processing_SISO<B,R>
 
 template <typename B, typename R>
 void Post_processing_SISO<B,R>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
 	if (old_n_frames != n_frames)

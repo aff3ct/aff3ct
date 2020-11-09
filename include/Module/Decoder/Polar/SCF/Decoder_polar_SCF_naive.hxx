@@ -97,7 +97,7 @@ void Decoder_polar_SCF_naive<B,R,F,G,H>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 int Decoder_polar_SCF_naive<B,R,F,G,H>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
 {
 	// initialization
 	bool decode_result = false;
@@ -156,7 +156,7 @@ int Decoder_polar_SCF_naive<B,R,F,G,H>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 int Decoder_polar_SCF_naive<B,R,F,G,H>
-::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id)
 {
 	// initialization
 	bool decode_result = false;
@@ -215,7 +215,7 @@ int Decoder_polar_SCF_naive<B,R,F,G,H>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 bool Decoder_polar_SCF_naive<B,R,F,G,H>
-::check_crc(const int frame_id)
+::check_crc(const size_t frame_id)
 {
 	auto &leaves = this->polar_tree.get_leaves();
 

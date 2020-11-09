@@ -83,7 +83,7 @@ bool Flip_and_check<B,R>
 ::apply_flip_and_check(const mipp::vector<R>& sys, const mipp::vector<R>& ext, mipp::vector<B>& s)
 {
 	// reconstruct the a posteriori information and calculate the metric associated
-	for (auto i = 0; i < this->K * this->n_frames; i++)
+	for (size_t i = 0; i < this->K * this->n_frames; i++)
 		metric[i] = std::abs(sys[i] + ext[i]);
 
 	// get the least reliable positions
@@ -111,7 +111,7 @@ bool Flip_and_check<B,R>
 
 template <typename B, typename R>
 void Flip_and_check<B,R>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
 	if (n_frames != old_n_frames)

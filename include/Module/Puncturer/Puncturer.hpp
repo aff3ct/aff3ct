@@ -99,9 +99,9 @@ public:
 	void depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id = -1, const bool managed_memory = true) const;
 
 protected:
-	virtual void _puncture(const B *X_N1, B *X_N2, const int frame_id) const;
+	virtual void _puncture(const B *X_N1, B *X_N2, const size_t frame_id) const;
 
-	virtual void _depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id) const;
+	virtual void _depuncture(const Q *Y_N1, Q *Y_N2, const size_t frame_id) const;
 };
 }
 }

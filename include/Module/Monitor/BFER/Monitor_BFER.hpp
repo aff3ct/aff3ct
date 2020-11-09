@@ -147,7 +147,7 @@ public:
 protected:
 	const Attributes& get_attributes() const;
 
-	virtual int _check_errors(const B *U, const B *V, const int frame_id);
+	virtual int _check_errors(const B *U, const B *V, const size_t frame_id);
 
 	virtual int _check_errors2(const B       *U,
 	                           const B       *V,
@@ -156,9 +156,9 @@ protected:
 	                                 int32_t *FE,
 	                                 float   *BER,
 	                                 float   *FER,
-	                           const int frame_id);
+	                           const size_t frame_id);
 
-	virtual int __check_errors(const B *U, const B *V, const int frame_id);
+	virtual int __check_errors(const B *U, const B *V, const size_t frame_id);
 };
 }
 }

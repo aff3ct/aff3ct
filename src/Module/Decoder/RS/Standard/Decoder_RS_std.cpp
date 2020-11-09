@@ -38,7 +38,7 @@ Decoder_RS_std<B,R>* Decoder_RS_std<B,R>
 
 template <typename B, typename R>
 int Decoder_RS_std<B,R>
-::_decode(S *Y_N, const int frame_id)
+::_decode(S *Y_N, const size_t frame_id)
 {
 	bool syn_error = false;
 

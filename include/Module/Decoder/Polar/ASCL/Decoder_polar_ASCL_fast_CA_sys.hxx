@@ -60,7 +60,7 @@ void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
-::_decode(const R *Y_N, B *V_K, const int frame_id)
+::_decode(const R *Y_N, B *V_K, const size_t frame_id)
 {
 	this->L = 1;
 	sc_decoder->_decode_siho(Y_N, V_K, frame_id);
@@ -97,7 +97,7 @@ void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 int Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
 {
 //	auto t_decod = std::chrono::steady_clock::now();
 	this->_decode(Y_N, V_K, frame_id);
@@ -116,7 +116,7 @@ int Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 int Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
-::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id)
 {
 //	auto t_decod = std::chrono::steady_clock::now();
 	this->_decode(Y_N, V_N, frame_id);
@@ -137,7 +137,7 @@ int Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
 	if (old_n_frames != n_frames)

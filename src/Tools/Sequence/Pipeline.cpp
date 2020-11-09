@@ -1184,7 +1184,7 @@ bool Pipeline
 	return this->bound_adaptors;
 }
 
-int Pipeline
+size_t Pipeline
 ::get_n_frames() const
 {
 	const auto n_frames = this->stages[0]->get_n_frames();
@@ -1202,7 +1202,7 @@ int Pipeline
 }
 
 void Pipeline
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto save_bound_adaptors = this->is_bound_adaptors();
 	if (!save_bound_adaptors)

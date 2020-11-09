@@ -55,7 +55,7 @@ void Encoder_BCH<B>
 
 template <typename B>
 void Encoder_BCH<B>
-::_encode(const B *U_K, B *X_N, const int frame_id)
+::_encode(const B *U_K, B *X_N, const size_t frame_id)
 {
 	// generate the parity bits
 	this->__encode(U_K, X_N);

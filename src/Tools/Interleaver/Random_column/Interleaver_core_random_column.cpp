@@ -35,7 +35,7 @@ Interleaver_core_random_column<T>* Interleaver_core_random_column<T>
 
 template <typename T>
 void Interleaver_core_random_column<T>
-::gen_lut(T *lut, const int frame_id)
+::gen_lut(T *lut, const size_t frame_id)
 {
 	std::vector<T> pi_temp(col_size); // interleaver lookup table for a column
 

@@ -27,7 +27,7 @@ Interleaver_core_golden<T>* Interleaver_core_golden<T>
 
 template <typename T>
 void Interleaver_core_golden<T>
-::gen_lut(T *lut, const int frame_id)
+::gen_lut(T *lut, const size_t frame_id)
 {
 	double g  = (std::sqrt(5)-1)/2.0;
 	double g2 = g * g;

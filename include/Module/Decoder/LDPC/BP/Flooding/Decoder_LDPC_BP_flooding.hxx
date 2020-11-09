@@ -79,14 +79,14 @@ Decoder_LDPC_BP_flooding<B,R,Update_rule>* Decoder_LDPC_BP_flooding<B,R,Update_r
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_flooding<B,R,Update_rule>
-::_reset(const int frame_id)
+::_reset(const size_t frame_id)
 {
 	std::fill(this->msg_chk_to_var[frame_id].begin(), this->msg_chk_to_var[frame_id].end(), (R)0);
 }
 
 template <typename B, typename R, class Update_rule>
 int Decoder_LDPC_BP_flooding<B,R,Update_rule>
-::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
+::_decode_siso(const R *Y_N1, R *Y_N2, const size_t frame_id)
 {
 	auto status = this->_decode(Y_N1, frame_id);
 
@@ -99,7 +99,7 @@ int Decoder_LDPC_BP_flooding<B,R,Update_rule>
 
 template <typename B, typename R, class Update_rule>
 int Decoder_LDPC_BP_flooding<B,R,Update_rule>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
@@ -127,7 +127,7 @@ int Decoder_LDPC_BP_flooding<B,R,Update_rule>
 
 template <typename B, typename R, class Update_rule>
 int Decoder_LDPC_BP_flooding<B,R,Update_rule>
-::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	// memory zones initialization
@@ -151,7 +151,7 @@ int Decoder_LDPC_BP_flooding<B,R,Update_rule>
 
 template <typename B, typename R, class Update_rule>
 int Decoder_LDPC_BP_flooding<B,R,Update_rule>
-::_decode(const R *Y_N, const int frame_id)
+::_decode(const R *Y_N, const size_t frame_id)
 {
 	this->up_rule.begin_decoding(this->n_ite);
 
@@ -254,7 +254,7 @@ void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 
 template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_flooding<B,R,Update_rule>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
 	if (old_n_frames != n_frames)

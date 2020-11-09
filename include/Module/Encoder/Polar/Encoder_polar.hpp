@@ -35,7 +35,7 @@ public:
 	virtual void notify_noise_update();
 
 protected:
-	virtual void _encode(const B *U_K, B *X_N, const int frame_id);
+	virtual void _encode(const B *U_K, B *X_N, const size_t frame_id);
 	void convert(const B *U_K, B *U_N);
 };
 }

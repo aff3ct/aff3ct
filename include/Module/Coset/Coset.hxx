@@ -43,7 +43,7 @@ Coset<B,D>
 	auto ps_ref = this->template create_socket_in <B>(p, "ref", this->size);
 	auto ps_in  = this->template create_socket_in <D>(p, "in",  this->size);
 	auto ps_out = this->template create_socket_out<D>(p, "out", this->size);
-	this->create_codelet(p, [ps_ref, ps_in, ps_out](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p, [ps_ref, ps_in, ps_out](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &cst = static_cast<Coset<B,D>&>(m);
 
@@ -94,7 +94,7 @@ void Coset<B,D>
 
 template <typename B, typename D>
 void Coset<B,D>
-::_apply(const B *ref, const D *in, D *out, const int frame_id)
+::_apply(const B *ref, const D *in, D *out, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }

@@ -33,7 +33,7 @@ public:
 	virtual Channel_user_bs<R>* clone() const;
 
 protected:
-	virtual void _add_noise(const R *X_N, R *Y_N, const int frame_id = -1);
+	virtual void _add_noise(const R *X_N, R *Y_N, const size_t frame_id);
 };
 }
 }

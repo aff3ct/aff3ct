@@ -48,7 +48,7 @@ void Modem_OOK_BSC<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_OOK_BSC<B,R,Q>
-::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
+::_demodulate(const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	auto log_pe_1_pe_2 = (Q)2 * this->log_pe_1_pe;
 

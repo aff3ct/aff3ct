@@ -79,10 +79,10 @@ public:
 protected:
 	virtual const std::vector<uint32_t>& get_info_bits_pos() = 0;
 
-	virtual void _get_sys_llr        (const Q *Y_N, Q *Y_K,         const int frame_id);
-	virtual void _get_sys_bit        (const Q *Y_N, B *V_K,         const int frame_id);
-	virtual void _get_sys_and_par_llr(const Q *Y_N, Q *sys, Q *par, const int frame_id);
-	virtual void _add_sys_and_ext_llr(const Q *ext, Q *Y_N,         const int frame_id);
+	virtual void _get_sys_llr        (const Q *Y_N, Q *Y_K,         const size_t frame_id);
+	virtual void _get_sys_bit        (const Q *Y_N, B *V_K,         const size_t frame_id);
+	virtual void _get_sys_and_par_llr(const Q *Y_N, Q *sys, Q *par, const size_t frame_id);
+	virtual void _add_sys_and_ext_llr(const Q *ext, Q *Y_N,         const size_t frame_id);
 };
 }
 }

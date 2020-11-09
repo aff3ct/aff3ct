@@ -22,7 +22,7 @@ Coset_bit<B,D>* Coset_bit<B,D>
 }
 
 template <typename B, typename D>
-void Coset_bit<B,D>::_apply(const B *ref, const D *in, D *out, const int frame_id)
+void Coset_bit<B,D>::_apply(const B *ref, const D *in, D *out, const size_t frame_id)
 {
 	for (auto i = 0; i < this->size; i++)
 		out[i] = ref[i] ? !in[i] : in[i];

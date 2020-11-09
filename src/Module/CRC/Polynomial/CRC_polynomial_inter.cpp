@@ -30,9 +30,9 @@ CRC_polynomial_inter<B>* CRC_polynomial_inter<B>
 
 template <typename B>
 void CRC_polynomial_inter<B>
-::_build(const B *U_K1, B *U_K2, const int frame_id)
+::_build(const B *U_K1, B *U_K2, const size_t frame_id)
 {
-	for (auto f = 0; f < this->get_n_frames_per_wave(); f++)
+	for (size_t f = 0; f < this->get_n_frames_per_wave(); f++)
 		CRC_polynomial<B>::_build(U_K1 + f *  this->K,
 			                      U_K2 + f * (this->K + this->size),
 			                      frame_id + f);
@@ -40,7 +40,7 @@ void CRC_polynomial_inter<B>
 
 template <typename B>
 bool CRC_polynomial_inter<B>
-::_check(const B *V_K, const int frame_id)
+::_check(const B *V_K, const size_t frame_id)
 {
 	this->_generate_INTER(V_K, this->buff_crc_inter.data(),
 	                      0,
@@ -48,7 +48,7 @@ bool CRC_polynomial_inter<B>
 	                      this->K * this->get_n_frames_per_wave(),
 	                      this->get_n_frames_per_wave());
 
-	auto i = 0;
+	size_t i = 0;
 	const auto off = this->K * this->get_n_frames_per_wave();
 	const auto total_crc_size = this->get_n_frames_per_wave() * this->size;
 	while ((i < total_crc_size) && (this->buff_crc_inter[off +i] == V_K[off +i]))
@@ -59,16 +59,16 @@ bool CRC_polynomial_inter<B>
 
 template <typename B>
 bool CRC_polynomial_inter<B>
-::_check_packed(const B *V_K, const int frame_id)
+::_check_packed(const B *V_K, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B>
 void CRC_polynomial_inter<B>
-::_extract(const B *V_K1, B *V_K2, const int frame_id)
+::_extract(const B *V_K1, B *V_K2, const size_t frame_id)
 {
-	for (auto f = 0; f < this->get_n_frames_per_wave(); f++)
+	for (size_t f = 0; f < this->get_n_frames_per_wave(); f++)
 		CRC_polynomial<B>::_extract(V_K1 + f * (this->K + this->size),
 			                        V_K2 + f *  this->K,
 			                        frame_id + f);

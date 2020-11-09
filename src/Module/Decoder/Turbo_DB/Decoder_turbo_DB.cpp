@@ -188,7 +188,7 @@ void Decoder_turbo_DB<B,R>
 
 template <typename B, typename R>
 int Decoder_turbo_DB<B,R>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N);
@@ -296,7 +296,7 @@ void Decoder_turbo_DB<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo_DB<B,R>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
 	if (old_n_frames != n_frames)

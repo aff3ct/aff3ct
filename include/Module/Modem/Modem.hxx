@@ -157,7 +157,7 @@ void Modem<B,R,Q>
 	auto &p1 = this->create_task("modulate");
 	auto p1s_X_N1 = this->template create_socket_in <B>(p1, "X_N1", this->N    );
 	auto p1s_X_N2 = this->template create_socket_out<R>(p1, "X_N2", this->N_mod);
-	this->create_codelet(p1, [p1s_X_N1, p1s_X_N2](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p1, [p1s_X_N1, p1s_X_N2](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
 
@@ -171,7 +171,7 @@ void Modem<B,R,Q>
 	auto &p7 = this->create_task("tmodulate");
 	auto p7s_X_N1 = this->template create_socket_in <Q>(p7, "X_N1", this->N    );
 	auto p7s_X_N2 = this->template create_socket_out<R>(p7, "X_N2", this->N_mod);
-	this->create_codelet(p7, [p7s_X_N1, p7s_X_N2](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p7, [p7s_X_N1, p7s_X_N2](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
 
@@ -185,7 +185,7 @@ void Modem<B,R,Q>
 	auto &p2 = this->create_task("filter");
 	auto p2s_Y_N1 = this->template create_socket_in <R>(p2, "Y_N1", this->N_mod);
 	auto p2s_Y_N2 = this->template create_socket_out<R>(p2, "Y_N2", this->N_fil);
-	this->create_codelet(p2, [p2s_Y_N1, p2s_Y_N2](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p2, [p2s_Y_N1, p2s_Y_N2](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
 
@@ -199,7 +199,7 @@ void Modem<B,R,Q>
 	auto &p3 = this->create_task("demodulate");
 	auto p3s_Y_N1 = this->template create_socket_in <Q>(p3, "Y_N1", this->N_fil);
 	auto p3s_Y_N2 = this->template create_socket_out<Q>(p3, "Y_N2", this->N    );
-	this->create_codelet(p3, [p3s_Y_N1, p3s_Y_N2](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p3, [p3s_Y_N1, p3s_Y_N2](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
 
@@ -214,7 +214,7 @@ void Modem<B,R,Q>
 	auto p4s_Y_N1 = this->template create_socket_in <Q>(p4, "Y_N1", this->N_fil);
 	auto p4s_Y_N2 = this->template create_socket_in <Q>(p4, "Y_N2", this->N    );
 	auto p4s_Y_N3 = this->template create_socket_out<Q>(p4, "Y_N3", this->N    );
-	this->create_codelet(p4, [p4s_Y_N1, p4s_Y_N2, p4s_Y_N3](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p4, [p4s_Y_N1, p4s_Y_N2, p4s_Y_N3](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
 
@@ -230,7 +230,7 @@ void Modem<B,R,Q>
 	auto p5s_H_N  = this->template create_socket_in <R>(p5, "H_N",  this->N_fil);
 	auto p5s_Y_N1 = this->template create_socket_in <Q>(p5, "Y_N1", this->N_fil);
 	auto p5s_Y_N2 = this->template create_socket_out<Q>(p5, "Y_N2", this->N    );
-	this->create_codelet(p5, [p5s_H_N, p5s_Y_N1, p5s_Y_N2](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p5, [p5s_H_N, p5s_Y_N1, p5s_Y_N2](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
 
@@ -247,7 +247,7 @@ void Modem<B,R,Q>
 	auto p6s_Y_N1 = this->template create_socket_in <Q>(p6, "Y_N1", this->N_fil);
 	auto p6s_Y_N2 = this->template create_socket_in <Q>(p6, "Y_N2", this->N    );
 	auto p6s_Y_N3 = this->template create_socket_out<Q>(p6, "Y_N3", this->N    );
-	this->create_codelet(p6, [p6s_H_N, p6s_Y_N1, p6s_Y_N2, p6s_Y_N3](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p6, [p6s_H_N, p6s_Y_N1, p6s_Y_N2, p6s_Y_N3](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
 
@@ -487,49 +487,49 @@ int Modem<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::_modulate(const B *X_N1, R *X_N2, const int frame_id)
+::_modulate(const B *X_N1, R *X_N2, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::_tmodulate(const Q *X_N1, R *X_N2, const int frame_id)
+::_tmodulate(const Q *X_N1, R *X_N2, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
+::_filter(const R *Y_N1, R *Y_N2, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
+::_demodulate(const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::_demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
+::_demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
+::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::_tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
+::_tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }

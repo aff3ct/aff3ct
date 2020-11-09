@@ -157,7 +157,7 @@ Quantizer_pow2<R,Q>* Quantizer_pow2<R,Q>
 
 template<typename R, typename Q>
 void Quantizer_pow2<R,Q>
-::_process(const R *Y_N1, Q *Y_N2, const int frame_id)
+::_process(const R *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	auto size = (unsigned)(this->N);
 	for (unsigned i = 0; i < size; i++)

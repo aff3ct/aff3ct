@@ -44,7 +44,7 @@ Decoder_HIHO<B>
 	auto &p1 = this->create_task("decode_hiho", (int)dec::tsk::decode_hiho);
 	auto p1s_Y_N = this->template create_socket_in <B>(p1, "Y_N", this->N);
 	auto p1s_V_K = this->template create_socket_out<B>(p1, "V_K", this->K);
-	this->create_codelet(p1, [p1s_Y_N, p1s_V_K](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p1, [p1s_Y_N, p1s_V_K](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &dec = static_cast<Decoder_HIHO<B>&>(m);
 
@@ -64,7 +64,7 @@ Decoder_HIHO<B>
 	auto &p2 = this->create_task("decode_hiho_cw", (int)dec::tsk::decode_hiho_cw);
 	auto p2s_Y_N = this->template create_socket_in <B>(p2, "Y_N", this->N);
 	auto p2s_V_N = this->template create_socket_out<B>(p2, "V_N", this->N);
-	this->create_codelet(p2, [p2s_Y_N, p2s_V_N](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p2, [p2s_Y_N, p2s_V_N](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &dec = static_cast<Decoder_HIHO<B>&>(m);
 
@@ -354,14 +354,14 @@ int Decoder_HIHO<B>
 
 template <typename B>
 int Decoder_HIHO<B>
-::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
+::_decode_hiho(const B *Y_N, B *V_K, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B>
 int Decoder_HIHO<B>
-::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
+::_decode_hiho_cw(const B *Y_N, B *V_N, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }

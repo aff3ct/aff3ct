@@ -31,10 +31,10 @@ namespace module
 class Module : public tools::Interface_clone
 {
 protected:
-	int         n_frames;     /*!< Number of frames to process in this Module */
-	int         n_frames_per_wave;
-	int         n_waves;
-	int         n_frames_per_wave_rest;
+	size_t      n_frames;     /*!< Number of frames to process in this Module */
+	size_t      n_frames_per_wave;
+	size_t      n_waves;
+	size_t      n_frames_per_wave_rest;
 	bool        single_wave;
 	std::string name;         /*!< Name of the Module. */
 	std::string short_name;   /*!< Short name of the Module. */
@@ -67,15 +67,15 @@ public:
 	 *
 	 * \return the number of frames to process in this Module.
 	 */
-	inline int get_n_frames() const;
+	inline size_t get_n_frames() const;
 
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 
-	inline int get_n_frames_per_wave() const;
+	inline size_t get_n_frames_per_wave() const;
 
-	inline int get_n_waves() const;
+	inline size_t get_n_waves() const;
 
-	inline int get_n_frames_per_wave_rest() const;
+	inline size_t get_n_frames_per_wave_rest() const;
 
 	inline bool is_single_wave() const;
 
@@ -109,17 +109,17 @@ protected:
 	template <typename T>
 	size_t create_socket_out(Task& task, const std::string &name, const size_t n_elmts);
 
-	void create_codelet(Task& task, std::function<int(Module &m, Task &t, const int frame_id)> codelet);
+	void create_codelet(Task& task, std::function<int(Module &m, Task &t, const size_t frame_id)> codelet);
 
 	void register_timer(Task& task, const std::string &key);
 
-	virtual void set_n_frames_per_wave(const int n_frames_per_wave);
+	virtual void set_n_frames_per_wave(const size_t n_frames_per_wave);
 
 	void set_single_wave(const bool enable_single_wave);
 
 private:
-	void _set_n_frames_per_wave(const int n_frames_per_wave);
-	void _set_n_frames         (const int n_frames         );
+	void _set_n_frames_per_wave(const size_t n_frames_per_wave);
+	void _set_n_frames         (const size_t n_frames         );
 };
 }
 }

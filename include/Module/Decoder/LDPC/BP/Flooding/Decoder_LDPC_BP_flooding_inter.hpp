@@ -49,17 +49,17 @@ public:
 
 	virtual Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>* clone() const;
 
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 
 protected:
-	void _reset(const int frame_id);
+	void _reset(const size_t frame_id);
 
-	int _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);
-	int _decode_siho   (const R *Y_N,  B *V_K,  const int frame_id);
-	int _decode_siho_cw(const R *Y_N,  B *V_N,  const int frame_id);
+	int _decode_siso   (const R *Y_N1, R *Y_N2, const size_t frame_id);
+	int _decode_siho   (const R *Y_N,  B *V_K,  const size_t frame_id);
+	int _decode_siho_cw(const R *Y_N,  B *V_N,  const size_t frame_id);
 
-	void _load                 (const R *Y_N, const int frame_id);
-	int  _decode               (const mipp::Reg<R> *Y_N, const int cur_wave);
+	void _load                 (const R *Y_N, const size_t frame_id);
+	int  _decode               (const mipp::Reg<R> *Y_N, const size_t cur_wave);
 	void _initialize_var_to_chk(const mipp::Reg<R> *Y_N, const mipp::vector<mipp::Reg<R>> &msg_chk_to_var,
 	                                                           mipp::vector<mipp::Reg<R>> &msg_var_to_chk);
 	void _decode_single_ite    (const mipp::vector<mipp::Reg<R>> &msg_var_to_chk,

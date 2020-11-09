@@ -28,7 +28,7 @@ class Interleaver_core : public Interface_set_seed, public Interface_clone
 protected:
 	const int size;
 	const std::string name;
-	      int n_frames;
+	      size_t n_frames;
 	      bool uniform;
 	      bool initialized;
 	std::vector<T> pi;     /*!< Lookup table for the interleaving process :
@@ -55,9 +55,9 @@ public:
 
 	int get_size() const;
 
-	inline int get_n_frames() const;
+	inline size_t get_n_frames() const;
 
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 
 	bool is_uniform() const;
 
@@ -72,7 +72,7 @@ protected:
 
 	void init();
 
-	virtual void gen_lut(T *lut, const int frame_id) = 0;
+	virtual void gen_lut(T *lut, const size_t frame_id) = 0;
 };
 }
 }

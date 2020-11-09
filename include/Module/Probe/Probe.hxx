@@ -40,7 +40,7 @@ Probe<T>
 
 	auto &p1 = this->create_task("probe");
 	auto p1s_in = this->template create_socket_in<T>(p1, "in", this->size);
-	this->create_codelet(p1, [p1s_in](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p1, [p1s_in](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &prb = static_cast<Probe<T>&>(m);
 
@@ -55,7 +55,7 @@ Probe<T>
 
 template <typename T>
 void Probe<T>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	std::stringstream message;
 	message << "This method is disabled in the 'Probe' class.";
@@ -81,7 +81,7 @@ void Probe<T>
 
 template <typename T>
 void Probe<T>
-::_probe(const T *in, const int frame_id)
+::_probe(const T *in, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }

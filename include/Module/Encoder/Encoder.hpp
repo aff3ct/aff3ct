@@ -81,9 +81,9 @@ public:
 
 	void set_memorizing(const bool memorizing);
 
-	const std::vector<B>& get_U_K(const int frame_id = 0) const;
+	const std::vector<B>& get_U_K(const size_t frame_id = 0) const;
 
-	const std::vector<B>& get_X_N(const int frame_id = 0) const;
+	const std::vector<B>& get_X_N(const size_t frame_id = 0) const;
 
 	/*!
 	 * \brief Encodes a vector of information bits (a message).
@@ -116,10 +116,10 @@ public:
 
 	virtual void set_seed(const int seed);
 
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 
 protected:
-	virtual void _encode(const B *U_K, B *X_N, const int frame_id);
+	virtual void _encode(const B *U_K, B *X_N, const size_t frame_id);
 
 	void set_sys(const bool sys);
 };

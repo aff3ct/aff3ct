@@ -44,7 +44,7 @@ Reporter_probe
 }
 
 void Reporter_probe
-::probe(const std::string &name, const void *data, const int frame_id)
+::probe(const std::string &name, const void *data, const size_t frame_id)
 {
 	const int col = this->name_to_col[name];
 	// bool can_push = false;

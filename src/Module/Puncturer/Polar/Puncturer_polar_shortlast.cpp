@@ -72,14 +72,14 @@ void Puncturer_polar_shortlast<B,Q>
 
 template <typename B, typename Q>
 void Puncturer_polar_shortlast<B,Q>
-::_puncture(const B *X_N1, B *X_N2, const int frame_id) const
+::_puncture(const B *X_N1, B *X_N2, const size_t frame_id) const
 {
 	std::copy(X_N1, X_N1 + this->N, X_N2);
 }
 
 template <typename B, typename Q>
 void Puncturer_polar_shortlast<B,Q>
-::_depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id) const
+::_depuncture(const Q *Y_N1, Q *Y_N2, const size_t frame_id) const
 {
 	std::copy(Y_N1, Y_N1 + this->N, Y_N2);
 

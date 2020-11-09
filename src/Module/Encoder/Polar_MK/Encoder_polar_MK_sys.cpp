@@ -35,7 +35,7 @@ Encoder_polar_MK_sys<B>* Encoder_polar_MK_sys<B>
 
 template <typename B>
 void Encoder_polar_MK_sys<B>
-::_encode(const B *U_K, B *X_N, const int frame_id)
+::_encode(const B *U_K, B *X_N, const size_t frame_id)
 {
 	this->convert(U_K, X_N);
 

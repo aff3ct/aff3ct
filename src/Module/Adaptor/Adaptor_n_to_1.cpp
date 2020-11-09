@@ -15,7 +15,7 @@ Adaptor_n_to_1* Adaptor_n_to_1
 }
 
 void Adaptor_n_to_1
-::push_n(const std::vector<const int8_t*> &in, const int frame_id)
+::push_n(const std::vector<const int8_t*> &in, const size_t frame_id)
 {
 	this->wait_push();
 
@@ -32,7 +32,7 @@ void Adaptor_n_to_1
 }
 
 void Adaptor_n_to_1
-::pull_1(const std::vector<int8_t*> &out, const int frame_id)
+::pull_1(const std::vector<int8_t*> &out, const size_t frame_id)
 {
 	this->wait_pull();
 

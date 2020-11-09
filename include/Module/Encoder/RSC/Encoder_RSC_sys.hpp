@@ -34,7 +34,7 @@ public:
 	bool is_codeword(const B *X_N);
 
 protected:
-	void _encode(const B *U_K, B *X_N, const int frame_id);
+	void _encode(const B *U_K, B *X_N, const size_t frame_id);
 
 	virtual int inner_encode(const int bit_sys, int &state) = 0;
 	virtual int tail_bit_sys(const int &state             ) = 0;

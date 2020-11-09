@@ -47,7 +47,7 @@ Decoder_maximum_likelihood_naive<B,R>* Decoder_maximum_likelihood_naive<B,R>
 
 template <typename B, typename R>
 int Decoder_maximum_likelihood_naive<B,R>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
 {
 	if (!this->encoder->is_sys())
 	{
@@ -67,7 +67,7 @@ int Decoder_maximum_likelihood_naive<B,R>
 
 template <typename B, typename R>
 int Decoder_maximum_likelihood_naive<B,R>
-::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id)
 {
 	// compute Hamming distance instead of Euclidean distance
 	if (hamming)
@@ -112,7 +112,7 @@ int Decoder_maximum_likelihood_naive<B,R>
 
 template <typename B, typename R>
 int Decoder_maximum_likelihood_naive<B,R>
-::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
+::_decode_hiho(const B *Y_N, B *V_K, const size_t frame_id)
 {
 	if (!this->encoder->is_sys())
 	{
@@ -132,7 +132,7 @@ int Decoder_maximum_likelihood_naive<B,R>
 
 template <typename B, typename R>
 int Decoder_maximum_likelihood_naive<B,R>
-::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
+::_decode_hiho_cw(const B *Y_N, B *V_N, const size_t frame_id)
 {
 	this->min_hamming_dist = std::numeric_limits<uint32_t>::max();
 

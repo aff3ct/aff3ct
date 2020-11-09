@@ -27,7 +27,7 @@ Decoder_NO<B,R>* Decoder_NO<B,R>
 
 template <typename B, typename R>
 int Decoder_NO<B,R>
-::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
+::_decode_siso(const R *sys, const R *par, R *ext, const size_t frame_id)
 {
 	std::copy(sys, sys + this->K, ext);
 
@@ -36,7 +36,7 @@ int Decoder_NO<B,R>
 
 template <typename B, typename R>
 int Decoder_NO<B,R>
-::_decode_siso(const R *Y_K1, R *Y_K2, const int frame_id)
+::_decode_siso(const R *Y_K1, R *Y_K2, const size_t frame_id)
 {
 	std::copy(Y_K1, Y_K1 + this->K, Y_K2);
 
@@ -45,7 +45,7 @@ int Decoder_NO<B,R>
 
 template <typename B, typename R>
 int Decoder_NO<B,R>
-::_decode_siho(const R *Y_K, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_K, B *V_K, const size_t frame_id)
 {
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	tools::hard_decide_unk(Y_K, V_K, this->K);
@@ -58,7 +58,7 @@ int Decoder_NO<B,R>
 
 template <typename B, typename R>
 int Decoder_NO<B,R>
-::_decode_siho_cw(const R *Y_K, B *V_K, const int frame_id)
+::_decode_siho_cw(const R *Y_K, B *V_K, const size_t frame_id)
 {
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	tools::hard_decide_unk(Y_K, V_K, this->K);

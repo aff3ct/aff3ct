@@ -145,7 +145,7 @@ void Adaptor
 }
 
 void Adaptor
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
 	if (old_n_frames != n_frames)

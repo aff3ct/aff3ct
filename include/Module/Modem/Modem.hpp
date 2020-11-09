@@ -251,19 +251,19 @@ public:
 	virtual void notify_noise_update();
 
 protected:
-	virtual void _modulate(const B *X_N1, R *X_N2, const int frame_id);
+	virtual void _modulate(const B *X_N1, R *X_N2, const size_t frame_id);
 
-	virtual void _tmodulate(const Q *X_N1, R *X_N2, const int frame_id);
+	virtual void _tmodulate(const Q *X_N1, R *X_N2, const size_t frame_id);
 
-	virtual void _filter(const R *Y_N1, R *Y_N2, const int frame_id);
+	virtual void _filter(const R *Y_N1, R *Y_N2, const size_t frame_id);
 
-	virtual void _demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id);
+	virtual void _demodulate(const Q *Y_N1, Q *Y_N2, const size_t frame_id);
 
-	virtual void _demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id);
+	virtual void _demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id);
 
-	virtual void _tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id);
+	virtual void _tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id);
 
-	virtual void _tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id);
+	virtual void _tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id);
 
 	void set_filter(const bool filter);
 

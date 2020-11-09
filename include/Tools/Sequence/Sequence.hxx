@@ -95,7 +95,7 @@ inline void Sequence
 	this->duplicate<tools::Sub_sequence, module::Module>(root);
 }
 
-int Sequence
+size_t Sequence
 ::get_n_frames() const
 {
 	const auto n_frames = this->all_modules[0][0]->get_n_frames();

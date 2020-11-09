@@ -42,7 +42,7 @@ public:
 	virtual Decoder_RS_std<B,R>* clone() const;
 
 protected:
-	virtual int _decode(S *Y_N, const int frame_id);
+	virtual int _decode(S *Y_N, const size_t frame_id);
 };
 }
 }

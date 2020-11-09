@@ -78,7 +78,7 @@ public:
 	void process(const R *Y_N1, Q *Y_N2, const int frame_id = -1, const bool managed_memory = true);
 
 protected:
-	virtual void _process(const R *Y_N1, Q *Y_N2, const int frame_id);
+	virtual void _process(const R *Y_N1, Q *Y_N2, const size_t frame_id);
 };
 }
 }

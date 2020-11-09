@@ -60,18 +60,18 @@ public:
 
 	virtual Decoder_turbo_product<B,R>* clone() const;
 
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 
 protected:
 	virtual void deep_copy(const Decoder_turbo_product<B,R> &m);
-	int _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);
-	int _decode_siho   (const R *Y_N,  B *V_K,  const int frame_id);
-	int _decode_siho_cw(const R *Y_N,  B *V_N,  const int frame_id);
+	int _decode_siso   (const R *Y_N1, R *Y_N2, const size_t frame_id);
+	int _decode_siho   (const R *Y_N,  B *V_K,  const size_t frame_id);
+	int _decode_siho_cw(const R *Y_N,  B *V_N,  const size_t frame_id);
 
 	// when return_K_siso = 0 then hard decode and fill V_K_i
 	// else if = 1 then hard decode and fill V_H_i
 	// else soft decode and fill Y_N_i
-	virtual int _decode(const R *Y_N, const int frame_id, int return_K_siso);
+	virtual int _decode(const R *Y_N, const size_t frame_id, int return_K_siso);
 
 };
 

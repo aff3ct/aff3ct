@@ -26,7 +26,7 @@ Decoder_turbo_fast<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo_fast<B,R>
-::_load(const R *Y_N, const int frame_id)
+::_load(const R *Y_N, const size_t frame_id)
 {
 	if (this->buffered_encoding && this->get_n_frames_per_wave() > 1)
 	{
@@ -97,7 +97,7 @@ Decoder_turbo_fast<B,R>* Decoder_turbo_fast<B,R>
 
 template <typename B, typename R>
 int Decoder_turbo_fast<B,R>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N, frame_id);
@@ -114,7 +114,7 @@ int Decoder_turbo_fast<B,R>
 	do
 	{
 		// l_se = sys + ext
-		for (auto i = 0; i < this->K * n_frames; i += mipp::nElReg<R>())
+		for (size_t i = 0; i < this->K * n_frames; i += mipp::nElReg<R>())
 		{
 			const auto r_l_sen = mipp::Reg<R>(&this->l_sn[i]) + mipp::Reg<R>(&this->l_e1n[i]);
 			r_l_sen.store(&this->l_sen[i]);
@@ -141,7 +141,7 @@ int Decoder_turbo_fast<B,R>
 				this->pi->interleave(this->l_e2n.data(), this->l_e1i.data(), frame_id, false);
 
 			// l_se = sys + ext
-			for (auto i = 0; i < this->K * n_frames; i += mipp::nElReg<R>())
+			for (size_t i = 0; i < this->K * n_frames; i += mipp::nElReg<R>())
 			{
 				const auto r_l_sei = mipp::Reg<R>(&this->l_si[i]) + mipp::Reg<R>(&this->l_e1i[i]);
 				r_l_sei.store(&this->l_sei[i]);
@@ -161,7 +161,7 @@ int Decoder_turbo_fast<B,R>
 
 			if (ite == this->n_ite || stop)
 				// add the systematic information to the extrinsic information, gives the a posteriori information
-				for (auto i = 0; i < this->K * n_frames; i += mipp::nElReg<R>())
+				for (size_t i = 0; i < this->K * n_frames; i += mipp::nElReg<R>())
 				{
 					const auto r_post = mipp::Reg<R>(&this->l_e2i[i]) + mipp::Reg<R>(&this->l_sei[i]);
 					r_post.store(&this->l_e2i[i]);

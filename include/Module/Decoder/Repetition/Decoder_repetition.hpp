@@ -29,8 +29,8 @@ protected:
 	virtual ~Decoder_repetition() = default;
 	virtual Decoder_repetition<B,R>* clone() const;
 
-	void _load       (const R *Y_N                            );
-	int  _decode_siho(const R *Y_N, B *V_K, const int frame_id);
+	void _load       (const R *Y_N                               );
+	int  _decode_siho(const R *Y_N, B *V_K, const size_t frame_id);
 };
 }
 }

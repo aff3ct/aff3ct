@@ -52,7 +52,7 @@ CRC_polynomial_fast<B>* CRC_polynomial_fast<B>
 
 template <typename B>
 void CRC_polynomial_fast<B>
-::_build(const B *U_K1, B *U_K2, const int frame_id)
+::_build(const B *U_K1, B *U_K2, const size_t frame_id)
 {
 #if __BYTE_ORDER != __LITTLE_ENDIAN
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, "The code of the fast CRC works only on little endian CPUs.");
@@ -70,7 +70,7 @@ void CRC_polynomial_fast<B>
 
 template <typename B>
 bool CRC_polynomial_fast<B>
-::_check(const B *V_K, const int frame_id)
+::_check(const B *V_K, const size_t frame_id)
 {
 	tools::Bit_packer::pack(V_K, (unsigned char*)this->buff_crc.data(), this->K + this->size);
 	return this->_check_packed(this->buff_crc.data(), frame_id);
@@ -78,7 +78,7 @@ bool CRC_polynomial_fast<B>
 
 template <typename B>
 bool CRC_polynomial_fast<B>
-::_check_packed(const B *V_K, const int frame_id)
+::_check_packed(const B *V_K, const size_t frame_id)
 {
 #if __BYTE_ORDER != __LITTLE_ENDIAN
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, "The code of the fast CRC works only on little endian CPUs.");

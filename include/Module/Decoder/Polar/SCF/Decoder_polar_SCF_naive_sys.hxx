@@ -45,7 +45,7 @@ void Decoder_polar_SCF_naive_sys<B,R,F,G,H>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 bool Decoder_polar_SCF_naive_sys<B,R,F,G,H>
-::check_crc(const int frame_id)
+::check_crc(const size_t frame_id)
 {
 	std::vector<B> U_test;
 	U_test.clear();

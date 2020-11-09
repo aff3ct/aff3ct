@@ -30,7 +30,7 @@ Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>* Decoder_polar_SCAN_naive_sys<B,R,F,
 template <typename B, typename R,
           tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
 int Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
-::_decode_siso(const R *sys, const R *par, R *ext, const int frame_id)
+::_decode_siso(const R *sys, const R *par, R *ext, const size_t frame_id)
 {
 	// ----------------------------------------------------------------------------------------------------------- LOAD
 
@@ -57,7 +57,7 @@ int Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
 template <typename B, typename R,
           tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
 int Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>
-::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
+::_decode_siso(const R *Y_N1, R *Y_N2, const size_t frame_id)
 {
 	// ----------------------------------------------------------------------------------------------------------- LOAD
 	this->_load(Y_N1);

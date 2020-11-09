@@ -74,15 +74,15 @@ public:
 	int decode_siho_cw(const R *Y_N, B *V_N, const int frame_id = -1, const bool managed_memory = true);
 
 protected:
-	virtual void set_n_frames_per_wave(const int n_frames_per_wave);
+	virtual void set_n_frames_per_wave(const size_t n_frames_per_wave);
 
-	virtual int _decode_siho(const R *Y_N, B *V_K, const int frame_id);
+	virtual int _decode_siho(const R *Y_N, B *V_K, const size_t frame_id);
 
-	virtual int _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id);
+	virtual int _decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id);
 
-	virtual int _decode_hiho(const B *Y_N, B *V_K, const int frame_id);
+	virtual int _decode_hiho(const B *Y_N, B *V_K, const size_t frame_id);
 
-	virtual int _decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id);
+	virtual int _decode_hiho_cw(const B *Y_N, B *V_N, const size_t frame_id);
 };
 }
 }

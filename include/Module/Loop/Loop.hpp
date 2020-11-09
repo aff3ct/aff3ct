@@ -68,9 +68,9 @@ public:
 	virtual void reset();
 
 protected:
-	virtual bool _stop(const int8_t *in, const int frame_id);
+	virtual bool _stop(const int8_t *in, const size_t frame_id);
 
-	virtual bool __stop(const int8_t *in, const int frame_id);
+	virtual bool __stop(const int8_t *in, const size_t frame_id);
 
 private:
 	static size_t compute_bytes(const size_t n_elmts, const std::type_index type);

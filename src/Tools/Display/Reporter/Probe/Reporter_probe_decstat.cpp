@@ -25,7 +25,7 @@ Reporter_probe_decstat
 }
 
 void Reporter_probe_decstat
-::probe(const std::string &name, const void *data, const int frame_id)
+::probe(const std::string &name, const void *data, const size_t frame_id)
 {
 	const int col = this->name_to_col[name];
 	if (this->datatypes[col] == typeid(int32_t))

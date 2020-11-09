@@ -103,7 +103,7 @@ mipp::Reg<B> operator%(mipp::Reg<B> r, int mod)
 
 template <typename B, typename R>
 int Decoder_BCH_fast<B,R>
-::_decode(const int frame_id)
+::_decode(const size_t frame_id)
 {
 	const auto r_zero = mipp::Reg<B>((B)0);
 	const auto r_one  = mipp::Reg<B>((B)1);
@@ -310,7 +310,7 @@ int Decoder_BCH_fast<B,R>
 
 template <typename B, typename R>
 void Decoder_BCH_fast<B,R>
-::_load(const B *Y_N, const int frame_id)
+::_load(const B *Y_N, const size_t frame_id)
 {
 	// reorder data into mipp registers
 	std::vector<const B*> frames(mipp::N<B>());
@@ -322,7 +322,7 @@ void Decoder_BCH_fast<B,R>
 
 template <typename B, typename R>
 int Decoder_BCH_fast<B,R>
-::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
+::_decode_hiho(const B *Y_N, B *V_K, const size_t frame_id)
 {
 	_load(Y_N, frame_id);
 
@@ -339,7 +339,7 @@ int Decoder_BCH_fast<B,R>
 
 template <typename B, typename R>
 int Decoder_BCH_fast<B,R>
-::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
+::_decode_hiho_cw(const B *Y_N, B *V_N, const size_t frame_id)
 {
 	_load(Y_N, frame_id);
 
@@ -356,7 +356,7 @@ int Decoder_BCH_fast<B,R>
 
 template <typename B, typename R>
 int Decoder_BCH_fast<B,R>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
 {
 	tools::hard_decide(Y_N, this->YH_N.data(), this->N * mipp::N<B>());
 
@@ -367,7 +367,7 @@ int Decoder_BCH_fast<B,R>
 
 template <typename B, typename R>
 int Decoder_BCH_fast<B,R>
-::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id)
 {
 	tools::hard_decide(Y_N, this->YH_N.data(), this->N * mipp::N<B>());
 
@@ -378,7 +378,7 @@ int Decoder_BCH_fast<B,R>
 
 template <typename B, typename R>
 void Decoder_BCH_fast<B,R>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
 	if (old_n_frames != n_frames)

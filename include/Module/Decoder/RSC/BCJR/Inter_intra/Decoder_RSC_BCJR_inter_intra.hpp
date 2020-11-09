@@ -34,7 +34,7 @@ protected:
 protected:
 	void _load (const R *Y_N);
 	void _store(      B *V_K) const;
-	int  _decode_siso_alt(const R *sys, const R *par, R *ext, const int frame_id);
+	int  _decode_siso_alt(const R *sys, const R *par, R *ext, const size_t frame_id);
 
 	virtual void compute_gamma   (const R *sys, const R *par) = 0;
 	virtual void compute_alpha   (                          ) = 0;

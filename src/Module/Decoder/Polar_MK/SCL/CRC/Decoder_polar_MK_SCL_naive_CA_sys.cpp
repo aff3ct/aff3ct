@@ -54,7 +54,7 @@ Decoder_polar_MK_SCL_naive_CA_sys<B,R>* Decoder_polar_MK_SCL_naive_CA_sys<B,R>
 
 template <typename B, typename R>
 void Decoder_polar_MK_SCL_naive_CA_sys<B,R>
-::select_best_path(const int frame_id)
+::select_best_path(const size_t frame_id)
 {
 	std::vector<B> U_test;
 	std::set<int> active_paths_before_crc = this->active_paths;

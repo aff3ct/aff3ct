@@ -24,7 +24,7 @@ Source_random<B>* Source_random<B>
 
 template <typename B>
 void Source_random<B>
-::_generate(B *U_K, const int frame_id)
+::_generate(B *U_K, const size_t frame_id)
 {
 	// generate a random k bits vector U_k
 	for (auto i = 0; i < this->K; i++)

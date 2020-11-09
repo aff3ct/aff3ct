@@ -119,7 +119,7 @@ Interleaver_core_user<T>* Interleaver_core_user<T>
 
 template <typename T>
 void Interleaver_core_user<T>
-::gen_lut(T *lut, const int frame_id)
+::gen_lut(T *lut, const size_t frame_id)
 {
 	std::copy(this->pi_buffer[cur_itl_id].begin(), this->pi_buffer[cur_itl_id].end(), lut);
 	cur_itl_id = (cur_itl_id +1) % pi_buffer.size();

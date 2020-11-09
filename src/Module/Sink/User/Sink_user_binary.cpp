@@ -51,7 +51,7 @@ void Sink_user_binary<B>
 
 template <typename B>
 void Sink_user_binary<B>
-::_send(const B *V, const int frame_id)
+::_send(const B *V, const size_t frame_id)
 {
 	size_t n_completing  = (CHAR_BIT - this->n_left) % CHAR_BIT; // number of bits that are needed to complete one byte
 	char reconstructed_byte;                                     // to store reconstructed byte (n_left & n_completing)

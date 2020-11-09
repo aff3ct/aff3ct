@@ -39,7 +39,7 @@ public:
 	virtual void set_seed(const int seed);
 
 protected:
-	void _encode(const B *U_K, B *X_N, const int frame_id);
+	void _encode(const B *U_K, B *X_N, const size_t frame_id);
 };
 }
 }

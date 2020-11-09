@@ -78,7 +78,7 @@ Source_user<B>* Source_user<B>
 
 template <typename B>
 void Source_user<B>
-::_generate(B *U_K, const int frame_id)
+::_generate(B *U_K, const size_t frame_id)
 {
 	std::copy(this->source[this->src_counter].begin(),
 	          this->source[this->src_counter].end  (),

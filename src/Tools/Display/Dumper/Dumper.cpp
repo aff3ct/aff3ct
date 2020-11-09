@@ -80,15 +80,8 @@ void Dumper
 
 
 void Dumper
-::add(const unsigned n_err, const int frame_id)
+::add(const unsigned n_err, const size_t frame_id)
 {
-	if (frame_id < 0)
-	{
-		std::stringstream message;
-		message << "'frame_id' has to be positive ('frame_id' = " << frame_id << ").";
-		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	if (n_err < this->add_threshold)
 		return;
 

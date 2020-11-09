@@ -146,7 +146,7 @@ void Decoder_turbo<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo<B,R>
-::_load(const R *Y_N, const int frame_id)
+::_load(const R *Y_N, const size_t frame_id)
 {
 	if (buffered_encoding)
 		this->buffered_load(Y_N, frame_id);
@@ -156,7 +156,7 @@ void Decoder_turbo<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo<B,R>
-::buffered_load(const R *Y_N, const int frame_id)
+::buffered_load(const R *Y_N, const size_t frame_id)
 {
 	if (this->get_n_frames_per_wave() == 1)
 	{
@@ -171,19 +171,19 @@ void Decoder_turbo<B,R>
 		const auto n_frames = this->get_n_frames_per_wave();
 
 		std::vector<const R*> frames(n_frames);
-		for (auto f = 0; f < n_frames; f++)
+		for (size_t f = 0; f < n_frames; f++)
 			frames[f] = Y_N + f*this->N;
 		tools::Reorderer<R>::apply(frames, l_sn.data(), siso_n->get_K() + siso_n->tail_length()/2);
 
-		for (auto f = 0; f < n_frames; f++)
+		for (size_t f = 0; f < n_frames; f++)
 			frames[f] = Y_N + f*this->N + siso_n->get_K() + siso_n->tail_length()/2;
 		tools::Reorderer<R>::apply(frames, l_pn.data(), siso_n->get_K() + siso_n->tail_length()/2);
 
-		for (auto f = 0; f < n_frames; f++)
+		for (size_t f = 0; f < n_frames; f++)
 			frames[f] = Y_N + f*this->N + siso_n->get_N();
 		tools::Reorderer<R>::apply(frames, &l_si[this->K*n_frames], siso_i->tail_length()/2);
 
-		for (auto f = 0; f < n_frames; f++)
+		for (size_t f = 0; f < n_frames; f++)
 			frames[f] = Y_N + f*this->N + siso_n->get_N() + siso_i->tail_length()/2;
 		tools::Reorderer<R>::apply(frames, l_pi.data(), siso_i->get_K() + siso_i->tail_length()/2);
 
@@ -194,7 +194,7 @@ void Decoder_turbo<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo<B,R>
-::standard_load(const R *Y_N, const int frame_id)
+::standard_load(const R *Y_N, const size_t frame_id)
 {
 	const auto tail_n = siso_n->tail_length();
 	const auto tail_i = siso_i->tail_length();
@@ -229,7 +229,7 @@ void Decoder_turbo<B,R>
 
 		for (auto i = 0; i < this->K; i++)
 		{
-			for (auto j = 0; j < n_frames; j++)
+			for (size_t j = 0; j < n_frames; j++)
 			{
 				l_sn[i*n_frames +j] = Y_N[j*((this->K*3) + tail_n + tail_i) + i * 3 +0];
 				l_pn[i*n_frames +j] = Y_N[j*((this->K*3) + tail_n + tail_i) + i * 3 +1];
@@ -241,7 +241,7 @@ void Decoder_turbo<B,R>
 		// tails bit in the natural domain
 		for (auto i = 0; i < tail_n/2; i++)
 		{
-			for (auto j = 0; j < n_frames; j++)
+			for (size_t j = 0; j < n_frames; j++)
 			{
 				l_sn[(this->K +i)*n_frames +j] = Y_N[j*((this->K*3) + tail_n + tail_i) + this->K*3 + 2*i +0];
 				l_pn[(this->K +i)*n_frames +j] = Y_N[j*((this->K*3) + tail_n + tail_i) + this->K*3 + 2*i +1];
@@ -251,7 +251,7 @@ void Decoder_turbo<B,R>
 		// tails bit in the interleaved domain
 		for (auto i = 0; i < tail_i/2; i++)
 		{
-			for (auto j = 0; j < n_frames; j++)
+			for (size_t j = 0; j < n_frames; j++)
 			{
 				l_si[(this->K +i)*n_frames +j] = Y_N[j*((this->K*3) + tail_n + tail_i) + this->K*3 + tail_n + 2*i +0];
 				l_pi[(this->K +i)*n_frames +j] = Y_N[j*((this->K*3) + tail_n + tail_i) + this->K*3 + tail_n + 2*i +1];
@@ -275,7 +275,7 @@ void Decoder_turbo<B,R>
 		const auto n_frames = this->get_n_frames_per_wave();
 
 		std::vector<B*> frames(n_frames);
-		for (auto f = 0; f < n_frames; f++)
+		for (size_t f = 0; f < n_frames; f++)
 			frames[f] = V_K + f*this->K;
 		tools::Reorderer<B>::apply_rev(s.data(), frames, this->K);
 	}
@@ -283,7 +283,7 @@ void Decoder_turbo<B,R>
 
 template <typename B, typename R>
 void Decoder_turbo<B,R>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
 	if (old_n_frames != n_frames)

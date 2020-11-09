@@ -78,7 +78,7 @@ Extractor<B,Q>
 	auto &p1 = this->create_task("get_sys_llr");
 	auto p1s_Y_N = this->template create_socket_in <Q>(p1, "Y_N", this->N);
 	auto p1s_Y_K = this->template create_socket_out<Q>(p1, "Y_K", this->K);
-	this->create_codelet(p1, [p1s_Y_N, p1s_Y_K](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p1, [p1s_Y_N, p1s_Y_K](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &ext = static_cast<Extractor<B,Q>&>(m);
 
@@ -92,7 +92,7 @@ Extractor<B,Q>
 	auto &p2 = this->create_task("get_sys_bit");
 	auto p2s_Y_N = this->template create_socket_in <Q>(p2, "Y_N", this->N);
 	auto p2s_V_K = this->template create_socket_out<B>(p2, "V_K", this->K);
-	this->create_codelet(p2, [p2s_Y_N, p2s_V_K](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p2, [p2s_Y_N, p2s_V_K](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &ext = static_cast<Extractor<B,Q>&>(m);
 
@@ -108,7 +108,7 @@ Extractor<B,Q>
 	auto p3s_Y_N = this->template create_socket_in <Q>(p3, "Y_N", this->N                 );
 	auto p3s_sys = this->template create_socket_out<Q>(p3, "sys", this->K           + tb_2);
 	auto p3s_par = this->template create_socket_out<Q>(p3, "par", this->N - this->K - tb_2);
-	this->create_codelet(p3, [&p3s_Y_N, &p3s_sys, &p3s_par](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p3, [&p3s_Y_N, &p3s_sys, &p3s_par](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &ext = static_cast<Extractor<B,Q>&>(m);
 
@@ -123,7 +123,7 @@ Extractor<B,Q>
 	auto &p4 = this->create_task("add_sys_and_ext_llr");
 	auto p4s_ext = this->template create_socket_in    <Q>(p4, "ext", this->K);
 	auto p4s_Y_N = this->template create_socket_in_out<Q>(p4, "Y_N", this->N);
-	this->create_codelet(p4, [p4s_ext, p4s_Y_N](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p4, [p4s_ext, p4s_Y_N](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &ext = static_cast<Extractor<B,Q>&>(m);
 
@@ -223,7 +223,7 @@ void Extractor<B,Q>
 
 template <typename B, typename Q>
 void Extractor<B,Q>
-::_get_sys_llr(const Q *Y_N, Q *Y_K, const int frame_id)
+::_get_sys_llr(const Q *Y_N, Q *Y_K, const size_t frame_id)
 {
 	const auto &info_bits_pos = this->get_info_bits_pos();
 	if (info_bits_pos.size() != (size_t)this->K)
@@ -240,7 +240,7 @@ void Extractor<B,Q>
 
 template <typename B, typename Q>
 void Extractor<B,Q>
-::_get_sys_bit(const Q *Y_N, B *V_K, const int frame_id)
+::_get_sys_bit(const Q *Y_N, B *V_K, const size_t frame_id)
 {
 	const auto &info_bits_pos = this->get_info_bits_pos();
 	if (info_bits_pos.size() != (size_t)this->K)
@@ -257,7 +257,7 @@ void Extractor<B,Q>
 
 template <typename B, typename Q>
 void Extractor<B,Q>
-::_get_sys_and_par_llr(const Q *Y_N, Q *sys, Q *par, const int frame_id)
+::_get_sys_and_par_llr(const Q *Y_N, Q *sys, Q *par, const size_t frame_id)
 {
 	const auto &info_bits_pos = this->get_info_bits_pos();
 	if (info_bits_pos.size() != (size_t)this->K)
@@ -285,7 +285,7 @@ void Extractor<B,Q>
 
 template <typename B, typename Q>
 void Extractor<B,Q>
-::_add_sys_and_ext_llr(const Q *ext, Q *Y_N, const int frame_id)
+::_add_sys_and_ext_llr(const Q *ext, Q *Y_N, const size_t frame_id)
 {
 	const auto &info_bits_pos = this->get_info_bits_pos();
 	if (info_bits_pos.size() != (size_t)this->K)

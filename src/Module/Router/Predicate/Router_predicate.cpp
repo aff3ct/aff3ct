@@ -54,7 +54,7 @@ void Router_predicate<O>
 
 template <typename O>
 size_t Router_predicate<O>
-::__route(const int8_t *in, const int frame_id)
+::__route(const int8_t *in, const size_t frame_id)
 {
 	return (*this->predicate)() ? 1 : 0;
 }

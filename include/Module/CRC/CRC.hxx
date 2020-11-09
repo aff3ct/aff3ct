@@ -56,7 +56,7 @@ CRC<B>
 	auto &p1 = this->create_task("build");
 	auto p1s_U_K1 = this->template create_socket_in <B>(p1, "U_K1", this->K             );
 	auto p1s_U_K2 = this->template create_socket_out<B>(p1, "U_K2", this->K + this->size);
-	this->create_codelet(p1, [p1s_U_K1, p1s_U_K2](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p1, [p1s_U_K1, p1s_U_K2](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &crc = static_cast<CRC<B>&>(m);
 
@@ -70,7 +70,7 @@ CRC<B>
 	auto &p2 = this->create_task("extract");
 	auto p2s_V_K1 = this->template create_socket_in <B>(p2, "V_K1", this->K + this->size);
 	auto p2s_V_K2 = this->template create_socket_out<B>(p2, "V_K2", this->K             );
-	this->create_codelet(p2, [p2s_V_K1, p2s_V_K2](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p2, [p2s_V_K1, p2s_V_K2](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &crc = static_cast<CRC<B>&>(m);
 
@@ -83,7 +83,7 @@ CRC<B>
 
 	auto &p3 = this->create_task("check");
 	auto p3s_V_K = this->template create_socket_in<B>(p3, "V_K", this->K + this->size);
-	this->create_codelet(p3, [p3s_V_K](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p3, [p3s_V_K](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &crc = static_cast<CRC<B>&>(m);
 
@@ -94,7 +94,7 @@ CRC<B>
 
 	auto &p4 = this->create_task("check_packed");
 	auto p4s_V_K = this->template create_socket_in<B>(p4, "V_K", this->K + this->size);
-	this->create_codelet(p4, [p4s_V_K](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p4, [p4s_V_K](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &crc = static_cast<CRC<B>&>(m);
 
@@ -303,21 +303,21 @@ bool CRC<B>
 
 template <typename B>
 void CRC<B>
-::_build(const B *U_K1, B *U_K2, const int frame_id)
+::_build(const B *U_K1, B *U_K2, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B>
 void CRC<B>
-::_extract(const B *V_K1, B *V_K2, const int frame_id)
+::_extract(const B *V_K1, B *V_K2, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B>
 bool CRC<B>
-::_check(const B *V_K, const int frame_id)
+::_check(const B *V_K, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	return false;
@@ -325,7 +325,7 @@ bool CRC<B>
 
 template <typename B>
 bool CRC<B>
-::_check_packed(const B *V_K, const int frame_id)
+::_check_packed(const B *V_K, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 	return false;

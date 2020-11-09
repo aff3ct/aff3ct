@@ -18,12 +18,12 @@ Probe_timestamp<T>
 
 template <typename T>
 void Probe_timestamp<T>
-::_probe(const T *in, const int frame_id)
+::_probe(const T *in, const size_t frame_id)
 {
 	auto unix_timestamp = std::chrono::seconds(std::time(NULL));
 	int64_t unix_timestamp_count = (int64_t)unix_timestamp.count();
 
-	for (auto f = 0; f < this->get_n_frames(); f++)
+	for (size_t f = 0; f < this->get_n_frames(); f++)
 		this->reporter.probe(this->col_name, (void*)&unix_timestamp_count, frame_id);
 }
 

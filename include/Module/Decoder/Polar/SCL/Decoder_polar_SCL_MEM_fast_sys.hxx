@@ -256,7 +256,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 int Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
 {
 	if (!API_polar::isAligned(Y_N))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N' is misaligned memory.");
@@ -286,7 +286,7 @@ int Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 int Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
-::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id)
 {
 	if (!API_polar::isAligned(Y_N))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'Y_N' is misaligned memory.");
@@ -1322,7 +1322,7 @@ void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 int Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
-::select_best_path(const int frame_id)
+::select_best_path(const size_t frame_id)
 {
 	best_path = -1;
 	for (auto i = 0; i < n_active_paths; i++)

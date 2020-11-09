@@ -59,7 +59,7 @@ Decoder_SIHO<B,R>
 	auto &p1 = this->create_task("decode_siho", (int)dec::tsk::decode_siho);
 	auto p1s_Y_N = this->template create_socket_in <R>(p1, "Y_N", this->N);
 	auto p1s_V_K = this->template create_socket_out<B>(p1, "V_K", this->K);
-	this->create_codelet(p1, [p1s_Y_N, p1s_V_K](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p1, [p1s_Y_N, p1s_V_K](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &dec = static_cast<Decoder_SIHO<B,R>&>(m);
 
@@ -80,7 +80,7 @@ Decoder_SIHO<B,R>
 	auto &p2 = this->create_task("decode_siho_cw", (int)dec::tsk::decode_siho_cw);
 	auto p2s_Y_N = this->template create_socket_in <R>(p2, "Y_N", this->N);
 	auto p2s_V_N = this->template create_socket_out<B>(p2, "V_N", this->N);
-	this->create_codelet(p2, [p2s_Y_N, p2s_V_N](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p2, [p2s_Y_N, p2s_V_N](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &dec = static_cast<Decoder_SIHO<B,R>&>(m);
 
@@ -366,39 +366,39 @@ int Decoder_SIHO<B,R>
 
 template <typename B, typename R>
 int Decoder_SIHO<B,R>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R>
 int Decoder_SIHO<B,R>
-::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R>
 int Decoder_SIHO<B,R>
-::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
+::_decode_hiho(const B *Y_N, B *V_K, const size_t frame_id)
 {
-	for (auto i = 0; i < this->N * this->get_n_frames_per_wave(); i++)
+	for (size_t i = 0; i < (size_t)this->N * this->get_n_frames_per_wave(); i++)
 		this->Y_N[i] = Y_N[i] ? (R)-1 : (R)1;
 	return this->_decode_siho(this->Y_N.data(), V_K, frame_id);
 }
 
 template <typename B, typename R>
 int Decoder_SIHO<B,R>
-::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
+::_decode_hiho_cw(const B *Y_N, B *V_N, const size_t frame_id)
 {
-	for (auto i = 0; i < this->N * this->get_n_frames_per_wave(); i++)
+	for (size_t i = 0; i < (size_t)this->N * this->get_n_frames_per_wave(); i++)
 		this->Y_N[i] = Y_N[i] ? (R)-1 : (R)1;
 	return this->_decode_siho_cw(this->Y_N.data(), V_N, frame_id);
 }
 
 template <typename B, typename R>
 void Decoder_SIHO<B,R>
-::set_n_frames_per_wave(const int n_frames_per_wave)
+::set_n_frames_per_wave(const size_t n_frames_per_wave)
 {
 	const auto old_n_frames_per_wave = this->get_n_frames_per_wave();
 	if (old_n_frames_per_wave != n_frames_per_wave)

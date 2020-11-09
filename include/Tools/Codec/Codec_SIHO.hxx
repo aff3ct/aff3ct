@@ -62,7 +62,7 @@ void Codec_SIHO<B,Q>
 
 template <typename B, typename Q>
 void Codec_SIHO<B,Q>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	Codec_HIHO<B,Q>::set_n_frames(n_frames);
 	if (this->decoder_siho != nullptr)

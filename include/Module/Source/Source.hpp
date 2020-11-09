@@ -82,7 +82,7 @@ public:
 	virtual void reset();
 
 protected:
-	virtual void _generate(B *U_K, const int frame_id);
+	virtual void _generate(B *U_K, const size_t frame_id);
 };
 }
 }

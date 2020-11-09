@@ -102,8 +102,8 @@ public:
 protected:
 	const Attributes& get_attributes() const;
 
-	virtual void _check_mutual_info(const B *bits, const R *llrs_a, const R *llrs_e, const int frame_id);
-	virtual void _check_mutual_info_avg(const B *bits, const R *llrs_a, const int frame_id);
+	virtual void _check_mutual_info(const B *bits, const R *llrs_a, const R *llrs_e, const size_t frame_id);
+	virtual void _check_mutual_info_avg(const B *bits, const R *llrs_a, const size_t frame_id);
 	virtual R _check_mutual_info_histo() const;
 };
 }

@@ -30,10 +30,10 @@ public:
 protected:
 	const std::vector<uint32_t>& get_info_bits_pos();
 
-	void _get_sys_and_par_llr(const Q *Y_N, Q *sys, Q *par, const int frame_id);
-	void _get_sys_llr        (const Q *Y_N, Q *sys,         const int frame_id);
-	void _add_sys_and_ext_llr(const Q *ext, Q *Y_N,         const int frame_id);
-	void _get_sys_bit        (const Q *Y_N, B *V_K,         const int frame_id);
+	void _get_sys_and_par_llr(const Q *Y_N, Q *sys, Q *par, const size_t frame_id);
+	void _get_sys_llr        (const Q *Y_N, Q *sys,         const size_t frame_id);
+	void _add_sys_and_ext_llr(const Q *ext, Q *Y_N,         const size_t frame_id);
+	void _get_sys_bit        (const Q *Y_N, B *V_K,         const size_t frame_id);
 };
 }
 }

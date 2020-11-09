@@ -59,7 +59,7 @@ Interleaver<D,T>
 	auto &p1 = this->create_task("interleave");
 	auto p1s_nat = this->template create_socket_in <D>(p1, "nat", this->core.get_size());
 	auto p1s_itl = this->template create_socket_out<D>(p1, "itl", this->core.get_size());
-	this->create_codelet(p1, [p1s_nat, p1s_itl](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p1, [p1s_nat, p1s_itl](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &itl = static_cast<Interleaver<D,T>&>(m);
 
@@ -74,7 +74,7 @@ Interleaver<D,T>
 	auto &p2 = this->create_task("interleave_reordering");
 	auto p2s_nat = this->template create_socket_in <D>(p2, "nat", this->core.get_size());
 	auto p2s_itl = this->template create_socket_out<D>(p2, "itl", this->core.get_size());
-	this->create_codelet(p2, [p2s_nat, p2s_itl](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p2, [p2s_nat, p2s_itl](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &itl = static_cast<Interleaver<D,T>&>(m);
 
@@ -89,7 +89,7 @@ Interleaver<D,T>
 	auto &p3 = this->create_task("deinterleave");
 	auto p3s_itl = this->template create_socket_in <D>(p3, "itl", this->core.get_size());
 	auto p3s_nat = this->template create_socket_out<D>(p3, "nat", this->core.get_size());
-	this->create_codelet(p3, [p3s_itl, p3s_nat](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p3, [p3s_itl, p3s_nat](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &itl = static_cast<Interleaver<D,T>&>(m);
 
@@ -104,7 +104,7 @@ Interleaver<D,T>
 	auto &p4 = this->create_task("deinterleave_reordering");
 	auto p4s_itl = this->template create_socket_in <D>(p4, "itl", this->core.get_size());
 	auto p4s_nat = this->template create_socket_out<D>(p4, "nat", this->core.get_size());
-	this->create_codelet(p4, [p4s_itl, p4s_nat](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p4, [p4s_itl, p4s_nat](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &itl = static_cast<Interleaver<D,T>&>(m);
 
@@ -215,12 +215,12 @@ template <typename D, typename T>
 void Interleaver<D,T>
 ::_interleave(const D *in_vec, D *out_vec,
               const std::vector<T> &lookup_table,
-              const int frame_id) const
+              const size_t frame_id) const
 {
 	if (!this->core.is_uniform())
 	{
 		// TODO: vectorize this code with the new AVX gather instruction
-		for (auto f = 0; f < this->get_n_frames_per_wave(); f++)
+		for (size_t f = 0; f < this->get_n_frames_per_wave(); f++)
 		{
 			const auto off = f * this->core.get_size();
 			for (auto i = 0; i < this->core.get_size(); i++)
@@ -231,7 +231,7 @@ void Interleaver<D,T>
 	{
 		auto cur_frame_id = (frame_id % this->get_n_frames()) % this->core.get_n_frames();
 		// TODO: vectorize this code with the new AVX gather instruction
-		for (auto f = 0; f < this->get_n_frames_per_wave(); f++)
+		for (size_t f = 0; f < this->get_n_frames_per_wave(); f++)
 		{
 			const auto lut = lookup_table.data() + cur_frame_id * this->core.get_size();
 			const auto off = f * this->core.get_size();
@@ -246,7 +246,7 @@ template <typename D, typename T>
 void Interleaver<D,T>
 ::_interleave_reordering(const D *in_vec, D *out_vec,
                          const std::vector<T> &lookup_table,
-                         const int frame_id) const
+                         const size_t frame_id) const
 {
 	if (!this->core.is_uniform())
 	{
@@ -263,7 +263,7 @@ void Interleaver<D,T>
 			{
 				const auto off1 =              i  * this->get_n_frames();
 				const auto off2 = lookup_table[i] * this->get_n_frames();
-				for (auto f = 0; f < this->get_n_frames_per_wave(); f++)
+				for (size_t f = 0; f < this->get_n_frames_per_wave(); f++)
 					out_vec[off1 +f] = in_vec[off2 +f];
 			}
 		}
@@ -271,7 +271,7 @@ void Interleaver<D,T>
 	else
 	{
 		auto cur_frame_id = (frame_id % this->get_n_frames()) % this->core.get_n_frames();
-		for (auto f = 0; f < this->get_n_frames_per_wave(); f++)
+		for (size_t f = 0; f < this->get_n_frames_per_wave(); f++)
 		{
 			const auto lut = lookup_table.data() + cur_frame_id * this->core.get_size();
 			for (auto i = 0; i < this->core.get_size(); i++)
@@ -283,7 +283,7 @@ void Interleaver<D,T>
 
 template <typename D, typename T>
 void Interleaver<D,T>
-::set_n_frames_per_wave(const int n_frames_per_wave)
+::set_n_frames_per_wave(const size_t n_frames_per_wave)
 {
 	const auto old_n_frames_per_wave = this->get_n_frames_per_wave();
 	if (old_n_frames_per_wave != n_frames_per_wave)

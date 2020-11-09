@@ -23,7 +23,7 @@ public:
 	virtual Interleaver_core_LTE<T>* clone() const;
 
 protected:
-	void gen_lut(T *lut, const int frame_id);
+	void gen_lut(T *lut, const size_t frame_id);
 
 private:
 	static inline int pi_LTE(const int &i, const int &f_1, const int &f_2, const int &K);

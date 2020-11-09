@@ -162,7 +162,7 @@ int Codec<B,Q>
 
 template <typename B, typename Q>
 void Codec<B,Q>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	if (this->interleaver_core != nullptr)
 		this->interleaver_core->set_n_frames(n_frames);

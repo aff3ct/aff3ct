@@ -94,7 +94,7 @@ void Channel_binary_symmetric<R>
 
 template <typename R>
 void Channel_binary_symmetric<R>
-::_add_noise(const R *X_N, R *Y_N, const int frame_id)
+::_add_noise(const R *X_N, R *Y_N, const size_t frame_id)
 {
 	auto event_draw = (E*)(this->noised_data.data() + this->N * frame_id);
 

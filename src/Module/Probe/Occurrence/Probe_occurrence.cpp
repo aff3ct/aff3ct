@@ -16,9 +16,9 @@ Probe_occurrence<T>
 
 template <typename T>
 void Probe_occurrence<T>
-::_probe(const T *in, const int frame_id)
+::_probe(const T *in, const size_t frame_id)
 {
-	for (auto f = 0; f < this->get_n_frames(); f++)
+	for (size_t f = 0; f < this->get_n_frames(); f++)
 	{
 		this->reporter.probe(this->col_name, (void*)&occurrences, frame_id);
 		this->occurrences++;

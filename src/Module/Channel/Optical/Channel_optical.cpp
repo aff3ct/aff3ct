@@ -96,7 +96,7 @@ void Channel_optical<R>
 
 template <typename R>
 void Channel_optical<R>
-::_add_noise(const R *X_N, R *Y_N, const int frame_id)
+::_add_noise(const R *X_N, R *Y_N, const size_t frame_id)
 {
 	pdf_noise_generator->generate(X_N, Y_N, this->N, (R)this->noise->get_value());
 }

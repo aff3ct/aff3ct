@@ -47,8 +47,8 @@ public:
 
 protected:
 	virtual void deep_copy(const Decoder_polar_SCL_MEM_fast_CA_sys<B,R,API_polar> &m);
-	        bool crc_check       (mipp::vector<B> &s, const int frame_id);
-	virtual int  select_best_path(const int frame_id);
+	        bool crc_check       (mipp::vector<B> &s, const size_t frame_id);
+	virtual int  select_best_path(const size_t frame_id);
 
 	virtual void init_buffers();
 	virtual void _store(B *V_K) const;

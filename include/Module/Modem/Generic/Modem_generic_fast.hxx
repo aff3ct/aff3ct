@@ -45,14 +45,14 @@ Modem_generic_fast<B,R,Q,MAX,MAXI>* Modem_generic_fast<B,R,Q,MAX,MAXI>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX, tools::proto_max_i<Q> MAXI>
 void Modem_generic_fast<B,R,Q,MAX,MAXI>
-::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
+::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX, tools::proto_max_i<Q> MAXI>
 void Modem_generic_fast<B,R,Q,MAX,MAXI>
-::_tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
+::_tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
@@ -175,7 +175,7 @@ struct demodulate_complex_SIMD<double, MAXI>
 
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX, tools::proto_max_i<Q> MAXI>
 void Modem_generic_fast<B,R,Q,MAX,MAXI>
-::_demodulate_complex(const Q *Y_N1, Q *Y_N2, const int frame_id)
+::_demodulate_complex(const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
@@ -347,7 +347,7 @@ struct demodulate_wg_complex_SIMD<double, double, MAXI>
 
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX, tools::proto_max_i<Q> MAXI>
 void Modem_generic_fast<B,R,Q,MAX,MAXI>
-::_demodulate_wg_complex(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
+::_demodulate_wg_complex(const R *H_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
@@ -506,7 +506,7 @@ struct demodulate_real_SIMD<double, MAXI>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX, tools::proto_max_i<Q> MAXI>
 void Modem_generic_fast<B,R,Q,MAX,MAXI>
-::_demodulate_real(const Q *Y_N1, Q *Y_N2, const int frame_id)
+::_demodulate_real(const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
@@ -666,7 +666,7 @@ struct demodulate_wg_real_SIMD<double, double, MAXI>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX, tools::proto_max_i<Q> MAXI>
 void Modem_generic_fast<B,R,Q,MAX,MAXI>
-::_demodulate_wg_real(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
+::_demodulate_wg_real(const R *H_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");

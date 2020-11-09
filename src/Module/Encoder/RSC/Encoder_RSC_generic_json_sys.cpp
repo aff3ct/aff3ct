@@ -124,7 +124,7 @@ int Encoder_RSC_generic_json_sys<B>
 
 template <typename B>
 void Encoder_RSC_generic_json_sys<B>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	if (n_frames != 1)
 	{

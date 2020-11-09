@@ -95,7 +95,7 @@ Router
 		}
 	}
 
-	this->create_codelet(p, [ps_in](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p, [ps_in](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &rtr = static_cast<Router&>(m);
 

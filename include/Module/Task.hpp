@@ -49,7 +49,7 @@ protected:
 	int32_t debug_limit;
 	uint8_t debug_precision;
 	int32_t debug_frame_max;
-	std::function<int(Module &m, Task& t, const int frame_id)> codelet;
+	std::function<int(Module &m, Task& t, const size_t frame_id)> codelet;
 
 	std::vector<int> status;
 	std::vector<mipp::vector<uint8_t>> out_buffers;
@@ -143,7 +143,7 @@ protected:
 	template <typename T>
 	size_t create_socket_out(const std::string &name, const size_t n_elmts, const bool hack_status = false);
 
-	void create_codelet(std::function<int(Module &m, Task& t, const int frame_id)> &codelet);
+	void create_codelet(std::function<int(Module &m, Task& t, const size_t frame_id)> &codelet);
 
 	void update_n_frames(const size_t old_n_frames, const size_t new_n_frames);
 

@@ -48,7 +48,7 @@ Decoder_maximum_likelihood_std<B,R>* Decoder_maximum_likelihood_std<B,R>
 
 template <typename B, typename R>
 int Decoder_maximum_likelihood_std<B,R>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
 {
 	auto status = this->_decode_siho_cw(Y_N, this->best_X_N.data(), frame_id);
 	std::copy(this->best_U_K.begin(), this->best_U_K.end(), V_K);
@@ -58,7 +58,7 @@ int Decoder_maximum_likelihood_std<B,R>
 
 template <typename B, typename R>
 int Decoder_maximum_likelihood_std<B,R>
-::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id)
 {
 	// compute Hamming distance instead of Euclidean distance
 	if (hamming)
@@ -103,7 +103,7 @@ int Decoder_maximum_likelihood_std<B,R>
 
 template <typename B, typename R>
 int Decoder_maximum_likelihood_std<B,R>
-::_decode_hiho(const B *Y_N, B *V_K, const int frame_id)
+::_decode_hiho(const B *Y_N, B *V_K, const size_t frame_id)
 {
 	auto status = this->_decode_hiho_cw(Y_N, this->best_X_N.data(), frame_id);
 	std::copy(this->best_U_K.begin(), this->best_U_K.end(), V_K);
@@ -112,7 +112,7 @@ int Decoder_maximum_likelihood_std<B,R>
 
 template <typename B, typename R>
 int Decoder_maximum_likelihood_std<B,R>
-::_decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id)
+::_decode_hiho_cw(const B *Y_N, B *V_N, const size_t frame_id)
 {
 	this->min_hamming_dist = std::numeric_limits<uint32_t>::max();
 

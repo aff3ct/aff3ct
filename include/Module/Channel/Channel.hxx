@@ -50,7 +50,7 @@ Channel<R>
 	auto &p1 = this->create_task("add_noise");
 	auto p1s_X_N = this->template create_socket_in <R>(p1, "X_N", this->N);
 	auto p1s_Y_N = this->template create_socket_out<R>(p1, "Y_N", this->N);
-	this->create_codelet(p1, [p1s_X_N, p1s_Y_N](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p1, [p1s_X_N, p1s_Y_N](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &chn = static_cast<Channel<R>&>(m);
 
@@ -66,7 +66,7 @@ Channel<R>
 	auto p2s_X_N = this->template create_socket_in <R>(p2, "X_N", this->N);
 	auto p2s_H_N = this->template create_socket_out<R>(p2, "H_N", this->N);
 	auto p2s_Y_N = this->template create_socket_out<R>(p2, "Y_N", this->N);
-	this->create_codelet(p2, [p2s_X_N, p2s_H_N, p2s_Y_N](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p2, [p2s_X_N, p2s_H_N, p2s_Y_N](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &chn = static_cast<Channel<R>&>(m);
 
@@ -181,14 +181,14 @@ void Channel<R>
 
 template <typename R>
 void Channel<R>
-::_add_noise(const R *X_N, R *Y_N, const int frame_id)
+::_add_noise(const R *X_N, R *Y_N, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename R>
 void Channel<R>
-::_add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id)
+::_add_noise_wg(const R *X_N, R *H_N, R *Y_N, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
@@ -207,7 +207,7 @@ void Channel<R>
 
 template<typename R>
 void Channel<R>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
 	if (old_n_frames != n_frames)

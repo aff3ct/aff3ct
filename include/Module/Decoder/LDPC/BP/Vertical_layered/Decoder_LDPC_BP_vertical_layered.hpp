@@ -42,17 +42,17 @@ public:
 
 	virtual Decoder_LDPC_BP_vertical_layered<B,R,Update_rule>* clone() const;
 
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 
 protected:
-	void _reset(const int frame_id);
+	void _reset(const size_t frame_id);
 
-	int _decode_siso   (const R *Y_N1, R *Y_N2, const int frame_id);
-	int _decode_siho   (const R *Y_N,  B *V_K,  const int frame_id);
-	int _decode_siho_cw(const R *Y_N,  B *V_N,  const int frame_id);
+	int _decode_siso   (const R *Y_N1, R *Y_N2, const size_t frame_id);
+	int _decode_siho   (const R *Y_N,  B *V_K,  const size_t frame_id);
+	int _decode_siho_cw(const R *Y_N,  B *V_N,  const size_t frame_id);
 
-	void _load             (const R *Y_N, const int frame_id);
-	int  _decode           (const int frame_id);
+	void _load             (const R *Y_N, const size_t frame_id);
+	int  _decode           (const size_t frame_id);
 	void _decode_single_ite(std::vector<R> &var_nodes, std::vector<R> &messages);
 };
 }

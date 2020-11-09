@@ -58,7 +58,7 @@ void Encoder_RA<B>
 
 template <typename B>
 void Encoder_RA<B>
-::_encode(const B *U_K, B *X_N, const int frame_id)
+::_encode(const B *U_K, B *X_N, const size_t frame_id)
 {
 	// repetition
 	for (auto i = 0; i < this->K; i++)
@@ -76,7 +76,7 @@ void Encoder_RA<B>
 
 template <typename B>
 void Encoder_RA<B>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
 	if (old_n_frames != n_frames)

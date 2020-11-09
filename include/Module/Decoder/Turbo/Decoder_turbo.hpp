@@ -58,16 +58,16 @@ public:
 
 	void add_post_processing(const tools::Post_processing_SISO<B,R> &post_processing);
 
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 
 protected:
 	virtual void deep_copy(const Decoder_turbo<B,R> &m);
-	virtual void _load (const R *Y_N, const int frame_id);
-	virtual void _store(      B *V_K                    ) const;
+	virtual void _load (const R *Y_N, const size_t frame_id);
+	virtual void _store(      B *V_K                       ) const;
 
 private:
-	void buffered_load(const R *Y_N, const int frame_id);
-	void standard_load(const R *Y_N, const int frame_id);
+	void buffered_load(const R *Y_N, const size_t frame_id);
+	void standard_load(const R *Y_N, const size_t frame_id);
 };
 }
 }

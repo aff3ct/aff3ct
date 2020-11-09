@@ -78,16 +78,16 @@ public:
 
 	inline void deinterleave_reordering(const D *itl, D *nat, const int frame_id = -1, const bool managed_memory = true);
 
-	void set_n_frames_per_wave(const int n_frames_per_wave);
+	void set_n_frames_per_wave(const size_t n_frames_per_wave);
 
 private:
 	inline void _interleave(const D *in_vec, D *out_vec,
 	                        const std::vector<T> &lookup_table,
-	                        const int frame_id) const;
+	                        const size_t frame_id) const;
 
 	inline void _interleave_reordering(const D *in_vec, D *out_vec,
 	                                   const std::vector<T> &lookup_table,
-	                                   const int frame_id) const;
+	                                   const size_t frame_id) const;
 };
 }
 }

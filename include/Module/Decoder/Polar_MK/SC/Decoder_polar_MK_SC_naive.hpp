@@ -80,10 +80,10 @@ protected:
 	        void recursive_deep_copy(const tools::Generic_node<Contents_MK_SC<B,R>> *nref,
 	                                       tools::Generic_node<Contents_MK_SC<B,R>> *nclone);
 
-	        void _load          (const R *Y_N                            );
-	        int  _decode_siho   (const R *Y_N, B *V_K, const int frame_id);
-	        int  _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id);
-	virtual void _store         (              B *V,   bool coded = false) const;
+	        void _load          (const R *Y_N                               );
+	        int  _decode_siho   (const R *Y_N, B *V_K, const size_t frame_id);
+	        int  _decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id);
+	virtual void _store         (              B *V,   bool coded = false   ) const;
 
 private:
 	void recursive_allocate_nodes_contents  (      tools::Generic_node<Contents_MK_SC<B,R>>* node_curr, const int vector_size               );

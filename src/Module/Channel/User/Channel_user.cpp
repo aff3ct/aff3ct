@@ -30,7 +30,7 @@ Channel_user<R>
 
 template <typename R>
 void Channel_user<R>
-::_add_noise(const R *X_N, R *Y_N, const int frame_id)
+::_add_noise(const R *X_N, R *Y_N, const size_t frame_id)
 {
 	if (this->add_users && this->n_frames > 1) // n_frames_per_wave = n_frames
 	{
@@ -57,7 +57,7 @@ Channel_user<R>* Channel_user<R>
 
 template <typename R>
 void Channel_user<R>
-::set_noise(const int frame_id)
+::set_noise(const size_t frame_id)
 {
 	std::copy(this->noise_buff[this->noise_counter].begin(),
 	          this->noise_buff[this->noise_counter].end(),
@@ -65,8 +65,6 @@ void Channel_user<R>
 
 	this->noise_counter = (this->noise_counter +1) % (int)this->noise_buff.size();
 }
-
-
 
 template<typename R>
 void Channel_user<R>::
@@ -227,7 +225,6 @@ void Channel_user<R>::read_as_binary(const std::string &filename, const int N, s
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Can't open '" + filename + "' file");
 	}
 }
-
 
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"

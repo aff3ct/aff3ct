@@ -152,7 +152,7 @@ int Modem_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
-::_modulate(const B *X_N1, R *X_N2, const int frame_id)
+::_modulate(const B *X_N1, R *X_N2, const size_t frame_id)
 {
 	// mapper
 	std::vector<SIN> mapped_frame(n_sy);
@@ -180,7 +180,7 @@ void Modem_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
-::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
+::_filter(const R *Y_N1, R *Y_N2, const size_t frame_id)
 {
 	if (this->noise == nullptr)
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
@@ -206,14 +206,14 @@ void Modem_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
-::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
+::_demodulate(const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	bcjr.decode(Y_N1, Y_N2);
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
-::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
+::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
 	bcjr.decode(Y_N1, Y_N2, Y_N3);
 }

@@ -41,7 +41,7 @@ Sink<B>
 
 	auto &p1 = this->create_task("send");
 	auto p1s_V = this->template create_socket_in <B>(p1, "V", K);
-	this->create_codelet(p1, [p1s_V](Module& m, Task& t, const int frame_id) -> int
+	this->create_codelet(p1, [p1s_V](Module& m, Task& t, const size_t frame_id) -> int
 	{
 		auto &snk = static_cast<Sink<B>&>(m);
 
@@ -78,7 +78,7 @@ void Sink<B>
 
 template <typename B>
 void Sink<B>
-::_send(const B *V, const int frame_id)
+::_send(const B *V, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }

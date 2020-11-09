@@ -51,7 +51,7 @@ void Modem_BPSK_fast<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
-::_modulate(const B *X_N1, R *X_N2, const int frame_id)
+::_modulate(const B *X_N1, R *X_N2, const size_t frame_id)
 {
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, "Unsupported data type.");
 }
@@ -62,7 +62,7 @@ namespace module
 {
 template <>
 void Modem_BPSK_fast<int, float, float>
-::_modulate(const int *X_N1, float *X_N2, const int frame_id)
+::_modulate(const int *X_N1, float *X_N2, const size_t frame_id)
 {
 	auto size = (unsigned int)(this->N);
 
@@ -88,7 +88,7 @@ namespace module
 {
 template <>
 void Modem_BPSK_fast<short, float, float>
-::_modulate(const short *X_N1, float *X_N2, const int frame_id)
+::_modulate(const short *X_N1, float *X_N2, const size_t frame_id)
 {
 	auto size = (unsigned int)(this->N);
 
@@ -122,7 +122,7 @@ namespace module
 {
 template <>
 void Modem_BPSK_fast<signed char, float, float>
-::_modulate(const signed char *X_N1, float *X_N2, const int frame_id)
+::_modulate(const signed char *X_N1, float *X_N2, const size_t frame_id)
 {
 	auto size = (unsigned int)(this->N);
 
@@ -163,14 +163,14 @@ void Modem_BPSK_fast<signed char, float, float>
 
 template <typename B,typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
-::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
+::_filter(const R *Y_N1, R *Y_N2, const size_t frame_id)
 {
 	std::copy(Y_N1, Y_N1 + this->N_fil, Y_N2);
 }
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
-::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
+::_demodulate(const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	if (disable_sig2)
 		std::copy(Y_N1, Y_N1 + this->N, Y_N2);
@@ -202,7 +202,7 @@ void Modem_BPSK_fast<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
-::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id)
+::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
 	this->_demodulate(Y_N1,Y_N3,frame_id);
 }

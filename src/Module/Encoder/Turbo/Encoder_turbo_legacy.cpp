@@ -68,7 +68,7 @@ void Encoder_turbo_legacy<B>
 
 template <typename B>
 void Encoder_turbo_legacy<B>
-::_encode(const B *U_K, B *X_N, const int frame_id)
+::_encode(const B *U_K, B *X_N, const size_t frame_id)
 {
 	this->pi->interleave(U_K - frame_id * this->K, this->U_K_i.data(), frame_id);
 	sub_enc->encode     (U_K - frame_id * this->K,       X_N_n.data(), frame_id);
@@ -145,7 +145,7 @@ bool Encoder_turbo_legacy<B>
 
 template <typename B>
 void Encoder_turbo_legacy<B>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
 	if (old_n_frames != n_frames)

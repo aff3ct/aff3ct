@@ -77,7 +77,7 @@ Puncturer<B,Q>
 	auto &p1 = this->create_task("puncture");
 	auto p1s_X_N1 = this->template create_socket_in <B>(p1, "X_N1", this->N_cw);
 	auto p1s_X_N2 = this->template create_socket_out<B>(p1, "X_N2", this->N   );
-	this->create_codelet(p1, [p1s_X_N1, p1s_X_N2](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p1, [p1s_X_N1, p1s_X_N2](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &pct = static_cast<Puncturer<B,Q>&>(m);
 
@@ -91,7 +91,7 @@ Puncturer<B,Q>
 	auto &p2 = this->create_task("depuncture");
 	auto p2s_Y_N1 = this->template create_socket_in <Q>(p2, "Y_N1", this->N   );
 	auto p2s_Y_N2 = this->template create_socket_out<Q>(p2, "Y_N2", this->N_cw);
-	this->create_codelet(p2, [p2s_Y_N1, p2s_Y_N2](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p2, [p2s_Y_N1, p2s_Y_N2](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &pct = static_cast<Puncturer<B,Q>&>(m);
 
@@ -171,14 +171,14 @@ void Puncturer<B,Q>
 
 template <typename B, typename Q>
 void Puncturer<B,Q>
-::_puncture(const B *X_N1, B *X_N2, const int frame_id) const
+::_puncture(const B *X_N1, B *X_N2, const size_t frame_id) const
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename Q>
 void Puncturer<B,Q>
-::_depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id) const
+::_depuncture(const Q *Y_N1, Q *Y_N2, const size_t frame_id) const
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }

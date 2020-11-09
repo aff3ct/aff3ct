@@ -23,7 +23,7 @@ public:
 	virtual Interleaver_core_CCSDS<T>* clone() const;
 
 protected:
-	void gen_lut(T *lut, const int frame_id);
+	void gen_lut(T *lut, const size_t frame_id);
 
 private:
 	static inline int pi_CCSDS(const int &index, const int &k_1, const int &k_2);

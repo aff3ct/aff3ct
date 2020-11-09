@@ -29,7 +29,7 @@ public:
 
 	module::Decoder_SISO<B,Q>& get_decoder_siso();
 
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 
 protected:
 	virtual void deep_copy(const Codec_SISO<B,Q> &t);

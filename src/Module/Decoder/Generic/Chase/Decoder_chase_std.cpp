@@ -61,7 +61,7 @@ void Decoder_chase_std<B,R>
 
 template <typename B, typename R>
 int Decoder_chase_std<B,R>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
 {
 	if (!this->encoder->is_sys())
 	{
@@ -151,7 +151,7 @@ void Decoder_chase_std<B,R>
 
 template <typename B, typename R>
 int Decoder_chase_std<B,R>
-::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id)
 {
 	tools::hard_decide(Y_N, V_N, this->N);
 

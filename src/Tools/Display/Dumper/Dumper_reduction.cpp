@@ -121,7 +121,7 @@ void Dumper_reduction
 }
 
 void Dumper_reduction
-::add(const int frame_id)
+::add(const size_t frame_id)
 {
 	throw invalid_argument(__FILE__, __LINE__, __func__, "This method can't be called on this class.");
 }

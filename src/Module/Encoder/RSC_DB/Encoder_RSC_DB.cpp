@@ -238,7 +238,7 @@ void Encoder_RSC_DB<B>
 
 template <typename B>
 void Encoder_RSC_DB<B>
-::_encode(const B *U_K, B *X_N, const int frame_id)
+::_encode(const B *U_K, B *X_N, const size_t frame_id)
 {
 	int circ_state, end_state;
 	__pre_encode(U_K, circ_state);

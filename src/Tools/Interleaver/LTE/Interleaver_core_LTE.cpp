@@ -25,7 +25,7 @@ Interleaver_core_LTE<T>* Interleaver_core_LTE<T>
 
 template <typename T>
 void Interleaver_core_LTE<T>
-::gen_lut(T *lut, const int frame_id)
+::gen_lut(T *lut, const size_t frame_id)
 {
 	std::map<T,T> f_1;
 	std::map<T,T> f_2;

@@ -33,11 +33,11 @@ public:
 	virtual ~Encoder_turbo_product() = default;
 	virtual Encoder_turbo_product<B>* clone() const;
 
-	virtual void _encode(const B *U_K, B *X_N, const int frame_id); using Encoder<B>::encode;
-
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 
 protected:
+	virtual void _encode(const B *U_K, B *X_N, const size_t frame_id);
+
 	virtual void deep_copy(const Encoder_turbo_product<B> &m);
 
 	/* to use with a GENIUS BCH decoder to save data in the sub encoders : will work only with a inter frame level of 1

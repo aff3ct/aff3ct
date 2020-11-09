@@ -128,13 +128,13 @@ public:
 	bool check_packed(const B *V_K, const int frame_id = -1, const bool managed_memory = true);
 
 protected:
-	virtual void _build(const B *U_K1, B *U_K2, const int frame_id);
+	virtual void _build(const B *U_K1, B *U_K2, const size_t frame_id);
 
-	virtual void _extract(const B *V_K1, B *V_K2, const int frame_id);
+	virtual void _extract(const B *V_K1, B *V_K2, const size_t frame_id);
 
-	virtual bool _check(const B *V_K, const int frame_id);
+	virtual bool _check(const B *V_K, const size_t frame_id);
 
-	virtual bool _check_packed(const B *V_K, const int frame_id);
+	virtual bool _check_packed(const B *V_K, const size_t frame_id);
 };
 }
 }

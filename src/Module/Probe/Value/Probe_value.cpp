@@ -14,7 +14,7 @@ Probe_value<T>
 
 template <typename T>
 void Probe_value<T>
-::_probe(const T *in, const int frame_id)
+::_probe(const T *in, const size_t frame_id)
 {
 	this->reporter.probe(this->col_name, (void*)in, frame_id);
 }

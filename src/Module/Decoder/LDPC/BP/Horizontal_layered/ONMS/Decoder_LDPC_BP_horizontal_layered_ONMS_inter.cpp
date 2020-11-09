@@ -63,7 +63,7 @@ Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>* Decoder_LDPC_BP_horizontal_l
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
-::_reset(const int frame_id)
+::_reset(const size_t frame_id)
 {
 	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 	const auto zero = mipp::Reg<R>((R)0);
@@ -73,7 +73,7 @@ void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
-::_load(const R *Y_N, const int frame_id)
+::_load(const R *Y_N, const size_t frame_id)
 {
 	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 
@@ -87,7 +87,7 @@ void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 
 template <typename B, typename R>
 int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
-::_decode_siso(const R *Y_N1, R *Y_N2, const int frame_id)
+::_decode_siso(const R *Y_N1, R *Y_N2, const size_t frame_id)
 {
 	// memory zones initialization
 	this->_load(Y_N1, frame_id);
@@ -132,7 +132,7 @@ int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 
 template <typename B, typename R>
 int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
-::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
+::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N, frame_id);
@@ -190,7 +190,7 @@ int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 
 template <typename B, typename R>
 int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
-::_decode_siho_cw(const R *Y_N, B *V_N, const int frame_id)
+::_decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N, frame_id);
@@ -246,7 +246,7 @@ int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 template <typename B, typename R>
 template <int F>
 int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
-::_decode(const int frame_id)
+::_decode(const size_t frame_id)
 {
 	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 
@@ -357,7 +357,7 @@ void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 
 template <typename B, typename R>
 bool Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
-::_check_syndrome(const int frame_id)
+::_check_syndrome(const size_t frame_id)
 {
 	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 	const auto zero = mipp::Msk<mipp::N<B>()>(false);
@@ -385,7 +385,7 @@ bool Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 
 template <typename B, typename R>
 int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
-::_check_syndrome_status(const int frame_id)
+::_check_syndrome_status(const size_t frame_id)
 {
 	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 	const auto zero = mipp::Msk<mipp::N<B>()>(false);
@@ -426,7 +426,7 @@ int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 
 template <typename B, typename R>
 void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
 	if (old_n_frames != n_frames)

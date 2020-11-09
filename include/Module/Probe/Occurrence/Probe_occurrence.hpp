@@ -34,7 +34,7 @@ public:
 	int64_t get_occurrences() const;
 
 protected:
-	virtual void _probe(const T *in, const int frame_id);
+	virtual void _probe(const T *in, const size_t frame_id);
 };
 }
 }

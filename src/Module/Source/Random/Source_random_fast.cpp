@@ -32,7 +32,7 @@ Source_random_fast<B>* Source_random_fast<B>
 
 template <typename B>
 void Source_random_fast<B>
-::_generate(B *U_K, const int frame_id)
+::_generate(B *U_K, const size_t frame_id)
 {
 	if (!mipp::isAligned(U_K))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'U_K' is misaligned memory.");

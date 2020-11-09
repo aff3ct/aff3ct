@@ -65,10 +65,10 @@ public:
 
 	virtual void reset();
 
-	void set_n_frames(const int n_frames);
+	void set_n_frames(const size_t n_frames);
 
 protected:
-	virtual void _probe(const T *in, const int frame_id);
+	virtual void _probe(const T *in, const size_t frame_id);
 };
 }
 }

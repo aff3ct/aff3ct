@@ -48,7 +48,7 @@ Encoder_polar<B>* Encoder_polar<B>
 
 template <typename B>
 void Encoder_polar<B>
-::_encode(const B *U_K, B *X_N, const int frame_id)
+::_encode(const B *U_K, B *X_N, const size_t frame_id)
 {
 	this->convert(U_K, X_N);
 	this->light_encode(X_N);

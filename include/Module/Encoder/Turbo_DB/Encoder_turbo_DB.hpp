@@ -40,11 +40,11 @@ public:
 
 	virtual Encoder_turbo_DB<B>* clone() const;
 
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 
 protected:
 	virtual void deep_copy(const Encoder_turbo_DB<B> &m);
-	void _encode(const B *U_K, B *X_N, const int frame_id);
+	void _encode(const B *U_K, B *X_N, const size_t frame_id);
 };
 }
 }

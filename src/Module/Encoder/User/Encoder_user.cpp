@@ -158,7 +158,7 @@ Encoder_user<B>* Encoder_user<B>
 
 template <typename B>
 void Encoder_user<B>
-::_encode(const B *U_K, B *X_N, const int frame_id)
+::_encode(const B *U_K, B *X_N, const size_t frame_id)
 {
 	std::copy(this->codewords[this->cw_counter].begin(),
 	          this->codewords[this->cw_counter].end  (),

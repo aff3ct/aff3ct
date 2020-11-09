@@ -107,7 +107,7 @@ unsigned CRC_polynomial<B>
 
 template <typename B>
 void CRC_polynomial<B>
-::_build(const B *U_K1, B *U_K2, const int frame_id)
+::_build(const B *U_K1, B *U_K2, const size_t frame_id)
 {
 	std::copy(U_K1, U_K1 + this->K, U_K2);
 	this->_generate(U_K1, U_K2, 0, this->K, this->K);
@@ -136,14 +136,14 @@ void CRC_polynomial<B>
 
 template <typename B>
 void CRC_polynomial<B>
-::_extract(const B *V_K1, B *V_K2, const int frame_id)
+::_extract(const B *V_K1, B *V_K2, const size_t frame_id)
 {
 	std::copy(V_K1, V_K1 + this->K, V_K2);
 }
 
 template <typename B>
 bool CRC_polynomial<B>
-::_check(const B *V_K, const int frame_id)
+::_check(const B *V_K, const size_t frame_id)
 {
 	this->_generate(V_K, this->buff_crc.data(), 0, this->K, this->K);
 
@@ -160,7 +160,7 @@ bool CRC_polynomial<B>
 
 template <typename B>
 bool CRC_polynomial<B>
-::_check_packed(const B *V_K, const int frame_id)
+::_check_packed(const B *V_K, const size_t frame_id)
 {
 	std::vector<B> V_K_unpack(this->K + this->size);
 	std::copy(V_K, V_K + this->K + this->size, V_K_unpack.begin());
@@ -170,7 +170,7 @@ bool CRC_polynomial<B>
 
 template <typename B>
 void CRC_polynomial<B>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
 	if (old_n_frames != n_frames)

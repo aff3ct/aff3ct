@@ -26,7 +26,7 @@ public:
 	virtual Encoder_polar_MK_sys<B>* clone() const;
 
 protected:
-	virtual void _encode(const B *U_K, B *X_N, const int frame_id);
+	virtual void _encode(const B *U_K, B *X_N, const size_t frame_id);
 };
 }
 }

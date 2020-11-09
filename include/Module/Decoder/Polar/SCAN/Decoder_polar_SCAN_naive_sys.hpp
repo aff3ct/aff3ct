@@ -28,8 +28,8 @@ public:
 	virtual Decoder_polar_SCAN_naive_sys<B,R,F,V,H,I,S>* clone() const;
 
 protected:
-	int  _decode_siso(const R *sys, const R *par, R *ext, const int frame_id);
-	int  _decode_siso(const R *Y_N1, R *Y_N2, const int frame_id);
+	int  _decode_siso(const R *sys, const R *par, R *ext, const size_t frame_id);
+	int  _decode_siso(const R *Y_N1, R *Y_N2, const size_t frame_id);
 	void _store(B *V_KN, bool coded = false) const;
 };
 }

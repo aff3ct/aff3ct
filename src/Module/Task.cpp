@@ -27,7 +27,8 @@ Task
   debug_limit(-1),
   debug_precision(2),
   debug_frame_max(-1),
-  codelet([](Module &m, Task &t, const int frame_id) -> int { throw tools::unimplemented_error(__FILE__, __LINE__, __func__); return 0; }),
+  codelet([](Module &m, Task &t, const size_t frame_id) -> int
+  	{ throw tools::unimplemented_error(__FILE__, __LINE__, __func__); return 0; }),
   status(module.get_n_frames()),
   n_calls(0),
   duration_total(std::chrono::nanoseconds(0)),
@@ -221,8 +222,8 @@ int Task
 
 		if (frame_id > 0 && managed_memory == true && n_frames_per_wave > 1)
 		{
-			const auto w = (frame_id % n_frames) / n_frames_per_wave;
-			const auto w_pos = frame_id % n_frames_per_wave;
+			const size_t w = (frame_id % n_frames) / n_frames_per_wave;
+			const size_t w_pos = frame_id % n_frames_per_wave;
 
 			for (size_t sid = 0; sid < this->sockets.size() -1; sid++)
 			{
@@ -243,10 +244,10 @@ int Task
 		}
 		else // if (frame_id < 0 || n_frames_per_wave == 1)
 		{
-			const auto w_start = (frame_id < 0) ? 0 : frame_id % n_waves;
-			const auto w_stop  = (frame_id < 0) ? n_waves : w_start +1;
+			const size_t w_start = (frame_id < 0) ? 0 : frame_id % n_waves;
+			const size_t w_stop  = (frame_id < 0) ? n_waves : w_start +1;
 
-			auto w = 0;
+			size_t w = 0;
 			for (w = w_start; w < w_stop -1 && exec_status != status_t::FAILURE_STOP; w++)
 			{
 				for (size_t sid = 0; sid < this->sockets.size() -1; sid++)
@@ -307,7 +308,7 @@ int Task
 		return exec_status;
 	}
 
-	if (frame_id != -1 && frame_id >= this->get_module().get_n_frames())
+	if (frame_id != -1 && (size_t)frame_id >= this->get_module().get_n_frames())
 	{
 		std::stringstream message;
 		message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = "
@@ -541,7 +542,7 @@ size_t Task
 }
 
 void Task
-::create_codelet(std::function<int(Module &m, Task& t, const int frame_id)> &codelet)
+::create_codelet(std::function<int(Module &m, Task& t, const size_t frame_id)> &codelet)
 {
 	this->codelet = codelet;
 

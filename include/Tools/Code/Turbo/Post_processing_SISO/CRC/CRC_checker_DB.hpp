@@ -33,7 +33,7 @@ public:
 	                          mipp::vector<R>& ext,
 	                          mipp::vector<B>& s);
 
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 };
 }
 }

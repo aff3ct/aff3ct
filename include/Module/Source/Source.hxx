@@ -41,7 +41,7 @@ Source<B>
 
 	auto &p = this->create_task("generate");
 	auto ps_U_K = this->template create_socket_out<B>(p, "U_K", this->K);
-	this->create_codelet(p, [ps_U_K](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p, [ps_U_K](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &src = static_cast<Source<B>&>(m);
 
@@ -84,7 +84,7 @@ void Source<B>
 }
 template <typename B>
 void Source<B>
-::_generate(B *U_K, const int frame_id)
+::_generate(B *U_K, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }

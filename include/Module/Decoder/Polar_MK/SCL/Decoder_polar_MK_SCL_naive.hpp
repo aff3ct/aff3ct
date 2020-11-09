@@ -78,11 +78,11 @@ protected:
 	        void recursive_deep_copy(const tools::Generic_node<Contents_MK_SCL<B,R>> *nref,
 	                                       tools::Generic_node<Contents_MK_SCL<B,R>> *nclone);
 
-	        void _load          (const R *Y_N                            );
-	        void _decode        (const int frame_id                      );
-	virtual int  _decode_siho   (const R *Y_N, B *V_K, const int frame_id);
-	virtual int  _decode_siho_cw(const R *Y_N, B *V_N, const int frame_id);
-	virtual void _store         (              B *V,   bool coded = false) const;
+	        void _load          (const R *Y_N                               );
+	        void _decode        (const size_t frame_id                      );
+	virtual int  _decode_siho   (const R *Y_N, B *V_K, const size_t frame_id);
+	virtual int  _decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id);
+	virtual void _store         (              B *V,   bool coded = false   ) const;
 
 private:
 	void recursive_compute_llr        (      tools::Generic_node<Contents_MK_SCL<B,R>>* node_cur, int depth);
@@ -97,7 +97,7 @@ private:
 	                    std::vector<std::vector<tools::Generic_node<Contents_MK_SCL<B,R>>*>> leaves_array);
 
 protected:
-	virtual void select_best_path(const int frame_id);
+	virtual void select_best_path(const size_t frame_id);
 
 	void recursive_allocate_nodes_contents  (      tools::Generic_node<Contents_MK_SCL<B,R>>* node_curr, const int vector_size, int &max_depth_llrs);
 	void recursive_initialize_frozen_bits   (const tools::Generic_node<Contents_MK_SCL<B,R>>* node_curr, const std::vector<bool>& frozen_bits);

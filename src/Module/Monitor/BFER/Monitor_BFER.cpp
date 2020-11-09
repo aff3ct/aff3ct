@@ -31,7 +31,7 @@ Monitor_BFER<B>
 	auto p1s_U = this->template create_socket_in<B>(p1, "U", this->get_K());
 	auto p1s_V = this->template create_socket_in<B>(p1, "V", this->get_K());
 
-	this->create_codelet(p1, [p1s_U, p1s_V](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p1, [p1s_U, p1s_V](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &mnt = static_cast<Monitor_BFER<B>&>(m);
 
@@ -52,7 +52,7 @@ Monitor_BFER<B>
 	auto p2s_FER = this->template create_socket_out<float  >(p2, "FER", 1      );
 
 	this->create_codelet(p2, [p2s_U, p2s_V, p2s_FRA, p2s_BE, p2s_FE, p2s_BER, p2s_FER](Module &m, Task &t,
-	                                                                                   const int frame_id) -> int
+	                                                                                   const size_t frame_id) -> int
 	{
 		auto &mnt = static_cast<Monitor_BFER<B>&>(m);
 
@@ -166,10 +166,10 @@ template <typename B>
 int Monitor_BFER<B>
 ::_check_errors(const B *U,
                 const B *V,
-                const int frame_id)
+                const size_t frame_id)
 {
 	int n_be_total = 0;
-	for (auto f = 0; f < this->get_n_frames(); f++)
+	for (size_t f = 0; f < this->get_n_frames(); f++)
 		n_be_total += this->__check_errors(U + f * get_K(),
 		                                   V + f * get_K(),
 		                                   f);
@@ -213,10 +213,10 @@ int Monitor_BFER<B>
                  int32_t *FE,
                  float   *BER,
                  float   *FER,
-                 const int frame_id)
+                 const size_t frame_id)
 {
 	int n_be_total = 0;
-	for (auto f = 0; f < this->get_n_frames(); f++)
+	for (size_t f = 0; f < this->get_n_frames(); f++)
 	{
 		auto n_be = this->__check_errors(U + f * get_K(),
 		                                 V + f * get_K(),
@@ -240,7 +240,7 @@ int Monitor_BFER<B>
 
 template <typename B>
 int Monitor_BFER<B>
-::__check_errors(const B *U, const B *V, const int frame_id)
+::__check_errors(const B *U, const B *V, const size_t frame_id)
 {
 	int bit_errors_count;
 

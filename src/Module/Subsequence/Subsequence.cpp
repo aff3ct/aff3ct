@@ -106,7 +106,7 @@ void Subsequence
 		}
 	}
 
-	this->create_codelet(p, [](Module &m, Task &t, const int frame_id) -> int
+	this->create_codelet(p, [](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &ss = static_cast<Subsequence&>(m);
 
@@ -170,7 +170,7 @@ void Subsequence
 }
 
 void Subsequence
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
 	if (old_n_frames != n_frames)

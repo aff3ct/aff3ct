@@ -69,8 +69,8 @@ public:
 	virtual void reset();
 
 protected:
-	virtual size_t _route(const int8_t *in, const int frame_id);
-	virtual size_t __route(const int8_t *in, const int frame_id);
+	virtual size_t _route(const int8_t *in, const size_t frame_id);
+	virtual size_t __route(const int8_t *in, const size_t frame_id);
 	virtual size_t select_route_inter(const size_t a, const size_t b);
 
 private:

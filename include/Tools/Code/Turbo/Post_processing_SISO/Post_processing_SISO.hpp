@@ -17,7 +17,7 @@ template <typename B = int, typename R = float>
 class Post_processing_SISO : public Interface_clone
 {
 protected:
-	int n_frames;
+	size_t n_frames;
 
 public:
 	virtual ~Post_processing_SISO() = default;
@@ -35,9 +35,9 @@ public:
 
 	virtual void end(const int n_ite);
 
-	inline int get_n_frames() const;
+	inline size_t get_n_frames() const;
 
-	virtual void set_n_frames(const int n_frames);
+	virtual void set_n_frames(const size_t n_frames);
 
 protected:
 	Post_processing_SISO();

@@ -45,10 +45,10 @@ public:
 	virtual Decoder_LDPC_BP_flooding_Gallager_A<B,R>* clone() const;
 
 protected:
-	int _decode_hiho   (const B *Y_N, B *V_K, const int frame_id);
-	int _decode_hiho_cw(const B *Y_N, B *V_K, const int frame_id);
-	int _decode_siho   (const R *Y_N, B *V_K, const int frame_id);
-	int _decode_siho_cw(const R *Y_N, B *V_K, const int frame_id);
+	int _decode_hiho   (const B *Y_N, B *V_K, const size_t frame_id);
+	int _decode_hiho_cw(const B *Y_N, B *V_K, const size_t frame_id);
+	int _decode_siho   (const R *Y_N, B *V_K, const size_t frame_id);
+	int _decode_siho_cw(const R *Y_N, B *V_K, const size_t frame_id);
 	int _decode        (const B *Y_N);
 
 	virtual void _initialize_var_to_chk(const B *Y_N, const std::vector<int8_t> &chk_to_var,

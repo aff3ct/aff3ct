@@ -125,7 +125,7 @@ void Channel_Rayleigh_LLR<R>
 
 template <typename R>
 void Channel_Rayleigh_LLR<R>
-::_add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id)
+::_add_noise_wg(const R *X_N, R *H_N, R *Y_N, const size_t frame_id)
 {
 	if (add_users && this->n_frames > 1) // n_frames_per_wave = n_frames
 	{
@@ -136,7 +136,7 @@ void Channel_Rayleigh_LLR<R>
 
 		if (this->complex)
 		{
-			for (auto f = 0; f < this->n_frames; f++)
+			for (size_t f = 0; f < this->n_frames; f++)
 			{
 				for (auto i = 0; i < this->N; i += 2)
 				{
@@ -150,7 +150,7 @@ void Channel_Rayleigh_LLR<R>
 		}
 		else
 		{
-			for (auto f = 0; f < this->n_frames; f++)
+			for (size_t f = 0; f < this->n_frames; f++)
 			{
 				for (auto i = 0; i < this->N; i++)
 				{
@@ -209,7 +209,7 @@ void Channel_Rayleigh_LLR<R>
 
 template<typename R>
 void Channel_Rayleigh_LLR<R>
-::set_n_frames(const int n_frames)
+::set_n_frames(const size_t n_frames)
 {
 	const auto old_n_frames = this->get_n_frames();
 	if (old_n_frames != n_frames)
