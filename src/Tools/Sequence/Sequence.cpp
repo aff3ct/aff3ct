@@ -492,9 +492,8 @@ void Sequence
 	if (this->is_thread_pinning())
 		Thread_pinning::pin(this->puids[tid]);
 
-	const bool no_copy_mode = this->is_no_copy_mode();
 	std::function<void(Generic_node<Sub_sequence>*)> exec_sequence =
-		[&exec_sequence, no_copy_mode](Generic_node<Sub_sequence>* cur_ss)
+		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss)
 		{
 			auto type = cur_ss->get_c()->type;
 			auto &tasks = cur_ss->get_c()->tasks;

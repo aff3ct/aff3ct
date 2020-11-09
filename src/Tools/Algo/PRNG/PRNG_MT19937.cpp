@@ -195,32 +195,32 @@ int PRNG_MT19937::rand()
 
 float PRNG_MT19937::randf_cc()
 {
-	return static_cast<float>(rand_u32()) / UINT32_MAX;
+	return static_cast<float>(rand_u32()) / (float)UINT32_MAX;
 }
 
 float PRNG_MT19937::randf_co()
 {
-	return static_cast<float>(rand_u32()) / (UINT32_MAX +1.0f);
+	return static_cast<float>(rand_u32()) / ((float)UINT32_MAX +1.0f);
 }
 
 float PRNG_MT19937::randf_oo()
 {
-	return (static_cast<float>(rand_u32()) +0.5f) / (UINT32_MAX +1.0f);
+	return (static_cast<float>(rand_u32()) +0.5f) / ((float)UINT32_MAX +1.0f);
 }
 
 double PRNG_MT19937::randd_cc()
 {
-	return static_cast<double>(rand_u32()) / UINT32_MAX;
+	return static_cast<double>(rand_u32()) / (double)UINT32_MAX;
 }
 
 double PRNG_MT19937::randd_co()
 {
-	return static_cast<double>(rand_u32()) / (UINT32_MAX +1.0);
+	return static_cast<double>(rand_u32()) / ((double)UINT32_MAX +1.0);
 }
 
 double PRNG_MT19937::randd_oo()
 {
-	return (static_cast<double>(rand_u32()) +0.5) / (UINT32_MAX +1.0);
+	return (static_cast<double>(rand_u32()) +0.5) / ((double)UINT32_MAX +1.0);
 }
 
 uint64_t PRNG_MT19937::rand_u64()
