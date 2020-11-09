@@ -167,7 +167,8 @@ void Channel_Rayleigh_LLR<R>
 	}
 	else // n_frames_per_wave = 1
 	{
-		gaussian_generator->generate(this->gains      .data() + frame_id * this->N, this->N, (R)1 / (R)std::sqrt((R)2));
+		const auto gains_size = this->complex ? this->N : 2 * this->N;
+		gaussian_generator->generate(this->gains      .data() + frame_id * this->N, gains_size, (R)1 / (R)std::sqrt((R)2));
 		gaussian_generator->generate(this->noised_data.data() + frame_id * this->N, this->N, (R)this->noise->get_value());
 
 		if (this->complex)

@@ -167,33 +167,30 @@ template <typename R>
 void Channel_Rayleigh_LLR_user<R>
 ::_add_noise_wg(const R *X_N, R *H_N, R *Y_N, const size_t frame_id)
 {
-	if (add_users && this->n_frames > 1)
+	// get all the needed gains from the stock
+	for (unsigned i = 0; i < gains.size(); ++i)
 	{
-		// get all the needed gains from the stock
-		for (unsigned i = 0; i < gains.size(); ++i)
+		gains[i] = gains_stock[gain_index];
+
+		current_gain_occur++;
+		if(current_gain_occur >= gain_occur)
 		{
-			gains[i] = gains_stock[gain_index];
+			current_gain_occur = 0;
+			gain_index++;
 
-			current_gain_occur++;
-			if(current_gain_occur >= gain_occur)
-			{
-				current_gain_occur = 0;
-				gain_index++;
-
-				if(gain_index >= gains_stock.size())
-					gain_index = 0;
-			}
+			if(gain_index >= gains_stock.size())
+				gain_index = 0;
 		}
+	}
 
-		// generate the noise
-		gaussian_generator->generate(this->noised_data, (R)this->noise->get_value()); // trow if noise is not SIGMA type
+	// generate the noise
+	gaussian_generator->generate(this->noised_data, (R)this->noise->get_value()); // trow if noise is not SIGMA type
 
-		// use the noise and the gain to modify the signal
-		for (size_t i = 0; i < this->N * this->n_frames; i++)
-		{
-			H_N[i] = this->gains[i];
-			Y_N[i] = X_N[i] * H_N[i] + this->noised_data[i];
-		}
+	// use the noise and the gain to modify the signal
+	for (size_t i = 0; i < this->N * this->n_frames; i++)
+	{
+		H_N[i] = this->gains[i];
+		Y_N[i] = X_N[i] * H_N[i] + this->noised_data[i];
 	}
 }
 
