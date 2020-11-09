@@ -92,6 +92,9 @@ protected:
 	inline void set_databytes(const size_t databytes);
 
 	inline void set_dataptr(void* dataptr);
+
+private:
+	inline void check_bound_socket();
 };
 }
 }

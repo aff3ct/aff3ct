@@ -63,7 +63,7 @@ int Module
 bool Module
 ::is_single_wave() const
 {
-	return single_wave;
+	return this->single_wave;
 }
 
 }

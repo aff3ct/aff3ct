@@ -32,6 +32,8 @@ Modem_SCMA<B,R,Q,PSI>
 {
 	const std::string name = "Modem_SCMA";
 	this->set_name(name);
+	this->set_n_frames(CB.get_number_of_users());
+	this->set_single_wave(true);
 
 	if (n_ite <= 0)
 	{
@@ -39,8 +41,6 @@ Modem_SCMA<B,R,Q,PSI>
 		message << "'n_ite' has to be greater than 0 ('n_ite' = " << n_ite << ").";
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
-
-	this->set_n_frames(CB.get_number_of_users());
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
@@ -71,15 +71,8 @@ void Modem_SCMA<B,R,Q,PSI>
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 void Modem_SCMA<B,R,Q,PSI>
-::modulate(const B* X_N1, R* X_N2, const int frame_id)
+::_modulate(const B* X_N1, R* X_N2, const int frame_id)
 {
-	if (frame_id != -1)
-	{
-		std::stringstream message;
-		message << "'frame_id' has to be equal to -1 ('frame_id' = " << frame_id << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	const auto N_mod = CB.get_number_of_real_symbols() * ((this->N + 1) / 2);
 
 	for (auto f = 0 ; f < this->n_frames ; f++)
@@ -116,15 +109,8 @@ void Modem_SCMA<B,R,Q,PSI>
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 void Modem_SCMA<B,R,Q,PSI>
-::demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
+::_demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
-	if (frame_id != -1)
-	{
-		std::stringstream message;
-		message << "'frame_id' has to be equal to -1 ('frame_id' = " << frame_id << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
@@ -151,15 +137,8 @@ void Modem_SCMA<B,R,Q,PSI>
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 void Modem_SCMA<B,R,Q,PSI>
-::demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
+::_demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id)
 {
-	if (frame_id != -1)
-	{
-		std::stringstream message;
-		message << "'frame_id' has to be equal to -1 ('frame_id' = " << frame_id << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
 
@@ -356,15 +335,8 @@ Q Modem_SCMA<B,R,Q,PSI>
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 void Modem_SCMA<B,R,Q,PSI>
-::filter(const R *Y_N1, R *Y_N2, const int frame_id)
+::_filter(const R *Y_N1, R *Y_N2, const int frame_id)
 {
-	if (frame_id != -1)
-	{
-		std::stringstream message;
-		message << "'frame_id' has to be equal to -1 ('frame_id' = " << frame_id << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	std::copy(Y_N1, Y_N1 + this->N_fil * this->n_frames, Y_N2);
 }
 

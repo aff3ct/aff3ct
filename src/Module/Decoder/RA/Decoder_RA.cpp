@@ -69,6 +69,14 @@ Decoder_RA<B,R>* Decoder_RA<B,R>
 }
 
 template <typename B, typename R>
+void Decoder_RA<B, R>
+::deep_copy(const Decoder_RA<B,R> &m)
+{
+	Decoder_SIHO<B,R>::deep_copy(m);
+	if (m.interleaver != nullptr) this->interleaver.reset(m.interleaver->clone());
+}
+
+template <typename B, typename R>
 int Decoder_RA<B, R>
 ::_decode_siho(const R *Y_N, B *V_K, const int frame_id)
 {

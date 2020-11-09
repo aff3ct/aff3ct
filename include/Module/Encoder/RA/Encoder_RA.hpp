@@ -34,6 +34,7 @@ public:
 	virtual void set_n_frames(const int n_frames);
 
 protected:
+	virtual void deep_copy(const Encoder_RA<B> &m);
 	void _encode(const B *U_K, B *X_N, const int frame_id);
 };
 }

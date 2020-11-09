@@ -13,7 +13,7 @@ template <typename B>
 Encoder_turbo_product<B>
 ::Encoder_turbo_product(const Encoder<B> &enc_r, const Encoder<B> &enc_c, const Interleaver<B> &pi)
 : Encoder<B>(enc_r.get_K() * enc_c.get_K(), pi.get_core().get_size()),
-  pi   (pi.clone()   ),
+  pi   (pi   .clone()),
   enc_r(enc_r.clone()),
   enc_c(enc_c.clone()),
 
@@ -91,6 +91,7 @@ void Encoder_turbo_product<B>
 	Module::deep_copy(m);
 	if (m.enc_r != nullptr) this->enc_r.reset(m.enc_r->clone());
 	if (m.enc_c != nullptr) this->enc_c.reset(m.enc_c->clone());
+	if (m.pi    != nullptr) this->pi   .reset(m.pi   ->clone());
 }
 
 template <typename B>

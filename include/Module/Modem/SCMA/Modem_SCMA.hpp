@@ -41,11 +41,6 @@ public:
 
 	virtual Modem_SCMA<B,R,Q,PSI>* clone() const;
 
-	virtual void modulate     (              const B* X_N1, R *X_N2, const int frame_id = -1); using Modem<B,R,Q>::modulate;
-	virtual void demodulate   (              const Q *Y_N1, Q *Y_N2, const int frame_id = -1); using Modem<B,R,Q>::demodulate;
-	virtual void demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id = -1); using Modem<B,R,Q>::demodulate_wg;
-	virtual void filter       (              const R *Y_N1, R *Y_N2, const int frame_id = -1); using Modem<B,R,Q>::filter;
-
 	static bool is_complex_mod();
 	static bool is_complex_fil();
 	static int size_mod(const int N, const int bps);
@@ -59,6 +54,11 @@ public:
 
 protected:
 	void check_noise();
+
+	virtual void _modulate     (              const B* X_N1, R *X_N2, const int frame_id);
+	virtual void _demodulate   (              const Q *Y_N1, Q *Y_N2, const int frame_id);
+	virtual void _demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id);
+	virtual void _filter       (              const R *Y_N1, R *Y_N2, const int frame_id);
 
 private:
 	Q phi(const Q* Y_N1, int i, int j, int k, int re, int batch);

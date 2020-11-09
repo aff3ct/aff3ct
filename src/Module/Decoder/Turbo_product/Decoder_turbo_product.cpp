@@ -20,7 +20,7 @@ Decoder_turbo_product<B,R>
   n_ite(n_ite),
   alpha(alpha),
   beta (beta ),
-  pi   (pi.clone()),
+  pi   (pi  .clone()),
   cp_r (cp_r.clone()),
   cp_c (cp_c.clone()),
 
@@ -126,6 +126,7 @@ void Decoder_turbo_product<B,R>
 	Module::deep_copy(m);
 	if (m.cp_r != nullptr) this->cp_r.reset(m.cp_r->clone());
 	if (m.cp_c != nullptr) this->cp_c.reset(m.cp_c->clone());
+	if (m.pi   != nullptr) this->pi  .reset(m.pi  ->clone());
 }
 
 template <typename B, typename R>

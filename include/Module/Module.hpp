@@ -116,6 +116,10 @@ protected:
 	virtual void set_n_frames_per_wave(const int n_frames_per_wave);
 
 	void set_single_wave(const bool enable_single_wave);
+
+private:
+	void _set_n_frames_per_wave(const int n_frames_per_wave);
+	void _set_n_frames         (const int n_frames         );
 };
 }
 }

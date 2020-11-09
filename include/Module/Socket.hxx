@@ -312,46 +312,8 @@ void Socket
 			message << "'s.dataptr' can't be NULL.";
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
-
-		if (bound_sockets.size() != 0 || bound_socket != nullptr)
-		{
-			std::stringstream bound_sockets_str;
-			if (bound_sockets.size() != 0)
-			{
-				bound_sockets_str << ", 'bound_sockets' = [";
-
-				for (size_t bs = 0; bs < bound_sockets.size(); bs++)
-				{
-					bound_sockets_str << "{" << "'name'"      << " = " << bound_sockets[bs]->get_name()      << ", "
-					                         << "'databytes'" << " = " << bound_sockets[bs]->get_databytes() << ", "
-					                         << "'task.name'" << " = " << bound_sockets[bs]->get_task().get_name()
-					                  << "}";
-					if (bs < bound_sockets.size() -1)
-						bound_sockets_str << ", ";
-				}
-
-				bound_sockets_str << "]";
-			}
-			else if (bound_socket != nullptr)
-			{
-				bound_sockets_str << ", 'bound_socket' = ";
-				bound_sockets_str << "{" << "'name'"      << " = " << bound_socket->get_name()      << ", "
-				                         << "'databytes'" << " = " << bound_socket->get_databytes() << ", "
-				                         << "'task.name'" << " = " << bound_socket->get_task().get_name()
-				                  << "}";
-			}
-
-			std::stringstream message;
-			message << "The current socket is already bound, it is impossible to bind it ("
-			        << "'databytes'"     << " = " << get_databytes() << ", "
-			        << "'name'"          << " = " << get_name()      << ", "
-			        << "'task.name'"     << " = " << task.get_name()
-			        << bound_sockets_str.str()
-			        << ").";
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
+		this->check_bound_socket();
 	}
-
 	this->dataptr = dataptr;
 }
 
@@ -442,45 +404,7 @@ void Socket
 {
 	if (name != this->get_name())
 	{
-		if (bound_sockets.size() != 0 || bound_socket != nullptr)
-		{
-			std::stringstream bound_sockets_str;
-			if (bound_sockets.size() != 0)
-			{
-				bound_sockets_str << ", 'bound_sockets' = [";
-
-				for (size_t bs = 0; bs < bound_sockets.size(); bs++)
-				{
-					bound_sockets_str << "{" << "'name'"      << " = " << bound_sockets[bs]->get_name()      << ", "
-					                         << "'databytes'" << " = " << bound_sockets[bs]->get_databytes() << ", "
-					                         << "'task.name'" << " = " << bound_sockets[bs]->get_task().get_name()
-					                  << "}";
-					if (bs < bound_sockets.size() -1)
-						bound_sockets_str << ", ";
-				}
-
-				bound_sockets_str << "]";
-			}
-			else if (bound_socket != nullptr)
-			{
-				bound_sockets_str << ", 'bound_socket' = ";
-				bound_sockets_str << "{" << "'name'"      << " = " << bound_socket->get_name()      << ", "
-				                         << "'databytes'" << " = " << bound_socket->get_databytes() << ", "
-				                         << "'task.name'" << " = " << bound_socket->get_task().get_name()
-				                  << "}";
-			}
-
-			std::stringstream message;
-			message << "The current socket is already bound, it is impossible to set new name ("
-			        << "'databytes'"     << " = " << get_databytes() << ", "
-			        << "'name'"          << " = " << get_name()      << ", "
-			        << "'new_name'"      << " = " << name            << ", "
-			        << "'task.name'"     << " = " << task.get_name()
-			        << bound_sockets_str.str()
-			        << ").";
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
+		this->check_bound_socket();
 		this->name = name;
 	}
 }
@@ -490,56 +414,7 @@ void Socket
 {
 	if (datatype != this->get_datatype())
 	{
-		if (bound_sockets.size() != 0 || bound_socket != nullptr)
-		{
-			std::stringstream bound_sockets_str;
-			if (bound_sockets.size() != 0)
-			{
-				bound_sockets_str << ", 'bound_sockets' = [";
-
-				for (size_t bs = 0; bs < bound_sockets.size(); bs++)
-				{
-					bound_sockets_str << "{" << "'name'"      << " = " << bound_sockets[bs]->get_name()      << ", "
-					                         << "'databytes'" << " = " << bound_sockets[bs]->get_databytes() << ", "
-					                         << "'task.name'" << " = " << bound_sockets[bs]->get_task().get_name()
-					                  << "}";
-					if (bs < bound_sockets.size() -1)
-						bound_sockets_str << ", ";
-				}
-
-				bound_sockets_str << "]";
-			}
-			else if (bound_socket != nullptr)
-			{
-				bound_sockets_str << ", 'bound_socket' = ";
-				bound_sockets_str << "{" << "'name'"      << " = " << bound_socket->get_name()      << ", "
-				                         << "'databytes'" << " = " << bound_socket->get_databytes() << ", "
-				                         << "'task.name'" << " = " << bound_socket->get_task().get_name()
-				                  << "}";
-			}
-
-			std::stringstream message;
-			message << "The current socket is already bound, it is impossible to set new datatype ("
-			        << "'databytes'"     << " = " << get_databytes()          << ", "
-			        << "'name'"          << " = " << get_name()               << ", "
-			        << "'datatype'"      << " = " << get_datatype_string()    << ", "
-			        << "'new_datatype'"  << " = " << type_to_string[datatype] << ", "
-			        << "'task.name'"     << " = " << task.get_name()
-			        << bound_sockets_str.str()
-			        << ").";
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (this->get_databytes() % type_to_size[datatype] != 0)
-		{
-			std::stringstream message;
-			message << "'databytes % type_to_size[datatype]' has to be equal to 0 ("
-			        << "'databytes'"              << " = " << this->get_databytes()    << ", "
-			        << "'type_to_size[datatype]'" << " = " << type_to_size[datatype]   << ", "
-			        << "'datatype'"               << " = " << type_to_string[datatype] << ").";
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
+		this->check_bound_socket();
 		this->datatype = datatype;
 	}
 }
@@ -549,55 +424,7 @@ void Socket
 {
 	if (databytes != this->get_databytes())
 	{
-		if (bound_sockets.size() != 0 || bound_socket != nullptr)
-		{
-			std::stringstream bound_sockets_str;
-			if (bound_sockets.size() != 0)
-			{
-				bound_sockets_str << ", 'bound_sockets' = [";
-
-				for (size_t bs = 0; bs < bound_sockets.size(); bs++)
-				{
-					bound_sockets_str << "{" << "'name'"      << " = " << bound_sockets[bs]->get_name()      << ", "
-					                         << "'databytes'" << " = " << bound_sockets[bs]->get_databytes() << ", "
-					                         << "'task.name'" << " = " << bound_sockets[bs]->get_task().get_name()
-					                  << "}";
-					if (bs < bound_sockets.size() -1)
-						bound_sockets_str << ", ";
-				}
-
-				bound_sockets_str << "]";
-			}
-			else if (bound_socket != nullptr)
-			{
-				bound_sockets_str << ", 'bound_socket' = ";
-				bound_sockets_str << "{" << "'name'"      << " = " << bound_socket->get_name()      << ", "
-				                         << "'databytes'" << " = " << bound_socket->get_databytes() << ", "
-				                         << "'task.name'" << " = " << bound_socket->get_task().get_name()
-				                  << "}";
-			}
-
-			std::stringstream message;
-			message << "The current socket is already bound, it is impossible to set new databytes ("
-			        << "'databytes'"     << " = " << get_databytes() << ", "
-			        << "'new_databytes'" << " = " << databytes       << ", "
-			        << "'name'"          << " = " << get_name()      << ", "
-			        << "'task.name'"     << " = " << task.get_name()
-			        << bound_sockets_str.str()
-			        << ").";
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
-		if (databytes % type_to_size[this->datatype] != 0)
-		{
-			std::stringstream message;
-			message << "'databytes % type_to_size[datatype]' has to be equal to 0 ("
-			        << "'databytes'"              << " = " << databytes                      << ", "
-			        << "'type_to_size[datatype]'" << " = " << type_to_size[this->datatype]   << ", "
-			        << "'datatype'"               << " = " << type_to_string[this->datatype] << ").";
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
-
+		this->check_bound_socket();
 		this->databytes = databytes;
 	}
 }
@@ -607,47 +434,52 @@ void Socket
 {
 	if (dataptr != this->get_dataptr())
 	{
-		if (bound_sockets.size() != 0 || bound_socket != nullptr)
+		this->check_bound_socket();
+		this->dataptr = dataptr;
+	}
+}
+
+void Socket
+::check_bound_socket()
+{
+	if (bound_sockets.size() != 0 || bound_socket != nullptr)
+	{
+		std::stringstream bound_sockets_str;
+		if (bound_sockets.size() != 0)
 		{
-			std::stringstream bound_sockets_str;
-			if (bound_sockets.size() != 0)
-			{
-				bound_sockets_str << ", 'bound_sockets' = [";
+			bound_sockets_str << ", 'bound_sockets' = [";
 
-				for (size_t bs = 0; bs < bound_sockets.size(); bs++)
-				{
-					bound_sockets_str << "{" << "'name'"      << " = " << bound_sockets[bs]->get_name()      << ", "
-					                         << "'databytes'" << " = " << bound_sockets[bs]->get_databytes() << ", "
-					                         << "'task.name'" << " = " << bound_sockets[bs]->get_task().get_name()
-					                  << "}";
-					if (bs < bound_sockets.size() -1)
-						bound_sockets_str << ", ";
-				}
-
-				bound_sockets_str << "]";
-			}
-			else if (bound_socket != nullptr)
+			for (size_t bs = 0; bs < bound_sockets.size(); bs++)
 			{
-				bound_sockets_str << ", 'bound_socket' = ";
-				bound_sockets_str << "{" << "'name'"      << " = " << bound_socket->get_name()      << ", "
-				                         << "'databytes'" << " = " << bound_socket->get_databytes() << ", "
-				                         << "'task.name'" << " = " << bound_socket->get_task().get_name()
+				bound_sockets_str << "{" << "'name'"      << " = " << bound_sockets[bs]->get_name()      << ", "
+				                         << "'databytes'" << " = " << bound_sockets[bs]->get_databytes() << ", "
+				                         << "'task.name'" << " = " << bound_sockets[bs]->get_task().get_name()
 				                  << "}";
+				if (bs < bound_sockets.size() -1)
+					bound_sockets_str << ", ";
 			}
 
-			std::stringstream message;
-			message << "The current socket is already bound, it is impossible to set new dataptr ("
-			        << "'dataptr'"     << " = " << get_dataptr()   << ", "
-			        << "'new_dataptr'" << " = " << dataptr         << ", "
-			        << "'databytes'"   << " = " << get_databytes() << ", "
-			        << "'name'"        << " = " << get_name()      << ", "
-			        << "'task.name'"   << " = " << task.get_name()
-			        << bound_sockets_str.str()
-			        << ").";
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+			bound_sockets_str << "]";
+		}
+		else if (bound_socket != nullptr)
+		{
+			bound_sockets_str << ", 'bound_socket' = ";
+			bound_sockets_str << "{" << "'name'"      << " = " << bound_socket->get_name()      << ", "
+			                         << "'databytes'" << " = " << bound_socket->get_databytes() << ", "
+			                         << "'task.name'" << " = " << bound_socket->get_task().get_name()
+			                  << "}";
 		}
 
-		this->dataptr = dataptr;
+		std::stringstream message;
+		message << "The current socket is already bound ("
+		        << "'dataptr'"   << " = " << get_dataptr()         << ", "
+		        << "'databytes'" << " = " << get_databytes()       << ", "
+		        << "'datatype'"  << " = " << get_datatype_string() << ", "
+		        << "'name'"      << " = " << get_name()            << ", "
+		        << "'task.name'" << " = " << task.get_name()
+		        << bound_sockets_str.str()
+		        << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 }
 

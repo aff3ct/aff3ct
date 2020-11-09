@@ -15,7 +15,7 @@ Encoder_turbo<B>
 ::Encoder_turbo(const int& K, const int& N, const Encoder<B> &enco_n, const Encoder<B> &enco_i,
                 const Interleaver<B> &pi)
 : Encoder<B>(K, N),
-  pi        (pi.clone()),
+  pi        (pi    .clone()),
   enco_n    (enco_n.clone()),
   enco_i    (enco_i.clone()),
   U_K_i     (K * enco_n.get_n_frames()),
@@ -77,6 +77,7 @@ void Encoder_turbo<B>
 	Module::deep_copy(m);
 	if (m.enco_n != nullptr) this->enco_n.reset(m.enco_n->clone());
 	if (m.enco_i != nullptr) this->enco_i.reset(m.enco_i->clone());
+	if (m.pi     != nullptr) this->pi    .reset(m.pi    ->clone());
 }
 
 template <typename B>

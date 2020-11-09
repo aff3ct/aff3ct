@@ -19,7 +19,7 @@ Decoder_turbo_DB<B,R>
                    const Interleaver<R> &pi)
 : Decoder_SIHO<B,R>(K, N),
   n_ite            (n_ite),
-  pi               (pi.clone()),
+  pi               (pi    .clone()),
   siso_n           (siso_n.clone()),
   siso_i           (siso_i.clone()),
   l_cpy            (2 * K),
@@ -127,6 +127,7 @@ void Decoder_turbo_DB<B,R>
 	Module::deep_copy(m);
 	if (m.siso_n != nullptr) this->siso_n.reset(m.siso_n->clone());
 	if (m.siso_i != nullptr) this->siso_i.reset(m.siso_i->clone());
+	if (m.pi     != nullptr) this->pi    .reset(m.pi    ->clone());
 	this->post_processings.clear();
 	for (auto &pp : m.post_processings)
 		this->post_processings.push_back(std::shared_ptr<tools::Post_processing_SISO<B,R>>(pp->clone()));

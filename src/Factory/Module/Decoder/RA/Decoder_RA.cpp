@@ -132,6 +132,6 @@ template aff3ct::module::Decoder_SIHO<B_16,Q_16>* aff3ct::factory::Decoder_RA::b
 template aff3ct::module::Decoder_SIHO<B_32,Q_32>* aff3ct::factory::Decoder_RA::build<B_32,Q_32>(const aff3ct::module::Interleaver<Q_32>&, module::Encoder<B_32>*) const;
 template aff3ct::module::Decoder_SIHO<B_64,Q_64>* aff3ct::factory::Decoder_RA::build<B_64,Q_64>(const aff3ct::module::Interleaver<Q_64>&, module::Encoder<B_64>*) const;
 #else
-template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_RA::build<B,Q>(aff3ct::module::Interleaver<Q>&, module::Encoder<B>*) const;
+template aff3ct::module::Decoder_SIHO<B,Q>* aff3ct::factory::Decoder_RA::build<B,Q>(const aff3ct::module::Interleaver<Q>&, module::Encoder<B>*) const;
 #endif
 // ==================================================================================== explicit template instantiation

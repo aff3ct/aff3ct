@@ -12,7 +12,7 @@ using namespace aff3ct::module;
 template <typename B>
 Encoder_RA<B>
 ::Encoder_RA(const int& K, const int& N, const Interleaver<B>& interleaver)
- : Encoder<B>(K, N), rep_count(N/K), U(N), tmp_X_N(N), interleaver(interleaver.clone())
+: Encoder<B>(K, N), rep_count(N/K), U(N), tmp_X_N(N), interleaver(interleaver.clone())
 {
 	const std::string name = "Encoder_RA";
 	this->set_name(name);
@@ -46,6 +46,14 @@ Encoder_RA<B>* Encoder_RA<B>
 	auto m = new Encoder_RA(*this);
 	m->deep_copy(*this);
 	return m;
+}
+
+template <typename B>
+void Encoder_RA<B>
+::deep_copy(const Encoder_RA<B> &m)
+{
+	Encoder<B>::deep_copy(m);
+	if (m.interleaver != nullptr) this->interleaver.reset(m.interleaver->clone());
 }
 
 template <typename B>
