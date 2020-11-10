@@ -5,6 +5,7 @@
 #ifndef TASK_HPP_
 #define TASK_HPP_
 
+#include <unordered_map>
 #include <functional>
 #include <cstddef>
 #include <limits>
@@ -27,9 +28,16 @@ class Socket;
 enum status_t : int { SUCCESS = 0,
                       FAILURE = 1,
                       FAILURE_STOP = -1,
+                      UNKNOWN = -2,
                       SKIPPED = std::numeric_limits<int>::min() };
 
 enum class socket_t : uint8_t { SIN, SIN_SOUT, SOUT };
+
+static std::unordered_map<int,std::string> status_t_to_string = {{                              0, "SUCCESS"     },
+                                                                 {                              1, "FAILURE"     },
+                                                                 {                             -1, "FAILURE_STOP"},
+                                                                 {                             -2, "UNKNOWN"     },
+                                                                 {std::numeric_limits<int>::min(), "SKIPPED"     }};
 
 class Task : public tools::Interface_clone, public tools::Interface_reset
 {
@@ -121,7 +129,7 @@ public:
 	const std::vector<std::chrono::nanoseconds>& get_timers_min    () const;
 	const std::vector<std::chrono::nanoseconds>& get_timers_max    () const;
 
-	int exec(const int frame_id = -1, const bool managed_memory = true);
+	const std::vector<int>& exec(const int frame_id = -1, const bool managed_memory = true);
 
 	inline Socket& operator[](const size_t id);
 
@@ -129,8 +137,10 @@ public:
 
 	Task* clone() const;
 
+	inline const std::vector<int>& get_status() const;
+
 protected:
-	int _exec(const int frame_id = -1, const bool managed_memory = true);
+	void _exec(const int frame_id = -1, const bool managed_memory = true);
 
 	void register_timer(const std::string &key);
 

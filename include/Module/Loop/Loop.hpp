@@ -60,11 +60,6 @@ public:
 	inline std::type_index get_datatype_out() const;
 	inline size_t get_n_calls    () const;
 
-	// template <class A = std::allocator<int8_t>>
-	// bool stop(const std::vector<int8_t,A>& in, const int frame_id = -1, const bool managed_memory = true);
-
-	// virtual bool stop(const int8_t *in, const int frame_id = -1, const bool managed_memory = true);
-
 	virtual void reset();
 
 protected:

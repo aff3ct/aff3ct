@@ -24,7 +24,9 @@ size_t Router
 ::route(const int8_t *in, const int frame_id, const bool managed_memory)
 {
 	(*this)[rtr::sck::route::in].bind(in);
-	return (size_t)(*this)[rtr::tsk::route].exec(frame_id, managed_memory);
+	const auto &status = (*this)[rtr::tsk::route].exec(frame_id, managed_memory);
+
+	return status[0];
 }
 
 size_t Router

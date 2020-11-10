@@ -104,7 +104,9 @@ R Monitor_MI<B,R>
 {
 	(*this)[mnt::sck::get_mutual_info::X].bind(X);
 	(*this)[mnt::sck::get_mutual_info::Y].bind(Y);
-	return (R)(*this)[mnt::tsk::get_mutual_info].exec(frame_id, managed_memory);
+	const auto &status = (*this)[mnt::tsk::get_mutual_info].exec(frame_id, managed_memory);
+
+	return (R)status[0];
 }
 
 template <typename B, typename R>

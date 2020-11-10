@@ -26,13 +26,6 @@ void Loop
 	this->n_calls = 0;
 }
 
-// bool Loop
-// ::stop(const int8_t *in, const int frame_id, const bool managed_memory)
-// {
-// 	(*this)[lop::sck::stop::in].bind(in);
-// 	return (*this)[lop::tsk::stop].exec(frame_id, managed_memory);
-// }
-
 bool Loop
 ::_stop(const int8_t *in, const size_t frame_id)
 {

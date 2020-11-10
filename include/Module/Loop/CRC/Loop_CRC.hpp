@@ -30,6 +30,8 @@ public:
 	virtual ~Loop_CRC() = default;
 	virtual Loop_CRC<I,O>* clone() const;
 
+	virtual void set_n_frames(const size_t n_frames);
+
 protected:
 	virtual void deep_copy(const Loop_CRC<I,O> &m);
 

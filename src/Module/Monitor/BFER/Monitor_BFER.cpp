@@ -159,7 +159,9 @@ int Monitor_BFER<B>
 {
 	(*this)[mnt::sck::check_errors::U].bind(U);
 	(*this)[mnt::sck::check_errors::V].bind(V);
-	return (*this)[mnt::tsk::check_errors].exec(frame_id, managed_memory);
+	const auto &status = (*this)[mnt::tsk::check_errors].exec(frame_id, managed_memory);
+
+	return status[0];
 }
 
 template <typename B>
@@ -201,7 +203,9 @@ int Monitor_BFER<B>
 	(*this)[mnt::sck::check_errors2::FE ].bind(FE);
 	(*this)[mnt::sck::check_errors2::BER].bind(BER);
 	(*this)[mnt::sck::check_errors2::FER].bind(FER);
-	return (*this)[mnt::tsk::check_errors2].exec(frame_id, managed_memory);
+	const auto &status = (*this)[mnt::tsk::check_errors2].exec(frame_id, managed_memory);
+
+	return status[0];
 }
 
 template <typename B>

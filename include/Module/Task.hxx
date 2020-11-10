@@ -90,5 +90,11 @@ void Task
 		}
 	}
 }
+
+const std::vector<int>& Task
+::get_status() const
+{
+	return this->status;
+}
 }
 }

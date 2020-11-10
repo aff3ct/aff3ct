@@ -155,13 +155,5 @@ size_t Loop
 	return this->n_calls;
 }
 
-// template <class A>
-// bool Loop
-// ::stop(const std::vector<int8_t,A>& in, const int frame_id, const bool managed_memory)
-// {
-// 	(*this)[lop::sck::stop::in1].bind(in);
-// 	return (*this)[lop::tsk::stop].exec(frame_id, managed_memory);
-// }
-
 }
 }

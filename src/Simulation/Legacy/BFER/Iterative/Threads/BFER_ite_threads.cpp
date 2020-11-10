@@ -571,7 +571,7 @@ void BFER_ite_threads<B,R,Q>
 
 		auto &loop = this->params_BFER_ite.crc->type != "NO" ? loop_crc : loop_ite;
 
-		while (!loop[lop::tsk::stop].exec())
+		while (!loop[lop::tsk::stop].exec()[0])
 		{
 			// ----------------------------------------------------------------------------------------------- decoding
 			if (this->params_BFER_ite.coset)

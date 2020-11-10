@@ -406,14 +406,14 @@ std::vector<std::vector<module::Task*>> Sequence
 
 void Sequence
 ::_exec(const size_t tid,
-        std::function<bool(const std::vector<int>&)> &stop_condition,
+        std::function<bool(const std::vector<const std::vector<int>*>&)> &stop_condition,
         Generic_node<Sub_sequence>* sequence)
 {
 	if (this->is_thread_pinning())
 		Thread_pinning::pin(this->puids[tid]);
 
-	std::function<void(Generic_node<Sub_sequence>*, std::vector<int>&)> exec_sequence =
-		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss, std::vector<int>& statuses)
+	std::function<void(Generic_node<Sub_sequence>*, std::vector<const std::vector<int>*>&)> exec_sequence =
+		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss, std::vector<const std::vector<int>*>& statuses)
 		{
 			auto type = cur_ss->get_c()->type;
 			auto &tasks = cur_ss->get_c()->tasks;
@@ -422,7 +422,7 @@ void Sequence
 
 			if (type == subseq_t::LOOP)
 			{
-				while (!(statuses[tasks_id[0]] = processes[0]()))
+				while (!(statuses[tasks_id[0]] = &processes[0]()))
 					exec_sequence(cur_ss->get_children()[0], statuses);
 				static_cast<module::Loop&>(tasks[0]->get_module()).reset();
 				exec_sequence(cur_ss->get_children()[1], statuses);
@@ -430,18 +430,18 @@ void Sequence
 			else
 			{
 				for (size_t p = 0; p < processes.size(); p++)
-					statuses[tasks_id[p]] = processes[p]();
+					statuses[tasks_id[p]] = &processes[p]();
 				for (auto c : cur_ss->get_children())
 					exec_sequence(c, statuses);
 			}
 		};
 
-	std::vector<int> statuses(this->n_tasks, 0);
+	std::vector<const std::vector<int>*> statuses(this->n_tasks, nullptr);
 	try
 	{
 		do
 		{
-			std::fill(statuses.begin(), statuses.end(), module::status_t::SKIPPED);
+			// std::fill(statuses.begin(), statuses.end(), module::status_t::SKIPPED);
 			try
 			{
 				exec_sequence(sequence, statuses);
@@ -501,7 +501,7 @@ void Sequence
 
 			if (type == subseq_t::LOOP)
 			{
-				while (!processes[0]())
+				while (!processes[0]()[0])
 					exec_sequence(cur_ss->get_children()[0]);
 				static_cast<module::Loop&>(tasks[0]->get_module()).reset();
 				exec_sequence(cur_ss->get_children()[1]);
@@ -562,7 +562,7 @@ void Sequence
 }
 
 void Sequence
-::exec(std::function<bool(const std::vector<int>&)> stop_condition)
+::exec(std::function<bool(const std::vector<const std::vector<int>*>&)> stop_condition)
 {
 	if (this->is_no_copy_mode())
 		this->gen_processes(true);
@@ -620,7 +620,7 @@ void Sequence
 	}
 }
 
-int Sequence
+void Sequence
 ::exec(const size_t tid)
 {
 	if (tid >= this->sequences.size())
@@ -631,31 +631,28 @@ int Sequence
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	std::function<void(Generic_node<Sub_sequence>*, int&)> exec_sequence =
-		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss, int& ret)
+	std::function<void(Generic_node<Sub_sequence>*)> exec_sequence =
+		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss)
 		{
 			auto type = cur_ss->get_c()->type;
 			auto &tasks = cur_ss->get_c()->tasks;
 			if (type == subseq_t::LOOP)
 			{
-				while (!tasks[0]->exec())
-					exec_sequence(cur_ss->get_children()[0], ret);
-				ret++;
+				while (!tasks[0]->exec()[0])
+					exec_sequence(cur_ss->get_children()[0]);
 				static_cast<module::Loop&>(tasks[0]->get_module()).reset();
-				exec_sequence(cur_ss->get_children()[1], ret);
+				exec_sequence(cur_ss->get_children()[1]);
 			}
 			else
 			{
 				for (size_t ta = 0; ta < tasks.size(); ta++)
-					ret += tasks[ta]->exec();
+					tasks[ta]->exec();
 				for (auto c : cur_ss->get_children())
-					exec_sequence(c, ret);
+					exec_sequence(c);
 			}
 		};
 
-	int ret = 0;
-	exec_sequence(this->sequences[tid], ret);
-	return ret;
+	exec_sequence(this->sequences[tid]);
 }
 
 template <class SS, class TA>
@@ -1175,7 +1172,7 @@ void Sequence
 		{
 			if (cur_node != nullptr)
 			{
-				std::map<module::Task*, std::function<int()>> modified_tasks;
+				std::map<module::Task*, std::function<const std::vector<int>&()>> modified_tasks;
 				auto contents = cur_node->get_c();
 				contents->processes.clear();
 				contents->rebind_sockets.clear();
@@ -1223,10 +1220,11 @@ void Sequence
 							}
 						}
 
-						modified_tasks[pull_task] = [contents, pull_task, adp_pull, rebind_id]() -> int
+						modified_tasks[pull_task] = [contents, pull_task, adp_pull, rebind_id]()
+							-> const std::vector<int>&
 						{
 							// active or passive waiting here
-							int ret = pull_task->exec();
+							const auto &status = pull_task->exec();
 							// rebind input sockets on the fly
 							for (size_t sin_id = 0; sin_id < contents->rebind_sockets[rebind_id].size(); sin_id++)
 							{
@@ -1244,7 +1242,7 @@ void Sequence
 								}
 							}
 							adp_pull->wake_up_pusher();
-							return ret;
+							return status;
 						};
 					}
 
@@ -1304,10 +1302,11 @@ void Sequence
 								contents->rebind_dataptrs[rebind_id].push_back(dataptrs);
 							}
 
-						modified_tasks[push_task] = [contents, push_task, adp_push, rebind_id]() -> int
+						modified_tasks[push_task] = [contents, push_task, adp_push, rebind_id]()
+							-> const std::vector<int>&
 						{
 							// active or passive waiting here
-							auto ret = push_task->exec();
+							const auto &status = push_task->exec();
 							// rebind output sockets on the fly
 							for (size_t sout_id = 0; sout_id < contents->rebind_sockets[rebind_id].size(); sout_id++)
 							{
@@ -1322,7 +1321,7 @@ void Sequence
 									contents->rebind_sockets[rebind_id][sout_id][ta]->bind(buff);
 							}
 							adp_push->wake_up_puller();
-							return ret;
+							return status;
 						};
 					}
 				}
@@ -1331,7 +1330,7 @@ void Sequence
 					if (modified_tasks.count(task))
 						contents->processes.push_back(modified_tasks[task]);
 					else
-						contents->processes.push_back([task]() -> int { return task->exec(); });
+						contents->processes.push_back([task]() -> const std::vector<int>& { return task->exec(); });
 
 				for (auto c : cur_node->get_children())
 					gen_processes_recursive(c);

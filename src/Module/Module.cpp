@@ -67,11 +67,11 @@ void Module
 	}
 
 	const auto old_n_frames = this->get_n_frames();
-	for (auto &t : tasks)
-		t->update_n_frames((size_t)old_n_frames, (size_t)n_frames);
 	this->n_frames = n_frames;
 	this->n_frames_per_wave_rest = this->get_n_frames() % this->get_n_frames_per_wave();
 	this->n_waves = (size_t)std::ceil((float)this->get_n_frames() / (float)this->get_n_frames_per_wave());
+	for (auto &t : tasks)
+		t->update_n_frames((size_t)old_n_frames, (size_t)n_frames);
 }
 
 void Module
@@ -86,11 +86,11 @@ void Module
 	}
 
 	const auto old_n_frames_per_wave = this->get_n_frames_per_wave();
-	for (auto &t : tasks)
-		t->update_n_frames_per_wave((size_t)old_n_frames_per_wave, (size_t)n_frames_per_wave);
 	this->n_frames_per_wave = n_frames_per_wave;
 	this->n_frames_per_wave_rest = this->get_n_frames() % this->get_n_frames_per_wave();
 	this->n_waves = (size_t)std::ceil((float)this->get_n_frames() / (float)this->get_n_frames_per_wave());
+	for (auto &t : tasks)
+		t->update_n_frames_per_wave((size_t)old_n_frames_per_wave, (size_t)n_frames_per_wave);
 }
 
 void Module

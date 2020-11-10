@@ -165,106 +165,48 @@ void CRC<B>
 	(*this)[crc::tsk::extract].exec(frame_id, managed_memory);
 }
 
-// template <typename B>
-// template <class A>
-// bool CRC<B>
-// ::check(const std::vector<B,A>& V_K, const int n_frames, const int frame_id)
-// {
-// 	if (n_frames <= 0 && n_frames != -1)
-// 	{
-// 		std::stringstream message;
-// 		message << "'n_frames' has to be greater than 0 or equal to -1 ('n_frames' = " << n_frames << ").";
-// 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-// 	}
-
-// 	if (frame_id != -1 && frame_id >= (n_frames ? n_frames : this->n_frames))
-// 	{
-// 		std::stringstream message;
-// 		message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = "
-// 		        << frame_id << ", 'n_frames' = " << (n_frames ? n_frames : this->n_frames) << ").";
-// 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-// 	}
-
-// 	if ((this->K + (int)this->get_size()) *       n_frames != (int)V_K.size() &&
-// 	    (this->K + (int)this->get_size()) * this->n_frames != (int)V_K.size())
-// 	{
-// 		std::stringstream message;
-// 		message << "'V_K.size()' has to be equal to ('K' + 'size') * 'n_frames' ('V_K.size()' = " << V_K.size()
-// 		        << ", 'K' = " << this->K
-// 		        << ", 'n_frames' = " << (n_frames != -1 ? n_frames : this->n_frames) << ").";
-// 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-// 	}
-
-// 	return this->check(V_K.data(), n_frames, frame_id);
-// }
-
 template <typename B>
 template <class A>
 bool CRC<B>
 ::check(const std::vector<B,A>& V_K, const int frame_id, const bool managed_memory)
 {
 	(*this)[crc::sck::check::V_K].bind(V_K);
-	auto ret = (*this)[crc::tsk::check].exec(frame_id, managed_memory);
-	return !ret;
+	const auto &status = (*this)[crc::tsk::check].exec(frame_id, managed_memory);
+
+	if (frame_id == -1)
+	{
+		size_t w = 0;
+		while (w < this->get_n_waves() && status[w] == status_t::SUCCESS)
+			w++;
+		return w == this->get_n_waves();
+	}
+	else
+	{
+		const auto w = (frame_id % this->get_n_frames()) / this->get_n_frames_per_wave();
+		return status[w] == status_t::SUCCESS;
+	}
 }
-
-// template <typename B>
-// bool CRC<B>
-// ::check(const B *V_K, const int n_frames, const int frame_id)
-// {
-// 	const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
-
-// 	const auto f_start = (frame_id < 0) ? 0 : frame_id % real_n_frames;
-// 	const auto f_stop  = (frame_id < 0) ? real_n_frames : f_start +1;
-
-// 	auto f = f_start;
-// 	while (f < f_stop && this->_check(V_K + f * (this->K + this->get_size()), f))
-// 		f++;
-
-// 	return f == f_stop;
-// }
 
 template <typename B>
 bool CRC<B>
 ::check(const B *V_K, const int frame_id, const bool managed_memory)
 {
 	(*this)[crc::sck::check::V_K].bind(V_K);
-	auto ret = (*this)[crc::tsk::check].exec(frame_id, managed_memory);
-	return !ret;
+	const auto &status = (*this)[crc::tsk::check].exec(frame_id, managed_memory);
+
+	if (frame_id == -1)
+	{
+		size_t w = 0;
+		while (w < this->get_n_waves() && status[w] == status_t::SUCCESS)
+			w++;
+		return w == this->get_n_waves();
+	}
+	else
+	{
+		const auto w = (frame_id % this->get_n_frames()) / this->get_n_frames_per_wave();
+		return status[w] == status_t::SUCCESS;
+	}
 }
-
-// template <typename B>
-// template <class A>
-// bool CRC<B>
-// ::check_packed(const std::vector<B,A>& V_K, const int n_frames, const int frame_id)
-// {
-// 	if (n_frames <= 0 && n_frames != -1)
-// 	{
-// 		std::stringstream message;
-// 		message << "'n_frames' has to be greater than 0 or equal to -1 ('n_frames' = " << n_frames << ").";
-// 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-// 	}
-
-// 	if (frame_id != -1 && frame_id >= (n_frames ? n_frames : this->n_frames))
-// 	{
-// 		std::stringstream message;
-// 		message << "'frame_id' has to be equal to '-1' or to be smaller than 'n_frames' ('frame_id' = "
-// 		        << frame_id << ", 'n_frames' = " << (n_frames ? n_frames : this->n_frames) << ").";
-// 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-// 	}
-
-// 	if ((this->K + (int)this->get_size()) *       n_frames != (int)V_K.size() &&
-// 	    (this->K + (int)this->get_size()) * this->n_frames != (int)V_K.size())
-// 	{
-// 		std::stringstream message;
-// 		message << "'V_K.size()' has to be equal to ('K' + 'size') * 'n_frames' ('V_K.size()' = " << V_K.size()
-// 		        << ", 'K' = " << this->K
-// 		        << ", 'n_frames' = " << (n_frames != -1 ? n_frames : this->n_frames) << ").";
-// 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-// 	}
-
-// 	return this->check_packed(V_K.data(), n_frames, frame_id);
-// }
 
 template <typename B>
 template <class A>
@@ -272,33 +214,41 @@ bool CRC<B>
 ::check_packed(const std::vector<B,A>& V_K, const int frame_id, const bool managed_memory)
 {
 	(*this)[crc::sck::check_packed::V_K].bind(V_K);
-	auto ret = (*this)[crc::tsk::check_packed].exec(frame_id, managed_memory);
-	return !ret;
+	const auto &status = (*this)[crc::tsk::check_packed].exec(frame_id, managed_memory);
+
+	if (frame_id == -1)
+	{
+		size_t w = 0;
+		while (w < this->get_n_waves() && status[w] == status_t::SUCCESS)
+			w++;
+		return w == this->get_n_waves();
+	}
+	else
+	{
+		const auto w = (frame_id % this->get_n_frames()) / this->get_n_frames_per_wave();
+		return status[w] == status_t::SUCCESS;
+	}
 }
-
-// template <typename B>
-// bool CRC<B>
-// ::check_packed(const B *V_K, const int n_frames, const int frame_id)
-// {
-// 	const int real_n_frames = (n_frames != -1) ? n_frames : this->n_frames;
-
-// 	const auto f_start = (frame_id < 0) ? 0 : frame_id % real_n_frames;
-// 	const auto f_stop  = (frame_id < 0) ? real_n_frames : f_start +1;
-
-// 	auto f = f_start;
-// 	while (f < f_stop && this->_check_packed(V_K + f * (this->K + this->get_size()), f))
-// 		f++;
-
-// 	return f == f_stop;
-// }
 
 template <typename B>
 bool CRC<B>
 ::check_packed(const B *V_K, const int frame_id, const bool managed_memory)
 {
 	(*this)[crc::sck::check_packed::V_K].bind(V_K);
-	auto ret = (*this)[crc::tsk::check_packed].exec(frame_id, managed_memory);
-	return !ret;
+	const auto &status = (*this)[crc::tsk::check_packed].exec(frame_id, managed_memory);
+
+	if (frame_id == -1)
+	{
+		size_t w = 0;
+		while (w < this->get_n_waves() && status[w] == status_t::SUCCESS)
+			w++;
+		return w == this->get_n_waves();
+	}
+	else
+	{
+		const auto w = (frame_id % this->get_n_frames()) / this->get_n_frames_per_wave();
+		return status[w] == status_t::SUCCESS;
+	}
 }
 
 template <typename B>

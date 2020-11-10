@@ -36,7 +36,7 @@ class Sub_sequence_generic
 public:
 	subseq_t type;
 	VTA tasks;
-	std::vector<std::function<int()>> processes;
+	std::vector<std::function<const std::vector<int>&()>> processes;
 	std::vector<size_t> tasks_id;
 	size_t id;
 
@@ -137,9 +137,9 @@ public:
 	void set_thread_pinning(const bool thread_pinning, const std::vector<size_t> &puids = {});
 	bool is_thread_pinning();
 
-	void exec(std::function<bool(const std::vector<int>&)> stop_condition);
-	void exec(std::function<bool(                       )> stop_condition);
-	int  exec(const size_t tid = 0                                       );
+	void exec(std::function<bool(const std::vector<const std::vector<int>*>&)> stop_condition);
+	void exec(std::function<bool(                                           )> stop_condition);
+	void exec(const size_t tid = 0                                                           );
 	inline size_t get_n_threads() const;
 
 	template <class C = module::Module>
@@ -197,7 +197,7 @@ protected:
 	void duplicate(const Generic_node<SS> *sequence);
 
 	void _exec(const size_t tid,
-	           std::function<bool(const std::vector<int>&)> &stop_condition,
+	           std::function<bool(const std::vector<const std::vector<int>*>&)> &stop_condition,
 	           Generic_node<Sub_sequence>* sequence);
 
 	void _exec_without_statuses(const size_t tid,

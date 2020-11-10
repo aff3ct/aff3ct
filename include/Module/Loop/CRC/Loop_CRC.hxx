@@ -22,6 +22,7 @@ Loop_CRC<I,O>
 {
 	const std::string name = "Loop_CRC";
 	this->set_name(name);
+	this->set_n_frames(this->crc->get_n_frames());
 
 	if (this->crc->get_size() + this->crc->get_K() != (int)n_elmts_in)
 	{
@@ -74,7 +75,19 @@ template <typename I, typename O>
 bool Loop_CRC<I,O>
 ::__stop(const int8_t *in, const size_t frame_id)
 {
-	return this->crc->check((const I*)in, 1, 0) ? true : false;
+	return this->crc->check((const I*)in, frame_id, false) ? true : false;
+}
+
+template <typename I, typename O>
+void Loop_CRC<I,O>
+::set_n_frames(const size_t n_frames)
+{
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		Loop_predicate<O>::set_n_frames(n_frames);
+		this->crc->set_n_frames(n_frames);
+	}
 }
 
 }

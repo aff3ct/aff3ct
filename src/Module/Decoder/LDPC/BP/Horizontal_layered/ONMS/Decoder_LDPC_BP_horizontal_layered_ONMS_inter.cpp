@@ -416,7 +416,7 @@ int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 		for (auto n = 0; n < mipp::N<B>(); n++)
 		{
 			packed_synd <<= 1;
-			packed_synd |= syndrome[n];
+			packed_synd |= (int)syndrome[n];
 		}
 		return packed_synd;
 	}
