@@ -164,5 +164,11 @@ void Interleaver_core<T>
 	// do nothing in the general case, this method has to be overrided
 }
 
+template <typename T>
+void Interleaver_core<T>
+::reinitialize()
+{
+}
+
 }
 }

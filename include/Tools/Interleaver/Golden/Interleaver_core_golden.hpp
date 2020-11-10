@@ -18,6 +18,7 @@ template <typename T = uint32_t>
 class Interleaver_core_golden : public Interleaver_core<T>
 {
 private:
+	int                                    seed;
 	std::mt19937                           gen;
 	std::uniform_real_distribution<double> dist;
 
@@ -28,6 +29,8 @@ public:
 	virtual Interleaver_core_golden<T>* clone() const;
 
 	virtual void set_seed(const int seed);
+
+	virtual void reinitialize();
 
 protected:
 	void gen_lut(T *lut, const size_t frame_id);

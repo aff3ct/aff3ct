@@ -11,7 +11,7 @@ template <typename T>
 Interleaver_core_random_column<T>
 ::Interleaver_core_random_column(const int size, const int n_cols, const int seed, const bool uniform)
 : Interleaver_core<T>(size, "random_column", uniform),
-  rd_engine(), n_cols(n_cols), col_size(size / n_cols)
+  seed(seed), rd_engine(), n_cols(n_cols), col_size(size / n_cols)
 {
 	if (col_size * n_cols != size)
 	{
@@ -55,8 +55,16 @@ template <typename T>
 void Interleaver_core_random_column<T>
 ::set_seed(const int seed)
 {
+	this->seed = seed;
 	rd_engine.seed(seed);
 	this->init();
+}
+
+template <typename T>
+void Interleaver_core_random_column<T>
+::reinitialize()
+{
+	this->set_seed(this->seed);
 }
 
 // ==================================================================================== explicit template instantiation

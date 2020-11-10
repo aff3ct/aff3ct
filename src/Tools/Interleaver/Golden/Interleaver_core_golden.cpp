@@ -11,7 +11,8 @@ using namespace aff3ct::tools;
 template <typename T>
 Interleaver_core_golden<T>
 ::Interleaver_core_golden(const int size, const int seed, const bool uniform)
-: Interleaver_core<T>(size, "golden", uniform), gen(), dist(0.0, size * 0.1)
+: Interleaver_core<T>(size, "golden", uniform),
+  seed(seed), gen(), dist(0.0, size * 0.1)
 {
 	gen.seed(seed);
 	this->init();
@@ -49,8 +50,16 @@ template <typename T>
 void Interleaver_core_golden<T>
 ::set_seed(const int seed)
 {
+	this->seed = seed;
 	gen.seed(seed);
 	this->init();
+}
+
+template <typename T>
+void Interleaver_core_golden<T>
+::reinitialize()
+{
+	this->set_seed(this->seed);
 }
 
 // ==================================================================================== explicit template instantiation

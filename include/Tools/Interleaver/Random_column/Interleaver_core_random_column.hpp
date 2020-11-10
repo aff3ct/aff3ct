@@ -18,6 +18,7 @@ template <typename T = uint32_t>
 class Interleaver_core_random_column : public Interleaver_core<T>
 {
 private:
+	int          seed;
 	std::mt19937 rd_engine;
 
 	const int n_cols;
@@ -30,6 +31,8 @@ public:
 	virtual Interleaver_core_random_column<T>* clone() const;
 
 	virtual void set_seed(const int seed);
+
+	virtual void reinitialize();
 
 protected:
 	void gen_lut(T *lut, const size_t frame_id);

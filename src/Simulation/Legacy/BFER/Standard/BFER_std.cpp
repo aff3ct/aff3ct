@@ -112,8 +112,12 @@ void BFER_std<B,R,Q>
 	{
 		auto& interleaver = codec[tid]->get_interleaver(); // can raise an exceptions
 		if (interleaver.is_uniform())
+		{
 			this->monitor_er[tid]->record_callback_check(std::bind(&tools::Interleaver_core<>::refresh,
 			                                                       &interleaver));
+			if (params_BFER_std.err_track_revert)
+				interleaver.reinitialize();
+		}
 
 		if (this->params_BFER_std.err_track_enable && interleaver.is_uniform())
 			this->dumper[tid]->register_data(interleaver.get_lut(),
@@ -205,6 +209,7 @@ std::unique_ptr<tools::Codec_SIHO<B,Q>> BFER_std<B,R,Q>
 	auto param_siho = dynamic_cast<factory::Codec_SIHO*>(params_cdc.get());
 	auto cdc = std::unique_ptr<tools::Codec_SIHO<B,Q>>(param_siho->build<B,Q>(crc));
 	cdc->set_n_frames(this->params.n_frames);
+
 	return cdc;
 }
 

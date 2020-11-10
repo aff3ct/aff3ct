@@ -9,7 +9,8 @@ using namespace aff3ct::tools;
 template <typename T>
 Interleaver_core_random<T>
 ::Interleaver_core_random(const int size, const int seed, const bool uniform)
-: Interleaver_core<T>(size, "random", uniform), rd_engine()
+: Interleaver_core<T>(size, "random", uniform),
+  seed(seed), rd_engine()
 {
 	rd_engine.seed(seed);
 	this->init();
@@ -35,8 +36,16 @@ template <typename T>
 void Interleaver_core_random<T>
 ::set_seed(const int seed)
 {
+	this->seed = seed;
 	rd_engine.seed(seed);
 	this->init();
+}
+
+template <typename T>
+void Interleaver_core_random<T>
+::reinitialize()
+{
+	this->set_seed(this->seed);
 }
 
 // ==================================================================================== explicit template instantiation

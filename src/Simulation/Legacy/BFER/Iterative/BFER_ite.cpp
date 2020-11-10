@@ -189,8 +189,12 @@ void BFER_ite<B,R,Q>
 	this->monitor_er[tid]->record_callback_check([this, tid](){ this->loop_crc[tid]                   ->reset(); });
 
 	if (interleaver_core[tid]->is_uniform())
+	{
 		this->monitor_er[tid]->record_callback_check(std::bind(&tools::Interleaver_core<>::refresh,
 		                                                       this->interleaver_core[tid].get()));
+		if (this->params_BFER_ite.err_track_revert)
+			interleaver_core[tid]->reinitialize();
+	}
 
 	if (this->params_BFER_ite.err_track_enable)
 	{

@@ -125,9 +125,15 @@ void BFER<B,R,Q>
 		if (params_BFER.err_track_revert)
 		{
 			this->monitor_er_red->clear_callbacks();
+			for (auto &m : this->monitor_er)
+				m->clear_callbacks();
 
 			if (this->monitor_mi_red != nullptr)
+			{
 				this->monitor_mi_red->clear_callbacks();
+				for (auto &m : this->monitor_mi)
+					m->clear_callbacks();
+			}
 
 			// dirty hack to override simulation params_BFER
 			auto &params_BFER_writable = const_cast<factory::BFER&>(params_BFER);

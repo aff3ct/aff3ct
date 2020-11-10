@@ -67,6 +67,8 @@ public:
 
 	virtual void set_seed(const int seed);
 
+	virtual void reinitialize();
+
 protected:
 	bool is_initialized() const;
 

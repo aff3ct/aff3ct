@@ -28,6 +28,8 @@ public:
 
 	virtual Interleaver_core_user<T>* clone() const;
 
+	virtual void reinitialize();
+
 protected:
 	void gen_lut(T *lut, const size_t frame_id);
 };

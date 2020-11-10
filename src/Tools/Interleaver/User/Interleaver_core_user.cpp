@@ -125,6 +125,14 @@ void Interleaver_core_user<T>
 	cur_itl_id = (cur_itl_id +1) % pi_buffer.size();
 }
 
+template <typename T>
+void Interleaver_core_user<T>
+::reinitialize()
+{
+	this->cur_itl_id = 0;
+	this->init();
+}
+
 // ==================================================================================== explicit template instantiation
 #include <cstdint>
 template class aff3ct::tools::Interleaver_core_user<uint8_t >;

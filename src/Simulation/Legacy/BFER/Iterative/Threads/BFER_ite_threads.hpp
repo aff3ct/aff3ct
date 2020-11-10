@@ -19,9 +19,9 @@ protected:
 	virtual void _launch();
 
 private:
-	void sockets_binding(const int tid = 0);
-	void simulation_loop(const int tid = 0);
-	void start_thread   (const int tid = 0);
+	void sockets_binding(const int tid = 0, const bool unbind = false);
+	void simulation_loop(const int tid = 0                           );
+	void start_thread   (const int tid = 0                           );
 };
 }
 }
