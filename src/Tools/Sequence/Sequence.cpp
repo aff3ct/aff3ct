@@ -621,7 +621,7 @@ void Sequence
 }
 
 void Sequence
-::exec(const size_t tid)
+::exec(const size_t tid, const int frame_id)
 {
 	if (tid >= this->sequences.size())
 	{
@@ -632,13 +632,13 @@ void Sequence
 	}
 
 	std::function<void(Generic_node<Sub_sequence>*)> exec_sequence =
-		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss)
+		[&exec_sequence, frame_id](Generic_node<Sub_sequence>* cur_ss)
 		{
 			auto type = cur_ss->get_c()->type;
 			auto &tasks = cur_ss->get_c()->tasks;
 			if (type == subseq_t::LOOP)
 			{
-				while (!tasks[0]->exec()[0])
+				while (!tasks[0]->exec(frame_id)[0])
 					exec_sequence(cur_ss->get_children()[0]);
 				static_cast<module::Loop&>(tasks[0]->get_module()).reset();
 				exec_sequence(cur_ss->get_children()[1]);
@@ -646,7 +646,7 @@ void Sequence
 			else
 			{
 				for (size_t ta = 0; ta < tasks.size(); ta++)
-					tasks[ta]->exec();
+					tasks[ta]->exec(frame_id);
 				for (auto c : cur_ss->get_children())
 					exec_sequence(c);
 			}

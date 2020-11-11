@@ -121,7 +121,8 @@ void Subsequence
 			}
 		}
 
-		ss.get_sequence().exec(-1); // execute all frames
+		// execute all frames
+		ss.get_sequence().exec();
 
 		return status_t::SUCCESS;
 	});

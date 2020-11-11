@@ -139,7 +139,7 @@ public:
 
 	void exec(std::function<bool(const std::vector<const std::vector<int>*>&)> stop_condition);
 	void exec(std::function<bool(                                           )> stop_condition);
-	void exec(const size_t tid = 0                                                           );
+	void exec(const size_t tid = 0, const int frame_id = -1                                  );
 	inline size_t get_n_threads() const;
 
 	template <class C = module::Module>
