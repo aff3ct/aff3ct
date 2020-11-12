@@ -1234,11 +1234,11 @@ void Sequence
 									// 'pull_task->exec()' call (this way the debug mode is still working)
 									auto swap_buff = contents->rebind_sockets[rebind_id][sin_id][1]->get_dataptr();
 									auto buff = adp_pull->get_filled_buffer(sin_id, swap_buff);
-									contents->rebind_sockets[rebind_id][sin_id][1]->bind(buff);
+									contents->rebind_sockets[rebind_id][sin_id][1]->dataptr = buff;
 									// for the next tasks the same buffer 'buff' is required, an easy mistake is to re-swap
 									// and the data will be false, this is why we just bind 'buff'
 									for (size_t ta = 2; ta < contents->rebind_sockets[rebind_id][sin_id].size(); ta++)
-										contents->rebind_sockets[rebind_id][sin_id][ta]->bind(buff);
+										contents->rebind_sockets[rebind_id][sin_id][ta]->dataptr = buff;
 								}
 							}
 							adp_pull->wake_up_pusher();
@@ -1314,11 +1314,11 @@ void Sequence
 								// 'push_task->exec()' call (this way the debug mode is still working)
 								auto swap_buff = contents->rebind_sockets[rebind_id][sout_id][1]->get_dataptr();
 								auto buff = adp_push->get_empty_buffer(sout_id, swap_buff);
-								contents->rebind_sockets[rebind_id][sout_id][1]->bind(buff);
+								contents->rebind_sockets[rebind_id][sout_id][1]->dataptr = buff;
 								// the output socket linked to the push adp can have more than one socket bound and so
 								// we have to rebind all the input sokects bound to the current output socket
 								for (size_t ta = 2; ta < contents->rebind_sockets[rebind_id][sout_id].size(); ta++)
-									contents->rebind_sockets[rebind_id][sout_id][ta]->bind(buff);
+									contents->rebind_sockets[rebind_id][sout_id][ta]->dataptr = buff;
 							}
 							adp_push->wake_up_puller();
 							return status;
@@ -1383,8 +1383,8 @@ void Sequence
 				for (size_t rebind_id = 0; rebind_id < contents->rebind_sockets.size(); rebind_id++)
 					for (size_t s = 0; s < contents->rebind_sockets[rebind_id].size(); s++)
 						for (size_t ta = 0; ta < contents->rebind_sockets[rebind_id][s].size(); ta++)
-							contents->rebind_sockets[rebind_id][s][ta]
-								->bind(contents->rebind_dataptrs[rebind_id][s][ta]);
+							contents->rebind_sockets[rebind_id][s][ta]->dataptr = 
+								contents->rebind_dataptrs[rebind_id][s][ta];
 			}
 
 			for (auto c : cur_node->get_children())

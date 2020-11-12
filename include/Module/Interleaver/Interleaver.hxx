@@ -251,7 +251,7 @@ void Interleaver<D,T>
 	if (!this->core.is_uniform())
 	{
 		// vectorized interleaving
-		if (this->get_n_frames_per_wave() == mipp::nElReg<D>())
+		if (this->get_n_frames_per_wave() == (size_t)mipp::nElReg<D>())
 		{
 			for (auto i = 0; i < this->core.get_size(); i++)
 				mipp::store<D>(&out_vec[i * mipp::nElReg<D>()],

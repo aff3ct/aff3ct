@@ -14,14 +14,22 @@
 #include "Tools/Interface/Interface_reset.hpp"
 #include "Module/Task.hpp"
 
+namespace aff3ct { namespace tools { class Sequence; } }
+
 namespace aff3ct
 {
 namespace module
 {
+class Adaptor_n_to_1;
+class Adaptor_1_to_n;
+
 class Socket : public tools::Interface_reset
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 	friend Task;
+	friend Adaptor_n_to_1;
+	friend Adaptor_1_to_n;
+	friend tools::Sequence;
 #endif
 protected:
 	Task &task;

@@ -33,7 +33,7 @@ void Decoder_turbo_fast<B,R>
 		const auto tail_n = this->siso_n->tail_length();
 		const auto tail_i = this->siso_i->tail_length();
 
-		if (this->get_n_frames_per_wave() == mipp::nElReg<B>())
+		if (this->get_n_frames_per_wave() == (size_t)mipp::nElReg<B>())
 		{
 			constexpr auto n_frames = mipp::nElReg<R>();
 
@@ -205,7 +205,7 @@ void Decoder_turbo_fast<B,R>
 {
 	if (this->get_n_frames_per_wave() > 1)
 	{
-		if (this->get_n_frames_per_wave() == mipp::nElReg<B>())
+		if (this->get_n_frames_per_wave() == (size_t)mipp::nElReg<B>())
 		{
 			constexpr auto n_frames = mipp::nElReg<B>();
 

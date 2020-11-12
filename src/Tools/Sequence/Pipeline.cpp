@@ -571,6 +571,8 @@ void Pipeline
 			for (size_t t = 0; t < n_threads; t++)
 			{
 				module::Adaptor* cur_adp = (t == 0) ? adp : adp->clone();
+				for (auto &t : cur_adp->tasks)
+					t->set_fast(true);
 				if (t > 0)
 				{
 					this->adaptors[sta -1].second.push_back(std::unique_ptr<module::Adaptor>(cur_adp));

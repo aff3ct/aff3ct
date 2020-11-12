@@ -112,7 +112,7 @@ void Adaptor_n_to_1
 			adp.wait_push();
 			// for debug mode coherence
 			for (size_t s = 0; s < t.sockets.size() -1; s++)
-				t.sockets[s]->bind(adp.get_empty_buffer(s));
+				t.sockets[s]->dataptr = adp.get_empty_buffer(s);
 		}
 		else
 		{
