@@ -759,7 +759,7 @@ void Pipeline
 					auto ss = this->stages[sta]->sequences[t]->get_contents();
 					assert(ss != nullptr);
 					ss->tasks    .insert(ss->tasks.begin(), task_pull);
-					ss->processes.insert(ss->processes.begin(), [task_pull]() { return task_pull->exec(); });
+					ss->processes.insert(ss->processes.begin(), [task_pull]() -> const std::vector<int>& { return task_pull->exec(); });
 					this->stages[sta]->update_tasks_id(t);
 				}
 				this->stages[sta]->firsts_tasks_id.clear();
@@ -786,7 +786,7 @@ void Pipeline
 					auto ss = this->stages[sta]->get_last_subsequence(t);
 					assert(ss != nullptr);
 					ss->tasks    .push_back(task_push);
-					ss->processes.push_back([task_push]() { return task_push->exec(); });
+					ss->processes.push_back([task_push]() -> const std::vector<int>& { return task_push->exec(); });
 					last_task_id = ss->tasks_id[ss->tasks_id.size() -1] +1;
 					ss->tasks_id .push_back(last_task_id);
 				}
@@ -930,7 +930,7 @@ void Pipeline
 				m->cancel_waiting();
 	};
 
-	std::vector<std::thread> threads;;
+	std::vector<std::thread> threads;
 	for (size_t s = 0; s < stages.size() -1; s++)
 	{
 		auto &stage = stages[s];
