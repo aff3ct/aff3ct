@@ -30,6 +30,7 @@ Probe<T>
 	const std::string name = "Probe<" + col_name + ">";
 	this->set_name(name);
 	this->set_short_name(name);
+	AProbe::set_n_frames(n_frames);
 
 	if (size <= 0)
 	{
@@ -49,17 +50,19 @@ Probe<T>
 
 		return status_t::SUCCESS;
 	});
-
-	AProbe::set_n_frames(n_frames);
 }
 
 template <typename T>
 void Probe<T>
 ::set_n_frames(const size_t n_frames)
 {
-	std::stringstream message;
-	message << "This method is disabled in the 'Probe' class.";
-	throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	const size_t old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
+	{
+		std::stringstream message;
+		message << "This method is disabled in the 'Probe' class.";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename T>
