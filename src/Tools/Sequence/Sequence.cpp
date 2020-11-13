@@ -441,7 +441,7 @@ void Sequence
 	{
 		do
 		{
-			// std::fill(statuses.begin(), statuses.end(), module::status_t::SKIPPED);
+			std::fill(statuses.begin(), statuses.end(), nullptr);
 			try
 			{
 				exec_sequence(sequence, statuses);
@@ -1383,7 +1383,7 @@ void Sequence
 				for (size_t rebind_id = 0; rebind_id < contents->rebind_sockets.size(); rebind_id++)
 					for (size_t s = 0; s < contents->rebind_sockets[rebind_id].size(); s++)
 						for (size_t ta = 0; ta < contents->rebind_sockets[rebind_id][s].size(); ta++)
-							contents->rebind_sockets[rebind_id][s][ta]->dataptr = 
+							contents->rebind_sockets[rebind_id][s][ta]->dataptr =
 								contents->rebind_dataptrs[rebind_id][s][ta];
 			}
 
