@@ -406,14 +406,14 @@ std::vector<std::vector<module::Task*>> Sequence
 
 void Sequence
 ::_exec(const size_t tid,
-        std::function<bool(const std::vector<const std::vector<int>*>&)> &stop_condition,
+        std::function<bool(const std::vector<const int*>&)> &stop_condition,
         Generic_node<Sub_sequence>* sequence)
 {
 	if (this->is_thread_pinning())
 		Thread_pinning::pin(this->puids[tid]);
 
-	std::function<void(Generic_node<Sub_sequence>*, std::vector<const std::vector<int>*>&)> exec_sequence =
-		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss, std::vector<const std::vector<int>*>& statuses)
+	std::function<void(Generic_node<Sub_sequence>*, std::vector<const int*>&)> exec_sequence =
+		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss, std::vector<const int*>& statuses)
 		{
 			auto type = cur_ss->get_c()->type;
 			auto &tasks = cur_ss->get_c()->tasks;
@@ -422,7 +422,7 @@ void Sequence
 
 			if (type == subseq_t::LOOP)
 			{
-				while (!(statuses[tasks_id[0]] = &processes[0]()))
+				while (!(statuses[tasks_id[0]] = processes[0]()))
 					exec_sequence(cur_ss->get_children()[0], statuses);
 				static_cast<module::Loop&>(tasks[0]->get_module()).reset();
 				exec_sequence(cur_ss->get_children()[1], statuses);
@@ -430,13 +430,13 @@ void Sequence
 			else
 			{
 				for (size_t p = 0; p < processes.size(); p++)
-					statuses[tasks_id[p]] = &processes[p]();
+					statuses[tasks_id[p]] = processes[p]();
 				for (auto c : cur_ss->get_children())
 					exec_sequence(c, statuses);
 			}
 		};
 
-	std::vector<const std::vector<int>*> statuses(this->n_tasks, nullptr);
+	std::vector<const int*> statuses(this->n_tasks, nullptr);
 	try
 	{
 		do
@@ -562,7 +562,7 @@ void Sequence
 }
 
 void Sequence
-::exec(std::function<bool(const std::vector<const std::vector<int>*>&)> stop_condition)
+::exec(std::function<bool(const std::vector<const int*>&)> stop_condition)
 {
 	if (this->is_no_copy_mode())
 		this->gen_processes(true);
@@ -1172,7 +1172,7 @@ void Sequence
 		{
 			if (cur_node != nullptr)
 			{
-				std::map<module::Task*, std::function<const std::vector<int>&()>> modified_tasks;
+				std::map<module::Task*, std::function<const int*()>> modified_tasks;
 				auto contents = cur_node->get_c();
 				contents->processes.clear();
 				contents->rebind_sockets.clear();
@@ -1220,11 +1220,12 @@ void Sequence
 							}
 						}
 
-						modified_tasks[pull_task] = [contents, pull_task, adp_pull, rebind_id]()
-							-> const std::vector<int>&
+						modified_tasks[pull_task] = [contents, pull_task, adp_pull, rebind_id]() -> const int*
 						{
 							// active or passive waiting here
-							const auto &status = pull_task->exec();
+							pull_task->exec();
+							const int* status = (int*)pull_task->sockets.back()->get_dataptr();
+
 							// rebind input sockets on the fly
 							for (size_t sin_id = 0; sin_id < contents->rebind_sockets[rebind_id].size(); sin_id++)
 							{
@@ -1302,11 +1303,11 @@ void Sequence
 								contents->rebind_dataptrs[rebind_id].push_back(dataptrs);
 							}
 
-						modified_tasks[push_task] = [contents, push_task, adp_push, rebind_id]()
-							-> const std::vector<int>&
+						modified_tasks[push_task] = [contents, push_task, adp_push, rebind_id]() -> const int*
 						{
 							// active or passive waiting here
-							const auto &status = push_task->exec();
+							push_task->exec();
+							const int* status = (int*)push_task->sockets.back()->get_dataptr();
 							// rebind output sockets on the fly
 							for (size_t sout_id = 0; sout_id < contents->rebind_sockets[rebind_id].size(); sout_id++)
 							{
@@ -1330,7 +1331,12 @@ void Sequence
 					if (modified_tasks.count(task))
 						contents->processes.push_back(modified_tasks[task]);
 					else
-						contents->processes.push_back([task]() -> const std::vector<int>& { return task->exec(); });
+						contents->processes.push_back([task]() -> const int*
+						{
+							task->exec();
+							const int* status = (int*)task->sockets.back()->get_dataptr();
+							return status;
+						});
 
 				for (auto c : cur_node->get_children())
 					gen_processes_recursive(c);

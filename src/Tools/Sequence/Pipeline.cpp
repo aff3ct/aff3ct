@@ -759,7 +759,12 @@ void Pipeline
 					auto ss = this->stages[sta]->sequences[t]->get_contents();
 					assert(ss != nullptr);
 					ss->tasks    .insert(ss->tasks.begin(), task_pull);
-					ss->processes.insert(ss->processes.begin(), [task_pull]() -> const std::vector<int>& { return task_pull->exec(); });
+					ss->processes.insert(ss->processes.begin(), [task_pull]() -> const int*
+					{
+						task_pull->exec();
+						const int* status = (int*)task_pull->sockets.back()->get_dataptr();
+						return status;
+					});
 					this->stages[sta]->update_tasks_id(t);
 				}
 				this->stages[sta]->firsts_tasks_id.clear();
@@ -786,7 +791,12 @@ void Pipeline
 					auto ss = this->stages[sta]->get_last_subsequence(t);
 					assert(ss != nullptr);
 					ss->tasks    .push_back(task_push);
-					ss->processes.push_back([task_push]() -> const std::vector<int>& { return task_push->exec(); });
+					ss->processes.push_back([task_push]() -> const int*
+					{
+						task_push->exec();
+						const int* status = (int*)task_push->sockets.back()->get_dataptr();
+						return status;
+					});
 					last_task_id = ss->tasks_id[ss->tasks_id.size() -1] +1;
 					ss->tasks_id .push_back(last_task_id);
 				}
@@ -905,7 +915,7 @@ void Pipeline
 }
 
 void Pipeline
-::exec(const std::vector<std::function<bool(const std::vector<const std::vector<int>*>&)>> &stop_conditions)
+::exec(const std::vector<std::function<bool(const std::vector<const int*>&)>> &stop_conditions)
 {
 	if (stop_conditions.size() != this->stages.size())
 	{
@@ -1009,10 +1019,9 @@ void Pipeline
 }
 
 void Pipeline
-::exec(std::function<bool(const std::vector<const std::vector<int>*>&)> stop_condition)
+::exec(std::function<bool(const std::vector<const int*>&)> stop_condition)
 {
-	this->exec(std::vector<std::function<bool(const std::vector<const std::vector<int>*>&)>>(this->stages.size(),
-	                                                                                         stop_condition));
+	this->exec(std::vector<std::function<bool(const std::vector<const int*>&)>>(this->stages.size(), stop_condition));
 }
 
 void Pipeline

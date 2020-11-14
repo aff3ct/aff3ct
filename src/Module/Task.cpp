@@ -222,8 +222,11 @@ void Task
 	const auto n_waves                = this->get_module().get_n_waves();
 	const auto n_frames_per_wave_rest = this->get_module().get_n_frames_per_wave_rest();
 
+	// do not use 'this->status' because the dataptr can have been changed by the 'tools::Sequence' when using the no
+	// copy mode
+	int* status = (int*)this->sockets.back()->get_dataptr();
 	for (size_t w = 0; w < n_waves; w++)
-		this->status[w] = (int)status_t::UNKNOWN;
+		status[w] = (int)status_t::UNKNOWN;
 
 	if ((managed_memory == false && frame_id >= 0)        ||
 		(frame_id == -1 && n_frames_per_wave == n_frames) ||
@@ -233,7 +236,7 @@ void Task
 	{
 		const auto real_frame_id = frame_id == -1 ? 0 : frame_id;
 		const size_t w = (real_frame_id % n_frames) / n_frames_per_wave;
-		this->status[w] = this->codelet(*this->module, *this, real_frame_id);
+		status[w] = this->codelet(*this->module, *this, real_frame_id);
 	}
 	else
 	{
@@ -255,7 +258,7 @@ void Task
 				this->sockets[sid]->dataptr = (void*)sockets_data[sid].data();
 			}
 
-			this->status[w] = this->codelet(*this->module, *this, w * n_frames_per_wave);
+			status[w] = this->codelet(*this->module, *this, w * n_frames_per_wave);
 
 			for (size_t sid = 0; sid < this->sockets.size() -1; sid++)
 				if (socket_type[sid] == socket_t::SOUT || socket_type[sid] == socket_t::SIN_SOUT)
@@ -276,8 +279,8 @@ void Task
 					this->sockets[sid]->dataptr = (void*)(sockets_dataptr_init[sid] +
 					                                      w * n_frames_per_wave * sockets_databytes_per_frame[sid]);
 
-				this->status[w] = this->codelet(*this->module, *this, w * n_frames_per_wave);
-				exec_status = (status_t)this->status[w];
+				status[w] = this->codelet(*this->module, *this, w * n_frames_per_wave);
+				exec_status = (status_t)status[w];
 			}
 
 			if (exec_status != status_t::FAILURE_STOP)
@@ -288,7 +291,7 @@ void Task
 						this->sockets[sid]->dataptr = (void*)(sockets_dataptr_init[sid] +
 						                                      w * n_frames_per_wave * sockets_databytes_per_frame[sid]);
 
-					this->status[w] = this->codelet(*this->module, *this, w * n_frames_per_wave);
+					status[w] = this->codelet(*this->module, *this, w * n_frames_per_wave);
 				}
 				else
 				{
@@ -301,7 +304,7 @@ void Task
 						this->sockets[sid]->dataptr = (void*)sockets_data[sid].data();
 					}
 
-					this->status[w] = this->codelet(*this->module, *this, w * n_frames_per_wave);
+					status[w] = this->codelet(*this->module, *this, w * n_frames_per_wave);
 
 					for (size_t sid = 0; sid < this->sockets.size() -1; sid++)
 						if (socket_type[sid] == socket_t::SOUT || socket_type[sid] == socket_t::SIN_SOUT)
@@ -443,13 +446,16 @@ const std::vector<int>& Task
 				}
 			}
 			std::cout << "# Returned status: [";
-			for (size_t w = 0; w < this->status.size(); w++)
+			// do not use 'this->status' because the dataptr can have been changed by the 'tools::Sequence' when using
+			// the no copy mode
+			int* status = (int*)this->sockets.back()->get_dataptr();
+			for (size_t w = 0; w < this->get_module().get_n_waves(); w++)
 			{
-				if (status_t_to_string.count(this->status[w]))
-					std::cout << ((w != 0) ? ", " : "") << std::dec << this->status[w]
-					          << " '" << status_t_to_string[this->status[w]] << "'";
+				if (status_t_to_string.count(status[w]))
+					std::cout << ((w != 0) ? ", " : "") << std::dec << status[w]
+					          << " '" << status_t_to_string[status[w]] << "'";
 				else
-					std::cout << ((w != 0) ? ", " : "") << std::dec << this->status[w];
+					std::cout << ((w != 0) ? ", " : "") << std::dec << status[w];
 			}
 			std::cout << "]" << std::endl;
 			std::cout << "#" << std::noshowbase << std::endl;

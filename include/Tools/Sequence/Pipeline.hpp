@@ -110,11 +110,11 @@ public:
 
 	virtual ~Pipeline() = default;
 
-	void exec(const std::vector<std::function<bool(const std::vector<const std::vector<int>*>&)>> &stop_conditions);
-	void exec(const std::vector<std::function<bool(                                           )>> &stop_conditions);
+	void exec(const std::vector<std::function<bool(const std::vector<const int*>&)>> &stop_conditions);
+	void exec(const std::vector<std::function<bool(                              )>> &stop_conditions);
 
-	void exec(std::function<bool(const std::vector<const std::vector<int>*>&)> stop_condition);
-	void exec(std::function<bool(                                           )> stop_condition);
+	void exec(std::function<bool(const std::vector<const int*>&)> stop_condition);
+	void exec(std::function<bool(                              )> stop_condition);
 
 	std::vector<Sequence*> get_stages();
 	Sequence& operator[](const size_t stage_id);
