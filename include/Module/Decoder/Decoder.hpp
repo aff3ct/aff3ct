@@ -22,12 +22,12 @@ namespace module
 
 		namespace sck
 		{
-			enum class decode_hiho    : size_t { Y_N,  V_K ,      status };
-			enum class decode_hiho_cw : size_t { Y_N,  V_N ,      status };
-			enum class decode_siho    : size_t { Y_N,  V_K ,      status };
-			enum class decode_siho_cw : size_t { Y_N,  V_N ,      status };
-			enum class decode_siso    : size_t { Y_N1, Y_N2,      status };
-			enum class decode_siso_alt: size_t { sys,  par,  ext, status };
+			enum class decode_hiho    : size_t { Y_N,       CWD,  V_K, status };
+			enum class decode_hiho_cw : size_t { Y_N,       CWD,  V_N, status };
+			enum class decode_siho    : size_t { Y_N,       CWD,  V_K, status };
+			enum class decode_siho_cw : size_t { Y_N,       CWD,  V_N, status };
+			enum class decode_siso    : size_t { Y_N1,      CWD, Y_N2, status };
+			enum class decode_siso_alt: size_t { sys,  par, CWD,  ext, status };
 		}
 
 		namespace tm
@@ -42,10 +42,11 @@ namespace module
 class Decoder : public Module, public tools::Interface_set_seed, public tools::Interface_reset
 {
 protected:
-	const int  K;          /*!< Number of information bits in one frame */
-	const int  N;          /*!< Size of one frame (= number of bits in one frame) */
-	      bool auto_reset;
-	const int  mask; // vilain toi
+	const int           K;          /*!< Number of information bits in one frame */
+	const int           N;          /*!< Size of one frame (= number of bits in one frame) */
+	      bool          auto_reset;
+	const int           mask;
+	std::vector<int8_t> CWD;
 
 public:
 	Decoder(const int K, const int N);
@@ -71,6 +72,8 @@ public:
 
 protected:
 	virtual void _reset(const size_t frame_id);
+
+	virtual void set_n_frames_per_wave(const size_t n_frames_per_wave);
 };
 }
 }

@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <vector>
+#include <cstdint>
 
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
@@ -56,21 +57,35 @@ public:
 	 * \param V_K: a decoded codeword (only the information bits).
 	 */
 	template <class A = std::allocator<B>>
-	int decode_hiho(const std::vector<B,A>& Y_N, std::vector<B,A>& V_K, const int frame_id = -1,
-	                const bool managed_memory = true);
+	int decode_hiho(const std::vector<B,A>& Y_N, std::vector<int8_t,A>& CWD, std::vector<B,A>& V_K,
+	                const int frame_id = -1, const bool managed_memory = true);
+
+	template <class A = std::allocator<B>>
+	int decode_hiho(const std::vector<B,A>& Y_N, std::vector<B,A>& V_K,
+	                const int frame_id = -1, const bool managed_memory = true);
+
+	int decode_hiho(const B *Y_N, int8_t *CWD, B *V_K, const int frame_id = -1, const bool managed_memory = true);
 
 	int decode_hiho(const B *Y_N, B *V_K, const int frame_id = -1, const bool managed_memory = true);
 
 	template <class A = std::allocator<B>>
-	int decode_hiho_cw(const std::vector<B,A>& Y_N, std::vector<B,A>& V_N, const int frame_id = -1,
-	                   const bool managed_memory = true);
+	int decode_hiho_cw(const std::vector<B,A>& Y_N, std::vector<int8_t,A>& CWD, std::vector<B,A>& V_N,
+	                   const int frame_id = -1, const bool managed_memory = true);
+
+	template <class A = std::allocator<B>>
+	int decode_hiho_cw(const std::vector<B,A>& Y_N, std::vector<B,A>& V_N,
+	                   const int frame_id = -1, const bool managed_memory = true);
+
+	int decode_hiho_cw(const B *Y_N, int8_t *CWD, B *V_N, const int frame_id = -1, const bool managed_memory = true);
 
 	int decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id = -1, const bool managed_memory = true);
 
 protected:
-	virtual int _decode_hiho(const B *Y_N, B *V_K, const size_t frame_id);
+	virtual int _decode_hiho(const B *Y_N, int8_t *CWD, B *V_K, const size_t frame_id);
+	virtual int _decode_hiho(const B *Y_N,              B *V_K, const size_t frame_id);
 
-	virtual int _decode_hiho_cw(const B *Y_N, B *V_N, const size_t frame_id);
+	virtual int _decode_hiho_cw(const B *Y_N, int8_t *CWD, B *V_N, const size_t frame_id);
+	virtual int _decode_hiho_cw(const B *Y_N,              B *V_N, const size_t frame_id);
 };
 }
 }

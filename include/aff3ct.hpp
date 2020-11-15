@@ -1254,9 +1254,6 @@
 #ifndef REPORTER_NOISE_HPP_
 #include <Tools/Display/Reporter/Noise/Reporter_noise.hpp>
 #endif
-#ifndef REPORTER_PROBE_DECSTAT_HPP_
-#include <Tools/Display/Reporter/Probe/Reporter_probe_decstat.hpp>
-#endif
 #ifndef REPORTER_PROBE_HPP_
 #include <Tools/Display/Reporter/Probe/Reporter_probe.hpp>
 #endif

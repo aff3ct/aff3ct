@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <vector>
+#include <cstdint>
 
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
@@ -58,8 +59,14 @@ public:
 	 * \param Y_N2: an extrinsic information about all the bits in the frame.
 	 */
 	template <class A = std::allocator<R>>
-	int decode_siso(const std::vector<R,A> &Y_N1, std::vector<R,A> &Y_N2, const int frame_id = -1,
-	                const bool managed_memory = true);
+	int decode_siso(const std::vector<R,A> &Y_N1, std::vector<int8_t,A> &CWD, std::vector<R,A> &Y_N2,
+	                const int frame_id = -1, const bool managed_memory = true);
+
+	template <class A = std::allocator<R>>
+	int decode_siso(const std::vector<R,A> &Y_N1, std::vector<R,A> &Y_N2,
+	                const int frame_id = -1, const bool managed_memory = true);
+
+	int decode_siso(const R *Y_N1, int8_t *CWD, R *Y_N2, const int frame_id = -1, const bool managed_memory = true);
 
 	int decode_siso(const R *Y_N1, R *Y_N2, const int frame_id = -1, const bool managed_memory = true);
 
@@ -78,10 +85,19 @@ public:
 	// virtual int decode_siso(const R *sys, const R *par, R *ext, const int n_frames = -1, const int frame_id = -1);
 
 	template <class A = std::allocator<R>>
+	int decode_siso_alt(const std::vector<R,A> &sys, const std::vector<R,A> &par, std::vector<int8_t,A> &CWD,
+	                    std::vector<R,A> &ext, const int frame_id = -1, const bool managed_memory = true);
+
+	template <class A = std::allocator<R>>
 	int decode_siso_alt(const std::vector<R,A> &sys, const std::vector<R,A> &par, std::vector<R,A> &ext,
 	                    const int frame_id = -1, const bool managed_memory = true);
 
-	int decode_siso_alt(const R *sys, const R *par, R *ext, const int frame_id = -1, const bool managed_memory = true);
+	int decode_siso_alt(const R *sys, const R *par, int8_t *CWD, R *ext, const int frame_id = -1,
+	                    const bool managed_memory = true);
+
+
+	int decode_siso_alt(const R *sys, const R *par, R *ext, const int frame_id = -1,
+	                    const bool managed_memory = true);
 
 	/*!
 	 * \brief Gets the number of tail bits.
@@ -91,9 +107,11 @@ public:
 	virtual int tail_length() const;
 
 protected:
-	virtual int _decode_siso(const R *Y_N1, R *Y_N2, const size_t frame_id);
+	virtual int _decode_siso(const R *Y_N1, int8_t *CWD, R *Y_N2, const size_t frame_id);
+	virtual int _decode_siso(const R *Y_N1,              R *Y_N2, const size_t frame_id);
 
-	virtual int _decode_siso_alt(const R *sys, const R *par, R *ext, const size_t frame_id);
+	virtual int _decode_siso_alt(const R *sys, const R *par, int8_t *CWD, R *ext, const size_t frame_id);
+	virtual int _decode_siso_alt(const R *sys, const R *par,              R *ext, const size_t frame_id);
 };
 }
 }

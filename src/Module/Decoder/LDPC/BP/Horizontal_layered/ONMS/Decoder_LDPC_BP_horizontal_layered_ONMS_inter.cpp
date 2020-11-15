@@ -87,7 +87,7 @@ void Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 
 template <typename B, typename R>
 int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
-::_decode_siso(const R *Y_N1, R *Y_N2, const size_t frame_id)
+::_decode_siso(const R *Y_N1, int8_t *CWD, R *Y_N2, const size_t frame_id)
 {
 	// memory zones initialization
 	this->_load(Y_N1, frame_id);
@@ -127,12 +127,14 @@ int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 	for (auto f = 0; f < mipp::N<R>(); f++) frames[f] = Y_N2 + f * this->N;
 	tools::Reorderer_static<R,mipp::N<R>()>::apply_rev((R*)this->var_nodes[cur_wave].data(), frames, this->N);
 
+	for (auto f = 0; f < mipp::N<R>() ; f++)
+		CWD[f] = !((status >> (mipp::N<R>() -1 -f)) & 1);
 	return status;
 }
 
 template <typename B, typename R>
 int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
-::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
+::_decode_siho(const R *Y_N, int8_t *CWD, B *V_K, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N, frame_id);
@@ -185,12 +187,14 @@ int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
 
+	for (auto f = 0; f < mipp::N<R>() ; f++)
+		CWD[f] = !((status >> (mipp::N<R>() -1 -f)) & 1);
 	return status;
 }
 
 template <typename B, typename R>
 int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
-::_decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id)
+::_decode_siho_cw(const R *Y_N, int8_t *CWD, B *V_N, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	this->_load(Y_N, frame_id);
@@ -240,6 +244,8 @@ int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
 
+	for (auto f = 0; f < mipp::N<R>() ; f++)
+		CWD[f] = !((status >> (mipp::N<R>() -1 -f)) & 1);
 	return status;
 }
 

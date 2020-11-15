@@ -79,7 +79,7 @@ bool Reporter_probe
 	for (size_t v = 0; v < this->datasizes[col] && can_pull; v++)
 	{
 		const std::string s = std::string((v != 0) ? ", " : "") + std::string((buff[v] >= 0) ? " " : "");
-		temp_stream << std::setprecision(this->precisions[col]) << s << buff[v];
+		temp_stream << std::setprecision(this->precisions[col]) << s << +buff[v];
 	}
 	if (this->datasizes[col]> 1 && can_pull) temp_stream << "]";
 	return can_pull;

@@ -86,7 +86,7 @@ void Decoder_LDPC_BP_flooding<B,R,Update_rule>
 
 template <typename B, typename R, class Update_rule>
 int Decoder_LDPC_BP_flooding<B,R,Update_rule>
-::_decode_siso(const R *Y_N1, R *Y_N2, const size_t frame_id)
+::_decode_siso(const R *Y_N1, int8_t *CWD, R *Y_N2, const size_t frame_id)
 {
 	auto status = this->_decode(Y_N1, frame_id);
 
@@ -94,12 +94,13 @@ int Decoder_LDPC_BP_flooding<B,R,Update_rule>
 	for (auto v = 0; v < this->N; v++)
 		Y_N2[v] = this->post[v] - Y_N1[v];
 
+	CWD[0] = !status;
 	return status;
 }
 
 template <typename B, typename R, class Update_rule>
 int Decoder_LDPC_BP_flooding<B,R,Update_rule>
-::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
+::_decode_siho(const R *Y_N, int8_t *CWD, B *V_K, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 //	auto d_load = std::chrono::steady_clock::now() - t_load;
@@ -122,12 +123,13 @@ int Decoder_LDPC_BP_flooding<B,R,Update_rule>
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
 
+	CWD[0] = !status;
 	return status;
 }
 
 template <typename B, typename R, class Update_rule>
 int Decoder_LDPC_BP_flooding<B,R,Update_rule>
-::_decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id)
+::_decode_siho_cw(const R *Y_N, int8_t *CWD, B *V_N, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	// memory zones initialization
@@ -146,6 +148,7 @@ int Decoder_LDPC_BP_flooding<B,R,Update_rule>
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::decode, d_decod);
 //	(*this)[dec::tsk::decode_siho_cw].update_timer(dec::tm::decode_siho_cw::store,  d_store);
 
+	CWD[0] = !status;
 	return status;
 }
 

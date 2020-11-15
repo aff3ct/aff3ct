@@ -14,7 +14,8 @@ Decoder
   K(K),
   N(N),
   auto_reset(true),
-  mask(std::numeric_limits<int>::max())
+  mask(std::numeric_limits<int>::max()),
+  CWD(this->get_n_frames_per_wave())
 {
 	const std::string name = "Decoder";
 	this->set_name(name);
@@ -113,4 +114,15 @@ void Decoder
 ::set_seed(const int seed)
 {
 	// do nothing in the general case, this method has to be overrided
+}
+
+void Decoder
+::set_n_frames_per_wave(const size_t n_frames_per_wave)
+{
+	const auto old_n_frames_per_wave = this->get_n_frames_per_wave();
+	if (old_n_frames_per_wave != n_frames_per_wave)
+	{
+		Module::set_n_frames_per_wave(n_frames_per_wave);
+		this->CWD.resize(n_frames_per_wave);
+	}
 }
