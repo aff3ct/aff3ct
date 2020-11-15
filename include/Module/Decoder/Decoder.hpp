@@ -70,10 +70,10 @@ public:
 
 	virtual void set_seed(const int seed);
 
+	virtual void set_n_frames(const size_t n_frames);
+
 protected:
 	virtual void _reset(const size_t frame_id);
-
-	virtual void set_n_frames_per_wave(const size_t n_frames_per_wave);
 };
 }
 }

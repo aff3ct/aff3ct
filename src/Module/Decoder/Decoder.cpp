@@ -15,7 +15,7 @@ Decoder
   N(N),
   auto_reset(true),
   mask(std::numeric_limits<int>::max()),
-  CWD(this->get_n_frames_per_wave())
+  CWD(this->get_n_frames())
 {
 	const std::string name = "Decoder";
 	this->set_name(name);
@@ -117,12 +117,12 @@ void Decoder
 }
 
 void Decoder
-::set_n_frames_per_wave(const size_t n_frames_per_wave)
+::set_n_frames(const size_t n_frames)
 {
-	const auto old_n_frames_per_wave = this->get_n_frames_per_wave();
-	if (old_n_frames_per_wave != n_frames_per_wave)
+	const auto old_n_frames = this->get_n_frames();
+	if (old_n_frames != n_frames)
 	{
-		Module::set_n_frames_per_wave(n_frames_per_wave);
-		this->CWD.resize(n_frames_per_wave);
+		Module::set_n_frames(n_frames);
+		this->CWD.resize(n_frames);
 	}
 }
