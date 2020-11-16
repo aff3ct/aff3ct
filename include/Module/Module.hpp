@@ -91,6 +91,8 @@ public:
 
 	inline Task& operator[](const size_t id);
 
+	void set_fast(const bool fast);
+
 protected:
 	virtual void deep_copy(const Module &m);
 

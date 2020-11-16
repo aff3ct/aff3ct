@@ -219,3 +219,10 @@ void Module
 {
 	task.register_timer(key);
 }
+
+void Module
+::set_fast(const bool fast)
+{
+	for (auto &t : this->tasks)
+		t->set_fast(fast);
+}
