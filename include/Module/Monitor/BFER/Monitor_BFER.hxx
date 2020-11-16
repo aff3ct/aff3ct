@@ -48,8 +48,8 @@ int Monitor_BFER<B>
 ::check_errors2(const std::vector<B,A    >& U,
                 const std::vector<B,A    >& V,
                       std::vector<int64_t>& FRA,
-                      std::vector<int64_t>& BE,
-                      std::vector<int64_t>& FE,
+                      std::vector<int32_t>& BE,
+                      std::vector<int32_t>& FE,
                       std::vector<float  >& BER,
                       std::vector<float  >& FER,
                 const int frame_id, const bool managed_memory)

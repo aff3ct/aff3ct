@@ -106,7 +106,7 @@ public:
 	void add_noise_wg(const std::vector<R,A>& X_N, std::vector<R,A>& H_N, std::vector<R,A>& Y_N,
 	                  const int frame_id = -1, const bool managed_memory = true);
 
-	void add_noise_wg(const R *X_N, R *Y_N, R *H_N, const int frame_id = -1, const bool managed_memory = true);
+	void add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id = -1, const bool managed_memory = true);
 
 	virtual void notify_noise_update();
 
