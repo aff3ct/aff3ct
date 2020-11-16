@@ -105,21 +105,7 @@ int Decoder_HIHO<B>
 	(*this)[dec::sck::decode_hiho::V_K].bind(V_K);
 	const auto &status = (*this)[dec::tsk::decode_hiho].exec(frame_id, managed_memory);
 
-	if (frame_id == -1)
-	{
-		int ret_status = 0;
-		for (size_t w = 0; w < this->get_n_waves(); w++)
-		{
-			ret_status <<= this->get_n_frames_per_wave();
-			ret_status |= status[w];
-		}
-		return ret_status & this->mask;
-	}
-	else
-	{
-		const auto w = (frame_id % this->get_n_frames()) / this->get_n_frames_per_wave();
-		return status[w] & this->mask;
-	}
+	return this->compute_status(status, frame_id);
 }
 
 template <typename B>
@@ -127,7 +113,12 @@ template <class A>
 int Decoder_HIHO<B>
 ::decode_hiho(const std::vector<B,A>& Y_N, std::vector<B,A>& V_K, const int frame_id, const bool managed_memory)
 {
-	return this->decode_hiho(Y_N, this->CWD, V_K, frame_id, managed_memory);
+	(*this)[dec::sck::decode_hiho::Y_N].bind(Y_N      );
+	(*this)[dec::sck::decode_hiho::CWD].bind(this->CWD);
+	(*this)[dec::sck::decode_hiho::V_K].bind(V_K      );
+	const auto &status = (*this)[dec::tsk::decode_hiho].exec(frame_id, managed_memory);
+
+	return this->compute_status(status, frame_id);
 }
 
 template <typename B>
@@ -139,28 +130,19 @@ int Decoder_HIHO<B>
 	(*this)[dec::sck::decode_hiho::V_K].bind(V_K);
 	const auto &status = (*this)[dec::tsk::decode_hiho].exec(frame_id, managed_memory);
 
-	if (frame_id == -1)
-	{
-		int ret_status = 0;
-		for (size_t w = 0; w < this->get_n_waves(); w++)
-		{
-			ret_status <<= this->get_n_frames_per_wave();
-			ret_status |= status[w];
-		}
-		return ret_status & this->mask;
-	}
-	else
-	{
-		const auto w = (frame_id % this->get_n_frames()) / this->get_n_frames_per_wave();
-		return status[w] & this->mask;
-	}
+	return this->compute_status(status, frame_id);
 }
 
 template <typename B>
 int Decoder_HIHO<B>
 ::decode_hiho(const B *Y_N, B *V_K, const int frame_id, const bool managed_memory)
 {
-	return this->decode_hiho(Y_N, this->CWD.data(), V_K, frame_id, managed_memory);
+	(*this)[dec::sck::decode_hiho::Y_N].bind(Y_N             );
+	(*this)[dec::sck::decode_hiho::CWD].bind(this->CWD.data());
+	(*this)[dec::sck::decode_hiho::V_K].bind(V_K             );
+	const auto &status = (*this)[dec::tsk::decode_hiho].exec(frame_id, managed_memory);
+
+	return this->compute_status(status, frame_id);
 }
 
 template <typename B>
@@ -174,21 +156,7 @@ int Decoder_HIHO<B>
 	(*this)[dec::sck::decode_hiho_cw::V_N].bind(V_N);
 	const auto &status = (*this)[dec::tsk::decode_hiho_cw].exec(frame_id, managed_memory);
 
-	if (frame_id == -1)
-	{
-		int ret_status = 0;
-		for (size_t w = 0; w < this->get_n_waves(); w++)
-		{
-			ret_status <<= this->get_n_frames_per_wave();
-			ret_status |= status[w];
-		}
-		return ret_status & this->mask;
-	}
-	else
-	{
-		const auto w = (frame_id % this->get_n_frames()) / this->get_n_frames_per_wave();
-		return status[w] & this->mask;
-	}
+	return this->compute_status(status, frame_id);
 }
 
 template <typename B>
@@ -196,7 +164,12 @@ template <class A>
 int Decoder_HIHO<B>
 ::decode_hiho_cw(const std::vector<B,A>& Y_N, std::vector<B,A>& V_N, const int frame_id, const bool managed_memory)
 {
-	return this->decode_hiho_cw(Y_N, this->CWD, V_N, frame_id, managed_memory);
+	(*this)[dec::sck::decode_hiho_cw::Y_N].bind(Y_N      );
+	(*this)[dec::sck::decode_hiho_cw::CWD].bind(this->CWD);
+	(*this)[dec::sck::decode_hiho_cw::V_N].bind(V_N      );
+	const auto &status = (*this)[dec::tsk::decode_hiho_cw].exec(frame_id, managed_memory);
+
+	return this->compute_status(status, frame_id);
 }
 
 template <typename B>
@@ -208,28 +181,19 @@ int Decoder_HIHO<B>
 	(*this)[dec::sck::decode_hiho_cw::V_N].bind(V_N);
 	const auto &status = (*this)[dec::tsk::decode_hiho_cw].exec(frame_id, managed_memory);
 
-	if (frame_id == -1)
-	{
-		int ret_status = 0;
-		for (size_t w = 0; w < this->get_n_waves(); w++)
-		{
-			ret_status <<= this->get_n_frames_per_wave();
-			ret_status |= status[w];
-		}
-		return ret_status & this->mask;
-	}
-	else
-	{
-		const auto w = (frame_id % this->get_n_frames()) / this->get_n_frames_per_wave();
-		return status[w] & this->mask;
-	}
+	return this->compute_status(status, frame_id);
 }
 
 template <typename B>
 int Decoder_HIHO<B>
 ::decode_hiho_cw(const B *Y_N, B *V_N, const int frame_id, const bool managed_memory)
 {
-	return this->decode_hiho_cw(Y_N, this->CWD.data(), V_N, frame_id, managed_memory);
+	(*this)[dec::sck::decode_hiho_cw::Y_N].bind(Y_N             );
+	(*this)[dec::sck::decode_hiho_cw::CWD].bind(this->CWD.data());
+	(*this)[dec::sck::decode_hiho_cw::V_N].bind(V_N             );
+	const auto &status = (*this)[dec::tsk::decode_hiho_cw].exec(frame_id, managed_memory);
+
+	return this->compute_status(status, frame_id);
 }
 
 template <typename B>

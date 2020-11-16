@@ -74,8 +74,14 @@ public:
 
 protected:
 	virtual void _reset(const size_t frame_id);
+
+	inline int compute_status(const std::vector<int>& status, const int frame_id);
 };
 }
 }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#include "Module/Decoder/Decoder.hxx"
+#endif
 
 #endif /* DECODER_HPP_ */
