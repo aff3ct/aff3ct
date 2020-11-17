@@ -28,8 +28,7 @@ class Socket;
 enum status_t : int { SUCCESS = 0,
                       FAILURE = 1,
                       FAILURE_STOP = -1,
-                      UNKNOWN = -2,
-                      SKIPPED = std::numeric_limits<int>::min() };
+                      UNKNOWN = -2 };
 
 enum class socket_t : uint8_t { SIN, SIN_SOUT, SOUT };
 
