@@ -40,6 +40,7 @@ copyright = '2020, AFF3CT team'
 author = 'AFF3CT team'
 
 # get the AFF3CT version from Git
+subprocess.call('git fetch --all --tags', shell=True)
 label = subprocess.check_output(["git", "describe"]).strip().decode(encoding='UTF-8')
 split_label = label.split("-")
 
