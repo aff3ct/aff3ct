@@ -81,10 +81,11 @@ public:
 
 	void remove_custom_name();
 
-	inline Task& operator[](const size_t id);
+	inline Task&   operator[](const size_t id            );
+	inline Socket& operator[](const std::string &tsk_sck );
+	inline Task&   operator()(const std::string &tsk_name);
 
 	void set_fast(const bool fast);
-
 protected:
 	virtual void deep_copy(const Module &m);
 
