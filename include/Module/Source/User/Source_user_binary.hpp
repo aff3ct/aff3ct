@@ -12,7 +12,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B>
+template <typename B = int32_t>
 class Source_user_binary : public Source<B>
 {
 private:
