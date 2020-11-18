@@ -123,8 +123,7 @@ void BFER<B,R,Q>
 		params_BFER.noise->template update<>(*this->noise, params_BFER.noise->range[noise_idx], bit_rate,
 		                                     params_BFER.mdm->bps, params_BFER.mdm->cpm_upf);
 
-		for (size_t f = 0; f < (size_t)params_BFER.n_frames; f++)
-			this->noise_vals[f] = this->noise->get_value();
+		std::fill(this->noise_vals.begin(), this->noise_vals.end(), this->noise->get_value());
 
 		if (params_BFER.err_track_revert)
 		{

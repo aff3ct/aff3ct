@@ -132,8 +132,7 @@ void EXIT<B,R>
 
 		this->noise.set_values(sigma, ebn0, esn0);
 
-		for (size_t f = 0; f < (size_t)params_EXIT.n_frames; f++)
-			this->noise_vals[f] = this->noise.get_value();
+		std::fill(this->noise_vals.begin(), this->noise_vals.end(), this->noise.get_value());
 
 		// for each "a" standard deviation (sig_a) to be simulated
 		using namespace module;
@@ -168,8 +167,7 @@ void EXIT<B,R>
 				this->noise_a.set_values(sig_a_2, sig_a_ebn0, sig_a_esn0);
 			}
 
-			for (size_t f = 0; f < (size_t)params_EXIT.n_frames; f++)
-				this->noise_a_vals[f] = this->noise_a.get_value();
+			std::fill(this->noise_a_vals.begin(), this->noise_a_vals.end(), this->noise_a.get_value());
 
 			if ((!params_EXIT.ter->disabled && noise_idx == 0 && sig_a_idx == 0 && !params_EXIT.debug)
 				|| (params_EXIT.statistics && !params_EXIT.debug))
