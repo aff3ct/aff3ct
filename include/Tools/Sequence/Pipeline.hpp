@@ -11,7 +11,7 @@
 #include <memory>
 #include <vector>
 
-#include "Tools/Interface/Interface_clone.hpp"
+#include "Tools/Interface/Interface_get_set_n_frames.hpp"
 #include "Tools/Sequence/Sequence.hpp"
 
 namespace aff3ct
@@ -19,7 +19,7 @@ namespace aff3ct
 namespace tools
 {
 
-class Pipeline
+class Pipeline : public Interface_get_set_n_frames
 {
 protected:
 	Sequence original_sequence;

@@ -13,6 +13,7 @@
 #include <string>
 
 #include "Tools/Interface/Interface_clone.hpp"
+#include "Tools/Interface/Interface_get_set_n_frames.hpp"
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
 
@@ -25,7 +26,7 @@ namespace module
  *
  * \brief A Module is an abstract concept. Basically, all the objects used in a Simulation are a Module.
  */
-class Module : public tools::Interface_clone
+class Module : public tools::Interface_clone, public tools::Interface_get_set_n_frames
 {
 protected:
 	size_t      n_frames;     /*!< Number of frames to process in this Module */

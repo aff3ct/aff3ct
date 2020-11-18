@@ -8,13 +8,14 @@
 #include <mipp.h>
 
 #include "Tools/Interface/Interface_clone.hpp"
+#include "Tools/Interface/Interface_get_set_n_frames.hpp"
 
 namespace aff3ct
 {
 namespace tools
 {
 template <typename B = int, typename R = float>
-class Post_processing_SISO : public Interface_clone
+class Post_processing_SISO : public Interface_clone, public Interface_get_set_n_frames
 {
 protected:
 	size_t n_frames;

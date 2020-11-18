@@ -12,6 +12,7 @@
 
 #include "Tools/Interface/Interface_get_set_noise.hpp"
 #include "Tools/Interface/Interface_notify_noise_update.hpp"
+#include "Tools/Interface/Interface_get_set_n_frames.hpp"
 #ifndef _MSC_VER
 #include "Tools/Interface/Interface_clone.hpp"
 #endif
@@ -29,9 +30,14 @@ namespace tools
 
 template <typename B = int, typename Q = float>
 #ifdef _MSC_VER
-class Codec : public Interface_get_set_noise, public Interface_notify_noise_update
+class Codec : public Interface_get_set_noise,
+              public Interface_notify_noise_update,
+              public Interface_get_set_n_frames
 #else
-class Codec : public Interface_get_set_noise, public Interface_notify_noise_update, public Interface_clone
+class Codec : public Interface_get_set_noise,
+              public Interface_notify_noise_update,
+              public Interface_get_set_n_frames,
+              public Interface_clone
 #endif
 {
 private:
@@ -67,7 +73,7 @@ public:
 
 	virtual void notify_noise_update();
 
-	int get_n_frames() const;
+	size_t get_n_frames() const;
 
 	virtual void set_n_frames(const size_t n_frames);
 

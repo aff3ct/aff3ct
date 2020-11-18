@@ -154,10 +154,17 @@ void Codec<B,Q>
 }
 
 template <typename B, typename Q>
-int Codec<B,Q>
+size_t Codec<B,Q>
 ::get_n_frames() const
 {
-	return this->get_encoder().get_n_frames();
+	if (this->encoder == nullptr)
+	{
+		std::stringstream message;
+		message << "'encoder' is NULL.";
+		throw runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	return this->encoder->get_n_frames();
 }
 
 template <typename B, typename Q>

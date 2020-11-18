@@ -16,6 +16,7 @@
 #include "Module/Socket.hpp"
 #include "Tools/Interface/Interface_clone.hpp"
 #include "Tools/Algo/Tree/Generic/Generic_node.hpp"
+#include "Tools/Interface/Interface_get_set_n_frames.hpp"
 
 namespace aff3ct
 {
@@ -51,7 +52,7 @@ public:
 using Sub_sequence       = Sub_sequence_generic<std::vector<      module::Task*>>;
 using Sub_sequence_const = Sub_sequence_generic<std::vector<const module::Task*>>;
 
-class Sequence : public Interface_clone
+class Sequence : public Interface_clone, public Interface_get_set_n_frames
 {
 	friend Pipeline;
 

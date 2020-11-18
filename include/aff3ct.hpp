@@ -1329,6 +1329,9 @@
 #ifndef INTERFACE_CLONE_HPP__
 #include <Tools/Interface/Interface_clone.hpp>
 #endif
+#ifndef INTERFACE_GET_SET_N_FRAMES_HPP__
+#include <Tools/Interface/Interface_get_set_n_frames.hpp>
+#endif
 #ifndef INTERFACE_GET_SET_NOISE_HPP__
 #include <Tools/Interface/Interface_get_set_noise.hpp>
 #endif
