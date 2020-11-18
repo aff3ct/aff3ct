@@ -29,15 +29,11 @@ public:
 	static int size_mod(const int N);
 	static int size_fil(const int N);
 
-	void notify_noise_update();
-
 protected:
-	void check_noise();
-
-	void    _modulate(const B *X_N1,                R *X_N2, const size_t frame_id);
-	void      _filter(const R *Y_N1,                R *Y_N2, const size_t frame_id);
-	void  _demodulate(const Q *Y_N1,                Q *Y_N2, const size_t frame_id);
-	void _tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id);
+	void    _modulate(                    const B *X_N1,                R *X_N2, const size_t frame_id);
+	void      _filter(const float *noise, const R *Y_N1,                R *Y_N2, const size_t frame_id);
+	void  _demodulate(const float *noise, const Q *Y_N1,                Q *Y_N2, const size_t frame_id);
+	void _tdemodulate(const float *noise, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id);
 };
 }
 }

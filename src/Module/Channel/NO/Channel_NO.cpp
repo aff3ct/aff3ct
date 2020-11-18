@@ -31,7 +31,7 @@ Channel_NO<R>* Channel_NO<R>
 
 template <typename R>
 void Channel_NO<R>
-::_add_noise(const R *X_N, R *Y_N, const size_t frame_id)
+::_add_noise(const float *noise, const R *X_N, R *Y_N, const size_t frame_id)
 {
 	if (add_users && this->n_frames > 1) // n_frames_per_wave = n_frames
 	{

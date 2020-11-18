@@ -45,14 +45,14 @@ Modem_generic_fast<B,R,Q,MAX,MAXI>* Modem_generic_fast<B,R,Q,MAX,MAXI>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX, tools::proto_max_i<Q> MAXI>
 void Modem_generic_fast<B,R,Q,MAX,MAXI>
-::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
+::_tdemodulate(const float *noise, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX, tools::proto_max_i<Q> MAXI>
 void Modem_generic_fast<B,R,Q,MAX,MAXI>
-::_tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
+::_tdemodulate_wg(const float *noise, const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
@@ -182,11 +182,6 @@ void Modem_generic_fast<B,R,Q,MAX,MAXI>
 
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
-
-	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
-	else if (!this->noise->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	const auto size_vec_loop = demodulate_complex_SIMD<Q, MAXI>::compute(Y_N1,
 	                                                                     Y_N2,
@@ -355,11 +350,6 @@ void Modem_generic_fast<B,R,Q,MAX,MAXI>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
-	else if (!this->noise->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
-
 	const auto size_vec_loop = demodulate_wg_complex_SIMD<R, Q, MAXI>::compute(H_N,
 	                                                                           Y_N1,
 	                                                                           Y_N2,
@@ -513,11 +503,6 @@ void Modem_generic_fast<B,R,Q,MAX,MAXI>
 
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
-
-	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
-	else if (!this->noise->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	const auto size_vec_loop = demodulate_real_SIMD<Q, MAXI>::compute(Y_N1,
 	                                                                  Y_N2,
@@ -673,11 +658,6 @@ void Modem_generic_fast<B,R,Q,MAX,MAXI>
 
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
-
-	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
-	else if (!this->noise->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	const auto size_vec_loop = demodulate_wg_real_SIMD<R, Q, MAXI>::compute(H_N,
 	                                                                        Y_N1,

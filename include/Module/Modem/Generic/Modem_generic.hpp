@@ -38,18 +38,14 @@ public:
 	static int size_mod(const int N, const tools::Constellation<R>& c);
 	static int size_fil(const int N, const tools::Constellation<R>& c);
 
-	void notify_noise_update();
-
 protected:
-	void check_noise();
-
-	virtual void   _tmodulate   (              const Q *X_N1,                 R *X_N2, const size_t frame_id);
-	virtual void   _modulate    (              const B *X_N1,                 R *X_N2, const size_t frame_id);
-	virtual void     _filter    (              const R *Y_N1,                 R *Y_N2, const size_t frame_id);
-	virtual void _demodulate    (              const Q *Y_N1,                 Q *Y_N2, const size_t frame_id);
-	virtual void _demodulate_wg (const R *H_N, const Q *Y_N1,                 Q *Y_N2, const size_t frame_id);
-	virtual void _tdemodulate   (              const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const size_t frame_id);
-	virtual void _tdemodulate_wg(const R *H_N, const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const size_t frame_id);
+	virtual void   _tmodulate   (                                  const Q *X_N1,                 R *X_N2, const size_t frame_id);
+	virtual void   _modulate    (                                  const B *X_N1,                 R *X_N2, const size_t frame_id);
+	virtual void     _filter    (const float *noise,               const R *Y_N1,                 R *Y_N2, const size_t frame_id);
+	virtual void _demodulate    (const float *noise,               const Q *Y_N1,                 Q *Y_N2, const size_t frame_id);
+	virtual void _demodulate_wg (const float *noise, const R *H_N, const Q *Y_N1,                 Q *Y_N2, const size_t frame_id);
+	virtual void _tdemodulate   (const float *noise,               const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const size_t frame_id);
+	virtual void _tdemodulate_wg(const float *noise, const R *H_N, const Q *Y_N1,  const Q *Y_N2, Q *Y_N3, const size_t frame_id);
 
 	virtual void   _tmodulate_complex   (              const Q *X_N1,                 R *X_N2, const size_t frame_id);
 	virtual void   _tmodulate_real      (              const Q *X_N1,                 R *X_N2, const size_t frame_id);

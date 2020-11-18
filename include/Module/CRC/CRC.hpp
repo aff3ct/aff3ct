@@ -102,8 +102,6 @@ public:
 	 *
 	 * \return true if the CRC is verified, false otherwise.
 	 */
-	// template <class A = std::allocator<B>>
-	// bool check(const std::vector<B,A>& V_K, const int n_frames = -1, const int frame_id = -1);
 	template <class A = std::allocator<B>>
 	bool check(const std::vector<B,A>& V_K, const int frame_id = -1, const bool managed_memory = true);
 
@@ -119,8 +117,6 @@ public:
 	 *
 	 * \return true if the CRC is verified, false otherwise.
 	 */
-	// template <class A = std::allocator<B>>
-	// bool check_packed(const std::vector<B,A>& V_K, const int n_frames = -1, const int frame_id = -1);
 	template <class A = std::allocator<B>>
 	bool check_packed(const std::vector<B,A>& V_K, const int frame_id = -1, const bool managed_memory = true);
 

@@ -28,6 +28,10 @@ class Channel_user : public Channel<R>
 protected:
 	const bool add_users;
 
+private:
+	std::vector<std::vector<R>> noise_buff;
+	int noise_counter;
+
 public:
 	Channel_user(const int N, const std::string &filename, const bool add_users = false);
 	virtual ~Channel_user() = default;
@@ -38,13 +42,9 @@ public:
 	static void read_as_binary (const std::string &filename, const int N, std::vector<std::vector<R>>& noise_buffer);
 
 protected:
-	virtual void _add_noise(const R *X_N, R *Y_N, const size_t frame_id);
+	virtual void _add_noise(const float *noise, const R *X_N, R *Y_N, const size_t frame_id);
 
 	virtual void set_noise(const size_t frame_id);
-
-private:
-	std::vector<std::vector<R>> noise_buff;
-	int noise_counter;
 };
 }
 }

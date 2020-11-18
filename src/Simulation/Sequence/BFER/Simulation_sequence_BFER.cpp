@@ -27,6 +27,7 @@ Simulation_sequence_BFER<B,R>
   params(params_BFER),
   params_BFER(params_BFER),
   noise(params_BFER.noise->build<>()),
+  noise_vals(params_BFER.n_frames),
   dumper(params_BFER.n_threads)
 {
 	if (params_BFER.n_threads < 1)
@@ -228,6 +229,9 @@ void Simulation_sequence_BFER<B,R>
 		                                     bit_rate,
 		                                     params_BFER.mdm->bps,
 		                                     params_BFER.mdm->cpm_upf);
+
+		for (size_t f = 0; f < (size_t)params_BFER.n_frames; f++)
+			this->noise_vals[f] = this->noise->get_value();
 
 		if (params_BFER.err_track_revert)
 		{

@@ -109,23 +109,14 @@ void BFER_ite<B,R,Q>
 	interleaver_llr2[tid].reset(factory::Interleaver::build<Q>(*interleaver_core[tid]));
 
 	// set the noise
-	codec1 [tid]->set_noise(*this->noise);
-	codec2 [tid]->set_noise(*this->noise);
-	modem1 [tid]->set_noise(*this->noise);
-	modem2 [tid]->set_noise(*this->noise);
-	channel[tid]->set_noise(*this->noise);
+	codec1[tid]->set_noise(*this->noise);
+	codec2[tid]->set_noise(*this->noise);
 
 	// register modules to "noise changed" callback
-	auto ptr_cdc1 = codec1 [tid].get();
-	auto ptr_cdc2 = codec2 [tid].get();
-	auto ptr_mdm1 = modem1 [tid].get();
-	auto ptr_mdm2 = modem2 [tid].get();
-	auto ptr_chn  = channel[tid].get();
+	auto ptr_cdc1 = codec1[tid].get();
+	auto ptr_cdc2 = codec2[tid].get();
 	this->noise->record_callback_update([ptr_cdc1](){ ptr_cdc1->notify_noise_update(); });
 	this->noise->record_callback_update([ptr_cdc2](){ ptr_cdc2->notify_noise_update(); });
-	this->noise->record_callback_update([ptr_mdm1](){ ptr_mdm1->notify_noise_update(); });
-	this->noise->record_callback_update([ptr_mdm2](){ ptr_mdm2->notify_noise_update(); });
-	this->noise->record_callback_update([ptr_chn ](){ ptr_chn ->notify_noise_update(); });
 
 	// set the seeds
 	const auto seed_src = rd_engine_seed[tid]();

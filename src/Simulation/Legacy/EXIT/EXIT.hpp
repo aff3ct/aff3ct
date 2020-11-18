@@ -33,6 +33,9 @@ protected:
 	// code specifications
 	tools::Sigma<> noise;   // current noise simulated
 	tools::Sigma<> noise_a; // current noise simulated for the "a" part
+	std::vector<float> noise_vals;
+	std::vector<float> noise_a_vals;
+
 	R sig_a;
 
 	// communication chain

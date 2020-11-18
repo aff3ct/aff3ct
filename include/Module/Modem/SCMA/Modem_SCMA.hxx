@@ -28,6 +28,7 @@ Modem_SCMA<B,R,Q,PSI>
   msg_resource_to_users(CB.get_number_of_resources(), CB.get_number_of_users(),     CB.get_codebook_size(),                         (Q)0),
   guess                (CB.get_number_of_users(),     CB.get_codebook_size(),                                                       (Q)0),
   disable_sig2         (disable_sig2 ),
+  n0                   ((R)1.0       ),
   n_ite                (n_ite        )
 {
 	const std::string name = "Modem_SCMA";
@@ -50,22 +51,6 @@ Modem_SCMA<B,R,Q,PSI>* Modem_SCMA<B,R,Q,PSI>
 	auto m = new Modem_SCMA(*this);
 	m->deep_copy(*this);
 	return m;
-}
-
-template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
-void Modem_SCMA<B,R,Q,PSI>
-::check_noise()
-{
-	Modem<B,R,Q>::check_noise();
-	this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
-}
-
-template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
-void Modem_SCMA<B,R,Q,PSI>
-::notify_noise_update()
-{
-	Modem<B,R,Q>::notify_noise_update();
-	this->n0 = this->disable_sig2 ? (R)1.0 : ((R)4.0 * this->noise->get_value() * this->noise->get_value());
 }
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
@@ -108,7 +93,7 @@ void Modem_SCMA<B,R,Q,PSI>
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 void Modem_SCMA<B,R,Q,PSI>
-::_demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
+::_demodulate_wg(const float *noise, const R *H_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
@@ -116,10 +101,8 @@ void Modem_SCMA<B,R,Q,PSI>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
-	else if (!this->noise->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
+	if (*noise != this->last_noise && !this->disable_sig2)
+		this->n0 = ((R)4.0 * *noise * *noise);
 
 	for (auto batch = 0 ; batch < (this->N +1) / 2 ; batch++)
 	{
@@ -136,7 +119,7 @@ void Modem_SCMA<B,R,Q,PSI>
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 void Modem_SCMA<B,R,Q,PSI>
-::_demodulate(const Q *Y_N1, Q *Y_N2, const size_t frame_id)
+::_demodulate(const float *noise, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
@@ -144,10 +127,8 @@ void Modem_SCMA<B,R,Q,PSI>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
-	else if (!this->noise->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
+	if (*noise != this->last_noise && !this->disable_sig2)
+		this->n0 = ((R)4.0 * *noise * *noise);
 
 	for (auto batch = 0 ; batch < (this->N +1) / 2 ; batch++)
 	{
@@ -166,17 +147,6 @@ template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 void Modem_SCMA<B,R,Q,PSI>
 ::demodulate_batch(Q* Y_N2, int batch)
 {
-	if (!std::is_same<R,Q>::value)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
-
-	if (!std::is_floating_point<Q>::value)
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
-
-	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
-	else if (!this->noise->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
-
 	// initial probability of each codeword/user
 	auto init_proba = (Q)1. / (Q)CB.get_codebook_size();
 	for (auto u = 0; u < CB.get_number_of_users(); ++u)
@@ -334,7 +304,7 @@ Q Modem_SCMA<B,R,Q,PSI>
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 void Modem_SCMA<B,R,Q,PSI>
-::_filter(const R *Y_N1, R *Y_N2, const size_t frame_id)
+::_filter(const float *noise, const R *Y_N1, R *Y_N2, const size_t frame_id)
 {
 	std::copy(Y_N1, Y_N1 + this->N_fil * this->n_frames, Y_N2);
 }

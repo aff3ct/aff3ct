@@ -68,7 +68,13 @@ Socket& Modem<B,R,Q>
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>
 ::Modem(const int N, const int N_mod, const int N_fil)
-: Module(), N(N), N_mod(N_mod), N_fil(N_fil), noise(nullptr), enable_filter(false), enable_demodulator(true)
+: Module(),
+  N(N),
+  N_mod(N_mod),
+  N_fil(N_fil),
+  enable_filter(false),
+  enable_demodulator(true),
+  last_noise(std::numeric_limits<float>::max())
 {
 	const std::string name = "Modem";
 	this->set_name(name);
@@ -101,7 +107,13 @@ Modem<B,R,Q>
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>
 ::Modem(const int N, const int N_mod)
-: Module(), N(N), N_mod(N_mod), N_fil(N_mod), noise(nullptr), enable_filter(false), enable_demodulator(true)
+: Module(),
+  N(N),
+  N_mod(N_mod),
+  N_fil(N_mod),
+  enable_filter(false),
+  enable_demodulator(true),
+  last_noise(std::numeric_limits<float>::max())
 {
 	const std::string name = "Modem";
 	this->set_name(name);
@@ -127,7 +139,13 @@ Modem<B,R,Q>
 template <typename B, typename R, typename Q>
 Modem<B,R,Q>
 ::Modem(const int N)
-: Module(), N(N), N_mod(N), N_fil(N), noise(nullptr), enable_filter(false), enable_demodulator(true)
+: Module(),
+  N(N),
+  N_mod(N),
+  N_fil(N),
+  enable_filter(false),
+  enable_demodulator(true),
+  last_noise(std::numeric_limits<float>::max())
 {
 	const std::string name = "Modem";
 	this->set_name(name);
@@ -183,79 +201,100 @@ void Modem<B,R,Q>
 	});
 
 	auto &p2 = this->create_task("filter");
-	auto p2s_Y_N1 = this->template create_socket_in <R>(p2, "Y_N1", this->N_mod);
-	auto p2s_Y_N2 = this->template create_socket_out<R>(p2, "Y_N2", this->N_fil);
-	this->create_codelet(p2, [p2s_Y_N1, p2s_Y_N2](Module &m, Task &t, const size_t frame_id) -> int
+	auto p2s_noise = this->template create_socket_in <float>(p2, "noise",          1);
+	auto p2s_Y_N1  = this->template create_socket_in <R    >(p2, "Y_N1", this->N_mod);
+	auto p2s_Y_N2  = this->template create_socket_out<R    >(p2, "Y_N2", this->N_fil);
+	this->create_codelet(p2, [p2s_noise, p2s_Y_N1, p2s_Y_N2](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
 
-		mdm._filter(static_cast<R*>(t[p2s_Y_N1].get_dataptr()),
-		            static_cast<R*>(t[p2s_Y_N2].get_dataptr()),
+		mdm._filter(static_cast<float*>(t[p2s_noise].get_dataptr()),
+		            static_cast<R    *>(t[p2s_Y_N1 ].get_dataptr()),
+		            static_cast<R    *>(t[p2s_Y_N2 ].get_dataptr()),
 		            frame_id);
+
+		mdm.last_noise = *static_cast<float*>(t[p2s_noise].get_dataptr());
 
 		return status_t::SUCCESS;
 	});
 
 	auto &p3 = this->create_task("demodulate");
-	auto p3s_Y_N1 = this->template create_socket_in <Q>(p3, "Y_N1", this->N_fil);
-	auto p3s_Y_N2 = this->template create_socket_out<Q>(p3, "Y_N2", this->N    );
-	this->create_codelet(p3, [p3s_Y_N1, p3s_Y_N2](Module &m, Task &t, const size_t frame_id) -> int
+	auto p3s_noise = this->template create_socket_in <float>(p3, "noise",          1);
+	auto p3s_Y_N1  = this->template create_socket_in <Q    >(p3, "Y_N1", this->N_fil);
+	auto p3s_Y_N2  = this->template create_socket_out<Q    >(p3, "Y_N2", this->N    );
+	this->create_codelet(p3, [p3s_noise, p3s_Y_N1, p3s_Y_N2](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
 
-		mdm._demodulate(static_cast<Q*>(t[p3s_Y_N1].get_dataptr()),
-		                static_cast<Q*>(t[p3s_Y_N2].get_dataptr()),
+		mdm._demodulate(static_cast<float*>(t[p3s_noise].get_dataptr()),
+		                static_cast<Q    *>(t[p3s_Y_N1 ].get_dataptr()),
+		                static_cast<Q    *>(t[p3s_Y_N2 ].get_dataptr()),
 		                frame_id);
+
+		mdm.last_noise = *static_cast<float*>(t[p3s_noise].get_dataptr());
 
 		return status_t::SUCCESS;
 	});
 
 	auto &p4 = this->create_task("tdemodulate");
-	auto p4s_Y_N1 = this->template create_socket_in <Q>(p4, "Y_N1", this->N_fil);
-	auto p4s_Y_N2 = this->template create_socket_in <Q>(p4, "Y_N2", this->N    );
-	auto p4s_Y_N3 = this->template create_socket_out<Q>(p4, "Y_N3", this->N    );
-	this->create_codelet(p4, [p4s_Y_N1, p4s_Y_N2, p4s_Y_N3](Module &m, Task &t, const size_t frame_id) -> int
+	auto p4s_noise = this->template create_socket_in <float>(p4, "noise",          1);
+	auto p4s_Y_N1  = this->template create_socket_in <Q    >(p4, "Y_N1", this->N_fil);
+	auto p4s_Y_N2  = this->template create_socket_in <Q    >(p4, "Y_N2", this->N    );
+	auto p4s_Y_N3  = this->template create_socket_out<Q    >(p4, "Y_N3", this->N    );
+	this->create_codelet(p4, [p4s_noise, p4s_Y_N1, p4s_Y_N2, p4s_Y_N3](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
 
-		mdm._tdemodulate(static_cast<Q*>(t[p4s_Y_N1].get_dataptr()),
-		                 static_cast<Q*>(t[p4s_Y_N2].get_dataptr()),
-		                 static_cast<Q*>(t[p4s_Y_N3].get_dataptr()),
+		mdm._tdemodulate(static_cast<float*>(t[p4s_noise].get_dataptr()),
+		                 static_cast<Q    *>(t[p4s_Y_N1 ].get_dataptr()),
+		                 static_cast<Q    *>(t[p4s_Y_N2 ].get_dataptr()),
+		                 static_cast<Q    *>(t[p4s_Y_N3 ].get_dataptr()),
 		                 frame_id);
+
+		mdm.last_noise = *static_cast<float*>(t[p4s_noise].get_dataptr());
 
 		return status_t::SUCCESS;
 	});
 
 	auto &p5 = this->create_task("demodulate_wg");
-	auto p5s_H_N  = this->template create_socket_in <R>(p5, "H_N",  this->N_fil);
-	auto p5s_Y_N1 = this->template create_socket_in <Q>(p5, "Y_N1", this->N_fil);
-	auto p5s_Y_N2 = this->template create_socket_out<Q>(p5, "Y_N2", this->N    );
-	this->create_codelet(p5, [p5s_H_N, p5s_Y_N1, p5s_Y_N2](Module &m, Task &t, const size_t frame_id) -> int
+	auto p5s_noise = this->template create_socket_in <float>(p5, "noise",          1);
+	auto p5s_H_N   = this->template create_socket_in <R    >(p5, "H_N",  this->N_fil);
+	auto p5s_Y_N1  = this->template create_socket_in <Q    >(p5, "Y_N1", this->N_fil);
+	auto p5s_Y_N2  = this->template create_socket_out<Q    >(p5, "Y_N2", this->N    );
+	this->create_codelet(p5, [p5s_noise, p5s_H_N, p5s_Y_N1, p5s_Y_N2](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
 
-		mdm._demodulate_wg(static_cast<R*>(t[p5s_H_N ].get_dataptr()),
-		                   static_cast<Q*>(t[p5s_Y_N1].get_dataptr()),
-		                   static_cast<Q*>(t[p5s_Y_N2].get_dataptr()),
+		mdm._demodulate_wg(static_cast<float*>(t[p5s_noise].get_dataptr()),
+		                   static_cast<R    *>(t[p5s_H_N  ].get_dataptr()),
+		                   static_cast<Q    *>(t[p5s_Y_N1 ].get_dataptr()),
+		                   static_cast<Q    *>(t[p5s_Y_N2 ].get_dataptr()),
 		                   frame_id);
+
+		mdm.last_noise = *static_cast<float*>(t[p5s_noise].get_dataptr());
 
 		return status_t::SUCCESS;
 	});
 
 	auto &p6 = this->create_task("tdemodulate_wg");
-	auto p6s_H_N  = this->template create_socket_in <R>(p6, "H_N",  this->N_fil);
-	auto p6s_Y_N1 = this->template create_socket_in <Q>(p6, "Y_N1", this->N_fil);
-	auto p6s_Y_N2 = this->template create_socket_in <Q>(p6, "Y_N2", this->N    );
-	auto p6s_Y_N3 = this->template create_socket_out<Q>(p6, "Y_N3", this->N    );
-	this->create_codelet(p6, [p6s_H_N, p6s_Y_N1, p6s_Y_N2, p6s_Y_N3](Module &m, Task &t, const size_t frame_id) -> int
+	auto p6s_noise = this->template create_socket_in <float>(p6, "noise",          1);
+	auto p6s_H_N   = this->template create_socket_in <R    >(p6, "H_N",  this->N_fil);
+	auto p6s_Y_N1  = this->template create_socket_in <Q    >(p6, "Y_N1", this->N_fil);
+	auto p6s_Y_N2  = this->template create_socket_in <Q    >(p6, "Y_N2", this->N    );
+	auto p6s_Y_N3  = this->template create_socket_out<Q    >(p6, "Y_N3", this->N    );
+	this->create_codelet(p6, [p6s_noise, p6s_H_N, p6s_Y_N1, p6s_Y_N2, p6s_Y_N3](Module &m, Task &t,
+	                                                                            const size_t frame_id) -> int
 	{
 		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
 
-		mdm._tdemodulate_wg(static_cast<R*>(t[p6s_H_N ].get_dataptr()),
-		                    static_cast<Q*>(t[p6s_Y_N1].get_dataptr()),
-		                    static_cast<Q*>(t[p6s_Y_N2].get_dataptr()),
-		                    static_cast<Q*>(t[p6s_Y_N3].get_dataptr()),
+		mdm._tdemodulate_wg(static_cast<float*>(t[p6s_noise].get_dataptr()),
+		                    static_cast<R    *>(t[p6s_H_N  ].get_dataptr()),
+		                    static_cast<Q    *>(t[p6s_Y_N1 ].get_dataptr()),
+		                    static_cast<Q    *>(t[p6s_Y_N2 ].get_dataptr()),
+		                    static_cast<Q    *>(t[p6s_Y_N3 ].get_dataptr()),
 		                    frame_id);
+
+		mdm.last_noise = *static_cast<float*>(t[p6s_noise].get_dataptr());
 
 		return status_t::SUCCESS;
 	});
@@ -294,36 +333,6 @@ bool Modem<B,R,Q>
 ::is_demodulator() const
 {
 	return this->enable_demodulator;
-}
-
-template <typename B, typename R, typename Q>
-void Modem<B,R,Q>
-::set_noise(const tools::Noise<>& noise)
-{
-	this->noise = &noise;
-	if (this->noise->is_set())
-		this->notify_noise_update();
-}
-
-template <typename B, typename R, typename Q>
-void Modem<B,R,Q>
-::notify_noise_update()
-{
-	this->check_noise();
-}
-
-template <typename B, typename R, typename Q>
-const tools::Noise<>& Modem<B,R,Q>
-::get_noise() const
-{
-	if (this->noise == nullptr)
-	{
-		std::stringstream message;
-		message << "'noise' should not be nullptr.";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	return *this->noise;
 }
 
 template <typename B, typename R, typename Q>
@@ -367,107 +376,119 @@ void Modem<B,R,Q>
 template <typename B, typename R, typename Q>
 template <class A>
 void Modem<B,R,Q>
-::filter(const std::vector<R,A>& Y_N1, std::vector<R,A>& Y_N2, const int frame_id, const bool managed_memory)
+::filter(const std::vector<float,A>& noise, const std::vector<R,A>& Y_N1, std::vector<R,A>& Y_N2, const int frame_id,
+         const bool managed_memory)
 {
-	(*this)[mdm::sck::filter::Y_N1].bind(Y_N1);
-	(*this)[mdm::sck::filter::Y_N2].bind(Y_N2);
+	(*this)[mdm::sck::filter::noise].bind(noise);
+	(*this)[mdm::sck::filter::Y_N1 ].bind(Y_N1 );
+	(*this)[mdm::sck::filter::Y_N2 ].bind(Y_N2 );
 	(*this)[mdm::tsk::filter].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::filter(const R *Y_N1, R *Y_N2, const int frame_id, const bool managed_memory)
+::filter(const float *noise, const R *Y_N1, R *Y_N2, const int frame_id, const bool managed_memory)
 {
-	(*this)[mdm::sck::filter::Y_N1].bind(Y_N1);
-	(*this)[mdm::sck::filter::Y_N2].bind(Y_N2);
+	(*this)[mdm::sck::filter::noise].bind(noise);
+	(*this)[mdm::sck::filter::Y_N1 ].bind(Y_N1 );
+	(*this)[mdm::sck::filter::Y_N2 ].bind(Y_N2 );
 	(*this)[mdm::tsk::filter].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
 template <class A>
 void Modem<B,R,Q>
-::demodulate(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame_id, const bool managed_memory)
+::demodulate(const std::vector<float,A>& noise, const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2,
+             const int frame_id, const bool managed_memory)
 {
-	(*this)[mdm::sck::demodulate::Y_N1].bind(Y_N1);
-	(*this)[mdm::sck::demodulate::Y_N2].bind(Y_N2);
+	(*this)[mdm::sck::demodulate::noise].bind(noise);
+	(*this)[mdm::sck::demodulate::Y_N1 ].bind(Y_N1 );
+	(*this)[mdm::sck::demodulate::Y_N2 ].bind(Y_N2 );
 	(*this)[mdm::tsk::demodulate].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::demodulate(const Q *Y_N1, Q *Y_N2, const int frame_id, const bool managed_memory)
+::demodulate(const float *noise, const Q *Y_N1, Q *Y_N2, const int frame_id, const bool managed_memory)
 {
-	(*this)[mdm::sck::demodulate::Y_N1].bind(Y_N1);
-	(*this)[mdm::sck::demodulate::Y_N2].bind(Y_N2);
+	(*this)[mdm::sck::demodulate::noise].bind(noise);
+	(*this)[mdm::sck::demodulate::Y_N1 ].bind(Y_N1 );
+	(*this)[mdm::sck::demodulate::Y_N2 ].bind(Y_N2 );
 	(*this)[mdm::tsk::demodulate].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
 template <class AQ, class AR>
 void Modem<B,R,Q>
-::demodulate_wg(const std::vector<R,AR>& H_N, const std::vector<Q,AQ>& Y_N1, std::vector<Q,AQ>& Y_N2,
-                const int frame_id, const bool managed_memory)
+::demodulate_wg(const std::vector<float,AR>& noise, const std::vector<R,AR>& H_N, const std::vector<Q,AQ>& Y_N1,
+                std::vector<Q,AQ>& Y_N2, const int frame_id, const bool managed_memory)
 {
-	(*this)[mdm::sck::demodulate_wg::H_N].bind(H_N);
-	(*this)[mdm::sck::demodulate_wg::Y_N1].bind(Y_N1);
-	(*this)[mdm::sck::demodulate_wg::Y_N2].bind(Y_N2);
+	(*this)[mdm::sck::demodulate_wg::noise].bind(noise);
+	(*this)[mdm::sck::demodulate_wg::H_N  ].bind(H_N  );
+	(*this)[mdm::sck::demodulate_wg::Y_N1 ].bind(Y_N1 );
+	(*this)[mdm::sck::demodulate_wg::Y_N2 ].bind(Y_N2 );
 	(*this)[mdm::tsk::demodulate_wg].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id, const bool managed_memory)
+::demodulate_wg(const float *noise, const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id, const bool managed_memory)
 {
-	(*this)[mdm::sck::demodulate_wg::H_N].bind(H_N);
-	(*this)[mdm::sck::demodulate_wg::Y_N1].bind(Y_N1);
-	(*this)[mdm::sck::demodulate_wg::Y_N2].bind(Y_N2);
+	(*this)[mdm::sck::demodulate_wg::noise].bind(noise);
+	(*this)[mdm::sck::demodulate_wg::H_N  ].bind(H_N  );
+	(*this)[mdm::sck::demodulate_wg::Y_N1 ].bind(Y_N1 );
+	(*this)[mdm::sck::demodulate_wg::Y_N2 ].bind(Y_N2 );
 	(*this)[mdm::tsk::demodulate_wg].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
 template <class A>
 void Modem<B,R,Q>
-::tdemodulate(const std::vector<Q,A>& Y_N1, const std::vector<Q,A>& Y_N2, std::vector<Q,A>& Y_N3, const int frame_id,
-              const bool managed_memory)
+::tdemodulate(const std::vector<float,A>& noise, const std::vector<Q,A>& Y_N1, const std::vector<Q,A>& Y_N2,
+              std::vector<Q,A>& Y_N3, const int frame_id, const bool managed_memory)
 {
-	(*this)[mdm::sck::tdemodulate::Y_N1].bind(Y_N1);
-	(*this)[mdm::sck::tdemodulate::Y_N2].bind(Y_N2);
-	(*this)[mdm::sck::tdemodulate::Y_N3].bind(Y_N3);
+	(*this)[mdm::sck::tdemodulate::noise].bind(noise);
+	(*this)[mdm::sck::tdemodulate::Y_N1 ].bind(Y_N1 );
+	(*this)[mdm::sck::tdemodulate::Y_N2 ].bind(Y_N2 );
+	(*this)[mdm::sck::tdemodulate::Y_N3 ].bind(Y_N3 );
 	(*this)[mdm::tsk::tdemodulate].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id, const bool managed_memory)
+::tdemodulate(const float *noise, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id, const bool managed_memory)
 {
-	(*this)[mdm::sck::tdemodulate::Y_N1].bind(Y_N1);
-	(*this)[mdm::sck::tdemodulate::Y_N2].bind(Y_N2);
-	(*this)[mdm::sck::tdemodulate::Y_N3].bind(Y_N3);
+	(*this)[mdm::sck::tdemodulate::noise].bind(noise);
+	(*this)[mdm::sck::tdemodulate::Y_N1 ].bind(Y_N1 );
+	(*this)[mdm::sck::tdemodulate::Y_N2 ].bind(Y_N2 );
+	(*this)[mdm::sck::tdemodulate::Y_N3 ].bind(Y_N3 );
 	(*this)[mdm::tsk::tdemodulate].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
 template <class AQ, class AR>
 void Modem<B,R,Q>
-::tdemodulate_wg(const std::vector<R,AR>& H_N,  const std::vector<Q,AQ>& Y_N1,
-                 const std::vector<Q,AQ>& Y_N2,       std::vector<Q,AQ>& Y_N3,
-                 const int frame_id, const bool managed_memory)
+::tdemodulate_wg(const std::vector<float,AR>& noise, const std::vector<R,AR>& H_N, const std::vector<Q,AQ>& Y_N1,
+                 const std::vector<Q,AQ>& Y_N2, std::vector<Q,AQ>& Y_N3, const int frame_id, const bool managed_memory)
 {
-	(*this)[mdm::sck::tdemodulate_wg::H_N].bind(H_N);
-	(*this)[mdm::sck::tdemodulate_wg::Y_N1].bind(Y_N1);
-	(*this)[mdm::sck::tdemodulate_wg::Y_N2].bind(Y_N2);
-	(*this)[mdm::sck::tdemodulate_wg::Y_N3].bind(Y_N3);
+	(*this)[mdm::sck::tdemodulate_wg::noise].bind(noise);
+	(*this)[mdm::sck::tdemodulate_wg::H_N  ].bind(H_N  );
+	(*this)[mdm::sck::tdemodulate_wg::Y_N1 ].bind(Y_N1 );
+	(*this)[mdm::sck::tdemodulate_wg::Y_N2 ].bind(Y_N2 );
+	(*this)[mdm::sck::tdemodulate_wg::Y_N3 ].bind(Y_N3 );
 	(*this)[mdm::tsk::tdemodulate_wg].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id, const bool managed_memory)
+::tdemodulate_wg(const float *noise, const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id,
+                 const bool managed_memory)
 {
-	(*this)[mdm::sck::tdemodulate_wg::H_N].bind(H_N);
-	(*this)[mdm::sck::tdemodulate_wg::Y_N1].bind(Y_N1);
-	(*this)[mdm::sck::tdemodulate_wg::Y_N2].bind(Y_N2);
-	(*this)[mdm::sck::tdemodulate_wg::Y_N3].bind(Y_N3);
+	(*this)[mdm::sck::tdemodulate_wg::noise].bind(noise);
+	(*this)[mdm::sck::tdemodulate_wg::H_N  ].bind(H_N  );
+	(*this)[mdm::sck::tdemodulate_wg::Y_N1 ].bind(Y_N1 );
+	(*this)[mdm::sck::tdemodulate_wg::Y_N2 ].bind(Y_N2 );
+	(*this)[mdm::sck::tdemodulate_wg::Y_N3 ].bind(Y_N3 );
 	(*this)[mdm::tsk::tdemodulate_wg].exec(frame_id, managed_memory);
 }
 
@@ -501,35 +522,35 @@ void Modem<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::_filter(const R *Y_N1, R *Y_N2, const size_t frame_id)
+::_filter(const float *noise, const R *Y_N1, R *Y_N2, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::_demodulate(const Q *Y_N1, Q *Y_N2, const size_t frame_id)
+::_demodulate(const float *noise, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::_demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
+::_demodulate_wg(const float *noise, const R *H_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
+::_tdemodulate(const float *noise, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R, typename Q>
 void Modem<B,R,Q>
-::_tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
+::_tdemodulate_wg(const float *noise, const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
@@ -546,18 +567,6 @@ void Modem<B,R,Q>
 ::set_demodulator(const bool demodulator)
 {
 	this->enable_demodulator = demodulator;
-}
-
-template <typename B, typename R, typename Q>
-void Modem<B,R,Q>
-::check_noise()
-{
-	if (this->noise == nullptr)
-	{
-		std::stringstream message;
-		message << "'noise' should not be nullptr.";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
 }
 
 }

@@ -26,9 +26,11 @@ using namespace aff3ct::simulation;
 template <typename B, typename R>
 EXIT<B,R>
 ::EXIT(const factory::EXIT& params_EXIT)
-: Simulation_legacy(params_EXIT),
-  params_EXIT      (params_EXIT),
-  sig_a            ((R)0       )
+: Simulation_legacy(params_EXIT         ),
+  params_EXIT      (params_EXIT         ),
+  noise_vals       (params_EXIT.n_frames),
+  noise_a_vals     (params_EXIT.n_frames),
+  sig_a            ((R)0                )
 {
 #ifdef AFF3CT_MPI
 	std::clog << rang::tag::warning << "This simulation is not MPI ready, the same computations will be launched "
@@ -130,6 +132,9 @@ void EXIT<B,R>
 
 		this->noise.set_values(sigma, ebn0, esn0);
 
+		for (size_t f = 0; f < (size_t)params_EXIT.n_frames; f++)
+			this->noise_vals[f] = this->noise.get_value();
+
 		// for each "a" standard deviation (sig_a) to be simulated
 		using namespace module;
 		for (unsigned sig_a_idx = 0; sig_a_idx < params_EXIT.sig_a_range.size(); sig_a_idx ++)
@@ -163,6 +168,8 @@ void EXIT<B,R>
 				this->noise_a.set_values(sig_a_2, sig_a_ebn0, sig_a_esn0);
 			}
 
+			for (size_t f = 0; f < (size_t)params_EXIT.n_frames; f++)
+				this->noise_a_vals[f] = this->noise_a.get_value();
 
 			if ((!params_EXIT.ter->disabled && noise_idx == 0 && sig_a_idx == 0 && !params_EXIT.debug)
 				|| (params_EXIT.statistics && !params_EXIT.debug))
@@ -239,19 +246,25 @@ void EXIT<B,R>
 	// Rayleigh channel
 	if (params_EXIT.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
-		cha[chn::sck::add_noise_wg ::X_N ](mda[mdm::sck::modulate    ::X_N2]);
-		mda[mdm::sck::demodulate_wg::H_N ](cha[chn::sck::add_noise_wg::H_N ]);
-		mda[mdm::sck::demodulate_wg::Y_N1](cha[chn::sck::add_noise_wg::Y_N ]);
+		cha[chn::sck::add_noise_wg ::noise].bind(this->noise_a_vals);
+		mda[mdm::sck::demodulate_wg::noise].bind(this->noise_a_vals);
+		cha[chn::sck::add_noise_wg ::X_N  ](mda[mdm::sck::modulate    ::X_N2]);
+		mda[mdm::sck::demodulate_wg::H_N  ](cha[chn::sck::add_noise_wg::H_N ]);
+		mda[mdm::sck::demodulate_wg::Y_N1 ](cha[chn::sck::add_noise_wg::Y_N ]);
 	}
 	else // additive channel (AWGN, USER, NO)
 	{
-		cha[chn::sck::add_noise ::X_N ](mda[mdm::sck::modulate ::X_N2]);
-		mda[mdm::sck::demodulate::Y_N1](cha[chn::sck::add_noise::Y_N ]);
+		cha[chn::sck::add_noise ::noise].bind(this->noise_a_vals);
+		mda[mdm::sck::demodulate::noise].bind(this->noise_a_vals);
+		cha[chn::sck::add_noise ::X_N  ](mda[mdm::sck::modulate ::X_N2]);
+		mda[mdm::sck::demodulate::Y_N1 ](cha[chn::sck::add_noise::Y_N ]);
 	}
 
 	// Rayleigh channel
 	if (params_EXIT.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
+		chn[chn::sck::add_noise_wg       ::noise ].bind(this->noise_vals);
+		mdm[mdm::sck::demodulate_wg      ::noise ].bind(this->noise_vals);
 		mnt[mnt::sck::check_mutual_info  ::llrs_a](mda[mdm::sck::demodulate_wg::Y_N2]);
 		chn[chn::sck::add_noise_wg       ::X_N   ](mdm[mdm::sck::modulate     ::X_N2]);
 		mdm[mdm::sck::demodulate_wg      ::H_N   ](chn[chn::sck::add_noise_wg ::H_N ]);
@@ -262,6 +275,8 @@ void EXIT<B,R>
 	}
 	else // additive channel (AWGN, USER, NO)
 	{
+		chn[chn::sck::add_noise          ::noise ].bind(this->noise_vals);
+		mdm[mdm::sck::demodulate         ::noise ].bind(this->noise_vals);
 		mnt[mnt::sck::check_mutual_info  ::llrs_a](mda[mdm::sck::demodulate::Y_N2]);
 		chn[chn::sck::add_noise          ::X_N   ](mdm[mdm::sck::modulate  ::X_N2]);
 		mdm[mdm::sck::demodulate         ::Y_N1  ](chn[chn::sck::add_noise ::Y_N ]);
@@ -373,10 +388,6 @@ std::unique_ptr<module::Modem<B,R,R>> EXIT<B,R>
 {
 	auto mdm = std::unique_ptr<module::Modem<B,R,R>>(params_EXIT.mdm->template build<B,R>(this->constellation.get()));
 	mdm->set_n_frames(this->params.n_frames);
-	mdm->set_noise(this->noise);
-
-	auto ptr = mdm.get();
-	this->noise.record_callback_update([ptr]() { ptr->notify_noise_update(); });
 
 	return mdm;
 }
@@ -389,10 +400,6 @@ std::unique_ptr<module::Modem<B,R>> EXIT<B,R>
 	mdm_params->N = params_EXIT.cdc->K;
 	auto mdm = std::unique_ptr<module::Modem<B,R>>(mdm_params->template build<B,R>(this->constellation.get()));
 	mdm->set_n_frames(this->params.n_frames);
-	mdm->set_noise(this->noise_a);
-
-	auto ptr = mdm.get();
-	this->noise_a.record_callback_update([ptr]() { ptr->notify_noise_update(); });
 
 	return mdm;
 }
@@ -403,10 +410,6 @@ std::unique_ptr<module::Channel<R>> EXIT<B,R>
 {
 	auto chn = std::unique_ptr<module::Channel<R>>(params_EXIT.chn->template build<R>());
 	chn->set_n_frames(this->params.n_frames);
-	chn->set_noise(this->noise);
-
-	auto ptr = chn.get();
-	this->noise.record_callback_update([ptr]() { ptr->notify_noise_update(); });
 
 	return chn;
 }
@@ -424,10 +427,6 @@ std::unique_ptr<module::Channel<R>> EXIT<B,R>
 
 	auto chn = std::unique_ptr<module::Channel<R>>(chn_params->template build<R>());
 	chn->set_n_frames(this->params.n_frames);
-	chn->set_noise(this->noise_a);
-
-	auto ptr = chn.get();
-	this->noise_a.record_callback_update([ptr]() { ptr->notify_noise_update(); });
 
 	return chn;
 }

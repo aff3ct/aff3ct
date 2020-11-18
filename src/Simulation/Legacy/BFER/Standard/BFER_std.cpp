@@ -71,17 +71,11 @@ void BFER_std<B,R,Q>
 	}
 
 	// set the noise
-	codec  [tid]->set_noise(*this->noise);
-	modem  [tid]->set_noise(*this->noise);
-	channel[tid]->set_noise(*this->noise);
+	codec[tid]->set_noise(*this->noise);
 
 	// register modules to "noise changed" callback
 	auto ptr_cdc = codec  [tid].get();
-	auto ptr_mdm = modem  [tid].get();
-	auto ptr_chn = channel[tid].get();
 	this->noise->record_callback_update([ptr_cdc](){ ptr_cdc->notify_noise_update(); });
-	this->noise->record_callback_update([ptr_mdm](){ ptr_mdm->notify_noise_update(); });
-	this->noise->record_callback_update([ptr_chn](){ ptr_chn->notify_noise_update(); });
 
 	// set the seeds
 	const auto seed_src = rd_engine_seed[tid]();

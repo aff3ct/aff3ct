@@ -10,8 +10,6 @@
 #include <vector>
 #include <memory>
 
-#include "Tools/Interface/Interface_get_set_noise.hpp"
-#include "Tools/Interface/Interface_notify_noise_update.hpp"
 #include "Tools/Interface/Interface_set_seed.hpp"
 #include "Tools/Noise/Noise.hpp"
 #include "Module/Task.hpp"
@@ -28,8 +26,8 @@ namespace module
 
 		namespace sck
 		{
-			enum class add_noise    : size_t { X_N, Y_N     , status };
-			enum class add_noise_wg : size_t { X_N, H_N, Y_N, status };
+			enum class add_noise    : size_t { noise, X_N, Y_N     , status };
+			enum class add_noise_wg : size_t { noise, X_N, H_N, Y_N, status };
 		}
 	}
 
@@ -43,10 +41,7 @@ namespace module
  * Please use Channel for inheritance (instead of Channel).
  */
 template <typename R = float>
-class Channel : public Module,
-                public tools::Interface_get_set_noise,
-                public tools::Interface_notify_noise_update,
-                public tools::Interface_set_seed
+class Channel : public Module, public tools::Interface_set_seed
 {
 public:
 	inline Task&   operator[](const chn::tsk               t);
@@ -55,7 +50,6 @@ public:
 
 protected:
 	const int N;                 // Size of one frame (= number of bits in one frame)
-	const tools::Noise<> *noise; // the current noise to apply to the input signal
 	std::vector<R> noised_data;  // vector of the noise applied to the signal
 
 public:
@@ -77,10 +71,6 @@ public:
 
 	const std::vector<R>& get_noised_data() const;
 
-	const tools::Noise<>& get_noise() const;
-
-	virtual void set_noise(const tools::Noise<>& noise);
-
 	virtual void set_seed(const int seed);
 
 	/*!
@@ -90,10 +80,10 @@ public:
 	 * \param Y_N: a noisy signal.
 	 */
 	template <class A = std::allocator<R>>
-	void add_noise(const std::vector<R,A>& X_N, std::vector<R,A>& Y_N, const int frame_id = -1,
-	               const bool managed_memory = true);
+	void add_noise(const std::vector<float,A>& noise, const std::vector<R,A>& X_N, std::vector<R,A>& Y_N,
+	               const int frame_id = -1, const bool managed_memory = true);
 
-	void add_noise(const R *X_N, R *Y_N, const int frame_id = -1, const bool managed_memory = true);
+	void add_noise(const float *noise, const R *X_N, R *Y_N, const int frame_id = -1, const bool managed_memory = true);
 
 	/*!
 	 * \brief Adds the noise to a perfectly clear signal.
@@ -103,21 +93,18 @@ public:
 	 * \param Y_N: a noisy signal.
 	 */
 	template <class A = std::allocator<R>>
-	void add_noise_wg(const std::vector<R,A>& X_N, std::vector<R,A>& H_N, std::vector<R,A>& Y_N,
-	                  const int frame_id = -1, const bool managed_memory = true);
+	void add_noise_wg(const std::vector<float,A>& noise, const std::vector<R,A>& X_N, std::vector<R,A>& H_N,
+	                  std::vector<R,A>& Y_N, const int frame_id = -1, const bool managed_memory = true);
 
-	void add_noise_wg(const R *X_N, R *H_N, R *Y_N, const int frame_id = -1, const bool managed_memory = true);
-
-	virtual void notify_noise_update();
+	void add_noise_wg(const float *noise, const R *X_N, R *H_N, R *Y_N, const int frame_id = -1,
+	                  const bool managed_memory = true);
 
 	virtual void set_n_frames(const size_t n_frames);
 
 protected:
-	virtual void _add_noise(const R *X_N, R *Y_N, const size_t frame_id);
+	virtual void _add_noise(const float *noise, const R *X_N, R *Y_N, const size_t frame_id);
 
-	virtual void _add_noise_wg(const R *X_N, R *H_N, R *Y_N, const size_t frame_id);
-
-	virtual void check_noise(); // check that the noise has the expected type
+	virtual void _add_noise_wg(const float *noise, const R *X_N, R *H_N, R *Y_N, const size_t frame_id);
 };
 }
 }

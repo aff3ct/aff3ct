@@ -335,13 +335,20 @@ void Simulation_sequence_BFER_ite<B,R,Q>
 	if (this->params_BFER_ite.chn->type != "NO")
 	{
 		if (is_rayleigh)
-			chn[chn::sck::add_noise_wg::X_N].bind(mdm1[mdm::sck::modulate::X_N2]);
+		{
+			chn[chn::sck::add_noise_wg::noise].bind(this->noise_vals);
+			chn[chn::sck::add_noise_wg::X_N  ].bind(mdm1[mdm::sck::modulate::X_N2]);
+		}
 		else
-			chn[chn::sck::add_noise::X_N].bind(mdm1[mdm::sck::modulate::X_N2]);
+		{
+			chn[chn::sck::add_noise::noise].bind(this->noise_vals);
+			chn[chn::sck::add_noise::X_N  ].bind(mdm1[mdm::sck::modulate::X_N2]);
+		}
 	}
 
 	if (mdm1.is_filter())
 	{
+		mdm1[mdm::sck::filter::noise].bind(this->noise_vals);
 		if (this->params_BFER_ite.chn->type != "NO")
 		{
 			if (is_rayleigh)
@@ -372,11 +379,14 @@ void Simulation_sequence_BFER_ite<B,R,Q>
 	{
 		if (is_rayleigh)
 		{
+			mdm1[mdm::sck::demodulate_wg::noise].bind(this->noise_vals);
 			if (this->params_BFER_ite.chn->type != "NO")
 				mdm1[mdm::sck::demodulate_wg::H_N].bind(chn[chn::sck::add_noise_wg::H_N]);
 			else
 				mdm1[mdm::sck::demodulate_wg::H_N].bind((uint8_t*)(chn[chn::sck::add_noise_wg::H_N].get_dataptr()));
 		}
+		else
+			mdm1[mdm::sck::demodulate::noise].bind(this->noise_vals);
 
 		if (this->params_BFER_ite.qnt->type != "NO")
 		{
@@ -472,6 +482,7 @@ void Simulation_sequence_BFER_ite<B,R,Q>
 	{
 		if (is_rayleigh)
 		{
+			mdm2[mdm::sck::tdemodulate_wg::noise].bind(this->noise_vals);
 			if (this->params_BFER_ite.chn->type != "NO")
 				mdm2[mdm::sck::tdemodulate_wg::H_N].bind(chn[chn::sck::add_noise_wg::H_N]);
 			else
@@ -490,6 +501,7 @@ void Simulation_sequence_BFER_ite<B,R,Q>
 		}
 		else
 		{
+			mdm2[mdm::sck::tdemodulate::noise].bind(this->noise_vals);
 			if (this->params_BFER_ite.qnt->type != "NO")
 				mdm2[mdm::sck::tdemodulate::Y_N1].bind(qnt[qnt::sck::process::Y_N2]);
 			else if (mdm1.is_filter())

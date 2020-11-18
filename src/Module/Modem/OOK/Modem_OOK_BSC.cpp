@@ -27,29 +27,16 @@ Modem_OOK_BSC<B,R,Q>* Modem_OOK_BSC<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_OOK_BSC<B,R,Q>
-::notify_noise_update()
+::_demodulate(const float *noise, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
-	Modem<B,R,Q>::notify_noise_update();
-	auto proba = this->noise->get_value(); // trow if noise is not set
+	if (*noise != this->last_noise)
+	{
+		auto proba = *noise;
+		if (proba == (R)0.)
+			proba = (R)1e-10;
+		this->log_pe_1_pe = (Q)log(proba / (1 - proba));
+	}
 
-	if (proba == (R)0.)
-		proba = (R)1e-10;
-
-	this->log_pe_1_pe = (Q)log(proba / (1 - proba));
-}
-
-template <typename B, typename R, typename Q>
-void Modem_OOK_BSC<B,R,Q>
-::check_noise()
-{
-	Modem_OOK<B,R,Q>::check_noise();
-	this->noise->is_of_type_throw(tools::Noise_type::EP);
-}
-
-template <typename B, typename R, typename Q>
-void Modem_OOK_BSC<B,R,Q>
-::_demodulate(const Q *Y_N1, Q *Y_N2, const size_t frame_id)
-{
 	auto log_pe_1_pe_2 = (Q)2 * this->log_pe_1_pe;
 
 	for (auto i = 0; i < this->N_fil; i++)

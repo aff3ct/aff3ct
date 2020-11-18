@@ -35,22 +35,6 @@ Modem_BPSK_fast<B,R,Q>* Modem_BPSK_fast<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
-::check_noise()
-{
-	Modem<B,R,Q>::check_noise();
-	this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
-}
-
-template <typename B, typename R, typename Q>
-void Modem_BPSK_fast<B,R,Q>
-::notify_noise_update()
-{
-	Modem<B,R,Q>::notify_noise_update();
-	this->two_on_square_sigma = (R)2.0 / (this->noise->get_value() * this->noise->get_value());
-}
-
-template <typename B, typename R, typename Q>
-void Modem_BPSK_fast<B,R,Q>
 ::_modulate(const B *X_N1, R *X_N2, const size_t frame_id)
 {
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, "Unsupported data type.");
@@ -163,14 +147,14 @@ void Modem_BPSK_fast<signed char, float, float>
 
 template <typename B,typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
-::_filter(const R *Y_N1, R *Y_N2, const size_t frame_id)
+::_filter(const float *noise, const R *Y_N1, R *Y_N2, const size_t frame_id)
 {
 	std::copy(Y_N1, Y_N1 + this->N_fil, Y_N2);
 }
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
-::_demodulate(const Q *Y_N1, Q *Y_N2, const size_t frame_id)
+::_demodulate(const float *noise, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	if (disable_sig2)
 		std::copy(Y_N1, Y_N1 + this->N, Y_N2);
@@ -182,29 +166,27 @@ void Modem_BPSK_fast<B,R,Q>
 		if (!std::is_floating_point<Q>::value)
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-		if (this->noise == nullptr)
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
-		else if (!this->noise->is_set())
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
+		if (*noise != this->last_noise)
+			this->two_on_square_sigma = (R)2.0 / (*noise * *noise);
 
 		auto size = (unsigned int)(this->N);
 		auto vec_loop_size = (size / mipp::nElReg<Q>()) * mipp::nElReg<Q>();
 		for (unsigned i = 0; i < vec_loop_size; i += mipp::nElReg<Q>())
 		{
-			auto y = mipp::Reg<Q>(&Y_N1[i]) * (Q)two_on_square_sigma;
+			auto y = mipp::Reg<Q>(&Y_N1[i]) * (Q)this->two_on_square_sigma;
 			y.store(&Y_N2[i]);
 		}
 		for (unsigned i = vec_loop_size; i < size; i++)
-			Y_N2[i] = Y_N1[i] * (Q)two_on_square_sigma;
+			Y_N2[i] = Y_N1[i] * (Q)this->two_on_square_sigma;
 	}
 
 }
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
-::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
+::_tdemodulate(const float *noise, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
-	this->_demodulate(Y_N1,Y_N3,frame_id);
+	this->_demodulate(noise, Y_N1, Y_N3, frame_id);
 }
 
 // ==================================================================================== explicit template instantiation

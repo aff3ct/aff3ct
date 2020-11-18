@@ -165,7 +165,7 @@ void Channel_Rayleigh_LLR_user<R>
 
 template <typename R>
 void Channel_Rayleigh_LLR_user<R>
-::_add_noise_wg(const R *X_N, R *H_N, R *Y_N, const size_t frame_id)
+::_add_noise_wg(const float *noise, const R *X_N, R *H_N, R *Y_N, const size_t frame_id)
 {
 	// get all the needed gains from the stock
 	for (unsigned i = 0; i < gains.size(); ++i)
@@ -184,7 +184,7 @@ void Channel_Rayleigh_LLR_user<R>
 	}
 
 	// generate the noise
-	gaussian_generator->generate(this->noised_data, (R)this->noise->get_value()); // trow if noise is not SIGMA type
+	gaussian_generator->generate(this->noised_data, (R)*noise);
 
 	// use the noise and the gain to modify the signal
 	for (size_t i = 0; i < this->N * this->n_frames; i++)
@@ -192,15 +192,6 @@ void Channel_Rayleigh_LLR_user<R>
 		H_N[i] = this->gains[i];
 		Y_N[i] = X_N[i] * H_N[i] + this->noised_data[i];
 	}
-}
-
-template<typename R>
-void Channel_Rayleigh_LLR_user<R>
-::check_noise()
-{
-	Channel<R>::check_noise();
-
-	this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
 }
 
 template<typename R>

@@ -125,12 +125,12 @@ void Channel_Rayleigh_LLR<R>
 
 template <typename R>
 void Channel_Rayleigh_LLR<R>
-::_add_noise_wg(const R *X_N, R *H_N, R *Y_N, const size_t frame_id)
+::_add_noise_wg(const float *noise, const R *X_N, R *H_N, R *Y_N, const size_t frame_id)
 {
 	if (add_users && this->n_frames > 1) // n_frames_per_wave = n_frames
 	{
 		gaussian_generator->generate(this->gains, (R)1 / (R)std::sqrt((R)2));
-		gaussian_generator->generate(this->noised_data.data(), this->N, (R)this->noise->get_value());
+		gaussian_generator->generate(this->noised_data.data(), this->N, (R)*noise);
 
 		std::fill(Y_N, Y_N + this->N, (R)0);
 
@@ -169,7 +169,7 @@ void Channel_Rayleigh_LLR<R>
 	{
 		const auto gains_size = this->complex ? this->N : 2 * this->N;
 		gaussian_generator->generate(this->gains      .data() + frame_id * this->N, gains_size, (R)1 / (R)std::sqrt((R)2));
-		gaussian_generator->generate(this->noised_data.data() + frame_id * this->N, this->N, (R)this->noise->get_value());
+		gaussian_generator->generate(this->noised_data.data() + frame_id * this->N, this->N, (R)*noise);
 
 		if (this->complex)
 		{
@@ -197,15 +197,6 @@ void Channel_Rayleigh_LLR<R>
 			}
 		}
 	}
-}
-
-template<typename R>
-void Channel_Rayleigh_LLR<R>
-::check_noise()
-{
-	Channel<R>::check_noise();
-
-	this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
 }
 
 template<typename R>

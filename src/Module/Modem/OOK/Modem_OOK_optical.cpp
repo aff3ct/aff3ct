@@ -31,31 +31,7 @@ Modem_OOK_optical<B,R,Q>* Modem_OOK_optical<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_OOK_optical<B,R,Q>
-::notify_noise_update()
-{
-	Modem<B,R,Q>::notify_noise_update();
-	this->current_dist = &dist.get_distribution(this->noise->get_value());
-
-	if (this->current_dist == nullptr)
-	{
-		std::stringstream message;
-		message << "Undefined noise power 'this->noise->get_value()' in the given distributions"
-		           " ('this->noise->get_value()' = " << this->noise->get_value() << ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-	}
-}
-
-template <typename B, typename R, typename Q>
-void Modem_OOK_optical<B,R,Q>
-::check_noise()
-{
-	Modem_OOK<B,R,Q>::check_noise();
-	this->noise->is_of_type_throw(tools::Noise_type::ROP);
-}
-
-template <typename B, typename R, typename Q>
-void Modem_OOK_optical<B,R,Q>
-::_demodulate(const Q *Y_N1, Q *Y_N2, const size_t frame_id)
+::_demodulate(const float *noise, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
@@ -63,8 +39,16 @@ void Modem_OOK_optical<B,R,Q>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (this->current_dist == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "No valid noise has been set.");
+	if (*noise != this->last_noise)
+	{
+		this->current_dist = &dist.get_distribution(*noise);
+		if (this->current_dist == nullptr)
+		{
+			std::stringstream message;
+			message << "Undefined noise power 'noise' in the given distributions ('noise' = " << *noise << ").";
+			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+		}
+	}
 
 	const auto& pdf_x  = this->current_dist->get_pdf_x();
 	const auto& pdf_y0 = this->current_dist->get_pdf_y()[0];

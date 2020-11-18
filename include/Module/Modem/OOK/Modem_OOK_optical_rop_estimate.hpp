@@ -23,7 +23,6 @@ class Modem_OOK_optical_rop_estimate : public Modem_OOK<B,R,Q>
 protected:
 	std::vector<size_t> ROP_known_bits;
 	const tools::Distributions<R>& dist;
-	tools::Received_optical_power<> rop_noise;
 
 	std::vector<R> dist_ROP_range;
 	std::vector<R> dist_meanvoltage_p0;
@@ -47,7 +46,7 @@ public:
 
 protected:
 	// H_N is replaced by X_N, that is the output of the modulation in order to estimate values
-	void _demodulate_wg(const R *X_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id);
+	void _demodulate_wg(const float *noise, const R *X_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id);
 
 private:
 	void init();

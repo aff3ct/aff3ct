@@ -42,23 +42,6 @@ Modem_generic<B,R,Q,MAX>* Modem_generic<B,R,Q,MAX>
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-void Modem_generic<B,R,Q,MAX>
-::check_noise()
-{
-	Modem<B,R,Q>::check_noise();
-	this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
-}
-
-template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-void Modem_generic<B,R,Q,MAX>
-::notify_noise_update()
-{
-	Modem<B,R,Q>::notify_noise_update();
-	if (!this->disable_sig2)
-		this->inv_sigma2 = (R)((R)1.0 / (2 * this->noise->get_value() * this->noise->get_value()));
-}
-
-template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 bool Modem_generic<B,R,Q,MAX>
 ::is_complex_mod(const tools::Constellation<R>& c)
 {
@@ -108,15 +91,18 @@ void Modem_generic<B,R,Q,MAX>
 
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_generic<B,R,Q,MAX>
-::_filter(const R *Y_N1, R *Y_N2, const size_t frame_id)
+::_filter(const float *noise, const R *Y_N1, R *Y_N2, const size_t frame_id)
 {
 	std::copy(Y_N1, Y_N1 + this->N_fil, Y_N2);
 }
 
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_generic<B,R,Q,MAX>
-::_demodulate(const Q *Y_N1, Q *Y_N2, const size_t frame_id)
+::_demodulate(const float *noise, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
+	if (*noise != this->last_noise && !this->disable_sig2)
+		this->inv_sigma2 = (R)((R)1.0 / (2 * *noise * *noise));
+
 	if (this->cstl.is_complex())
 		_demodulate_complex(Y_N1, Y_N2, frame_id);
 	else
@@ -125,8 +111,11 @@ void Modem_generic<B,R,Q,MAX>
 
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_generic<B,R,Q,MAX>
-::_demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
+::_demodulate_wg(const float *noise, const R *H_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
+	if (*noise != this->last_noise && !this->disable_sig2)
+		this->inv_sigma2 = (R)((R)1.0 / (2 * *noise * *noise));
+
 	if (this->cstl.is_complex())
 		_demodulate_wg_complex(H_N, Y_N1, Y_N2, frame_id);
 	else
@@ -135,8 +124,11 @@ void Modem_generic<B,R,Q,MAX>
 
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_generic<B,R,Q,MAX>
-::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
+::_tdemodulate(const float *noise, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
+	if (*noise != this->last_noise && !this->disable_sig2)
+		this->inv_sigma2 = (R)((R)1.0 / (2 * *noise * *noise));
+
 	if (this->cstl.is_complex())
 		_tdemodulate_complex(Y_N1, Y_N2, Y_N3, frame_id);
 	else
@@ -145,8 +137,11 @@ void Modem_generic<B,R,Q,MAX>
 
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_generic<B,R,Q,MAX>
-::_tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
+::_tdemodulate_wg(const float *noise, const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
+	if (*noise != this->last_noise && !this->disable_sig2)
+		this->inv_sigma2 = (R)((R)1.0 / (2 * *noise * *noise));
+
 	if (this->cstl.is_complex())
 		_tdemodulate_wg_complex(H_N, Y_N1, Y_N2, Y_N3, frame_id);
 	else
@@ -195,11 +190,6 @@ void Modem_generic<B,R,Q,MAX>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
-	else if (!this->noise->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
-
 	auto size = this->N;
 
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
@@ -232,11 +222,6 @@ void Modem_generic<B,R,Q,MAX>
 
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
-
-	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
-	else if (!this->noise->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	auto size = this->N;
 
@@ -273,11 +258,6 @@ void Modem_generic<B,R,Q,MAX>
 
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
-
-	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
-	else if (!this->noise->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	auto size = this->N;
 
@@ -330,11 +310,6 @@ void Modem_generic<B,R,Q,MAX>
 
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
-
-	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
-	else if (!this->noise->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	auto size = this->N;
 
@@ -471,11 +446,6 @@ void Modem_generic<B,R,Q,MAX>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
-	else if (!this->noise->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
-
 	auto size = this->N;
 
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
@@ -507,11 +477,6 @@ void Modem_generic<B,R,Q,MAX>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
-	else if (!this->noise->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
-
 	auto size = this->N;
 
 	for (auto n = 0; n < size; n++) // loop upon the LLRs
@@ -542,11 +507,6 @@ void Modem_generic<B,R,Q,MAX>
 
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
-
-	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
-	else if (!this->noise->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	auto size = this->N;
 
@@ -597,11 +557,6 @@ void Modem_generic<B,R,Q,MAX>
 
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
-
-	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
-	else if (!this->noise->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
 
 	auto size = this->N;
 

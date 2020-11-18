@@ -26,8 +26,8 @@ public:
 	static int size_fil(const int N);
 
 protected:
-	void _modulate(const B *X_N1, R *X_N2, const size_t frame_id);
-	void   _filter(const R *Y_N1, R *Y_N2, const size_t frame_id);
+	void _modulate(                    const B *X_N1, R *X_N2, const size_t frame_id);
+	void   _filter(const float *noise, const R *Y_N1, R *Y_N2, const size_t frame_id);
 };
 }
 }

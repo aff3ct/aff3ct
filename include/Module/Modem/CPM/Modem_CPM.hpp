@@ -65,19 +65,15 @@ public:
 	static int size_mod(const int N, const int bps, const int L, const int p, const int ups);
 	static int size_fil(const int N, const int bps, const int L, const int p);
 
-	void notify_noise_update();
-
 protected:
-	void check_noise();
-
-	void   _modulate (const B *X_N1,                R *X_N2, const size_t frame_id);
-	void     _filter (const R *Y_N1,                R *Y_N2, const size_t frame_id);
-	void _demodulate (const Q *Y_N1,                Q *Y_N2, const size_t frame_id);
-	void _tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id);
+	void   _modulate (                    const B *X_N1,                R *X_N2, const size_t frame_id);
+	void     _filter (const float *noise, const R *Y_N1,                R *Y_N2, const size_t frame_id);
+	void _demodulate (const float *noise, const Q *Y_N1,                Q *Y_N2, const size_t frame_id);
+	void _tdemodulate(const float *noise, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id);
 
 private:
 	void generate_baseband    (               );
-	void generate_projection  (               );
+	void generate_projection  (const R factor );
 	R calculate_phase_response(const R t_stamp);
 };
 }

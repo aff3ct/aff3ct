@@ -25,15 +25,11 @@ public:
 
 	virtual Modem_OOK_AWGN<B,R,Q>* clone() const;
 
-	void notify_noise_update();
-
 protected:
-	void check_noise();
-
-	void _demodulate    (              const Q *Y_N1,                Q *Y_N2, const size_t frame_id);
-	void _demodulate_wg (const R *H_N, const Q *Y_N1,                Q *Y_N2, const size_t frame_id);
-	void _tdemodulate   (              const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id);
-	void _tdemodulate_wg(const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id);
+	void _demodulate    (const float *noise,               const Q *Y_N1,                Q *Y_N2, const size_t frame_id);
+	void _demodulate_wg (const float *noise, const R *H_N, const Q *Y_N1,                Q *Y_N2, const size_t frame_id);
+	void _tdemodulate   (const float *noise,               const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id);
+	void _tdemodulate_wg(const float *noise, const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id);
 };
 }
 }

@@ -39,8 +39,7 @@ public:
 
 protected:
 	virtual void deep_copy(const Channel_binary_symmetric<R>& m);
-	void _add_noise(const R *X_N, R *Y_N, const size_t frame_id);
-	virtual void check_noise();
+	void _add_noise(const float *noise, const R *X_N, R *Y_N, const size_t frame_id);
 };
 }
 }

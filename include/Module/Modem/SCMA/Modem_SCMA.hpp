@@ -48,17 +48,13 @@ public:
 	static int size_mod(const int N, const std::string &codebook_path);
 	static int size_fil(const int N, const std::string &codebook_path);
 
-	void notify_noise_update();
-
 	virtual void set_n_frames(const size_t n_frames);
 
 protected:
-	void check_noise();
-
-	virtual void _modulate     (              const B* X_N1, R *X_N2, const size_t frame_id);
-	virtual void _demodulate   (              const Q *Y_N1, Q *Y_N2, const size_t frame_id);
-	virtual void _demodulate_wg(const R *H_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id);
-	virtual void _filter       (              const R *Y_N1, R *Y_N2, const size_t frame_id);
+	virtual void _modulate     (                                  const B* X_N1, R *X_N2, const size_t frame_id);
+	virtual void _demodulate   (const float *noise,               const Q *Y_N1, Q *Y_N2, const size_t frame_id);
+	virtual void _demodulate_wg(const float *noise, const R *H_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id);
+	virtual void _filter       (const float *noise,               const R *Y_N1, R *Y_N2, const size_t frame_id);
 
 private:
 	Q phi(const Q* Y_N1, int i, int j, int k, int re, int batch);

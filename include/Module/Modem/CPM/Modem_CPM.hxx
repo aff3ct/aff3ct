@@ -85,6 +85,9 @@ Modem_CPM<B,R,Q,MAX>
 	cpe.generate_tail_symb_transition();
 
 	generate_baseband();
+
+	if (no_sig2)
+		this->generate_projection((R)1);
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
@@ -94,23 +97,6 @@ Modem_CPM<B,R,Q,MAX>* Modem_CPM<B,R,Q,MAX>
 	auto m = new Modem_CPM(*this);
 	m->deep_copy(*this);
 	return m;
-}
-
-template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-void Modem_CPM<B,R,Q,MAX>
-::notify_noise_update()
-{
-	Modem<B,R,Q>::notify_noise_update();
-	if (!no_sig2)
-		this->generate_projection();
-}
-
-template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
-void Modem_CPM<B,R,Q,MAX>
-::check_noise()
-{
-	Modem<B,R,Q>::check_noise();
-	// this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
@@ -180,12 +166,10 @@ void Modem_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
-::_filter(const R *Y_N1, R *Y_N2, const size_t frame_id)
+::_filter(const float *noise, const R *Y_N1, R *Y_N2, const size_t frame_id)
 {
-	if (this->noise == nullptr)
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' should not be nullptr.");
-	else if (!this->noise->is_set())
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'noise' is not set.");
+	if (*noise != this->last_noise && !no_sig2)
+		this->generate_projection((R)1 / ((R)*noise * (R)*noise));
 
 	const auto Y_real = Y_N1;
 	const auto Y_imag = Y_N1 + this->N_mod / 2;
@@ -206,14 +190,14 @@ void Modem_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
-::_demodulate(const Q *Y_N1, Q *Y_N2, const size_t frame_id)
+::_demodulate(const float *noise, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	bcjr.decode(Y_N1, Y_N2);
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
-::_tdemodulate(const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
+::_tdemodulate(const float *noise, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
 	bcjr.decode(Y_N1, Y_N2, Y_N3);
 }
@@ -323,7 +307,7 @@ R Modem_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
-::generate_projection()
+::generate_projection(const R factor)
 {
 	if (projection.size() != baseband.size())
 	{
@@ -331,15 +315,6 @@ void Modem_CPM<B,R,Q,MAX>
 		message << "'projection.size()' and 'baseband.size()' have to be equal ('projection.size()' = "
 		        << projection.size() << ", 'baseband.size()' = " << baseband.size() << ").";
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
-	R factor = (R)1;
-
-	if (!no_sig2)
-	{
-		this->noise->is_of_type_throw(tools::Noise_type::SIGMA);
-
-		factor = (R)1 / (this->noise->get_value() * this->noise->get_value()); // 2 / sigma_complex^2
 	}
 
 	if (cpm->filters_type == "TOTAL")

@@ -166,11 +166,13 @@ void BFER_std_threads<B,R,Q>
 
 		if (this->params_BFER_std.chn->type != "NO")
 		{
+			chn[chn::sck::add_noise_wg::noise].bind(this->noise_vals);
 			bind_unbind(chn[chn::sck::add_noise_wg::X_N], mdm[mdm::sck::modulate::X_N2]);
 		}
 
 		if (mdm.is_filter())
 		{
+			mdm[mdm::sck::filter::noise].bind(this->noise_vals);
 			if (this->params_BFER_std.chn->type != "NO")
 				bind_unbind(mdm[mdm::sck::filter::Y_N1], chn[chn::sck::add_noise_wg::Y_N]);
 			else
@@ -179,6 +181,7 @@ void BFER_std_threads<B,R,Q>
 
 		if (mdm.is_demodulator())
 		{
+			mdm[mdm::sck::demodulate_wg::noise].bind(this->noise_vals);
 			if (this->params_BFER_std.chn->type != "NO")
 				bind_unbind(mdm[mdm::sck::demodulate_wg::H_N], chn[chn::sck::add_noise_wg::H_N]);
 			else
@@ -206,6 +209,8 @@ void BFER_std_threads<B,R,Q>
 	}
 	else if (is_optical)
 	{
+		chn[chn::sck::add_noise    ::noise].bind(this->noise_vals);
+		mdm[mdm::sck::demodulate_wg::noise].bind(this->noise_vals);
 		bind_unbind(chn[chn::sck::add_noise    ::X_N ], mdm[mdm::sck::modulate     ::X_N2]);
 		bind_unbind(mdm[mdm::sck::demodulate_wg::H_N ], mdm[mdm::sck::modulate     ::X_N2]);
 		bind_unbind(mdm[mdm::sck::demodulate_wg::Y_N1], chn[chn::sck::add_noise    ::Y_N ]);
@@ -214,10 +219,14 @@ void BFER_std_threads<B,R,Q>
 	else
 	{
 		if (this->params_BFER_std.chn->type != "NO")
+		{
+			chn[chn::sck::add_noise::noise].bind(this->noise_vals);
 			bind_unbind(chn[chn::sck::add_noise::X_N], mdm[mdm::sck::modulate::X_N2]);
+		}
 
 		if (mdm.is_filter())
 		{
+			mdm[mdm::sck::filter::noise].bind(this->noise_vals);
 			if (this->params_BFER_std.chn->type != "NO")
 				bind_unbind(mdm[mdm::sck::filter::Y_N1], chn[chn::sck::add_noise::Y_N]);
 			else
@@ -226,6 +235,7 @@ void BFER_std_threads<B,R,Q>
 
 		if (mdm.is_demodulator())
 		{
+			mdm[mdm::sck::demodulate::noise].bind(this->noise_vals);
 			if (mdm.is_filter())
 				bind_unbind(mdm[mdm::sck::demodulate::Y_N1], mdm[mdm::sck::filter::Y_N2]);
 			else if (this->params_BFER_std.chn->type != "NO")

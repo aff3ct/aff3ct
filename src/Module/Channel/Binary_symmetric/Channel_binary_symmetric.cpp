@@ -94,11 +94,11 @@ void Channel_binary_symmetric<R>
 
 template <typename R>
 void Channel_binary_symmetric<R>
-::_add_noise(const R *X_N, R *Y_N, const size_t frame_id)
+::_add_noise(const float *noise, const R *X_N, R *Y_N, const size_t frame_id)
 {
 	auto event_draw = (E*)(this->noised_data.data() + this->N * frame_id);
 
-	const auto event_probability = (R)this->noise->get_value();
+	const auto event_probability = (R)*noise;
 	event_generator->generate(event_draw, (unsigned)this->N, event_probability);
 
 	const mipp::Reg<E> r_false = (E)false;
@@ -121,14 +121,6 @@ void Channel_binary_symmetric<R>
 
 	for (auto i = vec_loop_size; i < this->N; i++)
 		Y_N[i] = event_draw[i] != (X_N[i] == (R)0.0) ? (R)0.0 : (R)1.0;
-}
-
-template<typename R>
-void Channel_binary_symmetric<R>::check_noise()
-{
-	Channel<R>::check_noise();
-
-	this->noise->is_of_type_throw(tools::Noise_type::EP);
 }
 
 // ==================================================================================== explicit template instantiation
