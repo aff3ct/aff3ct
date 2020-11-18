@@ -153,10 +153,7 @@ void BFER
 {
 	using namespace std::chrono;
 
-#if !defined(AFF3CT_SYSTEMC_SIMU)
 	this->n_threads = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
-#endif
-
 	Simulation::store(vals);
 
 	auto p = this->get_prefix();

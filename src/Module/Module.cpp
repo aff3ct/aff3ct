@@ -16,9 +16,6 @@ Module
   single_wave(false),
   name("Module"),
   short_name("Module")
-#ifdef AFF3CT_SYSTEMC_MODULE
-, sc(*this)
-#endif
 {
 }
 
@@ -40,14 +37,6 @@ void Module
 			this->tasks.push_back(std::move(t_new));
 		}
 	}
-
-#ifdef AFF3CT_SYSTEMC_MODULE
-	this->sc.module = this;
-	this->sc.sc_modules.clear();
-	for (size_t i = 0; i < m.sc.sc_modules.size(); i++)
-		if (m.sc.sc_modules[i] != nullptr)
-			this->sc.create_module(i);
-#endif
 }
 
 Module* Module
@@ -96,12 +85,6 @@ void Module
 void Module
 ::set_n_frames(const size_t n_frames)
 {
-#ifdef AFF3CT_SYSTEMC_MODULE
-	std::stringstream message;
-	message << "'This feature is not supported with the SystemC/TLM interface.";
-	throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-#endif
-
 	if (this->get_n_frames() != n_frames)
 		this->_set_n_frames(n_frames);
 
@@ -112,12 +95,6 @@ void Module
 void Module
 ::set_n_frames_per_wave(const size_t n_frames_per_wave)
 {
-#ifdef AFF3CT_SYSTEMC_MODULE
-	std::stringstream message;
-	message << "'This feature is not supported with the SystemC/TLM interface.";
-	throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-#endif
-
 	if (this->get_n_frames_per_wave() != n_frames_per_wave)
 		this->_set_n_frames_per_wave(n_frames_per_wave);
 
@@ -128,12 +105,6 @@ void Module
 void Module
 ::set_single_wave(const bool enable_single_wave)
 {
-#ifdef AFF3CT_SYSTEMC_MODULE
-	std::stringstream message;
-	message << "'This feature is not supported with the SystemC/TLM interface.";
-	throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-#endif
-
 	this->single_wave = enable_single_wave;
 	this->set_n_frames         (this->n_frames);
 	this->set_n_frames_per_wave(this->n_frames);

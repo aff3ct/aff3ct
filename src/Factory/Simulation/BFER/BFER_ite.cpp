@@ -2,7 +2,6 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Documentation/documentation.h"
-#include "Simulation/Legacy/BFER/Iterative/SystemC/SC_BFER_ite.hpp"
 #include "Simulation/Legacy/BFER/Iterative/Threads/BFER_ite_threads.hpp"
 #include "Simulation/Sequence/BFER/Iterative/Simulation_sequence_BFER_ite.hpp"
 #include "Factory/Simulation/BFER/BFER_ite.hpp"
@@ -152,14 +151,10 @@ template <typename B, typename R, typename Q>
 simulation::Simulation* BFER_ite
 ::build() const
 {
-#if defined(AFF3CT_SYSTEMC_SIMU)
-	return new simulation::SC_BFER_ite<B,R,Q>(*this);
-#else
 	if (this->sequence_threads)
 		return new simulation::Simulation_sequence_BFER_ite<B,R,Q>(*this);
 	else
 		return new simulation::BFER_ite_threads<B,R,Q>(*this);
-#endif
 }
 
 // ==================================================================================== explicit template instantiation

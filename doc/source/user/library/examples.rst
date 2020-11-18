@@ -420,113 +420,15 @@ possible to print debug information by toggling boolean to ``true`` at line
 .. note:: The full source code is available here:
   https://github.com/aff3ct/my_project_with_aff3ct/blob/master/examples/tasks/src/main.cpp.
 
-.. _user_library_systemc:
-
-SystemC/TLM
-===========
-
-Alternatively, the AFF3CT modules support SystemC/TLM interfaces,
-:numref:`lst_systemc_main` highlights the modifications in the ``main`` function
-to use standard TLM interfaces.
-
-.. code-block:: cpp
-	:caption: SystemC/TLM: main function
-	:name: lst_systemc_main
-	:emphasize-lines: 13-18,33-54,59-61,70-72
-	:linenos:
-
-	#include <aff3ct.hpp>
-	using namespace aff3ct;
-
-	int sc_main(int argc, char** argv)
-	{
-		params1  p; init_params1 (p   ); // create and initialize the parameters defined by the user
-		modules1 m; init_modules2(p, m); // create and initialize modules
-		utils1   u; init_utils1  (m, u); // create and initialize utils
-
-		// display the legend in the terminal
-		u.terminal->legend();
-
-		// add a callback to the monitor to call the "sc_core::sc_stop()" function
-		m.monitor->add_handler_check([&m, &u]() -> void
-		{
-			if (m.monitor->fe_limit_achieved())
-				sc_core::sc_stop();
-		});
-
-		// loop over the SNRs range
-		for (auto ebn0 = p.ebn0_min; ebn0 < p.ebn0_max; ebn0 += p.ebn0_step)
-		{
-			// compute the current sigma for the channel noise
-			const auto esn0  = tools::ebn0_to_esn0 (ebn0, p.R);
-			const auto sigma = tools::esn0_to_sigma(esn0     );
-
-			u.noise->set_values(sigma, ebn0, esn0);
-
-			// update the sigma of the modem and the channel
-			m.modem  ->set_noise(*u.noise);
-			m.channel->set_noise(*u.noise);
-
-			// create "sc_core::sc_module" instances for each task
-			using namespace module;
-			m.source ->sc.create_module(+src::tsk::generate    );
-			m.encoder->sc.create_module(+enc::tsk::encode      );
-			m.modem  ->sc.create_module(+mdm::tsk::modulate    );
-			m.modem  ->sc.create_module(+mdm::tsk::demodulate  );
-			m.channel->sc.create_module(+chn::tsk::add_noise   );
-			m.decoder->sc.create_module(+dec::tsk::decode_siho );
-			m.monitor->sc.create_module(+mnt::tsk::check_errors);
-
-			// declare a SystemC duplicator to duplicate the source 'generate' task output
-			tools::SC_Duplicator duplicator;
-
-			// bind the sockets between the modules
-			m.source ->sc[+src::tsk::generate   ].s_out[+src::sck::generate   ::U_K ](duplicator                            .s_in                               );
-			duplicator                           .s_out1                             (m.monitor->sc[+mnt::tsk::check_errors].s_in[+mnt::sck::check_errors::U   ]);
-			duplicator                           .s_out2                             (m.encoder->sc[+enc::tsk::encode      ].s_in[+enc::sck::encode      ::U_K ]);
-			m.encoder->sc[+enc::tsk::encode     ].s_out[+enc::sck::encode     ::X_N ](m.modem  ->sc[+mdm::tsk::modulate    ].s_in[+mdm::sck::modulate    ::X_N1]);
-			m.modem  ->sc[+mdm::tsk::modulate   ].s_out[+mdm::sck::modulate   ::X_N2](m.channel->sc[+chn::tsk::add_noise   ].s_in[+chn::sck::add_noise   ::X_N ]);
-			m.channel->sc[+chn::tsk::add_noise  ].s_out[+chn::sck::add_noise  ::Y_N ](m.modem  ->sc[+mdm::tsk::demodulate  ].s_in[+mdm::sck::demodulate  ::Y_N1]);
-			m.modem  ->sc[+mdm::tsk::demodulate ].s_out[+mdm::sck::demodulate ::Y_N2](m.decoder->sc[+dec::tsk::decode_siho ].s_in[+dec::sck::decode_siho ::Y_N ]);
-			m.decoder->sc[+dec::tsk::decode_siho].s_out[+dec::sck::decode_siho::V_K ](m.monitor->sc[+mnt::tsk::check_errors].s_in[+mnt::sck::check_errors::V   ]);
-
-			// display the performance (BER and FER) in real time (in a separate thread)
-			u.terminal->start_temp_report();
-
-			// start the SystemC simulation
-			sc_core::sc_report_handler::set_actions(sc_core::SC_INFO, sc_core::SC_DO_NOTHING);
-			sc_core::sc_start();
-
-			// display the performance (BER and FER) in the terminal
-			u.terminal->final_report();
-
-			// reset the monitor and the terminal for the next SNR
-			m.monitor->reset();
-			u.terminal->reset();
-
-			// dirty way to create a new SystemC simulation context
-			sc_core::sc_curr_simcontext = new sc_core::sc_simcontext();
-			sc_core::sc_default_global_context = sc_core::sc_curr_simcontext;
-		}
-
-		// display the statistics of the tasks (if enabled)
-		tools::Stats::show({ m.source.get(), m.encoder.get(), m.modem.get(), m.channel.get(), m.decoder.get(), m.monitor.get() }, true);
-
-		return 0;
-	}
-
-.. note:: The full source code is available here:
-  https://github.com/aff3ct/my_project_with_aff3ct/blob/master/examples/systemc/src/main.cpp.
-
 .. _user_library_factory:
 
 Factory
 =======
 
-In the previous :ref:`user_library_bootstrap`, :ref:`user_library_tasks` and
-:ref:`user_library_systemc` examples, the AFF3CT ``Module`` classes were built
-statically in the source code. In the *Factory* example, ``factory`` classes
-are used instead, to build modules dynamically from command line arguments.
+In the previous :ref:`user_library_bootstrap` and :ref:`user_library_tasks`
+examples, the AFF3CT ``Module`` classes were built statically in the source
+code. In the *Factory* example, ``factory`` classes are used instead, to build
+modules dynamically from command line arguments.
 
 .. code-block:: cpp
 	:caption: Factory: main function

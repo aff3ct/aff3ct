@@ -198,13 +198,7 @@ template <typename B, typename R>
 simulation::Simulation* EXIT
 ::build() const
 {
-#if defined(AFF3CT_SYSTEMC_SIMU)
-	throw tools::invalid_argument(__FILE__, __LINE__, __func__, "SystemC/TLM  simulation is not available.");
-#else
 	return new simulation::EXIT<B,R>(*this);
-#endif
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__);
 }
 
 // ==================================================================================== explicit template instantiation

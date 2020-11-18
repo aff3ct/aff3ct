@@ -255,37 +255,6 @@ build-linux-gcc-mpi:
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
 
-build-linux-gcc-systemc:
-  stage: build
-  variables:
-    GIT_SUBMODULE_STRATEGY: recursive
-  except:
-    - schedules
-  needs:
-    - job: analysis-cppcheck
-      artifacts: false
-    - job: analysis-headers
-      artifacts: false
-  tags:
-    - linux
-    - gcc
-    - systemc
-    - cmake
-  artifacts:
-    name: build-linux-gcc-systemc
-    paths:
-      - build_linux_gcc_systemc
-  script:
-    - cp $SYSTEMC_HOME/FindSystemC.cmake cmake/Modules/
-    - cp $SYSTEMC_HOME/FindTLM.cmake cmake/Modules/
-    - export CC="gcc"
-    - export CXX="g++"
-    - export CFLAGS="-Wall -funroll-loops -march=native -Wno-deprecated-declarations"
-    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_SYSTEMC_SIMU=ON"
-    - export NAME="build_linux_gcc_systemc"
-    - source ./ci/tools/threads.sh
-    - ./ci/build-linux-macos.sh
-
 build-linux-clang:
   stage: build
   variables:

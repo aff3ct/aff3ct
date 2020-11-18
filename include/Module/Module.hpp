@@ -15,9 +15,6 @@
 #include "Tools/Interface/Interface_clone.hpp"
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
-#ifdef AFF3CT_SYSTEMC_MODULE
-#include "Module/SC_Module.hpp"
-#endif
 
 namespace aff3ct
 {
@@ -43,12 +40,6 @@ protected:
 
 public:
 	std::vector<std::shared_ptr<Task>> tasks;
-#ifdef AFF3CT_SYSTEMC_MODULE
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-	friend SC_Module_container;
-#endif
-	SC_Module_container sc;
-#endif
 
 	/*!
 	 * \brief Constructor.

@@ -261,10 +261,6 @@ this feature and provides the following options:
 +-------------------------------+---------+---------+---------------------------------+
 | ``AFF3CT_LINK_MKL``           | BOOLEAN | OFF     | |cmake-opt-link_mkl|            |
 +-------------------------------+---------+---------+---------------------------------+
-| ``AFF3CT_SYSTEMC_SIMU``       | BOOLEAN | OFF     | |cmake-opt-systemc_simu|        |
-+-------------------------------+---------+---------+---------------------------------+
-| ``AFF3CT_SYSTEMC_MODULE``     | BOOLEAN | OFF     | |cmake-opt-systemc_module|      |
-+-------------------------------+---------+---------+---------------------------------+
 | ``AFF3CT_MPI``                | BOOLEAN | OFF     | |cmake-opt-mpi|                 |
 +-------------------------------+---------+---------+---------------------------------+
 | ``AFF3CT_POLAR_BIT_PACKING``  | BOOLEAN | ON      | |cmake-opt-polar_bit_packing|   |
@@ -285,10 +281,6 @@ this feature and provides the following options:
    channels).
 .. |cmake-opt-link_mkl| replace:: Link with the MKL library (used in the
    channels).
-.. |cmake-opt-systemc_simu| replace:: Enable the SystemC simulation
-   (incompatible with the library compilation).
-.. |cmake-opt-systemc_module| replace:: Enable the SystemC support (only for the
-   modules).
 .. |cmake-opt-mpi| replace:: Enable the MPI support.
 .. |cmake-opt-polar_bit_packing| replace:: Enable the bit packing technique for
    Polar code SC decoding.

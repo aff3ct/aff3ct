@@ -801,9 +801,6 @@
 #ifndef ROUTER_HPP_
 #include <Module/Router/Router.hpp>
 #endif
-#ifndef SC_MODULE_HPP_
-#include <Module/SC_Module.hpp>
-#endif
 #ifndef SINK_NO_HPP
 #include <Module/Sink/NO/Sink_NO.hpp>
 #endif
@@ -1445,24 +1442,6 @@
 #endif
 #ifndef SEQUENCE_HPP_
 #include <Tools/Sequence/Sequence.hpp>
-#endif
-#ifndef SC_DEBUG_HPP_
-#include <Tools/SystemC/SC_Debug.hpp>
-#endif
-#ifndef SC_DUMMY_HPP_
-#include <Tools/SystemC/SC_Dummy.hpp>
-#endif
-#ifndef SC_DUPLICATOR_HPP_
-#include <Tools/SystemC/SC_Duplicator.hpp>
-#endif
-#ifndef SC_FUNNEL_HPP_
-#include <Tools/SystemC/SC_Funnel.hpp>
-#endif
-#ifndef SC_PREDICATE_HPP_
-#include <Tools/SystemC/SC_Predicate.hpp>
-#endif
-#ifndef SC_ROUTER_HPP_
-#include <Tools/SystemC/SC_Router.hpp>
 #endif
 #ifndef THREAD_PINNING_HPP
 #include <Tools/Thread_pinning/Thread_pinning.hpp>

@@ -7,9 +7,6 @@
 #ifdef AFF3CT_MPI
 #include <mpi.h>
 #endif
-#ifdef AFF3CT_SYSTEMC_SIMU
-#include <systemc>
-#endif
 #include <cli.hpp>
 
 #include "Tools/types.h"
@@ -129,12 +126,6 @@ void print_version()
 	std::string mkl = "off";
 #endif
 
-#if defined(AFF3CT_SYSTEMC_SIMU)
-	std::string systemc = "on";
-#else
-	std::string systemc = "off";
-#endif
-
 	std::cout << "aff3ct (" << os << prec << ", " << compiler << "-" << compiler_version << ", "
 	          << mipp::InstructionFullType << ") " << affect_version << std::endl;
 	std::cout << "Compilation options:"                                                        << std::endl;
@@ -147,7 +138,6 @@ void print_version()
 	std::cout << "  - MPI:               " << mpi                                              << std::endl;
 	std::cout << "  - GSL:               " << gsl                                              << std::endl;
 	std::cout << "  - MKL:               " << mkl                                              << std::endl;
-	std::cout << "  - SystemC:           " << systemc                                          << std::endl;
 	std::cout << "Copyright (c) 2016-2020 - MIT license."                                      << std::endl;
 	std::cout << "This is free software; see the source for copying conditions.  There is NO"  << std::endl;
 	std::cout << "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." << std::endl;
@@ -197,11 +187,7 @@ int read_arguments(const int argc, const char** argv, factory::Launcher &params)
 	return (cmd_error.size() || display_help) ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
-#ifndef AFF3CT_SYSTEMC_SIMU
 int main(int argc, char **argv)
-#else
-int sc_main(int argc, char **argv)
-#endif
 {
 	int exit_code = EXIT_SUCCESS;
 #ifdef AFF3CT_MPI
