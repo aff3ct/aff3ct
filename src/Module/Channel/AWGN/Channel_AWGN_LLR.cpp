@@ -103,11 +103,11 @@ void Channel_AWGN_LLR<R>
 
 template <typename R>
 void Channel_AWGN_LLR<R>
-::_add_noise(const float *noise, const R *X_N, R *Y_N, const size_t frame_id)
+::_add_noise(const float *CP, const R *X_N, R *Y_N, const size_t frame_id)
 {
 	if (add_users && this->n_frames > 1) // n_frames_per_wave = n_frames
 	{
-		gaussian_generator->generate(this->noised_data.data(), this->N, (R)*noise);
+		gaussian_generator->generate(this->noised_data.data(), this->N, (R)*CP);
 
 		std::fill(Y_N, Y_N + this->N, (R)0);
 		for (size_t f = 0; f < this->n_frames; f++)
@@ -119,7 +119,7 @@ void Channel_AWGN_LLR<R>
 	}
 	else // n_frames_per_wave = 1
 	{
-		gaussian_generator->generate(this->noised_data.data() + frame_id * this->N, this->N, (R)*noise);
+		gaussian_generator->generate(this->noised_data.data() + frame_id * this->N, this->N, (R)*CP);
 
 		for (auto n = 0; n < this->N; n++)
 			Y_N[n] = X_N[n] + this->noised_data[frame_id * this->N +n];

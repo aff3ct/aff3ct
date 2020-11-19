@@ -66,7 +66,7 @@ void Modem_OOK<int,float,float>
 
 template <typename B,typename R, typename Q>
 void Modem_OOK<B,R,Q>
-::_filter(const float *noise, const R *Y_N1, R *Y_N2, const size_t frame_id)
+::_filter(const float *CP, const R *Y_N1, R *Y_N2, const size_t frame_id)
 {
 	std::copy(Y_N1, Y_N1 + this->N_fil, Y_N2);
 }

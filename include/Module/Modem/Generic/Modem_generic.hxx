@@ -91,17 +91,17 @@ void Modem_generic<B,R,Q,MAX>
 
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_generic<B,R,Q,MAX>
-::_filter(const float *noise, const R *Y_N1, R *Y_N2, const size_t frame_id)
+::_filter(const float *CP, const R *Y_N1, R *Y_N2, const size_t frame_id)
 {
 	std::copy(Y_N1, Y_N1 + this->N_fil, Y_N2);
 }
 
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_generic<B,R,Q,MAX>
-::_demodulate(const float *noise, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
+::_demodulate(const float *CP, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
-	if (*noise != this->last_noise && !this->disable_sig2)
-		this->inv_sigma2 = (R)((R)1.0 / (2 * *noise * *noise));
+	if (*CP != this->last_channel_param && !this->disable_sig2)
+		this->inv_sigma2 = (R)((R)1.0 / (2 * *CP * *CP));
 
 	if (this->cstl.is_complex())
 		_demodulate_complex(Y_N1, Y_N2, frame_id);
@@ -111,10 +111,10 @@ void Modem_generic<B,R,Q,MAX>
 
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_generic<B,R,Q,MAX>
-::_demodulate_wg(const float *noise, const R *H_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
+::_demodulate_wg(const float *CP, const R *H_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
-	if (*noise != this->last_noise && !this->disable_sig2)
-		this->inv_sigma2 = (R)((R)1.0 / (2 * *noise * *noise));
+	if (*CP != this->last_channel_param && !this->disable_sig2)
+		this->inv_sigma2 = (R)((R)1.0 / (2 * *CP * *CP));
 
 	if (this->cstl.is_complex())
 		_demodulate_wg_complex(H_N, Y_N1, Y_N2, frame_id);
@@ -124,10 +124,10 @@ void Modem_generic<B,R,Q,MAX>
 
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_generic<B,R,Q,MAX>
-::_tdemodulate(const float *noise, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
+::_tdemodulate(const float *CP, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
-	if (*noise != this->last_noise && !this->disable_sig2)
-		this->inv_sigma2 = (R)((R)1.0 / (2 * *noise * *noise));
+	if (*CP != this->last_channel_param && !this->disable_sig2)
+		this->inv_sigma2 = (R)((R)1.0 / (2 * *CP * *CP));
 
 	if (this->cstl.is_complex())
 		_tdemodulate_complex(Y_N1, Y_N2, Y_N3, frame_id);
@@ -137,10 +137,10 @@ void Modem_generic<B,R,Q,MAX>
 
 template <typename B,typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_generic<B,R,Q,MAX>
-::_tdemodulate_wg(const float *noise, const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
+::_tdemodulate_wg(const float *CP, const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
-	if (*noise != this->last_noise && !this->disable_sig2)
-		this->inv_sigma2 = (R)((R)1.0 / (2 * *noise * *noise));
+	if (*CP != this->last_channel_param && !this->disable_sig2)
+		this->inv_sigma2 = (R)((R)1.0 / (2 * *CP * *CP));
 
 	if (this->cstl.is_complex())
 		_tdemodulate_wg_complex(H_N, Y_N1, Y_N2, Y_N3, frame_id);

@@ -87,7 +87,7 @@ void Modem_OOK_optical_rop_estimate<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_OOK_optical_rop_estimate<B,R,Q>
-::_demodulate_wg(const float *noise, const R *X_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
+::_demodulate_wg(const float *CP, const R *X_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");

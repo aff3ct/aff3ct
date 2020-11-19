@@ -46,7 +46,7 @@ public:
 
 protected:
 	// H_N is replaced by X_N, that is the output of the modulation in order to estimate values
-	void _demodulate_wg(const float *noise, const R *X_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id);
+	void _demodulate_wg(const float *CP, const R *X_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id);
 
 private:
 	void init();

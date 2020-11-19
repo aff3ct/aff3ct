@@ -237,13 +237,13 @@ void Simulation_sequence_BFER_std<B,R,Q>
 
 		if (this->params_BFER_std.chn->type != "NO")
 		{
-			chn[chn::sck::add_noise_wg::noise].bind(this->noise_vals);
-			chn[chn::sck::add_noise_wg::X_N  ].bind(mdm[mdm::sck::modulate::X_N2]);
+			chn[chn::sck::add_noise_wg::CP ].bind(this->channel_params);
+			chn[chn::sck::add_noise_wg::X_N].bind(mdm[mdm::sck::modulate::X_N2]);
 		}
 
 		if (mdm.is_filter())
 		{
-			mdm[mdm::sck::filter::noise].bind(this->noise_vals);
+			mdm[mdm::sck::filter::CP].bind(this->channel_params);
 			if (this->params_BFER_std.chn->type != "NO")
 				mdm[mdm::sck::filter::Y_N1].bind(chn[chn::sck::add_noise_wg::Y_N]);
 			else
@@ -252,7 +252,7 @@ void Simulation_sequence_BFER_std<B,R,Q>
 
 		if (mdm.is_demodulator())
 		{
-			mdm[mdm::sck::demodulate_wg::noise].bind(this->noise_vals);
+			mdm[mdm::sck::demodulate_wg::CP].bind(this->channel_params);
 			if (this->params_BFER_std.chn->type != "NO")
 				mdm[mdm::sck::demodulate_wg::H_N].bind(chn[chn::sck::add_noise_wg::H_N]);
 			else
@@ -280,11 +280,11 @@ void Simulation_sequence_BFER_std<B,R,Q>
 	}
 	else if (is_optical)
 	{
-		chn[chn::sck::add_noise    ::noise].bind(this->noise_vals);
-		mdm[mdm::sck::demodulate_wg::noise].bind(this->noise_vals);
-		chn[chn::sck::add_noise    ::X_N  ].bind(mdm[mdm::sck::modulate ::X_N2]);
-		mdm[mdm::sck::demodulate_wg::H_N  ].bind(mdm[mdm::sck::modulate ::X_N2]);
-		mdm[mdm::sck::demodulate_wg::Y_N1 ].bind(chn[chn::sck::add_noise::Y_N ]);
+		chn[chn::sck::add_noise    ::CP  ].bind(this->channel_params);
+		mdm[mdm::sck::demodulate_wg::CP  ].bind(this->channel_params);
+		chn[chn::sck::add_noise    ::X_N ].bind(mdm[mdm::sck::modulate ::X_N2]);
+		mdm[mdm::sck::demodulate_wg::H_N ].bind(mdm[mdm::sck::modulate ::X_N2]);
+		mdm[mdm::sck::demodulate_wg::Y_N1].bind(chn[chn::sck::add_noise::Y_N ]);
 		if (this->params_BFER_std.qnt->type != "NO")
 			qnt[qnt::sck::process::Y_N1].bind(mdm[mdm::sck::demodulate_wg::Y_N2]);
 	}
@@ -292,13 +292,13 @@ void Simulation_sequence_BFER_std<B,R,Q>
 	{
 		if (this->params_BFER_std.chn->type != "NO")
 		{
-			chn[chn::sck::add_noise::noise].bind(this->noise_vals);
-			chn[chn::sck::add_noise::X_N  ].bind(mdm[mdm::sck::modulate::X_N2]);
+			chn[chn::sck::add_noise::CP ].bind(this->channel_params);
+			chn[chn::sck::add_noise::X_N].bind(mdm[mdm::sck::modulate::X_N2]);
 		}
 
 		if (mdm.is_filter())
 		{
-			mdm[mdm::sck::filter::noise].bind(this->noise_vals);
+			mdm[mdm::sck::filter::CP].bind(this->channel_params);
 			if (this->params_BFER_std.chn->type != "NO")
 				mdm[mdm::sck::filter::Y_N1].bind(chn[chn::sck::add_noise::Y_N]);
 			else
@@ -307,7 +307,7 @@ void Simulation_sequence_BFER_std<B,R,Q>
 
 		if (mdm.is_demodulator())
 		{
-			mdm[mdm::sck::demodulate::noise].bind(this->noise_vals);
+			mdm[mdm::sck::demodulate::CP].bind(this->channel_params);
 			if (mdm.is_filter())
 				mdm[mdm::sck::demodulate::Y_N1].bind(mdm[mdm::sck::filter::Y_N2]);
 			else if (this->params_BFER_std.chn->type != "NO")

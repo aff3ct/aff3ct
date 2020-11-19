@@ -94,11 +94,11 @@ void Channel_binary_erasure<R>
 
 template <typename R>
 void Channel_binary_erasure<R>
-::_add_noise(const float *noise, const R *X_N, R *Y_N, const size_t frame_id)
+::_add_noise(const float *CP, const R *X_N, R *Y_N, const size_t frame_id)
 {
 	auto event_draw = (E*)(this->noised_data.data() + this->N * frame_id);
 
-	const auto event_probability = (R)*noise;
+	const auto event_probability = (R)*CP;
 	event_generator->generate(event_draw, (unsigned)this->N, event_probability);
 
 	const mipp::Reg<R> r_erased = tools::unknown_symbol_val<R>();

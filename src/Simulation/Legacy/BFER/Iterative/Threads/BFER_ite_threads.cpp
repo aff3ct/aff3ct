@@ -223,19 +223,19 @@ void BFER_ite_threads<B,R,Q>
 	{
 		if (is_rayleigh)
 		{
-			chn[chn::sck::add_noise_wg::noise].bind(this->noise_vals);
+			chn[chn::sck::add_noise_wg::CP].bind(this->channel_params);
 			bind_unbind(chn[chn::sck::add_noise_wg::X_N], mdm1[mdm::sck::modulate::X_N2]);
 		}
 		else
 		{
-			chn[chn::sck::add_noise::noise].bind(this->noise_vals);
+			chn[chn::sck::add_noise::CP].bind(this->channel_params);
 			bind_unbind(chn[chn::sck::add_noise::X_N], mdm1[mdm::sck::modulate::X_N2]);
 		}
 	}
 
 	if (mdm1.is_filter())
 	{
-		mdm1[mdm::sck::filter::noise].bind(this->noise_vals);
+		mdm1[mdm::sck::filter::CP].bind(this->channel_params);
 		if (this->params_BFER_ite.chn->type != "NO")
 		{
 			if (is_rayleigh)
@@ -266,14 +266,14 @@ void BFER_ite_threads<B,R,Q>
 	{
 		if (is_rayleigh)
 		{
-			mdm1[mdm::sck::demodulate_wg::noise].bind(this->noise_vals);
+			mdm1[mdm::sck::demodulate_wg::CP].bind(this->channel_params);
 			if (this->params_BFER_ite.chn->type != "NO")
 				bind_unbind(mdm1[mdm::sck::demodulate_wg::H_N], chn[chn::sck::add_noise_wg::H_N]);
 			else
 				mdm1[mdm::sck::demodulate_wg::H_N].bind((uint8_t*)(chn[chn::sck::add_noise_wg::H_N].get_dataptr()));
 		}
 		else
-			mdm1[mdm::sck::demodulate::noise].bind(this->noise_vals);
+			mdm1[mdm::sck::demodulate::CP].bind(this->channel_params);
 
 		if (this->params_BFER_ite.qnt->type != "NO")
 		{
@@ -369,7 +369,7 @@ void BFER_ite_threads<B,R,Q>
 	{
 		if (is_rayleigh)
 		{
-			mdm2[mdm::sck::tdemodulate_wg::noise].bind(this->noise_vals);
+			mdm2[mdm::sck::tdemodulate_wg::CP].bind(this->channel_params);
 			if (this->params_BFER_ite.chn->type != "NO")
 				bind_unbind(mdm2[mdm::sck::tdemodulate_wg::H_N], chn[chn::sck::add_noise_wg::H_N]);
 			else
@@ -388,7 +388,7 @@ void BFER_ite_threads<B,R,Q>
 		}
 		else
 		{
-			mdm2[mdm::sck::tdemodulate::noise].bind(this->noise_vals);
+			mdm2[mdm::sck::tdemodulate::CP].bind(this->channel_params);
 			if (this->params_BFER_ite.qnt->type != "NO")
 				bind_unbind(mdm2[mdm::sck::tdemodulate::Y_N1], qnt[qnt::sck::process::Y_N2]);
 			else if (mdm1.is_filter())

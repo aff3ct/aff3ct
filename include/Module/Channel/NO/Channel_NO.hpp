@@ -23,7 +23,7 @@ public:
 	virtual Channel_NO<R>* clone() const;
 
 protected:
-	void _add_noise(const float *noise, const R *X_N, R *Y_N, const size_t frame_id);
+	void _add_noise(const float *CP, const R *X_N, R *Y_N, const size_t frame_id);
 };
 }
 }

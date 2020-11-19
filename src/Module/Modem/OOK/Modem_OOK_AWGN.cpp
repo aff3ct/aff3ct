@@ -30,7 +30,7 @@ Modem_OOK_AWGN<B,R,Q>* Modem_OOK_AWGN<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_OOK_AWGN<B,R,Q>
-::_demodulate(const float *noise, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
+::_demodulate(const float *CP, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	if (disable_sig2)
 		for (auto i = 0; i < this->N_fil; i++)
@@ -43,8 +43,8 @@ void Modem_OOK_AWGN<B,R,Q>
 		if (!std::is_floating_point<Q>::value)
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-		if (*noise != this->last_noise)
-			this->sigma_factor = (R)2.0 * (*noise) * (*noise);
+		if (*CP != this->last_channel_param)
+			this->sigma_factor = (R)2.0 * (*CP) * (*CP);
 
 		for (auto i = 0; i < this->N_fil; i++)
 			Y_N2[i] = -((Q) 2.0 * Y_N1[i] - (Q) 1) * (Q)this->sigma_factor;
@@ -53,7 +53,7 @@ void Modem_OOK_AWGN<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_OOK_AWGN<B,R,Q>
-::_demodulate_wg(const float *noise, const R *H_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
+::_demodulate_wg(const float *CP, const R *H_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	if (disable_sig2)
 		for (auto i = 0; i < this->N_fil; i++)
@@ -66,8 +66,8 @@ void Modem_OOK_AWGN<B,R,Q>
 		if (!std::is_floating_point<Q>::value)
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-		if (*noise != this->last_noise)
-			this->sigma_factor = (R)2.0 * (*noise) * (*noise);
+		if (*CP != this->last_channel_param)
+			this->sigma_factor = (R)2.0 * (*CP) * (*CP);
 
 		for (auto i = 0; i < this->N_fil; i++)
 			Y_N2[i] = -((Q)2.0 * Y_N1[i] - (Q)1) * (Q)this->sigma_factor * (Q)H_N[i];
@@ -76,16 +76,16 @@ void Modem_OOK_AWGN<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_OOK_AWGN<B,R,Q>
-::_tdemodulate(const float *noise, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
+::_tdemodulate(const float *CP, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
-	this->_demodulate(noise, Y_N1, Y_N3, frame_id);
+	this->_demodulate(CP, Y_N1, Y_N3, frame_id);
 }
 
 template <typename B, typename R, typename Q>
 void Modem_OOK_AWGN<B,R,Q>
-::_tdemodulate_wg(const float *noise, const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
+::_tdemodulate_wg(const float *CP, const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
-	this->_demodulate_wg(noise, H_N, Y_N1, Y_N3, frame_id);
+	this->_demodulate_wg(CP, H_N, Y_N1, Y_N3, frame_id);
 }
 
 // ==================================================================================== explicit template instantiation

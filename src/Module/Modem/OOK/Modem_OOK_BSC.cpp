@@ -27,11 +27,11 @@ Modem_OOK_BSC<B,R,Q>* Modem_OOK_BSC<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_OOK_BSC<B,R,Q>
-::_demodulate(const float *noise, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
+::_demodulate(const float *CP, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
-	if (*noise != this->last_noise)
+	if (*CP != this->last_channel_param)
 	{
-		auto proba = *noise;
+		auto proba = *CP;
 		if (proba == (R)0.)
 			proba = (R)1e-10;
 		this->log_pe_1_pe = (Q)log(proba / (1 - proba));

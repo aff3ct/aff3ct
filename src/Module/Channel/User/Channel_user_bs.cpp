@@ -28,7 +28,7 @@ Channel_user_bs<R>* Channel_user_bs<R>
 
 template <typename R>
 void Channel_user_bs<R>
-::_add_noise(const float *noise, const R *X_N, R *Y_N, const size_t frame_id)
+::_add_noise(const float *CP, const R *X_N, R *Y_N, const size_t frame_id)
 {
 	const mipp::Reg<E> r_false = (E)false;
 	const mipp::Reg<R> r_0     = (R)0.0;

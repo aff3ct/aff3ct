@@ -28,8 +28,8 @@ EXIT<B,R>
 ::EXIT(const factory::EXIT& params_EXIT)
 : Simulation_legacy(params_EXIT         ),
   params_EXIT      (params_EXIT         ),
-  noise_vals       (params_EXIT.n_frames),
-  noise_a_vals     (params_EXIT.n_frames),
+  channel_params   (params_EXIT.n_frames),
+  channel_a_params (params_EXIT.n_frames),
   sig_a            ((R)0                )
 {
 #ifdef AFF3CT_MPI
@@ -132,7 +132,7 @@ void EXIT<B,R>
 
 		this->noise.set_values(sigma, ebn0, esn0);
 
-		std::fill(this->noise_vals.begin(), this->noise_vals.end(), this->noise.get_value());
+		std::fill(this->channel_params.begin(), this->channel_params.end(), this->noise.get_value());
 
 		// for each "a" standard deviation (sig_a) to be simulated
 		using namespace module;
@@ -167,7 +167,7 @@ void EXIT<B,R>
 				this->noise_a.set_values(sig_a_2, sig_a_ebn0, sig_a_esn0);
 			}
 
-			std::fill(this->noise_a_vals.begin(), this->noise_a_vals.end(), this->noise_a.get_value());
+			std::fill(this->channel_a_params.begin(), this->channel_a_params.end(), this->noise_a.get_value());
 
 			if ((!params_EXIT.ter->disabled && noise_idx == 0 && sig_a_idx == 0 && !params_EXIT.debug)
 				|| (params_EXIT.statistics && !params_EXIT.debug))
@@ -244,25 +244,25 @@ void EXIT<B,R>
 	// Rayleigh channel
 	if (params_EXIT.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
-		cha[chn::sck::add_noise_wg ::noise].bind(this->noise_a_vals);
-		mda[mdm::sck::demodulate_wg::noise].bind(this->noise_a_vals);
-		cha[chn::sck::add_noise_wg ::X_N  ](mda[mdm::sck::modulate    ::X_N2]);
-		mda[mdm::sck::demodulate_wg::H_N  ](cha[chn::sck::add_noise_wg::H_N ]);
-		mda[mdm::sck::demodulate_wg::Y_N1 ](cha[chn::sck::add_noise_wg::Y_N ]);
+		cha[chn::sck::add_noise_wg ::CP  ].bind(this->channel_a_params);
+		mda[mdm::sck::demodulate_wg::CP  ].bind(this->channel_a_params);
+		cha[chn::sck::add_noise_wg ::X_N ](mda[mdm::sck::modulate    ::X_N2]);
+		mda[mdm::sck::demodulate_wg::H_N ](cha[chn::sck::add_noise_wg::H_N ]);
+		mda[mdm::sck::demodulate_wg::Y_N1](cha[chn::sck::add_noise_wg::Y_N ]);
 	}
 	else // additive channel (AWGN, USER, NO)
 	{
-		cha[chn::sck::add_noise ::noise].bind(this->noise_a_vals);
-		mda[mdm::sck::demodulate::noise].bind(this->noise_a_vals);
-		cha[chn::sck::add_noise ::X_N  ](mda[mdm::sck::modulate ::X_N2]);
-		mda[mdm::sck::demodulate::Y_N1 ](cha[chn::sck::add_noise::Y_N ]);
+		cha[chn::sck::add_noise ::CP  ].bind(this->channel_a_params);
+		mda[mdm::sck::demodulate::CP  ].bind(this->channel_a_params);
+		cha[chn::sck::add_noise ::X_N ](mda[mdm::sck::modulate ::X_N2]);
+		mda[mdm::sck::demodulate::Y_N1](cha[chn::sck::add_noise::Y_N ]);
 	}
 
 	// Rayleigh channel
 	if (params_EXIT.chn->type.find("RAYLEIGH") != std::string::npos)
 	{
-		chn[chn::sck::add_noise_wg       ::noise ].bind(this->noise_vals);
-		mdm[mdm::sck::demodulate_wg      ::noise ].bind(this->noise_vals);
+		chn[chn::sck::add_noise_wg       ::CP    ].bind(this->channel_params);
+		mdm[mdm::sck::demodulate_wg      ::CP    ].bind(this->channel_params);
 		mnt[mnt::sck::check_mutual_info  ::llrs_a](mda[mdm::sck::demodulate_wg::Y_N2]);
 		chn[chn::sck::add_noise_wg       ::X_N   ](mdm[mdm::sck::modulate     ::X_N2]);
 		mdm[mdm::sck::demodulate_wg      ::H_N   ](chn[chn::sck::add_noise_wg ::H_N ]);
@@ -273,8 +273,8 @@ void EXIT<B,R>
 	}
 	else // additive channel (AWGN, USER, NO)
 	{
-		chn[chn::sck::add_noise          ::noise ].bind(this->noise_vals);
-		mdm[mdm::sck::demodulate         ::noise ].bind(this->noise_vals);
+		chn[chn::sck::add_noise          ::CP    ].bind(this->channel_params);
+		mdm[mdm::sck::demodulate         ::CP    ].bind(this->channel_params);
 		mnt[mnt::sck::check_mutual_info  ::llrs_a](mda[mdm::sck::demodulate::Y_N2]);
 		chn[chn::sck::add_noise          ::X_N   ](mdm[mdm::sck::modulate  ::X_N2]);
 		mdm[mdm::sck::demodulate         ::Y_N1  ](chn[chn::sck::add_noise ::Y_N ]);

@@ -31,7 +31,7 @@ Modem_OOK_optical<B,R,Q>* Modem_OOK_optical<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_OOK_optical<B,R,Q>
-::_demodulate(const float *noise, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
+::_demodulate(const float *CP, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
@@ -39,13 +39,13 @@ void Modem_OOK_optical<B,R,Q>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (*noise != this->last_noise)
+	if (*CP != this->last_channel_param)
 	{
-		this->current_dist = &dist.get_distribution(*noise);
+		this->current_dist = &dist.get_distribution(*CP);
 		if (this->current_dist == nullptr)
 		{
 			std::stringstream message;
-			message << "Undefined noise power 'noise' in the given distributions ('noise' = " << *noise << ").";
+			message << "Undefined noise power 'CP' in the given distributions ('CP' = " << *CP << ").";
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 		}
 	}

@@ -25,13 +25,13 @@ namespace module
 
 		namespace sck
 		{
-			enum class modulate       : size_t {             X_N1, X_N2      , status };
-			enum class tmodulate      : size_t {             X_N1, X_N2      , status };
-			enum class filter         : size_t { noise,      Y_N1, Y_N2      , status };
-			enum class demodulate     : size_t { noise,      Y_N1, Y_N2      , status };
-			enum class tdemodulate    : size_t { noise,      Y_N1, Y_N2, Y_N3, status };
-			enum class demodulate_wg  : size_t { noise, H_N, Y_N1, Y_N2      , status };
-			enum class tdemodulate_wg : size_t { noise, H_N, Y_N1, Y_N2, Y_N3, status };
+			enum class modulate       : size_t {          X_N1, X_N2      , status };
+			enum class tmodulate      : size_t {          X_N1, X_N2      , status };
+			enum class filter         : size_t { CP,      Y_N1, Y_N2      , status };
+			enum class demodulate     : size_t { CP,      Y_N1, Y_N2      , status };
+			enum class tdemodulate    : size_t { CP,      Y_N1, Y_N2, Y_N3, status };
+			enum class demodulate_wg  : size_t { CP, H_N, Y_N1, Y_N2      , status };
+			enum class tdemodulate_wg : size_t { CP, H_N, Y_N1, Y_N2, Y_N3, status };
 		}
 	}
 
@@ -66,7 +66,7 @@ protected:
 
 	bool  enable_filter;
 	bool  enable_demodulator;
-	float last_noise;
+	float last_channel_param;
 
 public:
 	/*!
@@ -145,10 +145,10 @@ public:
 	 * \param Y_N2: a filtered vector.
 	 */
 	template <class A = std::allocator<R>>
-	void filter(const std::vector<float,A>& noise, const std::vector<R,A>& Y_N1, std::vector<R,A>& Y_N2,
+	void filter(const std::vector<float,A>& CP, const std::vector<R,A>& Y_N1, std::vector<R,A>& Y_N2,
 	            const int frame_id = -1, const bool managed_memory = true);
 
-	void filter(const float *noise, const R *Y_N1, R *Y_N2, const int frame_id = -1, const bool managed_memory = true);
+	void filter(const float *CP, const R *Y_N1, R *Y_N2, const int frame_id = -1, const bool managed_memory = true);
 
 	/*!
 	 * \brief Demodulates a vector of noised and modulated bits/symbols (after the filtering process if required).
@@ -157,10 +157,10 @@ public:
 	 * \param Y_N2: a demodulated vector.
 	 */
 	template <class A = std::allocator<Q>>
-	void demodulate(const std::vector<float,A>& noise, const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2,
+	void demodulate(const std::vector<float,A>& CP, const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2,
 	                const int frame_id = -1, const bool managed_memory = true);
 
-	void demodulate(const float *noise, const Q *Y_N1, Q *Y_N2, const int frame_id = -1,
+	void demodulate(const float *CP, const Q *Y_N1, Q *Y_N2, const int frame_id = -1,
 	                const bool managed_memory = true);
 
 	/*!
@@ -171,10 +171,10 @@ public:
 	 * \param Y_N2: a demodulated vector.
 	 */
 	template <class AQ = std::allocator<Q>, class AR = std::allocator<R>>
-	void demodulate_wg(const std::vector<float,AR>& noise, const std::vector<R,AR>& H_N, const std::vector<Q,AQ>& Y_N1,
+	void demodulate_wg(const std::vector<float,AR>& CP, const std::vector<R,AR>& H_N, const std::vector<Q,AQ>& Y_N1,
 	                   std::vector<Q,AQ>& Y_N2, const int frame_id = -1, const bool managed_memory = true);
 
-	void demodulate_wg(const float *noise, const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id = -1,
+	void demodulate_wg(const float *CP, const R *H_N, const Q *Y_N1, Q *Y_N2, const int frame_id = -1,
 	                   const bool managed_memory = true);
 
 	/*!
@@ -189,10 +189,10 @@ public:
 	 * \param Y_N3: a demodulated vector.
 	 */
 	template <class A = std::allocator<Q>>
-	void tdemodulate(const std::vector<float,A>& noise, const std::vector<Q,A>& Y_N1, const std::vector<Q,A>& Y_N2,
+	void tdemodulate(const std::vector<float,A>& CP, const std::vector<Q,A>& Y_N1, const std::vector<Q,A>& Y_N2,
 	                 std::vector<Q,A>& Y_N3, const int frame_id = -1, const bool managed_memory = true);
 
-	void tdemodulate(const float *noise, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id = -1,
+	void tdemodulate(const float *CP, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const int frame_id = -1,
 	                 const bool managed_memory = true);
 
 	/*!
@@ -208,11 +208,11 @@ public:
 	 * \param Y_N3: a demodulated vector.
 	 */
 	template <class AQ = std::allocator<Q>, class AR = std::allocator<R>>
-	void tdemodulate_wg(const std::vector<float,AR>& noise, const std::vector<R,AR>& H_N, const std::vector<Q,AQ>& Y_N1,
+	void tdemodulate_wg(const std::vector<float,AR>& CP, const std::vector<R,AR>& H_N, const std::vector<Q,AQ>& Y_N1,
 	                    const std::vector<Q,AQ>& Y_N2, std::vector<Q,AQ>& Y_N3, const int frame_id = -1,
 	                    const bool managed_memory = true);
 
-	void tdemodulate_wg(const float *noise, const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3,
+	void tdemodulate_wg(const float *CP, const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3,
 	                    const int frame_id = -1, const bool managed_memory = true);
 
 	/*!
@@ -248,15 +248,15 @@ protected:
 
 	virtual void _tmodulate(const Q *X_N1, R *X_N2, const size_t frame_id);
 
-	virtual void _filter(const float *noise, const R *Y_N1, R *Y_N2, const size_t frame_id);
+	virtual void _filter(const float *CP, const R *Y_N1, R *Y_N2, const size_t frame_id);
 
-	virtual void _demodulate(const float *noise, const Q *Y_N1, Q *Y_N2, const size_t frame_id);
+	virtual void _demodulate(const float *CP, const Q *Y_N1, Q *Y_N2, const size_t frame_id);
 
-	virtual void _demodulate_wg(const float *noise, const R *H_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id);
+	virtual void _demodulate_wg(const float *CP, const R *H_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id);
 
-	virtual void _tdemodulate(const float *noise, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id);
+	virtual void _tdemodulate(const float *CP, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id);
 
-	virtual void _tdemodulate_wg(const float *noise, const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3,
+	virtual void _tdemodulate_wg(const float *CP, const R *H_N, const Q *Y_N1, const Q *Y_N2, Q *Y_N3,
 	                             const size_t frame_id);
 
 	void set_filter(const bool filter);

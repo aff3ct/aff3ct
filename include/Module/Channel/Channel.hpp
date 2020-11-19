@@ -26,8 +26,8 @@ namespace module
 
 		namespace sck
 		{
-			enum class add_noise    : size_t { noise, X_N, Y_N     , status };
-			enum class add_noise_wg : size_t { noise, X_N, H_N, Y_N, status };
+			enum class add_noise    : size_t { CP, X_N, Y_N     , status };
+			enum class add_noise_wg : size_t { CP, X_N, H_N, Y_N, status };
 		}
 	}
 
@@ -80,10 +80,10 @@ public:
 	 * \param Y_N: a noisy signal.
 	 */
 	template <class A = std::allocator<R>>
-	void add_noise(const std::vector<float,A>& noise, const std::vector<R,A>& X_N, std::vector<R,A>& Y_N,
+	void add_noise(const std::vector<float,A>& CP, const std::vector<R,A>& X_N, std::vector<R,A>& Y_N,
 	               const int frame_id = -1, const bool managed_memory = true);
 
-	void add_noise(const float *noise, const R *X_N, R *Y_N, const int frame_id = -1, const bool managed_memory = true);
+	void add_noise(const float *CP, const R *X_N, R *Y_N, const int frame_id = -1, const bool managed_memory = true);
 
 	/*!
 	 * \brief Adds the noise to a perfectly clear signal.
@@ -93,18 +93,18 @@ public:
 	 * \param Y_N: a noisy signal.
 	 */
 	template <class A = std::allocator<R>>
-	void add_noise_wg(const std::vector<float,A>& noise, const std::vector<R,A>& X_N, std::vector<R,A>& H_N,
+	void add_noise_wg(const std::vector<float,A>& CP, const std::vector<R,A>& X_N, std::vector<R,A>& H_N,
 	                  std::vector<R,A>& Y_N, const int frame_id = -1, const bool managed_memory = true);
 
-	void add_noise_wg(const float *noise, const R *X_N, R *H_N, R *Y_N, const int frame_id = -1,
+	void add_noise_wg(const float *CP, const R *X_N, R *H_N, R *Y_N, const int frame_id = -1,
 	                  const bool managed_memory = true);
 
 	virtual void set_n_frames(const size_t n_frames);
 
 protected:
-	virtual void _add_noise(const float *noise, const R *X_N, R *Y_N, const size_t frame_id);
+	virtual void _add_noise(const float *CP, const R *X_N, R *Y_N, const size_t frame_id);
 
-	virtual void _add_noise_wg(const float *noise, const R *X_N, R *H_N, R *Y_N, const size_t frame_id);
+	virtual void _add_noise_wg(const float *CP, const R *X_N, R *H_N, R *Y_N, const size_t frame_id);
 };
 }
 }

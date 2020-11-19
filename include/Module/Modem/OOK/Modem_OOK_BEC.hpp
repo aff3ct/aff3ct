@@ -21,7 +21,7 @@ public:
 	virtual Modem_OOK_BEC<B,R,Q>* clone() const;
 
 protected:
-	void _demodulate(const float *noise, const Q *Y_N1, Q *Y_N2, const size_t frame_id);
+	void _demodulate(const float *CP, const Q *Y_N1, Q *Y_N2, const size_t frame_id);
 };
 }
 }

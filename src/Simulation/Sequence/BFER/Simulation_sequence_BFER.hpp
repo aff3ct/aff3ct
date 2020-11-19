@@ -36,7 +36,7 @@ protected:
 	const factory::BFER       &params_BFER;
 
 	std::unique_ptr<tools::Noise        < >> noise;
-	std::vector    <float                  > noise_vals;
+	std::vector    <float                  > channel_params;
 	std::unique_ptr<tools::Distributions<R>> distributions;
 	std::unique_ptr<tools::Constellation<R>> constellation;
 

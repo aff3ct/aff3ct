@@ -33,8 +33,8 @@ protected:
 	// code specifications
 	tools::Sigma<> noise;   // current noise simulated
 	tools::Sigma<> noise_a; // current noise simulated for the "a" part
-	std::vector<float> noise_vals;
-	std::vector<float> noise_a_vals;
+	std::vector<float> channel_params;
+	std::vector<float> channel_a_params;
 
 	R sig_a;
 

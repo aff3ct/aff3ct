@@ -45,7 +45,7 @@ public:
 	virtual void set_n_frames(const size_t n_frames);
 
 protected:
-	virtual void _add_noise_wg(const float *noise, const R *X_N, R *H_N, R *Y_N, const size_t frame_id);
+	virtual void _add_noise_wg(const float *CP, const R *X_N, R *H_N, R *Y_N, const size_t frame_id);
 	virtual void deep_copy(const Channel_Rayleigh_LLR<R>& m);
 };
 }

@@ -42,7 +42,7 @@ public:
 	static void read_as_binary (const std::string &filename, const int N, std::vector<std::vector<R>>& noise_buffer);
 
 protected:
-	virtual void _add_noise(const float *noise, const R *X_N, R *Y_N, const size_t frame_id);
+	virtual void _add_noise(const float *CP, const R *X_N, R *Y_N, const size_t frame_id);
 
 	virtual void set_noise(const size_t frame_id);
 };

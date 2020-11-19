@@ -33,7 +33,7 @@ BFER<B,R,Q>
   bit_rate((float)params_BFER.src->K / (float)params_BFER.cdc->N),
 
   noise(params_BFER.noise->template build<>()),
-  noise_vals(params_BFER.n_frames),
+  channel_params(params_BFER.n_frames),
 
   monitor_mi(params_BFER.n_threads),
   monitor_er(params_BFER.n_threads),
@@ -123,7 +123,7 @@ void BFER<B,R,Q>
 		params_BFER.noise->template update<>(*this->noise, params_BFER.noise->range[noise_idx], bit_rate,
 		                                     params_BFER.mdm->bps, params_BFER.mdm->cpm_upf);
 
-		std::fill(this->noise_vals.begin(), this->noise_vals.end(), this->noise->get_value());
+		std::fill(this->channel_params.begin(), this->channel_params.end(), this->noise->get_value());
 
 		if (params_BFER.err_track_revert)
 		{

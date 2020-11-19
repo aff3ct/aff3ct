@@ -38,7 +38,7 @@ public:
 	void set_seed(const int seed);
 
 protected:
-	void _add_noise(const float *noise, const R *X_N, R *Y_N, const size_t frame_id);
+	void _add_noise(const float *CP, const R *X_N, R *Y_N, const size_t frame_id);
 
 	virtual void deep_copy(const Channel_AWGN_LLR<R>& m);
 };

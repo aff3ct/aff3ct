@@ -93,7 +93,7 @@ void Modem_SCMA<B,R,Q,PSI>
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 void Modem_SCMA<B,R,Q,PSI>
-::_demodulate_wg(const float *noise, const R *H_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
+::_demodulate_wg(const float *CP, const R *H_N, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
@@ -101,8 +101,8 @@ void Modem_SCMA<B,R,Q,PSI>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (*noise != this->last_noise && !this->disable_sig2)
-		this->n0 = ((R)4.0 * *noise * *noise);
+	if (*CP != this->last_channel_param && !this->disable_sig2)
+		this->n0 = ((R)4.0 * *CP * *CP);
 
 	for (auto batch = 0 ; batch < (this->N +1) / 2 ; batch++)
 	{
@@ -119,7 +119,7 @@ void Modem_SCMA<B,R,Q,PSI>
 
 template <typename B, typename R, typename Q, tools::proto_psi<Q> PSI>
 void Modem_SCMA<B,R,Q,PSI>
-::_demodulate(const float *noise, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
+::_demodulate(const float *CP, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	if (!std::is_same<R,Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'R' and 'Q' have to be the same.");
@@ -127,8 +127,8 @@ void Modem_SCMA<B,R,Q,PSI>
 	if (!std::is_floating_point<Q>::value)
 		throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-	if (*noise != this->last_noise && !this->disable_sig2)
-		this->n0 = ((R)4.0 * *noise * *noise);
+	if (*CP != this->last_channel_param && !this->disable_sig2)
+		this->n0 = ((R)4.0 * *CP * *CP);
 
 	for (auto batch = 0 ; batch < (this->N +1) / 2 ; batch++)
 	{

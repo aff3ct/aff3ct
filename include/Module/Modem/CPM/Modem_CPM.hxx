@@ -166,10 +166,10 @@ void Modem_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
-::_filter(const float *noise, const R *Y_N1, R *Y_N2, const size_t frame_id)
+::_filter(const float *CP, const R *Y_N1, R *Y_N2, const size_t frame_id)
 {
-	if (*noise != this->last_noise && !no_sig2)
-		this->generate_projection((R)1 / ((R)*noise * (R)*noise));
+	if (*CP != this->last_channel_param && !no_sig2)
+		this->generate_projection((R)1 / ((R)*CP * (R)*CP));
 
 	const auto Y_real = Y_N1;
 	const auto Y_imag = Y_N1 + this->N_mod / 2;
@@ -190,14 +190,14 @@ void Modem_CPM<B,R,Q,MAX>
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
-::_demodulate(const float *noise, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
+::_demodulate(const float *CP, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	bcjr.decode(Y_N1, Y_N2);
 }
 
 template <typename B, typename R, typename Q, tools::proto_max<Q> MAX>
 void Modem_CPM<B,R,Q,MAX>
-::_tdemodulate(const float *noise, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
+::_tdemodulate(const float *CP, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
 	bcjr.decode(Y_N1, Y_N2, Y_N3);
 }

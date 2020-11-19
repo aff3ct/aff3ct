@@ -44,7 +44,7 @@ protected:
 	const float bit_rate;
 
 	std::unique_ptr<tools::Noise<>> noise; // current simulated noise
-	std::vector<float> noise_vals;
+	std::vector<float> channel_params;
 
 	// the monitors of the the BFER simulation
 	using Monitor_BFER_type = module::Monitor_BFER<B>;

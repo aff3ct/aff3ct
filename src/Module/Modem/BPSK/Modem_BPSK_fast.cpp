@@ -147,14 +147,14 @@ void Modem_BPSK_fast<signed char, float, float>
 
 template <typename B,typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
-::_filter(const float *noise, const R *Y_N1, R *Y_N2, const size_t frame_id)
+::_filter(const float *CP, const R *Y_N1, R *Y_N2, const size_t frame_id)
 {
 	std::copy(Y_N1, Y_N1 + this->N_fil, Y_N2);
 }
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
-::_demodulate(const float *noise, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
+::_demodulate(const float *CP, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	if (disable_sig2)
 		std::copy(Y_N1, Y_N1 + this->N, Y_N2);
@@ -166,8 +166,8 @@ void Modem_BPSK_fast<B,R,Q>
 		if (!std::is_floating_point<Q>::value)
 			throw tools::invalid_argument(__FILE__, __LINE__, __func__, "Type 'Q' has to be float or double.");
 
-		if (*noise != this->last_noise)
-			this->two_on_square_sigma = (R)2.0 / (*noise * *noise);
+		if (*CP != this->last_channel_param)
+			this->two_on_square_sigma = (R)2.0 / (*CP * *CP);
 
 		auto size = (unsigned int)(this->N);
 		auto vec_loop_size = (size / mipp::nElReg<Q>()) * mipp::nElReg<Q>();
@@ -184,9 +184,9 @@ void Modem_BPSK_fast<B,R,Q>
 
 template <typename B, typename R, typename Q>
 void Modem_BPSK_fast<B,R,Q>
-::_tdemodulate(const float *noise, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
+::_tdemodulate(const float *CP, const Q *Y_N1, const Q *Y_N2, Q *Y_N3, const size_t frame_id)
 {
-	this->_demodulate(noise, Y_N1, Y_N3, frame_id);
+	this->_demodulate(CP, Y_N1, Y_N3, frame_id);
 }
 
 // ==================================================================================== explicit template instantiation
