@@ -25,7 +25,7 @@ private:
 
 public:
 	Encoder_RSC_generic_json_sys(const int& K, const int& N,
-	                             const bool buffered_encoding = true, std::vector<int> poly = {5,7},
+	                             const bool buffered_encoding = true, std::vector<int> poly = std::vector<int>({5,7}),
 	                             std::ostream &stream = std::cout);
 	virtual ~Encoder_RSC_generic_json_sys() = default;
 
