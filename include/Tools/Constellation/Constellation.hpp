@@ -19,7 +19,7 @@ namespace tools
  * \brief describe a constellation
  * \param Symbol_type is the symbol type as a real or a complex
  */
-template <typename R>
+template <typename R = float>
 class Constellation
 {
 public:

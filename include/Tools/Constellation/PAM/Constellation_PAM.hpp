@@ -13,7 +13,7 @@ namespace aff3ct
 {
 namespace tools
 {
-template <typename R>
+template <typename R = float>
 class Constellation_PAM : public Constellation<R>
 {
 public:
