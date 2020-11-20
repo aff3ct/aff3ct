@@ -301,7 +301,7 @@ def split_templates(declaration_str):
 # detect a class method and record corresponding entry
 # - method_is_inline indicate whether the method is defined in the class (True) or just declared (False)
 # - method_suffix store trailing method declaration items (such as "= 0" for pure virtual methods)
-def add_method(class_entry, method, method_is_inline, method_suffix, method_templates):
+def add_method(class_entry, method, method_is_inline, method_suffix, method_templates, method_access):
     method_entry = dict()
     class_short_name = class_entry['class_short_name']
     method_is_virtual = False
@@ -409,6 +409,7 @@ def add_method(class_entry, method, method_is_inline, method_suffix, method_temp
         return None
 
     # record all method infos in a method_entry
+    method_entry['method_access'] = method_access
     method_entry['method_signature'] = method
     method_entry['method_kind'] = method_kind
     method_entry['method_is_virtual'] = method_is_virtual
@@ -733,8 +734,8 @@ def process_ast(ast_filename):
                             scope_entry = None
                             if not filter_out:
                                 # only record public class members
-                                if previous_scope == 'class' and class_access == 'public':
-                                    method_entry = add_method(class_entry, method, True, '', method_templates)
+                                if previous_scope == 'class' and (class_access == 'public' or class_access == 'protected'):
+                                    method_entry = add_method(class_entry, method, True, '', method_templates, class_access)
                                     if method_entry is not None:
                                         method_unique_name = method_entry['method_unique_name']
                                         method_unique_short_name = method_entry['method_unique_short_name']
@@ -833,7 +834,7 @@ def process_ast(ast_filename):
                         continue
 
                     # detect method declarations in classes
-                    if scope == 'class' and class_access == 'public':
+                    if scope == 'class' and (class_access == 'public' or class_access == 'protected'):
                         method = None
 
                         (method_line_perhaps, method_templates) = split_templates(line.strip())
@@ -851,7 +852,7 @@ def process_ast(ast_filename):
                                 method_suffix = m.group(2)
                         if method is not None:
                             # some method found, add it to db
-                            method_entry = add_method(class_entry, method, False, method_suffix, method_templates)
+                            method_entry = add_method(class_entry, method, False, method_suffix, method_templates, class_access)
                             if method_entry is not None:
                                 method_unique_name = method_entry['method_unique_name']
                                 method_unique_short_name = method_entry['method_unique_short_name']
@@ -862,7 +863,7 @@ def process_ast(ast_filename):
                             continue
 
                 if not filter_out:
-                    if scope == 'class' and class_access == 'public':
+                    if scope == 'class' and (class_access == 'public' or class_access == 'protected'):
                         # only consider class members, and only public ones
                         if debug_mode:
                             print(line)
@@ -886,7 +887,7 @@ def process_ast(ast_filename):
                 method_output = method_entry['method_output']
                 if method_output is not None and method_output['out_type'] in enum_classes:
                     method_output['out_realtype'] = enum_classes[method_output['out_type']]['class_enum_type']
-            
+
 
     if debug_mode:
         # if debug_mode, dump internal_db
