@@ -38,7 +38,7 @@ protected:
 
 		Attributes();
 		void reset();
-		Attributes& operator+=(const Attributes&);
+		Attributes& operator+=(const Attributes& a);
 	};
 
 private:
