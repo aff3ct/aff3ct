@@ -17,6 +17,7 @@
 #include "Tools/Interface/Interface_clone.hpp"
 #include "Tools/Algo/Tree/Generic/Generic_node.hpp"
 #include "Tools/Interface/Interface_get_set_n_frames.hpp"
+#include "Tools/Interface/Interface_is_done.hpp"
 
 namespace aff3ct
 {
@@ -75,6 +76,7 @@ protected:
 	std::vector<size_t> puids;
 	bool no_copy_mode;
 	const std::vector<const module::Task*> saved_exclusions;
+	std::vector<tools::Interface_is_done*> donners;
 
 public:
 	Sequence(const std::vector<const module::Task*> &firsts,
@@ -140,7 +142,8 @@ public:
 
 	void exec(std::function<bool(const std::vector<const int*>&)> stop_condition);
 	void exec(std::function<bool(                              )> stop_condition);
-	void exec(const size_t tid = 0, const int frame_id = -1    );
+	void exec(                                                                  );
+	void exec_seq(const size_t tid = 0, const int frame_id = -1);
 	inline size_t get_n_threads() const;
 
 	template <class C = module::Module>

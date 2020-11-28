@@ -9,6 +9,7 @@
 #include <cstddef>
 
 #include "Tools/Interface/Interface_reset.hpp"
+#include "Tools/Interface/Interface_is_done.hpp"
 #include "Module/Module.hpp"
 
 namespace aff3ct
@@ -35,7 +36,7 @@ namespace module
  *
  * Please use Monitor for inheritance (instead of Monitor).
  */
-class Monitor : public Module, public tools::Interface_reset
+class Monitor : public Module, public tools::Interface_reset, public tools::Interface_is_done
 {
 public:
 

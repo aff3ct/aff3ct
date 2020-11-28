@@ -19,7 +19,7 @@ private:
 	std::ifstream source_file;
 	const bool auto_reset;
 	const bool fifo_mode;
-	bool over;
+	bool done;
 	size_t n_left;
 	std::vector<char> memblk;
 	std::vector<B> left_bits; // to store bits that are left by last call (n_left & n_completing)
@@ -31,7 +31,7 @@ public:
 	                   const bool fifo_mode = false);
 	virtual ~Source_user_binary() = default;
 
-	virtual bool is_over() const;
+	virtual bool is_done() const;
 
 	virtual void reset();
 

@@ -1335,6 +1335,9 @@
 #ifndef INTERFACE_GET_SET_NOISE_HPP__
 #include <Tools/Interface/Interface_get_set_noise.hpp>
 #endif
+#ifndef INTERFACE_IS_DONE_HPP__
+#include <Tools/Interface/Interface_is_done.hpp>
+#endif
 #ifndef INTERFACE_NOTIFY_FROZENBITS_UPDATE_HPP__
 #include <Tools/Interface/Interface_notify_frozenbits_update.hpp>
 #endif

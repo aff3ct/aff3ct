@@ -286,6 +286,7 @@ void Sequence
 	this->_init<SS>(root);
 	this->update_firsts_and_lasts_tasks();
 	this->gen_processes();
+	this->donners = get_modules<tools::Interface_is_done>(true);
 }
 
 Sequence* Sequence
@@ -621,7 +622,19 @@ void Sequence
 }
 
 void Sequence
-::exec(const size_t tid, const int frame_id)
+::exec()
+{
+	this->exec([this]()
+	{
+		for (auto donner : this->donners)
+			if (donner->is_done())
+				return true;
+		return false;
+	});
+}
+
+void Sequence
+::exec_seq(const size_t tid, const int frame_id)
 {
 	if (tid >= this->sequences.size())
 	{

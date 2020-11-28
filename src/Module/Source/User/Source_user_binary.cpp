@@ -15,7 +15,7 @@ Source_user_binary<B>
   source_file(filename.c_str(), std::ios::in | std::ios::binary),
   auto_reset(fifo_mode ? true : auto_reset),
   fifo_mode(fifo_mode),
-  over(false),
+  done(false),
   n_left(0),
   memblk(K),
   left_bits(CHAR_BIT)
@@ -40,22 +40,22 @@ void Source_user_binary<B>
 		source_file.seekg(0, std::ios::beg);
 	if (source_file.fail())
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "Could not go back to the beginning of the file.");
-	this->over = false;
+	this->done = false;
 	this->n_left = 0;
 }
 
 template <typename B>
 bool Source_user_binary<B>
-::is_over() const
+::is_done() const
 {
-	return this->over;
+	return this->done;
 }
 
 template <typename B>
 void Source_user_binary<B>
 ::_generate(B *U_K, const size_t frame_id)
 {
-	if (this->is_over())
+	if (this->is_done())
 		std::fill(U_K, U_K + this->K, (B)0);
 	else
 	{
@@ -93,7 +93,7 @@ void Source_user_binary<B>
 			this->n_left = tmp_n_left < 0 ? (size_t)0 : (size_t)tmp_n_left;
 
 			if (!this->auto_reset && source_file.eof())
-				this->over = true;
+				this->done = true;
 		}
 		else
 		{

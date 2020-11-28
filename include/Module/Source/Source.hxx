@@ -98,7 +98,7 @@ void Source<B>
 
 template <typename B>
 bool Source<B>
-::is_over() const
+::is_done() const
 {
 	return false;
 }
