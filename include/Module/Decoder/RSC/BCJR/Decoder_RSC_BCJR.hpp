@@ -22,7 +22,7 @@ protected:
 	const int  n_ff;
 	const bool buffered_encoding;
 
-	const std::vector<std::vector<int>> &trellis;
+	const std::vector<std::vector<int>> trellis;
 
 	mipp::vector<R> sys, par; // input LLR from the channel
 	mipp::vector<R> ext;      // extrinsic LLRs
