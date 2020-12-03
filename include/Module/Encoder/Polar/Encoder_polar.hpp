@@ -19,7 +19,7 @@ class Encoder_polar : public Encoder<B>, public tools::Interface_notify_frozenbi
 {
 protected:
 	const int                m;           // log_2 of code length
-	const std::vector<bool>& frozen_bits; // true means frozen, false means set to 0/1
+	      std::vector<bool>  frozen_bits; // true means frozen, false means set to 0/1
 	      std::vector<B>     X_N_tmp;
 
 public:
@@ -32,7 +32,7 @@ public:
 
 	bool is_codeword(const B *X_N);
 
-	virtual void notify_noise_update();
+	virtual void notify_frozenbits_update(const std::vector<bool>& frozen_bits);
 
 protected:
 	virtual void _encode(const B *U_K, B *X_N, const size_t frame_id);

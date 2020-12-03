@@ -23,7 +23,8 @@ namespace aff3ct
 namespace tools
 {
 template <typename B = int, typename Q = float>
-class Codec_polar : public Codec_SISO<B,Q>
+class Codec_polar : public Codec_SISO<B,Q>,
+                    public Interface_notify_frozenbits_update
 {
 protected:
 	const bool adaptive_fb;
@@ -52,7 +53,7 @@ public:
 	bool is_generated_decoder() const;
 	const Frozenbits_generator& get_frozen_bits_generator() const;
 
-	void notify_frozenbits_update();
+	void notify_frozenbits_update(const std::vector<bool>& frozen_bits);
 	virtual void notify_noise_update();
 
 protected:

@@ -52,7 +52,7 @@ Encoder_polar_MK<B>
 				this->Ke[ke][i * kernel_size +j] = (B)this->code.get_kernel_matrices()[ke][j][i];
 	}
 
-	this->notify_noise_update();
+	this->notify_frozenbits_update(frozen_bits);
 }
 
 template <typename B>
@@ -159,8 +159,9 @@ void Encoder_polar_MK<B>
 
 template <typename B>
 void Encoder_polar_MK<B>
-::notify_noise_update()
+::notify_frozenbits_update(const std::vector<bool>& frozen_bits)
 {
+	std::copy(frozen_bits.begin(), frozen_bits.end(), this->frozen_bits.begin());
 	auto k = 0;
 	for (auto n = 0; n < this->N; n++)
 		if (!frozen_bits[n])

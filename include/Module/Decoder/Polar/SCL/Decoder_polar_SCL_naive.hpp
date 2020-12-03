@@ -38,7 +38,7 @@ protected:
 	const int m;           // graph depth
 	const R   metric_init; // init value of the metrics in the trees
 
-	const std::vector<bool> &frozen_bits;
+	std::vector<bool> frozen_bits;
 
 	const int     L; // maximum paths number
 	std::set<int> active_paths;
@@ -52,7 +52,7 @@ public:
 
 	virtual Decoder_polar_SCL_naive<B,R,F,G>* clone() const;
 
-	virtual void notify_noise_update();
+	virtual void notify_frozenbits_update(const std::vector<bool>&);
 
 protected:
 	virtual void deep_copy          (const Decoder_polar_SCL_naive<B,R,F,G>& m);

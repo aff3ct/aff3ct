@@ -14,7 +14,7 @@ Extractor_polar<B,Q>
 	const std::string name = "Extractor_polar";
 	this->set_name(name);
 
-	this->notify_noise_update();
+	this->notify_frozenbits_update(frozen_bits);
 }
 
 template <typename B, typename Q>
@@ -28,8 +28,9 @@ Extractor_polar<B,Q>* Extractor_polar<B,Q>
 
 template <typename B, typename Q>
 void Extractor_polar<B,Q>
-::notify_noise_update()
+::notify_frozenbits_update(const std::vector<bool>& fb)
 {
+	std::copy(fb.begin(), fb.end(), this->frozen_bits.begin());
 	int j = 0;
 	for (auto i = 0; i < this->N; i++)
 		if (!this->frozen_bits[i])

@@ -46,7 +46,7 @@ class Decoder_polar_MK_SC_naive : public Decoder_SIHO<B,R>, public tools::Interf
 
 protected:
 	const tools::Polar_code &code;
-	const std::vector<bool> &frozen_bits;
+	std::vector<bool> frozen_bits;
 	tools::Generic_tree<Contents_MK_SC<B,R>> polar_tree;
 	std::vector<std::vector<B>> Ke;
 	std::vector<uint32_t> idx;
@@ -73,7 +73,7 @@ public:
 
 	virtual Decoder_polar_MK_SC_naive<B,R>* clone() const;
 
-	virtual void notify_noise_update();
+	virtual void notify_frozenbits_update(const std::vector<bool>&);
 
 protected:
 	virtual void deep_copy          (const Decoder_polar_MK_SC_naive<B,R>& m );

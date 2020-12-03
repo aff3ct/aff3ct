@@ -42,7 +42,7 @@ protected:
 	std::set<int> active_paths;
 
 	const tools::Polar_code &code;
-	const std::vector<bool> &frozen_bits;
+	std::vector<bool> frozen_bits;
 	std::vector<tools::Generic_tree_metric<Contents_MK_SCL<B,R>,R>> polar_trees;
 	std::vector<std::vector<tools::Generic_node<Contents_MK_SCL<B,R>>*>> leaves_array;
 	std::vector<std::vector<B>> Ke;
@@ -71,7 +71,7 @@ public:
 
 	virtual Decoder_polar_MK_SCL_naive<B,R>* clone() const;
 
-	virtual void notify_noise_update();
+	virtual void notify_frozenbits_update(const std::vector<bool>&);
 
 protected:
 	virtual void deep_copy          (const Decoder_polar_MK_SCL_naive<B,R>& m);

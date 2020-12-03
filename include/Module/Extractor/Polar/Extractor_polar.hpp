@@ -19,7 +19,7 @@ template <typename B = int, typename Q = float>
 class Extractor_polar : public Extractor<B,Q>, public tools::Interface_notify_frozenbits_update
 {
 protected:
-	const std::vector<bool>& frozen_bits; // known bits (alias frozen bits) are set to true
+	std::vector<bool>     frozen_bits; // known bits (alias frozen bits) are set to true
 	std::vector<uint32_t> info_bits_pos;
 
 public:
@@ -28,7 +28,7 @@ public:
 
 	virtual Extractor_polar<B,Q>* clone() const;
 
-	virtual void notify_noise_update();
+	virtual void notify_frozenbits_update(const std::vector<bool>& fb);
 
 protected:
 	const std::vector<uint32_t>& get_info_bits_pos();

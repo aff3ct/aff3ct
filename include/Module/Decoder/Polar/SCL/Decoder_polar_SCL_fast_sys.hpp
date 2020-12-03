@@ -32,7 +32,7 @@ class Decoder_polar_SCL_fast_sys : public Decoder_SIHO<B,R>, public tools::Inter
 protected:
 	const int                         m;              // graph depth
 	      int                         L;              // maximum paths number
-	const std::vector<bool>&          frozen_bits;
+	      std::vector<bool>           frozen_bits;
 	      tools::Pattern_polar_parser polar_patterns;
 
 	            std ::vector<int >    paths;          // active paths
@@ -67,7 +67,7 @@ public:
 
 	virtual Decoder_polar_SCL_fast_sys<B,R,API_polar>* clone() const;
 
-	virtual void notify_noise_update();
+	virtual void notify_frozenbits_update(const std::vector<bool>&);
 
 protected:
 	virtual void _decode        (const R *Y_N                               );

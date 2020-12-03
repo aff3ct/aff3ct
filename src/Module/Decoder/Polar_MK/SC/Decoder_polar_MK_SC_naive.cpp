@@ -164,9 +164,10 @@ void Decoder_polar_MK_SC_naive<B,R>
 
 template <typename B, typename R>
 void Decoder_polar_MK_SC_naive<B,R>
-::notify_noise_update()
+::notify_frozenbits_update(const std::vector<bool>& fb)
 {
-	this->recursive_initialize_frozen_bits(this->polar_tree.get_root(), frozen_bits);
+	std::copy(fb.begin(), fb.end(), this->frozen_bits.begin());
+	this->recursive_initialize_frozen_bits(this->polar_tree.get_root(), fb);
 }
 
 template <typename B, typename R>

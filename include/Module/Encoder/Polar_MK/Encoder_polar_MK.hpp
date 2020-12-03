@@ -20,7 +20,7 @@ class Encoder_polar_MK : public Encoder<B>, public tools::Interface_notify_froze
 {
 protected:
 	const tools::Polar_code&          code;
-	const std::vector<bool>&          frozen_bits;
+	      std::vector<bool>           frozen_bits;
 	      std::vector<std::vector<B>> Ke;
 	      std::vector<uint32_t>       idx;
 	      std::vector<B>              u;
@@ -33,8 +33,7 @@ public:
 	virtual Encoder_polar_MK<B>* clone() const;
 
 	// bool is_codeword(const B *X_N);
-
-	virtual void notify_noise_update();
+	virtual void notify_frozenbits_update(const std::vector<bool>& frozen_bits);
 
 protected:
 	virtual void _encode(const B *U_K, B *X_N, const size_t frame_id);

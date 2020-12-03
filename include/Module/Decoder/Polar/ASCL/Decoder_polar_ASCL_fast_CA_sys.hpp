@@ -45,7 +45,7 @@ public:
 
 	virtual Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>* clone() const;
 
-	virtual void notify_noise_update();
+	virtual void notify_frozenbits_update(const std::vector<bool>&);
 
 	virtual void set_n_frames(const size_t n_frames);
 

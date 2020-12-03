@@ -52,11 +52,12 @@ void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>
-::notify_noise_update()
+::notify_frozenbits_update(const std::vector<bool>& frozen_bits)
 {
-	Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>::notify_noise_update();
-	sc_decoder->notify_noise_update();
+	Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>::notify_frozenbits_update(frozen_bits);
+	sc_decoder->notify_frozenbits_update(frozen_bits);
 }
+
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_fast_CA_sys<B,R,API_polar>

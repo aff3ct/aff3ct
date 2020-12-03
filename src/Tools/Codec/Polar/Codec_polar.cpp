@@ -137,7 +137,7 @@ Codec_polar<B,Q>
 			}
 			if (this->N_cw != this->N && puncturer_shortlast)
 				puncturer_shortlast->gen_frozen_bits(*frozen_bits);
-			this->notify_frozenbits_update();
+			this->notify_frozenbits_update(*frozen_bits);
 		}
 	}
 	else
@@ -153,7 +153,7 @@ Codec_polar<B,Q>
 		std::copy(fb.begin(), fb.end(), frozen_bits->begin());
 		if (this->N_cw != this->N && puncturer_shortlast)
 			puncturer_shortlast->gen_frozen_bits(*frozen_bits);
-		this->notify_frozenbits_update();
+		this->notify_frozenbits_update(*frozen_bits);
 	}
 }
 
@@ -183,14 +183,14 @@ void Codec_polar<B,Q>
 
 template <typename B, typename Q>
 void Codec_polar<B,Q>
-::notify_frozenbits_update()
+::notify_frozenbits_update(const std::vector<bool>& frozen_bits)
 {
 	if (this->fb_decoder)
-		this->fb_decoder->notify_noise_update();
+		this->fb_decoder->notify_frozenbits_update(frozen_bits);
 	if (this->fb_encoder)
-		this->fb_encoder->notify_noise_update();
+		this->fb_encoder->notify_frozenbits_update(frozen_bits);
 	if (this->fb_extractor)
-		this->fb_extractor->notify_noise_update();
+		this->fb_extractor->notify_frozenbits_update(frozen_bits);
 }
 
 template <typename B, typename Q>
@@ -206,7 +206,7 @@ void Codec_polar<B,Q>
 		{
 			puncturer_shortlast->gen_frozen_bits(*frozen_bits);
 		}
-		this->notify_frozenbits_update();
+		this->notify_frozenbits_update(*this->frozen_bits);
 	}
 }
 

@@ -27,7 +27,7 @@ class Pattern_polar_parser : public Interface_notify_frozenbits_update
 protected:
 	const int                                                   N;                /*!< Codeword size. */
 	const int                                                   m;                /*!< Tree depth. */
-	const std::vector<bool>                                    &frozen_bits;      /*!< Vector of frozen bits (true if frozen, false otherwise). */
+	      std::vector<bool>                                     frozen_bits;      /*!< Vector of frozen bits (true if frozen, false otherwise). */
 	      std::vector<std::shared_ptr<tools::Pattern_polar_i>>  patterns;         /*!< Vector of patterns. */
 	const size_t                                                pattern_rate0_id; /*!< Terminal pattern when the bit is frozen. */
 	const size_t                                                pattern_rate1_id; /*!< Terminal pattern when the bit is an information bit. */
@@ -58,7 +58,7 @@ public:
 	 */
 	virtual ~Pattern_polar_parser();
 
-	virtual void notify_noise_update();
+	virtual void notify_frozenbits_update(const std::vector<bool>& frozen_bits);
 
 	/*!
 	 * \brief Gets a binary tree of patterns.

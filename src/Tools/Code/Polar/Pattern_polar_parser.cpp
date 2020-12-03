@@ -106,10 +106,10 @@ void Pattern_polar_parser
 			this->recursive_deep_copy(nref->get_right(), nclone->get_right());
 	}
 }
-
 void Pattern_polar_parser
-::notify_noise_update()
+::notify_frozenbits_update(const std::vector<bool>& fb)
 {
+	std::copy(fb.begin(), fb.end(), this->frozen_bits.begin());
 	this->recursive_deallocate_nodes_patterns(this->polar_tree.get_root());
 	this->pattern_types.clear();
 	this->leaves_pattern_types.clear();
@@ -117,6 +117,7 @@ void Pattern_polar_parser
 	this->polar_tree = Binary_tree<Pattern_polar_i>(m +1);
 	this->recursive_allocate_nodes_patterns(this->polar_tree.get_root());
 	this->generate_nodes_indexes           (this->polar_tree.get_root());
+
 }
 
 void Pattern_polar_parser

@@ -37,7 +37,7 @@ class Decoder_polar_SC_naive : public Decoder_SIHO<B,R>, public tools::Interface
 protected:
 	const int m; // graph depth
 
-	const std::vector<bool> &frozen_bits;
+	std::vector<bool> frozen_bits;
 	tools::Binary_tree<Contents_SC<B,R>> polar_tree;
 
 public:
@@ -46,7 +46,7 @@ public:
 
 	virtual Decoder_polar_SC_naive<B,R,F,G,H>* clone() const;
 
-	virtual void notify_noise_update();
+	virtual void notify_frozenbits_update(const std::vector<bool>&);
 
 protected:
 	virtual void deep_copy          (const Decoder_polar_SC_naive<B,R,F,G,H>& m);

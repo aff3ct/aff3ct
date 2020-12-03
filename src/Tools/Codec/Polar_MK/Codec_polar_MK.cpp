@@ -95,7 +95,7 @@ Codec_polar_MK<B,Q>
 		}
 
 		fb_generator->generate(*frozen_bits);
-		this->notify_frozenbits_update();
+		this->notify_frozenbits_update(*frozen_bits);
 	}
 }
 
@@ -123,14 +123,14 @@ void Codec_polar_MK<B,Q>
 
 template <typename B, typename Q>
 void Codec_polar_MK<B,Q>
-::notify_frozenbits_update()
+::notify_frozenbits_update(const std::vector<bool>& fb)
 {
 	if (this->fb_decoder)
-		this->fb_decoder->notify_noise_update();
+		this->fb_decoder->notify_frozenbits_update(fb);
 	if (this->fb_encoder)
-		this->fb_encoder->notify_noise_update();
+		this->fb_encoder->notify_frozenbits_update(fb);
 	if (this->fb_extractor)
-		this->fb_extractor->notify_noise_update();
+		this->fb_extractor->notify_frozenbits_update(fb);
 }
 
 template <typename B, typename Q>
@@ -142,7 +142,7 @@ void Codec_polar_MK<B,Q>
 	{
 		this->fb_generator->set_noise(*this->noise);
 		this->fb_generator->generate(*this->frozen_bits);
-		this->notify_frozenbits_update();
+		this->notify_frozenbits_update(*this->frozen_bits);
 	}
 }
 

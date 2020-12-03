@@ -53,10 +53,11 @@ void Decoder_polar_MK_ASCL_naive_CA<B,R>
 
 template <typename B, typename R>
 void Decoder_polar_MK_ASCL_naive_CA<B,R>
-::notify_noise_update()
+::notify_frozenbits_update(const std::vector<bool>& fb)
 {
-	Decoder_polar_MK_SCL_naive_CA<B,R>::notify_noise_update();
-	sc_decoder->notify_noise_update();
+	std::copy(fb.begin(), fb.end(), this->frozen_bits.begin());
+	Decoder_polar_MK_SCL_naive_CA<B,R>::notify_frozenbits_update(fb);
+	sc_decoder->notify_frozenbits_update(fb);
 }
 
 template <typename B, typename R>
