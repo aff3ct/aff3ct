@@ -46,7 +46,7 @@ public:
 
 	virtual Decoder_polar_SC_naive<B,R,F,G,H>* clone() const;
 
-	virtual void notify_frozenbits_update(const std::vector<bool>&);
+	virtual void notify_frozenbits_update(const std::vector<bool>& frozen_bits);
 
 protected:
 	virtual void deep_copy          (const Decoder_polar_SC_naive<B,R,F,G,H>& m);

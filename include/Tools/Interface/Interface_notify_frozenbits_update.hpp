@@ -14,7 +14,7 @@ namespace tools
 class Interface_notify_frozenbits_update
 {
 public:
-	virtual void notify_frozenbits_update(const std::vector<bool>&) = 0;
+	virtual void notify_frozenbits_update(const std::vector<bool>& frozen_bits) = 0;
 };
 
 }
