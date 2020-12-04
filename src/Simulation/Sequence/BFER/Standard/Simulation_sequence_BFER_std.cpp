@@ -573,8 +573,13 @@ void Simulation_sequence_BFER_std<B,R,Q>
 		m->set_seed(prng());
 
 	auto fb_modules = this->sequence->template get_modules<tools::Interface_notify_frozenbits_update>();
-	for (auto &m : fb_modules)
-		m->notify_frozenbits_update(fb_modules[0]->get_frozen_bits());
+	if (fb_modules.size())
+	{
+		this->noise->record_callback_update([fb_modules](){
+		for (auto &m : fb_modules)
+			m->notify_frozenbits_update(fb_modules[0]->get_frozen_bits());
+		});
+	}
 
 	bool is_interleaver = true;
 	try
