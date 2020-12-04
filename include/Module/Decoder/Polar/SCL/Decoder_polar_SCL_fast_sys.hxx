@@ -248,6 +248,12 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 	polar_patterns.notify_frozenbits_update(fb);
 }
 
+template <typename B, typename R, class API_polar>
+const std::vector<bool>& Decoder_polar_SCL_fast_sys<B,R,API_polar>
+::get_frozen_bits() const
+{
+	return this->frozen_bits;
+}
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_fast_sys<B,R,API_polar>

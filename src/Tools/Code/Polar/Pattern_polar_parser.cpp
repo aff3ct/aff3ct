@@ -55,8 +55,9 @@ Pattern_polar_parser
 			delete p;
 	}
 
-	this->recursive_allocate_nodes_patterns(this->polar_tree.get_root());
-	this->generate_nodes_indexes           (this->polar_tree.get_root());
+	//this->recursive_allocate_nodes_patterns(this->polar_tree.get_root());
+	//this->generate_nodes_indexes           (this->polar_tree.get_root());
+	this->notify_frozenbits_update(frozen_bits);
 }
 
 Pattern_polar_parser
@@ -118,6 +119,12 @@ void Pattern_polar_parser
 	this->recursive_allocate_nodes_patterns(this->polar_tree.get_root());
 	this->generate_nodes_indexes           (this->polar_tree.get_root());
 
+}
+
+const std::vector<bool>& Pattern_polar_parser
+::get_frozen_bits() const
+{
+	return this->frozen_bits;
 }
 
 void Pattern_polar_parser

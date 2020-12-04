@@ -115,6 +115,13 @@ void Encoder_polar<B>
 			this->info_bits_pos[k++] = n;
 }
 
+
+template <typename B>
+const std::vector<bool>& Encoder_polar<B>
+::get_frozen_bits() const
+{
+	return this->frozen_bits;
+}
 // ==================================================================================== explicit template instantiation
 #include "Tools/types.h"
 #ifdef AFF3CT_MULTI_PREC

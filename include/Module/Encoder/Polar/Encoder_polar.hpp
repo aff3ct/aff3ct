@@ -32,6 +32,7 @@ public:
 
 	bool is_codeword(const B *X_N);
 
+	virtual const std::vector<bool>& get_frozen_bits() const;
 	virtual void notify_frozenbits_update(const std::vector<bool>& frozen_bits);
 
 protected:

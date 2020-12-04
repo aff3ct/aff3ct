@@ -171,6 +171,13 @@ void Decoder_polar_MK_SC_naive<B,R>
 }
 
 template <typename B, typename R>
+const std::vector<bool>& Decoder_polar_MK_SC_naive<B,R>
+::get_frozen_bits() const
+{
+	return this->frozen_bits;
+}
+
+template <typename B, typename R>
 void Decoder_polar_MK_SC_naive<B,R>
 ::_load(const R *Y_N)
 {

@@ -38,6 +38,13 @@ void Extractor_polar<B,Q>
 }
 
 template <typename B, typename Q>
+const std::vector<bool>& Extractor_polar<B,Q>
+::get_frozen_bits() const
+{
+	return this->frozen_bits;
+}
+
+template <typename B, typename Q>
 const std::vector<uint32_t>& Extractor_polar<B,Q>
 ::get_info_bits_pos()
 {

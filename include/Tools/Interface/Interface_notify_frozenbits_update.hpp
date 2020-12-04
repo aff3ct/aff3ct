@@ -15,6 +15,7 @@ class Interface_notify_frozenbits_update
 {
 public:
 	virtual void notify_frozenbits_update(const std::vector<bool>& frozen_bits) = 0;
+	virtual const std::vector<bool>& get_frozen_bits() const = 0;
 };
 
 }

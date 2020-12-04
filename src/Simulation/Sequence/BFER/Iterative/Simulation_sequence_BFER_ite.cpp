@@ -11,6 +11,7 @@
 #include "Tools/Interface/Interface_set_seed.hpp"
 #include "Tools/Interface/Interface_get_set_noise.hpp"
 #include "Tools/Interface/Interface_notify_noise_update.hpp"
+#include "Tools/Interface/Interface_notify_frozenbits_update.hpp"
 #include "Tools/Display/Dumper/Dumper.hpp"
 #include "Tools/Exception/exception.hpp"
 #include "Factory/Module/Coset/Coset.hpp"
@@ -661,6 +662,10 @@ void Simulation_sequence_BFER_ite<B,R,Q>
 	std::mt19937 prng(params_BFER_ite.local_seed);
 	for (auto &m : this->sequence->template get_modules<tools::Interface_set_seed>())
 		m->set_seed(prng());
+
+	auto fb_modules = this->sequence->template get_modules<tools::Interface_notify_frozenbits_update>();
+	for (auto &m : fb_modules)
+		m->notify_frozenbits_update(fb_modules[0]->get_frozen_bits());
 
 	this->interleaver_core->set_seed(params_BFER_ite.itl->core->seed);
 	if (this->interleaver_core->is_uniform())

@@ -29,6 +29,7 @@ public:
 	virtual Extractor_polar<B,Q>* clone() const;
 
 	virtual void notify_frozenbits_update(const std::vector<bool>& fb);
+	virtual const std::vector<bool>& get_frozen_bits() const;
 
 protected:
 	const std::vector<uint32_t>& get_info_bits_pos();

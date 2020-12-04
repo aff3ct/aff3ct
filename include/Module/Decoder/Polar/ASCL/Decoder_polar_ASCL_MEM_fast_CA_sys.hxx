@@ -61,6 +61,13 @@ void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 }
 
 template <typename B, typename R, class API_polar>
+const std::vector<bool>& Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
+::get_frozen_bits() const
+{
+	return this->frozen_bits;
+}
+
+template <typename B, typename R, class API_polar>
 void Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>
 ::_decode(const R *Y_N, B *V_K, const size_t frame_id)
 {

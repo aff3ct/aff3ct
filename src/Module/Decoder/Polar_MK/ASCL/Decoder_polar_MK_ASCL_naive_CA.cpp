@@ -61,6 +61,13 @@ void Decoder_polar_MK_ASCL_naive_CA<B,R>
 }
 
 template <typename B, typename R>
+const std::vector<bool>& Decoder_polar_MK_ASCL_naive_CA<B,R>
+::get_frozen_bits() const
+{
+	return this->frozen_bits;
+}
+
+template <typename B, typename R>
 int Decoder_polar_MK_ASCL_naive_CA<B,R>
 ::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
 {

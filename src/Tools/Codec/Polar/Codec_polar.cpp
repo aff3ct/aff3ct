@@ -137,6 +137,7 @@ Codec_polar<B,Q>
 			}
 			if (this->N_cw != this->N && puncturer_shortlast)
 				puncturer_shortlast->gen_frozen_bits(*frozen_bits);
+
 			this->notify_frozenbits_update(*frozen_bits);
 		}
 	}

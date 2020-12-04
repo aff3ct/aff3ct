@@ -68,6 +68,7 @@ public:
 	virtual Decoder_polar_SCL_fast_sys<B,R,API_polar>* clone() const;
 
 	virtual void notify_frozenbits_update(const std::vector<bool>& frozen_bits);
+	virtual const std::vector<bool>& get_frozen_bits() const;
 
 protected:
 	virtual void _decode        (const R *Y_N                               );

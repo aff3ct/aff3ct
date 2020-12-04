@@ -102,6 +102,13 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 }
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
+const std::vector<bool>& Decoder_polar_SC_naive<B,R,F,G,H>
+::get_frozen_bits() const
+{
+	return this->frozen_bits;
+}
+
+template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
 ::_load(const R *Y_N)
 {

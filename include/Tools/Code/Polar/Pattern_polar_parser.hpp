@@ -59,6 +59,7 @@ public:
 	virtual ~Pattern_polar_parser();
 
 	virtual void notify_frozenbits_update(const std::vector<bool>& frozen_bits);
+	virtual const std::vector<bool>& get_frozen_bits() const;
 
 	/*!
 	 * \brief Gets a binary tree of patterns.

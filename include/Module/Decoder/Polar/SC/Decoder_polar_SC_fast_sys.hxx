@@ -212,6 +212,7 @@ Decoder_polar_SC_fast_sys<B,R,API_polar>
 		        << k << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
+	this->notify_frozenbits_update(frozen_bits);
 }
 
 template <typename B, typename R, class API_polar>
@@ -228,7 +229,14 @@ void Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::notify_frozenbits_update(const std::vector<bool>& fb)
 {
 	std::copy(fb.begin(), fb.end(), this->frozen_bits.begin());
-	polar_patterns.notify_frozenbits_update(fb);
+	polar_patterns.notify_frozenbits_update(this->frozen_bits);
+}
+
+template <typename B, typename R, class API_polar>
+const std::vector<bool>& Decoder_polar_SC_fast_sys<B,R,API_polar>
+::get_frozen_bits() const
+{
+	return this->frozen_bits;
 }
 
 template <typename B, typename R, class API_polar>
