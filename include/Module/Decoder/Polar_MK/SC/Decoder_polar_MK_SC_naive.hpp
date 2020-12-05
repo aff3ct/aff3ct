@@ -11,7 +11,7 @@
 
 #include "Tools/Algo/Tree/Generic/Generic_tree.hpp"
 #include "Tools/Algo/Tree/Generic/Generic_node.hpp"
-#include "Tools/Interface/Interface_notify_frozenbits_update.hpp"
+#include "Tools/Interface/Interface_get_set_frozen_bits.hpp"
 #include "Tools/Code/Polar/Polar_code.hpp"
 #include "Module/Decoder/Decoder_SIHO.hpp"
 
@@ -39,7 +39,7 @@ template <typename B, typename R>
 class Decoder_polar_MK_ASCL_naive_CA;
 
 template <typename B = int, typename R = float>
-class Decoder_polar_MK_SC_naive : public Decoder_SIHO<B,R>, public tools::Interface_notify_frozenbits_update
+class Decoder_polar_MK_SC_naive : public Decoder_SIHO<B,R>, public tools::Interface_get_set_frozen_bits
 {
 	friend Decoder_polar_MK_ASCL_naive_CA<B,R>;
 	friend tools::Frozenbits_generator_GA;
@@ -73,7 +73,7 @@ public:
 
 	virtual Decoder_polar_MK_SC_naive<B,R>* clone() const;
 
-	virtual void notify_frozenbits_update(const std::vector<bool>& frozen_bits);
+	virtual void set_frozen_bits(const std::vector<bool>& frozen_bits);
 	virtual const std::vector<bool>& get_frozen_bits() const;
 
 protected:

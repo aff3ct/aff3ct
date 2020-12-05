@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include "Tools/Interface/Interface_notify_frozenbits_update.hpp"
+#include "Tools/Interface/Interface_get_set_frozen_bits.hpp"
 #include "Tools/Code/Polar/Polar_code.hpp"
 #include "Module/Encoder/Encoder.hpp"
 
@@ -16,7 +16,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int>
-class Encoder_polar_MK : public Encoder<B>, public tools::Interface_notify_frozenbits_update
+class Encoder_polar_MK : public Encoder<B>, public tools::Interface_get_set_frozen_bits
 {
 protected:
 	const tools::Polar_code&          code;
@@ -33,7 +33,7 @@ public:
 	virtual Encoder_polar_MK<B>* clone() const;
 
 	// bool is_codeword(const B *X_N);
-	virtual void notify_frozenbits_update(const std::vector<bool>& frozen_bits);
+	virtual void set_frozen_bits(const std::vector<bool>& frozen_bits);
 	virtual const std::vector<bool>& get_frozen_bits() const;
 
 protected:

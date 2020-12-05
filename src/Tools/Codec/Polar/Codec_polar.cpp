@@ -88,7 +88,7 @@ Codec_polar<B,Q>
 	try
 	{
 		this->set_encoder(enc_params.build<B>(*frozen_bits));
-		fb_encoder = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_encoder());
+		fb_encoder = dynamic_cast<Interface_get_set_frozen_bits*>(&this->get_encoder());
 	}
 	catch (cannot_allocate const&)
 	{
@@ -109,14 +109,14 @@ Codec_polar<B,Q>
 
 	try
 	{
-		this->fb_decoder = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_decoder_siho());
+		this->fb_decoder = dynamic_cast<Interface_get_set_frozen_bits*>(&this->get_decoder_siho());
 	}
 	catch(std::exception&) {}
 
 	this->set_extractor(new module::Extractor_polar<B,Q>(enc_params.K,
 	                                                     enc_params.N_cw,
 	                                                     *frozen_bits));
-	fb_extractor = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_extractor());
+	fb_extractor = dynamic_cast<Interface_get_set_frozen_bits*>(&this->get_extractor());
 
 	// ------------------------------------------------------------------------------------------------- frozen bit gen
 	if (!generated_decoder)
@@ -138,7 +138,7 @@ Codec_polar<B,Q>
 			if (this->N_cw != this->N && puncturer_shortlast)
 				puncturer_shortlast->gen_frozen_bits(*frozen_bits);
 
-			this->notify_frozenbits_update(*frozen_bits);
+			this->set_frozen_bits(*frozen_bits);
 		}
 	}
 	else
@@ -154,7 +154,7 @@ Codec_polar<B,Q>
 		std::copy(fb.begin(), fb.end(), frozen_bits->begin());
 		if (this->N_cw != this->N && puncturer_shortlast)
 			puncturer_shortlast->gen_frozen_bits(*frozen_bits);
-		this->notify_frozenbits_update(*frozen_bits);
+		this->set_frozen_bits(*frozen_bits);
 	}
 }
 
@@ -175,23 +175,23 @@ void Codec_polar<B,Q>
 	if (t.puncturer_shortlast != nullptr)
 		this->puncturer_shortlast = dynamic_cast<module::Puncturer_polar_shortlast<B,Q>*>(&this->get_puncturer());
 	if (t.fb_encoder != nullptr)
-		this->fb_encoder = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_encoder());
+		this->fb_encoder = dynamic_cast<Interface_get_set_frozen_bits*>(&this->get_encoder());
 	if (t.fb_decoder != nullptr)
-		this->fb_decoder = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_decoder_siho());
+		this->fb_decoder = dynamic_cast<Interface_get_set_frozen_bits*>(&this->get_decoder_siho());
 	if (t.fb_extractor != nullptr)
-		this->fb_extractor = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_extractor());
+		this->fb_extractor = dynamic_cast<Interface_get_set_frozen_bits*>(&this->get_extractor());
 }
 
 template <typename B, typename Q>
 void Codec_polar<B,Q>
-::notify_frozenbits_update(const std::vector<bool>& frozen_bits)
+::set_frozen_bits(const std::vector<bool>& frozen_bits)
 {
 	if (this->fb_decoder)
-		this->fb_decoder->notify_frozenbits_update(frozen_bits);
+		this->fb_decoder->set_frozen_bits(frozen_bits);
 	if (this->fb_encoder)
-		this->fb_encoder->notify_frozenbits_update(frozen_bits);
+		this->fb_encoder->set_frozen_bits(frozen_bits);
 	if (this->fb_extractor)
-		this->fb_extractor->notify_frozenbits_update(frozen_bits);
+		this->fb_extractor->set_frozen_bits(frozen_bits);
 }
 
 template <typename B, typename Q>
@@ -207,7 +207,7 @@ void Codec_polar<B,Q>
 		{
 			puncturer_shortlast->gen_frozen_bits(*frozen_bits);
 		}
-		this->notify_frozenbits_update(*this->frozen_bits);
+		this->set_frozen_bits(*this->frozen_bits);
 	}
 }
 

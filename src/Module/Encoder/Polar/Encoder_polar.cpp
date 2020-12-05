@@ -34,7 +34,7 @@ Encoder_polar<B>
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	this->notify_frozenbits_update(frozen_bits);
+	this->set_frozen_bits(frozen_bits);
 }
 
 template <typename B>
@@ -106,7 +106,7 @@ bool Encoder_polar<B>
 
 template <typename B>
 void Encoder_polar<B>
-::notify_frozenbits_update(const std::vector<bool>& frozen_bits)
+::set_frozen_bits(const std::vector<bool>& frozen_bits)
 {
 	std::copy(frozen_bits.begin(), frozen_bits.end(), this->frozen_bits.begin());
 	auto k = 0;

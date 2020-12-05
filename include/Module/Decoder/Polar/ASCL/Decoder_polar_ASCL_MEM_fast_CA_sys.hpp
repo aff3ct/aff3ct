@@ -47,7 +47,7 @@ public:
 
 	virtual Decoder_polar_ASCL_MEM_fast_CA_sys<B,R,API_polar>* clone() const;
 
-	virtual void notify_frozenbits_update(const std::vector<bool>& frozen_bits);
+	virtual void set_frozen_bits(const std::vector<bool>& frozen_bits);
 	virtual const std::vector<bool>& get_frozen_bits() const;
 
 	virtual void set_n_frames(const size_t n_frames);

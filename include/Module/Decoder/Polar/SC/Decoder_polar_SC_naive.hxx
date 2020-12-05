@@ -95,7 +95,7 @@ void Decoder_polar_SC_naive<B,R,F,G,H>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, tools::proto_h<B,R> H>
 void Decoder_polar_SC_naive<B,R,F,G,H>
-::notify_frozenbits_update(const std::vector<bool>& fb)
+::set_frozen_bits(const std::vector<bool>& fb)
 {
 	std::copy(fb.begin(), fb.end(), this->frozen_bits.begin());
 	this->recursive_initialize_frozen_bits(this->polar_tree.get_root(), fb);

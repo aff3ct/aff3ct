@@ -9,7 +9,7 @@
 #include <vector>
 #include <memory>
 
-#include "Tools/Interface/Interface_notify_frozenbits_update.hpp"
+#include "Tools/Interface/Interface_get_set_frozen_bits.hpp"
 #include "Tools/Algo/Tree/Binary/Binary_tree.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
 
@@ -22,7 +22,7 @@ namespace tools
  * \brief Parses a polar code (represented as a tree) and returns a simplified tree with specialized nodes and tree
  *        cuts when possible.
  */
-class Pattern_polar_parser : public Interface_notify_frozenbits_update
+class Pattern_polar_parser : public Interface_get_set_frozen_bits
 {
 protected:
 	const int                                                   N;                /*!< Codeword size. */
@@ -58,7 +58,7 @@ public:
 	 */
 	virtual ~Pattern_polar_parser();
 
-	virtual void notify_frozenbits_update(const std::vector<bool>& frozen_bits);
+	virtual void set_frozen_bits(const std::vector<bool>& frozen_bits);
 	virtual const std::vector<bool>& get_frozen_bits() const;
 
 	/*!

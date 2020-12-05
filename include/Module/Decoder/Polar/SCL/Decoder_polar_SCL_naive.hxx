@@ -119,7 +119,7 @@ void Decoder_polar_SCL_naive<B,R,F,G>
 
 template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
-::notify_frozenbits_update(const std::vector<bool>& fb)
+::set_frozen_bits(const std::vector<bool>& fb)
 {
 	std::copy(fb.begin(), fb.end(), this->frozen_bits.begin());
 	for (auto i = 0; i < L; i++)

@@ -9,7 +9,7 @@
 #include <memory>
 
 #include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator.hpp"
-#include "Tools/Interface/Interface_notify_frozenbits_update.hpp"
+#include "Tools/Interface/Interface_get_set_frozen_bits.hpp"
 #include "Module/CRC/CRC.hpp"
 #include "Module/Puncturer/Polar/Puncturer_polar_shortlast.hpp"
 #include "Factory/Module/Encoder/Polar/Encoder_polar.hpp"
@@ -24,7 +24,7 @@ namespace tools
 {
 template <typename B = int, typename Q = float>
 class Codec_polar : public Codec_SISO<B,Q>,
-                    public Interface_notify_frozenbits_update
+                    public Interface_get_set_frozen_bits
 {
 protected:
 	const bool adaptive_fb;
@@ -34,9 +34,9 @@ protected:
 	std::shared_ptr<Frozenbits_generator> fb_generator;
 
 	module::Puncturer_polar_shortlast<B,Q>* puncturer_shortlast;
-	Interface_notify_frozenbits_update* fb_decoder;
-	Interface_notify_frozenbits_update* fb_encoder;
-	Interface_notify_frozenbits_update* fb_extractor;
+	Interface_get_set_frozen_bits* fb_decoder;
+	Interface_get_set_frozen_bits* fb_encoder;
+	Interface_get_set_frozen_bits* fb_extractor;
 
 public:
 	Codec_polar(const factory::Frozenbits_generator &fb_par,
@@ -53,7 +53,7 @@ public:
 	bool is_generated_decoder() const;
 	const Frozenbits_generator& get_frozen_bits_generator() const;
 
-	void notify_frozenbits_update(const std::vector<bool>& frozen_bits);
+	void set_frozen_bits(const std::vector<bool>& frozen_bits);
 	virtual void notify_noise_update();
 
 protected:

@@ -65,7 +65,7 @@ Codec_polar_MK<B,Q>
 	try
 	{
 		this->set_encoder(enc_params.build<B>(*code.get(), *frozen_bits));
-		fb_encoder = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_encoder());
+		fb_encoder = dynamic_cast<Interface_get_set_frozen_bits*>(&this->get_encoder());
 	}
 	catch (tools::cannot_allocate const&)
 	{
@@ -73,12 +73,12 @@ Codec_polar_MK<B,Q>
 	}
 
 	this->set_decoder_siho(dec_params.build<B,Q>(*code.get(), *frozen_bits, crc, &this->get_encoder()));
-	this->fb_decoder = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_decoder_siho());
+	this->fb_decoder = dynamic_cast<Interface_get_set_frozen_bits*>(&this->get_decoder_siho());
 
 	this->set_extractor(new module::Extractor_polar<B,Q>(enc_params.K,
 	                                                     enc_params.N_cw,
 	                                                     *frozen_bits));
-	fb_extractor = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_extractor());
+	fb_extractor = dynamic_cast<Interface_get_set_frozen_bits*>(&this->get_extractor());
 
 	// ------------------------------------------------------------------------------------------------- frozen bit gen
 	if (!adaptive_fb)
@@ -95,7 +95,7 @@ Codec_polar_MK<B,Q>
 		}
 
 		fb_generator->generate(*frozen_bits);
-		this->notify_frozenbits_update(*frozen_bits);
+		this->set_frozen_bits(*frozen_bits);
 	}
 }
 
@@ -114,23 +114,23 @@ void Codec_polar_MK<B,Q>
 {
 	Codec_SIHO<B,Q>::deep_copy(t);
 	if (t.fb_encoder != nullptr)
-		this->fb_encoder = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_encoder());
+		this->fb_encoder = dynamic_cast<Interface_get_set_frozen_bits*>(&this->get_encoder());
 	if (t.fb_decoder != nullptr)
-		this->fb_decoder = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_decoder_siho());
+		this->fb_decoder = dynamic_cast<Interface_get_set_frozen_bits*>(&this->get_decoder_siho());
 	if (t.fb_extractor != nullptr)
-		this->fb_extractor = dynamic_cast<Interface_notify_frozenbits_update*>(&this->get_extractor());
+		this->fb_extractor = dynamic_cast<Interface_get_set_frozen_bits*>(&this->get_extractor());
 }
 
 template <typename B, typename Q>
 void Codec_polar_MK<B,Q>
-::notify_frozenbits_update(const std::vector<bool>& fb)
+::set_frozen_bits(const std::vector<bool>& fb)
 {
 	if (this->fb_decoder)
-		this->fb_decoder->notify_frozenbits_update(fb);
+		this->fb_decoder->set_frozen_bits(fb);
 	if (this->fb_encoder)
-		this->fb_encoder->notify_frozenbits_update(fb);
+		this->fb_encoder->set_frozen_bits(fb);
 	if (this->fb_extractor)
-		this->fb_extractor->notify_frozenbits_update(fb);
+		this->fb_extractor->set_frozen_bits(fb);
 }
 
 template <typename B, typename Q>
@@ -142,7 +142,7 @@ void Codec_polar_MK<B,Q>
 	{
 		this->fb_generator->set_noise(*this->noise);
 		this->fb_generator->generate(*this->frozen_bits);
-		this->notify_frozenbits_update(*this->frozen_bits);
+		this->set_frozen_bits(*this->frozen_bits);
 	}
 }
 

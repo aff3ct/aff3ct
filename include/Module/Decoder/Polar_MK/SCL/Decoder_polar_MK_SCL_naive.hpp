@@ -12,7 +12,7 @@
 
 #include "Tools/Algo/Tree/Generic/Generic_tree_metric.hpp"
 #include "Tools/Algo/Tree/Generic/Generic_node.hpp"
-#include "Tools/Interface/Interface_notify_frozenbits_update.hpp"
+#include "Tools/Interface/Interface_get_set_frozen_bits.hpp"
 #include "Tools/Code/Polar/Polar_code.hpp"
 #include "Module/Decoder/Decoder_SIHO.hpp"
 
@@ -33,8 +33,8 @@ public:
 	virtual ~Contents_MK_SCL() {}
 };
 
-template <typename B, typename R>
-class Decoder_polar_MK_SCL_naive : public Decoder_SIHO<B,R>, public tools::Interface_notify_frozenbits_update
+template <typename B = int, typename R = float>
+class Decoder_polar_MK_SCL_naive : public Decoder_SIHO<B,R>, public tools::Interface_get_set_frozen_bits
 {
 protected:
 	const R metric_init; // init value of the metrics in the trees
@@ -71,7 +71,7 @@ public:
 
 	virtual Decoder_polar_MK_SCL_naive<B,R>* clone() const;
 
-	virtual void notify_frozenbits_update(const std::vector<bool>& frozen_bits);
+	virtual void set_frozen_bits(const std::vector<bool>& frozen_bits);
 	virtual const std::vector<bool>& get_frozen_bits() const;
 
 protected:

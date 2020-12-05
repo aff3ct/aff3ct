@@ -219,10 +219,10 @@ Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>* Decoder_polar_SCL_MEM_fast_sys<B,
 
 template <typename B, typename R, class API_polar>
 void Decoder_polar_SCL_MEM_fast_sys<B,R,API_polar>
-::notify_frozenbits_update(const std::vector<bool>& fb)
+::set_frozen_bits(const std::vector<bool>& fb)
 {
 	std::copy(fb.begin(), fb.end(), this->frozen_bits.begin());
-	polar_patterns.notify_frozenbits_update(fb);
+	polar_patterns.set_frozen_bits(fb);
 }
 
 template <typename B, typename R, class API_polar>

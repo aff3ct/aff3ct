@@ -16,7 +16,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B, typename R>
+template <typename B=int, typename R=float>
 class Decoder_polar_MK_SCL_naive_CA_sys : public Decoder_polar_MK_SCL_naive_CA<B,R>
 {
 

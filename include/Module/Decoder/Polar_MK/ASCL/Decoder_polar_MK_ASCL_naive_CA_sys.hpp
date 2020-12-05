@@ -18,7 +18,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B = int, typename R = float>
+template <typename B=int, typename R=float>
 class Decoder_polar_MK_ASCL_naive_CA_sys : public Decoder_polar_MK_SCL_naive_CA_sys<B,R>
 {
 private:
@@ -45,7 +45,7 @@ public:
 
 	virtual Decoder_polar_MK_ASCL_naive_CA_sys<B,R>* clone() const;
 
-	virtual void notify_frozenbits_update(const std::vector<bool>& fb);
+	virtual void set_frozen_bits(const std::vector<bool>& fb);
 	virtual const std::vector<bool>& get_frozen_bits() const;
 
 	virtual void set_n_frames(const size_t n_frames);

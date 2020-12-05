@@ -1329,6 +1329,9 @@
 #ifndef INTERFACE_CLONE_HPP__
 #include <Tools/Interface/Interface_clone.hpp>
 #endif
+#ifndef Interface_get_set_frozen_bits_HPP__
+#include <Tools/Interface/Interface_get_set_frozen_bits.hpp>
+#endif
 #ifndef INTERFACE_GET_SET_N_FRAMES_HPP__
 #include <Tools/Interface/Interface_get_set_n_frames.hpp>
 #endif
@@ -1337,9 +1340,6 @@
 #endif
 #ifndef INTERFACE_IS_DONE_HPP__
 #include <Tools/Interface/Interface_is_done.hpp>
-#endif
-#ifndef INTERFACE_NOTIFY_FROZENBITS_UPDATE_HPP__
-#include <Tools/Interface/Interface_notify_frozenbits_update.hpp>
 #endif
 #ifndef INTERFACE_NOTIFY_NOISE_UPDATE_HPP__
 #include <Tools/Interface/Interface_notify_noise_update.hpp>

@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <vector>
 
-#include "Tools/Interface/Interface_notify_frozenbits_update.hpp"
+#include "Tools/Interface/Interface_get_set_frozen_bits.hpp"
 #include "Module/Extractor/Extractor.hpp"
 
 namespace aff3ct
@@ -16,7 +16,7 @@ namespace aff3ct
 namespace module
 {
 template <typename B = int, typename Q = float>
-class Extractor_polar : public Extractor<B,Q>, public tools::Interface_notify_frozenbits_update
+class Extractor_polar : public Extractor<B,Q>, public tools::Interface_get_set_frozen_bits
 {
 protected:
 	std::vector<bool>     frozen_bits; // known bits (alias frozen bits) are set to true
@@ -28,7 +28,7 @@ public:
 
 	virtual Extractor_polar<B,Q>* clone() const;
 
-	virtual void notify_frozenbits_update(const std::vector<bool>& fb);
+	virtual void set_frozen_bits(const std::vector<bool>& fb);
 	virtual const std::vector<bool>& get_frozen_bits() const;
 
 protected:

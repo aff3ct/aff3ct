@@ -11,7 +11,7 @@
 #include "Tools/Algo/Tree/Binary/Binary_node.hpp"
 #include "Tools/Algo/Tree/Binary/Binary_tree_metric.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
-#include "Tools/Interface/Interface_notify_frozenbits_update.hpp"
+#include "Tools/Interface/Interface_get_set_frozen_bits.hpp"
 
 #include "Module/Decoder/Decoder_SIHO.hpp"
 
@@ -19,7 +19,7 @@ namespace aff3ct
 {
 namespace module
 {
-template <typename B = int, typename R = float>
+template <typename B = int32_t, typename R = float>
 class Contents_SCL
 {
 public:
@@ -31,8 +31,8 @@ public:
 	virtual ~Contents_SCL() {}
 };
 
-template <typename B, typename R, tools::proto_f<R> F = tools::f_LLR, tools::proto_g<B,R> G = tools::g_LLR>
-class Decoder_polar_SCL_naive : public Decoder_SIHO<B,R>, public tools::Interface_notify_frozenbits_update
+template <typename B=int, typename R=float, tools::proto_f<R> F = tools::f_LLR, tools::proto_g<B,R> G = tools::g_LLR>
+class Decoder_polar_SCL_naive : public Decoder_SIHO<B,R>, public tools::Interface_get_set_frozen_bits
 {
 protected:
 	const int m;           // graph depth
@@ -52,7 +52,7 @@ public:
 
 	virtual Decoder_polar_SCL_naive<B,R,F,G>* clone() const;
 
-	virtual void notify_frozenbits_update(const std::vector<bool>& frozen_bits);
+	virtual void set_frozen_bits(const std::vector<bool>& frozen_bits);
 	virtual const std::vector<bool>& get_frozen_bits() const;
 
 protected:

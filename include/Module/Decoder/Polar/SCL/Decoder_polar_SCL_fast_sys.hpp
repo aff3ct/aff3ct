@@ -11,7 +11,7 @@
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
 #include "Tools/Algo/Sort/LC_sorter.hpp"
 #include "Tools/Code/Polar/decoder_polar_functions.h"
-#include "Tools/Interface/Interface_notify_frozenbits_update.hpp"
+#include "Tools/Interface/Interface_get_set_frozen_bits.hpp"
 #include "Tools/Code/Polar/Pattern_polar_parser.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_i.hpp"
 
@@ -27,7 +27,7 @@ template <typename B = int, typename R = float,
                                                                tools::g0_LLR<  R>,
                                                                tools::h_LLR <B,R>,
                                                                tools::xo_STD<B  >>>
-class Decoder_polar_SCL_fast_sys : public Decoder_SIHO<B,R>, public tools::Interface_notify_frozenbits_update
+class Decoder_polar_SCL_fast_sys : public Decoder_SIHO<B,R>, public tools::Interface_get_set_frozen_bits
 {
 protected:
 	const int                         m;              // graph depth
@@ -67,7 +67,7 @@ public:
 
 	virtual Decoder_polar_SCL_fast_sys<B,R,API_polar>* clone() const;
 
-	virtual void notify_frozenbits_update(const std::vector<bool>& frozen_bits);
+	virtual void set_frozen_bits(const std::vector<bool>& frozen_bits);
 	virtual const std::vector<bool>& get_frozen_bits() const;
 
 protected:
