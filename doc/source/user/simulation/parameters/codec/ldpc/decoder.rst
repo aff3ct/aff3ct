@@ -247,10 +247,10 @@ Description of the allowed values:
 
 .. note:: When the inter-frame |SIMD| strategy is set, the simulator will run
    with the right number of frames depending on the |SIMD| length. This number
-   of frames can be manually set with the :ref:`src-src-fra` parameter. Be aware
-   that running the simulator with the :ref:`src-src-fra` parameter set to 1 and
-   the :ref:`dec-polar-dec-simd` parameter set to ``INTER`` will completely be
-   counterproductive and will lead to no throughput improvements.
+   of frames can be manually set with the :ref:`sim-sim-inter-fra` parameter. Be
+   aware that running the simulator with the :ref:`sim-sim-inter-fra` parameter
+   set to 1 and the :ref:`dec-polar-dec-simd` parameter set to ``INTER`` will
+   completely be counterproductive and will lead to no throughput improvements.
 
 .. _dec-ldpc-dec-h-reorder:
 

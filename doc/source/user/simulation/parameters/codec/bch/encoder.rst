@@ -83,7 +83,7 @@ Description of the allowed values:
 
 .. |dec-simd_descr_inter| replace:: Select the inter-frame strategy.
 
-.. note:: Be aware that running the simulator with the :ref:`src-src-fra`
+.. note:: Be aware that running the simulator with the :ref:`sim-sim-inter-fra`
    parameter set to 1 and the :ref:`dec-polar-dec-simd` parameter set to
    ``INTER`` will completely be counterproductive and will lead to no throughput
    improvements.

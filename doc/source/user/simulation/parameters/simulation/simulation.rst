@@ -446,9 +446,9 @@ when a bit is 1, then the corresponding output bit is flipped.
 
 |factory::Simulation::p+dbg-fra|
 
-This behavior can be overridden with the :ref:`src-src-fra` parameter and a task
-can be executed on many frames. In that case, you may want to reduce the number
-of displayed frames on screen:
+This behavior can be overridden with the :ref:`sim-sim-inter-fra` parameter and
+a task can be executed on many frames. In that case, you may want to reduce the
+number of displayed frames on screen:
 
 .. code-block:: bash
 
