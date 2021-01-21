@@ -26,5 +26,8 @@ code_coverage_report/
 doc/build/
 doc/source/api/
 doc/output/
+scripts/abi/aff3ct_ast.txt
+scripts/abi/db.json
+scripts/abi/db_summary.txt
 
 __pycache__/
