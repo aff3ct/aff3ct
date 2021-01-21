@@ -363,13 +363,13 @@ build-windows-gcc-x86-sse4.2:
     - gcc
     - cmake
     - x86
-    - 32-bit
+    - 64-bit
   artifacts:
     name: build-windows-gcc-x86-sse4.2
     paths:
       - build_windows_gcc_x86_sse4.2
   script:
-    - set "CFLAGS=-Wall -funroll-loops -m32 -msse4.2"
+    - set "CFLAGS=-Wall -funroll-loops -m64 -msse4.2"
     - set "LFLAGS=-static -static-libgcc -static-libstdc++"
     - set "CMAKE_OPT=-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
     - set "NAME=build_windows_gcc_x86_sse4.2"
