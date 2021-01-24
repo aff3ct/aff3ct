@@ -40,6 +40,14 @@ Galois<I>
 		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	if ((size_t)m > sizeof(I) * 8)
+	{
+		std::stringstream message;
+		message << "'m' can't be higher than 'sizeof(I) * 8' ('m' = " << m << ", 'sizeof(I) * 8' = "
+		        << (sizeof(I) * 8) << ").";
+		throw invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	if (N != ((1 << m) -1))
 	{
 		std::stringstream message;
