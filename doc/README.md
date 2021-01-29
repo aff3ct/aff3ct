@@ -25,3 +25,19 @@ make latexpdf
 
 The last command will create a new folder: `build/html`.
 In the `html` folder you just have to open the `index.html` file to read the generated documentation.
+
+# Generating Only the Doxygen Documentation
+
+Install Doxygen:
+
+```bash
+sudo apt install doxygen
+```
+
+Generate the documentation:
+
+```bash
+mkdir build
+cd source
+doxygen Doxyfile
+```
