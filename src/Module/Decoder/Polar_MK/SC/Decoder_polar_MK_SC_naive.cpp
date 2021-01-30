@@ -166,6 +166,7 @@ template <typename B, typename R>
 void Decoder_polar_MK_SC_naive<B,R>
 ::set_frozen_bits(const std::vector<bool>& fb)
 {
+	aff3ct::tools::Interface_get_set_frozen_bits::assert_frozen_bits(fb, this->K, this->N);
 	std::copy(fb.begin(), fb.end(), this->frozen_bits.begin());
 	this->recursive_initialize_frozen_bits(this->polar_tree.get_root(), fb);
 }

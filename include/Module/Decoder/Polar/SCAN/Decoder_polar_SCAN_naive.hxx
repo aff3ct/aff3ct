@@ -310,5 +310,22 @@ void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 		Decoder_SISO<B,R>::set_n_frames(n_frames);
 }
 
+template <typename B, typename R,
+          tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
+void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
+::set_frozen_bits(const std::vector<bool>& fb)
+{
+	aff3ct::tools::Interface_get_set_frozen_bits::assert_frozen_bits(fb, this->K, this->N);
+	std::copy(fb.begin(), fb.end(), this->frozen_bits.begin());
+}
+
+template <typename B, typename R,
+          tools::proto_f<R> F, tools::proto_v<R> V, tools::proto_h<B,R> H, tools::proto_i<R> I, tools::proto_s<R> S>
+const std::vector<bool>& Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
+::get_frozen_bits() const
+{
+	return this->frozen_bits;
+}
+
 }
 }

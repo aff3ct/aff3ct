@@ -16,8 +16,10 @@ class Interface_get_set_frozen_bits
 public:
 	virtual void set_frozen_bits(const std::vector<bool>& frozen_bits) = 0;
 	virtual const std::vector<bool>& get_frozen_bits() const = 0;
-};
 
+protected:
+	static void assert_frozen_bits(const std::vector<bool>& frozen_bits, const int K, const int N);
+};
 }
 }
 

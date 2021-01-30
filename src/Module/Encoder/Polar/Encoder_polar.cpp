@@ -25,15 +25,6 @@ Encoder_polar<B>
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	auto k = 0; for (auto i = 0; i < this->N; i++) if (frozen_bits[i] == 0) k++;
-	if (this->K != k)
-	{
-		std::stringstream message;
-		message << "The number of information bits in the frozen_bits is invalid ('K' = " << K << ", 'k' = "
-		        << k << ").";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-	}
-
 	this->set_frozen_bits(frozen_bits);
 }
 
@@ -107,7 +98,8 @@ bool Encoder_polar<B>
 template <typename B>
 void Encoder_polar<B>
 ::set_frozen_bits(const std::vector<bool>& frozen_bits)
-{
+{	
+	aff3ct::tools::Interface_get_set_frozen_bits::assert_frozen_bits(frozen_bits, this->K, this->N);
 	std::copy(frozen_bits.begin(), frozen_bits.end(), this->frozen_bits.begin());
 	auto k = 0;
 	for (auto n = 0; n < this->N; n++)

@@ -9,6 +9,7 @@
 
 #include "Tools/Code/Polar/decoder_polar_functions.h"
 #include "Module/Decoder/Decoder_SISO.hpp"
+#include "Tools/Interface/Interface_get_set_frozen_bits.hpp"
 
 namespace aff3ct
 {
@@ -19,14 +20,14 @@ template <typename B = int, typename R = float, tools::proto_f<  R> F = &tools::
                                                 tools::proto_h<B,R> H = &tools::h_LLR,
                                                 tools::proto_i<  R> I = &tools::init_LLR,
                                                 tools::proto_s<  R> S = &tools::sat_val>
-class Decoder_polar_SCAN_naive : public Decoder_SISO<B,R>
+class Decoder_polar_SCAN_naive : public Decoder_SISO<B,R>, public tools::Interface_get_set_frozen_bits
 {
 protected:
 	const int m;            // coded bits log-length
 	const int max_iter;
 	const int layers_count; // number of layers in the graph = m+1
 
-	const std::vector<bool>&    frozen_bits;
+	std::vector<bool>           frozen_bits;
 	std::vector<std::vector<R>> feedback_graph;
 	std::vector<std::vector<R>> soft_graph;
 
@@ -37,6 +38,9 @@ public:
 	virtual Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>* clone() const;
 
 	virtual void set_n_frames(const size_t n_frames);
+
+	virtual void set_frozen_bits(const std::vector<bool>& frozen_bits);
+	virtual const std::vector<bool>& get_frozen_bits() const;	
 
 protected:
 	void _reset(const size_t frame_id);

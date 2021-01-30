@@ -121,6 +121,7 @@ template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G>
 void Decoder_polar_SCL_naive<B,R,F,G>
 ::set_frozen_bits(const std::vector<bool>& fb)
 {
+	aff3ct::tools::Interface_get_set_frozen_bits::assert_frozen_bits(fb, this->K, this->N);
 	std::copy(fb.begin(), fb.end(), this->frozen_bits.begin());
 	for (auto i = 0; i < L; i++)
 		this->recursive_initialize_frozen_bits(this->polar_trees[i].get_root(), frozen_bits);
