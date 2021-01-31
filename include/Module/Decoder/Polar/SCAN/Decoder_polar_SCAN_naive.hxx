@@ -7,6 +7,7 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
+#include "Tools/Code/Polar/fb_assert.h"
 #include "Module/Decoder/Polar/SCAN/Decoder_polar_SCAN_naive.hpp"
 
 namespace aff3ct
@@ -315,7 +316,7 @@ template <typename B, typename R,
 void Decoder_polar_SCAN_naive<B,R,F,V,H,I,S>
 ::set_frozen_bits(const std::vector<bool>& fb)
 {
-	aff3ct::tools::Interface_get_set_frozen_bits::assert_frozen_bits(fb, this->K, this->N);
+	aff3ct::tools::fb_assert(frozen_bits, this->K, this->N);
 	std::copy(fb.begin(), fb.end(), this->frozen_bits.begin());
 }
 

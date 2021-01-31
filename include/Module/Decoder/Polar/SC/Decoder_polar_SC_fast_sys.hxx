@@ -19,6 +19,7 @@
 #include "Tools/Code/Polar/Patterns/Pattern_polar_spc.hpp"
 #include "Tools/Code/Polar/Patterns/Pattern_polar_std.hpp"
 #include "Tools/Code/Polar/fb_extract.h"
+#include "Tools/Code/Polar/fb_assert.h"
 #include "Module/Decoder/Polar/SC/Decoder_polar_SC_fast_sys.hpp"
 
 namespace aff3ct
@@ -228,7 +229,7 @@ template <typename B, typename R, class API_polar>
 void Decoder_polar_SC_fast_sys<B,R,API_polar>
 ::set_frozen_bits(const std::vector<bool>& fb)
 {
-	aff3ct::tools::Interface_get_set_frozen_bits::assert_frozen_bits(fb, this->K, this->N);
+	aff3ct::tools::fb_assert(frozen_bits, this->K, this->N);
 	std::copy(fb.begin(), fb.end(), this->frozen_bits.begin());
 	polar_patterns.set_frozen_bits(this->frozen_bits);
 }

@@ -1,12 +1,13 @@
-#include "Tools/Interface/Interface_get_set_frozen_bits.hpp"
+#include "Tools/Code/Polar/fb_assert.h"
 
 #include <sstream>
 #include "Tools/Exception/exception.hpp"
 
-using namespace aff3ct::tools;
-
-void Interface_get_set_frozen_bits
-::assert_frozen_bits(const std::vector<bool>& frozen_bits, const int K, const int N)
+namespace aff3ct
+{
+namespace tools
+{
+void fb_assert(const std::vector<bool>& frozen_bits, const int K, const int N)
 {
 	if (frozen_bits.size() != N)
 	{
@@ -26,4 +27,6 @@ void Interface_get_set_frozen_bits
 				<< k << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
+}
+}
 }
