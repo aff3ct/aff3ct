@@ -1113,6 +1113,9 @@
 #ifndef DECODER_POLAR_FUNCTIONS_H
 #include <Tools/Code/Polar/decoder_polar_functions.h>
 #endif
+#ifndef FB_ASSERT_H
+#include <Tools/Code/Polar/fb_assert.h>
+#endif
 #ifndef FROZENBITS_GENERATOR_5G_HPP_
 #include <Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_5G.hpp>
 #endif
