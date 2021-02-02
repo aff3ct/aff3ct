@@ -3,6 +3,7 @@
 #include <string>
 
 #include "Tools/Exception/exception.hpp"
+#include "Tools/Code/Polar/fb_assert.h"
 #include "Module/Encoder/Polar_MK/Encoder_polar_MK.hpp"
 
 using namespace aff3ct;
@@ -161,6 +162,7 @@ template <typename B>
 void Encoder_polar_MK<B>
 ::set_frozen_bits(const std::vector<bool>& frozen_bits)
 {
+	aff3ct::tools::fb_assert(frozen_bits, this->K, this->N);
 	std::copy(frozen_bits.begin(), frozen_bits.end(), this->frozen_bits.begin());
 	auto k = 0;
 	for (auto n = 0; n < this->N; n++)

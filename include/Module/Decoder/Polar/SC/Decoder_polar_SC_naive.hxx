@@ -8,6 +8,7 @@
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/utils.h"
+#include "Tools/Code/Polar/fb_assert.h"
 #include "Module/Decoder/Polar/SC/Decoder_polar_SC_naive.hpp"
 
 namespace aff3ct
@@ -97,6 +98,7 @@ template <typename B, typename R, tools::proto_f<R> F, tools::proto_g<B,R> G, to
 void Decoder_polar_SC_naive<B,R,F,G,H>
 ::set_frozen_bits(const std::vector<bool>& fb)
 {
+	aff3ct::tools::fb_assert(fb, this->K, this->N);
 	std::copy(fb.begin(), fb.end(), this->frozen_bits.begin());
 	this->recursive_initialize_frozen_bits(this->polar_tree.get_root(), fb);
 }
