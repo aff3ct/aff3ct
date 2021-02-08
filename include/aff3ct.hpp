@@ -1341,6 +1341,9 @@
 #ifndef INTERFACE_GET_SET_NOISE_HPP__
 #include <Tools/Interface/Interface_get_set_noise.hpp>
 #endif
+#ifndef Interface_get_trellis_HPP__
+#include <Tools/Interface/Interface_get_trellis.hpp>
+#endif
 #ifndef INTERFACE_IS_DONE_HPP__
 #include <Tools/Interface/Interface_is_done.hpp>
 #endif

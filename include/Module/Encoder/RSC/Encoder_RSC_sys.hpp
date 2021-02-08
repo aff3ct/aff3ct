@@ -8,13 +8,14 @@
 #include <vector>
 
 #include "Module/Encoder/Encoder.hpp"
+#include "Tools/Interface/Interface_get_trellis.hpp"
 
 namespace aff3ct
 {
 namespace module
 {
 template <typename B = int>
-class Encoder_RSC_sys : public Encoder<B>
+class Encoder_RSC_sys : public Encoder<B>, public tools::Interface_get_trellis
 {
 protected:
 	const int n_ff;     // number of D flip-flop
