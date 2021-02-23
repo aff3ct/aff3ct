@@ -55,26 +55,32 @@ template <class C>
 std::vector<C*> Sequence
 ::get_cloned_modules(const C &module_ref) const
 {
-	std::vector<C*> cloned_modules(this->all_modules[0].size());
-	for (auto &e : this->all_modules)
+	bool found = false;
+	size_t mid = 0;
+	while (mid < this->all_modules[0].size() && !found)
+		if (dynamic_cast<C*>(this->all_modules[0][mid]) == &module_ref)
+			found = true;
+		else
+			mid++;
+
+	if (!found)
 	{
-		auto c = dynamic_cast<C*>(e[0]);
-		if (c == &module_ref)
+		std::stringstream message;
+		message << "'module_ref' can't be found in the sequence.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	std::vector<C*> cloned_modules(this->all_modules.size());
+	for (size_t tid = 0; tid < this->all_modules.size(); tid++)
+	{
+		auto c = dynamic_cast<C*>(this->all_modules[tid][mid]);
+		if (c == nullptr)
 		{
-			cloned_modules[0] = c;
-			for (size_t m = 1; m < cloned_modules.size(); m++)
-			{
-				c = dynamic_cast<C*>(e[m]);
-				if (c == nullptr)
-				{
-					std::stringstream message;
-					message << "'c' can't be 'nullptr', this should never happen.";
-					throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-				}
-				cloned_modules[m] = c;
-			}
-			break;
+			std::stringstream message;
+			message << "'c' can't be 'nullptr', this should never happen.";
+			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
+		cloned_modules[tid] = c;
 	}
 	return cloned_modules;
 }
