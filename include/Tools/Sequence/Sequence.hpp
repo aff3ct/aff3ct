@@ -149,7 +149,7 @@ public:
 	template <class C = module::Module>
 	std::vector<C*> get_modules(const bool subsequence_modules = true) const;
 	template <class C = module::Module>
-	std::vector<C*> get_cloned_modules(const C &module) const;
+	std::vector<C*> get_cloned_modules(const C &module_ref) const;
 
 	std::vector<std::vector<module::Module*>> get_modules_per_threads() const;
 	std::vector<std::vector<module::Module*>> get_modules_per_types  () const;
