@@ -51,6 +51,34 @@ std::vector<C*> Sequence
 	return ret;
 }
 
+template <class C>
+std::vector<C*> Sequence
+::get_cloned_modules(const C &module) const
+{
+	std::vector<C*> cloned_modules(this->all_modules[0].size());
+	for (auto &e : this->all_modules)
+	{
+		auto c = dynamic_cast<C*>(e[0]);
+		if (c == &module)
+		{
+			cloned_modules[0] = c;
+			for (size_t m = 1; m < cloned_modules.size(); m++)
+			{
+				c = dynamic_cast<C*>(e[m]);
+				if (c == nullptr)
+				{
+					std::stringstream message;
+					message << "'c' can't be 'nullptr', this should never happen.";
+					throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+				}
+				cloned_modules[m] = c;
+			}
+			break;
+		}
+	}
+	return cloned_modules;
+}
+
 template <class SS>
 inline void Sequence
 ::_init(Generic_node<SS> *root)
