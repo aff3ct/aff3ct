@@ -39,6 +39,7 @@ protected:
 	std::vector<std::vector<size_t>> saved_lasts_tasks_id;
 
 	bool bound_adaptors;
+	bool auto_stop;
 
 public:
 	// Pipeline(const module::Task &first,
@@ -115,6 +116,7 @@ public:
 
 	void exec(std::function<bool(const std::vector<const int*>&)> stop_condition);
 	void exec(std::function<bool(                              )> stop_condition);
+	void exec(                                                                  );
 
 	std::vector<Sequence*> get_stages();
 	Sequence& operator[](const size_t stage_id);
@@ -135,6 +137,9 @@ public:
 	void bind_adaptors();
 	void unbind_adaptors();
 	bool is_bound_adaptors() const;
+
+	void set_auto_stop(const bool auto_stop);
+	bool is_auto_stop() const;
 
 	size_t get_n_frames() const;
 	void set_n_frames(const size_t n_frames);

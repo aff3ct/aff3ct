@@ -81,7 +81,8 @@ Pipeline
   adaptors(sep_stages.size() -1),
   saved_firsts_tasks_id(sep_stages.size()),
   saved_lasts_tasks_id(sep_stages.size()),
-  bound_adaptors(false)
+  bound_adaptors(false),
+  auto_stop(true)
 {
 	this->init<module::Task>(firsts,
 	                         lasts,
@@ -108,7 +109,8 @@ Pipeline
   adaptors(sep_stages.size() -1),
   saved_firsts_tasks_id(sep_stages.size()),
   saved_lasts_tasks_id(sep_stages.size()),
-  bound_adaptors(false)
+  bound_adaptors(false),
+  auto_stop(true)
 {
 	std::vector<std::tuple<std::vector<module::Task*>,
 	                       std::vector<module::Task*>,
@@ -1030,6 +1032,12 @@ void Pipeline
 	this->exec(std::vector<std::function<bool()>>(this->stages.size(), stop_condition));
 }
 
+void Pipeline
+::exec()
+{
+	this->exec([]() { return false; });
+}
+
 const std::vector<std::vector<module::Task*>>& Pipeline
 ::get_firsts_tasks() const
 {
@@ -1194,6 +1202,20 @@ bool Pipeline
 ::is_bound_adaptors() const
 {
 	return this->bound_adaptors;
+}
+
+void Pipeline
+::set_auto_stop(const bool auto_stop)
+{
+	this->auto_stop = auto_stop;
+	for (auto stage : this->stages)
+		stage->set_auto_stop(auto_stop);
+}
+
+bool Pipeline
+::is_auto_stop() const
+{
+	return this->auto_stop;
 }
 
 size_t Pipeline

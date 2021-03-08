@@ -40,7 +40,8 @@ Sequence
   thread_pinning(thread_pinning),
   puids(puids),
   no_copy_mode(true),
-  saved_exclusions(exclusions)
+  saved_exclusions(exclusions),
+  auto_stop(true)
 {
 #ifndef AFF3CT_HWLOC
 	if (thread_pinning)
@@ -568,11 +569,25 @@ void Sequence
 	if (this->is_no_copy_mode())
 		this->gen_processes(true);
 
+	std::function<bool(const std::vector<const int*>&)> real_stop_condition;
+	if (this->auto_stop)
+		real_stop_condition = [this, stop_condition](const std::vector<const int*>& statuses)
+		{
+			bool res = stop_condition(statuses);
+			for (auto donner : this->donners)
+				if (donner->is_done())
+					return true;
+			return res;
+		};
+	else
+		real_stop_condition = stop_condition;
+
 	std::vector<std::thread> threads(n_threads);
 	for (size_t tid = 1; tid < n_threads; tid++)
-		threads[tid] = std::thread(&Sequence::_exec, this, tid, std::ref(stop_condition), std::ref(this->sequences[tid]));
+		threads[tid] = std::thread(&Sequence::_exec, this, tid, std::ref(real_stop_condition),
+		                           std::ref(this->sequences[tid]));
 
-	this->_exec(0, stop_condition, this->sequences[0]);
+	this->_exec(0, real_stop_condition, this->sequences[0]);
 
 	for (size_t tid = 1; tid < n_threads; tid++)
 		threads[tid].join();
@@ -596,14 +611,27 @@ void Sequence
 	if (this->is_no_copy_mode())
 		this->gen_processes(true);
 
+	std::function<bool()> real_stop_condition;
+	if (this->auto_stop)
+		real_stop_condition = [this, stop_condition]()
+		{
+			bool res = stop_condition();
+			for (auto donner : this->donners)
+				if (donner->is_done())
+					return true;
+			return res;
+		};
+	else
+		real_stop_condition = stop_condition;
+
 	std::vector<std::thread> threads(n_threads);
 	for (size_t tid = 1; tid < n_threads; tid++)
 	{
-		threads[tid] = std::thread(&Sequence::_exec_without_statuses, this, tid, std::ref(stop_condition),
+		threads[tid] = std::thread(&Sequence::_exec_without_statuses, this, tid, std::ref(real_stop_condition),
 		                           std::ref(this->sequences[tid]));
 	}
 
-	this->_exec_without_statuses(0, stop_condition, this->sequences[0]);
+	this->_exec_without_statuses(0, real_stop_condition, this->sequences[0]);
 
 	for (size_t tid = 1; tid < n_threads; tid++)
 		threads[tid].join();
@@ -624,13 +652,7 @@ void Sequence
 void Sequence
 ::exec()
 {
-	this->exec([this]()
-	{
-		for (auto donner : this->donners)
-			if (donner->is_done())
-				return true;
-		return false;
-	});
+	this->exec([]() { return false; });
 }
 
 void Sequence
@@ -1425,6 +1447,18 @@ bool Sequence
 ::is_no_copy_mode() const
 {
 	return this->no_copy_mode;
+}
+
+void Sequence
+::set_auto_stop(const bool auto_stop)
+{
+	this->auto_stop = auto_stop;
+}
+
+bool Sequence
+::is_auto_stop() const
+{
+	return this->auto_stop;
 }
 
 Sub_sequence* Sequence

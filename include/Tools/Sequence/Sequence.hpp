@@ -77,6 +77,7 @@ protected:
 	bool no_copy_mode;
 	const std::vector<const module::Task*> saved_exclusions;
 	std::vector<tools::Interface_is_done*> donners;
+	bool auto_stop;
 
 public:
 	Sequence(const std::vector<const module::Task*> &firsts,
@@ -164,6 +165,9 @@ public:
 
 	void set_no_copy_mode(const bool no_copy_mode);
 	bool is_no_copy_mode() const;
+
+	void set_auto_stop(const bool auto_stop);
+	bool is_auto_stop() const;
 
 	inline size_t get_n_frames() const;
 	void set_n_frames(const size_t n_frames);
