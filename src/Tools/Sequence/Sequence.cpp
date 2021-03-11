@@ -124,7 +124,8 @@ Sequence
   thread_pinning(thread_pinning),
   puids(puids),
   no_copy_mode(true),
-  saved_exclusions(exclusions_convert_to_const(exclusions))
+  saved_exclusions(exclusions_convert_to_const(exclusions)),
+  auto_stop(true)
 {
 	if (thread_pinning && puids.size() < n_threads)
 	{
