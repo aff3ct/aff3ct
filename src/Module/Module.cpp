@@ -185,6 +185,40 @@ void Module
 	task.create_codelet(codelet);
 }
 
+size_t Module
+::create_socket_in(Task& task, const std::string &name, const size_t n_elmts, const std::type_index& datatype)
+{
+	     if (datatype == typeid(int8_t )) return this->template create_socket_in<int8_t >(task, name, n_elmts);
+	else if (datatype == typeid(int16_t)) return this->template create_socket_in<int16_t>(task, name, n_elmts);
+	else if (datatype == typeid(int32_t)) return this->template create_socket_in<int32_t>(task, name, n_elmts);
+	else if (datatype == typeid(int64_t)) return this->template create_socket_in<int64_t>(task, name, n_elmts);
+	else if (datatype == typeid(float  )) return this->template create_socket_in<float  >(task, name, n_elmts);
+	else if (datatype == typeid(double )) return this->template create_socket_in<double >(task, name, n_elmts);
+	else
+	{
+		std::stringstream message;
+		message << "This should never happen.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+}
+
+size_t Module
+::create_socket_out(Task& task, const std::string &name, const size_t n_elmts, const std::type_index& datatype)
+{
+	     if (datatype == typeid(int8_t )) return this->template create_socket_out<int8_t >(task, name, n_elmts);
+	else if (datatype == typeid(int16_t)) return this->template create_socket_out<int16_t>(task, name, n_elmts);
+	else if (datatype == typeid(int32_t)) return this->template create_socket_out<int32_t>(task, name, n_elmts);
+	else if (datatype == typeid(int64_t)) return this->template create_socket_out<int64_t>(task, name, n_elmts);
+	else if (datatype == typeid(float  )) return this->template create_socket_out<float  >(task, name, n_elmts);
+	else if (datatype == typeid(double )) return this->template create_socket_out<double >(task, name, n_elmts);
+	else
+	{
+		std::stringstream message;
+		message << "This should never happen.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+}
+
 void Module
 ::register_timer(Task& task, const std::string &key)
 {

@@ -65,44 +65,10 @@ void Adaptor_1_to_n
 	this->set_short_name(name);
 	this->set_single_wave(true);
 
-	std::function<size_t(Task&, const size_t, const std::type_index&, const std::string&)> create_socket_in =
-		[this](Task& p, const size_t n_elmts, const std::type_index& datatype, const std::string& n)
-		{
-			     if (datatype == typeid(int8_t )) return this->template create_socket_in<int8_t >(p, n, n_elmts);
-			else if (datatype == typeid(int16_t)) return this->template create_socket_in<int16_t>(p, n, n_elmts);
-			else if (datatype == typeid(int32_t)) return this->template create_socket_in<int32_t>(p, n, n_elmts);
-			else if (datatype == typeid(int64_t)) return this->template create_socket_in<int64_t>(p, n, n_elmts);
-			else if (datatype == typeid(float  )) return this->template create_socket_in<float  >(p, n, n_elmts);
-			else if (datatype == typeid(double )) return this->template create_socket_in<double >(p, n, n_elmts);
-			else
-			{
-				std::stringstream message;
-				message << "This should never happen.";
-				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-			}
-		};
-
-	std::function<size_t(Task&, const size_t, const std::type_index&, const std::string&)> create_socket_out =
-		[this](Task& p, const size_t n_elmts, const std::type_index& datatype, const std::string& n)
-		{
-			     if (datatype == typeid(int8_t )) return this->template create_socket_out<int8_t >(p, n, n_elmts);
-			else if (datatype == typeid(int16_t)) return this->template create_socket_out<int16_t>(p, n, n_elmts);
-			else if (datatype == typeid(int32_t)) return this->template create_socket_out<int32_t>(p, n, n_elmts);
-			else if (datatype == typeid(int64_t)) return this->template create_socket_out<int64_t>(p, n, n_elmts);
-			else if (datatype == typeid(float  )) return this->template create_socket_out<float  >(p, n, n_elmts);
-			else if (datatype == typeid(double )) return this->template create_socket_out<double >(p, n, n_elmts);
-			else
-			{
-				std::stringstream message;
-				message << "This should never happen.";
-				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-			}
-		};
-
 	auto &p1 = this->create_task("push_1", (int)adp::tsk::push_1);
 	std::vector<size_t> p1s_in;
 	for (size_t s = 0; s < this->n_sockets; s++)
-		p1s_in.push_back(create_socket_in(p1, this->n_elmts[s], this->datatype[s], "in" + std::to_string(s+1)));
+		p1s_in.push_back(this->create_socket_in(p1, "in" + std::to_string(s), this->n_elmts[s], this->datatype[s]));
 
 	this->create_codelet(p1, [p1s_in](Module &m, Task &t, const size_t frame_id) -> int
 	{
@@ -127,7 +93,7 @@ void Adaptor_1_to_n
 	auto &p2 = this->create_task("pull_n", (int)adp::tsk::pull_n);
 	std::vector<size_t> p2s_out;
 	for (size_t s = 0; s < this->n_sockets; s++)
-		p2s_out.push_back(create_socket_out(p2, this->n_elmts[s], this->datatype[s], "out" + std::to_string(s+1)));
+		p2s_out.push_back(this->create_socket_out(p2, "out" + std::to_string(s), this->n_elmts[s], this->datatype[s]));
 
 	this->create_codelet(p2, [p2s_out](Module &m, Task &t, const size_t frame_id) -> int
 	{

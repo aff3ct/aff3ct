@@ -9,6 +9,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <typeindex>
 #include <memory>
 
 namespace aff3ct
@@ -106,6 +107,9 @@ std::vector<T*> convert_to_ptr(const std::vector<std::shared_ptr<T>> &v);
 template <typename T>
 void check_LUT(const std::vector<T> &LUT, const std::string &LUT_name = "LUT", const size_t LUT_size = 0);
 
+size_t compute_bytes(const size_t n_elmts, const std::type_index type);
+
+std::vector<size_t> compute_bytes(const std::vector<size_t> &n_elmts, const std::vector<std::type_index> &type);
 }
 }
 

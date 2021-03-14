@@ -28,10 +28,10 @@ namespace module
 
 		namespace sck
 		{
-			enum class push_1 : size_t { in1,  in2,  in3,  in4,  status };
-			enum class pull_n : size_t { out1, out2, out3, out4, status };
-			enum class push_n : size_t { in1,  in2,  in3,  in4,  status };
-			enum class pull_1 : size_t { out1, out2, out3, out4, status };
+			enum class push_1 : size_t { in0,  in1,  in2,  in3,  status };
+			enum class pull_n : size_t { out0, out1, out2, out3, status };
+			enum class push_n : size_t { in0,  in1,  in2,  in3,  status };
+			enum class pull_1 : size_t { out0, out1, out2, out3, status };
 		}
 	}
 
@@ -94,10 +94,6 @@ protected:
 	virtual void* get_filled_buffer(const size_t sid, void* swap_buffer) = 0;
 	virtual void wake_up_pusher() = 0;
 	virtual void wake_up_puller() = 0;
-
-private:
-	static             size_t  compute_bytes(const             size_t   n_elmts, const             std::type_index   type);
-	static std::vector<size_t> compute_bytes(const std::vector<size_t> &n_elmts, const std::vector<std::type_index> &type);
 };
 }
 }

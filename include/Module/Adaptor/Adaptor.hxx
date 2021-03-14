@@ -2,6 +2,7 @@
 #include <string>
 #include <sstream>
 
+#include "Tools/general_utils.h"
 #include "Tools/Exception/exception.hpp"
 #include "Module/Adaptor/Adaptor.hpp"
 
@@ -16,15 +17,15 @@ Adaptor
           const size_t buffer_size)
 : Module(),
   n_elmts(1, n_elmts),
-  n_bytes(1, compute_bytes(n_elmts, datatype)),
+  n_bytes(1, tools::compute_bytes(n_elmts, datatype)),
   datatype(1, datatype),
   buffer_size(buffer_size),
   n_sockets(1),
   id(0),
   cur_id(0),
   buffer(new std::vector<std::vector<std::vector<int8_t*>>>
-  	(1, std::vector<std::vector<int8_t*>>(1,
-  		std::vector<int8_t*>(buffer_size)))),
+      (1, std::vector<std::vector<int8_t*>>(1,
+          std::vector<int8_t*>(buffer_size)))),
   first(new std::vector<std::atomic<uint64_t>>(1000)),
   last(new std::vector<std::atomic<uint64_t>>(1000)),
   waiting_canceled(new std::atomic<bool>(false)),
@@ -68,7 +69,7 @@ Adaptor
           const size_t buffer_size)
 : Module(),
   n_elmts(n_elmts),
-  n_bytes(compute_bytes(n_elmts, datatype)),
+  n_bytes(tools::compute_bytes(n_elmts, datatype)),
   datatype(datatype),
   buffer_size(buffer_size),
   n_sockets(n_elmts.size()),

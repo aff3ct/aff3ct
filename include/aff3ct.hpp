@@ -738,6 +738,9 @@
 #ifndef MONITOR_HPP_
 #include <Module/Monitor/Monitor.hpp>
 #endif
+#ifndef MULTIPLEXER_HPP_
+#include <Module/Multiplexer/Multiplexer.hpp>
+#endif
 #ifndef PROBE_LATENCY_HPP_
 #include <Module/Probe/Latency/Probe_latency.hpp>
 #endif
@@ -833,6 +836,9 @@
 #endif
 #ifndef SUBSEQUENCE_HPP_
 #include <Module/Subsequence/Subsequence.hpp>
+#endif
+#ifndef SWITCHER_HPP_
+#include <Module/Switcher/Switcher.hpp>
 #endif
 #ifndef TASK_HPP_
 #include <Module/Task.hpp>

@@ -97,12 +97,14 @@ protected:
 
 	template <typename T>
 	size_t create_socket_in(Task& task, const std::string &name, const size_t n_elmts);
+	size_t create_socket_in(Task& task, const std::string &name, const size_t n_elmts, const std::type_index& datatype);
 
 	template <typename T>
 	size_t create_socket_in_out(Task& task, const std::string &name, const size_t n_elmts);
 
 	template <typename T>
 	size_t create_socket_out(Task& task, const std::string &name, const size_t n_elmts);
+	size_t create_socket_out(Task& task, const std::string &name, const size_t n_elmts, const std::type_index& datatype);
 
 	void create_codelet(Task& task, std::function<int(Module &m, Task &t, const size_t frame_id)> codelet);
 
