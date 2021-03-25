@@ -30,8 +30,8 @@ class BFER_ite : public BFER
 public:
 	// ----------------------------------------------------------------------------------------------------- PARAMETERS
 	// optional parameters
-	int n_ite     = 15;
-	int crc_start = 2;
+	int  n_ite                 = 15;
+	bool crc_early_termination = false;
 
 	// module parameters
 	tools::auto_cloned_unique_ptr<Interleaver> itl;

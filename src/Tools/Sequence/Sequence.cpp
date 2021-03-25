@@ -15,8 +15,7 @@
 #include "Module/Task.hpp"
 #include "Module/Socket.hpp"
 #include "Module/Probe/Probe.hpp"
-#include "Module/Loop/Loop.hpp"
-#include "Module/Router/Router.hpp"
+#include "Module/Switcher/Switcher.hpp"
 #include "Module/Adaptor/Adaptor.hpp"
 #include "Tools/Sequence/Sequence.hpp"
 
@@ -194,8 +193,9 @@ Sequence
 Sequence
 ::~Sequence()
 {
+	std::vector<Generic_node<Sub_sequence>*> already_deleted_nodes;
 	for (auto s : this->sequences)
-		this->delete_tree(s);
+		this->delete_tree(s, already_deleted_nodes);
 }
 
 template <class SS, class TA>
@@ -243,7 +243,8 @@ void Sequence
 	auto root = new Generic_node<SS>(nullptr, {}, nullptr, 0, 0, 0);
 	root->set_contents(nullptr);
 	size_t ssid = 0, taid = 0;
-	std::vector<TA*> loops;
+	std::vector<TA*> switchers;
+	std::vector<std::pair<TA*,Generic_node<SS>*>> selectors;
 	std::vector<TA*> real_lasts;
 
 	this->lasts_tasks_id.clear();
@@ -256,7 +257,8 @@ void Sequence
 		last_subseq = this->init_recursive<SS,TA>(last_subseq,
 		                                          ssid,
 		                                          taid,
-		                                          loops,
+		                                          selectors,
+		                                          switchers,
 		                                          *first,
 		                                          *first,
 		                                          lasts,
@@ -366,19 +368,30 @@ std::vector<std::vector<module::Task*>> Sequence
 {
 	std::vector<std::vector<module::Task*>> tasks_per_threads(this->n_threads);
 
-	std::function<void(Generic_node<Sub_sequence>*, const size_t)> get_tasks_recursive =
-		[&](Generic_node<Sub_sequence>* cur_ss, const size_t tid)
+	std::function<void(Generic_node<Sub_sequence>*, const size_t,
+		               std::vector<Generic_node<Sub_sequence>*> &)> get_tasks_recursive =
+		[&](Generic_node<Sub_sequence>* cur_ss, const size_t tid,
+			std::vector<Generic_node<Sub_sequence>*> &already_parsed_nodes)
 		{
-			tasks_per_threads[tid].insert(tasks_per_threads[tid].end(),
-			                              cur_ss->get_c()->tasks.begin(),
-			                              cur_ss->get_c()->tasks.end());
+			if (std::find(already_parsed_nodes.begin(),
+			              already_parsed_nodes.end(),
+			              cur_ss) == already_parsed_nodes.end())
+			{
+				already_parsed_nodes.push_back(cur_ss);
+				tasks_per_threads[tid].insert(tasks_per_threads[tid].end(),
+				                              cur_ss->get_c()->tasks.begin(),
+				                              cur_ss->get_c()->tasks.end());
 
-			for (auto c : cur_ss->get_children())
-				get_tasks_recursive(c, tid);
+				for (auto c : cur_ss->get_children())
+					get_tasks_recursive(c, tid, already_parsed_nodes);
+			}
 		};
 
 	for (size_t tid = 0; tid < this->n_threads; tid++)
-		get_tasks_recursive(this->sequences[tid], tid);
+	{
+		std::vector<Generic_node<Sub_sequence>*> already_parsed_nodes;
+		get_tasks_recursive(this->sequences[tid], tid, already_parsed_nodes);
+	}
 
 	return tasks_per_threads;
 }
@@ -388,20 +401,29 @@ std::vector<std::vector<module::Task*>> Sequence
 {
 	std::vector<std::vector<module::Task*>> tasks_per_types(this->n_tasks);
 
-	std::function<void(Generic_node<Sub_sequence>*, size_t&)> get_tasks_recursive =
-		[&](Generic_node<Sub_sequence>* cur_ss, size_t &mid)
+	std::function<void(Generic_node<Sub_sequence>*, size_t&,
+		               std::vector<Generic_node<Sub_sequence>*>&)> get_tasks_recursive =
+		[&](Generic_node<Sub_sequence>* cur_ss, size_t &mid,
+			std::vector<Generic_node<Sub_sequence>*> &already_parsed_nodes)
 		{
-			for (auto &t : cur_ss->get_c()->tasks)
-				tasks_per_types[mid++].push_back(t);
+			if (std::find(already_parsed_nodes.begin(),
+			    already_parsed_nodes.end(),
+			    cur_ss) == already_parsed_nodes.end())
+			{
+				already_parsed_nodes.push_back(cur_ss);
+				for (auto &t : cur_ss->get_c()->tasks)
+					tasks_per_types[mid++].push_back(t);
 
-			for (auto c : cur_ss->get_children())
-				get_tasks_recursive(c, mid);
+				for (auto c : cur_ss->get_children())
+					get_tasks_recursive(c, mid, already_parsed_nodes);
+			}
 		};
 
 	for (size_t tid = 0; tid < this->n_threads; tid++)
 	{
 		size_t mid = 0;
-		get_tasks_recursive(this->sequences[tid], mid);
+		std::vector<Generic_node<Sub_sequence>*> already_parsed_nodes;
+		get_tasks_recursive(this->sequences[tid], mid, already_parsed_nodes);
 	}
 
 	return tasks_per_types;
@@ -419,16 +441,14 @@ void Sequence
 		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss, std::vector<const int*>& statuses)
 		{
 			auto type = cur_ss->get_c()->type;
-			auto &tasks = cur_ss->get_c()->tasks;
 			auto &tasks_id = cur_ss->get_c()->tasks_id;
 			auto &processes = cur_ss->get_c()->processes;
 
-			if (type == subseq_t::LOOP)
+			if (type == subseq_t::SWITCHER)
 			{
-				while (!(statuses[tasks_id[0]] = processes[0]()))
-					exec_sequence(cur_ss->get_children()[0], statuses);
-				static_cast<module::Loop&>(tasks[0]->get_module()).reset();
-				exec_sequence(cur_ss->get_children()[1], statuses);
+				statuses[tasks_id[0]] = processes[0]();
+				const int path = statuses[tasks_id[0]][0];
+				exec_sequence(cur_ss->get_children()[path], statuses);
 			}
 			else
 			{
@@ -499,15 +519,12 @@ void Sequence
 		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss)
 		{
 			auto type = cur_ss->get_c()->type;
-			auto &tasks = cur_ss->get_c()->tasks;
 			auto &processes = cur_ss->get_c()->processes;
 
-			if (type == subseq_t::LOOP)
+			if (type == subseq_t::SWITCHER)
 			{
-				while (!processes[0]()[0])
-					exec_sequence(cur_ss->get_children()[0]);
-				static_cast<module::Loop&>(tasks[0]->get_module()).reset();
-				exec_sequence(cur_ss->get_children()[1]);
+				const int path = processes[0]()[0];
+				exec_sequence(cur_ss->get_children()[path]);
 			}
 			else
 			{
@@ -672,12 +689,10 @@ void Sequence
 		{
 			auto type = cur_ss->get_c()->type;
 			auto &tasks = cur_ss->get_c()->tasks;
-			if (type == subseq_t::LOOP)
+			if (type == subseq_t::SWITCHER)
 			{
-				while (!tasks[0]->exec(frame_id)[0])
-					exec_sequence(cur_ss->get_children()[0]);
-				static_cast<module::Loop&>(tasks[0]->get_module()).reset();
-				exec_sequence(cur_ss->get_children()[1]);
+				const int path = tasks[0]->exec(frame_id)[0];
+				exec_sequence(cur_ss->get_children()[path]);
 			}
 			else
 			{
@@ -696,7 +711,8 @@ Generic_node<SS>* Sequence
 ::init_recursive(Generic_node<SS> *cur_subseq,
                  size_t &ssid,
                  size_t &taid,
-                 std::vector<TA*> &loops,
+                 std::vector<std::pair<TA*,Generic_node<SS>*>> &selectors,
+                 std::vector<TA*> &switchers,
                  TA &first,
                  TA &current_task,
                  const std::vector<TA*> &lasts,
@@ -728,86 +744,193 @@ Generic_node<SS>* Sequence
 		real_lasts_id.erase(real_lasts_id.begin() + dist);
 	}
 
-	if (auto loop = dynamic_cast<const module::Loop*>(&current_task.get_module()))
+	bool is_last = true;
+	Generic_node<SS>* last_subseq = nullptr;
+
+	if (auto switcher = dynamic_cast<const module::Switcher*>(&current_task.get_module()))
 	{
-		if (std::find(loops.begin(), loops.end(), &current_task) == loops.end())
+		const auto current_task_name = current_task.get_name();
+		if (current_task_name == "commute")
 		{
-			loops.push_back(&current_task);
-			Generic_node<SS>* node_loop = nullptr;
-			if (&first == &current_task)
-				node_loop = cur_subseq;
-			else
+			if (std::find(switchers.begin(), switchers.end(), &current_task) == switchers.end())
 			{
-				ssid++;
-				node_loop = new Generic_node<SS>(cur_subseq, {}, nullptr, cur_subseq->get_depth() +1, 0, 0);
+				switchers.push_back(&current_task);
+				auto node_switcher = new Generic_node<SS>(cur_subseq, {}, nullptr, cur_subseq->get_depth() +1, 0, 0);
+
+				node_switcher->set_contents(new SS());
+				node_switcher->get_c()->tasks.push_back(&current_task);
+				node_switcher->get_c()->tasks_id.push_back(taid++);
+				node_switcher->get_c()->type = subseq_t::SWITCHER;
+				node_switcher->get_c()->id = ssid++;
+
+				cur_subseq->add_child(node_switcher);
+
+				for (size_t sdo = 0; sdo < switcher->get_n_data_sockets(); sdo++)
+				{
+					auto node_switcher_son = new Generic_node<SS>(node_switcher, {}, nullptr,
+						node_switcher->get_depth() +1, 0, sdo);
+
+					node_switcher_son->set_contents(new SS());
+					node_switcher_son->get_c()->id = ssid++;
+
+					node_switcher->add_child(node_switcher_son);
+
+					auto &bss = (*switcher)[module::swi::tsk::commute].sockets[sdo+2]->get_bound_sockets();
+					for (auto bs : bss)
+					{
+						if (bs != nullptr)
+						{
+							auto &t = bs->get_task();
+							if (std::find(exclusions.begin(), exclusions.end(), &t) == exclusions.end())
+							{
+								if (t.is_last_input_socket(*bs))
+								{
+									is_last = false;
+									last_subseq = Sequence::init_recursive<SS,TA>(node_switcher_son, ssid, taid,
+										selectors, switchers, first, t, lasts, exclusions, real_lasts_id, real_lasts);
+								}
+								else
+								{
+									if (dynamic_cast<const module::Switcher*>(&t.get_module()) &&
+										t.get_name() == "select")
+									{
+										Generic_node<SS>* node_selector = nullptr;
+										for (auto &sel : selectors)
+											if (sel.first == &t)
+											{
+												node_selector = sel.second;
+												break;
+											}
+
+										if (!node_selector)
+										{
+											node_selector = new Generic_node<SS>(node_switcher_son, {}, nullptr,
+												node_switcher_son->get_depth() +1, 0, 0);
+											selectors.push_back({&t, node_selector});
+										}
+										node_switcher_son->add_child(node_selector);
+									}
+								}
+							}
+						}
+					}
+				}
+				// exception for the status socket
+				auto &bss = (*switcher)[module::swi::tsk::commute].sockets[switcher->get_n_data_sockets()+2]
+					->get_bound_sockets();
+				for (auto bs : bss)
+				{
+					if (bs != nullptr)
+					{
+						auto &t = bs->get_task();
+						if (std::find(exclusions.begin(), exclusions.end(), &t) == exclusions.end())
+						{
+							if (t.is_last_input_socket(*bs))
+							{
+								is_last = false;
+								last_subseq = Sequence::init_recursive<SS,TA>(node_switcher, ssid, taid, selectors,
+									switchers, first, t, lasts, exclusions, real_lasts_id, real_lasts);
+							}
+						}
+					}
+				}
+			}
+		}
+		else if (current_task_name == "select")
+		{
+			Generic_node<SS>* node_selector = nullptr;
+
+			for (auto &sel : selectors)
+				if (sel.first == &current_task)
+				{
+					node_selector = sel.second;
+					break;
+				}
+
+			if (!node_selector)
+			{
+				node_selector = new Generic_node<SS>(cur_subseq, {}, nullptr, cur_subseq->get_depth() +1, 0, 0);
+				selectors.push_back({&current_task, node_selector});
 			}
 
-			auto node_loop_son0 = new Generic_node<SS>(node_loop, {}, nullptr, node_loop->get_depth() +1, 0, 0);
-			auto node_loop_son1 = new Generic_node<SS>(node_loop, {}, nullptr, node_loop->get_depth() +1, 0, 1);
-			node_loop->add_child(node_loop_son0);
-			node_loop->add_child(node_loop_son1);
+			node_selector->set_contents(new SS());
+			node_selector->get_c()->tasks.push_back(&current_task);
+			node_selector->get_c()->tasks_id.push_back(taid++);
+			node_selector->get_c()->type = subseq_t::SELECTER;
+			node_selector->get_c()->id = ssid++;
 
-			node_loop->set_contents(new SS());
-			node_loop_son0->set_contents(new SS());
-			node_loop_son1->set_contents(new SS());
+			cur_subseq->add_child(node_selector);
 
-			node_loop->get_c()->tasks.push_back(&current_task);
-			node_loop->get_c()->tasks_id.push_back(taid++);
-			node_loop->get_c()->type = subseq_t::LOOP;
-			node_loop->get_c()->id = ssid++;
+			auto node_selector_son = new Generic_node<SS>(node_selector, {}, nullptr, node_selector->get_depth() +1, 0,
+				0);
 
-			if (!cur_subseq->get_children().size())
-				cur_subseq->add_child(node_loop);
+			node_selector_son->set_contents(new SS());
+			node_selector_son->get_c()->id = ssid++;
 
-			if (loop->tasks[0]->sockets[2]->get_bound_sockets().size() == 1)
+			node_selector->add_child(node_selector_son);
+
+			for (auto &s : current_task.sockets)
 			{
-				node_loop_son0->get_c()->id = ssid++;
-				auto &t = loop->tasks[0]->sockets[2]->get_bound_sockets()[0]->get_task();
-				Sequence::init_recursive<SS,TA>(node_loop_son0, ssid, taid, loops, first, t, lasts, exclusions,
-				                                real_lasts_id, real_lasts);
-			}
-			else
-			{
-				std::stringstream message;
-				message << "'loop->tasks[0]->sockets[2]->get_bound_sockets().size()' has to be equal to 1 ("
-				        << "'loop->tasks[0]->sockets[2]->get_bound_sockets().size()' = "
-				        << loop->tasks[0]->sockets[2]->get_bound_sockets().size() << ").";
-				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-			}
+				if (current_task.get_socket_type(*s) == module::socket_t::SOUT)
+				{
+					auto bss = s->get_bound_sockets();
+					for (auto bs : bss)
+					{
+						if (bs != nullptr)
+						{
+							auto &t = bs->get_task();
+							if (std::find(exclusions.begin(), exclusions.end(), &t) == exclusions.end())
+							{
+								if (t.is_last_input_socket(*bs))
+								{
+									is_last = false;
+									last_subseq = Sequence::init_recursive<SS,TA>(node_selector_son, ssid, taid,
+										selectors, switchers, first, t, lasts, exclusions, real_lasts_id, real_lasts);
+								}
+								else
+								{
+									if (dynamic_cast<const module::Switcher*>(&t.get_module()) &&
+										t.get_name() == "select")
+									{
+										Generic_node<SS>* node_selector = nullptr;
+										for (auto &sel : selectors)
+											if (sel.first == &t)
+											{
+												node_selector = sel.second;
+												break;
+											}
 
-			if (loop->tasks[0]->sockets[3]->get_bound_sockets().size() == 1)
-			{
-				node_loop_son1->get_c()->id = ssid++;
-				auto &t = loop->tasks[0]->sockets[3]->get_bound_sockets()[0]->get_task();
-				return Sequence::init_recursive<SS,TA>(node_loop_son1, ssid, taid, loops, first, t, lasts, exclusions,
-				                                       real_lasts_id, real_lasts);
-			}
-			else
-			{
-				std::stringstream message;
-				message << "'loop->tasks[0]->sockets[3]->get_bound_sockets().size()' has to be equal to 1 ("
-				        << "'loop->tasks[0]->sockets[3]->get_bound_sockets().size()' = "
-				        << loop->tasks[0]->sockets[3]->get_bound_sockets().size() << ").";
-				throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+										if (!node_selector)
+										{
+											node_selector = new Generic_node<SS>(node_selector_son, {}, nullptr,
+												node_selector_son->get_depth() +1, 0, 0);
+											selectors.push_back({&t, node_selector});
+										}
+										node_selector_son->add_child(node_selector);
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 	}
 	else
 	{
 		if (cur_subseq->get_contents() == nullptr)
+		{
 			cur_subseq->set_contents(new SS());
-
+			cur_subseq->get_c()->id = ssid++;
+		}
 		cur_subseq->get_c()->tasks.push_back(&current_task);
 		cur_subseq->get_c()->tasks_id.push_back(taid++);
 
-		bool is_last = true;
-		Generic_node<SS>* last_subseq = nullptr;
 		if (std::find(lasts.begin(), lasts.end(), &current_task) == lasts.end())
 		{
 			for (auto &s : current_task.sockets)
 			{
-				if (current_task.get_socket_type(*s) == module::socket_t::SIN_SOUT ||
-					current_task.get_socket_type(*s) == module::socket_t::SOUT)
+				if (current_task.get_socket_type(*s) == module::socket_t::SOUT)
 				{
 					auto bss = s->get_bound_sockets();
 					for (auto &bs : bss)
@@ -817,12 +940,33 @@ Generic_node<SS>* Sequence
 							auto &t = bs->get_task();
 							if (std::find(exclusions.begin(), exclusions.end(), &t) == exclusions.end())
 							{
-								if (t.is_last_input_socket(*bs) || dynamic_cast<const module::Loop*>(&t.get_module()))
+								if (t.is_last_input_socket(*bs))
 								{
 									is_last = false;
-									last_subseq = Sequence::init_recursive<SS,TA>(cur_subseq, ssid, taid, loops, first,
-									                                              t, lasts, exclusions, real_lasts_id,
-									                                              real_lasts);
+									last_subseq = Sequence::init_recursive<SS,TA>(cur_subseq, ssid, taid, selectors,
+										switchers, first, t, lasts, exclusions, real_lasts_id, real_lasts);
+								}
+								else
+								{
+									if (dynamic_cast<const module::Switcher*>(&t.get_module()) &&
+										t.get_name() == "select")
+									{
+										Generic_node<SS>* node_selector = nullptr;
+										for (auto &sel : selectors)
+											if (sel.first == &t)
+											{
+												node_selector = sel.second;
+												break;
+											}
+
+										if (!node_selector)
+										{
+											node_selector = new Generic_node<SS>(cur_subseq, {}, nullptr,
+												cur_subseq->get_depth() +1, 0, 0);
+											selectors.push_back({&t, node_selector});
+										}
+										cur_subseq->add_child(node_selector);
+									}
 								}
 							}
 						}
@@ -845,17 +989,18 @@ Generic_node<SS>* Sequence
 				}
 			}
 		}
-
-		if (is_last && std::find(real_lasts.begin(), real_lasts.end(), &current_task) == real_lasts.end())
-		{
-			real_lasts.push_back(&current_task);
-			real_lasts_id.push_back(cur_subseq->get_contents()->tasks_id.back());
-		}
-		if (last_subseq)
-			return last_subseq;
 	}
 
-	return cur_subseq;
+	if (is_last && std::find(real_lasts.begin(), real_lasts.end(), &current_task) == real_lasts.end())
+	{
+		real_lasts.push_back(&current_task);
+		real_lasts_id.push_back(cur_subseq->get_contents()->tasks_id.back());
+	}
+
+	if (last_subseq)
+		return last_subseq;
+	else
+		return cur_subseq;
 }
 
 template <class SS, class MO>
@@ -864,19 +1009,22 @@ void Sequence
 {
 	std::set<MO*> modules_set;
 
-	std::function<void(const Generic_node<SS>*)> collect_modules_list;
-	collect_modules_list = [&](const Generic_node<SS> *node)
+	std::function<void(const Generic_node<SS>*, std::vector<const Generic_node<SS>*> &)> collect_modules_list;
+	collect_modules_list = [&](const Generic_node<SS> *node, std::vector<const Generic_node<SS>*> &already_parsed_nodes)
 	{
-		if (node != nullptr)
+		if (node != nullptr &&
+		    std::find(already_parsed_nodes.begin(), already_parsed_nodes.end(), node) == already_parsed_nodes.end())
 		{
+			already_parsed_nodes.push_back(node);
 			if (node->get_c())
 				for (auto ta : node->get_c()->tasks)
 					modules_set.insert(&ta->get_module());
 			for (auto c : node->get_children())
-				collect_modules_list(c);
+				collect_modules_list(c, already_parsed_nodes);
 		}
 	};
-	collect_modules_list(sequence);
+	std::vector<const Generic_node<SS>*> already_parsed_nodes;
+	collect_modules_list(sequence, already_parsed_nodes);
 
 	std::vector<MO*> modules_vec;
 	for (auto m : modules_set)
@@ -941,14 +1089,23 @@ void Sequence
 
 	std::function<void(const Generic_node<SS>*,
 	                         Generic_node<Sub_sequence>*,
-	                   const size_t)> duplicate_sequence;
+	                   const size_t,
+	                         std::vector<const Generic_node<SS>*>&,
+	                         std::map<size_t,Generic_node<Sub_sequence>*>&)> duplicate_sequence;
 
 	duplicate_sequence = [&](const Generic_node<SS>           *sequence_ref,
 	                               Generic_node<Sub_sequence> *sequence_cpy,
-	                         const size_t thread_id)
+	                         const size_t thread_id,
+	                               std::vector<const Generic_node<SS>*> &already_parsed_nodes,
+	                               std::map<size_t,Generic_node<Sub_sequence>*> &allocated_nodes)
 	{
-		if (sequence_ref != nullptr && sequence_ref->get_c())
+		if (sequence_ref != nullptr && sequence_ref->get_c() &&
+		    std::find(already_parsed_nodes.begin(),
+		              already_parsed_nodes.end(),
+		              sequence_ref) == already_parsed_nodes.end())
 		{
+			already_parsed_nodes.push_back(sequence_ref);
+
 			auto ss_ref = sequence_ref->get_c();
 			auto ss_cpy = new Sub_sequence();
 
@@ -971,8 +1128,7 @@ void Sequence
 				// replicate the sockets binding
 				for (size_t s_id = 0; s_id < t_ref->sockets.size(); s_id++)
 				{
-					if (t_ref->get_socket_type(*t_ref->sockets[s_id]) == module::socket_t::SIN_SOUT ||
-					    t_ref->get_socket_type(*t_ref->sockets[s_id]) == module::socket_t::SIN)
+					if (t_ref->get_socket_type(*t_ref->sockets[s_id]) == module::socket_t::SIN)
 					{
 						const module::Socket* s_ref_out = nullptr;
 						try { s_ref_out = &t_ref->sockets[s_id]->get_bound_socket(); } catch (...) {}
@@ -1000,31 +1156,77 @@ void Sequence
 						}
 					}
 				}
+
+				// replicate the tasks binding
+				if (t_ref->is_no_input_socket() && t_ref->fake_input_socket != nullptr)
+				{
+					const module::Socket* s_ref_out = nullptr;
+					try { s_ref_out = &t_ref->fake_input_socket->get_bound_socket(); } catch (...) {}
+					if (s_ref_out)
+					{
+						auto &t_ref_out = s_ref_out->get_task();
+						auto &m_ref_out = t_ref_out.get_module();
+
+						auto m_id_out = get_module_id(modules_vec, m_ref_out);
+
+						if (m_id_out != -1)
+						{
+							auto t_id_out = get_task_id(m_ref_out.tasks, t_ref_out);
+							auto s_id_out = get_socket_id(t_ref_out.sockets, *s_ref_out);
+
+							assert(t_id_out != -1);
+							assert(s_id_out != -1);
+
+							(*this->all_modules[thread_id][m_id_out]).tasks[t_id_out]->set_autoalloc(true);
+
+							auto &t_in  = *this->all_modules[thread_id][m_id    ]->tasks[t_id    ];
+							auto &s_out = *this->all_modules[thread_id][m_id_out]->tasks[t_id_out]->sockets[s_id_out];
+							t_in.bind(s_out);
+						}
+					}
+				}
 			}
 
 			// add the sub-sequence to the current tree node
 			sequence_cpy->set_contents(ss_cpy);
+			allocated_nodes[sequence_cpy->get_c()->id] = sequence_cpy;
 
 			for (size_t c = 0; c < sequence_ref->get_children().size(); c++)
-				sequence_cpy->add_child(new Generic_node<Sub_sequence>(sequence_cpy,
-				                                                       {},
-				                                                       nullptr,
-				                                                       sequence_cpy->get_depth() +1,
-				                                                       0,
-				                                                       c));
+			{
+				if (std::find(already_parsed_nodes.begin(),
+				              already_parsed_nodes.end(),
+				              sequence_ref->get_children()[c]) != already_parsed_nodes.end())
+					sequence_cpy->add_child(allocated_nodes[sequence_ref->get_children()[c]->get_c()->id]);
+				else
+					sequence_cpy->add_child(new Generic_node<Sub_sequence>(sequence_cpy,
+					                                                       {},
+					                                                       nullptr,
+					                                                       sequence_cpy->get_depth() +1,
+					                                                       0,
+					                                                       c));
+			}
 
 			for (size_t c = 0; c < sequence_ref->get_children().size(); c++)
-				duplicate_sequence(sequence_ref->get_children()[c], sequence_cpy->get_children()[c], thread_id);
+				duplicate_sequence(sequence_ref->get_children()[c], sequence_cpy->get_children()[c], thread_id,
+				                   already_parsed_nodes, allocated_nodes);
 		}
 	};
 
-	std::function<void(Generic_node<Sub_sequence>*)> set_autoalloc_true =
-		[&set_autoalloc_true](Generic_node<Sub_sequence>* node)
+	std::function<void(Generic_node<Sub_sequence>*, std::vector<Generic_node<Sub_sequence>*> &)> set_autoalloc_true =
+		[&set_autoalloc_true](Generic_node<Sub_sequence>* node,
+		                      std::vector<Generic_node<Sub_sequence>*> &already_parsed_nodes)
 		{
-			for (auto t : node->get_c()->tasks)
-				t->set_autoalloc(true);
-			for (auto c : node->get_children())
-				set_autoalloc_true(c);
+			if (std::find(already_parsed_nodes.begin(),
+			              already_parsed_nodes.end(),
+			              node) == already_parsed_nodes.end())
+			{
+				already_parsed_nodes.push_back(node);
+
+				for (auto t : node->get_c()->tasks)
+					t->set_autoalloc(true);
+				for (auto c : node->get_children())
+					set_autoalloc_true(c, already_parsed_nodes);
+			}
 		};
 
 	for (size_t thread_id = (this->tasks_inplace ? 1 : 0); thread_id < this->sequences.size(); thread_id++)
@@ -1033,8 +1235,11 @@ void Sequence
 			Thread_pinning::pin(this->puids[thread_id]);
 
 		this->sequences[thread_id] = new Generic_node<Sub_sequence>(nullptr, {}, nullptr, 0, 0, 0);
-		duplicate_sequence(sequence, this->sequences[thread_id], thread_id);
-		set_autoalloc_true(this->sequences[thread_id]);
+		already_parsed_nodes.clear();
+		std::map<size_t,Generic_node<Sub_sequence>*> allocated_nodes;
+		duplicate_sequence(sequence, this->sequences[thread_id], thread_id, already_parsed_nodes, allocated_nodes);
+		std::vector<Generic_node<Sub_sequence>*> already_parsed_nodes_bis;
+		set_autoalloc_true(this->sequences[thread_id], already_parsed_nodes_bis);
 
 		if (this->is_thread_pinning())
 			Thread_pinning::unpin();
@@ -1046,20 +1251,22 @@ template void tools::Sequence::duplicate<tools::Sub_sequence,             module
 
 template <class SS>
 void Sequence
-::delete_tree(Generic_node<SS> *node)
+::delete_tree(Generic_node<SS> *node, std::vector<Generic_node<SS>*> &already_deleted_nodes)
 {
-	if (node != nullptr)
+	if (node != nullptr &&
+	    std::find(already_deleted_nodes.begin(), already_deleted_nodes.end(), node) == already_deleted_nodes.end())
 	{
+		already_deleted_nodes.push_back(node);
 		for (auto c : node->get_children())
-			this->delete_tree(c);
+			this->delete_tree(c, already_deleted_nodes);
 		auto c = node->get_c();
 		if (c != nullptr) delete c;
 		delete node;
 	}
 }
 
-template void tools::Sequence::delete_tree<tools::Sub_sequence_const>(Generic_node<tools::Sub_sequence_const>*);
-template void tools::Sequence::delete_tree<tools::Sub_sequence      >(Generic_node<tools::Sub_sequence      >*);
+template void tools::Sequence::delete_tree<tools::Sub_sequence_const>(Generic_node<tools::Sub_sequence_const>*, std::vector<Generic_node<Sub_sequence_const>*> &already_deleted_nodes);
+template void tools::Sequence::delete_tree<tools::Sub_sequence      >(Generic_node<tools::Sub_sequence      >*, std::vector<Generic_node<Sub_sequence      >*> &already_deleted_nodes);
 
 template <class VTA>
 void Sequence
@@ -1084,19 +1291,37 @@ void Sequence
 		stream << tab << tab << tab << "node [style=filled];" << std::endl;
 		stream << tab << tab << tab << "subgraph \"cluster_" << +&t << "\" {" << std::endl;
 		stream << tab << tab << tab << tab << "node [style=filled];" << std::endl;
+
+		if (t->fake_input_socket != nullptr)
+		{
+			auto &s = t->fake_input_socket;
+			std::string stype = "in";
+			stream << tab << tab << tab << tab << "\"" << +s.get() << "\""
+			                                   << "[label=\"" << stype << ":" << s->get_name() << "\", style=filled, "
+			                                   << "fillcolor=red, penwidth=\"2.0\"];" << std::endl;
+		}
+
+		size_t sid = 0;
 		for (auto &s : t->sockets)
 		{
 			std::string stype;
 			switch (t->get_socket_type(*s))
 			{
-				case module::socket_t::SIN: stype = "in"; break;
-				case module::socket_t::SOUT: stype = "out"; break;
-				case module::socket_t::SIN_SOUT: stype = "in_out"; break;
+				case module::socket_t::SIN: stype = "in[" + std::to_string(sid) + "]"; break;
+				case module::socket_t::SOUT: stype = "out[" + std::to_string(sid) + "]"; break;
 				default: stype = "unkn"; break;
 			}
+
+			std::string bold_or_not;
+			if (t->is_last_input_socket(*s))
+				bold_or_not = ", penwidth=\"2.0\"";
+
 			stream << tab << tab << tab << tab << "\"" << +s.get() << "\""
-			                                   << "[label=\"" << stype << ":" << s->get_name() << "\"];" << std::endl;
+			                                   << "[label=\"" << stype << ":" << s->get_name() << "\"" << bold_or_not
+			                                   << "];" << std::endl;
+			sid++;
 		}
+
 		stream << tab << tab << tab << tab << "label=\"" << t->get_name() << " (id = " << tasks_id[exec_order] << ")" << "\";" << std::endl;
 		stream << tab << tab << tab << tab << "color=" << color << ";" << std::endl;
 		stream << tab << tab << tab << "}" << std::endl;
@@ -1111,7 +1336,7 @@ void Sequence
 	{
 		stream << tab << tab << "label=\"" << subseq_name << "\";"
 		       << std::endl;
-		std::string color = subseq_type == subseq_t::LOOP ? "red" : "blue";
+		std::string color = subseq_type == subseq_t::SWITCHER || subseq_type == subseq_t::SELECTER ? "red" : "blue";
 		stream << tab << tab << "color=" << color << ";" << std::endl;
 		stream << tab << "}" << std::endl;
 	}
@@ -1130,12 +1355,14 @@ void Sequence
 	{
 		for (auto &s : t->sockets)
 		{
-			if (t->get_socket_type(*s) == module::socket_t::SOUT ||
-				t->get_socket_type(*s) == module::socket_t::SIN_SOUT)
+			if (t->get_socket_type(*s) == module::socket_t::SOUT)
 			{
-				for (auto &bs : s->get_bound_sockets())
+				auto &bss = s->get_bound_sockets();
+				size_t id = 0;
+				for (auto &bs : bss)
 				{
-					stream << tab << "\"" << +s.get() << "\" -> \"" << +bs << "\"" << std::endl;
+					stream << tab << "\"" << +s.get() << "\" -> \"" << +bs << "\""
+					       << (bss.size() > 1 ? "[label=\"" + std::to_string(id++) + "\"]" : "") << std::endl;
 				}
 			}
 		}
@@ -1158,13 +1385,19 @@ void Sequence
 {
 	std::function<void(Generic_node<SS>*,
 	                   const std::string&,
-	                   std::ostream&)> export_dot_subsequences_recursive =
+	                   std::ostream&,
+	                   std::vector<Generic_node<SS>*>&)> export_dot_subsequences_recursive =
 		[&export_dot_subsequences_recursive, this](Generic_node<SS>* cur_node,
 		                                           const std::string &tab,
-		                                           std::ostream &stream)
+		                                           std::ostream &stream,
+		                                           std::vector<Generic_node<SS>*> &already_parsed_nodes)
 		{
-			if (cur_node != nullptr)
+			if (cur_node != nullptr &&
+			    std::find(already_parsed_nodes.begin(),
+			              already_parsed_nodes.end(),
+			              cur_node) == already_parsed_nodes.end())
 			{
+				already_parsed_nodes.push_back(cur_node);
 				this->export_dot_subsequence(cur_node->get_c()->tasks,
 				                             cur_node->get_c()->tasks_id,
 				                             cur_node->get_c()->type,
@@ -1173,41 +1406,56 @@ void Sequence
 				                             stream);
 
 				for (auto c : cur_node->get_children())
-					export_dot_subsequences_recursive(c, tab, stream);
+					export_dot_subsequences_recursive(c, tab, stream, already_parsed_nodes);
 			}
 		};
 
 	std::function<void(Generic_node<SS>*,
 	                   const std::string&,
-	                   std::ostream&)> export_dot_connections_recursive =
+	                   std::ostream&,
+	                   std::vector<Generic_node<SS>*> &)> export_dot_connections_recursive =
 		[&export_dot_connections_recursive, this](Generic_node<SS> *cur_node,
 		                                          const std::string &tab,
-		                                          std::ostream &stream)
+		                                          std::ostream &stream,
+		                                          std::vector<Generic_node<SS>*> &already_parsed_nodes)
 		{
-			if (cur_node != nullptr)
+			if (cur_node != nullptr &&
+				std::find(already_parsed_nodes.begin(),
+				          already_parsed_nodes.end(),
+				          cur_node) == already_parsed_nodes.end())
 			{
+				already_parsed_nodes.push_back(cur_node);
 				this->export_dot_connections(cur_node->get_c()->tasks, tab, stream);
 
 				for (auto c : cur_node->get_children())
-					export_dot_connections_recursive(c, tab, stream);
+					export_dot_connections_recursive(c, tab, stream, already_parsed_nodes);
 			}
 		};
 
 	std::string tab = "\t";
 	stream << "digraph Sequence {" << std::endl;
-	export_dot_subsequences_recursive(root, tab, stream);
-	export_dot_connections_recursive (root, tab, stream);
+	std::vector<Generic_node<SS>*> already_parsed_nodes;
+	export_dot_subsequences_recursive(root, tab, stream, already_parsed_nodes);
+	already_parsed_nodes.clear();
+	export_dot_connections_recursive (root, tab, stream, already_parsed_nodes);
 	stream << "}" << std::endl;
 }
 
 void Sequence
 ::gen_processes(const bool no_copy_mode)
 {
-	std::function<void(Generic_node<Sub_sequence>*)> gen_processes_recursive =
-		[&gen_processes_recursive, no_copy_mode](Generic_node<Sub_sequence>* cur_node)
+	std::function<void(            Generic_node<Sub_sequence>*,
+	                   std::vector<Generic_node<Sub_sequence>*>&)> gen_processes_recursive =
+		[&gen_processes_recursive, no_copy_mode](            Generic_node<Sub_sequence>   *cur_node,
+		                                         std::vector<Generic_node<Sub_sequence>*> &already_parsed_nodes)
 		{
-			if (cur_node != nullptr)
+			if (cur_node != nullptr &&
+			    std::find(already_parsed_nodes.begin(),
+			              already_parsed_nodes.end(),
+			              cur_node) == already_parsed_nodes.end())
 			{
+				already_parsed_nodes.push_back(cur_node);
+
 				std::map<module::Task*, std::function<const int*()>> modified_tasks;
 				auto contents = cur_node->get_c();
 				contents->processes.clear();
@@ -1238,18 +1486,7 @@ void Sequence
 								auto bs = pull_task->sockets[s]->get_bound_sockets();
 								bound_sockets.insert(bound_sockets.end(), bs.begin(), bs.end());
 								for (auto sck : bs)
-								{
-									if (sck->get_task().get_socket_type(*sck) == module::socket_t::SIN_SOUT)
-									{
-										std::stringstream message;
-										message << "'SIN_SOUT' socket type is unsupported at this time ("
-										        << "'sck->get_name()' = " << sck->get_name() << ", "
-										        << "'sck->get_task().get_name()' = ." << sck->get_task().get_name()
-										        << ".)";
-										throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-									}
 									dataptrs.push_back(sck->get_dataptr());
-								}
 
 								contents->rebind_sockets[rebind_id].push_back(bound_sockets);
 								contents->rebind_dataptrs[rebind_id].push_back(dataptrs);
@@ -1303,16 +1540,6 @@ void Sequence
 								dataptrs.push_back(push_task->sockets[s]->get_dataptr());
 
 								auto bound_socket = &push_task->sockets[s]->get_bound_socket();
-								if (bound_socket->get_task().get_socket_type(*bound_socket) ==
-								    module::socket_t::SIN_SOUT)
-								{
-									std::stringstream message;
-									message << "'SIN_SOUT' socket type is unsupported at this time ("
-									        << "'bound_socket->get_name()' = " << bound_socket->get_name() << ", "
-									        << "'bound_socket->get_task().get_name()' = ."
-									        << bound_socket->get_task().get_name() << ".)";
-									throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-								}
 								bound_sockets.push_back(bound_socket);
 								dataptrs.push_back(bound_socket->get_dataptr());
 
@@ -1320,17 +1547,6 @@ void Sequence
 								for (size_t s = 0; s < bs.size(); s++)
 									if (&bs[s]->get_task() != push_task)
 									{
-										if (bs[s]->get_task().get_socket_type(*bs[s]) == module::socket_t::SIN_SOUT)
-										{
-											std::stringstream message;
-											message << "'SIN_SOUT' socket type is unsupported at this time ("
-											        << "'s' = " << s << ", "
-											        << "'bs[s]->get_name()' = " << bs[s]->get_name() << ", "
-											        << "'bs[s]->get_task().get_name()' = ."
-											        << bs[s]->get_task().get_name() << ".)";
-											throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
-										}
-
 										bound_sockets.push_back(bs[s]);
 										dataptrs.push_back(bs[s]->get_dataptr());
 									}
@@ -1375,7 +1591,7 @@ void Sequence
 						});
 
 				for (auto c : cur_node->get_children())
-					gen_processes_recursive(c);
+					gen_processes_recursive(c, already_parsed_nodes);
 			}
 		};
 
@@ -1385,7 +1601,8 @@ void Sequence
 		if (this->is_thread_pinning())
 			Thread_pinning::pin(this->puids[thread_id++]);
 
-		gen_processes_recursive(sequence);
+		std::vector<Generic_node<Sub_sequence>*> already_parsed_nodes;
+		gen_processes_recursive(sequence, already_parsed_nodes);
 
 		if (this->is_thread_pinning())
 			Thread_pinning::unpin();
@@ -1395,11 +1612,17 @@ void Sequence
 void Sequence
 ::reset_no_copy_mode()
 {
-	std::function<void(Generic_node<Sub_sequence>*)> reset_no_copy_mode_recursive =
-		[&reset_no_copy_mode_recursive](Generic_node<Sub_sequence>* cur_node)
+	std::function<void(Generic_node<Sub_sequence>*,
+	                   std::vector<Generic_node<Sub_sequence>*> &)> reset_no_copy_mode_recursive =
+		[&reset_no_copy_mode_recursive](Generic_node<Sub_sequence>* cur_node,
+		                                std::vector<Generic_node<Sub_sequence>*> &already_parsed_nodes)
 		{
-			if (cur_node != nullptr)
+			if (cur_node != nullptr &&
+			    std::find(already_parsed_nodes.begin(),
+			              already_parsed_nodes.end(),
+			              cur_node) == already_parsed_nodes.end())
 			{
+				already_parsed_nodes.push_back(cur_node);
 				auto contents = cur_node->get_c();
 				for (auto task : contents->tasks)
 				{
@@ -1427,15 +1650,17 @@ void Sequence
 						for (size_t ta = 0; ta < contents->rebind_sockets[rebind_id][s].size(); ta++)
 							contents->rebind_sockets[rebind_id][s][ta]->dataptr =
 								contents->rebind_dataptrs[rebind_id][s][ta];
-			}
 
-			for (auto c : cur_node->get_children())
-				reset_no_copy_mode_recursive(c);
+				for (auto c : cur_node->get_children())
+					reset_no_copy_mode_recursive(c, already_parsed_nodes);
+			}
 		};
 
 	for (auto &sequence : this->sequences)
-		reset_no_copy_mode_recursive(sequence);
-
+	{
+		std::vector<Generic_node<Sub_sequence>*> already_parsed_nodes;
+		reset_no_copy_mode_recursive(sequence, already_parsed_nodes);
+	}
 }
 
 void Sequence
@@ -1465,14 +1690,20 @@ bool Sequence
 Sub_sequence* Sequence
 ::get_last_subsequence(const size_t tid)
 {
-	std::function<Sub_sequence*(Generic_node<Sub_sequence>*)> get_last_subsequence_recursive =
-		[&get_last_subsequence_recursive](Generic_node<Sub_sequence>* cur_node) -> Sub_sequence*
+	std::function<Sub_sequence*(Generic_node<Sub_sequence>*,
+	              std::vector<Generic_node<Sub_sequence>*>&)> get_last_subsequence_recursive =
+		[&get_last_subsequence_recursive](Generic_node<Sub_sequence>* cur_node,
+		                                  std::vector<Generic_node<Sub_sequence>*> &already_parsed_nodes) -> Sub_sequence*
 		{
-			if (cur_node != nullptr)
+			if (cur_node != nullptr &&
+			    std::find(already_parsed_nodes.begin(),
+			              already_parsed_nodes.end(),
+			              cur_node) == already_parsed_nodes.end())
 			{
+				already_parsed_nodes.push_back(cur_node);
 				Sub_sequence* last_ss = nullptr;
 				for (auto c : cur_node->get_children())
-					last_ss = get_last_subsequence_recursive(c);
+					last_ss = get_last_subsequence_recursive(c, already_parsed_nodes);
 				return last_ss ? last_ss : cur_node->get_contents();
 			}
 			else
@@ -1482,41 +1713,55 @@ Sub_sequence* Sequence
 			}
 		};
 
-	return get_last_subsequence_recursive(this->sequences[tid]);
+	std::vector<Generic_node<Sub_sequence>*> already_parsed_nodes;
+	return get_last_subsequence_recursive(this->sequences[tid], already_parsed_nodes);
 }
 
 void Sequence
 ::update_tasks_id(const size_t tid)
 {
-	std::function<void(Generic_node<Sub_sequence>*, size_t&)> update_tasks_id_recursive =
-		[&update_tasks_id_recursive](Generic_node<Sub_sequence>* cur_node, size_t& taid)
+	std::function<void(Generic_node<Sub_sequence>*, size_t&,
+		               std::vector<Generic_node<Sub_sequence>*> &)> update_tasks_id_recursive =
+		[&update_tasks_id_recursive](Generic_node<Sub_sequence>* cur_node, size_t& taid,
+		                             std::vector<Generic_node<Sub_sequence>*> &already_parsed_nodes)
 		{
-			if (cur_node != nullptr)
+			if (cur_node != nullptr &&
+			    std::find(already_parsed_nodes.begin(),
+			              already_parsed_nodes.end(),
+			              cur_node) == already_parsed_nodes.end())
 			{
+				already_parsed_nodes.push_back(cur_node);
 				Sub_sequence* ss = cur_node->get_contents();
 				ss->tasks_id.resize(ss->tasks.size());
 				std::iota(ss->tasks_id.begin(), ss->tasks_id.end(), taid);
 				taid += ss->tasks_id.size();
 
 				for (auto c : cur_node->get_children())
-					update_tasks_id_recursive(c, taid);
+					update_tasks_id_recursive(c, taid, already_parsed_nodes);
 			}
 		};
 
 	size_t taid = 0;
-	return update_tasks_id_recursive(this->sequences[tid], taid);
+	std::vector<Generic_node<Sub_sequence>*> already_parsed_nodes;
+	return update_tasks_id_recursive(this->sequences[tid], taid, already_parsed_nodes);
 }
 
 std::vector<module::Task*> Sequence
 ::get_tasks_from_id(const size_t taid)
 {
-	std::function<void(Generic_node<Sub_sequence>*, const size_t, std::vector<module::Task*>&)> get_tasks_from_id_recursive =
+	std::function<void(Generic_node<Sub_sequence>*, const size_t, std::vector<module::Task*>&,
+		               std::vector<Generic_node<Sub_sequence>*> &)> get_tasks_from_id_recursive =
 		[&get_tasks_from_id_recursive](Generic_node<Sub_sequence>* cur_node,
 		                               const size_t taid,
-		                               std::vector<module::Task*> &tasks)
+		                               std::vector<module::Task*> &tasks,
+		                               std::vector<Generic_node<Sub_sequence>*> &already_parsed_nodes)
 		{
-			if (cur_node != nullptr)
+			if (cur_node != nullptr &&
+			    std::find(already_parsed_nodes.begin(),
+			              already_parsed_nodes.end(),
+			              cur_node) == already_parsed_nodes.end())
 			{
+				already_parsed_nodes.push_back(cur_node);
 				Sub_sequence* ss = cur_node->get_contents();
 				bool found = false;
 				for (size_t t = 0; t < ss->tasks_id.size(); t++)
@@ -1529,13 +1774,16 @@ std::vector<module::Task*> Sequence
 
 				if (!found)
 					for (auto c : cur_node->get_children())
-						get_tasks_from_id_recursive(c, taid, tasks);
+						get_tasks_from_id_recursive(c, taid, tasks, already_parsed_nodes);
 			}
 		};
 
 	std::vector<module::Task*> tasks;
 	for (auto &s : this->sequences)
-		get_tasks_from_id_recursive(s, taid, tasks);
+	{
+		std::vector<Generic_node<Sub_sequence>*> already_parsed_nodes;
+		get_tasks_from_id_recursive(s, taid, tasks, already_parsed_nodes);
+	}
 	return tasks;
 }
 
@@ -1575,14 +1823,14 @@ void Sequence
 		}
 
 		std::vector<std::pair<module::Socket*, module::Socket*>> unbind_sockets;
+		std::vector<std::pair<module::Task*, module::Socket*>> unbind_tasks;
 		std::function<void(const std::vector<module::Task*>, module::Task*)> unbind_sockets_recursive =
-		[&unbind_sockets, &unbind_sockets_recursive](const std::vector<module::Task*> possessed_tsks,
-		                                             module::Task* tsk_out)
+		[&unbind_sockets, &unbind_tasks, &unbind_sockets_recursive](const std::vector<module::Task*> possessed_tsks,
+		                                                            module::Task* tsk_out)
 		{
 			for (auto sck_out : tsk_out->sockets)
 			{
-				if (tsk_out->get_socket_type(*sck_out) == module::socket_t::SIN_SOUT ||
-					tsk_out->get_socket_type(*sck_out) == module::socket_t::SOUT)
+				if (tsk_out->get_socket_type(*sck_out) == module::socket_t::SOUT)
 				{
 					for (auto sck_in : sck_out->get_bound_sockets())
 					{
@@ -1590,9 +1838,17 @@ void Sequence
 						// if the task of the current input socket is in the tasks of the sequence
 						if (std::find(possessed_tsks.begin(), possessed_tsks.end(), tsk_in) != possessed_tsks.end())
 						{
-							sck_in->unbind(*sck_out);
-							// memorize the unbinds to rebind after!
-							unbind_sockets.push_back(std::make_pair(sck_in, sck_out.get()));
+							if (tsk_in->is_no_input_socket())
+							{
+								tsk_in->unbind(*sck_out);
+								unbind_tasks.push_back(std::make_pair(tsk_in, sck_out.get()));
+							}
+							else
+							{
+								sck_in->unbind(*sck_out);
+								// memorize the unbinds to rebind after!
+								unbind_sockets.push_back(std::make_pair(sck_in, sck_out.get()));
+							}
 							// do the same operation recursively on the current "tsk_in"
 							unbind_sockets_recursive(possessed_tsks, tsk_in);
 						}
@@ -1613,6 +1869,10 @@ void Sequence
 
 		// rebind the sockets
 		for (auto &u : unbind_sockets)
+			u.first->bind(*u.second);
+
+		// rebind the tasks
+		for (auto &u : unbind_tasks)
 			u.first->bind(*u.second);
 	}
 }

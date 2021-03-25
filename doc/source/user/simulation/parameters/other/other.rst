@@ -24,7 +24,7 @@ Other parameters
        --sim-prec, -p     <integer:including set={8|16|32|64}>
          Specify the representation of the real numbers in the receiver part of the
          chain.
-       --sim-type         <text:including set={BFER|BFERI|EXIT}>
+       --sim-type         <text:including set={BFER|BFERI}>
          Select the type of simulation (or communication chain skeleton).
 
    Other parameter(s):
@@ -63,7 +63,7 @@ Other parameters
        --sim-prec, -p     <integer:including set={8|16|32|64}>
          Specify the representation of the real numbers in the receiver part of the
          chain.
-       --sim-type         <text:including set={BFER|BFERI|EXIT}>
+       --sim-type         <text:including set={BFER|BFERI}>
          Select the type of simulation (or communication chain skeleton).
 
    Other parameter(s):
@@ -144,7 +144,7 @@ Other parameters
          [factory::Launcher::p+prec,p]
          Specify the representation of the real numbers in the receiver part of the
          chain.
-       --sim-type         <text:including set={BFER|BFERI|EXIT}>
+       --sim-type         <text:including set={BFER|BFERI}>
          [factory::Launcher::p+type]
          Select the type of simulation (or communication chain skeleton).
 

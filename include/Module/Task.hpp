@@ -30,7 +30,7 @@ enum status_t : int { SUCCESS = 0,
                       FAILURE_STOP = -1,
                       UNKNOWN = -2 };
 
-enum class socket_t : uint8_t { SIN, SIN_SOUT, SOUT };
+enum class socket_t : uint8_t { SIN, SOUT };
 
 static std::unordered_map<int,std::string> status_t_to_string = {{                              0, "SUCCESS"     },
                                                                  {                              1, "FAILURE"     },
@@ -53,6 +53,7 @@ protected:
 	bool fast;
 	bool debug;
 	bool debug_hex;
+	bool no_input_socket;
 	int32_t debug_limit;
 	uint8_t debug_precision;
 	int32_t debug_frame_max;
@@ -82,6 +83,7 @@ protected:
 	std::vector<std::vector<int8_t >> sockets_data;
 
 public:
+	std::shared_ptr<Socket> fake_input_socket;
 	std::vector<std::shared_ptr<Socket>> sockets;
 
 	Task(      Module &module,
@@ -138,19 +140,26 @@ public:
 
 	inline const std::vector<int>& get_status() const;
 
+	void   bind  (Socket &s_out, const int priority = -1);
+	size_t unbind(Socket &s_out                         );
+
+	bool is_no_input_socket() const;
+
 protected:
+	void set_no_input_socket(const bool no_input_socket);
+
 	void _exec(const int frame_id = -1, const bool managed_memory = true);
 
 	void register_timer(const std::string &key);
 
 	template <typename T>
 	size_t create_socket_in(const std::string &name, const size_t n_elmts);
-
-	template <typename T>
-	size_t create_socket_in_out(const std::string &name, const size_t n_elmts);
+	size_t create_socket_in(const std::string &name, const size_t n_elmts, const std::type_index& datatype);
 
 	template <typename T>
 	size_t create_socket_out(const std::string &name, const size_t n_elmts, const bool hack_status = false);
+	size_t create_socket_out(const std::string &name, const size_t n_elmts, const std::type_index& datatype,
+	                         const bool hack_status = false);
 
 	void create_codelet(std::function<int(Module &m, Task& t, const size_t frame_id)> &codelet);
 

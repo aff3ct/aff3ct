@@ -382,7 +382,7 @@ for fn in fileNames:
 		if refsNThreads == 0 or (refsNThreads > args.nThreads and args.nThreads != 0):
 			refsNThreads = args.nThreads
 
-	argsAFFECT += ["--ter-freq", "0", "-t", str(refsNThreads), "--sim-meta", simuRef.getMetadata("title"), "--sim-sequence"]
+	argsAFFECT += ["--ter-freq", "0", "-t", str(refsNThreads), "--sim-meta", simuRef.getMetadata("title")]
 	if args.maxFE:
 		argsAFFECT += ["-e", str(args.maxFE)]
 

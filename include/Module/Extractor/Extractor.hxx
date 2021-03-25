@@ -121,14 +121,16 @@ Extractor<B,Q>
 	});
 
 	auto &p4 = this->create_task("add_sys_and_ext_llr");
-	auto p4s_ext = this->template create_socket_in    <Q>(p4, "ext", this->K);
-	auto p4s_Y_N = this->template create_socket_in_out<Q>(p4, "Y_N", this->N);
-	this->create_codelet(p4, [p4s_ext, p4s_Y_N](Module &m, Task &t, const size_t frame_id) -> int
+	auto p4s_ext  = this->template create_socket_in <Q>(p4, "ext",  this->K);
+	auto p4s_Y_N1 = this->template create_socket_in <Q>(p4, "Y_N1", this->N);
+	auto p4s_Y_N2 = this->template create_socket_out<Q>(p4, "Y_N2", this->N);
+	this->create_codelet(p4, [p4s_ext, p4s_Y_N1, p4s_Y_N2](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &ext = static_cast<Extractor<B,Q>&>(m);
 
-		ext._add_sys_and_ext_llr(static_cast<Q*>(t[p4s_ext].get_dataptr()),
-		                         static_cast<Q*>(t[p4s_Y_N].get_dataptr()),
+		ext._add_sys_and_ext_llr(static_cast<Q*>(t[p4s_ext ].get_dataptr()),
+		                         static_cast<Q*>(t[p4s_Y_N1].get_dataptr()),
+		                         static_cast<Q*>(t[p4s_Y_N2].get_dataptr()),
 		                         frame_id);
 
 		return status_t::SUCCESS;
@@ -205,19 +207,22 @@ void Extractor<B,Q>
 template <typename B, typename Q>
 template <class A>
 void Extractor<B,Q>
-::add_sys_and_ext_llr(const std::vector<Q,A> &ext, std::vector<Q,A> &Y_N, const int frame_id, const bool managed_memory)
+::add_sys_and_ext_llr(const std::vector<Q,A> &ext, const std::vector<Q,A> &Y_N1, std::vector<Q,A> &Y_N2,
+                      const int frame_id, const bool managed_memory)
 {
-	(*this)[ext::sck::add_sys_and_ext_llr::ext].bind(ext);
-	(*this)[ext::sck::add_sys_and_ext_llr::Y_N].bind(Y_N);
+	(*this)[ext::sck::add_sys_and_ext_llr::ext ].bind(ext);
+	(*this)[ext::sck::add_sys_and_ext_llr::Y_N1].bind(Y_N1);
+	(*this)[ext::sck::add_sys_and_ext_llr::Y_N2].bind(Y_N2);
 	(*this)[ext::tsk::add_sys_and_ext_llr].exec(frame_id, managed_memory);
 }
 
 template <typename B, typename Q>
 void Extractor<B,Q>
-::add_sys_and_ext_llr(const Q *ext, Q *Y_N, const int frame_id, const bool managed_memory)
+::add_sys_and_ext_llr(const Q *ext, const Q *Y_N1, Q *Y_N2, const int frame_id, const bool managed_memory)
 {
-	(*this)[ext::sck::add_sys_and_ext_llr::ext].bind(ext);
-	(*this)[ext::sck::add_sys_and_ext_llr::Y_N].bind(Y_N);
+	(*this)[ext::sck::add_sys_and_ext_llr::ext ].bind(ext);
+	(*this)[ext::sck::add_sys_and_ext_llr::Y_N1].bind(Y_N1);
+	(*this)[ext::sck::add_sys_and_ext_llr::Y_N2].bind(Y_N2);
 	(*this)[ext::tsk::add_sys_and_ext_llr].exec(frame_id, managed_memory);
 }
 
@@ -285,7 +290,7 @@ void Extractor<B,Q>
 
 template <typename B, typename Q>
 void Extractor<B,Q>
-::_add_sys_and_ext_llr(const Q *ext, Q *Y_N, const size_t frame_id)
+::_add_sys_and_ext_llr(const Q *ext, const Q *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	const auto &info_bits_pos = this->get_info_bits_pos();
 	if (info_bits_pos.size() != (size_t)this->K)
@@ -296,8 +301,9 @@ void Extractor<B,Q>
 		throw tools::length_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
+	std::copy(Y_N1, Y_N1 + this->N, Y_N2);
 	for (auto i = 0; i < K; i++)
-		Y_N[info_bits_pos[i]] += ext[i];
+		Y_N2[info_bits_pos[i]] += ext[i];
 }
 
 }

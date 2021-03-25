@@ -14,7 +14,7 @@ possible to enable debug and benchmarking tools.
 """"""""""""""
 
    :Type: text
-   :Allowed values: ``BFER`` ``BFERI`` ``EXIT``
+   :Allowed values: ``BFER`` ``BFERI``
    :Default: ``BFER``
    :Examples: ``--sim-type BFERI``
 
@@ -29,12 +29,9 @@ Description of the allowed values:
 +-----------+------------------------+
 | ``BFERI`` | |sim-type_descr_bferi| |
 +-----------+------------------------+
-| ``EXIT``  | |sim-type_descr_exit|  |
-+-----------+------------------------+
 
 .. |sim-type_descr_bfer|  replace:: The standard |BFER| chain (:numref:`fig_bfer`).
 .. |sim-type_descr_bferi| replace:: The iterative |BFER| chain (:numref:`fig_bferi`).
-.. |sim-type_descr_exit|  replace:: The EXIT chart simulation chain (not documented at this time).
 
 .. _fig_bfer:
 
@@ -659,16 +656,12 @@ modulation (see the :ref:`mdm-mdm-type` ``SCMA`` parameter).
 .. note:: **For large frames**, increase the |IFL| can **decrease the
   simulation throughput** due the CPU cache size limitation.
 
-.. _sim-sim-crc-start:
+.. _sim-sim-crc-earlyt:
 
-``--sim-crc-start``
-"""""""""""""""""""
+``--sim-crc-earlyt``
+""""""""""""""""""""
 
-   :Type: integer
-   :Default: 2
-   :Examples: ``--sim-crc-start 1``
-
-|factory::BFER_ite::p+crc-start|
+|factory::BFER_ite::p+crc-earlyt|
 
 .. note:: Available only for ``BFERI`` simulation type (c.f. the
    :ref:`sim-sim-type` parameter).
@@ -687,13 +680,6 @@ modulation (see the :ref:`mdm-mdm-type` ``SCMA`` parameter).
 .. note:: Available only for ``BFERI`` simulation type (c.f. the
    :ref:`sim-sim-type` parameter).
 
-.. _sim-sim-sequence:
-
-``--sim-sequence`` |image_advanced_argument|
-""""""""""""""""""""""""""""""""""""""""""""
-
-|factory::BFER::p+sequence|
-
 .. _sim-sim-sequence-path:
 
 ``--sim-sequence-path`` |image_advanced_argument|
@@ -705,13 +691,6 @@ modulation (see the :ref:`mdm-mdm-type` ``SCMA`` parameter).
    :Examples: ``--sim-sequence-path sequence.dot``
 
 |factory::BFER::p+sequence-path|
-
-.. _sim-sim-clone:
-
-``--sim-clone`` |image_advanced_argument|
-"""""""""""""""""""""""""""""""""""""""""
-
-|factory::BFER::p+clone|
 
 .. _sim-sim-max-fra:
 

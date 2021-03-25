@@ -24,6 +24,7 @@ Task
   fast(fast),
   debug(debug),
   debug_hex(false),
+  no_input_socket(true),
   debug_limit(-1),
   debug_precision(2),
   debug_frame_max(-1),
@@ -251,7 +252,7 @@ void Task
 
 			for (size_t sid = 0; sid < this->sockets.size() -1; sid++)
 			{
-				if (socket_type[sid] == socket_t::SIN || socket_type[sid] == socket_t::SIN_SOUT)
+				if (socket_type[sid] == socket_t::SIN)
 					std::copy(sockets_dataptr_init[sid] + ((frame_id % n_frames) + 0) * sockets_databytes_per_frame[sid],
 					          sockets_dataptr_init[sid] + ((frame_id % n_frames) + 1) * sockets_databytes_per_frame[sid],
 					          sockets_data[sid].begin() + w_pos                       * sockets_databytes_per_frame[sid]);
@@ -261,7 +262,7 @@ void Task
 			status[w] = this->codelet(*this->module, *this, w * n_frames_per_wave);
 
 			for (size_t sid = 0; sid < this->sockets.size() -1; sid++)
-				if (socket_type[sid] == socket_t::SOUT || socket_type[sid] == socket_t::SIN_SOUT)
+				if (socket_type[sid] == socket_t::SOUT)
 					std::copy(sockets_data[sid].begin() + (w_pos + 0)           * sockets_databytes_per_frame[sid],
 					          sockets_data[sid].begin() + (w_pos + 1)           * sockets_databytes_per_frame[sid],
 					          sockets_dataptr_init[sid] + (frame_id % n_frames) * sockets_databytes_per_frame[sid]);
@@ -297,7 +298,7 @@ void Task
 				{
 					for (size_t sid = 0; sid < this->sockets.size() -1; sid++)
 					{
-						if (socket_type[sid] == socket_t::SIN || socket_type[sid] == socket_t::SIN_SOUT)
+						if (socket_type[sid] == socket_t::SIN)
 							std::copy(sockets_dataptr_init[sid] + w * n_frames_per_wave * sockets_databytes_per_frame[sid],
 							          sockets_dataptr_init[sid] +     n_frames          * sockets_databytes_per_frame[sid],
 							          sockets_data[sid].begin());
@@ -307,7 +308,7 @@ void Task
 					status[w] = this->codelet(*this->module, *this, w * n_frames_per_wave);
 
 					for (size_t sid = 0; sid < this->sockets.size() -1; sid++)
-						if (socket_type[sid] == socket_t::SOUT || socket_type[sid] == socket_t::SIN_SOUT)
+						if (socket_type[sid] == socket_t::SOUT)
 							std::copy(sockets_data[sid].begin(),
 							          sockets_data[sid].begin() + n_frames_per_wave_rest * sockets_databytes_per_frame[sid],
 							          sockets_dataptr_init[sid] + w * n_frames_per_wave  * sockets_databytes_per_frame[sid]);
@@ -372,7 +373,7 @@ const std::vector<int>& Task
 			for (auto& s : sockets)
 			{
 				auto s_type = get_socket_type(*s);
-				if (s_type == socket_t::SIN || s_type == socket_t::SIN_SOUT)
+				if (s_type == socket_t::SIN)
 				{
 					std::string spaces; for (size_t ss = 0; ss < max_n_chars - s->get_name().size(); ss++) spaces += " ";
 
@@ -425,7 +426,7 @@ const std::vector<int>& Task
 			for (auto& s : sockets)
 			{
 				auto s_type = get_socket_type(*s);
-				if ((s_type == socket_t::SOUT || s_type == socket_t::SIN_SOUT) && s->get_name() != "status")
+				if ((s_type == socket_t::SOUT) && s->get_name() != "status")
 				{
 					std::string spaces; for (size_t ss = 0; ss < max_n_chars - s->get_name().size(); ss++) spaces += " ";
 
@@ -545,18 +546,26 @@ size_t Task
 	socket_type.push_back(socket_t::SIN);
 	last_input_socket = &s;
 
+	this->set_no_input_socket(false);
+
 	return socket_type.size() -1;
 }
 
-template <typename T>
 size_t Task
-::create_socket_in_out(const std::string &name, const size_t n_elmts)
+::create_socket_in(const std::string &name, const size_t n_elmts, const std::type_index& datatype)
 {
-	auto &s = create_socket<T>(name, n_elmts);
-	socket_type.push_back(socket_t::SIN_SOUT);
-	last_input_socket = &s;
-
-	return socket_type.size() -1;
+	     if (datatype == typeid(int8_t )) return this->template create_socket_in<int8_t >(name, n_elmts);
+	else if (datatype == typeid(int16_t)) return this->template create_socket_in<int16_t>(name, n_elmts);
+	else if (datatype == typeid(int32_t)) return this->template create_socket_in<int32_t>(name, n_elmts);
+	else if (datatype == typeid(int64_t)) return this->template create_socket_in<int64_t>(name, n_elmts);
+	else if (datatype == typeid(float  )) return this->template create_socket_in<float  >(name, n_elmts);
+	else if (datatype == typeid(double )) return this->template create_socket_in<double >(name, n_elmts);
+	else
+	{
+		std::stringstream message;
+		message << "This should never happen.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename T>
@@ -574,6 +583,24 @@ size_t Task
 	}
 
 	return socket_type.size() -1;
+}
+
+size_t Task
+::create_socket_out(const std::string &name, const size_t n_elmts, const std::type_index& datatype,
+                    const bool hack_status)
+{
+	     if (datatype == typeid(int8_t )) return this->template create_socket_out<int8_t >(name, n_elmts, hack_status);
+	else if (datatype == typeid(int16_t)) return this->template create_socket_out<int16_t>(name, n_elmts, hack_status);
+	else if (datatype == typeid(int32_t)) return this->template create_socket_out<int32_t>(name, n_elmts, hack_status);
+	else if (datatype == typeid(int64_t)) return this->template create_socket_out<int64_t>(name, n_elmts, hack_status);
+	else if (datatype == typeid(float  )) return this->template create_socket_out<float  >(name, n_elmts, hack_status);
+	else if (datatype == typeid(double )) return this->template create_socket_out<double >(name, n_elmts, hack_status);
+	else
+	{
+		std::stringstream message;
+		message << "This should never happen.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 void Task
@@ -751,6 +778,7 @@ Task* Task
 	Task* t = new Task(*this);
 	t->sockets.clear();
 	t->last_input_socket = nullptr;
+	t->fake_input_socket = nullptr;
 
 	size_t out_buffers_counter = 0;
 	for (auto s : this->sockets)
@@ -777,12 +805,64 @@ Task* Task
 		                                                dataptr));
 		t->sockets.push_back(s_new);
 
-		if (t->get_socket_type(*s_new) == socket_t::SIN || t->get_socket_type(*s_new) == socket_t::SIN_SOUT)
+		if (t->get_socket_type(*s_new) == socket_t::SIN)
 			t->last_input_socket = s_new.get();
 	}
 
 	return t;
 }
+
+bool Task
+::is_no_input_socket() const
+{
+	return this->no_input_socket;
+}
+
+void Task
+::set_no_input_socket(const bool no_input_socket)
+{
+	this->no_input_socket = no_input_socket;
+}
+
+void Task
+::bind(Socket &s_out, const int priority)
+{
+	if (this->is_no_input_socket())
+	{
+		this->fake_input_socket.reset(new Socket(*this,
+		                                         "fake",
+		                                         s_out.get_datatype(),
+		                                         s_out.get_databytes(),
+		                                         this->is_fast()));
+		this->fake_input_socket->bind(s_out, priority);
+		this->last_input_socket = this->fake_input_socket.get();
+	}
+	else
+	{
+		std::stringstream message;
+		message << "Only tasks with no input socket can be directly bind.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+}
+
+size_t Task
+::unbind(Socket &s_out)
+{
+	if (this->is_no_input_socket())
+	{
+		this->last_input_socket = nullptr;
+		const auto pos = this->fake_input_socket->unbind(s_out);
+		this->fake_input_socket = nullptr;
+		return pos;
+	}
+	else
+	{
+		std::stringstream message;
+		message << "Only tasks with no input socket can be directly unbind.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+}
+
 
 // ==================================================================================== explicit template instantiation
 template size_t Task::create_socket_in<int8_t >(const std::string&, const size_t);
@@ -791,13 +871,6 @@ template size_t Task::create_socket_in<int32_t>(const std::string&, const size_t
 template size_t Task::create_socket_in<int64_t>(const std::string&, const size_t);
 template size_t Task::create_socket_in<float  >(const std::string&, const size_t);
 template size_t Task::create_socket_in<double >(const std::string&, const size_t);
-
-template size_t Task::create_socket_in_out<int8_t >(const std::string&, const size_t);
-template size_t Task::create_socket_in_out<int16_t>(const std::string&, const size_t);
-template size_t Task::create_socket_in_out<int32_t>(const std::string&, const size_t);
-template size_t Task::create_socket_in_out<int64_t>(const std::string&, const size_t);
-template size_t Task::create_socket_in_out<float  >(const std::string&, const size_t);
-template size_t Task::create_socket_in_out<double >(const std::string&, const size_t);
 
 template size_t Task::create_socket_out<int8_t >(const std::string&, const size_t, const bool);
 template size_t Task::create_socket_out<int16_t>(const std::string&, const size_t, const bool);

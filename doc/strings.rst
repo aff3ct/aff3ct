@@ -105,16 +105,8 @@
 .. |factory::BFER::p+coset,c| replace::
    Enable the *coset* approach.
 
-.. |factory::BFER::p+sequence| replace::
-   Enable the new simulator engine based on a sequence (should be faster than
-   the legacy simulator engine).
-
 .. |factory::BFER::p+sequence-path| replace::
-   Enable the new simulator engine based on a sequence and export the simulated
-   sequence in Graphviz format at the given path.
-
-.. |factory::BFER::p+clone| replace::
-   Enable the *clone* method to allocate the module objects.
+   Export the simulated sequence in Graphviz format at the given path.
 
 .. |factory::BFER::p+err-trk| replace::
    Track the erroneous frames. When an error is found, the information bits from
@@ -159,10 +151,9 @@
 .. |factory::BFER_ite::p+ite,I| replace::
    Set the number of global iterations between the demodulator and the decoder.
 
-.. |factory::BFER_ite::p+crc-start| replace::
-   Set the number of simulation iterations to proceed before starting the |CRC|
-   checking in the turbo demodulation process. It reduces the number of false
-   positive |CRC| detections.
+.. |factory::BFER_ite::p+crc-earlyt| replace::
+   Enable to use the CRC to early terminate (if possible) the turbo decoding
+   process. It should reduce the simulation time in high SNR zones.
 
 .. ------------------------------------------------ factory BFER_std parameters
 

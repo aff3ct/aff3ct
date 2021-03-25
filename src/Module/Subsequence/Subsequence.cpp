@@ -63,12 +63,6 @@ void Subsequence
 			else if (s->get_datatype() == typeid(double ))
 				this->template create_socket_in<double >(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
 		}
-		if (first->get_socket_type(*s) == socket_t::SIN_SOUT)
-		{
-			std::stringstream message;
-			message << "'SIN_SOUT' socket type is not supported.";
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-		}
 	}
 	auto &lasts  = sequence.get_lasts_tasks()[0];
 	for (auto &last : lasts) for (auto &s : last->sockets)
@@ -87,12 +81,6 @@ void Subsequence
 				this->template create_socket_out<float  >(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
 			else if (s->get_datatype() == typeid(double ))
 				this->template create_socket_out<double >(p, s->get_name(), s->get_n_elmts() / this->get_n_frames());
-		}
-		if (last->get_socket_type(*s) == socket_t::SIN_SOUT)
-		{
-			std::stringstream message;
-			message << "'SIN_SOUT' socket type is not supported.";
-			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 	}
 

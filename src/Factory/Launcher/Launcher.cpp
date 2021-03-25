@@ -28,7 +28,6 @@
 #include "Launcher/Code/Uncoded/Uncoded.hpp"
 #include "Launcher/Simulation/BFER_ite.hpp"
 #include "Launcher/Simulation/BFER_std.hpp"
-#include "Launcher/Simulation/EXIT.hpp"
 #include "Factory/Launcher/Launcher.hpp"
 
 using namespace aff3ct;
@@ -67,11 +66,7 @@ void Launcher
 		cli::arg_rank::REQ);
 
 	tools::add_arg(args, p, class_name+"p+type",
-#if !defined(AFF3CT_8BIT_PREC) && !defined(AFF3CT_16BIT_PREC)
-		cli::Text(cli::Including_set("BFER", "BFERI", "EXIT")));
-#else
-		cli::Text(cli::Including_set("BFER", "BFERI")));
-#endif
+	cli::Text(cli::Including_set("BFER", "BFERI")));
 
 #ifdef AFF3CT_MULTI_PREC
 	tools::add_arg(args, p, class_name+"p+prec,p",
@@ -235,53 +230,6 @@ void Launcher
 
 template <typename B, typename R, typename Q>
 launcher::Launcher* Launcher
-::build_exit(const int argc, const char **argv) const
-{
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__, "Unsupported code/simulation pair.");
-}
-
-namespace aff3ct
-{
-namespace factory
-{
-#if defined(AFF3CT_MULTI_PREC) || defined(AFF3CT_32BIT_PREC)
-template <>
-launcher::Launcher* Launcher
-::build_exit<int32_t, float, float>(const int argc, const char **argv) const
-{
-	if (this->cde_type == "POLAR")
-		if (this->sim_type == "EXIT")
-			return new launcher::Polar<launcher::EXIT<int32_t,float>,int32_t,float>(argc, argv);
-
-	if (this->cde_type == "RSC")
-		if (this->sim_type == "EXIT")
-			return new launcher::RSC<launcher::EXIT<int32_t,float>,int32_t,float>(argc, argv);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__, "Unsupported code/simulation pair.");
-}
-#endif
-
-#if defined(AFF3CT_MULTI_PREC) || defined(AFF3CT_64BIT_PREC)
-template <>
-launcher::Launcher* Launcher
-::build_exit<int64_t, double, double>(const int argc, const char **argv) const
-{
-	if (this->cde_type == "POLAR")
-		if (this->sim_type == "EXIT")
-			return new launcher::Polar<launcher::EXIT<int64_t,double>,int64_t,double>(argc, argv);
-
-	if (this->cde_type == "RSC")
-		if (this->sim_type == "EXIT")
-			return new launcher::RSC<launcher::EXIT<int64_t,double>,int64_t,double>(argc, argv);
-
-	throw tools::cannot_allocate(__FILE__, __LINE__, __func__, "Unsupported code/simulation pair.");
-}
-#endif
-}
-}
-
-template <typename B, typename R, typename Q>
-launcher::Launcher* Launcher
 ::build(const int argc, const char **argv) const
 {
 	if (this->cde_type == "POLAR")
@@ -354,7 +302,9 @@ launcher::Launcher* Launcher
 		if (this->sim_type == "BFERI") return new launcher::Uncoded<launcher::BFER_ite<B,R,Q>,B,R,Q>(argc, argv);
 	}
 
-	return build_exit<B,R,Q>(argc, argv);
+	std::stringstream message;
+	message << "Invalid code type ('" << this->cde_type << "') or simulation type ('" << this->sim_type << "').";
+	throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
 }
 
 // ==================================================================================== explicit template instantiation

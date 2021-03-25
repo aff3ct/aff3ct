@@ -421,8 +421,7 @@ void Pipeline
 				{
 					auto sck = tsk->sockets[sck_id];
 					// if the current socket is an output socket type
-					if (tsk->get_socket_type(*sck) == module::socket_t::SOUT ||
-					    tsk->get_socket_type(*sck) == module::socket_t::SIN_SOUT)
+					if (tsk->get_socket_type(*sck) == module::socket_t::SOUT)
 					{
 						// for all the bounded sockets to the current socket
 						for (auto bsck : sck->get_bound_sockets())
@@ -465,8 +464,7 @@ void Pipeline
 				{
 					auto sck = tsk->sockets[sck_id];
 					// if the current socket is an input socket type
-					if (tsk->get_socket_type(*sck) == module::socket_t::SIN ||
-					    tsk->get_socket_type(*sck) == module::socket_t::SIN_SOUT)
+					if (tsk->get_socket_type(*sck) == module::socket_t::SIN)
 					{
 						module::Socket* bsck = nullptr;
 						try

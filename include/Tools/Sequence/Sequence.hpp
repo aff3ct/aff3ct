@@ -30,7 +30,7 @@ namespace tools
 {
 class Pipeline;
 
-enum class subseq_t : size_t { STD, LOOP, ROUTER };
+enum class subseq_t : size_t { STD, SWITCHER, SELECTER };
 
 template <class VTA = std::vector<module::Task*>>
 class Sub_sequence_generic
@@ -174,13 +174,14 @@ public:
 
 protected:
 	template <class SS>
-	void delete_tree(Generic_node<SS> *node);
+	void delete_tree(Generic_node<SS> *node, std::vector<Generic_node<SS>*> &already_deleted_nodes);
 
 	template <class SS, class TA>
 	Generic_node<SS>* init_recursive(Generic_node<SS> *cur_subseq,
 	                                 size_t &ssid,
 	                                 size_t &taid,
-	                                 std::vector<TA*> &loops,
+	                                 std::vector<std::pair<TA*,Generic_node<SS>*>> &selectors,
+	                                 std::vector<TA*> &switchers,
 	                                 TA& first,
 	                                 TA& current_task,
 	                                 const std::vector<TA*> &lasts,

@@ -52,10 +52,6 @@ public:
 	template <typename B = int, typename R = float, typename Q = R>
 	launcher::Launcher* build(const int argc, const char **argv) const;
 
-private:
-	template <typename B = int, typename R = float, typename Q = R>
-	inline launcher::Launcher* build_exit(const int argc, const char **argv) const;
-
 protected:
 	Launcher(const std::string &n, const std::string &sn, const std::string &p);
 };

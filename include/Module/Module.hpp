@@ -81,9 +81,10 @@ public:
 
 	void remove_custom_name();
 
-	inline Task&   operator[](const size_t id            );
-	inline Socket& operator[](const std::string &tsk_sck );
-	inline Task&   operator()(const std::string &tsk_name);
+	inline       Task&   operator[](const size_t id            );
+	inline const Task&   operator[](const size_t id            ) const;
+	inline       Socket& operator[](const std::string &tsk_sck );
+	inline       Task&   operator()(const std::string &tsk_name);
 
 	void set_fast(const bool fast);
 protected:
@@ -98,9 +99,6 @@ protected:
 	template <typename T>
 	size_t create_socket_in(Task& task, const std::string &name, const size_t n_elmts);
 	size_t create_socket_in(Task& task, const std::string &name, const size_t n_elmts, const std::type_index& datatype);
-
-	template <typename T>
-	size_t create_socket_in_out(Task& task, const std::string &name, const size_t n_elmts);
 
 	template <typename T>
 	size_t create_socket_out(Task& task, const std::string &name, const size_t n_elmts);

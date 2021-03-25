@@ -22,18 +22,6 @@ BFER* BFER
 ::clone() const
 {
 	return new BFER(*this);
-
-	// if (src    != nullptr) { clone->src    = src   ->clone(); }
-	// if (crc    != nullptr) { clone->crc    = crc   ->clone(); }
-	// if (cdc    != nullptr) { clone->cdc    = cdc   ->clone(); }
-	// if (mdm    != nullptr) { clone->mdm    = mdm   ->clone(); }
-	// if (chn    != nullptr) { clone->chn    = chn   ->clone(); }
-	// if (qnt    != nullptr) { clone->qnt    = qnt   ->clone(); }
-	// if (mnt_mi != nullptr) { clone->mnt_mi = mnt_mi->clone(); }
-	// if (mnt_er != nullptr) { clone->mnt_er = mnt_er->clone(); }
-	// if (ter    != nullptr) { clone->ter    = ter   ->clone(); }
-
-	// return clone;
 }
 
 std::vector<std::string> BFER
@@ -135,14 +123,6 @@ void BFER
 		cli::Integer(cli::Positive(), cli::Non_zero()));
 #endif
 
-	tools::add_arg(args, p, class_name+"p+clone",
-		cli::None(),
-		cli::arg_rank::ADV);
-
-	tools::add_arg(args, p, class_name+"p+sequence",
-		cli::None(),
-		cli::arg_rank::ADV);
-
 	tools::add_arg(args, p, class_name+"p+sequence-path",
 		cli::File(cli::openmode::write),
 		cli::arg_rank::ADV);
@@ -164,17 +144,9 @@ void BFER
 	if(vals.exist({p+"-err-trk"      })) this->err_track_enable    = true;
 	if(vals.exist({p+"-coset",    "c"})) this->coset               = true;
 	if(vals.exist({p+"-coded",       })) this->coded_monitoring    = true;
-	if(vals.exist({p+"-clone",       })) this->alloc_clone         = true;
-	if(vals.exist({p+"-sequence",    })) this->sequence_threads    = true;
 
-	if (vals.exist({p+"-chain-path"}))
-	{
-		this->sequence_threads = true;
+	if (vals.exist({p+"-sequence-path"}))
 		this->sequence_path = vals.at({p+"-sequence-path"});
-	}
-
-	if (this->sequence_threads)
-		this->alloc_clone = true;
 
 	if (this->err_track_revert)
 	{
@@ -233,12 +205,6 @@ void BFER
 
 	std::string enable_rev_track = (this->err_track_revert) ? "on" : "off";
 	headers[p].push_back(std::make_pair("Bad frames replay", enable_rev_track));
-
-	std::string enable_alloc_clone = (this->alloc_clone) ? "on" : "off";
-	headers[p].push_back(std::make_pair("Clone allocations", enable_alloc_clone));
-
-	std::string enable_sequence_threads = (this->sequence_threads) ? "on" : "off";
-	headers[p].push_back(std::make_pair("Sequence multithreading", enable_sequence_threads));
 
 	if (!this->sequence_path.empty())
 		headers[p].push_back(std::make_pair("Path export sequence (dot)", this->sequence_path));

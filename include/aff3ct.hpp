@@ -234,6 +234,9 @@
 #ifndef CONNECTOR_N_TO_1_HPP_
 #include <Module/Adaptor/Adaptor_n_to_1.hpp>
 #endif
+#ifndef BINARYOP_HPP_
+#include <Module/Binaryop/Binaryop.hpp>
+#endif
 #ifndef CHANNEL_AWGN_LLR_HPP_
 #include <Module/Channel/AWGN/Channel_AWGN_LLR.hpp>
 #endif
@@ -269,6 +272,18 @@
 #endif
 #ifndef CHANNEL_USER_HPP_
 #include <Module/Channel/User/Channel_user.hpp>
+#endif
+#ifndef CONTROLLER_CYCLIC_HPP_
+#include <Module/Controller/Controller_cyclic/Controller_cyclic.hpp>
+#endif
+#ifndef CONTROLLER_HPP_
+#include <Module/Controller/Controller.hpp>
+#endif
+#ifndef CONTROLLER_LIMIT_HPP_
+#include <Module/Controller/Controller_limit/Controller_limit.hpp>
+#endif
+#ifndef CONTROLLER_STATIC_HPP_
+#include <Module/Controller/Controller_static/Controller_static.hpp>
 #endif
 #ifndef COSET_BIT_HPP_
 #include <Module/Coset/Bit/Coset_bit.hpp>
@@ -672,17 +687,20 @@
 #ifndef EXTRACTOR_UNCODED_HPP_
 #include <Module/Extractor/Uncoded/Extractor_uncoded.hpp>
 #endif
+#ifndef FINALIZER_HPP_
+#include <Module/Finalizer/Finalizer.hpp>
+#endif
+#ifndef INCREMENTER_HPP_
+#include <Module/Incrementer/Incrementer.hpp>
+#endif
+#ifndef INITIALIZER_HPP_
+#include <Module/Initializer/Initializer.hpp>
+#endif
 #ifndef INTERLEAVER_HPP_
 #include <Module/Interleaver/Interleaver.hpp>
 #endif
-#ifndef LOOP_CRC_HPP_
-#include <Module/Loop/CRC/Loop_CRC.hpp>
-#endif
-#ifndef LOOP_HPP_
-#include <Module/Loop/Loop.hpp>
-#endif
-#ifndef LOOP_PREDICATE_HPP_
-#include <Module/Loop/Predicate/Loop_predicate.hpp>
+#ifndef ITERATOR_HPP_
+#include <Module/Iterator/Iterator.hpp>
 #endif
 #ifndef MODEM_BPSK_FAST_HPP_
 #include <Module/Modem/BPSK/Modem_BPSK_fast.hpp>
@@ -738,9 +756,6 @@
 #ifndef MONITOR_HPP_
 #include <Module/Monitor/Monitor.hpp>
 #endif
-#ifndef MULTIPLEXER_HPP_
-#include <Module/Multiplexer/Multiplexer.hpp>
-#endif
 #ifndef PROBE_LATENCY_HPP_
 #include <Module/Probe/Latency/Probe_latency.hpp>
 #endif
@@ -795,14 +810,8 @@
 #ifndef QUANTIZER_HPP_
 #include <Module/Quantizer/Quantizer.hpp>
 #endif
-#ifndef ROUTER_CRC_HPP_
-#include <Module/Router/CRC/Router_CRC.hpp>
-#endif
-#ifndef ROUTER_PREDICATE_HPP_
-#include <Module/Router/Predicate/Router_predicate.hpp>
-#endif
-#ifndef ROUTER_HPP_
-#include <Module/Router/Router.hpp>
+#ifndef INCREMENTER_HPP_
+#include <Module/Reducer/Reducer.hpp>
 #endif
 #ifndef SINK_NO_HPP
 #include <Module/Sink/NO/Sink_NO.hpp>
@@ -812,6 +821,9 @@
 #endif
 #ifndef SINK_USER_BINARY_HPP
 #include <Module/Sink/User/Sink_user_binary.hpp>
+#endif
+#ifndef SLEEPER_HPP_
+#include <Module/Sleeper/Sleeper.hpp>
 #endif
 #ifndef SOCKET_HPP_
 #include <Module/Socket.hpp>
@@ -842,6 +854,9 @@
 #endif
 #ifndef TASK_HPP_
 #include <Module/Task.hpp>
+#endif
+#ifndef UNARYOP_HPP_
+#include <Module/Unaryop/Unaryop.hpp>
 #endif
 #ifndef BIT_PACKER_HPP_
 #include <Tools/Algo/Bit_packer.hpp>
@@ -920,12 +935,6 @@
 #endif
 #ifndef VECTOR_4D_HPP_
 #include <Tools/Algo/Multidimensional_vector/Vector_4D.hpp>
-#endif
-#ifndef PREDICATE_HPP
-#include <Tools/Algo/Predicate.hpp>
-#endif
-#ifndef PREDICATE_ITE_HPP
-#include <Tools/Algo/Predicate_ite.hpp>
 #endif
 #ifndef PRNG_MT19937_HPP
 #include <Tools/Algo/PRNG/PRNG_MT19937.hpp>
@@ -1401,6 +1410,9 @@
 #ifndef INTERLEAVER_CORE_USER_HPP
 #include <Tools/Interleaver/User/Interleaver_core_user.hpp>
 #endif
+#ifndef BINARYOP_H
+#include <Tools/Math/binaryop.h>
+#endif
 #ifndef DISTRIBUTION_HPP__
 #include <Tools/Math/Distribution/Distribution.hpp>
 #endif
@@ -1421,6 +1433,9 @@
 #endif
 #ifndef NUMERICAL_INTEGRATION_H_
 #include <Tools/Math/numerical_integration.h>
+#endif
+#ifndef UNARYOP_H
+#include <Tools/Math/unaryop.h>
 #endif
 #ifndef MATH_UTILS_H
 #include <Tools/Math/utils.h>

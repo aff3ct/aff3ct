@@ -99,7 +99,8 @@ inline void Sequence
 ::_init(Generic_node<tools::Sub_sequence_const> *root)
 {
 	this->duplicate<tools::Sub_sequence_const, const module::Module>(root);
-	this->delete_tree(root);
+	std::vector<Generic_node<Sub_sequence_const>*> already_deleted_nodes;
+	this->delete_tree(root, already_deleted_nodes);
 }
 
 template <>
@@ -109,19 +110,26 @@ inline void Sequence
 	this->sequences[0] = root;
 
 	std::set<module::Module*> modules_set;
-	std::function<void(const Generic_node<tools::Sub_sequence>*)> collect_modules_list;
-	collect_modules_list = [&](const Generic_node<tools::Sub_sequence> *node)
+	std::function<void(const Generic_node<tools::Sub_sequence>*,
+	                   std::vector<const Generic_node<tools::Sub_sequence>*>&)> collect_modules_list;
+	collect_modules_list = [&](const Generic_node<tools::Sub_sequence> *node,
+	                           std::vector<const Generic_node<tools::Sub_sequence>*> &already_parsed_nodes)
 	{
-		if (node != nullptr)
+		if (node != nullptr &&
+		    std::find(already_parsed_nodes.begin(),
+		              already_parsed_nodes.end(),
+		              node) == already_parsed_nodes.end())
 		{
+			already_parsed_nodes.push_back(node);
 			if (node->get_c())
 				for (auto ta : node->get_c()->tasks)
 					modules_set.insert(&ta->get_module());
 			for (auto c : node->get_children())
-				collect_modules_list(c);
+				collect_modules_list(c, already_parsed_nodes);
 		}
 	};
-	collect_modules_list(root);
+	std::vector<const Generic_node<tools::Sub_sequence>*> already_parsed_nodes;
+	collect_modules_list(root, already_parsed_nodes);
 
 	for (auto m : modules_set)
 		this->all_modules[0].push_back(m);

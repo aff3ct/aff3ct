@@ -1,5 +1,4 @@
-#include "Simulation/Legacy/BFER/Standard/Threads/BFER_std_threads.hpp"
-#include "Simulation/Sequence/BFER/Standard/Simulation_sequence_BFER_std.hpp"
+#include "Simulation/BFER/Standard/Simulation_BFER_std.hpp"
 #include "Factory/Simulation/BFER/BFER_std.hpp"
 
 using namespace aff3ct;
@@ -18,20 +17,6 @@ BFER_std* BFER_std
 ::clone() const
 {
 	return new BFER_std(*this);
-
-	// if (src != nullptr) { clone->src = src->clone(); }
-	// if (crc != nullptr) { clone->crc = crc->clone(); }
-	// if (cdc != nullptr) { clone->cdc = dynamic_cast<Codec_SIHO*>(cdc->clone()); }
-	// if (mdm != nullptr) { clone->mdm = mdm->clone(); }
-	// if (chn != nullptr) { clone->chn = chn->clone(); }
-	// if (qnt != nullptr) { clone->qnt = qnt->clone(); }
-	// if (mnt_er != nullptr) { clone->mnt_er = mnt_er->clone(); }
-	// if (mnt_mi != nullptr) { clone->mnt_mi = mnt_mi->clone(); }
-	// if (ter != nullptr) { clone->ter = ter->clone(); }
-
-	// clone->set_cdc(clone->cdc);
-
-	// return clone;
 }
 
 void BFER_std
@@ -62,10 +47,7 @@ template <typename B, typename R, typename Q>
 simulation::Simulation* BFER_std
 ::build() const
 {
-	if (this->sequence_threads)
-		return new simulation::Simulation_sequence_BFER_std<B,R,Q>(*this);
-	else
-		return new simulation::BFER_std_threads<B,R,Q>(*this);
+	return new simulation::Simulation_BFER_std<B,R,Q>(*this);
 }
 
 // ==================================================================================== explicit template instantiation
