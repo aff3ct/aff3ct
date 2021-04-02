@@ -193,7 +193,7 @@ Sequence
 Sequence
 ::~Sequence()
 {
-	std::vector<Generic_node<Sub_sequence>*> already_deleted_nodes;
+	std::vector<Digraph_node<Sub_sequence>*> already_deleted_nodes;
 	for (auto s : this->sequences)
 		this->delete_tree(s, already_deleted_nodes);
 }
@@ -240,11 +240,11 @@ void Sequence
 		}
 	}
 
-	auto root = new Generic_node<SS>(nullptr, {}, nullptr, 0, 0, 0);
+	auto root = new Digraph_node<SS>({}, {}, nullptr, 0);
 	root->set_contents(nullptr);
 	size_t ssid = 0, taid = 0;
 	std::vector<TA*> switchers;
-	std::vector<std::pair<TA*,Generic_node<SS>*>> selectors;
+	std::vector<std::pair<TA*,Digraph_node<SS>*>> selectors;
 	std::vector<TA*> real_lasts;
 
 	this->lasts_tasks_id.clear();
@@ -368,10 +368,10 @@ std::vector<std::vector<module::Task*>> Sequence
 {
 	std::vector<std::vector<module::Task*>> tasks_per_threads(this->n_threads);
 
-	std::function<void(Generic_node<Sub_sequence>*, const size_t,
-		               std::vector<Generic_node<Sub_sequence>*> &)> get_tasks_recursive =
-		[&](Generic_node<Sub_sequence>* cur_ss, const size_t tid,
-			std::vector<Generic_node<Sub_sequence>*> &already_parsed_nodes)
+	std::function<void(Digraph_node<Sub_sequence>*, const size_t,
+		               std::vector<Digraph_node<Sub_sequence>*> &)> get_tasks_recursive =
+		[&](Digraph_node<Sub_sequence>* cur_ss, const size_t tid,
+			std::vector<Digraph_node<Sub_sequence>*> &already_parsed_nodes)
 		{
 			if (std::find(already_parsed_nodes.begin(),
 			              already_parsed_nodes.end(),
@@ -389,7 +389,7 @@ std::vector<std::vector<module::Task*>> Sequence
 
 	for (size_t tid = 0; tid < this->n_threads; tid++)
 	{
-		std::vector<Generic_node<Sub_sequence>*> already_parsed_nodes;
+		std::vector<Digraph_node<Sub_sequence>*> already_parsed_nodes;
 		get_tasks_recursive(this->sequences[tid], tid, already_parsed_nodes);
 	}
 
@@ -401,10 +401,10 @@ std::vector<std::vector<module::Task*>> Sequence
 {
 	std::vector<std::vector<module::Task*>> tasks_per_types(this->n_tasks);
 
-	std::function<void(Generic_node<Sub_sequence>*, size_t&,
-		               std::vector<Generic_node<Sub_sequence>*>&)> get_tasks_recursive =
-		[&](Generic_node<Sub_sequence>* cur_ss, size_t &mid,
-			std::vector<Generic_node<Sub_sequence>*> &already_parsed_nodes)
+	std::function<void(Digraph_node<Sub_sequence>*, size_t&,
+		               std::vector<Digraph_node<Sub_sequence>*>&)> get_tasks_recursive =
+		[&](Digraph_node<Sub_sequence>* cur_ss, size_t &mid,
+			std::vector<Digraph_node<Sub_sequence>*> &already_parsed_nodes)
 		{
 			if (std::find(already_parsed_nodes.begin(),
 			    already_parsed_nodes.end(),
@@ -422,7 +422,7 @@ std::vector<std::vector<module::Task*>> Sequence
 	for (size_t tid = 0; tid < this->n_threads; tid++)
 	{
 		size_t mid = 0;
-		std::vector<Generic_node<Sub_sequence>*> already_parsed_nodes;
+		std::vector<Digraph_node<Sub_sequence>*> already_parsed_nodes;
 		get_tasks_recursive(this->sequences[tid], mid, already_parsed_nodes);
 	}
 
@@ -432,19 +432,19 @@ std::vector<std::vector<module::Task*>> Sequence
 void Sequence
 ::_exec(const size_t tid,
         std::function<bool(const std::vector<const int*>&)> &stop_condition,
-        Generic_node<Sub_sequence>* sequence)
+        Digraph_node<Sub_sequence>* sequence)
 {
 	if (this->is_thread_pinning())
 		Thread_pinning::pin(this->puids[tid]);
 
-	std::function<void(Generic_node<Sub_sequence>*, std::vector<const int*>&)> exec_sequence =
-		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss, std::vector<const int*>& statuses)
+	std::function<void(Digraph_node<Sub_sequence>*, std::vector<const int*>&)> exec_sequence =
+		[&exec_sequence](Digraph_node<Sub_sequence>* cur_ss, std::vector<const int*>& statuses)
 		{
 			auto type = cur_ss->get_c()->type;
 			auto &tasks_id = cur_ss->get_c()->tasks_id;
 			auto &processes = cur_ss->get_c()->processes;
 
-			if (type == subseq_t::SWITCHER)
+			if (type == subseq_t::COMMUTE)
 			{
 				statuses[tasks_id[0]] = processes[0]();
 				const int path = statuses[tasks_id[0]][0];
@@ -510,18 +510,18 @@ void Sequence
 void Sequence
 ::_exec_without_statuses(const size_t tid,
                          std::function<bool()> &stop_condition,
-                         Generic_node<Sub_sequence>* sequence)
+                         Digraph_node<Sub_sequence>* sequence)
 {
 	if (this->is_thread_pinning())
 		Thread_pinning::pin(this->puids[tid]);
 
-	std::function<void(Generic_node<Sub_sequence>*)> exec_sequence =
-		[&exec_sequence](Generic_node<Sub_sequence>* cur_ss)
+	std::function<void(Digraph_node<Sub_sequence>*)> exec_sequence =
+		[&exec_sequence](Digraph_node<Sub_sequence>* cur_ss)
 		{
 			auto type = cur_ss->get_c()->type;
 			auto &processes = cur_ss->get_c()->processes;
 
-			if (type == subseq_t::SWITCHER)
+			if (type == subseq_t::COMMUTE)
 			{
 				const int path = processes[0]()[0];
 				exec_sequence(cur_ss->get_children()[path]);
@@ -684,12 +684,12 @@ void Sequence
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 
-	std::function<void(Generic_node<Sub_sequence>*)> exec_sequence =
-		[&exec_sequence, frame_id](Generic_node<Sub_sequence>* cur_ss)
+	std::function<void(Digraph_node<Sub_sequence>*)> exec_sequence =
+		[&exec_sequence, frame_id](Digraph_node<Sub_sequence>* cur_ss)
 		{
 			auto type = cur_ss->get_c()->type;
 			auto &tasks = cur_ss->get_c()->tasks;
-			if (type == subseq_t::SWITCHER)
+			if (type == subseq_t::COMMUTE)
 			{
 				const int path = tasks[0]->exec(frame_id)[0];
 				exec_sequence(cur_ss->get_children()[path]);
@@ -707,11 +707,11 @@ void Sequence
 }
 
 template <class SS, class TA>
-Generic_node<SS>* Sequence
-::init_recursive(Generic_node<SS> *cur_subseq,
+Digraph_node<SS>* Sequence
+::init_recursive(Digraph_node<SS> *cur_subseq,
                  size_t &ssid,
                  size_t &taid,
-                 std::vector<std::pair<TA*,Generic_node<SS>*>> &selectors,
+                 std::vector<std::pair<TA*,Digraph_node<SS>*>> &selectors,
                  std::vector<TA*> &switchers,
                  TA &first,
                  TA &current_task,
@@ -745,7 +745,7 @@ Generic_node<SS>* Sequence
 	}
 
 	bool is_last = true;
-	Generic_node<SS>* last_subseq = nullptr;
+	Digraph_node<SS>* last_subseq = nullptr;
 
 	if (auto switcher = dynamic_cast<const module::Switcher*>(&current_task.get_module()))
 	{
@@ -755,20 +755,20 @@ Generic_node<SS>* Sequence
 			if (std::find(switchers.begin(), switchers.end(), &current_task) == switchers.end())
 			{
 				switchers.push_back(&current_task);
-				auto node_switcher = new Generic_node<SS>(cur_subseq, {}, nullptr, cur_subseq->get_depth() +1, 0, 0);
+				auto node_switcher = new Digraph_node<SS>({cur_subseq}, {}, nullptr, cur_subseq->get_depth() +1);
 
 				node_switcher->set_contents(new SS());
 				node_switcher->get_c()->tasks.push_back(&current_task);
 				node_switcher->get_c()->tasks_id.push_back(taid++);
-				node_switcher->get_c()->type = subseq_t::SWITCHER;
+				node_switcher->get_c()->type = subseq_t::COMMUTE;
 				node_switcher->get_c()->id = ssid++;
 
 				cur_subseq->add_child(node_switcher);
 
 				for (size_t sdo = 0; sdo < switcher->get_n_data_sockets(); sdo++)
 				{
-					auto node_switcher_son = new Generic_node<SS>(node_switcher, {}, nullptr,
-						node_switcher->get_depth() +1, 0, sdo);
+					auto node_switcher_son = new Digraph_node<SS>({node_switcher}, {}, nullptr,
+						node_switcher->get_depth() +1);
 
 					node_switcher_son->set_contents(new SS());
 					node_switcher_son->get_c()->id = ssid++;
@@ -794,7 +794,7 @@ Generic_node<SS>* Sequence
 									if (dynamic_cast<const module::Switcher*>(&t.get_module()) &&
 										t.get_name() == "select")
 									{
-										Generic_node<SS>* node_selector = nullptr;
+										Digraph_node<SS>* node_selector = nullptr;
 										for (auto &sel : selectors)
 											if (sel.first == &t)
 											{
@@ -804,10 +804,12 @@ Generic_node<SS>* Sequence
 
 										if (!node_selector)
 										{
-											node_selector = new Generic_node<SS>(node_switcher_son, {}, nullptr,
-												node_switcher_son->get_depth() +1, 0, 0);
+											node_selector = new Digraph_node<SS>({node_switcher_son}, {}, nullptr,
+												node_switcher_son->get_depth() +1);
 											selectors.push_back({&t, node_selector});
 										}
+										else
+											node_selector->add_father(node_switcher_son);
 										node_switcher_son->add_child(node_selector);
 									}
 								}
@@ -838,7 +840,7 @@ Generic_node<SS>* Sequence
 		}
 		else if (current_task_name == "select")
 		{
-			Generic_node<SS>* node_selector = nullptr;
+			Digraph_node<SS>* node_selector = nullptr;
 
 			for (auto &sel : selectors)
 				if (sel.first == &current_task)
@@ -849,20 +851,19 @@ Generic_node<SS>* Sequence
 
 			if (!node_selector)
 			{
-				node_selector = new Generic_node<SS>(cur_subseq, {}, nullptr, cur_subseq->get_depth() +1, 0, 0);
+				node_selector = new Digraph_node<SS>({cur_subseq}, {}, nullptr, cur_subseq->get_depth() +1);
 				selectors.push_back({&current_task, node_selector});
 			}
 
 			node_selector->set_contents(new SS());
 			node_selector->get_c()->tasks.push_back(&current_task);
 			node_selector->get_c()->tasks_id.push_back(taid++);
-			node_selector->get_c()->type = subseq_t::SELECTER;
+			node_selector->get_c()->type = subseq_t::SELECT;
 			node_selector->get_c()->id = ssid++;
 
 			cur_subseq->add_child(node_selector);
 
-			auto node_selector_son = new Generic_node<SS>(node_selector, {}, nullptr, node_selector->get_depth() +1, 0,
-				0);
+			auto node_selector_son = new Digraph_node<SS>({node_selector}, {}, nullptr, node_selector->get_depth() +1);
 
 			node_selector_son->set_contents(new SS());
 			node_selector_son->get_c()->id = ssid++;
@@ -892,7 +893,7 @@ Generic_node<SS>* Sequence
 									if (dynamic_cast<const module::Switcher*>(&t.get_module()) &&
 										t.get_name() == "select")
 									{
-										Generic_node<SS>* node_selector = nullptr;
+										Digraph_node<SS>* node_selector = nullptr;
 										for (auto &sel : selectors)
 											if (sel.first == &t)
 											{
@@ -902,10 +903,12 @@ Generic_node<SS>* Sequence
 
 										if (!node_selector)
 										{
-											node_selector = new Generic_node<SS>(node_selector_son, {}, nullptr,
-												node_selector_son->get_depth() +1, 0, 0);
+											node_selector = new Digraph_node<SS>({node_selector_son}, {}, nullptr,
+												node_selector_son->get_depth() +1);
 											selectors.push_back({&t, node_selector});
 										}
+										else
+											node_selector->add_father(node_selector_son);
 										node_selector_son->add_child(node_selector);
 									}
 								}
@@ -951,7 +954,7 @@ Generic_node<SS>* Sequence
 									if (dynamic_cast<const module::Switcher*>(&t.get_module()) &&
 										t.get_name() == "select")
 									{
-										Generic_node<SS>* node_selector = nullptr;
+										Digraph_node<SS>* node_selector = nullptr;
 										for (auto &sel : selectors)
 											if (sel.first == &t)
 											{
@@ -961,10 +964,12 @@ Generic_node<SS>* Sequence
 
 										if (!node_selector)
 										{
-											node_selector = new Generic_node<SS>(cur_subseq, {}, nullptr,
-												cur_subseq->get_depth() +1, 0, 0);
+											node_selector = new Digraph_node<SS>({cur_subseq}, {}, nullptr,
+												cur_subseq->get_depth() +1);
 											selectors.push_back({&t, node_selector});
 										}
+										else
+											node_selector->add_father(cur_subseq);
 										cur_subseq->add_child(node_selector);
 									}
 								}
@@ -1005,12 +1010,12 @@ Generic_node<SS>* Sequence
 
 template <class SS, class MO>
 void Sequence
-::duplicate(const Generic_node<SS> *sequence)
+::duplicate(const Digraph_node<SS> *sequence)
 {
 	std::set<MO*> modules_set;
 
-	std::function<void(const Generic_node<SS>*, std::vector<const Generic_node<SS>*> &)> collect_modules_list;
-	collect_modules_list = [&](const Generic_node<SS> *node, std::vector<const Generic_node<SS>*> &already_parsed_nodes)
+	std::function<void(const Digraph_node<SS>*, std::vector<const Digraph_node<SS>*> &)> collect_modules_list;
+	collect_modules_list = [&](const Digraph_node<SS> *node, std::vector<const Digraph_node<SS>*> &already_parsed_nodes)
 	{
 		if (node != nullptr &&
 		    std::find(already_parsed_nodes.begin(), already_parsed_nodes.end(), node) == already_parsed_nodes.end())
@@ -1023,7 +1028,7 @@ void Sequence
 				collect_modules_list(c, already_parsed_nodes);
 		}
 	};
-	std::vector<const Generic_node<SS>*> already_parsed_nodes;
+	std::vector<const Digraph_node<SS>*> already_parsed_nodes;
 	collect_modules_list(sequence, already_parsed_nodes);
 
 	std::vector<MO*> modules_vec;
@@ -1087,17 +1092,17 @@ void Sequence
 		return -1;
 	};
 
-	std::function<void(const Generic_node<SS>*,
-	                         Generic_node<Sub_sequence>*,
+	std::function<void(const Digraph_node<SS>*,
+	                         Digraph_node<Sub_sequence>*,
 	                   const size_t,
-	                         std::vector<const Generic_node<SS>*>&,
-	                         std::map<size_t,Generic_node<Sub_sequence>*>&)> duplicate_sequence;
+	                         std::vector<const Digraph_node<SS>*>&,
+	                         std::map<size_t,Digraph_node<Sub_sequence>*>&)> duplicate_sequence;
 
-	duplicate_sequence = [&](const Generic_node<SS>           *sequence_ref,
-	                               Generic_node<Sub_sequence> *sequence_cpy,
+	duplicate_sequence = [&](const Digraph_node<SS>           *sequence_ref,
+	                               Digraph_node<Sub_sequence> *sequence_cpy,
 	                         const size_t thread_id,
-	                               std::vector<const Generic_node<SS>*> &already_parsed_nodes,
-	                               std::map<size_t,Generic_node<Sub_sequence>*> &allocated_nodes)
+	                               std::vector<const Digraph_node<SS>*> &already_parsed_nodes,
+	                               std::map<size_t,Digraph_node<Sub_sequence>*> &allocated_nodes)
 	{
 		if (sequence_ref != nullptr && sequence_ref->get_c() &&
 		    std::find(already_parsed_nodes.begin(),
@@ -1198,12 +1203,10 @@ void Sequence
 				              sequence_ref->get_children()[c]) != already_parsed_nodes.end())
 					sequence_cpy->add_child(allocated_nodes[sequence_ref->get_children()[c]->get_c()->id]);
 				else
-					sequence_cpy->add_child(new Generic_node<Sub_sequence>(sequence_cpy,
+					sequence_cpy->add_child(new Digraph_node<Sub_sequence>({sequence_cpy},
 					                                                       {},
 					                                                       nullptr,
-					                                                       sequence_cpy->get_depth() +1,
-					                                                       0,
-					                                                       c));
+					                                                       sequence_cpy->get_depth() +1));
 			}
 
 			for (size_t c = 0; c < sequence_ref->get_children().size(); c++)
@@ -1212,9 +1215,9 @@ void Sequence
 		}
 	};
 
-	std::function<void(Generic_node<Sub_sequence>*, std::vector<Generic_node<Sub_sequence>*> &)> set_autoalloc_true =
-		[&set_autoalloc_true](Generic_node<Sub_sequence>* node,
-		                      std::vector<Generic_node<Sub_sequence>*> &already_parsed_nodes)
+	std::function<void(Digraph_node<Sub_sequence>*, std::vector<Digraph_node<Sub_sequence>*> &)> set_autoalloc_true =
+		[&set_autoalloc_true](Digraph_node<Sub_sequence>* node,
+		                      std::vector<Digraph_node<Sub_sequence>*> &already_parsed_nodes)
 		{
 			if (std::find(already_parsed_nodes.begin(),
 			              already_parsed_nodes.end(),
@@ -1234,11 +1237,11 @@ void Sequence
 		if (this->is_thread_pinning())
 			Thread_pinning::pin(this->puids[thread_id]);
 
-		this->sequences[thread_id] = new Generic_node<Sub_sequence>(nullptr, {}, nullptr, 0, 0, 0);
+		this->sequences[thread_id] = new Digraph_node<Sub_sequence>({}, {}, nullptr, 0);
 		already_parsed_nodes.clear();
-		std::map<size_t,Generic_node<Sub_sequence>*> allocated_nodes;
+		std::map<size_t,Digraph_node<Sub_sequence>*> allocated_nodes;
 		duplicate_sequence(sequence, this->sequences[thread_id], thread_id, already_parsed_nodes, allocated_nodes);
-		std::vector<Generic_node<Sub_sequence>*> already_parsed_nodes_bis;
+		std::vector<Digraph_node<Sub_sequence>*> already_parsed_nodes_bis;
 		set_autoalloc_true(this->sequences[thread_id], already_parsed_nodes_bis);
 
 		if (this->is_thread_pinning())
@@ -1246,12 +1249,12 @@ void Sequence
 	}
 }
 
-template void tools::Sequence::duplicate<tools::Sub_sequence_const, const module::Module>(const Generic_node<tools::Sub_sequence_const>*);
-template void tools::Sequence::duplicate<tools::Sub_sequence,             module::Module>(const Generic_node<tools::Sub_sequence      >*);
+template void tools::Sequence::duplicate<tools::Sub_sequence_const, const module::Module>(const Digraph_node<tools::Sub_sequence_const>*);
+template void tools::Sequence::duplicate<tools::Sub_sequence,             module::Module>(const Digraph_node<tools::Sub_sequence      >*);
 
 template <class SS>
 void Sequence
-::delete_tree(Generic_node<SS> *node, std::vector<Generic_node<SS>*> &already_deleted_nodes)
+::delete_tree(Digraph_node<SS> *node, std::vector<Digraph_node<SS>*> &already_deleted_nodes)
 {
 	if (node != nullptr &&
 	    std::find(already_deleted_nodes.begin(), already_deleted_nodes.end(), node) == already_deleted_nodes.end())
@@ -1265,8 +1268,8 @@ void Sequence
 	}
 }
 
-template void tools::Sequence::delete_tree<tools::Sub_sequence_const>(Generic_node<tools::Sub_sequence_const>*, std::vector<Generic_node<Sub_sequence_const>*> &already_deleted_nodes);
-template void tools::Sequence::delete_tree<tools::Sub_sequence      >(Generic_node<tools::Sub_sequence      >*, std::vector<Generic_node<Sub_sequence      >*> &already_deleted_nodes);
+template void tools::Sequence::delete_tree<tools::Sub_sequence_const>(Digraph_node<tools::Sub_sequence_const>*, std::vector<Digraph_node<Sub_sequence_const>*> &already_deleted_nodes);
+template void tools::Sequence::delete_tree<tools::Sub_sequence      >(Digraph_node<tools::Sub_sequence      >*, std::vector<Digraph_node<Sub_sequence      >*> &already_deleted_nodes);
 
 template <class VTA>
 void Sequence
@@ -1336,7 +1339,7 @@ void Sequence
 	{
 		stream << tab << tab << "label=\"" << subseq_name << "\";"
 		       << std::endl;
-		std::string color = subseq_type == subseq_t::SWITCHER || subseq_type == subseq_t::SELECTER ? "red" : "blue";
+		std::string color = subseq_type == subseq_t::COMMUTE || subseq_type == subseq_t::SELECT ? "red" : "blue";
 		stream << tab << tab << "color=" << color << ";" << std::endl;
 		stream << tab << "}" << std::endl;
 	}
@@ -1381,16 +1384,16 @@ void Sequence
 
 template <class SS>
 void Sequence
-::export_dot(Generic_node<SS>* root, std::ostream &stream) const
+::export_dot(Digraph_node<SS>* root, std::ostream &stream) const
 {
-	std::function<void(Generic_node<SS>*,
+	std::function<void(Digraph_node<SS>*,
 	                   const std::string&,
 	                   std::ostream&,
-	                   std::vector<Generic_node<SS>*>&)> export_dot_subsequences_recursive =
-		[&export_dot_subsequences_recursive, this](Generic_node<SS>* cur_node,
+	                   std::vector<Digraph_node<SS>*>&)> export_dot_subsequences_recursive =
+		[&export_dot_subsequences_recursive, this](Digraph_node<SS>* cur_node,
 		                                           const std::string &tab,
 		                                           std::ostream &stream,
-		                                           std::vector<Generic_node<SS>*> &already_parsed_nodes)
+		                                           std::vector<Digraph_node<SS>*> &already_parsed_nodes)
 		{
 			if (cur_node != nullptr &&
 			    std::find(already_parsed_nodes.begin(),
@@ -1410,14 +1413,14 @@ void Sequence
 			}
 		};
 
-	std::function<void(Generic_node<SS>*,
+	std::function<void(Digraph_node<SS>*,
 	                   const std::string&,
 	                   std::ostream&,
-	                   std::vector<Generic_node<SS>*> &)> export_dot_connections_recursive =
-		[&export_dot_connections_recursive, this](Generic_node<SS> *cur_node,
+	                   std::vector<Digraph_node<SS>*> &)> export_dot_connections_recursive =
+		[&export_dot_connections_recursive, this](Digraph_node<SS> *cur_node,
 		                                          const std::string &tab,
 		                                          std::ostream &stream,
-		                                          std::vector<Generic_node<SS>*> &already_parsed_nodes)
+		                                          std::vector<Digraph_node<SS>*> &already_parsed_nodes)
 		{
 			if (cur_node != nullptr &&
 				std::find(already_parsed_nodes.begin(),
@@ -1434,7 +1437,7 @@ void Sequence
 
 	std::string tab = "\t";
 	stream << "digraph Sequence {" << std::endl;
-	std::vector<Generic_node<SS>*> already_parsed_nodes;
+	std::vector<Digraph_node<SS>*> already_parsed_nodes;
 	export_dot_subsequences_recursive(root, tab, stream, already_parsed_nodes);
 	already_parsed_nodes.clear();
 	export_dot_connections_recursive (root, tab, stream, already_parsed_nodes);
@@ -1444,10 +1447,10 @@ void Sequence
 void Sequence
 ::gen_processes(const bool no_copy_mode)
 {
-	std::function<void(            Generic_node<Sub_sequence>*,
-	                   std::vector<Generic_node<Sub_sequence>*>&)> gen_processes_recursive =
-		[&gen_processes_recursive, no_copy_mode](            Generic_node<Sub_sequence>   *cur_node,
-		                                         std::vector<Generic_node<Sub_sequence>*> &already_parsed_nodes)
+	std::function<void(            Digraph_node<Sub_sequence>*,
+	                   std::vector<Digraph_node<Sub_sequence>*>&)> gen_processes_recursive =
+		[&gen_processes_recursive, no_copy_mode](            Digraph_node<Sub_sequence>   *cur_node,
+		                                         std::vector<Digraph_node<Sub_sequence>*> &already_parsed_nodes)
 		{
 			if (cur_node != nullptr &&
 			    std::find(already_parsed_nodes.begin(),
@@ -1601,7 +1604,7 @@ void Sequence
 		if (this->is_thread_pinning())
 			Thread_pinning::pin(this->puids[thread_id++]);
 
-		std::vector<Generic_node<Sub_sequence>*> already_parsed_nodes;
+		std::vector<Digraph_node<Sub_sequence>*> already_parsed_nodes;
 		gen_processes_recursive(sequence, already_parsed_nodes);
 
 		if (this->is_thread_pinning())
@@ -1612,10 +1615,10 @@ void Sequence
 void Sequence
 ::reset_no_copy_mode()
 {
-	std::function<void(Generic_node<Sub_sequence>*,
-	                   std::vector<Generic_node<Sub_sequence>*> &)> reset_no_copy_mode_recursive =
-		[&reset_no_copy_mode_recursive](Generic_node<Sub_sequence>* cur_node,
-		                                std::vector<Generic_node<Sub_sequence>*> &already_parsed_nodes)
+	std::function<void(Digraph_node<Sub_sequence>*,
+	                   std::vector<Digraph_node<Sub_sequence>*> &)> reset_no_copy_mode_recursive =
+		[&reset_no_copy_mode_recursive](Digraph_node<Sub_sequence>* cur_node,
+		                                std::vector<Digraph_node<Sub_sequence>*> &already_parsed_nodes)
 		{
 			if (cur_node != nullptr &&
 			    std::find(already_parsed_nodes.begin(),
@@ -1658,7 +1661,7 @@ void Sequence
 
 	for (auto &sequence : this->sequences)
 	{
-		std::vector<Generic_node<Sub_sequence>*> already_parsed_nodes;
+		std::vector<Digraph_node<Sub_sequence>*> already_parsed_nodes;
 		reset_no_copy_mode_recursive(sequence, already_parsed_nodes);
 	}
 }
@@ -1690,10 +1693,10 @@ bool Sequence
 Sub_sequence* Sequence
 ::get_last_subsequence(const size_t tid)
 {
-	std::function<Sub_sequence*(Generic_node<Sub_sequence>*,
-	              std::vector<Generic_node<Sub_sequence>*>&)> get_last_subsequence_recursive =
-		[&get_last_subsequence_recursive](Generic_node<Sub_sequence>* cur_node,
-		                                  std::vector<Generic_node<Sub_sequence>*> &already_parsed_nodes) -> Sub_sequence*
+	std::function<Sub_sequence*(Digraph_node<Sub_sequence>*,
+	              std::vector<Digraph_node<Sub_sequence>*>&)> get_last_subsequence_recursive =
+		[&get_last_subsequence_recursive](Digraph_node<Sub_sequence>* cur_node,
+		                                  std::vector<Digraph_node<Sub_sequence>*> &already_parsed_nodes) -> Sub_sequence*
 		{
 			if (cur_node != nullptr &&
 			    std::find(already_parsed_nodes.begin(),
@@ -1713,17 +1716,17 @@ Sub_sequence* Sequence
 			}
 		};
 
-	std::vector<Generic_node<Sub_sequence>*> already_parsed_nodes;
+	std::vector<Digraph_node<Sub_sequence>*> already_parsed_nodes;
 	return get_last_subsequence_recursive(this->sequences[tid], already_parsed_nodes);
 }
 
 void Sequence
 ::update_tasks_id(const size_t tid)
 {
-	std::function<void(Generic_node<Sub_sequence>*, size_t&,
-		               std::vector<Generic_node<Sub_sequence>*> &)> update_tasks_id_recursive =
-		[&update_tasks_id_recursive](Generic_node<Sub_sequence>* cur_node, size_t& taid,
-		                             std::vector<Generic_node<Sub_sequence>*> &already_parsed_nodes)
+	std::function<void(Digraph_node<Sub_sequence>*, size_t&,
+		               std::vector<Digraph_node<Sub_sequence>*> &)> update_tasks_id_recursive =
+		[&update_tasks_id_recursive](Digraph_node<Sub_sequence>* cur_node, size_t& taid,
+		                             std::vector<Digraph_node<Sub_sequence>*> &already_parsed_nodes)
 		{
 			if (cur_node != nullptr &&
 			    std::find(already_parsed_nodes.begin(),
@@ -1742,19 +1745,19 @@ void Sequence
 		};
 
 	size_t taid = 0;
-	std::vector<Generic_node<Sub_sequence>*> already_parsed_nodes;
+	std::vector<Digraph_node<Sub_sequence>*> already_parsed_nodes;
 	return update_tasks_id_recursive(this->sequences[tid], taid, already_parsed_nodes);
 }
 
 std::vector<module::Task*> Sequence
 ::get_tasks_from_id(const size_t taid)
 {
-	std::function<void(Generic_node<Sub_sequence>*, const size_t, std::vector<module::Task*>&,
-		               std::vector<Generic_node<Sub_sequence>*> &)> get_tasks_from_id_recursive =
-		[&get_tasks_from_id_recursive](Generic_node<Sub_sequence>* cur_node,
+	std::function<void(Digraph_node<Sub_sequence>*, const size_t, std::vector<module::Task*>&,
+		               std::vector<Digraph_node<Sub_sequence>*> &)> get_tasks_from_id_recursive =
+		[&get_tasks_from_id_recursive](Digraph_node<Sub_sequence>* cur_node,
 		                               const size_t taid,
 		                               std::vector<module::Task*> &tasks,
-		                               std::vector<Generic_node<Sub_sequence>*> &already_parsed_nodes)
+		                               std::vector<Digraph_node<Sub_sequence>*> &already_parsed_nodes)
 		{
 			if (cur_node != nullptr &&
 			    std::find(already_parsed_nodes.begin(),
@@ -1781,7 +1784,7 @@ std::vector<module::Task*> Sequence
 	std::vector<module::Task*> tasks;
 	for (auto &s : this->sequences)
 	{
-		std::vector<Generic_node<Sub_sequence>*> already_parsed_nodes;
+		std::vector<Digraph_node<Sub_sequence>*> already_parsed_nodes;
 		get_tasks_from_id_recursive(s, taid, tasks, already_parsed_nodes);
 	}
 	return tasks;

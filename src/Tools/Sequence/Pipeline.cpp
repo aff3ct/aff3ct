@@ -1115,11 +1115,11 @@ std::vector<std::vector<module::Task*>> Pipeline
 void Pipeline
 ::export_dot(std::ostream &stream) const
 {
-	std::function<void(Generic_node<Sub_sequence>*,
+	std::function<void(Digraph_node<Sub_sequence>*,
 	                   const size_t,
 	                   const std::string&,
 	                   std::ostream&)> export_dot_subsequences_recursive =
-		[&export_dot_subsequences_recursive, this](Generic_node<Sub_sequence> *cur_node,
+		[&export_dot_subsequences_recursive, this](Digraph_node<Sub_sequence> *cur_node,
 		                                           const size_t sta,
 		                                           const std::string &tab,
 		                                           std::ostream &stream)
@@ -1138,11 +1138,11 @@ void Pipeline
 			}
 		};
 
-	std::function<void(Generic_node<Sub_sequence>*,
+	std::function<void(Digraph_node<Sub_sequence>*,
 	                   const size_t,
 	                   const std::string&,
 	                   std::ostream&)> export_dot_connections_recursive =
-		[&export_dot_connections_recursive, this](Generic_node<Sub_sequence> *cur_node,
+		[&export_dot_connections_recursive, this](Digraph_node<Sub_sequence> *cur_node,
 		                                          const size_t sta,
 		                                          const std::string &tab,
 		                                          std::ostream &stream)

@@ -864,6 +864,9 @@
 #ifndef CALLBACK_HPP__
 #include <Tools/Algo/Callback/Callback.hpp>
 #endif
+#ifndef DIGRAPH_NODE_HPP_
+#include <Tools/Algo/Digraph/Digraph_node.hpp>
+#endif
 #ifndef DRAW_GENERATOR_HPP_
 #include <Tools/Algo/Draw_generator/Draw_generator.hpp>
 #endif

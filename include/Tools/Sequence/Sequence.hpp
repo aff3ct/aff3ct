@@ -15,7 +15,7 @@
 
 #include "Module/Socket.hpp"
 #include "Tools/Interface/Interface_clone.hpp"
-#include "Tools/Algo/Tree/Generic/Generic_node.hpp"
+#include "Tools/Algo/Digraph/Digraph_node.hpp"
 #include "Tools/Interface/Interface_get_set_n_frames.hpp"
 #include "Tools/Interface/Interface_is_done.hpp"
 
@@ -30,7 +30,7 @@ namespace tools
 {
 class Pipeline;
 
-enum class subseq_t : size_t { STD, SWITCHER, SELECTER };
+enum class subseq_t : size_t { STD, COMMUTE, SELECT };
 
 template <class VTA = std::vector<module::Task*>>
 class Sub_sequence_generic
@@ -59,7 +59,7 @@ class Sequence : public Interface_clone, public Interface_get_set_n_frames
 
 protected:
 	size_t n_threads;
-	std::vector<Generic_node<Sub_sequence>*> sequences;
+	std::vector<Digraph_node<Sub_sequence>*> sequences;
 	std::vector<size_t> firsts_tasks_id;
 	std::vector<size_t> lasts_tasks_id;
 	std::vector<std::vector<module::Task*>> firsts_tasks;
@@ -174,13 +174,13 @@ public:
 
 protected:
 	template <class SS>
-	void delete_tree(Generic_node<SS> *node, std::vector<Generic_node<SS>*> &already_deleted_nodes);
+	void delete_tree(Digraph_node<SS> *node, std::vector<Digraph_node<SS>*> &already_deleted_nodes);
 
 	template <class SS, class TA>
-	Generic_node<SS>* init_recursive(Generic_node<SS> *cur_subseq,
+	Digraph_node<SS>* init_recursive(Digraph_node<SS> *cur_subseq,
 	                                 size_t &ssid,
 	                                 size_t &taid,
-	                                 std::vector<std::pair<TA*,Generic_node<SS>*>> &selectors,
+	                                 std::vector<std::pair<TA*,Digraph_node<SS>*>> &selectors,
 	                                 std::vector<TA*> &switchers,
 	                                 TA& first,
 	                                 TA& current_task,
@@ -203,18 +203,18 @@ protected:
 	                                  std::ostream &stream = std::cout) const;
 
 	template <class SS>
-	void export_dot(Generic_node<SS>* root, std::ostream &stream = std::cout) const;
+	void export_dot(Digraph_node<SS>* root, std::ostream &stream = std::cout) const;
 
 	template <class SS, class MO>
-	void duplicate(const Generic_node<SS> *sequence);
+	void duplicate(const Digraph_node<SS> *sequence);
 
 	void _exec(const size_t tid,
 	           std::function<bool(const std::vector<const int*>&)> &stop_condition,
-	           Generic_node<Sub_sequence>* sequence);
+	           Digraph_node<Sub_sequence>* sequence);
 
 	void _exec_without_statuses(const size_t tid,
 	                            std::function<bool()> &stop_condition,
-	                            Generic_node<Sub_sequence>* sequence);
+	                            Digraph_node<Sub_sequence>* sequence);
 
 	void gen_processes(const bool no_copy_mode = false);
 	void reset_no_copy_mode();
@@ -230,7 +230,7 @@ private:
 	template <class SS, class TA>
 	void init(const std::vector<TA*> &firsts, const std::vector<TA*> &lasts, const std::vector<TA*> &exclusions);
 	template <class SS>
-	inline void _init(Generic_node<SS> *root);
+	inline void _init(Digraph_node<SS> *root);
 };
 }
 }
