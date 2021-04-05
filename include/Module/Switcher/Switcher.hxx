@@ -32,7 +32,9 @@ Switcher
   n_elmts(n_elmts),
   n_bytes(tools::compute_bytes(n_elmts, datatype)),
   datatype(datatype),
-  path(n_data_sockets -1)
+  path(n_data_sockets -1),
+  no_copy_commute(false),
+  no_copy_select (false)
 {
 	const std::string name = "Switcher";
 	this->set_name(name);
@@ -69,12 +71,15 @@ Switcher
 		swi.set_path((size_t)ctrl_socket_in[0]);
 		const size_t path = swi.get_path();
 
-		const auto data_socket_in  = static_cast<const int8_t*>(t[p1s_in_data       ].get_dataptr());
-		      auto data_socket_out = static_cast<      int8_t*>(t[p1s_out_data[path]].get_dataptr());
+		if (!swi.is_no_copy_commute())
+		{
+			const auto data_socket_in  = static_cast<const int8_t*>(t[p1s_in_data       ].get_dataptr());
+			      auto data_socket_out = static_cast<      int8_t*>(t[p1s_out_data[path]].get_dataptr());
 
-		std::copy(data_socket_in,
-		          data_socket_in + swi.get_n_frames() * swi.get_n_bytes(),
-		          data_socket_out);
+			std::copy(data_socket_in,
+			          data_socket_in + swi.get_n_frames() * swi.get_n_bytes(),
+			          data_socket_out);
+		}
 
 		return (int)path;
 	});
@@ -88,17 +93,45 @@ Switcher
 	this->create_codelet(p2, [p2s_in_data, p2s_out_data](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &swi = static_cast<Switcher&>(m);
-		const size_t path = swi.get_path();
 
-		const auto data_socket_in  = static_cast<const int8_t*>(t[p2s_in_data[path]].get_dataptr());
-		      auto data_socket_out = static_cast<      int8_t*>(t[p2s_out_data     ].get_dataptr());
+		if (!swi.is_no_copy_select())
+		{
+			const size_t path = swi.get_path();
 
-		std::copy(data_socket_in,
-		          data_socket_in + swi.get_n_frames() * swi.get_n_bytes(),
-		          data_socket_out);
+			const auto data_socket_in  = static_cast<const int8_t*>(t[p2s_in_data[path]].get_dataptr());
+			      auto data_socket_out = static_cast<      int8_t*>(t[p2s_out_data     ].get_dataptr());
+
+			std::copy(data_socket_in,
+			          data_socket_in + swi.get_n_frames() * swi.get_n_bytes(),
+			          data_socket_out);
+		}
 
 		return status_t::SUCCESS;
 	});
+}
+
+void Switcher
+::set_no_copy_commute(const bool no_copy_commute)
+{
+	this->no_copy_commute = no_copy_commute;
+}
+
+void Switcher
+::set_no_copy_select(const bool no_copy_select)
+{
+	this->no_copy_select = no_copy_select;
+}
+
+bool Switcher
+::is_no_copy_commute() const
+{
+	return this->no_copy_commute;
+}
+
+bool Switcher
+::is_no_copy_select () const
+{
+	return this->no_copy_select;
 }
 
 size_t Switcher

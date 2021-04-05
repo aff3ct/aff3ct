@@ -78,7 +78,6 @@ template <typename T>
 void Incrementer<T>
 ::_increment(const T *in, T *out, const size_t frame_id)
 {
-	// std::cout << "[" << this->get_custom_name() << "] - start" << std::endl;
 	std::chrono::time_point<std::chrono::steady_clock> t_start;
 	if (this->ns)
 		t_start = std::chrono::steady_clock::now();
@@ -92,7 +91,6 @@ void Incrementer<T>
 		while ((size_t)duration.count() < this->ns) // active waiting
 			duration = std::chrono::steady_clock::now() - t_start;
 	}
-	// std::cout << "[" << this->get_custom_name() << "] - stop" << std::endl;
 }
 
 // ==================================================================================== explicit template instantiation

@@ -1466,6 +1466,94 @@ void Sequence
 				contents->rebind_dataptrs.clear();
 				for (auto task : contents->tasks)
 				{
+					if (dynamic_cast<module::Switcher*>(&task->get_module()) &&
+						task->get_name().find("select") != std::string::npos && no_copy_mode)
+					{
+						auto select_task = task;
+						auto switcher = dynamic_cast<module::Switcher*>(&select_task->get_module());
+						switcher->set_no_copy_select(true);
+
+						const auto rebind_id = contents->rebind_sockets.size();
+						contents->rebind_sockets.resize(rebind_id +1);
+						contents->rebind_dataptrs.resize(rebind_id +1);
+
+						for (size_t s = 0; s < select_task->sockets.size() -1; s++)
+						{
+							if (select_task->get_socket_type(*select_task->sockets[s]) == module::socket_t::SOUT)
+							{
+								std::vector<module::Socket*> bound_sockets;
+								std::vector<void*> dataptrs;
+
+								auto bs = select_task->sockets[s]->get_bound_sockets();
+								bound_sockets.insert(bound_sockets.end(), bs.begin(), bs.end());
+								for (auto sck : bs)
+									dataptrs.push_back(sck->get_dataptr());
+
+								contents->rebind_sockets[rebind_id].push_back(bound_sockets);
+								contents->rebind_dataptrs[rebind_id].push_back(dataptrs);
+							}
+						}
+
+						modified_tasks[select_task] = [contents, select_task, switcher, rebind_id]() -> const int*
+						{
+							select_task->exec();
+							const int* status = (int*)select_task->sockets.back()->get_dataptr();
+
+							const auto path = switcher->get_path();
+							const auto in_dataptr = select_task->sockets[path]->get_dataptr();
+
+							// rebind input sockets on the fly
+							for (size_t sout_id = 0; sout_id < contents->rebind_sockets[rebind_id].size(); sout_id++)
+								for (size_t sin_id = 0; sin_id < contents->rebind_sockets[rebind_id][sout_id].size(); sin_id++)
+									contents->rebind_sockets[rebind_id][sout_id][sin_id]->dataptr = in_dataptr;
+
+							return status;
+						};
+					}
+
+					if (dynamic_cast<module::Switcher*>(&task->get_module()) &&
+						task->get_name().find("commute") != std::string::npos && no_copy_mode)
+					{
+						auto commute_task = task;
+						auto switcher = dynamic_cast<module::Switcher*>(&commute_task->get_module());
+						switcher->set_no_copy_commute(true);
+
+						const auto rebind_id = contents->rebind_sockets.size();
+						contents->rebind_sockets.resize(rebind_id +1);
+						contents->rebind_dataptrs.resize(rebind_id +1);
+
+						for (size_t s = 0; s < commute_task->sockets.size() -1; s++)
+						{
+							if (commute_task->get_socket_type(*commute_task->sockets[s]) == module::socket_t::SOUT)
+							{
+								std::vector<module::Socket*> bound_sockets;
+								std::vector<void*> dataptrs;
+
+								auto bs = commute_task->sockets[s]->get_bound_sockets();
+								bound_sockets.insert(bound_sockets.end(), bs.begin(), bs.end());
+								for (auto sck : bs)
+									dataptrs.push_back(sck->get_dataptr());
+
+								contents->rebind_sockets[rebind_id].push_back(bound_sockets);
+								contents->rebind_dataptrs[rebind_id].push_back(dataptrs);
+							}
+						}
+
+						modified_tasks[commute_task] = [contents, commute_task, switcher, rebind_id]() -> const int*
+						{
+							commute_task->exec();
+							const int* status = (int*)commute_task->sockets.back()->get_dataptr();
+							const auto in_dataptr = commute_task->sockets[0]->get_dataptr();
+
+							// rebind input sockets on the fly
+							for (size_t sout_id = 0; sout_id < contents->rebind_sockets[rebind_id].size(); sout_id++)
+								for (size_t sin_id = 0; sin_id < contents->rebind_sockets[rebind_id][sout_id].size(); sin_id++)
+									contents->rebind_sockets[rebind_id][sout_id][sin_id]->dataptr = in_dataptr;
+
+							return status;
+						};
+					}
+
 					if (dynamic_cast<module::Adaptor*>(&task->get_module()) &&
 						task->get_name().find("pull") != std::string::npos && no_copy_mode)
 					{
@@ -1629,6 +1717,22 @@ void Sequence
 				auto contents = cur_node->get_c();
 				for (auto task : contents->tasks)
 				{
+					if (dynamic_cast<module::Switcher*>(&task->get_module()) &&
+						task->get_name().find("select") != std::string::npos)
+					{
+						auto select_task = task;
+						auto switcher = dynamic_cast<module::Switcher*>(&select_task->get_module());
+						switcher->set_no_copy_select(false);
+					}
+
+					if (dynamic_cast<module::Switcher*>(&task->get_module()) &&
+						task->get_name().find("commute") != std::string::npos)
+					{
+						auto commute_task = task;
+						auto switcher = dynamic_cast<module::Switcher*>(&commute_task->get_module());
+						switcher->set_no_copy_commute(false);
+					}
+
 					if (dynamic_cast<module::Adaptor*>(&task->get_module()) &&
 						task->get_name().find("pull") != std::string::npos)
 					{
