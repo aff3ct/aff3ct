@@ -1479,6 +1479,7 @@ void Sequence
 
 						for (size_t s = 0; s < select_task->sockets.size() -1; s++)
 						{
+							// there should be only one output socket at this time
 							if (select_task->get_socket_type(*select_task->sockets[s]) == module::socket_t::SOUT)
 							{
 								std::vector<module::Socket*> bound_sockets;
@@ -1503,6 +1504,7 @@ void Sequence
 							const auto in_dataptr = select_task->sockets[path]->get_dataptr();
 
 							// rebind input sockets on the fly
+							// there should be only one output socket at this time (sout_id == 0)
 							for (size_t sout_id = 0; sout_id < contents->rebind_sockets[rebind_id].size(); sout_id++)
 								for (size_t sin_id = 0; sin_id < contents->rebind_sockets[rebind_id][sout_id].size(); sin_id++)
 									contents->rebind_sockets[rebind_id][sout_id][sin_id]->dataptr = in_dataptr;
@@ -1544,11 +1546,11 @@ void Sequence
 							commute_task->exec();
 							const int* status = (int*)commute_task->sockets.back()->get_dataptr();
 							const auto in_dataptr = commute_task->sockets[0]->get_dataptr();
+							const auto path = switcher->get_path();
 
 							// rebind input sockets on the fly
-							for (size_t sout_id = 0; sout_id < contents->rebind_sockets[rebind_id].size(); sout_id++)
-								for (size_t sin_id = 0; sin_id < contents->rebind_sockets[rebind_id][sout_id].size(); sin_id++)
-									contents->rebind_sockets[rebind_id][sout_id][sin_id]->dataptr = in_dataptr;
+							for (size_t sin_id = 0; sin_id < contents->rebind_sockets[rebind_id][path].size(); sin_id++)
+									contents->rebind_sockets[rebind_id][path][sin_id]->dataptr = in_dataptr;
 
 							return status;
 						};
