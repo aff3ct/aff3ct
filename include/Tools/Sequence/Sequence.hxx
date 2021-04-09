@@ -120,25 +120,29 @@ inline void Sequence
 			auto node_contents = node->get_c();
 
 			if (node->get_fathers ().size() == 1 &&
-				node->get_children().size() <= 1 &&
-				node_contents->tasks.size() == 0)
+			    node->get_children().size() == 1 &&
+			    node_contents->tasks.size() == 0)
 			{
-				auto father = node->get_fathers()[0];
+				auto father = node->get_fathers ().size() ? node->get_fathers ()[0] : nullptr;
 				auto child  = node->get_children().size() ? node->get_children()[0] : nullptr;
 
-				auto child_pos = node->get_child_pos(*father);
-				if (child_pos == -1)
+				auto child_pos = -1;
+				if (father != nullptr)
 				{
-					std::stringstream message;
-					message << "'child_pos' should be different from '-1'.";
-					throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
-				}
+					child_pos = node->get_child_pos(*father);
+					if (child_pos == -1)
+					{
+						std::stringstream message;
+						message << "'child_pos' should be different from '-1'.";
+						throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+					}
 
-				if (!father->cut_child((size_t)child_pos))
-				{
-					std::stringstream message;
-					message << "'father->cut_child(child_pos)' should return true ('child_pos' = " << child_pos << ").";
-					throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+					if (!father->cut_child((size_t)child_pos))
+					{
+						std::stringstream message;
+						message << "'father->cut_child(child_pos)' should return true ('child_pos' = " << child_pos << ").";
+						throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+					}
 				}
 
 				auto father_pos = -1;
@@ -161,10 +165,13 @@ inline void Sequence
 					}
 				}
 
+				if (node == root)
+					root = child;
+
 				delete node_contents;
 				delete node;
 
-				if (child != nullptr)
+				if (child != nullptr && father != nullptr)
 				{
 					father->add_child (child,  child_pos );
 					child ->add_father(father, father_pos);

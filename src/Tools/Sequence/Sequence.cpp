@@ -448,7 +448,8 @@ void Sequence
 			{
 				statuses[tasks_id[0]] = processes[0]();
 				const int path = statuses[tasks_id[0]][0];
-				exec_sequence(cur_ss->get_children()[path], statuses);
+				if (cur_ss->get_children().size() > (size_t)path)
+					exec_sequence(cur_ss->get_children()[path], statuses);
 			}
 			else
 			{
@@ -524,7 +525,8 @@ void Sequence
 			if (type == subseq_t::COMMUTE)
 			{
 				const int path = processes[0]()[0];
-				exec_sequence(cur_ss->get_children()[path]);
+				if (cur_ss->get_children().size() > (size_t)path)
+					exec_sequence(cur_ss->get_children()[path]);
 			}
 			else
 			{
@@ -692,7 +694,8 @@ void Sequence
 			if (type == subseq_t::COMMUTE)
 			{
 				const int path = tasks[0]->exec(frame_id)[0];
-				exec_sequence(cur_ss->get_children()[path]);
+				if (cur_ss->get_children().size() > (size_t)path)
+					exec_sequence(cur_ss->get_children()[path]);
 			}
 			else
 			{
@@ -742,6 +745,12 @@ Digraph_node<SS>* Sequence
 		real_lasts.erase(it);
 		auto dist = std::distance(real_lasts.begin(), it);
 		real_lasts_id.erase(real_lasts_id.begin() + dist);
+	}
+
+	if (cur_subseq->get_contents() == nullptr)
+	{
+		cur_subseq->set_contents(new SS());
+		cur_subseq->get_c()->id = ssid++;
 	}
 
 	bool is_last = true;
@@ -921,11 +930,6 @@ Digraph_node<SS>* Sequence
 	}
 	else
 	{
-		if (cur_subseq->get_contents() == nullptr)
-		{
-			cur_subseq->set_contents(new SS());
-			cur_subseq->get_c()->id = ssid++;
-		}
 		cur_subseq->get_c()->tasks.push_back(&current_task);
 		cur_subseq->get_c()->tasks_id.push_back(taid++);
 
