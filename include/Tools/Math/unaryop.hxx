@@ -35,10 +35,12 @@ template <typename TI, typename TO, proto_uop<TI,TO> UOP>
 std::string uop_get_name()
 {
 	std::string op = "ukn";
+#ifndef _MSC_VER
 	     if ((uintptr_t)UOP == (uintptr_t)uop_abs    <TI,TO>) op = "abs";
 	else if ((uintptr_t)UOP == (uintptr_t)uop_not    <TI,TO>) op = "not";
 	else if ((uintptr_t)UOP == (uintptr_t)uop_not_abs<TI,TO>) op = "not_abs";
 	else if ((uintptr_t)UOP == (uintptr_t)uop_sign   <TI,TO>) op = "sign";
+#endif
 	return op;
 }
 

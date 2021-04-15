@@ -66,6 +66,7 @@ template <typename TI, typename TO, proto_bop<TI,TO> BOP>
 std::string bop_get_name()
 {
 	std::string op = "ukn";
+#ifndef _MSC_VER
 	     if ((uintptr_t)BOP == (uintptr_t)bop_add<TI,TO>) op = "add";
 	else if ((uintptr_t)BOP == (uintptr_t)bop_sub<TI,TO>) op = "sub";
 	else if ((uintptr_t)BOP == (uintptr_t)bop_mul<TI,TO>) op = "mul";
@@ -75,6 +76,7 @@ std::string bop_get_name()
 	else if ((uintptr_t)BOP == (uintptr_t)bop_and<TI,TO>) op = "and";
 	else if ((uintptr_t)BOP == (uintptr_t)bop_min<TI,TO>) op = "min";
 	else if ((uintptr_t)BOP == (uintptr_t)bop_max<TI,TO>) op = "max";
+#endif
 	return op;
 }
 
