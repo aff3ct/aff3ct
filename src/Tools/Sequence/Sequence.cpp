@@ -40,6 +40,7 @@ Sequence
   puids(puids),
   no_copy_mode(true),
   saved_exclusions(exclusions),
+  switchers_reset(n_threads),
   auto_stop(true)
 {
 #ifndef AFF3CT_HWLOC
@@ -124,6 +125,7 @@ Sequence
   puids(puids),
   no_copy_mode(true),
   saved_exclusions(exclusions_convert_to_const(exclusions)),
+  switchers_reset(n_threads),
   auto_stop(true)
 {
 	if (thread_pinning && puids.size() < n_threads)
@@ -291,6 +293,11 @@ void Sequence
 	this->update_firsts_and_lasts_tasks();
 	this->gen_processes();
 	this->donners = get_modules<tools::Interface_is_done>(true);
+
+	for (size_t tid = 0; tid < this->n_threads; tid++)
+		for (auto &mdl : this->all_modules[tid])
+			if (auto swi = dynamic_cast<module::Switcher*>(mdl))
+				this->switchers_reset[tid].push_back(dynamic_cast<tools::Interface_reset*>(swi));
 }
 
 Sequence* Sequence
@@ -465,6 +472,10 @@ void Sequence
 	{
 		do
 		{
+			// force switchers reset to reinitialize the path to the last input socket
+			for (size_t s = 0; s < this->switchers_reset[tid].size(); s++)
+				this->switchers_reset[tid][s]->reset();
+
 			std::fill(statuses.begin(), statuses.end(), nullptr);
 			try
 			{
@@ -541,6 +552,10 @@ void Sequence
 	{
 		do
 		{
+			// force switchers reset to reinitialize the path to the last input socket
+			for (size_t s = 0; s < this->switchers_reset[tid].size(); s++)
+				this->switchers_reset[tid][s]->reset();
+
 			try
 			{
 				exec_sequence(sequence);

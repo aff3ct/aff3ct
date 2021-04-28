@@ -77,6 +77,7 @@ protected:
 	bool no_copy_mode;
 	const std::vector<const module::Task*> saved_exclusions;
 	std::vector<tools::Interface_is_done*> donners;
+	std::vector<std::vector<tools::Interface_reset*>> switchers_reset;
 	bool auto_stop;
 
 public:

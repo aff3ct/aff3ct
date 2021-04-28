@@ -15,6 +15,7 @@
 #include "Module/Socket.hpp"
 #include "Module/Module.hpp"
 #include "Tools/Sequence/Sequence.hpp"
+#include "Tools/Interface/Interface_reset.hpp"
 
 namespace aff3ct
 {
@@ -25,7 +26,7 @@ namespace module
 		enum class tsk : size_t { commute, select, SIZE };
 	}
 
-class Switcher : public Module
+class Switcher : public Module, public tools::Interface_reset
 {
 friend tools::Sequence; // Sequence is friend to enable the no copy mode (0 copy)
 
@@ -59,6 +60,8 @@ public:
 
 	inline bool is_no_copy_commute() const;
 	inline bool is_no_copy_select () const;
+
+	virtual void reset();
 
 protected:
 	inline void set_path(const size_t path);

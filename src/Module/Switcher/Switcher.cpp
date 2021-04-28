@@ -10,3 +10,9 @@ Switcher* Switcher
 	m->deep_copy(*this);
 	return m;
 }
+
+void Switcher
+::reset()
+{
+	this->path = this->get_n_data_sockets() -1;
+}
