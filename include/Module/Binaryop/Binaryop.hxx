@@ -24,17 +24,6 @@ Binaryop<TI,TO,BOP>
 ::Binaryop(const size_t n_elmts)
 : Module(), n_elmts(n_elmts)
 {
-	std::string op = "ukn";
-	     if ((uintptr_t)BOP == (uintptr_t)tools::bop_add<TI,TO>) op = "add";
-	else if ((uintptr_t)BOP == (uintptr_t)tools::bop_sub<TI,TO>) op = "sub";
-	else if ((uintptr_t)BOP == (uintptr_t)tools::bop_mul<TI,TO>) op = "mul";
-	else if ((uintptr_t)BOP == (uintptr_t)tools::bop_div<TI,TO>) op = "div";
-	else if ((uintptr_t)BOP == (uintptr_t)tools::bop_or <TI,TO>) op = "or";
-	else if ((uintptr_t)BOP == (uintptr_t)tools::bop_xor<TI,TO>) op = "xor";
-	else if ((uintptr_t)BOP == (uintptr_t)tools::bop_and<TI,TO>) op = "and";
-	else if ((uintptr_t)BOP == (uintptr_t)tools::bop_min<TI,TO>) op = "min";
-	else if ((uintptr_t)BOP == (uintptr_t)tools::bop_max<TI,TO>) op = "max";
-
 	const std::string name = "Binaryop";
 	this->set_name(name + "<" + tools::bop_get_name<TI,TO,BOP>() + ">");
 	this->set_short_name(name);
