@@ -32,8 +32,8 @@ Event_generator_MKL<R,E>* Event_generator_MKL<R,E>
 ::clone() const
 {
 	Event_generator_MKL<R,E>* eg = new Event_generator_MKL(*this);
-	VSLStreamStatePtr new_ptr;
-	vslCopyStream(&new_ptr, (VSLStreamStatePtr*)this->stream_state);
+	VSLStreamStatePtr* new_ptr = new VSLStreamStatePtr;
+	vslCopyStream(new_ptr, *(VSLStreamStatePtr*)this->stream_state);
 	eg->stream_state = (void*)new_ptr;
 	return eg;
 }
