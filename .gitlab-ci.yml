@@ -15,7 +15,7 @@ before_script:
 # - pwd
 
 analysis-cppcheck:
-  image: registry.gitlab.com/aff3ct/aff3ct/ubuntu_cppcheck:v1.9
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_cppcheck:v1.9
   stage: analysis
   allow_failure: false
   artifacts:
@@ -24,12 +24,13 @@ analysis-cppcheck:
     paths:
       - cppcheck/
   tags:
-    - docker
     - linux
+    - docker
   script:
     - ./ci/analysis-cppcheck.sh
 
 analysis-clang:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_clang:v10.0.0
   stage: analysis
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -45,10 +46,7 @@ analysis-clang:
     - development
   tags:
     - linux
-    - clang
-    - scan-build
-    - clang-tidy
-    - python
+    - docker
   script:
     - export CFLAGS="-pedantic -fdiagnostics-show-option -Wall -Wno-overloaded-virtual"
     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=OFF -DAFF3CT_COMPILE_SHARED_LIB=OFF -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
@@ -73,7 +71,7 @@ analysis-headers:
     - diff aff3ct.hpp include/aff3ct.hpp
 
 analysis-git-submodules:
-  image: registry.gitlab.com/aff3ct/aff3ct/ubuntu_git:v2.25.1
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_git:v2.25.1
   stage: analysis
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -90,24 +88,24 @@ analysis-git-submodules:
     - ./ci/analysis-git-submodule.sh
 
 analysis-documentation:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_doc
   stage: analysis
   artifacts:
     name: analysis-documentation
     when: always
     paths:
       - doc/build/html
-      - doc/build/latex
+#     - doc/build/latex
       - doc/build/doxygen
   tags:
-    - pip3
-    - doxygen
-    - latex
-    - powerful
+    - linux
+    - docker
   script:
     - export THREADS="1"
     - ./ci/analysis-documentation.sh
 
 build-linux-gcc-nointr:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_gcc:v9.3.0
   stage: build
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -119,10 +117,9 @@ build-linux-gcc-nointr:
     - job: analysis-headers
       artifacts: false
   tags:
+    - x86_64
     - linux
-    - gcc
-    - cmake
-    - x86
+    - docker
   artifacts:
     name: build-linux-gcc-nointr
     paths:
@@ -138,6 +135,7 @@ build-linux-gcc-nointr:
     - ./ci/build-linux-macos.sh
 
 build-linux-gcc-x64-sse4.2:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_gcc:v9.3.0
   stage: build
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -149,11 +147,9 @@ build-linux-gcc-x64-sse4.2:
     - job: analysis-documentation
       artifacts: true
   tags:
+    - x86_64
     - linux
-    - gcc
-    - cmake
-    - x86
-    - 64-bit
+    - docker
   artifacts:
     name: build-linux-gcc-x64-sse4.2
     paths:
@@ -169,6 +165,7 @@ build-linux-gcc-x64-sse4.2:
     - ./ci/build-linux-macos.sh
 
 build-linux-gcc-x64-avx2:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_gcc:v9.3.0
   stage: build
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -182,11 +179,9 @@ build-linux-gcc-x64-avx2:
     - job: analysis-documentation
       artifacts: true
   tags:
+    - x86_64
     - linux
-    - gcc
-    - cmake
-    - x86
-    - 64-bit
+    - docker
   artifacts:
     name: build-linux-gcc-x64-avx2
     paths:
@@ -202,6 +197,7 @@ build-linux-gcc-x64-avx2:
     - ./ci/build-linux-macos.sh
 
 build-linux-gcc-8-bit:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_gcc:v9.3.0
   stage: build
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -213,11 +209,9 @@ build-linux-gcc-8-bit:
     - job: analysis-headers
       artifacts: false
   tags:
+    - x86_64
     - linux
-    - gcc
-    - arm
-    - cmake
-    - gsl
+    - docker
   artifacts:
     name: build-linux-gcc-8-bit
     paths:
@@ -232,6 +226,7 @@ build-linux-gcc-8-bit:
     - ./ci/build-linux-macos.sh
 
 build-linux-gcc-mpi:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_openmpi:v4.0.3
   stage: build
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -243,11 +238,9 @@ build-linux-gcc-mpi:
     - job: analysis-headers
       artifacts: false
   tags:
+    - x86_64
     - linux
-    - gcc
-    - mpi
-    - cmake
-    - gsl
+    - docker
   artifacts:
     name: build-linux-gcc-mpi
     paths:
@@ -262,6 +255,7 @@ build-linux-gcc-mpi:
     - ./ci/build-linux-macos.sh
 
 build-linux-clang:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_clang:v10.0.0
   stage: build
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -273,10 +267,9 @@ build-linux-clang:
     - job: analysis-headers
       artifacts: false
   tags:
+    - x86_64
     - linux
-    - clang
-    - cmake
-    - gsl
+    - docker
   artifacts:
     name: build-linux-clang
     paths:
@@ -287,35 +280,6 @@ build-linux-clang:
     - export CFLAGS="-Wall -Wno-overloaded-virtual -funroll-loops"
     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON"
     - export NAME="build_linux_clang"
-    - source ./ci/tools/threads.sh
-    - ./ci/build-linux-macos.sh
-
-build-linux-gcc-4.8:
-  stage: build
-  variables:
-    GIT_SUBMODULE_STRATEGY: recursive
-  except:
-    - schedules
-  needs:
-    - job: analysis-cppcheck
-      artifacts: false
-    - job: analysis-headers
-      artifacts: false
-  tags:
-    - linux
-    - gcc-4.8
-    - cmake
-    - gsl
-  artifacts:
-    name: build-linux-gcc-4.8
-    paths:
-      - build_linux_gcc-4.8
-  script:
-    - export CC="gcc-4.8"
-    - export CXX="g++-4.8"
-    - export CFLAGS="-Wall -funroll-loops -march=native"
-    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_LINK_GSL=ON"
-    - export NAME="build_linux_gcc-4.8"
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
 
@@ -332,7 +296,7 @@ build-linux-icpc:
     - job: analysis-headers
       artifacts: false
   tags:
-    - x86
+    - x86_64
     - linux
     - docker
   artifacts:
@@ -469,6 +433,7 @@ build-macos-clang-x64-sse4.2:
     - ./ci/build-linux-macos.sh
 
 check-debug-parser:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_python:v3.8.5
   stage: check
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -478,12 +443,10 @@ check-debug-parser:
     - job: build-linux-gcc-x64-sse4.2
       artifacts: true
   tags:
-    - linux
-    - x86
-    - 64-bit
+    - x86_64
     - sse4.2
-    - python3.5
-    - mat4py
+    - linux
+    - docker
   artifacts:
     name: debug-parser-output
     when: always
@@ -492,10 +455,12 @@ check-debug-parser:
   script:
     - source ./ci/tools/git-version.sh
     - cd ./scripts/debug_parser/
+    - pip3 install -r requirements.txt
     - export AFF3CT_PATH="../../../build_linux_gcc_x64_sse4.2/bin/aff3ct-$GIT_VERSION"
     - ./test/test.sh
 
 check-documentation:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_python:v3.8.5
   stage: check
   except:
     - schedules
@@ -503,15 +468,15 @@ check-documentation:
     - job: build-linux-gcc-x64-sse4.2
       artifacts: true
   tags:
-    - linux
-    - x86
-    - 64-bit
+    - x86_64
     - sse4.2
-    - python3.5
+    - linux
+    - docker
   script:
     - ./ci/check-documentation.py --aff3ct "build_linux_gcc_x64_sse4.2/bin/aff3ct"
 
 test-regression-bch:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_python:v3.8.5
   stage: test
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -520,11 +485,10 @@ test-regression-bch:
     - job: build-linux-gcc-x64-sse4.2
       artifacts: true
   tags:
-    - linux
-    - x86
-    - 64-bit
+    - x86_64
     - sse4.2
-    - python3.4
+    - linux
+    - docker
   artifacts:
      name: test-regression-results-bch
      when: always
@@ -538,6 +502,7 @@ test-regression-bch:
     - ./ci/test-regression.py --refs-path refs/BCH --results-path test-regression-results-bch --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-ldpc:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_python:v3.8.5
   stage: test
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -546,12 +511,11 @@ test-regression-ldpc:
     - job: build-linux-gcc-x64-sse4.2
       artifacts: true
   tags:
-    - linux
-    - x86
-    - 64-bit
+    - x86_64
     - sse4.2
+    - linux
+    - docker
     - powerful
-    - python3.4
   artifacts:
      name: test-regression-results-ldpc
      when: always
@@ -565,6 +529,7 @@ test-regression-ldpc:
     - ./ci/test-regression.py --refs-path refs/LDPC --results-path test-regression-results-ldpc --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-polar:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_python:v3.8.5
   stage: test
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -573,12 +538,11 @@ test-regression-polar:
     - job: build-linux-gcc-x64-sse4.2
       artifacts: true
   tags:
-    - linux
-    - x86
-    - 64-bit
+    - x86_64
     - sse4.2
+    - linux
+    - docker
     - powerful
-    - python3.4
   artifacts:
      name: test-regression-results-polar
      when: always
@@ -592,6 +556,7 @@ test-regression-polar:
     - ./ci/test-regression.py --refs-path refs/POLAR --results-path test-regression-results-polar --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-polar-mk:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_python:v3.8.5
   stage: test
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -600,12 +565,11 @@ test-regression-polar-mk:
     - job: build-linux-gcc-x64-sse4.2
       artifacts: true
   tags:
-    - linux
-    - x86
-    - 64-bit
+    - x86_64
     - sse4.2
+    - linux
+    - docker
     - powerful
-    - python3.4
   artifacts:
      name: test-regression-results-polar-mk
      when: always
@@ -619,6 +583,7 @@ test-regression-polar-mk:
     - ./ci/test-regression.py --refs-path refs/POLAR_MK --results-path test-regression-results-polar-mk --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-ra:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_python:v3.8.5
   stage: test
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -629,11 +594,10 @@ test-regression-ra:
     - job: build-linux-gcc-x64-sse4.2
       artifacts: true
   tags:
-    - linux
-    - x86
-    - 64-bit
+    - x86_64
     - sse4.2
-    - python3.4
+    - linux
+    - docker
   artifacts:
      name: test-regression-results-ra
      when: always
@@ -647,6 +611,7 @@ test-regression-ra:
     - ./ci/test-regression.py --refs-path refs/RA --results-path test-regression-results-ra --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-rep:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_python:v3.8.5
   stage: test
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -655,11 +620,10 @@ test-regression-rep:
     - job: build-linux-gcc-x64-sse4.2
       artifacts: true
   tags:
-    - linux
-    - x86
-    - 64-bit
+    - x86_64
     - sse4.2
-    - python3.4
+    - linux
+    - docker
   artifacts:
      name: test-regression-results-rep
      when: always
@@ -673,6 +637,7 @@ test-regression-rep:
     - ./ci/test-regression.py --refs-path refs/REP --results-path test-regression-results-rep --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-rs:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_python:v3.8.5
   stage: test
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -681,11 +646,10 @@ test-regression-rs:
     - job: build-linux-gcc-x64-sse4.2
       artifacts: true
   tags:
-    - linux
-    - x86
-    - 64-bit
+    - x86_64
     - sse4.2
-    - python3.4
+    - linux
+    - docker
   artifacts:
      name: test-regression-results-rs
      when: always
@@ -707,11 +671,10 @@ test-regression-rsc:
     - job: build-linux-gcc-x64-sse4.2
       artifacts: true
   tags:
-    - linux
-    - x86
-    - 64-bit
+    - x86_64
     - sse4.2
-    - python3.4
+    - linux
+    - docker
   artifacts:
      name: test-regression-results-rsc
      when: always
@@ -725,6 +688,7 @@ test-regression-rsc:
     - ./ci/test-regression.py --refs-path refs/RSC --results-path test-regression-results-rsc --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-rsc-db:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_python:v3.8.5
   stage: test
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -733,11 +697,10 @@ test-regression-rsc-db:
     - job: build-linux-gcc-x64-sse4.2
       artifacts: true
   tags:
-    - linux
-    - x86
-    - 64-bit
+    - x86_64
     - sse4.2
-    - python3.4
+    - linux
+    - docker
   artifacts:
      name: test-regression-results-rsc-db
      when: always
@@ -751,6 +714,7 @@ test-regression-rsc-db:
     - ./ci/test-regression.py --refs-path refs/RSC_DB --results-path test-regression-results-rsc-db --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-turbo:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_python:v3.8.5
   stage: test
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -759,12 +723,11 @@ test-regression-turbo:
     - job: build-linux-gcc-x64-sse4.2
       artifacts: true
   tags:
-    - linux
-    - x86
-    - 64-bit
+    - x86_64
     - sse4.2
+    - linux
+    - docker
     - powerful
-    - python3.4
   artifacts:
      name: test-regression-results-turbo
      when: always
@@ -778,6 +741,7 @@ test-regression-turbo:
     - ./ci/test-regression.py --refs-path refs/TURBO --results-path test-regression-results-turbo --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-turbo-db:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_python:v3.8.5
   stage: test
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -786,12 +750,11 @@ test-regression-turbo-db:
     - job: build-linux-gcc-x64-sse4.2
       artifacts: true
   tags:
-    - linux
-    - x86
-    - 64-bit
+    - x86_64
     - sse4.2
+    - linux
+    - docker
     - powerful
-    - python3.4
   artifacts:
      name: test-regression-results-turbo-db
      when: always
@@ -805,6 +768,7 @@ test-regression-turbo-db:
     - ./ci/test-regression.py --refs-path refs/TURBO_DB --results-path test-regression-results-turbo-db --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-turbo-prod:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_python:v3.8.5
   stage: test
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -813,12 +777,11 @@ test-regression-turbo-prod:
     - job: build-linux-gcc-x64-sse4.2
       artifacts: true
   tags:
-    - linux
-    - x86
-    - 64-bit
+    - x86_64
     - sse4.2
+    - linux
+    - docker
     - powerful
-    - python3.4
   artifacts:
      name: test-regression-results-turbo-prod
      when: always
@@ -832,6 +795,7 @@ test-regression-turbo-prod:
     - ./ci/test-regression.py --refs-path refs/TURBO_PROD --results-path test-regression-results-turbo-prod --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-uncoded:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_python:v3.8.5
   stage: test
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -840,11 +804,10 @@ test-regression-uncoded:
     - job: build-linux-gcc-x64-sse4.2
       artifacts: true
   tags:
-    - linux
-    - x86
-    - 64-bit
+    - x86_64
     - sse4.2
-    - python3.4
+    - linux
+    - docker
   artifacts:
      name: test-regression-results-uncoded
      when: always

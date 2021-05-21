@@ -5,7 +5,7 @@ This  debug parser supports the hex debug format (`--sim-debug-hex`), which is h
 
 ## Dependencies
 ```
-pip3 install argparse mat4py
+pip3 install --user -r requirements.txt
 ```
 For dynamic parsing, on Ubuntu, run the following command (and add it to your bashrc !)
 ```
