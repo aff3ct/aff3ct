@@ -38,7 +38,7 @@ public:
 	          const std::string &funcname,
 	          const std::string &message) throw();
 
-	virtual ~exception() throw() = default;
+	virtual ~exception() = default;
 
 	virtual const char* what() const throw(); // return the message and the back trace if enabled
 };

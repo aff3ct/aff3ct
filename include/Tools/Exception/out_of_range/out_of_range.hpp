@@ -27,7 +27,7 @@ public:
 	             const std::string &funcname = exception::empty_string,
 	             const std::string &message = exception::empty_string) throw();
 
-	virtual ~out_of_range() throw() = default;
+	virtual ~out_of_range() = default;
 };
 }
 }

@@ -27,7 +27,7 @@ public:
 	             const std::string &funcname = exception::empty_string,
 	             const std::string &message = exception::empty_string) throw();
 
-	virtual ~domain_error() throw() = default;
+	virtual ~domain_error() = default;
 };
 }
 }
