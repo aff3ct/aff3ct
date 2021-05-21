@@ -663,6 +663,7 @@ test-regression-rs:
     - ./ci/test-regression.py --refs-path refs/RS --results-path test-regression-results-rs --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-regression-rsc:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_python:v3.8.5
   stage: test
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
