@@ -15,7 +15,7 @@ before_script:
 # - pwd
 
 analysis-cppcheck:
-  image: registry.gitlab.com/aff3ct/aff3ct/ubuntu_cppcheck:latest
+  image: registry.gitlab.com/aff3ct/aff3ct/ubuntu_cppcheck:v1.9
   stage: analysis
   allow_failure: false
   artifacts:
@@ -58,6 +58,7 @@ analysis-clang:
     - ./ci/analysis-clang.sh
 
 analysis-headers:
+  image: ubuntu:20.04
   stage: analysis
   artifacts:
     name: analysis-headers
@@ -66,11 +67,13 @@ analysis-headers:
       - aff3ct.hpp
   tags:
     - linux
+    - docker
   script:
     - ./scripts/generate_aff3ct_header.sh aff3ct.hpp
     - diff aff3ct.hpp include/aff3ct.hpp
 
 analysis-git-submodules:
+  image: registry.gitlab.com/aff3ct/aff3ct/ubuntu_git:v2.25.1
   stage: analysis
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -78,6 +81,7 @@ analysis-git-submodules:
     - schedules
   tags:
     - linux
+    - docker
   only:
     - master
     - development
