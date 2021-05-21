@@ -15,6 +15,7 @@ before_script:
 # - pwd
 
 analysis-cppcheck:
+  image: registry.gitlab.com/aff3ct/aff3ct/ubuntu_cppcheck:latest
   stage: analysis
   allow_failure: false
   artifacts:
@@ -23,7 +24,8 @@ analysis-cppcheck:
     paths:
       - cppcheck/
   tags:
-    - cppcheck
+    - docker
+    - linux
   script:
     - ./ci/analysis-cppcheck.sh
 
@@ -326,19 +328,14 @@ build-linux-icpc:
     - job: analysis-headers
       artifacts: false
   tags:
-#   - linux
-#   - icpc
-#   - cmake
-#   - mkl
-#   - gsl
     - x86
+    - linux
     - docker
   artifacts:
     name: build-linux-icpc
     paths:
       - build_linux_icpc
   script:
-#   - source /opt/intel/vars-intel.sh
     - export CC="icc"
     - export CXX="icpc"
     - export CFLAGS="-Wall -funroll-loops -march=native -std=c++11"
