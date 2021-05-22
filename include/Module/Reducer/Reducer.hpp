@@ -55,15 +55,15 @@ protected:
 	virtual void _reduce(const TI *in, TO *out, const size_t frame_id);
 };
 
-template <typename TI, typename TO = TI> using Reducer_add = Reducer<TI,TO,tools::bop_add<TI,TO>>;
-template <typename TI, typename TO = TI> using Reducer_sub = Reducer<TI,TO,tools::bop_sub<TI,TO>>;
-template <typename TI, typename TO = TI> using Reducer_mul = Reducer<TI,TO,tools::bop_mul<TI,TO>>;
-template <typename TI, typename TO = TI> using Reducer_div = Reducer<TI,TO,tools::bop_div<TI,TO>>;
-template <typename TI, typename TO = TI> using Reducer_or  = Reducer<TI,TO,tools::bop_or <TI,TO>>;
-template <typename TI, typename TO = TI> using Reducer_xor = Reducer<TI,TO,tools::bop_xor<TI,TO>>;
-template <typename TI, typename TO = TI> using Reducer_and = Reducer<TI,TO,tools::bop_and<TI,TO>>;
-template <typename TI, typename TO = TI> using Reducer_min = Reducer<TI,TO,tools::bop_min<TI,TO>>;
-template <typename TI, typename TO = TI> using Reducer_max = Reducer<TI,TO,tools::bop_max<TI,TO>>;
+template <typename TI, typename TO = TI, tools::proto_bop<TI, TO> BOP = tools::bop_add<TI, TO>> using Reducer_add = Reducer<TI, TO, BOP>;
+template <typename TI, typename TO = TI, tools::proto_bop<TI, TO> BOP = tools::bop_sub<TI, TO>> using Reducer_sub = Reducer<TI, TO, BOP>;
+template <typename TI, typename TO = TI, tools::proto_bop<TI, TO> BOP = tools::bop_mul<TI, TO>> using Reducer_mul = Reducer<TI, TO, BOP>;
+template <typename TI, typename TO = TI, tools::proto_bop<TI, TO> BOP = tools::bop_div<TI, TO>> using Reducer_div = Reducer<TI, TO, BOP>;
+template <typename TI, typename TO = TI, tools::proto_bop<TI, TO> BOP = tools::bop_or <TI, TO>> using Reducer_or  = Reducer<TI, TO, BOP>;
+template <typename TI, typename TO = TI, tools::proto_bop<TI, TO> BOP = tools::bop_xor<TI, TO>> using Reducer_xor = Reducer<TI, TO, BOP>;
+template <typename TI, typename TO = TI, tools::proto_bop<TI, TO> BOP = tools::bop_and<TI, TO>> using Reducer_and = Reducer<TI, TO, BOP>;
+template <typename TI, typename TO = TI, tools::proto_bop<TI, TO> BOP = tools::bop_min<TI, TO>> using Reducer_min = Reducer<TI, TO, BOP>;
+template <typename TI, typename TO = TI, tools::proto_bop<TI, TO> BOP = tools::bop_max<TI, TO>> using Reducer_max = Reducer<TI, TO, BOP>;
 
 }
 }
