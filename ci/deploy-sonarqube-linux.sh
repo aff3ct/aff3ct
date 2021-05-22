@@ -44,6 +44,7 @@ GCC_REGEX='(?<file>.*):(?<line>[0-9]+):[0-9]+:\\x20warning:\\x20(?<message>.*)\\
 GIT_SHORT_TAG=$(echo $GIT_TAG | cut -d $'v' -f2-)
 echo "sonar.projectKey=storm:aff3ct:gitlab:$GIT_BRANCH"                  >  sonar-project.properties
 echo "sonar.projectVersion=$GIT_SHORT_TAG"                               >> sonar-project.properties
+echo "sonar.host.url=$SONARQUBE_HOST"                                    >> sonar-project.properties
 echo "sonar.scm.disabled=false"                                          >> sonar-project.properties
 echo "sonar.scm.provider=git"                                            >> sonar-project.properties
 echo "sonar.login=$SONARQUBE_TOKEN"                                      >> sonar-project.properties

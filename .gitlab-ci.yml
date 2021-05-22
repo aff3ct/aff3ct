@@ -822,6 +822,7 @@ test-regression-uncoded:
     - ./ci/test-regression.py --refs-path refs/UNCODED --results-path test-regression-results-uncoded --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
 test-build-coverage-regression:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_coverage
   stage: test
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -833,10 +834,10 @@ test-build-coverage-regression:
     - job: analysis-headers
       artifacts: false
   tags:
-    - linux
-    - gcc
-    - lcov
+    - x86_64
     - sse4.2
+    - linux
+    - docker
     - powerful
   artifacts:
      name: code-coverage-files
@@ -849,6 +850,7 @@ test-build-coverage-regression:
     - ./ci/test-build-coverage-regression.sh
 
 coverage-linux:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_coverage
   stage: coverage
   except:
     - schedules
@@ -856,9 +858,9 @@ coverage-linux:
     - job: test-build-coverage-regression
       artifacts: true
   tags:
+    - x86_64
     - linux
-    - lcov
-    - lcov_cobertura
+    - docker
   coverage: '/.*lines\.*: (\d+.\d+\%)/'
   artifacts:
      name: code-coverage-report
@@ -869,6 +871,7 @@ coverage-linux:
     - ./ci/coverage-linux.sh
 
 deploy-sonarqube-linux:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_sonarqube:v3.0.3
   stage: deploy
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -879,9 +882,9 @@ deploy-sonarqube-linux:
     - coverage-linux
     - analysis-clang
   tags:
+    - x86_64
     - linux
-    - sonarqube
-    - gcc
+    - docker
   only:
     - master
     - development
@@ -893,6 +896,7 @@ deploy-sonarqube-linux:
     - ./ci/deploy-sonarqube-linux.sh
 
 deploy-builds-linux:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_git:v2.25.1
   stage: deploy
   except:
     - schedules
@@ -903,8 +907,9 @@ deploy-builds-linux:
     - build-windows-gcc-x64-avx2
     - build-macos-clang-x64-sse4.2
   tags:
+    - x86_64
     - linux
-    - github
+    - docker
   only:
     - master
     - development
@@ -914,6 +919,15 @@ deploy-builds-linux:
      paths:
       - builds/
   allow_failure: true
+  before_script:
+    ## https://docs.gitlab.com/ee/ci/ssh_keys/
+    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - git config --global user.email "adrien.cassagne@inria.fr"
+    - git config --global user.name "Adrien Cassagne"
   script:
     - source ./ci/tools/git-branch.sh
     - source ./ci/tools/git-tag.sh
@@ -925,6 +939,7 @@ deploy-builds-linux:
     - ./ci/deploy-builds-linux.sh build_linux_gcc_x64_sse4.2 build_linux_gcc_x64_avx2 build_windows_gcc_x86_sse4.2 build_windows_gcc_x64_avx2 build_macos_clang_x64_sse4.2
 
 deploy-upload-ppa:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_gcc:v9.3.0
   stage: deploy
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -934,12 +949,9 @@ deploy-upload-ppa:
     - analysis-documentation
   allow_failure: true
   tags:
+    - x86_64
     - linux
-    - gcc
-    - cmake
-    - x86
-    - 64-bit
-    - ppa
+    - docker
   only:
     - master
     - development
