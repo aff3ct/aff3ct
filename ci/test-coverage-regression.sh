@@ -1,25 +1,8 @@
 #!/bin/bash
 set -x
 
-if [ -z "$THREADS" ]
-then
-	echo "The 'THREADS' environment variable is not set, default value = 1."
-	THREADS=1
-fi
-
 WD=$(pwd)
-build_root=build_coverage_linux_x86_gcc
-
-function compile {
-	build=$1
-	mkdir $build
-	cd $build
-	cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS_DEBUG="-O0" -DCMAKE_CXX_FLAGS="-Wall -funroll-loops -msse4.2 --coverage" -DCMAKE_EXE_LINKER_FLAGS="--coverage" -DAFF3CT_COMPILE_EXE="ON" -DAFF3CT_PREC="MULTI"
-	rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
-	make -j $THREADS
-	rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
-	cd ..
-}
+build_root=build
 
 function gen_coverage_info
 {
@@ -50,8 +33,6 @@ function gen_coverage_info
 	done
 }
 
-compile "${build_root}"
-cd ${WD}
 gen_coverage_info "${build_root}" "refs"
 cd ${WD}
 

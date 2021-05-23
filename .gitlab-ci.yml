@@ -254,6 +254,33 @@ build-linux-gcc-mpi:
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
 
+build-linux-gcc-coverage:
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_gcc:v9.3.0
+  stage: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  needs:
+    - job: analysis-cppcheck
+      artifacts: false
+    - job: analysis-headers
+      artifacts: false
+  tags:
+    - x86_64
+    - linux
+    - docker
+  artifacts:
+    name: build
+    paths:
+      - build
+  script:
+    - export CC="gcc"
+    - export CXX="g++"
+    - export CFLAGS="-Wall -funroll-loops -msse4.2 --coverage"
+    - export LFLAGS="--coverage"
+    - export CMAKE_OPT="-DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS_DEBUG=-O0 -DAFF3CT_COMPILE_EXE=ON -DAFF3CT_PREC=MULTI"
+    - source ./ci/tools/threads.sh
+    - ./ci/build-linux-macos.sh
+
 build-linux-clang:
   image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_clang:v10.0.0
   stage: build
@@ -821,7 +848,7 @@ test-regression-uncoded:
     - export TIME_SEC=$CI_AFF3CT_TEST_UNCODED_TIME_SEC
     - ./ci/test-regression.py --refs-path refs/UNCODED --results-path test-regression-results-uncoded --build-path build_linux_gcc_x64_sse4.2 --binary-path bin/aff3ct-$GIT_VERSION --max-snr-time $TIME_SEC --sensibility 2.5 --weak-rate 0.9 --verbose 1 --n-threads $THREADS
 
-test-build-coverage-regression:
+test-coverage-regression:
   image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_coverage
   stage: test
   variables:
@@ -829,10 +856,8 @@ test-build-coverage-regression:
   except:
     - schedules
   needs:
-    - job: analysis-cppcheck
-      artifacts: false
-    - job: analysis-headers
-      artifacts: false
+    - job: build-linux-gcc-coverage
+      artifacts: true
   tags:
     - x86_64
     - sse4.2
@@ -845,9 +870,8 @@ test-build-coverage-regression:
      paths:
       - code_coverage_files/
   script:
-    - source ./ci/tools/threads.sh
     - source ./ci/tools/git-version.sh
-    - ./ci/test-build-coverage-regression.sh
+    - ./ci/test-coverage-regression.sh
 
 coverage-linux:
   image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_coverage
@@ -855,7 +879,7 @@ coverage-linux:
   except:
     - schedules
   needs:
-    - job: test-build-coverage-regression
+    - job: test-coverage-regression
       artifacts: true
   tags:
     - x86_64
