@@ -963,7 +963,7 @@ deploy-builds-linux:
     - ./ci/deploy-builds-linux.sh build_linux_gcc_x64_sse4.2 build_linux_gcc_x64_avx2 build_windows_gcc_x86_sse4.2 build_windows_gcc_x64_avx2 build_macos_clang_x64_sse4.2
 
 deploy-upload-ppa:
-  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_gcc:v9.3.0
+  image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_ppa
   stage: deploy
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -987,6 +987,9 @@ deploy-upload-ppa:
       - build/Debian/xenial/*.xz
       - build/Debian/xenial/*.dsc
       - build/Debian/xenial/*.build
+  before_script:
+    - apk add --no-cache gnupg
+    - echo "$GPG_PRIVATE_KEY" | gpg --batch --import --pinentry-mode loopback --no-tty
   script:
     - source ./ci/tools/git-branch.sh
     - source ./ci/tools/threads.sh
