@@ -980,7 +980,6 @@ deploy-upload-ppa:
       - build/Debian/xenial/*.dsc
       - build/Debian/xenial/*.build
   before_script:
-    - apk add --no-cache gnupg
     - echo "$GPG_PRIVATE_KEY" | gpg --batch --import --pinentry-mode loopback --no-tty
   script:
     - source ./ci/tools/git-branch.sh
