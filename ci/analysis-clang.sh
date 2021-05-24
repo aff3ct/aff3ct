@@ -24,8 +24,9 @@ cd $NAME
 
 # scan-build -v -plist --intercept-first --analyze-headers -o $REPORTS_DIR \
 scan-build -v -plist -o $REPORTS_DIR \
-           cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug \
-                    -DCMAKE_CXX_FLAGS="$CFLAGS" -DCMAKE_VERBOSE_MAKEFILE=ON \
+           cmake .. -G"Unix Makefiles" -DCMAKE_CXX_COMPILER=clang++ \
+                    -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="$CFLAGS" \
+                    -DCMAKE_VERBOSE_MAKEFILE=ON \
                     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
                     -DCMAKE_EXE_LINKER_FLAGS="$LFLAGS" $CMAKE_OPT
 rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
