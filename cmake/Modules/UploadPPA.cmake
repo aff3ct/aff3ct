@@ -95,8 +95,8 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
          "usr/include/aff3ct-${AFF3CT_VERSION_FULL}/*\n")
 
     file(WRITE "${DEBIAN_SOURCE_DIR}/debian/${CPACK_DEBIAN_PACKAGE_NAME}-doc.install"
-         "doc/built/html/* usr/share/aff3ct-${AFF3CT_VERSION_FULL}/doc/html\n"
-         "doc/built/latex/AFF3CT.pdf usr/share/aff3ct-${AFF3CT_VERSION_FULL}/doc/pdf/\n")
+         "doc/built/html/* usr/share/aff3ct-${AFF3CT_VERSION_FULL}/doc/html\n")
+#        "doc/built/latex/AFF3CT.pdf usr/share/aff3ct-${AFF3CT_VERSION_FULL}/doc/pdf/\n")
 
     ##############################################################################
     # debian/copyright
