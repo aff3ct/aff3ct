@@ -901,6 +901,7 @@ deploy-sonarqube-linux:
     - x86_64
     - linux
     - docker
+    - no_proxy
   only:
     - master
     - development
@@ -926,6 +927,7 @@ deploy-builds-linux:
     - x86_64
     - linux
     - docker
+    - no_proxy
   only:
     - master
     - development
@@ -968,6 +970,7 @@ deploy-upload-ppa:
     - x86_64
     - linux
     - docker
+    - no_proxy
   only:
     - master
     - development
