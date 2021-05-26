@@ -24,6 +24,7 @@ analysis-cppcheck:
     paths:
       - cppcheck/
   tags:
+    - x86_64
     - linux
     - docker
   script:
@@ -434,10 +435,8 @@ build-macos-clang-x64-sse4.2:
     - job: analysis-documentation
       artifacts: true
   tags:
+    - x86_64
     - macos
-    - apple-clang
-    - cmake
-    - x86
   artifacts:
     name: build-macos-clang-x64-sse4.2
     paths:
