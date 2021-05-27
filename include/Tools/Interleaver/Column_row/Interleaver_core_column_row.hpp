@@ -36,7 +36,7 @@ private:
 
 public:
 	Interleaver_core_column_row(const int size, const int n_cols, const std::string& read_order);
-	Interleaver_core_column_row(const int size, const int n_cols, const READ_ORDER   read_order);
+	Interleaver_core_column_row(const int size, const int n_cols, const aff3ct::tools::Interleaver_core_column_row<T>::READ_ORDER  read_order);
 	virtual ~Interleaver_core_column_row() = default;
 
 	virtual Interleaver_core_column_row<T>* clone() const;
