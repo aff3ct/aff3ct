@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "Module/Encoder/Encoder.hpp"
+#include "Tools/Interface/Interface_get_trellis.hpp"
 
 namespace aff3ct
 {
@@ -19,7 +20,7 @@ template <typename B>
 class Encoder_turbo_DB;
 
 template <typename B = int>
-class Encoder_RSC_DB: public Encoder<B>
+class Encoder_RSC_DB: public Encoder<B>, public tools::Interface_get_trellis
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 	friend Encoder_turbo_DB<B>;
