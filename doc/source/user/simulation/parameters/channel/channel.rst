@@ -248,8 +248,8 @@ experiments is an *Intel(R) Xeon(R) CPU E3-1270 v5 @ 3.60GHz* 8 threads |CPU|.
 
    :Type: text
    :Allowed values: ``NO`` ``FRAME`` ``ONETAP``
-   :Default: 1
-   :Examples: ``--chn-gain-occur 10``
+   :Default: ``NO``
+   :Examples: ``--chn-blk-fad NO``
 
 |factory::Channel::p+blk-fad|
 
