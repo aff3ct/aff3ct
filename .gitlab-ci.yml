@@ -46,6 +46,7 @@ analysis-clang:
     - master
     - development
   tags:
+    - x86_64
     - linux
     - docker
   script:
@@ -65,6 +66,7 @@ analysis-headers:
     paths:
       - aff3ct.hpp
   tags:
+    - x86_64
     - linux
     - docker
   script:
@@ -79,6 +81,7 @@ analysis-git-submodules:
   except:
     - schedules
   tags:
+    - x86_64
     - linux
     - docker
   only:
@@ -99,6 +102,7 @@ analysis-documentation:
 #     - doc/build/latex
       - doc/build/doxygen
   tags:
+    - x86_64
     - linux
     - docker
   script:
