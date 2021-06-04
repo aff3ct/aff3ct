@@ -140,8 +140,9 @@ public:
 
 	inline const std::vector<int>& get_status() const;
 
-	void   bind  (Socket &s_out, const int priority = -1);
-	size_t unbind(Socket &s_out                         );
+	void   bind     (Socket &s_out, const int priority = -1);
+	void   operator=(Socket &s_out                         );
+	size_t unbind   (Socket &s_out                         );
 
 	bool is_no_input_socket() const;
 
@@ -169,7 +170,7 @@ protected:
 
 private:
 	template <typename T>
-	inline Socket& create_socket(const std::string &name, const size_t n_elmts, const bool hack_status = false);
+	inline Socket& create_socket(const std::string &name, const size_t n_elmts, const socket_t type, const bool hack_status = false);
 };
 }
 }

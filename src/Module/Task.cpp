@@ -490,7 +490,7 @@ const std::vector<int>& Task
 
 template <typename T>
 Socket& Task
-::create_socket(const std::string &name, const size_t n_elmts, const bool hack_status)
+::create_socket(const std::string &name, const size_t n_elmts, const socket_t type, const bool hack_status)
 {
 	if (name.empty())
 	{
@@ -525,7 +525,7 @@ Socket& Task
 			throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 		}
 
-	auto s = std::make_shared<Socket>(*this, name, typeid(T), n_elmts * sizeof(T), this->is_fast());
+	auto s = std::make_shared<Socket>(*this, name, typeid(T), n_elmts * sizeof(T), type, this->is_fast());
 
 	sockets.push_back(std::move(s));
 
@@ -542,7 +542,7 @@ template <typename T>
 size_t Task
 ::create_socket_in(const std::string &name, const size_t n_elmts)
 {
-	auto &s = create_socket<T>(name, n_elmts);
+	auto &s = create_socket<T>(name, n_elmts, socket_t::SIN);
 	socket_type.push_back(socket_t::SIN);
 	last_input_socket = &s;
 
@@ -572,7 +572,7 @@ template <typename T>
 size_t Task
 ::create_socket_out(const std::string &name, const size_t n_elmts, const bool hack_status)
 {
-	auto &s = create_socket<T>(name, n_elmts, hack_status);
+	auto &s = create_socket<T>(name, n_elmts, socket_t::SOUT, hack_status);
 	socket_type.push_back(socket_t::SOUT);
 
 	// memory allocation
@@ -801,6 +801,7 @@ Task* Task
 		                                                s->get_name(),
 		                                                s->get_datatype(),
 		                                                s->get_databytes(),
+		                                                s->get_type(),
 		                                                s->is_fast(),
 		                                                dataptr));
 		t->sockets.push_back(s_new);
@@ -833,6 +834,7 @@ void Task
 		                                         "fake",
 		                                         s_out.get_datatype(),
 		                                         s_out.get_databytes(),
+		                                         socket_t::SIN,
 		                                         this->is_fast()));
 		this->fake_input_socket->bind(s_out, priority);
 		this->last_input_socket = this->fake_input_socket.get();
@@ -841,6 +843,25 @@ void Task
 	{
 		std::stringstream message;
 		message << "Only tasks with no input socket can be directly bind.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+}
+
+void Task
+::operator=(Socket &s_out)
+{
+	if (s_out.get_type() == socket_t::SOUT)
+		this->bind(s_out);
+	else
+	{
+		std::stringstream message;
+		message << "'s_out' should be and output socket ("
+		        << "'s_out.datatype'"         << " = " << type_to_string[s_out.get_datatype()] << ", "
+		        << "'s_out.name'"             << " = " << s_out.get_name()                     << ", "
+		        << "'s_out.task.name'"        << " = " << s_out.task.get_name()                << ", "
+		        << "'s_out.type'"             << " = " << (s_out.get_type() == socket_t::SIN ? "SIN" : "SOUT") /*<< ", "*/
+//		        << "'s_out.task.module.name'" << " = " << s_out.task.get_module_name()
+		        << ").";
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 }

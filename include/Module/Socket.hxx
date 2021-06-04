@@ -25,8 +25,9 @@ static std::unordered_map<std::type_index,uint8_t> type_to_size = {{typeid(int8_
 
 Socket
 ::Socket(Task &task, const std::string &name, const std::type_index datatype, const size_t databytes,
-         const bool fast, void *dataptr)
-: task(task), name(name), datatype(datatype), databytes(databytes), fast(fast), dataptr(dataptr), bound_socket(nullptr)
+         const socket_t type, const bool fast, void *dataptr)
+: task(task), name(name), datatype(datatype), databytes(databytes), fast(fast), dataptr(dataptr), bound_socket(nullptr),
+  type(type)
 {
 	if (databytes % type_to_size[datatype] != 0)
 	{
@@ -121,6 +122,12 @@ const Socket& Socket
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
 	}
 	return *this->bound_socket;
+}
+
+socket_t Socket
+::get_type() const
+{
+	return this->type;
 }
 
 void Socket
@@ -227,6 +234,51 @@ void Socket
 ::operator()(Socket &s_out, const int priority)
 {
 	bind(s_out, priority);
+}
+
+void Socket
+::operator=(Socket &s)
+{
+	if (s.get_type() == socket_t::SOUT && this->get_type() == socket_t::SIN)
+		this->bind(s);
+	else if (s.get_type() == socket_t::SIN && this->get_type() == socket_t::SOUT)
+		s.bind(*this);
+	else
+	{
+		std::stringstream message;
+		message << "Binding of output and input socket is required ("
+		        << "'s.datatype'"         << " = " << type_to_string[s.datatype] << ", "
+		        << "'s.name'"             << " = " << s.get_name()               << ", "
+		        << "'s.task.name'"        << " = " << s.task.get_name()          << ", "
+		        << "'s.type'"             << " = " << (s.get_type() == socket_t::SIN ? "SIN" : "SOUT") << ", "
+//		        << "'s.task.module.name'" << " = " << s.task.get_module_name()   << ", "
+		        << "'datatype'"           << " = " << type_to_string[this->datatype] << ", "
+		        << "'name'"               << " = " << get_name()                     << ", "
+		        << "'task.name'"          << " = " << task.get_name()                << ", "
+		        << "'type'"               << " = " << (get_type() == socket_t::SIN ? "SIN" : "SOUT") /*<< ", "*/
+//		        << "'task.module.name'"   << " = " << task.get_module_name()
+		        << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+}
+
+void Socket
+::operator=(Task &t)
+{
+	if (this->get_type() == socket_t::SOUT)
+		t.bind(*this);
+	else
+	{
+		std::stringstream message;
+		message << "The current socket should be and output socket ("
+		        << "'datatype'"         << " = " << type_to_string[this->datatype] << ", "
+		        << "'name'"             << " = " << get_name()                     << ", "
+		        << "'task.name'"        << " = " << task.get_name()                << ", "
+		        << "'type'"             << " = " << (get_type() == socket_t::SIN ? "SIN" : "SOUT") /*<< ", "*/
+//		        << "'task.module.name'" << " = " << task.get_module_name()
+		        << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
 }
 
 template <typename T, class A>
