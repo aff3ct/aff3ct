@@ -68,6 +68,18 @@ public:
 
 	inline void operator()(Socket &s_out, const int priority = -1);
 
+	template <typename T>
+	inline void operator=(const T *array);
+
+	template <typename T>
+	inline void operator=(T *array);
+
+	template <typename T, class A = std::allocator<T>>
+	inline void operator=(const std::vector<T,A> &vector);
+
+	template <typename T, class A = std::allocator<T>>
+	inline void operator=(std::vector<T,A> &vector);
+
 	inline void operator=(Socket &s);
 
 	inline void operator=(Task &t);

@@ -270,31 +270,31 @@ void Simulation_BFER_ite<B,R,Q>
 		std::fill(enc_data, enc_data + enc_bytes, 0);
 		std::fill(itl_data, itl_data + itl_bytes, 0);
 
-		mdm1[mdm::sck::modulate::X_N1].bind(itb[itl::sck::interleave::itl]);
+		mdm1[mdm::sck::modulate::X_N1] = itb[itl::sck::interleave::itl];
 		mdm1[mdm::tsk::modulate].exec();
 		mdm1[mdm::tsk::modulate].reset();
 	}
 	else
 	{
 		if (this->params_BFER_ite.crc->type != "NO")
-			crc[crc::sck::build::U_K1].bind(src[src::sck::generate::U_K]);
+			crc[crc::sck::build::U_K1] = src[src::sck::generate::U_K];
 
 		if (this->params_BFER_ite.cdc->enc->type != "NO")
 		{
 			if (this->params_BFER_ite.crc->type != "NO")
-				enc[enc::sck::encode::U_K].bind(crc[crc::sck::build::U_K2]);
+				enc[enc::sck::encode::U_K] = crc[crc::sck::build::U_K2];
 			else
-				enc[enc::sck::encode::U_K].bind(src[src::sck::generate::U_K]);
+				enc[enc::sck::encode::U_K] = src[src::sck::generate::U_K];
 		}
 
 		if (this->params_BFER_ite.cdc->enc->type != "NO")
-			itb[itl::sck::interleave::nat].bind(enc[enc::sck::encode::X_N]);
+			itb[itl::sck::interleave::nat] = enc[enc::sck::encode::X_N];
 		else if (this->params_BFER_ite.crc->type != "NO")
-			itb[itl::sck::interleave::nat].bind(crc[crc::sck::build::U_K2]);
+			itb[itl::sck::interleave::nat] = crc[crc::sck::build::U_K2];
 		else
-			itb[itl::sck::interleave::nat].bind(src[src::sck::generate::U_K]);
+			itb[itl::sck::interleave::nat] = src[src::sck::generate::U_K];
 
-		mdm1[mdm::sck::modulate::X_N1].bind(itb[itl::sck::interleave::itl]);
+		mdm1[mdm::sck::modulate::X_N1] = itb[itl::sck::interleave::itl];
 	}
 
 	if (this->params_BFER_ite.coset)
@@ -302,51 +302,51 @@ void Simulation_BFER_ite<B,R,Q>
 		if (this->params_BFER_ite.coded_monitoring)
 		{
 			if (this->params_BFER_ite.cdc->enc->type != "NO")
-				csb[cst::sck::apply::ref].bind(enc[enc::sck::encode::X_N]);
+				csb[cst::sck::apply::ref] = enc[enc::sck::encode::X_N];
 			else if (this->params_BFER_ite.crc->type != "NO")
-				csb[cst::sck::apply::ref].bind(crc[crc::sck::build::U_K2]);
+				csb[cst::sck::apply::ref] = crc[crc::sck::build::U_K2];
 			else
-				csb[cst::sck::apply::ref].bind(src[src::sck::generate::U_K]);
+				csb[cst::sck::apply::ref] = src[src::sck::generate::U_K];
 		}
 		else
 		{
 			if (this->params_BFER_ite.crc->type != "NO")
-				csb[cst::sck::apply::ref].bind(crc[crc::sck::build::U_K2]);
+				csb[cst::sck::apply::ref] = crc[crc::sck::build::U_K2];
 			else
-				csb[cst::sck::apply::ref].bind(src[src::sck::generate::U_K]);
+				csb[cst::sck::apply::ref] = src[src::sck::generate::U_K];
 		}
 
 		if (this->params_BFER_ite.cdc->enc->type != "NO")
 		{
-			csr1[cst::sck::apply::ref].bind(enc[enc::sck::encode::X_N]);
-			csr2[cst::sck::apply::ref].bind(enc[enc::sck::encode::X_N]);
-			csr3[cst::sck::apply::ref].bind(enc[enc::sck::encode::X_N]);
+			csr1[cst::sck::apply::ref] = enc[enc::sck::encode::X_N];
+			csr2[cst::sck::apply::ref] = enc[enc::sck::encode::X_N];
+			csr3[cst::sck::apply::ref] = enc[enc::sck::encode::X_N];
 		}
 		else if (this->params_BFER_ite.crc->type != "NO")
 		{
-			csr1[cst::sck::apply::ref].bind(crc[crc::sck::build::U_K2]);
-			csr2[cst::sck::apply::ref].bind(crc[crc::sck::build::U_K2]);
-			csr3[cst::sck::apply::ref].bind(crc[crc::sck::build::U_K2]);
+			csr1[cst::sck::apply::ref] = crc[crc::sck::build::U_K2];
+			csr2[cst::sck::apply::ref] = crc[crc::sck::build::U_K2];
+			csr3[cst::sck::apply::ref] = crc[crc::sck::build::U_K2];
 		}
 		else
 		{
-			csr1[cst::sck::apply::ref].bind(src[src::sck::generate::U_K]);
-			csr2[cst::sck::apply::ref].bind(src[src::sck::generate::U_K]);
-			csr3[cst::sck::apply::ref].bind(src[src::sck::generate::U_K]);
+			csr1[cst::sck::apply::ref] = src[src::sck::generate::U_K];
+			csr2[cst::sck::apply::ref] = src[src::sck::generate::U_K];
+			csr3[cst::sck::apply::ref] = src[src::sck::generate::U_K];
 		}
 	}
 
 	if (this->params_BFER_ite.coded_monitoring)
 	{
 		if (this->params_BFER_ite.cdc->enc->type != "NO")
-			mnt[mnt::sck::check_errors::U].bind(enc[enc::sck::encode::X_N]);
+			mnt[mnt::sck::check_errors::U] = enc[enc::sck::encode::X_N];
 		else if (this->params_BFER_ite.crc->type != "NO")
-			mnt[mnt::sck::check_errors::U].bind(crc[crc::sck::build::U_K2]);
+			mnt[mnt::sck::check_errors::U] = crc[crc::sck::build::U_K2];
 		else
-			mnt[mnt::sck::check_errors::U].bind(src[src::sck::generate::U_K]);
+			mnt[mnt::sck::check_errors::U] = src[src::sck::generate::U_K];
 	}
 	else
-		mnt[mnt::sck::check_errors::U].bind(src[src::sck::generate::U_K]);
+		mnt[mnt::sck::check_errors::U] = src[src::sck::generate::U_K];
 
 	const auto is_rayleigh = this->params_BFER_ite.chn->type.find("RAYLEIGH") != std::string::npos;
 	if (is_rayleigh && this->params_BFER_ite.chn->type == "NO")
@@ -360,183 +360,183 @@ void Simulation_BFER_ite<B,R,Q>
 	{
 		if (is_rayleigh)
 		{
-			chn[chn::sck::add_noise_wg::CP ].bind(this->channel_params);
-			chn[chn::sck::add_noise_wg::X_N].bind(mdm1[mdm::sck::modulate::X_N2]);
+			chn[chn::sck::add_noise_wg::CP ] = this->channel_params;
+			chn[chn::sck::add_noise_wg::X_N] = mdm1[mdm::sck::modulate::X_N2];
 		}
 		else
 		{
-			chn[chn::sck::add_noise::CP ].bind(this->channel_params);
-			chn[chn::sck::add_noise::X_N].bind(mdm1[mdm::sck::modulate::X_N2]);
+			chn[chn::sck::add_noise::CP ] = this->channel_params;
+			chn[chn::sck::add_noise::X_N] = mdm1[mdm::sck::modulate::X_N2];
 		}
 	}
 
 	if (mdm1.is_filter())
 	{
-		mdm1[mdm::sck::filter::CP].bind(this->channel_params);
+		mdm1[mdm::sck::filter::CP] = this->channel_params;
 		if (this->params_BFER_ite.chn->type != "NO")
 		{
 			if (is_rayleigh)
-				mdm1[mdm::sck::filter::Y_N1].bind(chn[chn::sck::add_noise_wg::Y_N]);
+				mdm1[mdm::sck::filter::Y_N1] = chn[chn::sck::add_noise_wg::Y_N];
 			else
-				mdm1[mdm::sck::filter::Y_N1].bind(chn[chn::sck::add_noise::Y_N]);
+				mdm1[mdm::sck::filter::Y_N1] = chn[chn::sck::add_noise::Y_N];
 		}
 		else
-			mdm1[mdm::sck::filter::Y_N1].bind(mdm1[mdm::sck::modulate::X_N2]);
+			mdm1[mdm::sck::filter::Y_N1] = mdm1[mdm::sck::modulate::X_N2];
 	}
 
 	if (this->params_BFER_ite.qnt->type != "NO")
 	{
 		if (mdm1.is_filter())
-			qnt[qnt::sck::process::Y_N1].bind(mdm1[mdm::sck::filter::Y_N2]);
+			qnt[qnt::sck::process::Y_N1] = mdm1[mdm::sck::filter::Y_N2];
 		else if (this->params_BFER_ite.chn->type != "NO")
 		{
 			if (is_rayleigh)
-				qnt[qnt::sck::process::Y_N1].bind(chn[chn::sck::add_noise_wg::Y_N]);
+				qnt[qnt::sck::process::Y_N1] = chn[chn::sck::add_noise_wg::Y_N];
 			else
-				qnt[qnt::sck::process::Y_N1].bind(chn[chn::sck::add_noise::Y_N]);
+				qnt[qnt::sck::process::Y_N1] = chn[chn::sck::add_noise::Y_N];
 		}
 		else
-			qnt[qnt::sck::process::Y_N1].bind(mdm1[mdm::sck::modulate::X_N2]);
+			qnt[qnt::sck::process::Y_N1] = mdm1[mdm::sck::modulate::X_N2];
 	}
 
 	if (mdm1.is_demodulator())
 	{
 		if (is_rayleigh)
 		{
-			mdm1[mdm::sck::demodulate_wg::CP].bind(this->channel_params);
+			mdm1[mdm::sck::demodulate_wg::CP] = this->channel_params;
 			if (this->params_BFER_ite.chn->type != "NO")
-				mdm1[mdm::sck::demodulate_wg::H_N].bind(chn[chn::sck::add_noise_wg::H_N]);
+				mdm1[mdm::sck::demodulate_wg::H_N] = chn[chn::sck::add_noise_wg::H_N];
 			else
-				mdm1[mdm::sck::demodulate_wg::H_N].bind((uint8_t*)(chn[chn::sck::add_noise_wg::H_N].get_dataptr()));
+				mdm1[mdm::sck::demodulate_wg::H_N] = (uint8_t*)(chn[chn::sck::add_noise_wg::H_N].get_dataptr());
 		}
 		else
-			mdm1[mdm::sck::demodulate::CP].bind(this->channel_params);
+			mdm1[mdm::sck::demodulate::CP] = this->channel_params;
 
 		if (this->params_BFER_ite.qnt->type != "NO")
 		{
 			if (is_rayleigh)
-				mdm1[mdm::sck::demodulate_wg::Y_N1].bind(qnt[qnt::sck::process::Y_N2]);
+				mdm1[mdm::sck::demodulate_wg::Y_N1] = qnt[qnt::sck::process::Y_N2];
 			else
-				mdm1[mdm::sck::demodulate::Y_N1].bind(qnt[qnt::sck::process::Y_N2]);
+				mdm1[mdm::sck::demodulate::Y_N1] = qnt[qnt::sck::process::Y_N2];
 		}
 		else if (mdm1.is_filter())
 		{
 			if (is_rayleigh)
-				mdm1[mdm::sck::demodulate_wg::Y_N1].bind(mdm1[mdm::sck::filter::Y_N2]);
+				mdm1[mdm::sck::demodulate_wg::Y_N1] = mdm1[mdm::sck::filter::Y_N2];
 			else
-				mdm1[mdm::sck::demodulate::Y_N1].bind(mdm1[mdm::sck::filter::Y_N2]);
+				mdm1[mdm::sck::demodulate::Y_N1] = mdm1[mdm::sck::filter::Y_N2];
 		}
 		else if (this->params_BFER_ite.chn->type != "NO")
 		{
 			if (is_rayleigh)
-				mdm1[mdm::sck::demodulate_wg::Y_N1].bind(chn[chn::sck::add_noise_wg::Y_N]);
+				mdm1[mdm::sck::demodulate_wg::Y_N1] = chn[chn::sck::add_noise_wg::Y_N];
 			else
-				mdm1[mdm::sck::demodulate::Y_N1].bind(chn[chn::sck::add_noise::Y_N]);
+				mdm1[mdm::sck::demodulate::Y_N1] = chn[chn::sck::add_noise::Y_N];
 		}
 		else
 		{
 			if (is_rayleigh)
-				mdm1[mdm::sck::demodulate_wg::Y_N1].bind(mdm1[mdm::sck::modulate::X_N2]);
+				mdm1[mdm::sck::demodulate_wg::Y_N1] = mdm1[mdm::sck::modulate::X_N2];
 			else
-				mdm1[mdm::sck::demodulate::Y_N1].bind(mdm1[mdm::sck::modulate::X_N2]);
+				mdm1[mdm::sck::demodulate::Y_N1] = mdm1[mdm::sck::modulate::X_N2];
 		}
 	}
 
 	if (mdm1.is_demodulator())
 	{
 		if (is_rayleigh)
-			itl1[itl::sck::deinterleave::itl].bind(mdm1[mdm::sck::demodulate_wg::Y_N2]);
+			itl1[itl::sck::deinterleave::itl] = mdm1[mdm::sck::demodulate_wg::Y_N2];
 		else
-			itl1[itl::sck::deinterleave::itl].bind(mdm1[mdm::sck::demodulate::Y_N2]);
+			itl1[itl::sck::deinterleave::itl] = mdm1[mdm::sck::demodulate::Y_N2];
 	}
 	else if (this->params_BFER_ite.qnt->type != "NO")
-		itl1[itl::sck::deinterleave::itl].bind(qnt[qnt::sck::process::Y_N2]);
+		itl1[itl::sck::deinterleave::itl] = qnt[qnt::sck::process::Y_N2];
 	else if (mdm1.is_filter())
-		itl1[itl::sck::deinterleave::itl].bind(mdm1[mdm::sck::filter::Y_N2]);
+		itl1[itl::sck::deinterleave::itl] = mdm1[mdm::sck::filter::Y_N2];
 	else if (this->params_BFER_ite.chn->type != "NO")
 	{
 		if (is_rayleigh)
-			itl1[itl::sck::deinterleave::itl].bind(chn[chn::sck::add_noise_wg::Y_N]);
+			itl1[itl::sck::deinterleave::itl] = chn[chn::sck::add_noise_wg::Y_N];
 		else
-			itl1[itl::sck::deinterleave::itl].bind(chn[chn::sck::add_noise::Y_N]);
+			itl1[itl::sck::deinterleave::itl] = chn[chn::sck::add_noise::Y_N];
 	}
 	else
-		itl1[itl::sck::deinterleave::itl].bind(mdm1[mdm::sck::modulate::X_N2]);
+		itl1[itl::sck::deinterleave::itl] = mdm1[mdm::sck::modulate::X_N2];
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// ---------------------------------------------------------------------------------------- turbo demodulation loop
 	// ----------------------------------------------------------------------------------------------------------------
 
-	swi[swi::tsk::select ][1].bind(itl1[itl::sck::deinterleave::nat]);
-	ite[ite::tsk::iterate   ].bind(swi [swi::tsk::select      ][2  ]);
-	swi[swi::tsk::commute][0].bind(swi [swi::tsk::select      ][2  ]);
+	swi[swi::tsk::select ][1] = itl1[itl::sck::deinterleave::nat];
+	ite[ite::tsk::iterate   ] = swi [swi::tsk::select      ][2  ];
+	swi[swi::tsk::commute][0] = swi [swi::tsk::select      ][2  ];
 
 	if (this->params_BFER_ite.crc->type != "NO" && this->params_BFER_ite.crc_early_termination)
 	{
-		ext[ext::sck::get_sys_bit::Y_N].bind(swi[swi::tsk::select     ][2     ]);
-		crc[crc::sck::check      ::V_K].bind(ext[ext::sck::get_sys_bit::V_K   ]);
-		uop[uop::sck::perform    ::in ].bind(crc[crc::sck::check      ::status]);
-		red[red::sck::reduce     ::in ].bind(uop[uop::sck::perform    ::out   ]);
-		bop[bop::sck::perform    ::in1].bind(ite[ite::sck::iterate    ::out   ]);
-		bop[bop::sck::perform    ::in2].bind(red[red::sck::reduce     ::out   ]);
-		swi[swi::tsk::commute    ][1  ].bind(bop[bop::sck::perform    ::out   ]);
+		ext[ext::sck::get_sys_bit::Y_N] = swi[swi::tsk::select     ][2     ];
+		crc[crc::sck::check      ::V_K] = ext[ext::sck::get_sys_bit::V_K   ];
+		uop[uop::sck::perform    ::in ] = crc[crc::sck::check      ::status];
+		red[red::sck::reduce     ::in ] = uop[uop::sck::perform    ::out   ];
+		bop[bop::sck::perform    ::in1] = ite[ite::sck::iterate    ::out   ];
+		bop[bop::sck::perform    ::in2] = red[red::sck::reduce     ::out   ];
+		swi[swi::tsk::commute    ][1  ] = bop[bop::sck::perform    ::out   ];
 	}
 	else
-		swi[swi::tsk::commute][1].bind(ite[ite::sck::iterate::out]);
+		swi[swi::tsk::commute][1] = ite[ite::sck::iterate::out];
 
 	// ------------------------------------------------------------------------------------------------------- decoding
 	if (this->params_BFER_ite.coset)
 	{
-		csr1[cst::sck::apply      ::in  ].bind(swi [swi::tsk::commute    ][2   ]);
-		dcs [dec::sck::decode_siso::Y_N1].bind(csr1[cst::sck::apply      ::out ]);
-		csr2[cst::sck::apply      ::in  ].bind(dcs [dec::sck::decode_siso::Y_N2]);
+		csr1[cst::sck::apply      ::in  ] = swi [swi::tsk::commute    ][2   ];
+		dcs [dec::sck::decode_siso::Y_N1] = csr1[cst::sck::apply      ::out ];
+		csr2[cst::sck::apply      ::in  ] = dcs [dec::sck::decode_siso::Y_N2];
 	}
 	else
 	{
-		dcs[dec::sck::decode_siso::Y_N1].bind(swi[swi::tsk::commute][2]);
+		dcs[dec::sck::decode_siso::Y_N1] = swi[swi::tsk::commute][2];
 	}
 
 	// --------------------------------------------------------------------------------------------------- interleaving
 	if (this->params_BFER_ite.coset)
-		itl2[itl::sck::interleave::nat].bind(csr2[cst::sck::apply::out]);
+		itl2[itl::sck::interleave::nat] = csr2[cst::sck::apply::out];
 	else
-		itl2[itl::sck::interleave::nat].bind(dcs[dec::sck::decode_siso::Y_N2]);
+		itl2[itl::sck::interleave::nat] = dcs[dec::sck::decode_siso::Y_N2];
 
 	// --------------------------------------------------------------------------------------------------- demodulation
 	if (mdm2.is_demodulator())
 	{
 		if (is_rayleigh)
 		{
-			mdm2[mdm::sck::tdemodulate_wg::CP].bind(this->channel_params);
+			mdm2[mdm::sck::tdemodulate_wg::CP] = this->channel_params;
 			if (this->params_BFER_ite.chn->type != "NO")
-				mdm2[mdm::sck::tdemodulate_wg::H_N].bind(chn[chn::sck::add_noise_wg::H_N]);
+				mdm2[mdm::sck::tdemodulate_wg::H_N] = chn[chn::sck::add_noise_wg::H_N];
 			else
-				mdm2[mdm::sck::tdemodulate_wg::H_N].bind((uint8_t*)(chn[chn::sck::add_noise_wg::H_N].get_dataptr()));
+				mdm2[mdm::sck::tdemodulate_wg::H_N] = (uint8_t*)(chn[chn::sck::add_noise_wg::H_N].get_dataptr());
 
 			if (this->params_BFER_ite.qnt->type != "NO")
-				mdm2[mdm::sck::tdemodulate_wg::Y_N1].bind(qnt[qnt::sck::process::Y_N2]);
+				mdm2[mdm::sck::tdemodulate_wg::Y_N1] = qnt[qnt::sck::process::Y_N2];
 			else if (mdm1.is_filter())
-				mdm2[mdm::sck::tdemodulate_wg::Y_N1].bind(mdm1[mdm::sck::filter::Y_N2]);
+				mdm2[mdm::sck::tdemodulate_wg::Y_N1] = mdm1[mdm::sck::filter::Y_N2];
 			else if (this->params_BFER_ite.chn->type != "NO")
-				mdm2[mdm::sck::tdemodulate_wg::Y_N1].bind(chn[chn::sck::add_noise_wg::Y_N]);
+				mdm2[mdm::sck::tdemodulate_wg::Y_N1] = chn[chn::sck::add_noise_wg::Y_N];
 			else
-				mdm2[mdm::sck::tdemodulate_wg::Y_N1].bind(mdm1[mdm::sck::modulate::X_N2]);
+				mdm2[mdm::sck::tdemodulate_wg::Y_N1] = mdm1[mdm::sck::modulate::X_N2];
 
-			mdm2[mdm::sck::tdemodulate_wg::Y_N2].bind(itl2[itl::sck::interleave::itl]);
+			mdm2[mdm::sck::tdemodulate_wg::Y_N2] = itl2[itl::sck::interleave::itl];
 		}
 		else
 		{
-			mdm2[mdm::sck::tdemodulate::CP].bind(this->channel_params);
+			mdm2[mdm::sck::tdemodulate::CP] = this->channel_params;
 			if (this->params_BFER_ite.qnt->type != "NO")
-				mdm2[mdm::sck::tdemodulate::Y_N1].bind(qnt[qnt::sck::process::Y_N2]);
+				mdm2[mdm::sck::tdemodulate::Y_N1] = qnt[qnt::sck::process::Y_N2];
 			else if (mdm1.is_filter())
-				mdm2[mdm::sck::tdemodulate::Y_N1].bind(mdm1[mdm::sck::filter::Y_N2]);
+				mdm2[mdm::sck::tdemodulate::Y_N1] = mdm1[mdm::sck::filter::Y_N2];
 			else if (this->params_BFER_ite.chn->type != "NO")
-				mdm2[mdm::sck::tdemodulate::Y_N1].bind(chn[chn::sck::add_noise::Y_N]);
+				mdm2[mdm::sck::tdemodulate::Y_N1] = chn[chn::sck::add_noise::Y_N];
 			else
-				mdm2[mdm::sck::tdemodulate::Y_N1].bind(mdm1[mdm::sck::modulate::X_N2]);
+				mdm2[mdm::sck::tdemodulate::Y_N1] = mdm1[mdm::sck::modulate::X_N2];
 
-			mdm2[mdm::sck::tdemodulate::Y_N2].bind(itl2[itl::sck::interleave::itl ]);
+			mdm2[mdm::sck::tdemodulate::Y_N2] = itl2[itl::sck::interleave::itl ];
 		}
 	}
 
@@ -544,82 +544,82 @@ void Simulation_BFER_ite<B,R,Q>
 	if (mdm2.is_demodulator())
 	{
 		if (is_rayleigh)
-			itl2[itl::sck::deinterleave::itl].bind(mdm2[mdm::sck::tdemodulate_wg::Y_N3]);
+			itl2[itl::sck::deinterleave::itl] = mdm2[mdm::sck::tdemodulate_wg::Y_N3];
 		else
-			itl2[itl::sck::deinterleave::itl].bind(mdm2[mdm::sck::tdemodulate::Y_N3]);
+			itl2[itl::sck::deinterleave::itl] = mdm2[mdm::sck::tdemodulate::Y_N3];
 	}
 	else if (this->params_BFER_ite.qnt->type != "NO")
-		itl2[itl::sck::deinterleave::itl].bind(qnt[qnt::sck::process::Y_N2]);
+		itl2[itl::sck::deinterleave::itl] = qnt[qnt::sck::process::Y_N2];
 	else if (mdm1.is_filter())
-		itl2[itl::sck::deinterleave::itl].bind(mdm1[mdm::sck::filter::Y_N2]);
+		itl2[itl::sck::deinterleave::itl] = mdm1[mdm::sck::filter::Y_N2];
 	else if (this->params_BFER_ite.chn->type != "NO")
 	{
 		if (is_rayleigh)
-			itl2[itl::sck::deinterleave::itl].bind(chn[chn::sck::add_noise_wg::Y_N]);
+			itl2[itl::sck::deinterleave::itl] = chn[chn::sck::add_noise_wg::Y_N];
 		else
-			itl2[itl::sck::deinterleave::itl].bind(chn[chn::sck::add_noise::Y_N]);
+			itl2[itl::sck::deinterleave::itl] = chn[chn::sck::add_noise::Y_N];
 	}
 	else
-		itl2[itl::sck::deinterleave::itl].bind(mdm1[mdm::sck::modulate::X_N2]);
+		itl2[itl::sck::deinterleave::itl] = mdm1[mdm::sck::modulate::X_N2];
 
-	swi[swi::tsk::select][0].bind(itl2[itl::sck::deinterleave::nat]);
+	swi[swi::tsk::select][0] = itl2[itl::sck::deinterleave::nat];
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// --------------------------------------------------------------------------------- end of turbo demodulation loop
 	// ----------------------------------------------------------------------------------------------------------------
 
 	if (this->params_BFER_ite.crc->type != "NO" && this->params_BFER_ite.crc_early_termination)
-		ite[ite::tsk::reset].bind(swi[swi::tsk::commute][3]);
+		ite[ite::tsk::reset] = swi[swi::tsk::commute][3];
 
 	if (this->params_BFER_ite.coset)
 	{
-		csr3[cst::sck::apply::in].bind(swi[swi::tsk::commute][3]);
+		csr3[cst::sck::apply::in] = swi[swi::tsk::commute][3];
 
 		if (this->params_BFER_ite.coded_monitoring)
 		{
-			dch[dec::sck::decode_siho_cw::Y_N].bind(csr3[cst::sck::apply         ::out]);
-			csb[cst::sck::apply         ::in ].bind(dch [dec::sck::decode_siho_cw::V_N]);
+			dch[dec::sck::decode_siho_cw::Y_N] = csr3[cst::sck::apply         ::out];
+			csb[cst::sck::apply         ::in ] = dch [dec::sck::decode_siho_cw::V_N];
 		}
 		else
 		{
-			dch[dec::sck::decode_siho::Y_N].bind(csr3[cst::sck::apply      ::out]);
-			csb[cst::sck::apply      ::in ].bind(dch [dec::sck::decode_siho::V_K]);
+			dch[dec::sck::decode_siho::Y_N] = csr3[cst::sck::apply      ::out];
+			csb[cst::sck::apply      ::in ] = dch [dec::sck::decode_siho::V_K];
 			if (this->params_BFER_ite.crc->type != "NO")
-				crc[crc::sck::extract::V_K1].bind(csb[cst::sck::apply::out]);
+				crc[crc::sck::extract::V_K1] = csb[cst::sck::apply::out];
 		}
 	}
 	else
 	{
 		if (this->params_BFER_ite.coded_monitoring)
 		{
-			dch[dec::sck::decode_siho_cw::Y_N].bind(swi[swi::tsk::commute][3]);
+			dch[dec::sck::decode_siho_cw::Y_N] = swi[swi::tsk::commute][3];
 		}
 		else
 		{
-			dch[dec::sck::decode_siho::Y_N].bind(swi[swi::tsk::commute][3]);
+			dch[dec::sck::decode_siho::Y_N] = swi[swi::tsk::commute][3];
 
 			if (this->params_BFER_ite.crc->type != "NO")
-				crc[crc::sck::extract::V_K1].bind(dch[dec::sck::decode_siho::V_K]);
+				crc[crc::sck::extract::V_K1] = dch[dec::sck::decode_siho::V_K];
 		}
 	}
 
 	if (this->params_BFER_ite.coded_monitoring)
 	{
 		if (this->params_BFER_ite.coset)
-			mnt[mnt::sck::check_errors::V].bind(csb[cst::sck::apply::out]);
+			mnt[mnt::sck::check_errors::V] = csb[cst::sck::apply::out];
 		else
-			mnt[mnt::sck::check_errors::V].bind(dch[dec::sck::decode_siho_cw::V_N]);
+			mnt[mnt::sck::check_errors::V] = dch[dec::sck::decode_siho_cw::V_N];
 	}
 	else
 	{
 		if (this->params_BFER_ite.crc->type != "NO")
-			mnt[mnt::sck::check_errors::V].bind(crc[crc::sck::extract::V_K2]);
+			mnt[mnt::sck::check_errors::V] = crc[crc::sck::extract::V_K2];
 		else
 		{
 			if (this->params_BFER_ite.coset)
-				mnt[mnt::sck::check_errors::V].bind(csb[cst::sck::apply::out]);
+				mnt[mnt::sck::check_errors::V] = csb[cst::sck::apply::out];
 			else
-				mnt[mnt::sck::check_errors::V].bind(dch[dec::sck::decode_siho::V_K]);
+				mnt[mnt::sck::check_errors::V] = dch[dec::sck::decode_siho::V_K];
 		}
 	}
 }
