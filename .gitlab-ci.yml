@@ -464,6 +464,7 @@ check-debug-parser:
   needs:
     - job: build-linux-gcc-x64-sse4.2
       artifacts: true
+  allow_failure: true
   tags:
     - x86_64
     - sse4.2
