@@ -69,7 +69,7 @@ public:
 	virtual int get_K() const;
 
 	/*!
-	 * \brief Fulfills a vector with bits.
+	 * \brief Task method method fulfills a vector with bits.
 	 *
 	 * \param U_K: a vector of bits to fill.
 	 */
