@@ -1,6 +1,7 @@
 #include <cmath>
 #include <sstream>
 
+#include "Tools/Interface/Interface_reset.hpp"
 #include "Tools/Exception/exception.hpp"
 #include "Module/Module.hpp"
 
@@ -155,6 +156,17 @@ void Module
 Task& Module
 ::create_task(const std::string &name, const int id)
 {
+
+	auto it = find_if(this->tasks.begin(), this->tasks.end(),
+					  [name](std::shared_ptr<Task> t){return t->get_name()==name;});
+
+	if (it != this->tasks.end())
+	{
+		std::stringstream message;
+		message << "Task '" << name << "' already exists.";
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+	}
+
 	auto t = std::make_shared<Task>(*this, name);
 
 	if (id < 0)
@@ -208,4 +220,24 @@ void Module
 {
 	for (auto &t : this->tasks)
 		t->set_fast(fast);
+}
+
+void Module
+::create_reset_task()
+{
+	auto iface = dynamic_cast<aff3ct::tools::Interface_reset*>(this);
+	if (iface == nullptr)
+	{
+		std::stringstream message;
+		message << "This module does not inherits from the interface Interface_reset.";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	auto &p = this->create_task("reset");
+	this->create_codelet(p, [](Module &m, Task &t, const size_t frame_id) -> int
+	{
+		auto &iface = dynamic_cast<aff3ct::tools::Interface_reset&>(m);
+		iface.reset();
+		return 0;
+	});
 }

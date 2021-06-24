@@ -87,6 +87,9 @@ public:
 	inline       Task&   operator()(const std::string &tsk_name);
 
 	void set_fast(const bool fast);
+
+	void create_reset_task();
+
 protected:
 	virtual void deep_copy(const Module &m);
 
