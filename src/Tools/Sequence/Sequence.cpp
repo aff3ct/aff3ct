@@ -41,7 +41,11 @@ Sequence
   no_copy_mode(true),
   saved_exclusions(exclusions),
   switchers_reset(n_threads),
-  auto_stop(true)
+  auto_stop(true),
+  next_round_is_over(n_threads, false),
+  cur_task_id(n_threads,0),
+  cur_ss(n_threads, nullptr)
+
 {
 #ifndef AFF3CT_HWLOC
 	if (thread_pinning)
@@ -126,7 +130,10 @@ Sequence
   no_copy_mode(true),
   saved_exclusions(exclusions_convert_to_const(exclusions)),
   switchers_reset(n_threads),
-  auto_stop(true)
+  auto_stop(true),
+  next_round_is_over(n_threads, false),
+  cur_task_id(n_threads,0),
+  cur_ss(n_threads, nullptr)
 {
 	if (thread_pinning && puids.size() < n_threads)
 	{
@@ -298,6 +305,9 @@ void Sequence
 		for (auto &mdl : this->all_modules[tid])
 			if (auto swi = dynamic_cast<module::Switcher*>(mdl))
 				this->switchers_reset[tid].push_back(dynamic_cast<tools::Interface_reset*>(swi));
+
+	for (size_t tid = 0; tid < this->sequences.size(); tid++)
+		this->cur_ss[tid] = this->sequences[tid];
 }
 
 Sequence* Sequence
@@ -722,6 +732,69 @@ void Sequence
 		};
 
 	exec_sequence(this->sequences[tid]);
+}
+
+module::Task* Sequence
+::exec_step(const size_t tid, const int frame_id)
+{
+	if (tid >= this->sequences.size())
+	{
+		std::stringstream message;
+		message << "'tid' has to be smaller than 'sequences.size()' ('tid' = " << tid
+		        << ", 'sequences.size()' = " << this->sequences.size() << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+
+	module::Task* executed_task = nullptr;
+	if (this->next_round_is_over[tid])
+	{
+		this->next_round_is_over[tid] = false;
+		this->cur_ss[tid] = this->sequences[tid];
+		this->cur_task_id[tid] = 0;
+	}
+	else
+	{
+		executed_task = this->cur_ss[tid]->get_c()->tasks[cur_task_id[tid]];
+		const std::vector<int>& ret = executed_task->exec(frame_id);
+
+		auto type = this->cur_ss[tid]->get_c()->type;
+		if (type == subseq_t::COMMUTE)
+		{
+			const size_t path = (size_t)ret[0];
+			if (this->cur_ss[tid]->get_children().size() > path)
+			{
+				this->cur_ss[tid] = this->cur_ss[tid]->get_children()[path];
+				this->cur_task_id[tid] = 0;
+			}
+			else
+			{
+				std::stringstream message;
+				message << "This should never happen ('path' = " << path
+				        << ", 'cur_ss[tid]->get_children().size()' = " << this->cur_ss[tid]->get_children().size()
+				        << ", 'tid' = " << tid << ").";
+				throw tools::invalid_argument(__FILE__, __LINE__, __func__, message.str());
+			}
+		}
+		else
+		{
+			this->cur_task_id[tid]++;
+			if (this->cur_task_id[tid] == (this->cur_ss[tid]->get_c()->tasks.size()))
+			{
+				// skip nodes without tasks if any
+				while (this->cur_ss[tid]->get_children().size() > 0)
+				{
+					this->cur_ss[tid] = this->cur_ss[tid]->get_children()[0];
+					this->cur_task_id[tid] = 0;
+					if (this->cur_ss[tid]->get_c() && this->cur_ss[tid]->get_c()->tasks.size() > 0)
+						break;
+				}
+				if (this->cur_task_id[tid] >= this->cur_ss[tid]->get_c()->tasks.size())
+					this->next_round_is_over[tid] = true;
+			}
+		}
+	}
+
+	return executed_task;
 }
 
 template <class SS, class TA>
