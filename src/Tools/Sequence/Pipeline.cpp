@@ -210,6 +210,13 @@ Pipeline
 {
 }
 
+
+Pipeline
+::~Pipeline()
+{
+	this->unbind_adaptors();
+}
+
 std::vector<Sequence*> Pipeline
 ::get_stages()
 {

@@ -109,7 +109,7 @@ public:
 	         const std::vector<std::vector<size_t>> &puids = {}/*,
 	         const std::vector<bool> &tasks_inplace = {}*/);
 
-	virtual ~Pipeline() = default;
+	virtual ~Pipeline();
 
 	void exec(const std::vector<std::function<bool(const std::vector<const int*>&)>> &stop_conditions);
 	void exec(const std::vector<std::function<bool(                              )>> &stop_conditions);
