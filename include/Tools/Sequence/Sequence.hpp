@@ -53,7 +53,7 @@ public:
 using Sub_sequence       = Sub_sequence_generic<std::vector<      module::Task*>>;
 using Sub_sequence_const = Sub_sequence_generic<std::vector<const module::Task*>>;
 
-class Sequence : public Interface_clone, public Interface_get_set_n_frames
+class Sequence : public Interface_clone, public Interface_get_set_n_frames, public Interface_is_done
 {
 	friend Pipeline;
 
@@ -179,6 +179,8 @@ public:
 
 	inline size_t get_n_frames() const;
 	void set_n_frames(const size_t n_frames);
+
+	virtual bool is_done() const;
 
 protected:
 	template <class SS>

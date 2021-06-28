@@ -446,6 +446,15 @@ std::vector<std::vector<module::Task*>> Sequence
 	return tasks_per_types;
 }
 
+bool Sequence
+::is_done() const
+{
+	for (auto donner : this->donners)
+		if (donner->is_done())
+			return true;
+	return false;
+}
+
 void Sequence
 ::_exec(const size_t tid,
         std::function<bool(const std::vector<const int*>&)> &stop_condition,
@@ -619,10 +628,7 @@ void Sequence
 		real_stop_condition = [this, stop_condition](const std::vector<const int*>& statuses)
 		{
 			bool res = stop_condition(statuses);
-			for (auto donner : this->donners)
-				if (donner->is_done())
-					return true;
-			return res;
+			return res || this->is_done();
 		};
 	else
 		real_stop_condition = stop_condition;
@@ -661,10 +667,7 @@ void Sequence
 		real_stop_condition = [this, stop_condition]()
 		{
 			bool res = stop_condition();
-			for (auto donner : this->donners)
-				if (donner->is_done())
-					return true;
-			return res;
+			return res || this->is_done();
 		};
 	else
 		real_stop_condition = stop_condition;
