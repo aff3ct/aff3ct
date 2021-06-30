@@ -74,7 +74,7 @@ public:
 	virtual void set_seed(const int seed);
 
 	/*!
-	 * \brief Adds the noise to a perfectly clear signal.
+	 * \brief Task method that adds the noise to a perfectly clear signal.
 	 *
 	 * \param X_N: a perfectly clear message.
 	 * \param Y_N: a noisy signal.
@@ -86,7 +86,7 @@ public:
 	void add_noise(const float *CP, const R *X_N, R *Y_N, const int frame_id = -1, const bool managed_memory = true);
 
 	/*!
-	 * \brief Adds the noise to a perfectly clear signal.
+	 * \brief Task method that adds the noise to a perfectly clear signal.
 	 *
 	 * \param X_N: a perfectly clear message.
 	 * \param H_N: the channel gains.

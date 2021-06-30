@@ -113,7 +113,7 @@ public:
 	bool is_demodulator() const;
 
 	/*!
-	 * \brief Modulates a vector of bits or symbols.
+	 * \brief Task method that modulates a vector of bits or symbols.
 	 *
 	 * \param X_N1: a vector of bits or symbols.
 	 * \param X_N2: a vector of modulated bits or symbols.
@@ -125,7 +125,7 @@ public:
 	void modulate(const B *X_N1, R *X_N2, const int frame_id = -1, const bool managed_memory = true);
 
 	/*!
-	 * \brief soft Modulates a vector of LLRs.
+	 * \brief Task method that modulates softly a vector of LLRs.
 	 *
 	 * \param X_N1: a vector of LLRs.
 	 * \param X_N2: a vector of soft symbols.
@@ -137,7 +137,7 @@ public:
 	void tmodulate(const Q *X_N1, R *X_N2, const int frame_id = -1, const bool managed_memory = true);
 
 	/*!
-	 * \brief Filters a vector of noised and modulated bits/symbols.
+	 * \brief Task method that filters a vector of noised and modulated bits/symbols.
 	 *
 	 * By default this method does nothing.
 	 *
@@ -151,7 +151,7 @@ public:
 	void filter(const float *CP, const R *Y_N1, R *Y_N2, const int frame_id = -1, const bool managed_memory = true);
 
 	/*!
-	 * \brief Demodulates a vector of noised and modulated bits/symbols (after the filtering process if required).
+	 * \brief Task method that demodulates a vector of noised and modulated bits/symbols (after the filtering process if required).
 	 *
 	 * \param Y_N1: a vector of noised and modulated bits/symbols.
 	 * \param Y_N2: a demodulated vector.
@@ -164,7 +164,7 @@ public:
 	                const bool managed_memory = true);
 
 	/*!
-	 * \brief Demodulates a vector of noised and modulated bits/symbols (after the filtering process if required).
+	 * \brief Task method that demodulates a vector of noised and modulated bits/symbols (after the filtering process if required).
 	 *
 	 * \param H_N:  channel gains.
 	 * \param Y_N1: a vector of noised and modulated bits/symbols.
@@ -178,7 +178,7 @@ public:
 	                   const bool managed_memory = true);
 
 	/*!
-	 * \brief Demodulates a vector of noised and modulated bits/symbols (after the filtering process if required).
+	 * \brief Task method that demodulates a vector of noised and modulated bits/symbols (after the filtering process if required).
 	 *
 	 * Used for the iterative turbo demodulation technique, this type of demodulation takes the decoder information
 	 * into account.
@@ -196,7 +196,7 @@ public:
 	                 const bool managed_memory = true);
 
 	/*!
-	 * \brief Demodulates a vector of noised and modulated bits/symbols (after the filtering process if required).
+	 * \brief Task that demodulates a vector of noised and modulated bits/symbols (after the filtering process if required).
 	 *
 	 * Used for the iterative turbo demodulation technique, this type of demodulation takes the decoder information
 	 * into account.

@@ -86,7 +86,7 @@ public:
 	const std::vector<B>& get_X_N(const size_t frame_id = 0) const;
 
 	/*!
-	 * \brief Encodes a vector of information bits (a message).
+	 * \brief Task method that encodes a vector of information bits (a message).
 	 *
 	 * \param U_K: a vector of information bits (a message).
 	 * \param X_N: an encoded frame with redundancy added (parity bits).

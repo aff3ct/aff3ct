@@ -57,7 +57,7 @@ public:
 	virtual Decoder_SIHO<B,R>* clone() const;
 
 	/*!
-	 * \brief Decodes the noisy frame.
+	 * \brief Task method that decodes the noisy frame.
 	 *
 	 * \param Y_N: a noisy frame.
 	 * \param V_K: a decoded codeword (only the information bits).

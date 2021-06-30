@@ -53,7 +53,7 @@ public:
 	virtual Decoder_SISO<B,R>* clone() const;
 
 	/*!
-	 * \brief Decodes a given noisy codeword.
+	 * \brief Task method that decodes a given noisy codeword.
 	 *
 	 * \param Y_N1: a completely noisy codeword from the channel.
 	 * \param Y_N2: an extrinsic information about all the bits in the frame.
