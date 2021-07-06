@@ -768,6 +768,20 @@ module::Task* Sequence
 			{
 				this->cur_ss[tid] = this->cur_ss[tid]->get_children()[path];
 				this->cur_task_id[tid] = 0;
+
+				if (this->cur_ss[tid]->get_c()->tasks.size() == 0)
+				{
+					// skip nodes without tasks if any
+					while (this->cur_ss[tid]->get_children().size() > 0)
+					{
+						this->cur_ss[tid] = this->cur_ss[tid]->get_children()[0];
+						this->cur_task_id[tid] = 0;
+						if (this->cur_ss[tid]->get_c() && this->cur_ss[tid]->get_c()->tasks.size() > 0)
+							break;
+					}
+					if (this->cur_task_id[tid] >= this->cur_ss[tid]->get_c()->tasks.size())
+						this->next_round_is_over[tid] = true;
+				}
 			}
 			else
 			{
