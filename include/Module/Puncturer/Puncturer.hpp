@@ -82,9 +82,9 @@ public:
 	 */
 	template <class A = std::allocator<B>>
 	void puncture(const std::vector<B,A>& X_N1, std::vector<B,A>& X_N2, const int frame_id = -1,
-	              const bool managed_memory = true) const;
+	              const bool managed_memory = true);
 
-	void puncture(const B *X_N1, B *X_N2, const int frame_id = -1, const bool managed_memory = true) const;
+	void puncture(const B *X_N1, B *X_N2, const int frame_id = -1, const bool managed_memory = true);
 
 	/*!
 	 * \brief Depunctures a codeword.
@@ -94,9 +94,9 @@ public:
 	 */
 	template <class A = std::allocator<Q>>
 	void depuncture(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame_id = -1,
-	                const bool managed_memory = true) const;
+	                const bool managed_memory = true);
 
-	void depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id = -1, const bool managed_memory = true) const;
+	void depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id = -1, const bool managed_memory = true);
 
 protected:
 	virtual void _puncture(const B *X_N1, B *X_N2, const size_t frame_id) const;

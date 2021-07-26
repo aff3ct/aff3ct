@@ -134,7 +134,7 @@ int Puncturer<B,Q>
 template <typename B, typename Q>
 template <class A>
 void Puncturer<B,Q>
-::puncture(const std::vector<B,A>& X_N1, std::vector<B,A>& X_N2, const int frame_id, const bool managed_memory) const
+::puncture(const std::vector<B,A>& X_N1, std::vector<B,A>& X_N2, const int frame_id, const bool managed_memory)
 {
 	(*this)[pct::sck::puncture::X_N1].bind(X_N1);
 	(*this)[pct::sck::puncture::X_N2].bind(X_N2);
@@ -143,7 +143,7 @@ void Puncturer<B,Q>
 
 template <typename B, typename Q>
 void Puncturer<B,Q>
-::puncture(const B *X_N1, B *X_N2, const int frame_id, const bool managed_memory) const
+::puncture(const B *X_N1, B *X_N2, const int frame_id, const bool managed_memory)
 {
 	(*this)[pct::sck::puncture::X_N1].bind(X_N1);
 	(*this)[pct::sck::puncture::X_N2].bind(X_N2);
@@ -153,7 +153,7 @@ void Puncturer<B,Q>
 template <typename B, typename Q>
 template <class A>
 void Puncturer<B,Q>
-::depuncture(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame_id, const bool managed_memory) const
+::depuncture(const std::vector<Q,A>& Y_N1, std::vector<Q,A>& Y_N2, const int frame_id, const bool managed_memory)
 {
 	(*this)[pct::sck::depuncture::Y_N1].bind(Y_N1);
 	(*this)[pct::sck::depuncture::Y_N2].bind(Y_N2);
@@ -162,7 +162,7 @@ void Puncturer<B,Q>
 
 template <typename B, typename Q>
 void Puncturer<B,Q>
-::depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id, const bool managed_memory) const
+::depuncture(const Q *Y_N1, Q *Y_N2, const int frame_id, const bool managed_memory)
 {
 	(*this)[pct::sck::depuncture::Y_N1].bind(Y_N1);
 	(*this)[pct::sck::depuncture::Y_N2].bind(Y_N2);
