@@ -135,7 +135,7 @@ int Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 ::_decode_siho(const R *Y_N, int8_t *CWD, B *V_K, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 
 	std::vector<const R*> frames_in(mipp::N<R>());
 	for (auto f = 0; f < mipp::N<R>(); f++) frames_in[f] = Y_N + f * this->N;

@@ -80,7 +80,7 @@ template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 ::_reset(const size_t frame_id)
 {
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 	const auto zero = mipp::Reg<R>((R)0);
 	std::fill(this->messages [cur_wave].begin(), this->messages [cur_wave].end(), zero);
 	std::fill(this->var_nodes[cur_wave].begin(), this->var_nodes[cur_wave].end(), zero);
@@ -90,7 +90,7 @@ template <typename B, typename R, class Update_rule>
 void Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 ::_load(const R *Y_N, const size_t frame_id)
 {
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 
 	std::vector<const R*> frames(mipp::N<R>());
 	for (auto f = 0; f < mipp::N<R>(); f++) frames[f] = Y_N + f * this->N;
@@ -110,7 +110,7 @@ int Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 	auto status = this->_decode(frame_id);
 
 	// prepare for next round by processing extrinsic information
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 	for (auto v = 0; v < this->N; v++)
 		this->var_nodes[cur_wave][v] -= Y_N_reorderered[v];
 
@@ -137,7 +137,7 @@ int Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 	for (auto v = 0; v < this->K; v++)
 	{
 		const auto k = this->info_bits_pos[v];
@@ -172,7 +172,7 @@ int Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	// take the hard decision
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 	for (auto v = 0; v < this->N; v++)
 		V_reorderered[v] = mipp::cast<R,B>(this->var_nodes[cur_wave][v]) >> (sizeof(B) * 8 - 1);
 
@@ -194,7 +194,7 @@ template <typename B, typename R, class Update_rule>
 int Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 ::_decode(const size_t frame_id)
 {
-	const auto cur_wave = frame_id / this->simd_inter_frame_level;
+	const auto cur_wave = frame_id / this->get_n_frames_per_wave();
 
 	this->up_rule.begin_decoding(this->n_ite);
 
