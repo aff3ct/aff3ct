@@ -27,7 +27,7 @@ private:
 protected:
 	const R saturation;
 
-	const std::vector<unsigned> &info_bits_pos;
+	const std::vector<unsigned> info_bits_pos;
 
 	// data structures for iterative decoding
 	std::vector<mipp::vector<mipp::Reg<R>>> var_nodes;

@@ -15,7 +15,7 @@ class Decoder_LDPC_BP
 {
 protected:
 	const int                  n_ite;
-	const tools::Sparse_matrix &H;
+	const tools::Sparse_matrix H;
 	const bool                 enable_syndrome;
 	const int                  syndrome_depth;
 
