@@ -23,7 +23,7 @@ template <typename B = int, typename R = float, class Update_rule = tools::Updat
 class Decoder_LDPC_BP_vertical_layered_inter : public Decoder_SISO<B,R>, public Decoder_LDPC_BP
 {
 protected:
-	const std::vector<unsigned> &info_bits_pos;
+	const std::vector<unsigned> info_bits_pos;
 
 	Update_rule up_rule;
 

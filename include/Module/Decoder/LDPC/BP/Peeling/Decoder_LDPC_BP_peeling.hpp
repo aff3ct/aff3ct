@@ -20,7 +20,7 @@ template<typename B = int, typename R = float>
 class Decoder_LDPC_BP_peeling : public Decoder_SIHO<B,R>, public Decoder_LDPC_BP
 {
 protected:
-	const std::vector<unsigned> &info_bits_pos;
+	const std::vector<unsigned> info_bits_pos;
 
 	// data structures for iterative decoding
 	std::vector<B> var_nodes;
