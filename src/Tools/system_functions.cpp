@@ -1,4 +1,4 @@
-#if (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__))
+#if (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__)) && !defined(__ANDROID__)
 #include <execinfo.h> // backtrace, backtrace_symbols
 #include <cxxabi.h>   // __cxa_demangle
 #endif
@@ -26,7 +26,7 @@ std::string aff3ct::tools::get_back_trace(int first_call)
 {
 	std::string bt_str;
 
-#if (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__))
+#if (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__)) && !defined(__ANDROID__)
 	const int bt_max_depth = 32;
 	void *bt_array[bt_max_depth];
 
@@ -94,7 +94,7 @@ std::string aff3ct::tools::run_system_command(std::string cmd)
 
 	cmd.append(" 2>&1");
 
-#if (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__))
+#if (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__)) && !defined(__ANDROID__)
 	FILE *stream = popen(cmd.c_str(), "r");
 #elif defined(_WIN64) || defined(_WIN32)
 	FILE *stream = _popen(cmd.c_str(), "r");
@@ -110,7 +110,7 @@ std::string aff3ct::tools::run_system_command(std::string cmd)
 			if (fgets(buffer, max_buffer, stream) != NULL)
 				data.append(buffer);
 
-#if (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__))
+#if (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__)) && !defined(__ANDROID__)
 		pclose(stream);
 #elif defined(_WIN64) || defined(_WIN32)
 		_pclose(stream);
@@ -126,7 +126,7 @@ std::string aff3ct::tools::addr_to_line(const std::string& backtrace)
 {
 #ifdef NDEBUG
 	return backtrace;
-#elif (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__))
+#elif (defined(__GNUC__) || defined(__clang__) || defined(__llvm__)) && (defined(__linux__) || defined(__linux) || defined(__APPLE__)) && !defined(__ANDROID__)
 	// TODO Bug: lines does not always match with the real line where are called the functions.
 
 	std::string bt_str;
