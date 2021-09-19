@@ -36,9 +36,12 @@ public:
 
 protected:
 	const size_t n_data_sockets;
-	const size_t n_elmts;
-	const size_t n_bytes;
-	const std::type_index datatype;
+	const size_t n_elmts_commute;
+	const size_t n_elmts_select;
+	const size_t n_bytes_commute;
+	const size_t n_bytes_select;
+	const std::type_index datatype_select;
+	const std::type_index datatype_commute;
 	      size_t path;
 
 	bool no_copy_commute;
@@ -46,17 +49,26 @@ protected:
 
 public:
 	inline Switcher(const size_t n_data_sockets,
+	                const size_t n_elmts_commute,
+	                const std::type_index datatype_commute,
+	                const size_t n_elmts_select,
+	                const std::type_index datatype_select);
+
+	inline Switcher(const size_t n_data_sockets,
 	                const size_t n_elmts,
 	                const std::type_index datatype);
 	virtual ~Switcher() = default;
 	virtual Switcher* clone() const;
 
 
-	inline size_t          get_n_data_sockets() const;
-	inline size_t          get_n_elmts       () const;
-	inline size_t          get_n_bytes       () const;
-	inline std::type_index get_datatype      () const;
-	inline size_t          get_path          () const;
+	inline size_t          get_n_data_sockets  () const;
+	inline size_t          get_n_elmts_commute () const;
+	inline size_t          get_n_elmts_select  () const;
+	inline size_t          get_n_bytes_commute () const;
+	inline size_t          get_n_bytes_select  () const;
+	inline std::type_index get_datatype_commute() const;
+	inline std::type_index get_datatype_select () const;
+	inline size_t          get_path            () const;
 
 	inline bool is_no_copy_commute() const;
 	inline bool is_no_copy_select () const;
