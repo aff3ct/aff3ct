@@ -40,8 +40,8 @@ protected:
 	const size_t n_elmts_select;
 	const size_t n_bytes_commute;
 	const size_t n_bytes_select;
-	const std::type_index datatype_select;
 	const std::type_index datatype_commute;
+	const std::type_index datatype_select;
 	      size_t path;
 
 	bool no_copy_commute;
