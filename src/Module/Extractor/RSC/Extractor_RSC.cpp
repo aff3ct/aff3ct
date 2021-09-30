@@ -14,6 +14,13 @@ Extractor_RSC<B,Q>
 {
 	const std::string name = "Extractor_RSC";
 	this->set_name(name);
+
+	if (buffered_encoding)
+		for (auto i = 0; i < K; i++)
+			info_bits_pos[i] = i;
+	else
+		for (auto i = 0; i < K; i++)
+			info_bits_pos[i] = 2*i;
 }
 
 template <typename B, typename Q>
@@ -87,7 +94,7 @@ template <typename B, typename Q>
 const std::vector<uint32_t>& Extractor_RSC<B,Q>
 ::get_info_bits_pos()
 {
-	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+	return info_bits_pos;
 }
 
 
