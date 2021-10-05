@@ -69,6 +69,12 @@ public:
 	inline void operator()(Socket &s_out, const int priority = -1);
 
 	template <typename T>
+	inline void operator=(const void *array);
+
+	template <typename T>
+	inline void operator=(void *array);
+
+	template <typename T>
 	inline void operator=(const T *array);
 
 	template <typename T>

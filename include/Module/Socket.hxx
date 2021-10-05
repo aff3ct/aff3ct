@@ -238,6 +238,46 @@ void Socket
 
 template <typename T>
 void Socket
+::operator=(const void *array)
+{
+	if (this->get_type() == socket_t::SIN)
+		this->bind(array);
+	else
+	{
+		std::stringstream message;
+		message << "Current socket have to be an input socket ("
+		        << "'datatype'"           << " = " << type_to_string[this->datatype] << ", "
+		        << "'name'"               << " = " << get_name()                     << ", "
+		        << "'task.name'"          << " = " << task.get_name()                << ", "
+		        << "'type'"               << " = " << (get_type() == socket_t::SIN ? "SIN" : "SOUT") /*<< ", "*/
+//		        << "'task.module.name'"   << " = " << task.get_module_name()
+		        << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+}
+
+template <typename T>
+void Socket
+::operator=(void *array)
+{
+	if (this->get_type() == socket_t::SIN)
+		this->bind(array);
+	else
+	{
+		std::stringstream message;
+		message << "Current socket have to be an input socket ("
+		        << "'datatype'"           << " = " << type_to_string[this->datatype] << ", "
+		        << "'name'"               << " = " << get_name()                     << ", "
+		        << "'task.name'"          << " = " << task.get_name()                << ", "
+		        << "'type'"               << " = " << (get_type() == socket_t::SIN ? "SIN" : "SOUT") /*<< ", "*/
+//		        << "'task.module.name'"   << " = " << task.get_module_name()
+		        << ").";
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+	}
+}
+
+template <typename T>
+void Socket
 ::operator=(const T *array)
 {
 	if (this->get_type() == socket_t::SIN)
