@@ -1459,9 +1459,13 @@ void Sequence
 		for (auto &s : t->sockets)
 		{
 			std::string stype;
+			bool static_input = false;
 			switch (t->get_socket_type(*s))
 			{
-				case module::socket_t::SIN: stype = "in[" + std::to_string(sid) + "]"; break;
+				case module::socket_t::SIN:
+					stype = "in[" + std::to_string(sid) + "]";
+					static_input = s->get_dataptr() != nullptr && s->bound_socket == nullptr;
+					break;
 				case module::socket_t::SOUT: stype = "out[" + std::to_string(sid) + "]"; break;
 				default: stype = "unkn"; break;
 			}
@@ -1472,6 +1476,7 @@ void Sequence
 
 			stream << tab << tab << tab << tab << "\"" << +s.get() << "\""
 			                                   << "[label=\"" << stype << ":" << s->get_name() << "\"" << bold_or_not
+			                                   << (static_input ? ", style=filled, fillcolor=green" : "")
 			                                   << "];" << std::endl;
 			sid++;
 		}
