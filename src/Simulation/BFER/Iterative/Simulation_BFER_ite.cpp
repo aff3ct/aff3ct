@@ -299,7 +299,9 @@ void Simulation_BFER_ite<B,R,Q>
 
 	if (this->params_BFER_ite.coset)
 	{
-		if (this->params_BFER_ite.coded_monitoring)
+		if (this->params_BFER_ite.src->type == "AZCW")
+			csb[cst::sck::apply::ref] = enc[enc::sck::encode::X_N].get_dataptr();
+		else if (this->params_BFER_ite.coded_monitoring)
 		{
 			if (this->params_BFER_ite.cdc->enc->type != "NO")
 				csb[cst::sck::apply::ref] = enc[enc::sck::encode::X_N];
@@ -316,7 +318,13 @@ void Simulation_BFER_ite<B,R,Q>
 				csb[cst::sck::apply::ref] = src[src::sck::generate::U_K];
 		}
 
-		if (this->params_BFER_ite.cdc->enc->type != "NO")
+		if (this->params_BFER_ite.src->type == "AZCW")
+		{
+			csr1[cst::sck::apply::ref] = enc[enc::sck::encode::X_N].get_dataptr();
+			csr2[cst::sck::apply::ref] = enc[enc::sck::encode::X_N].get_dataptr();
+			csr3[cst::sck::apply::ref] = enc[enc::sck::encode::X_N].get_dataptr();
+		}
+		else if (this->params_BFER_ite.cdc->enc->type != "NO")
 		{
 			csr1[cst::sck::apply::ref] = enc[enc::sck::encode::X_N];
 			csr2[cst::sck::apply::ref] = enc[enc::sck::encode::X_N];
@@ -336,7 +344,9 @@ void Simulation_BFER_ite<B,R,Q>
 		}
 	}
 
-	if (this->params_BFER_ite.coded_monitoring)
+	if (this->params_BFER_ite.src->type == "AZCW")
+		mnt[mnt::sck::check_errors::U] = enc[enc::sck::encode::X_N].get_dataptr();
+	else if (this->params_BFER_ite.coded_monitoring)
 	{
 		if (this->params_BFER_ite.cdc->enc->type != "NO")
 			mnt[mnt::sck::check_errors::U] = enc[enc::sck::encode::X_N];

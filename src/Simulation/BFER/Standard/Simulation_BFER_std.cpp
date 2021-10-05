@@ -473,12 +473,17 @@ void Simulation_BFER_std<B,R,Q>
 
 	if (this->params_BFER_std.coded_monitoring)
 	{
-		if (this->params_BFER_std.cdc->enc->type != "NO")
-			mnt[mnt::sck::check_errors::U] = enc[enc::sck::encode::X_N];
-		else if (this->params_BFER_std.crc->type != "NO")
-			mnt[mnt::sck::check_errors::U] = crc[crc::sck::build::U_K2];
+		if (this->params_BFER_std.src->type == "AZCW")
+			mnt[mnt::sck::check_errors::U] = enc[enc::sck::encode::X_N].get_dataptr();
 		else
-			mnt[mnt::sck::check_errors::U] = src[src::sck::generate::U_K];
+		{
+			if (this->params_BFER_std.cdc->enc->type != "NO")
+				mnt[mnt::sck::check_errors::U] = enc[enc::sck::encode::X_N];
+			else if (this->params_BFER_std.crc->type != "NO")
+				mnt[mnt::sck::check_errors::U] = crc[crc::sck::build::U_K2];
+			else
+				mnt[mnt::sck::check_errors::U] = src[src::sck::generate::U_K];
+		}
 
 		if (this->params_BFER_std.coset)
 			mnt[mnt::sck::check_errors::V] = csb[cst::sck::apply::out];
@@ -487,7 +492,10 @@ void Simulation_BFER_std<B,R,Q>
 	}
 	else
 	{
-		mnt[mnt::sck::check_errors::U] = src[src::sck::generate::U_K];
+		if (this->params_BFER_std.src->type == "AZCW")
+			mnt[mnt::sck::check_errors::U] = enc[enc::sck::encode::X_N].get_dataptr();
+		else
+			mnt[mnt::sck::check_errors::U] = src[src::sck::generate::U_K];
 		if (this->params_BFER_std.crc->type != "NO")
 			mnt[mnt::sck::check_errors::V] = crc[crc::sck::extract::V_K2];
 		else if (this->params_BFER_std.coset)
@@ -498,14 +506,19 @@ void Simulation_BFER_std<B,R,Q>
 
 	if (this->params_BFER_std.mnt_mutinfo)
 	{
-		if (this->params_BFER_std.cdc->pct != nullptr && this->params_BFER_std.cdc->pct->type != "NO")
-			mni[mnt::sck::get_mutual_info::X] = pct[pct::sck::puncture::X_N2];
-		else if (this->params_BFER_std.cdc->enc->type != "NO")
-			mni[mnt::sck::get_mutual_info::X] = enc[enc::sck::encode::X_N];
-		else if (this->params_BFER_std.crc->type != "NO")
-			mni[mnt::sck::get_mutual_info::X] = crc[crc::sck::build::U_K2];
+		if (this->params_BFER_std.src->type == "AZCW")
+			mni[mnt::sck::get_mutual_info::X] = enc[enc::sck::encode::X_N].get_dataptr();
 		else
-			mni[mnt::sck::get_mutual_info::X] = src[src::sck::generate::U_K];
+		{
+			if (this->params_BFER_std.cdc->pct != nullptr && this->params_BFER_std.cdc->pct->type != "NO")
+				mni[mnt::sck::get_mutual_info::X] = pct[pct::sck::puncture::X_N2];
+			else if (this->params_BFER_std.cdc->enc->type != "NO")
+				mni[mnt::sck::get_mutual_info::X] = enc[enc::sck::encode::X_N];
+			else if (this->params_BFER_std.crc->type != "NO")
+				mni[mnt::sck::get_mutual_info::X] = crc[crc::sck::build::U_K2];
+			else
+				mni[mnt::sck::get_mutual_info::X] = src[src::sck::generate::U_K];
+		}
 
 		if (mdm.is_demodulator())
 		{
