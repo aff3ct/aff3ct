@@ -909,7 +909,7 @@ Digraph_node<SS>* Sequence
 								                                                    in_sockets_feed[&t] = 1;
 								bool t_is_select = dynamic_cast<const module::Switcher*>(&(t.get_module())) &&
 								                   t.get_name() == "select";
-								if ((!t_is_select && in_sockets_feed[&t] >= t.get_n_input_sockets()) ||
+								if ((!t_is_select && in_sockets_feed[&t] >= t.get_n_input_sockets() - t.get_n_static_input_sockets()) ||
 								    ( t_is_select && t.is_last_input_socket(*bs)))
 								{
 									is_last = false;
@@ -962,7 +962,7 @@ Digraph_node<SS>* Sequence
 							                                                    in_sockets_feed[&t] = 1;
 							bool t_is_select = dynamic_cast<const module::Switcher*>(&(t.get_module())) &&
 							                   t.get_name() == "select";
-							if ((!t_is_select && in_sockets_feed[&t] >= t.get_n_input_sockets()) ||
+							if ((!t_is_select && in_sockets_feed[&t] >= t.get_n_input_sockets() - t.get_n_static_input_sockets()) ||
 							    ( t_is_select && t.is_last_input_socket(*bs)))
 							{
 								is_last = false;
@@ -1027,7 +1027,7 @@ Digraph_node<SS>* Sequence
 								bool t_is_select = dynamic_cast<const module::Switcher*>(&(t.get_module())) &&
 								                   t.get_name() == "select";
 
-								if ((!t_is_select && in_sockets_feed[&t] >= t.get_n_input_sockets()) ||
+								if ((!t_is_select && in_sockets_feed[&t] >= t.get_n_input_sockets() - t.get_n_static_input_sockets()) ||
 								    ( t_is_select && t.is_last_input_socket(*bs)))
 								{
 									is_last = false;
@@ -1092,7 +1092,7 @@ Digraph_node<SS>* Sequence
 								                                                    in_sockets_feed[&t] = 1;
 								bool t_is_select = dynamic_cast<const module::Switcher*>(&(t.get_module())) &&
 								                   t.get_name() == "select";
-								if ((!t_is_select && in_sockets_feed[&t] >= t.get_n_input_sockets()) ||
+								if ((!t_is_select && in_sockets_feed[&t] >= t.get_n_input_sockets() - t.get_n_static_input_sockets()) ||
 								    ( t_is_select && t.is_last_input_socket(*bs)))
 								{
 									is_last = false;

@@ -134,6 +134,7 @@ public:
 
 	size_t get_n_input_sockets() const;
 	size_t get_n_output_sockets() const;
+	size_t get_n_static_input_sockets() const;
 
 	const std::vector<int>& exec(const int frame_id = -1, const bool managed_memory = true);
 

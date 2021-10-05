@@ -901,6 +901,18 @@ size_t Task
 	}
 }
 
+size_t Task
+::get_n_static_input_sockets() const
+{
+	size_t n = 0;
+	for (auto &s : this->sockets)
+		if (s->get_type() == socket_t::SIN &&
+		    s->get_dataptr() != nullptr &&
+		    s->bound_socket == nullptr)
+			n++;
+	return n;
+}
+
 
 // ==================================================================================== explicit template instantiation
 template size_t Task::create_socket_in<int8_t >(const std::string&, const size_t);
