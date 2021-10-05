@@ -58,6 +58,8 @@ protected:
 	uint8_t debug_precision;
 	int32_t debug_frame_max;
 	std::function<int(Module &m, Task& t, const size_t frame_id)> codelet;
+	size_t n_input_sockets;
+	size_t n_output_sockets;
 
 	std::vector<int> status;
 	std::vector<mipp::vector<uint8_t>> out_buffers;
@@ -129,6 +131,9 @@ public:
 	const std::vector<std::chrono::nanoseconds>& get_timers_total  () const;
 	const std::vector<std::chrono::nanoseconds>& get_timers_min    () const;
 	const std::vector<std::chrono::nanoseconds>& get_timers_max    () const;
+
+	size_t get_n_input_sockets() const;
+	size_t get_n_output_sockets() const;
 
 	const std::vector<int>& exec(const int frame_id = -1, const bool managed_memory = true);
 

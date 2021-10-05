@@ -30,6 +30,8 @@ Task
   debug_frame_max(-1),
   codelet([](Module &m, Task &t, const size_t frame_id) -> int
   	{ throw tools::unimplemented_error(__FILE__, __LINE__, __func__); return 0; }),
+  n_input_sockets(0),
+  n_output_sockets(0),
   status(module.get_n_waves()),
   n_calls(0),
   duration_total(std::chrono::nanoseconds(0)),
@@ -547,6 +549,7 @@ size_t Task
 	last_input_socket = &s;
 
 	this->set_no_input_socket(false);
+	this->n_input_sockets++;
 
 	return socket_type.size() -1;
 }
@@ -574,6 +577,8 @@ size_t Task
 {
 	auto &s = create_socket<T>(name, n_elmts, socket_t::SOUT, hack_status);
 	socket_type.push_back(socket_t::SOUT);
+
+	this->n_output_sockets++;
 
 	// memory allocation
 	if (is_autoalloc())
@@ -746,6 +751,18 @@ socket_t Task
 	message << "The socket does not exist ('s.name' = " << s.get_name() << ", 'task.name' = " << this->get_name()
 	        << ", 'module.name' = " << module->get_name() << ").";
 	throw tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
+}
+
+size_t Task
+::get_n_input_sockets() const
+{
+	return this->n_input_sockets;
+}
+
+size_t Task
+::get_n_output_sockets() const
+{
+	return this->n_output_sockets;
 }
 
 void Task

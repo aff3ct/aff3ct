@@ -45,7 +45,6 @@ Sequence
   next_round_is_over(n_threads, false),
   cur_task_id(n_threads,0),
   cur_ss(n_threads, nullptr)
-
 {
 #ifndef AFF3CT_HWLOC
 	if (thread_pinning)
@@ -261,6 +260,8 @@ void Sequence
 	auto last_subseq = root;
 	for (auto first : firsts)
 	{
+		std::map<TA*,unsigned> in_sockets_feed;
+		std::map<TA*,std::pair<Digraph_node<SS>*,size_t>> task_subseq;
 		auto contents = last_subseq->get_contents();
 		this->firsts_tasks_id.push_back(contents ? contents->tasks_id[contents->tasks_id.size() -1] : 0);
 		last_subseq = this->init_recursive<SS,TA>(last_subseq,
@@ -273,7 +274,9 @@ void Sequence
 		                                          lasts,
 		                                          exclusions,
 		                                          this->lasts_tasks_id,
-		                                          real_lasts);
+		                                          real_lasts,
+		                                          in_sockets_feed,
+		                                          task_subseq);
 	}
 
 	std::stringstream real_lasts_ss;
@@ -826,7 +829,9 @@ Digraph_node<SS>* Sequence
                  const std::vector<TA*> &lasts,
                  const std::vector<TA*> &exclusions,
                  std::vector<size_t> &real_lasts_id,
-                 std::vector<TA*> &real_lasts)
+                 std::vector<TA*> &real_lasts,
+                 std::map<TA*,unsigned> &in_sockets_feed,
+                 std::map<TA*,std::pair<Digraph_node<SS>*,size_t>> &task_subseq)
 {
 	if (this->tasks_inplace && !current_task.is_autoalloc())
 	{
@@ -864,7 +869,7 @@ Digraph_node<SS>* Sequence
 	if (auto switcher = dynamic_cast<const module::Switcher*>(&current_task.get_module()))
 	{
 		const auto current_task_name = current_task.get_name();
-		if (current_task_name == "commute")
+		if (current_task_name == "commute") // ---------------------------------------------------------------- COMMUTE
 		{
 			if (std::find(switchers.begin(), switchers.end(), &current_task) == switchers.end())
 			{
@@ -897,11 +902,20 @@ Digraph_node<SS>* Sequence
 							auto &t = bs->get_task();
 							if (std::find(exclusions.begin(), exclusions.end(), &t) == exclusions.end())
 							{
-								if (t.is_last_input_socket(*bs))
+								if (task_subseq.find(&t) == task_subseq.end() || task_subseq[&t].second < ssid)
+									task_subseq[&t] = {node_switcher_son, ssid};
+
+								in_sockets_feed.find(&t) != in_sockets_feed.end() ? in_sockets_feed[&t]++ :
+								                                                    in_sockets_feed[&t] = 1;
+								bool t_is_select = dynamic_cast<const module::Switcher*>(&(t.get_module())) &&
+								                   t.get_name() == "select";
+								if ((!t_is_select && in_sockets_feed[&t] >= t.get_n_input_sockets()) ||
+								    ( t_is_select && t.is_last_input_socket(*bs)))
 								{
 									is_last = false;
-									last_subseq = Sequence::init_recursive<SS,TA>(node_switcher_son, ssid, taid,
-										selectors, switchers, first, t, lasts, exclusions, real_lasts_id, real_lasts);
+									last_subseq = Sequence::init_recursive<SS,TA>(task_subseq[&t].first,
+										task_subseq[&t].second, taid, selectors, switchers, first, t, lasts, exclusions,
+										real_lasts_id, real_lasts, in_sockets_feed, task_subseq);
 								}
 								else
 								{
@@ -941,18 +955,27 @@ Digraph_node<SS>* Sequence
 						auto &t = bs->get_task();
 						if (std::find(exclusions.begin(), exclusions.end(), &t) == exclusions.end())
 						{
-							if (t.is_last_input_socket(*bs))
+							if (task_subseq.find(&t) == task_subseq.end() || task_subseq[&t].second < ssid)
+								task_subseq[&t] = {node_switcher, ssid};
+
+							in_sockets_feed.find(&t) != in_sockets_feed.end() ? in_sockets_feed[&t]++ :
+							                                                    in_sockets_feed[&t] = 1;
+							bool t_is_select = dynamic_cast<const module::Switcher*>(&(t.get_module())) &&
+							                   t.get_name() == "select";
+							if ((!t_is_select && in_sockets_feed[&t] >= t.get_n_input_sockets()) ||
+							    ( t_is_select && t.is_last_input_socket(*bs)))
 							{
 								is_last = false;
-								last_subseq = Sequence::init_recursive<SS,TA>(node_switcher, ssid, taid, selectors,
-									switchers, first, t, lasts, exclusions, real_lasts_id, real_lasts);
+								last_subseq = Sequence::init_recursive<SS,TA>(task_subseq[&t].first,
+									task_subseq[&t].second, taid, selectors, switchers, first, t, lasts, exclusions,
+									real_lasts_id, real_lasts, in_sockets_feed, task_subseq);
 							}
 						}
 					}
 				}
 			}
 		}
-		else if (current_task_name == "select")
+		else if (current_task_name == "select") // ------------------------------------------------------------- SELECT
 		{
 			Digraph_node<SS>* node_selector = nullptr;
 
@@ -996,11 +1019,21 @@ Digraph_node<SS>* Sequence
 							auto &t = bs->get_task();
 							if (std::find(exclusions.begin(), exclusions.end(), &t) == exclusions.end())
 							{
-								if (t.is_last_input_socket(*bs))
+								if (task_subseq.find(&t) == task_subseq.end() || task_subseq[&t].second < ssid)
+									task_subseq[&t] = {node_selector_son, ssid};
+
+								in_sockets_feed.find(&t) != in_sockets_feed.end() ? in_sockets_feed[&t]++ :
+								                                                    in_sockets_feed[&t] = 1;
+								bool t_is_select = dynamic_cast<const module::Switcher*>(&(t.get_module())) &&
+								                   t.get_name() == "select";
+
+								if ((!t_is_select && in_sockets_feed[&t] >= t.get_n_input_sockets()) ||
+								    ( t_is_select && t.is_last_input_socket(*bs)))
 								{
 									is_last = false;
-									last_subseq = Sequence::init_recursive<SS,TA>(node_selector_son, ssid, taid,
-										selectors, switchers, first, t, lasts, exclusions, real_lasts_id, real_lasts);
+									last_subseq = Sequence::init_recursive<SS,TA>(task_subseq[&t].first,
+										task_subseq[&t].second, taid, selectors, switchers, first, t, lasts, exclusions,
+										real_lasts_id, real_lasts, in_sockets_feed, task_subseq);
 								}
 								else
 								{
@@ -1033,7 +1066,7 @@ Digraph_node<SS>* Sequence
 			}
 		}
 	}
-	else
+	else // --------------------------------------------------------------------------------------------- STANDARD CASE
 	{
 		cur_subseq->get_c()->tasks.push_back(&current_task);
 		cur_subseq->get_c()->tasks_id.push_back(taid++);
@@ -1052,11 +1085,20 @@ Digraph_node<SS>* Sequence
 							auto &t = bs->get_task();
 							if (std::find(exclusions.begin(), exclusions.end(), &t) == exclusions.end())
 							{
-								if (t.is_last_input_socket(*bs))
+								if (task_subseq.find(&t) == task_subseq.end() || task_subseq[&t].second < ssid)
+									task_subseq[&t] = {cur_subseq, ssid};
+
+								in_sockets_feed.find(&t) != in_sockets_feed.end() ? in_sockets_feed[&t]++ :
+								                                                    in_sockets_feed[&t] = 1;
+								bool t_is_select = dynamic_cast<const module::Switcher*>(&(t.get_module())) &&
+								                   t.get_name() == "select";
+								if ((!t_is_select && in_sockets_feed[&t] >= t.get_n_input_sockets()) ||
+								    ( t_is_select && t.is_last_input_socket(*bs)))
 								{
 									is_last = false;
-									last_subseq = Sequence::init_recursive<SS,TA>(cur_subseq, ssid, taid, selectors,
-										switchers, first, t, lasts, exclusions, real_lasts_id, real_lasts);
+									last_subseq = Sequence::init_recursive<SS,TA>(task_subseq[&t].first,
+										task_subseq[&t].second, taid, selectors, switchers, first, t, lasts, exclusions,
+										real_lasts_id, real_lasts, in_sockets_feed, task_subseq);
 								}
 								else
 								{

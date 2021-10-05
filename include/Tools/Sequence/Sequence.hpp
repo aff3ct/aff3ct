@@ -197,7 +197,9 @@ protected:
 	                                 const std::vector<TA*> &lasts,
 	                                 const std::vector<TA*> &exclusions,
 	                                 std::vector<size_t> &real_lasts_id,
-	                                 std::vector<TA*> &real_lasts);
+	                                 std::vector<TA*> &real_lasts,
+	                                 std::map<TA*,unsigned> &in_sockets_feed,
+	                                 std::map<TA*,std::pair<Digraph_node<SS>*,size_t>> &task_subseq);
 
 	template <class VTA>
 	void export_dot_subsequence(const VTA &subseq,
