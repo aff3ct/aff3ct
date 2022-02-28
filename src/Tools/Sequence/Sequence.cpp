@@ -258,9 +258,9 @@ void Sequence
 	this->lasts_tasks_id.clear();
 	this->firsts_tasks_id.clear();
 	auto last_subseq = root;
+	std::map<TA*,unsigned> in_sockets_feed;
 	for (auto first : firsts)
 	{
-		std::map<TA*,unsigned> in_sockets_feed;
 		std::map<TA*,std::pair<Digraph_node<SS>*,size_t>> task_subseq;
 		auto contents = last_subseq->get_contents();
 		this->firsts_tasks_id.push_back(contents ? contents->tasks_id[contents->tasks_id.size() -1] : 0);
