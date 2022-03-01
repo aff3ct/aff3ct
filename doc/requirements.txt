@@ -4,6 +4,7 @@ sphinxcontrib-bibtex==0.4.0
 sphinxcontrib-websupport==1.1.0
 sphinxcontrib-svg2pdfconverter==0.1.0
 breathe==4.11.0
+mistune==0.8.4
 m2r==0.2.1
 docutils==0.14
 exhale==0.2.3
