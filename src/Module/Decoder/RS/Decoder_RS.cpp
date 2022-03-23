@@ -47,7 +47,7 @@ Decoder_RS<B,R>* Decoder_RS<B,R>
 
 template <typename B, typename R>
 int Decoder_RS<B, R>
-::_decode_hiho(const B *Y_N, B *V_K, const size_t frame_id)
+::_decode_hiho(const B *Y_N, int8_t *CWD, B *V_K, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	tools::Bit_packer::pack(Y_N, YH_N.data(), this->N, 1, false, this->m);
@@ -56,7 +56,7 @@ int Decoder_RS<B, R>
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	auto status = this->_decode(YH_N.data(), frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
-
+	CWD[0] = !status;
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	tools::Bit_packer::unpack(YH_N.data() + this->n_rdncy, V_K, this->K, 1, false, this->m);
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
@@ -70,7 +70,7 @@ int Decoder_RS<B, R>
 
 template <typename B, typename R>
 int Decoder_RS<B, R>
-::_decode_hiho_cw(const B *Y_N, B *V_N, const size_t frame_id)
+::_decode_hiho_cw(const B *Y_N, int8_t *CWD, B *V_N, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	tools::Bit_packer::pack(Y_N, YH_N.data(), this->N, 1, false, this->m);
@@ -79,7 +79,7 @@ int Decoder_RS<B, R>
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	auto status = this->_decode(YH_N.data(), frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
-
+	CWD[0] = !status;
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	tools::Bit_packer::unpack(YH_N.data(), V_N, this->N, 1, false, this->m);
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
@@ -93,7 +93,7 @@ int Decoder_RS<B, R>
 
 template <typename B, typename R>
 int Decoder_RS<B, R>
-::_decode_siho(const R *Y_N, B *V_K, const size_t frame_id)
+::_decode_siho(const R *Y_N, int8_t *CWD, B *V_K, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	tools::hard_decide(Y_N, YH_Nb.data(), this->N);
@@ -103,7 +103,7 @@ int Decoder_RS<B, R>
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	auto status = this->_decode(YH_N.data(), frame_id);
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
-
+	CWD[0] = !status;
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE
 	tools::Bit_packer::unpack(YH_N.data() + this->n_rdncy, V_K, this->K, 1, false, this->m);
 //	auto d_store = std::chrono::steady_clock::now() - t_store;
@@ -117,7 +117,7 @@ int Decoder_RS<B, R>
 
 template <typename B, typename R>
 int Decoder_RS<B, R>
-::_decode_siho_cw(const R *Y_N, B *V_N, const size_t frame_id)
+::_decode_siho_cw(const R *Y_N, int8_t *CWD, B *V_N, const size_t frame_id)
 {
 //	auto t_load = std::chrono::steady_clock::now(); // ----------------------------------------------------------- LOAD
 	tools::hard_decide(Y_N, YH_Nb.data(), this->N);
@@ -126,6 +126,7 @@ int Decoder_RS<B, R>
 
 //	auto t_decod = std::chrono::steady_clock::now(); // -------------------------------------------------------- DECODE
 	auto status = this->_decode(YH_N.data(), frame_id);
+	CWD[0] = !status;
 //	auto d_decod = std::chrono::steady_clock::now() - t_decod;
 
 //	auto t_store = std::chrono::steady_clock::now(); // --------------------------------------------------------- STORE

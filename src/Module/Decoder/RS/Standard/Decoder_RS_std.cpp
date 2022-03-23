@@ -242,6 +242,7 @@ int Decoder_RS_std<B,R>
 						Y_N[loc[i]] ^= err[loc[i]]; // Y_N[i] must be in polynomial form
 					}
 				}
+				syn_error = false;
 			}
 			// else // no. roots != degree of elp => over t errors and cannot solve
 		}
@@ -249,7 +250,7 @@ int Decoder_RS_std<B,R>
 	}
 	// else // no non-zero syndromes => no errors: output received codeword
 
-	return 0;
+	return (int)syn_error;
 }
 
 // ==================================================================================== explicit template instantiation
