@@ -9,19 +9,27 @@ namespace aff3ct
 {
 namespace module
 {
-static std::unordered_map<std::type_index,std::string> type_to_string = {{typeid(int8_t ), "int8"   },
-                                                                         {typeid(int16_t), "int16"  },
-                                                                         {typeid(int32_t), "int32"  },
-                                                                         {typeid(int64_t), "int64"  },
-                                                                         {typeid(float  ), "float32"},
-                                                                         {typeid(double ), "float64"}};
+static std::unordered_map<std::type_index,std::string> type_to_string = {{typeid(int8_t  ), "int8"   },
+                                                                         {typeid(uint8_t ), "uint8"  },
+                                                                         {typeid(int16_t ), "int16"  },
+                                                                         {typeid(uint16_t), "uint16" },
+                                                                         {typeid(int32_t ), "int32"  },
+                                                                         {typeid(uint32_t), "uint32" },
+                                                                         {typeid(int64_t ), "int64"  },
+                                                                         {typeid(uint64_t), "uint64" },
+                                                                         {typeid(float  ),  "float32"},
+                                                                         {typeid(double ),  "float64"}};
 
-static std::unordered_map<std::type_index,uint8_t> type_to_size = {{typeid(int8_t ), 1},
-                                                                   {typeid(int16_t), 2},
-                                                                   {typeid(int32_t), 4},
-                                                                   {typeid(int64_t), 8},
-                                                                   {typeid(float  ), 4},
-                                                                   {typeid(double ), 8}};
+static std::unordered_map<std::type_index,uint8_t> type_to_size = {{typeid(int8_t  ), 1},
+                                                                   {typeid(uint8_t ), 1},
+                                                                   {typeid(int16_t ), 2},
+                                                                   {typeid(uint16_t), 2},
+                                                                   {typeid(int32_t ), 4},
+                                                                   {typeid(uint32_t), 4},
+                                                                   {typeid(int64_t ), 8},
+                                                                   {typeid(uint64_t), 8},
+                                                                   {typeid(float   ), 4},
+                                                                   {typeid(double  ), 8}};
 
 Socket
 ::Socket(Task &task, const std::string &name, const std::type_index datatype, const size_t databytes,

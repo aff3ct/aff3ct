@@ -915,17 +915,25 @@ size_t Task
 
 
 // ==================================================================================== explicit template instantiation
-template size_t Task::create_socket_in<int8_t >(const std::string&, const size_t);
-template size_t Task::create_socket_in<int16_t>(const std::string&, const size_t);
-template size_t Task::create_socket_in<int32_t>(const std::string&, const size_t);
-template size_t Task::create_socket_in<int64_t>(const std::string&, const size_t);
-template size_t Task::create_socket_in<float  >(const std::string&, const size_t);
-template size_t Task::create_socket_in<double >(const std::string&, const size_t);
+template size_t Task::create_socket_in<int8_t  >(const std::string&, const size_t);
+template size_t Task::create_socket_in<uint8_t >(const std::string&, const size_t);
+template size_t Task::create_socket_in<int16_t >(const std::string&, const size_t);
+template size_t Task::create_socket_in<uint16_t>(const std::string&, const size_t);
+template size_t Task::create_socket_in<int32_t >(const std::string&, const size_t);
+template size_t Task::create_socket_in<uint32_t>(const std::string&, const size_t);
+template size_t Task::create_socket_in<int64_t >(const std::string&, const size_t);
+template size_t Task::create_socket_in<uint64_t>(const std::string&, const size_t);
+template size_t Task::create_socket_in<float   >(const std::string&, const size_t);
+template size_t Task::create_socket_in<double  >(const std::string&, const size_t);
 
-template size_t Task::create_socket_out<int8_t >(const std::string&, const size_t, const bool);
-template size_t Task::create_socket_out<int16_t>(const std::string&, const size_t, const bool);
-template size_t Task::create_socket_out<int32_t>(const std::string&, const size_t, const bool);
-template size_t Task::create_socket_out<int64_t>(const std::string&, const size_t, const bool);
-template size_t Task::create_socket_out<float  >(const std::string&, const size_t, const bool);
-template size_t Task::create_socket_out<double >(const std::string&, const size_t, const bool);
+template size_t Task::create_socket_out<int8_t  >(const std::string&, const size_t, const bool);
+template size_t Task::create_socket_out<uint8_t >(const std::string&, const size_t, const bool);
+template size_t Task::create_socket_out<int16_t >(const std::string&, const size_t, const bool);
+template size_t Task::create_socket_out<uint16_t>(const std::string&, const size_t, const bool);
+template size_t Task::create_socket_out<int32_t >(const std::string&, const size_t, const bool);
+template size_t Task::create_socket_out<uint32_t>(const std::string&, const size_t, const bool);
+template size_t Task::create_socket_out<int64_t >(const std::string&, const size_t, const bool);
+template size_t Task::create_socket_out<uint64_t>(const std::string&, const size_t, const bool);
+template size_t Task::create_socket_out<float   >(const std::string&, const size_t, const bool);
+template size_t Task::create_socket_out<double  >(const std::string&, const size_t, const bool);
 // ==================================================================================== explicit template instantiation
