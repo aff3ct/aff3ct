@@ -386,12 +386,16 @@ const std::vector<int>& Task
 					auto p = debug_precision;
 					auto h = debug_hex;
 					std::cout << "# {IN}  " << s->get_name() << spaces << " = [";
-					     if (s->get_datatype() == typeid(int8_t )) display_data((int8_t *)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(int16_t)) display_data((int16_t*)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(int32_t)) display_data((int32_t*)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(int64_t)) display_data((int64_t*)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(float  )) display_data((float  *)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(double )) display_data((double *)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					     if (s->get_datatype() == typeid(int8_t  )) display_data((int8_t  *)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(uint8_t )) display_data((uint8_t *)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int16_t )) display_data((int16_t *)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(uint16_t)) display_data((uint16_t*)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int32_t )) display_data((int32_t *)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(uint32_t)) display_data((uint32_t*)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int64_t )) display_data((int64_t *)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(uint64_t)) display_data((uint64_t*)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(float   )) display_data((float   *)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(double  )) display_data((double  *)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
 					std::cout << "]" << std::endl;
 				}
 			}
@@ -439,12 +443,16 @@ const std::vector<int>& Task
 					auto p = debug_precision;
 					auto h = debug_hex;
 					std::cout << "# {OUT} " << s->get_name() << spaces << " = [";
-					     if (s->get_datatype() == typeid(int8_t )) display_data((int8_t *)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(int16_t)) display_data((int16_t*)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(int32_t)) display_data((int32_t*)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(int64_t)) display_data((int64_t*)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(float  )) display_data((float  *)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
-					else if (s->get_datatype() == typeid(double )) display_data((double *)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					     if (s->get_datatype() == typeid(int8_t  )) display_data((int8_t  *)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(uint8_t )) display_data((uint8_t *)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int16_t )) display_data((int16_t *)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(uint16_t)) display_data((uint16_t*)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int32_t )) display_data((int32_t *)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(uint32_t)) display_data((uint32_t*)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(int64_t )) display_data((int64_t *)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(uint64_t)) display_data((uint64_t*)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(float   )) display_data((float   *)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
+					else if (s->get_datatype() == typeid(double  )) display_data((double  *)s->get_dataptr(), fra_size, n_fra, n_fra_per_w, limit, max_frame, p, (uint8_t)max_n_chars +12, h);
 					std::cout << "]" << std::endl;
 				}
 			}
@@ -557,12 +565,16 @@ size_t Task
 size_t Task
 ::create_socket_in(const std::string &name, const size_t n_elmts, const std::type_index& datatype)
 {
-	     if (datatype == typeid(int8_t )) return this->template create_socket_in<int8_t >(name, n_elmts);
-	else if (datatype == typeid(int16_t)) return this->template create_socket_in<int16_t>(name, n_elmts);
-	else if (datatype == typeid(int32_t)) return this->template create_socket_in<int32_t>(name, n_elmts);
-	else if (datatype == typeid(int64_t)) return this->template create_socket_in<int64_t>(name, n_elmts);
-	else if (datatype == typeid(float  )) return this->template create_socket_in<float  >(name, n_elmts);
-	else if (datatype == typeid(double )) return this->template create_socket_in<double >(name, n_elmts);
+	     if (datatype == typeid(int8_t  )) return this->template create_socket_in<int8_t  >(name, n_elmts);
+	else if (datatype == typeid(uint8_t )) return this->template create_socket_in<uint8_t >(name, n_elmts);
+	else if (datatype == typeid(int16_t )) return this->template create_socket_in<int16_t >(name, n_elmts);
+	else if (datatype == typeid(uint16_t)) return this->template create_socket_in<uint16_t>(name, n_elmts);
+	else if (datatype == typeid(int32_t )) return this->template create_socket_in<int32_t >(name, n_elmts);
+	else if (datatype == typeid(uint32_t)) return this->template create_socket_in<uint32_t>(name, n_elmts);
+	else if (datatype == typeid(int64_t )) return this->template create_socket_in<int64_t >(name, n_elmts);
+	else if (datatype == typeid(uint64_t)) return this->template create_socket_in<uint64_t>(name, n_elmts);
+	else if (datatype == typeid(float   )) return this->template create_socket_in<float   >(name, n_elmts);
+	else if (datatype == typeid(double  )) return this->template create_socket_in<double  >(name, n_elmts);
 	else
 	{
 		std::stringstream message;
@@ -594,12 +606,16 @@ size_t Task
 ::create_socket_out(const std::string &name, const size_t n_elmts, const std::type_index& datatype,
                     const bool hack_status)
 {
-	     if (datatype == typeid(int8_t )) return this->template create_socket_out<int8_t >(name, n_elmts, hack_status);
-	else if (datatype == typeid(int16_t)) return this->template create_socket_out<int16_t>(name, n_elmts, hack_status);
-	else if (datatype == typeid(int32_t)) return this->template create_socket_out<int32_t>(name, n_elmts, hack_status);
-	else if (datatype == typeid(int64_t)) return this->template create_socket_out<int64_t>(name, n_elmts, hack_status);
-	else if (datatype == typeid(float  )) return this->template create_socket_out<float  >(name, n_elmts, hack_status);
-	else if (datatype == typeid(double )) return this->template create_socket_out<double >(name, n_elmts, hack_status);
+	     if (datatype == typeid(int8_t  )) return this->template create_socket_out<int8_t  >(name, n_elmts, hack_status);
+	else if (datatype == typeid(uint8_t )) return this->template create_socket_out<uint8_t >(name, n_elmts, hack_status);
+	else if (datatype == typeid(int16_t )) return this->template create_socket_out<int16_t >(name, n_elmts, hack_status);
+	else if (datatype == typeid(uint16_t)) return this->template create_socket_out<uint16_t>(name, n_elmts, hack_status);
+	else if (datatype == typeid(int32_t )) return this->template create_socket_out<int32_t >(name, n_elmts, hack_status);
+	else if (datatype == typeid(uint32_t)) return this->template create_socket_out<uint32_t>(name, n_elmts, hack_status);
+	else if (datatype == typeid(int64_t )) return this->template create_socket_out<int64_t >(name, n_elmts, hack_status);
+	else if (datatype == typeid(uint64_t)) return this->template create_socket_out<uint64_t>(name, n_elmts, hack_status);
+	else if (datatype == typeid(float   )) return this->template create_socket_out<float   >(name, n_elmts, hack_status);
+	else if (datatype == typeid(double  )) return this->template create_socket_out<double  >(name, n_elmts, hack_status);
 	else
 	{
 		std::stringstream message;
