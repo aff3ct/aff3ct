@@ -205,12 +205,16 @@ void aff3ct::tools::check_LUT(const std::vector<T> &LUT, const std::string &LUT_
 
 size_t aff3ct::tools::compute_bytes(const size_t n_elmts, const std::type_index type)
 {
-	     if (type == typeid(int8_t )) return n_elmts * sizeof(int8_t );
-	else if (type == typeid(int16_t)) return n_elmts * sizeof(int16_t);
-	else if (type == typeid(int32_t)) return n_elmts * sizeof(int32_t);
-	else if (type == typeid(int64_t)) return n_elmts * sizeof(int64_t);
-	else if (type == typeid(float  )) return n_elmts * sizeof(float  );
-	else if (type == typeid(double )) return n_elmts * sizeof(double );
+	     if (type == typeid(int8_t  )) return n_elmts * sizeof(int8_t  );
+	else if (type == typeid(uint8_t )) return n_elmts * sizeof(uint8_t );
+	else if (type == typeid(int16_t )) return n_elmts * sizeof(int16_t );
+	else if (type == typeid(uint16_t)) return n_elmts * sizeof(uint16_t);
+	else if (type == typeid(int32_t )) return n_elmts * sizeof(int32_t );
+	else if (type == typeid(uint32_t)) return n_elmts * sizeof(uint32_t);
+	else if (type == typeid(int64_t )) return n_elmts * sizeof(int64_t );
+	else if (type == typeid(uint64_t)) return n_elmts * sizeof(uint64_t);
+	else if (type == typeid(float   )) return n_elmts * sizeof(float   );
+	else if (type == typeid(double  )) return n_elmts * sizeof(double  );
 	else
 	{
 		std::stringstream message;
