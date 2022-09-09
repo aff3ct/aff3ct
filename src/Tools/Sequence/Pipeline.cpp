@@ -362,6 +362,7 @@ void Pipeline
 		                                          stage_thread_pinning,
 		                                          stage_puids,
 		                                          stage_tasks_inplace));
+		this->stages[s]->is_part_of_pipeline = true;
 	}
 
 	// verify that the sequential sequence is equivalent to the pipeline sequence
@@ -940,29 +941,42 @@ void Pipeline
 	}
 
 	auto &stages = this->stages;
-	auto stop_threads = [&stages]()
-	{
-		for (auto &stage : stages)
-			for (auto &m : stage->get_modules<tools::Interface_waiting>())
-				m->cancel_waiting();
-	};
-
 	std::vector<std::thread> threads;
 	for (size_t s = 0; s < stages.size() -1; s++)
 	{
-		auto &stage = stages[s];
 		auto &stop_condition = stop_conditions[s];
-		threads.push_back(std::thread([&stage, &stop_condition, &stop_threads]()
+		threads.push_back(std::thread([&stages, s, &stop_condition]()
 		{
-			stage->exec(stop_condition);
-			stop_threads();
+			stages[s]->exec(stop_condition);
+			// send the signal to stop the next stage
+			const auto &tasks = stages[s + 1]->get_tasks_per_threads();
+			for (size_t th = 0; th < tasks.size(); th++)
+				for (size_t ta = 0; ta < tasks[th].size(); ta++)
+				{
+					auto m = dynamic_cast<module::Adaptor*>(&tasks[th][ta]->get_module());
+					if (m != nullptr)
+						if (tasks[th][ta]->get_name() == "pull_n" || tasks[th][ta]->get_name() == "pull_1")
+							m->cancel_waiting();
+				}
 		}));
 	}
 	stages[stages.size() -1]->exec(stop_conditions[stages.size() -1]);
-	stop_threads();
+	// stop all the stages before
+	for (size_t notify_s = 0; notify_s < stages.size() -1; notify_s++)
+		for (auto &m : stages[notify_s]->get_modules<tools::Interface_waiting>())
+			m->cancel_waiting();
 
 	for (auto &t : threads)
 		t.join();
+
+	// this is NOT made in the tools::Sequence::exec() to correctly flush the pipeline before restoring buffers
+	// initial configuration
+	for (auto &stage : this->stages)
+		if (stage->is_no_copy_mode())
+		{
+			stage->reset_no_copy_mode();
+			stage->gen_processes(false);
+		}
 
 	for (auto &padps : this->adaptors)
 	{
@@ -992,29 +1006,42 @@ void Pipeline
 	}
 
 	auto &stages = this->stages;
-	auto stop_threads = [&stages]()
-	{
-		for (auto &stage : stages)
-			for (auto &m : stage->get_modules<tools::Interface_waiting>())
-				m->cancel_waiting();
-	};
-
 	std::vector<std::thread> threads;
 	for (size_t s = 0; s < stages.size() -1; s++)
 	{
-		auto &stage = stages[s];
 		auto &stop_condition = stop_conditions[s];
-		threads.push_back(std::thread([&stage, &stop_condition, &stop_threads]()
+		threads.push_back(std::thread([&stages, s, &stop_condition]()
 		{
-			stage->exec(stop_condition);
-			stop_threads();
+			stages[s]->exec(stop_condition);
+			// send the signal to stop the next stage
+			const auto &tasks = stages[s + 1]->get_tasks_per_threads();
+			for (size_t th = 0; th < tasks.size(); th++)
+				for (size_t ta = 0; ta < tasks[th].size(); ta++)
+				{
+					auto m = dynamic_cast<module::Adaptor*>(&tasks[th][ta]->get_module());
+					if (m != nullptr)
+						if (tasks[th][ta]->get_name() == "pull_n" || tasks[th][ta]->get_name() == "pull_1")
+							m->cancel_waiting();
+				}
 		}));
 	}
 	stages[stages.size() -1]->exec(stop_conditions[stages.size() -1]);
-	stop_threads();
+	// stop all the stages before
+	for (size_t notify_s = 0; notify_s < stages.size() -1; notify_s++)
+		for (auto &m : stages[notify_s]->get_modules<tools::Interface_waiting>())
+			m->cancel_waiting();
 
 	for (auto &t : threads)
 		t.join();
+
+	// this is NOT made in the tools::Sequence::exec() to correctly flush the pipeline before restoring buffers
+	// initial configuration
+	for (auto &stage : this->stages)
+		if (stage->is_no_copy_mode())
+		{
+			stage->reset_no_copy_mode();
+			stage->gen_processes(false);
+		}
 
 	for (auto &padps : this->adaptors)
 	{

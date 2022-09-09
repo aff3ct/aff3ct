@@ -90,7 +90,7 @@ void Adaptor_n_to_1
 		}
 	}
 
-	if (*this->waiting_canceled)
+	if (this->is_empty(this->cur_id) && *this->waiting_canceled)
 		throw tools::waiting_canceled(__FILE__, __LINE__, __func__);
 }
 

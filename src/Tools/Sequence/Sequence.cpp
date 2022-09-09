@@ -42,6 +42,7 @@ Sequence
   saved_exclusions(exclusions),
   switchers_reset(n_threads),
   auto_stop(true),
+  is_part_of_pipeline(false),
   next_round_is_over(n_threads, false),
   cur_task_id(n_threads,0),
   cur_ss(n_threads, nullptr)
@@ -130,6 +131,7 @@ Sequence
   saved_exclusions(exclusions_convert_to_const(exclusions)),
   switchers_reset(n_threads),
   auto_stop(true),
+  is_part_of_pipeline(false),
   next_round_is_over(n_threads, false),
   cur_task_id(n_threads,0),
   cur_ss(n_threads, nullptr)
@@ -646,7 +648,7 @@ void Sequence
 	for (size_t tid = 1; tid < n_threads; tid++)
 		threads[tid].join();
 
-	if (this->is_no_copy_mode())
+	if (this->is_no_copy_mode() && !this->is_part_of_pipeline)
 	{
 		this->reset_no_copy_mode();
 		this->gen_processes(false);
@@ -687,7 +689,7 @@ void Sequence
 	for (size_t tid = 1; tid < n_threads; tid++)
 		threads[tid].join();
 
-	if (this->is_no_copy_mode())
+	if (this->is_no_copy_mode() && !this->is_part_of_pipeline)
 	{
 		this->reset_no_copy_mode();
 		this->gen_processes(false);

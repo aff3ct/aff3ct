@@ -79,6 +79,7 @@ protected:
 	std::vector<tools::Interface_is_done*> donners;
 	std::vector<std::vector<tools::Interface_reset*>> switchers_reset;
 	bool auto_stop;
+	bool is_part_of_pipeline;
 
 	// internal state for the `exec_step` method
 	std::vector<bool> next_round_is_over;
