@@ -51,7 +51,7 @@ void Sink_user_binary<B>
 
 template <typename B>
 void Sink_user_binary<B>
-::_send(const B *V, const size_t frame_id)
+::_send_k(const B *V, const uint32_t *real_K, const size_t frame_id)
 {
 	size_t n_completing  = (CHAR_BIT - this->n_left) % CHAR_BIT; // number of bits that are needed to complete one byte
 	char reconstructed_byte;                                     // to store reconstructed byte (n_left & n_completing)
@@ -72,14 +72,14 @@ void Sink_user_binary<B>
 		sink_file.write(&reconstructed_byte, 1);
 	}
 
-	size_t main_chunk_size = (this->K - n_completing) / CHAR_BIT; // in byte
-	this->n_left           = (this->K - n_completing) % CHAR_BIT;
+	size_t main_chunk_size = (*real_K - n_completing) / CHAR_BIT; // in byte
+	this->n_left           = (*real_K - n_completing) % CHAR_BIT;
 
 	tools::Bit_packer::pack(V + n_completing, this->chunk.data(), main_chunk_size * CHAR_BIT);
 	sink_file.write(this->chunk.data(), main_chunk_size);
 	sink_file.flush();
 	this->n_left = 0;
-	for (size_t i = n_completing + main_chunk_size * CHAR_BIT; i < (size_t)this->K; i++)
+	for (size_t i = n_completing + main_chunk_size * CHAR_BIT; i < (size_t)*real_K; i++)
 		this->reconstructed_buffer[this->n_left++] = V[i];
 }
 

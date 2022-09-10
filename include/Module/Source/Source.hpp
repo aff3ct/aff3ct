@@ -26,7 +26,7 @@ namespace module
 
 		namespace sck
 		{
-			enum class generate : size_t { U_K, status };
+			enum class generate : size_t { U_K, real_K, status };
 		}
 	}
 
@@ -78,6 +78,12 @@ public:
 
 	void generate(B *U_K, const int frame_id = -1, const bool managed_memory = true);
 
+	template <class A = std::allocator<B>>
+	void generate(std::vector<B,A>& U_K, std::vector<uint32_t>& real_K, const int frame_id = -1,
+	              const bool managed_memory = true);
+
+	void generate(B *U_K, uint32_t *real_K, const int frame_id = -1, const bool managed_memory = true);
+
 	virtual void set_seed(const int seed);
 
 	virtual bool is_done() const;
@@ -86,6 +92,7 @@ public:
 
 protected:
 	virtual void _generate(B *U_K, const size_t frame_id);
+	virtual void _generate(B *U_K, uint32_t *real_K, const size_t frame_id);
 };
 }
 }

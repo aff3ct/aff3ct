@@ -53,7 +53,7 @@ bool Source_user_binary<B>
 
 template <typename B>
 void Source_user_binary<B>
-::_generate(B *U_K, const size_t frame_id)
+::_generate(B *U_K, uint32_t* real_K, const size_t frame_id)
 {
 	if (this->is_done())
 		std::fill(U_K, U_K + this->K, (B)0);
@@ -86,17 +86,24 @@ void Source_user_binary<B>
 
 		if (this->n_left + n_bytes_read * CHAR_BIT <= (size_t)this->K)
 		{
+			*real_K = this->n_left + n_bytes_read * CHAR_BIT;
+
+			if (!this->auto_reset && source_file.eof()) {
+				this->done = true;
+				if (this->n_left + n_bytes_read * CHAR_BIT == 0)
+					throw tools::processing_aborted(__FILE__, __LINE__, __func__);
+			}
+
 			tools::Bit_packer::unpack(this->memblk.data(), U_K + this->n_left, n_bytes_read * CHAR_BIT);
 			std::fill(U_K + this->n_left + n_bytes_read * CHAR_BIT, U_K + this->K, (B)0);
 
 			int tmp_n_left = ((int)n_bytes_read * (int)CHAR_BIT) - (this->K - (int)this->n_left);
 			this->n_left = tmp_n_left < 0 ? (size_t)0 : (size_t)tmp_n_left;
-
-			if (!this->auto_reset && source_file.eof())
-				this->done = true;
 		}
 		else
 		{
+			*real_K = this->K;
+
 			tools::Bit_packer::unpack(this->memblk.data(), U_K + this->n_left, this->K - this->n_left);
 
 			int tmp_n_left = ((int)n_bytes_read * (int)CHAR_BIT) - (this->K - (int)this->n_left);

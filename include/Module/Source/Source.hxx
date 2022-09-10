@@ -41,11 +41,13 @@ Source<B>
 
 	auto &p = this->create_task("generate");
 	auto ps_U_K = this->template create_socket_out<B>(p, "U_K", this->K);
-	this->create_codelet(p, [ps_U_K](Module &m, Task &t, const size_t frame_id) -> int
+	auto ps_real_K = this->template create_socket_out<uint32_t>(p, "real_K", 1);
+	this->create_codelet(p, [ps_U_K, ps_real_K](Module &m, Task &t, const size_t frame_id) -> int
 	{
 		auto &src = static_cast<Source<B>&>(m);
 
 		src._generate(static_cast<B*>(t[ps_U_K].get_dataptr()),
+			          static_cast<uint32_t*>(t[ps_real_K].get_dataptr()),
 		              frame_id);
 
 		return status_t::SUCCESS;
@@ -82,11 +84,39 @@ void Source<B>
 	(*this)[src::sck::generate::U_K].bind(U_K);
 	(*this)[src::tsk::generate].exec(frame_id, managed_memory);
 }
+
+template <typename B>
+template <class A>
+void Source<B>
+::generate(std::vector<B,A>& U_K, std::vector<uint32_t>& real_K, const int frame_id, const bool managed_memory)
+{
+	(*this)[src::sck::generate::U_K].bind(U_K);
+	(*this)[src::sck::generate::real_K].bind(real_K);
+	(*this)[src::tsk::generate].exec(frame_id, managed_memory);
+}
+
+template <typename B>
+void Source<B>
+::generate(B *U_K, uint32_t* real_K, const int frame_id, const bool managed_memory)
+{
+	(*this)[src::sck::generate::U_K].bind(U_K);
+	(*this)[src::sck::generate::real_K].bind(real_K);
+	(*this)[src::tsk::generate].exec(frame_id, managed_memory);
+}
+
 template <typename B>
 void Source<B>
 ::_generate(B *U_K, const size_t frame_id)
 {
 	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B>
+void Source<B>
+::_generate(B *U_K, uint32_t *real_K, const size_t frame_id)
+{
+	this->_generate(U_K, frame_id);
+	*real_K = this->K;
 }
 
 template <typename B>
