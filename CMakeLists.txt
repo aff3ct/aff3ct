@@ -674,8 +674,8 @@ set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
 set(CPACK_COMPONENTS_GROUPING "ALL_COMPONENTS_IN_ONE")
 set(CPACK_PACKAGE_NAME "aff3ct")
 set(CPACK_SOURCE_PACKAGE_NAME "aff3ct")
-set(CPACK_PACKAGE_DESCRIPTION "AFF3CT - A Fast Forward Error Correction Toolbox!")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "AFF3CT - A Fast Forward Error Correction Toolbox!
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "AFF3CT - A Fast Forward Error Correction Toolbox!")
+set(CPACK_PACKAGE_DESCRIPTION "AFF3CT - A Fast Forward Error Correction Toolbox!
     AFF3CT is an open source software dedicated to Forward Error Correction (FEC or
     channel coding) simulations. It is written in C++ and it supports a broad range
     of codes: from the well-spread turbo codes and Low-Density Parity-Check (LDPC)
