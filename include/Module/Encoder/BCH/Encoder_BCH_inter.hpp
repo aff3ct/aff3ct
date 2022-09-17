@@ -6,6 +6,7 @@
 #define ENCODER_BCH_INTER_HPP_
 
 #include <vector>
+#include <mipp.h>
 
 #include "Tools/Code/BCH/BCH_polynomial_generator.hpp"
 #include "Module/Encoder/BCH/Encoder_BCH.hpp"

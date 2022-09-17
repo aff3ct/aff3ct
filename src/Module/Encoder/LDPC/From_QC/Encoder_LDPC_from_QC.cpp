@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <sstream>
 #include <algorithm>
+#include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
 #include "Module/Encoder/LDPC/From_QC/Encoder_LDPC_from_QC.hpp"

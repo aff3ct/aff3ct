@@ -8,10 +8,10 @@
 #include <string>
 #include <ios>
 
-#include "Tools/Display/Reporter/MI/Reporter_MI.hpp"
-#include "Tools/Display/Reporter/BFER/Reporter_BFER.hpp"
-#include "Tools/Display/Reporter/Noise/Reporter_noise.hpp"
-#include "Tools/Display/Reporter/Throughput/Reporter_throughput.hpp"
+#include "Tools/Reporter/MI/Reporter_MI.hpp"
+#include "Tools/Reporter/BFER/Reporter_BFER.hpp"
+#include "Tools/Reporter/Noise/Reporter_noise.hpp"
+#include "Tools/Reporter/Throughput/Reporter_throughput.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Display/Statistics/Statistics.hpp"
 #include "Tools/Exception/exception.hpp"

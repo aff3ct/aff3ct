@@ -11,7 +11,7 @@
 #include <memory>
 #include <rang.hpp>
 
-#include "Tools/Display/Reporter/Reporter.hpp"
+#include "Tools/Reporter/Reporter.hpp"
 #include "Tools/Display/Terminal/Terminal.hpp"
 
 namespace aff3ct

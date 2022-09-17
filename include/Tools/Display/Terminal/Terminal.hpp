@@ -11,7 +11,7 @@
 #include <mutex>
 #include <thread>
 
-#include "Tools/Display/Reporter/Reporter.hpp"
+#include "Tools/Reporter/Reporter.hpp"
 
 namespace aff3ct
 {

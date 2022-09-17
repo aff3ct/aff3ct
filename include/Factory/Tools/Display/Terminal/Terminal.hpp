@@ -12,7 +12,7 @@
 
 #include "Tools/Factory/Header.hpp"
 #include "Tools/Display/Terminal/Terminal.hpp"
-#include "Tools/Display/Reporter/Reporter.hpp"
+#include "Tools/Reporter/Reporter.hpp"
 #include "Factory/Factory.hpp"
 
 namespace aff3ct

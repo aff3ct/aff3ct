@@ -3,6 +3,7 @@
 #include <string>
 #include <limits>
 #include <cmath>
+#include <mipp.h>
 
 #include "Tools/general_utils.h"
 #include "Tools/Perf/common/hard_decide.h"

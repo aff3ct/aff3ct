@@ -3,7 +3,7 @@
 #include <limits>
 
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Algo/Bit_packer.hpp"
+#include "Tools/Algo/Bit_packer/Bit_packer.hpp"
 #include "Tools/Perf/common/hard_decide.h"
 #include "Module/Decoder/Generic/ML/Decoder_maximum_likelihood_naive.hpp"
 

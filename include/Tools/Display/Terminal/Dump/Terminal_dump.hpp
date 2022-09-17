@@ -8,7 +8,7 @@
 #include <iostream>
 #include <vector>
 
-#include "Tools/Display/Reporter/Reporter.hpp"
+#include "Tools/Reporter/Reporter.hpp"
 #include "Tools/Display/Terminal/Standard/Terminal_std.hpp"
 
 namespace aff3ct

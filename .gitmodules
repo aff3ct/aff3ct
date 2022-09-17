@@ -7,12 +7,12 @@
 [submodule "refs"]
 	path = refs
 	url = ../error_rate_references
-[submodule "lib/rang"]
-	path = lib/rang
-	url = https://github.com/agauniyal/rang.git
 [submodule "lib/date"]
 	path = lib/date
 	url = https://github.com/HowardHinnant/date.git
 [submodule "lib/cli"]
 	path = lib/cli
 	url = ../cli
+[submodule "lib/aff3ct-core"]
+	path = lib/aff3ct-core
+	url = ../aff3ct-core/

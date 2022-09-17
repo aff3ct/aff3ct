@@ -19,6 +19,9 @@ echo ""                                                                         
 echo "#ifndef AFF3CT_HPP"                                                       >> $AFF3CT_HEADER
 echo "#define AFF3CT_HPP"                                                       >> $AFF3CT_HEADER
 echo ""                                                                         >> $AFF3CT_HEADER
+echo "#ifndef AFF3CT_CORE_HPP"                                                  >> $AFF3CT_HEADER
+echo "#include <aff3ct_core.hpp>"                                               >> $AFF3CT_HEADER
+echo "#endif"                                                                   >> $AFF3CT_HEADER
 
 headersh=$(find .\/include\/ -type f -follow -print | # find all source files
            grep "[.]h$" |                             # take all .h files

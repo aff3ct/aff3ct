@@ -10,7 +10,7 @@
 #include "Tools/Sequence/Sequence.hpp"
 #include "Tools/Constellation/Constellation.hpp"
 #include "Tools/Math/Distribution/Distributions.hpp"
-#include "Tools/Display/Reporter/Reporter.hpp"
+#include "Tools/Reporter/Reporter.hpp"
 #include "Tools/Display/Terminal/Terminal.hpp"
 #include "Tools/Display/Dumper/Dumper.hpp"
 #include "Tools/Display/Dumper/Dumper_reduction.hpp"

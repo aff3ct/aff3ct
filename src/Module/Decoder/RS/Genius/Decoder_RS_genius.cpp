@@ -6,7 +6,7 @@
 #include "Tools/Perf/distance/distance.h"
 #include "Tools/Perf/distance/Bitwise_diff.h"
 #include "Tools/Exception/exception.hpp"
-#include "Tools/Algo/Bit_packer.hpp"
+#include "Tools/Algo/Bit_packer/Bit_packer.hpp"
 #include "Module/Decoder/RS/Genius/Decoder_RS_genius.hpp"
 
 using namespace aff3ct;

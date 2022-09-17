@@ -179,6 +179,19 @@ assign_source_group(${source_files})
 # --------------------------------------------------------------------------------------------------------- SUB-PROJECT
 # ---------------------------------------------------------------------------------------------------------------------
 
+# aff3ct-core
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/aff3ct-core/include/aff3ct_core.hpp")
+    option(AFF3CT_CORE_COMPILE_STATIC_LIB "" OFF)
+    option(AFF3CT_CORE_COMPILE_SHARED_LIB "" OFF)
+    option(AFF3CT_CORE_LINK_HWLOC "" ${AFF3CT_LINK_HWLOC})
+    option(AFF3CT_CORE_COLORS "" ${AFF3CT_COLORS})
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/aff3ct-core/ EXCLUDE_FROM_ALL)
+    message(STATUS "AFF3CT - Sub-project found: aff3ct-core")
+else()
+    message(FATAL_ERROR "AFF3CT - aff3ct-core can't be found, try to init the submodule with the following cmd:\n"
+                        "$ git submodule update --init --recursive")
+endif()
+
 # cli
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/cli/src/cli.hpp")
     option(CLI_COMPILE_STATIC_LIB "" OFF)
@@ -209,7 +222,7 @@ endif()
 
 # Binary
 if(AFF3CT_COMPILE_EXE)
-    add_executable(aff3ct-bin $<TARGET_OBJECTS:aff3ct-obj> $<TARGET_OBJECTS:cli-obj>)
+    add_executable(aff3ct-bin $<TARGET_OBJECTS:aff3ct-obj> $<TARGET_OBJECTS:aff3ct-core-obj> $<TARGET_OBJECTS:cli-obj>)
     set_target_properties(aff3ct-bin PROPERTIES
                                      OUTPUT_NAME aff3ct-${AFF3CT_VERSION_FULL}
                                      POSITION_INDEPENDENT_CODE ON) # set -fpie
@@ -218,14 +231,14 @@ endif(AFF3CT_COMPILE_EXE)
 
 # Library
 if(AFF3CT_COMPILE_SHARED_LIB)
-    add_library(aff3ct-shared-lib SHARED $<TARGET_OBJECTS:aff3ct-obj> $<TARGET_OBJECTS:cli-obj>)
+    add_library(aff3ct-shared-lib SHARED $<TARGET_OBJECTS:aff3ct-obj> $<TARGET_OBJECTS:aff3ct-core-obj> $<TARGET_OBJECTS:cli-obj>)
     set_target_properties(aff3ct-shared-lib PROPERTIES
                                             OUTPUT_NAME aff3ct-${AFF3CT_VERSION_FULL}
                                             POSITION_INDEPENDENT_CODE ON) # set -fpic
     message(STATUS "AFF3CT - Compile: shared library")
 endif(AFF3CT_COMPILE_SHARED_LIB)
 if(AFF3CT_COMPILE_STATIC_LIB)
-    add_library(aff3ct-static-lib STATIC $<TARGET_OBJECTS:aff3ct-obj> $<TARGET_OBJECTS:cli-obj>)
+    add_library(aff3ct-static-lib STATIC $<TARGET_OBJECTS:aff3ct-obj> $<TARGET_OBJECTS:aff3ct-core-obj> $<TARGET_OBJECTS:cli-obj>)
     set_target_properties(aff3ct-static-lib PROPERTIES
                                             OUTPUT_NAME aff3ct-${AFF3CT_VERSION_FULL}
                                             POSITION_INDEPENDENT_CODE ON) # set -fpic
@@ -365,6 +378,11 @@ endmacro()
 aff3ct_target_include_directories(PRIVATE "src"     "aff3ct")
 aff3ct_target_include_directories(PUBLIC  "include" "aff3ct")
 
+# AFF3CT-core headers
+aff3ct_target_include_directories(PUBLIC  "lib/aff3ct-core/include"          "aff3ct")
+aff3ct_target_include_directories(PRIVATE "lib/aff3ct-core/src"              "aff3ct")
+aff3ct_target_include_directories(PUBLIC  "lib/aff3ct-core/lib/rang/include" "rang"  )
+
 # cli headers
 aff3ct_target_include_directories(PUBLIC "lib/cli/src" "cli")
 
@@ -381,15 +399,6 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/MIPP/src/mipp.h")
 else()
     message(FATAL_ERROR "AFF3CT - MIPP can't be found, try to init the submodule with the following cmd:\n"
                         "$ git submodule update --init -- ../lib/MIPP/")
-endif()
-
-# rang
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/rang/include/rang.hpp")
-    aff3ct_target_include_directories(PUBLIC "lib/rang/include" "rang")
-    message(STATUS "AFF3CT - Header found: rang")
-else()
-    message(FATAL_ERROR "AFF3CT - rang can't be found, try to init the submodule with the following cmd:\n"
-                        "$ git submodule update --init -- ../lib/rang/")
 endif()
 
 # date
@@ -575,6 +584,19 @@ if (AFF3CT_COMPILE_SHARED_LIB OR AFF3CT_COMPILE_STATIC_LIB)
             COMPONENT headers
             FILES_MATCHING PATTERN "*.hxx")
 
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/aff3ct-core/include/"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct
+            COMPONENT headers
+            FILES_MATCHING PATTERN "*.h")
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/aff3ct-core/include/"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct
+            COMPONENT headers
+            FILES_MATCHING PATTERN "*.hpp")
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/aff3ct-core/include/"
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct
+            COMPONENT headers
+            FILES_MATCHING PATTERN "*.hxx")
+
     install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/date/include/date/"
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/date
             COMPONENT headers
@@ -587,7 +609,7 @@ if (AFF3CT_COMPILE_SHARED_LIB OR AFF3CT_COMPILE_STATIC_LIB)
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/MIPP
             COMPONENT headers
             FILES_MATCHING PATTERN "*.hxx")
-    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/rang/include/"
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/aff3ct-core/lib/rang/include/"
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/rang
             COMPONENT headers
             FILES_MATCHING PATTERN "*.hpp")

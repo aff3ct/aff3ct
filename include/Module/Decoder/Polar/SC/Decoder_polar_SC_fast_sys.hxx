@@ -7,7 +7,7 @@
 #include <algorithm>
 
 #include "Tools/Math/utils.h"
-#include "Tools/Algo/Bit_packer.hpp"
+#include "Tools/Algo/Bit_packer/Bit_packer.hpp"
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Perf/Reorderer/Reorderer.hpp"
 #include "Tools/Perf/Transpose/transpose_selector.h"

@@ -1,3 +1,4 @@
+#include <cmath>
 #include <string>
 
 #include "Tools/Noise/Noise.hpp"
@@ -34,7 +35,7 @@ void Modem_OOK_BSC<B,R,Q>
 		auto proba = *CP;
 		if (proba == (R)0.)
 			proba = (R)1e-10;
-		this->log_pe_1_pe = (Q)log(proba / (1 - proba));
+		this->log_pe_1_pe = (Q)std::log(proba / (1 - proba));
 	}
 
 	auto log_pe_1_pe_2 = (Q)2 * this->log_pe_1_pe;
