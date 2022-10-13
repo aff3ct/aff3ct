@@ -23,7 +23,6 @@ option(AFF3CT_LINK_MKL           "Link with the MKL library (used in the channel
 option(AFF3CT_MPI                "Enable the MPI support"                                                   OFF)
 option(AFF3CT_POLAR_BIT_PACKING  "Enable the bit packing technique for Polar code SC decoding"              ON )
 option(AFF3CT_POLAR_BOUNDS       "Enable the use of the external Tal & Vardy Polar best channels generator" OFF)
-option(AFF3CT_COLORS             "Enable the colors in the terminal"                                        ON )
 option(AFF3CT_OVERRIDE_VERSION   "Compile without .git directory, provided a version and hash"              OFF)
 
 if (AFF3CT_COMPILE_EXE OR AFF3CT_COMPILE_STATIC_LIB OR AFF3CT_COMPILE_SHARED_LIB)
@@ -176,7 +175,6 @@ assign_source_group(${source_files})
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/aff3ct-core/include/aff3ct_core.hpp")
     option(AFF3CT_CORE_COMPILE_STATIC_LIB "" OFF)
     option(AFF3CT_CORE_COMPILE_SHARED_LIB "" OFF)
-    option(AFF3CT_CORE_COLORS "" ${AFF3CT_COLORS})
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/aff3ct-core/ EXCLUDE_FROM_ALL)
     message(STATUS "AFF3CT - Sub-project found: aff3ct-core")
 else()
@@ -266,11 +264,6 @@ if(WIN32) # for Windows operating system in general
     set(WINDOWS_VISTA 0x0600)
     aff3ct_target_compile_definitions(PUBLIC _WIN32_WINNT=${WINDOWS_VISTA})
     aff3ct_target_compile_definitions(PUBLIC NOMINMAX)
-    message(STATUS "AFF3CT - System: Windows")
-elseif(APPLE) # for macOS
-    message(STATUS "AFF3CT - System: macOS")
-elseif(UNIX AND NOT APPLE) # for Linux, BSD, Solaris, Minix
-    message(STATUS "AFF3CT - System: Unix/Linux")
 endif()
 
 # common
@@ -285,12 +278,6 @@ if(AFF3CT_POLAR_BOUNDS)
     message(STATUS "AFF3CT - Polar bounds: on")
 else()
     message(STATUS "AFF3CT - Polar bounds: off")
-endif()
-if(AFF3CT_COLORS)
-    aff3ct_target_compile_definitions(PUBLIC AFF3CT_COLORS)
-    message(STATUS "AFF3CT - Terminal colors: on")
-else()
-    message(STATUS "AFF3CT - Terminal colors: off")
 endif()
 if(AFF3CT_EXT_STRINGS)
     aff3ct_target_compile_definitions(PUBLIC AFF3CT_EXT_STRINGS)
@@ -316,6 +303,13 @@ elseif(AFF3CT_PREC STREQUAL "MULTI")
     message(STATUS "AFF3CT - Precision: 8/16/32/64-bit")
 else()
     message(FATAL_ERROR "AFF3CT_PREC='${AFF3CT_PREC}' and should be '8', '16', '32', '64' or 'MULTI'.")
+endif()
+
+if(AFF3CT_CORE_COLORS)
+    aff3ct_target_compile_definitions(PUBLIC AFF3CT_CORE_COLORS)
+endif()
+if(AFF3CT_CORE_BACKTRACE)
+    aff3ct_target_compile_definitions(PUBLIC AFF3CT_CORE_BACKTRACE)
 endif()
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -438,6 +432,8 @@ endif(AFF3CT_LINK_MKL)
 
 # hwloc
 if(AFF3CT_CORE_LINK_HWLOC)
+    aff3ct_target_compile_definitions(PUBLIC "AFF3CT_CORE_HWLOC")
+
     find_package(Hwloc REQUIRED QUIET)
     if(Hwloc_FOUND)
         aff3ct_target_include_directories2(PUBLIC "${Hwloc_INCLUDE_DIRS}")

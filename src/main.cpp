@@ -90,7 +90,7 @@ void print_version()
 	std::string polar_bounds = "off";
 #endif
 
-#if defined(AFF3CT_COLORS)
+#if defined(AFF3CT_CORE_COLORS)
 	std::string terminal_colors = "on";
 #else
 	std::string terminal_colors = "off";

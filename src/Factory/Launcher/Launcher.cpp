@@ -104,7 +104,7 @@ void Launcher
 
 	args.add_link({"no-legend"}, {"full-legend"});
 
-#ifdef AFF3CT_COLORS
+#ifdef AFF3CT_CORE_COLORS
 	tools::add_arg(args, p, class_name+"no-colors",
 		cli::None());
 #endif
@@ -145,7 +145,7 @@ void Launcher
 	tools::exception::no_backtrace    =  vals.exist({"except-no-bt"});
 	tools::exception::no_addr_to_line = !vals.exist({"except-a2l"  });
 
-#ifdef AFF3CT_COLORS
+#ifdef AFF3CT_CORE_COLORS
 	if (vals.exist({"no-colors"}))
 	{
 		rang::setControlMode(rang::control::Off);
