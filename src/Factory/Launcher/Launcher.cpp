@@ -82,7 +82,7 @@ void Launcher
 	tools::add_arg(args, p, class_name+"version,v",
 		cli::None());
 
-#ifdef AFF3CT_BACKTRACE
+#ifdef AFF3CT_CORE_BACKTRACE
 	tools::add_arg(args, p, class_name+"except-no-bt",
 		cli::None(),
 		cli::arg_rank::ADV);
