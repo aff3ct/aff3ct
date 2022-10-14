@@ -11,8 +11,8 @@
 #include <vector>
 
 #include "Tools/Interleaver/Interleaver_core.hpp"
-#include "Module/Task.hpp"
-#include "Module/Socket.hpp"
+#include "Runtime/Task/Task.hpp"
+#include "Runtime/Socket/Socket.hpp"
 #include "Module/Module.hpp"
 
 namespace aff3ct
@@ -36,11 +36,11 @@ template <typename D = int32_t, typename T = uint32_t>
 class Interleaver : public Module
 {
 public:
-	inline Task&   operator[](const itl::tsk                          t);
-	inline Socket& operator[](const itl::sck::interleave              s);
-	inline Socket& operator[](const itl::sck::interleave_reordering   s);
-	inline Socket& operator[](const itl::sck::deinterleave            s);
-	inline Socket& operator[](const itl::sck::deinterleave_reordering s);
+	inline runtime::Task&   operator[](const itl::tsk                          t);
+	inline runtime::Socket& operator[](const itl::sck::interleave              s);
+	inline runtime::Socket& operator[](const itl::sck::interleave_reordering   s);
+	inline runtime::Socket& operator[](const itl::sck::deinterleave            s);
+	inline runtime::Socket& operator[](const itl::sck::deinterleave_reordering s);
 
 protected:
 	const tools::Interleaver_core<T> &core;

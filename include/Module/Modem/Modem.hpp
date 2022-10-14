@@ -11,8 +11,8 @@
 #include <vector>
 
 #include "Tools/Noise/Noise.hpp"
-#include "Module/Task.hpp"
-#include "Module/Socket.hpp"
+#include "Runtime/Task/Task.hpp"
+#include "Runtime/Socket/Socket.hpp"
 #include "Module/Module.hpp"
 
 namespace aff3ct
@@ -50,14 +50,14 @@ template <typename B = int, typename R = float, typename Q = R>
 class Modem : public Module
 {
 public:
-	inline Task&   operator[](const mdm::tsk                 t);
-	inline Socket& operator[](const mdm::sck::modulate       s);
-	inline Socket& operator[](const mdm::sck::tmodulate      s);
-	inline Socket& operator[](const mdm::sck::filter         s);
-	inline Socket& operator[](const mdm::sck::demodulate     s);
-	inline Socket& operator[](const mdm::sck::tdemodulate    s);
-	inline Socket& operator[](const mdm::sck::demodulate_wg  s);
-	inline Socket& operator[](const mdm::sck::tdemodulate_wg s);
+	inline runtime::Task&   operator[](const mdm::tsk                 t);
+	inline runtime::Socket& operator[](const mdm::sck::modulate       s);
+	inline runtime::Socket& operator[](const mdm::sck::tmodulate      s);
+	inline runtime::Socket& operator[](const mdm::sck::filter         s);
+	inline runtime::Socket& operator[](const mdm::sck::demodulate     s);
+	inline runtime::Socket& operator[](const mdm::sck::tdemodulate    s);
+	inline runtime::Socket& operator[](const mdm::sck::demodulate_wg  s);
+	inline runtime::Socket& operator[](const mdm::sck::tdemodulate_wg s);
 
 protected:
 	const int N;     /*!< Size of one frame (= number of bits in one frame) */

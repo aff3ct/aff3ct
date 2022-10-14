@@ -5,7 +5,7 @@
 #include <random>
 #include <string>
 
-#include "Tools/Sequence/Sequence.hpp"
+#include "Runtime/Sequence/Sequence.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Interface/Interface_set_seed.hpp"
 #include "Tools/Interface/Interface_get_set_noise.hpp"
@@ -544,31 +544,31 @@ void Simulation_BFER_std<B,R,Q>
 	const auto is_optical = this->params_BFER_std.chn->type == "OPTICAL" && this->params_BFER_std.mdm->rop_est_bits > 0;
 	const auto t = this->params_BFER.n_threads;
 	if (this->params_BFER_std.src->type != "AZCW")
-		this->sequence.reset(new tools::Sequence((*this->source)[module::src::tsk::generate], t));
+		this->sequence.reset(new runtime::Sequence((*this->source)[module::src::tsk::generate], t));
 	else if (this->params_BFER_std.chn->type != "NO")
 	{
 		if (is_rayleigh)
-			this->sequence.reset(new tools::Sequence((*this->channel)[module::chn::tsk::add_noise_wg], t));
+			this->sequence.reset(new runtime::Sequence((*this->channel)[module::chn::tsk::add_noise_wg], t));
 		else
-			this->sequence.reset(new tools::Sequence((*this->channel)[module::chn::tsk::add_noise], t));
+			this->sequence.reset(new runtime::Sequence((*this->channel)[module::chn::tsk::add_noise], t));
 	}
 	else if (this->modem->is_demodulator())
 	{
 		if (is_rayleigh || is_optical)
-			this->sequence.reset(new tools::Sequence((*this->modem)[module::mdm::tsk::demodulate_wg], t));
+			this->sequence.reset(new runtime::Sequence((*this->modem)[module::mdm::tsk::demodulate_wg], t));
 		else
-			this->sequence.reset(new tools::Sequence((*this->modem)[module::mdm::tsk::demodulate], t));
+			this->sequence.reset(new runtime::Sequence((*this->modem)[module::mdm::tsk::demodulate], t));
 	}
 	else if (this->modem->is_filter())
-		this->sequence.reset(new tools::Sequence((*this->modem)[module::mdm::tsk::filter], t));
+		this->sequence.reset(new runtime::Sequence((*this->modem)[module::mdm::tsk::filter], t));
 	else if (this->params_BFER_std.qnt->type != "NO")
-		this->sequence.reset(new tools::Sequence((*this->quantizer)[module::qnt::tsk::process], t));
+		this->sequence.reset(new runtime::Sequence((*this->quantizer)[module::qnt::tsk::process], t));
 	else if (this->params_BFER_std.cdc->pct != nullptr && this->params_BFER_std.cdc->pct->type != "NO")
-		this->sequence.reset(new tools::Sequence(this->codec->get_puncturer()[module::pct::tsk::puncture], t));
+		this->sequence.reset(new runtime::Sequence(this->codec->get_puncturer()[module::pct::tsk::puncture], t));
 	else if (this->params_BFER_std.coset)
-		this->sequence.reset(new tools::Sequence((*this->coset_real)[module::cst::tsk::apply], t));
+		this->sequence.reset(new runtime::Sequence((*this->coset_real)[module::cst::tsk::apply], t));
 	else
-		this->sequence.reset(new tools::Sequence(this->codec->get_decoder_siho()[module::dec::tsk::decode_siho], t));
+		this->sequence.reset(new runtime::Sequence(this->codec->get_decoder_siho()[module::dec::tsk::decode_siho], t));
 
 	// set the noise
 	this->codec->set_noise(*this->noise);

@@ -29,7 +29,7 @@ Monitor_MI<B,R>
 	auto &p = this->create_task("get_mutual_info", (int)mnt::tsk::get_mutual_info);
 	auto ps_X = this->template create_socket_in<B>(p, "X", get_N());
 	auto ps_Y = this->template create_socket_in<R>(p, "Y", get_N());
-	this->create_codelet(p, [ps_X, ps_Y](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p, [ps_X, ps_Y](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &mnt = static_cast<Monitor_MI<B,R>&>(m);
 

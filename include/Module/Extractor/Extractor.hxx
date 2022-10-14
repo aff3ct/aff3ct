@@ -10,35 +10,35 @@ namespace module
 {
 
 template <typename B, typename Q>
-Task& Extractor<B,Q>
+runtime::Task& Extractor<B,Q>
 ::operator[](const ext::tsk t)
 {
 	return Module::operator[]((size_t)t);
 }
 
 template <typename B, typename Q>
-Socket& Extractor<B,Q>
+runtime::Socket& Extractor<B,Q>
 ::operator[](const ext::sck::get_sys_llr s)
 {
 	return Module::operator[]((size_t)ext::tsk::get_sys_llr)[(size_t)s];
 }
 
 template <typename B, typename Q>
-Socket& Extractor<B,Q>
+runtime::Socket& Extractor<B,Q>
 ::operator[](const ext::sck::get_sys_bit s)
 {
 	return Module::operator[]((size_t)ext::tsk::get_sys_bit)[(size_t)s];
 }
 
 template <typename B, typename Q>
-Socket& Extractor<B,Q>
+runtime::Socket& Extractor<B,Q>
 ::operator[](const ext::sck::get_sys_and_par_llr s)
 {
 	return Module::operator[]((size_t)ext::tsk::get_sys_and_par_llr)[(size_t)s];
 }
 
 template <typename B, typename Q>
-Socket& Extractor<B,Q>
+runtime::Socket& Extractor<B,Q>
 ::operator[](const ext::sck::add_sys_and_ext_llr s)
 {
 	return Module::operator[]((size_t)ext::tsk::add_sys_and_ext_llr)[(size_t)s];
@@ -78,7 +78,7 @@ Extractor<B,Q>
 	auto &p1 = this->create_task("get_sys_llr");
 	auto p1s_Y_N = this->template create_socket_in <Q>(p1, "Y_N", this->N);
 	auto p1s_Y_K = this->template create_socket_out<Q>(p1, "Y_K", this->K);
-	this->create_codelet(p1, [p1s_Y_N, p1s_Y_K](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p1, [p1s_Y_N, p1s_Y_K](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &ext = static_cast<Extractor<B,Q>&>(m);
 
@@ -86,13 +86,13 @@ Extractor<B,Q>
 		                 static_cast<Q*>(t[p1s_Y_K].get_dataptr()),
 		                 frame_id);
 
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 	});
 
 	auto &p2 = this->create_task("get_sys_bit");
 	auto p2s_Y_N = this->template create_socket_in <Q>(p2, "Y_N", this->N);
 	auto p2s_V_K = this->template create_socket_out<B>(p2, "V_K", this->K);
-	this->create_codelet(p2, [p2s_Y_N, p2s_V_K](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p2, [p2s_Y_N, p2s_V_K](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &ext = static_cast<Extractor<B,Q>&>(m);
 
@@ -100,7 +100,7 @@ Extractor<B,Q>
 		                 static_cast<B*>(t[p2s_V_K].get_dataptr()),
 		                 frame_id);
 
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 	});
 
 	const auto tb_2 = this->tail_length / 2;
@@ -108,7 +108,7 @@ Extractor<B,Q>
 	auto p3s_Y_N = this->template create_socket_in <Q>(p3, "Y_N", this->N                 );
 	auto p3s_sys = this->template create_socket_out<Q>(p3, "sys", this->K           + tb_2);
 	auto p3s_par = this->template create_socket_out<Q>(p3, "par", this->N - this->K - tb_2);
-	this->create_codelet(p3, [&p3s_Y_N, &p3s_sys, &p3s_par](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p3, [&p3s_Y_N, &p3s_sys, &p3s_par](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &ext = static_cast<Extractor<B,Q>&>(m);
 
@@ -117,14 +117,14 @@ Extractor<B,Q>
 		                         static_cast<Q*>(t[p3s_par].get_dataptr()),
 		                         frame_id);
 
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 	});
 
 	auto &p4 = this->create_task("add_sys_and_ext_llr");
 	auto p4s_ext  = this->template create_socket_in <Q>(p4, "ext",  this->K);
 	auto p4s_Y_N1 = this->template create_socket_in <Q>(p4, "Y_N1", this->N);
 	auto p4s_Y_N2 = this->template create_socket_out<Q>(p4, "Y_N2", this->N);
-	this->create_codelet(p4, [p4s_ext, p4s_Y_N1, p4s_Y_N2](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p4, [p4s_ext, p4s_Y_N1, p4s_Y_N2](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &ext = static_cast<Extractor<B,Q>&>(m);
 
@@ -133,7 +133,7 @@ Extractor<B,Q>
 		                         static_cast<Q*>(t[p4s_Y_N2].get_dataptr()),
 		                         frame_id);
 
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 	});
 }
 

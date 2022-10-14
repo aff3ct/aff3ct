@@ -9,8 +9,8 @@
 #include <vector>
 #include <cstdint>
 
-#include "Module/Task.hpp"
-#include "Module/Socket.hpp"
+#include "Runtime/Task/Task.hpp"
+#include "Runtime/Socket/Socket.hpp"
 #include "Module/Decoder/Decoder.hpp"
 
 namespace aff3ct
@@ -30,9 +30,9 @@ template <typename B = int>
 class Decoder_HIHO : public Decoder
 {
 public:
-	inline Task&   operator[](const dec::tsk                 t);
-	inline Socket& operator[](const dec::sck::decode_hiho    s);
-	inline Socket& operator[](const dec::sck::decode_hiho_cw s);
+	inline runtime::Task&   operator[](const dec::tsk                 t);
+	inline runtime::Socket& operator[](const dec::sck::decode_hiho    s);
+	inline runtime::Socket& operator[](const dec::sck::decode_hiho_cw s);
 
 public:
 	/*!

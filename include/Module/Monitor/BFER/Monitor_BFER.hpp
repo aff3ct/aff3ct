@@ -12,8 +12,8 @@
 
 #include "Tools/Algo/Histogram.hpp"
 #include "Tools/Algo/Callback/Callback.hpp"
-#include "Module/Task.hpp"
-#include "Module/Socket.hpp"
+#include "Runtime/Task/Task.hpp"
+#include "Runtime/Socket/Socket.hpp"
 #include "Module/Monitor/Monitor.hpp"
 
 namespace aff3ct
@@ -25,9 +25,9 @@ template <typename B = int>
 class Monitor_BFER : public Monitor
 {
 public:
-	inline Task&   operator[](const mnt::tsk                t);
-	inline Socket& operator[](const mnt::sck::check_errors  s);
-	inline Socket& operator[](const mnt::sck::check_errors2 s);
+	inline runtime::Task&   operator[](const mnt::tsk                t);
+	inline runtime::Socket& operator[](const mnt::sck::check_errors  s);
+	inline runtime::Socket& operator[](const mnt::sck::check_errors2 s);
 
 protected:
 	struct Attributes

@@ -5,7 +5,7 @@
 #include <random>
 #include <string>
 
-#include "Tools/Sequence/Sequence.hpp"
+#include "Runtime/Sequence/Sequence.hpp"
 #include "Tools/Display/rang_format/rang_format.h"
 #include "Tools/Interface/Interface_set_seed.hpp"
 #include "Tools/Interface/Interface_get_set_noise.hpp"
@@ -641,27 +641,27 @@ void Simulation_BFER_ite<B,R,Q>
 	const auto is_rayleigh = this->params_BFER_ite.chn->type.find("RAYLEIGH") != std::string::npos;
 	const auto t = this->params_BFER.n_threads;
 	if (this->params_BFER_ite.src->type != "AZCW")
-		this->sequence.reset(new tools::Sequence((*this->source)[module::src::tsk::generate], t));
+		this->sequence.reset(new runtime::Sequence((*this->source)[module::src::tsk::generate], t));
 	else if (this->params_BFER_ite.chn->type != "NO")
 	{
 		if (is_rayleigh)
-			this->sequence.reset(new tools::Sequence((*this->channel)[module::chn::tsk::add_noise_wg], t));
+			this->sequence.reset(new runtime::Sequence((*this->channel)[module::chn::tsk::add_noise_wg], t));
 		else
-			this->sequence.reset(new tools::Sequence((*this->channel)[module::chn::tsk::add_noise], t));
+			this->sequence.reset(new runtime::Sequence((*this->channel)[module::chn::tsk::add_noise], t));
 	}
 	else if (this->modem1->is_filter())
-		this->sequence.reset(new tools::Sequence((*this->modem1)[module::mdm::tsk::filter], t));
+		this->sequence.reset(new runtime::Sequence((*this->modem1)[module::mdm::tsk::filter], t));
 	else if (this->params_BFER_ite.qnt->type != "NO")
-		this->sequence.reset(new tools::Sequence((*this->quantizer)[module::qnt::tsk::process], t));
+		this->sequence.reset(new runtime::Sequence((*this->quantizer)[module::qnt::tsk::process], t));
 	else if (this->modem1->is_demodulator())
 	{
 		if (is_rayleigh)
-			this->sequence.reset(new tools::Sequence((*this->modem1)[module::mdm::tsk::demodulate_wg], t));
+			this->sequence.reset(new runtime::Sequence((*this->modem1)[module::mdm::tsk::demodulate_wg], t));
 		else
-			this->sequence.reset(new tools::Sequence((*this->modem1)[module::mdm::tsk::demodulate], t));
+			this->sequence.reset(new runtime::Sequence((*this->modem1)[module::mdm::tsk::demodulate], t));
 	}
 	else
-		this->sequence.reset(new tools::Sequence((*this->interleaver_llr1)[module::itl::tsk::deinterleave], t));
+		this->sequence.reset(new runtime::Sequence((*this->interleaver_llr1)[module::itl::tsk::deinterleave], t));
 
 	// set the noise
 	this->codec->set_noise(*this->noise);

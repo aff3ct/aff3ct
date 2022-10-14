@@ -206,7 +206,7 @@ int Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 		this->up_rule.end_ite();
 
 		packed_synd = this->_check_syndrome_soft_status(this->var_nodes[cur_wave]);
-		if (packed_synd == status_t::SUCCESS && this->enable_syndrome) break;
+		if (packed_synd == runtime::status_t::SUCCESS && this->enable_syndrome) break;
 	}
 
 	this->up_rule.end_decoding();
@@ -319,12 +319,12 @@ int Decoder_LDPC_BP_horizontal_layered_inter<B,R,Update_rule>
 				return packed_synd;
 			}
 			else
-				return status_t::SUCCESS;
+				return runtime::status_t::SUCCESS;
 		}
-		return status_t::FAILURE;
+		return runtime::status_t::FAILURE;
 	}
 	else
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 }
 
 template <typename B, typename R, class Update_rule>

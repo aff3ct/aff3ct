@@ -10,21 +10,21 @@ namespace module
 {
 
 template <typename B, typename Q>
-Task& Puncturer<B,Q>
+runtime::Task& Puncturer<B,Q>
 ::operator[](const pct::tsk t)
 {
 	return Module::operator[]((size_t)t);
 }
 
 template <typename B, typename Q>
-Socket& Puncturer<B,Q>
+runtime::Socket& Puncturer<B,Q>
 ::operator[](const pct::sck::puncture s)
 {
 	return Module::operator[]((size_t)pct::tsk::puncture)[(size_t)s];
 }
 
 template <typename B, typename Q>
-Socket& Puncturer<B,Q>
+runtime::Socket& Puncturer<B,Q>
 ::operator[](const pct::sck::depuncture s)
 {
 	return Module::operator[]((size_t)pct::tsk::depuncture)[(size_t)s];
@@ -77,7 +77,7 @@ Puncturer<B,Q>
 	auto &p1 = this->create_task("puncture");
 	auto p1s_X_N1 = this->template create_socket_in <B>(p1, "X_N1", this->N_cw);
 	auto p1s_X_N2 = this->template create_socket_out<B>(p1, "X_N2", this->N   );
-	this->create_codelet(p1, [p1s_X_N1, p1s_X_N2](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p1, [p1s_X_N1, p1s_X_N2](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &pct = static_cast<Puncturer<B,Q>&>(m);
 
@@ -85,13 +85,13 @@ Puncturer<B,Q>
 		              static_cast<B*>(t[p1s_X_N2].get_dataptr()),
 		              frame_id);
 
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 	});
 
 	auto &p2 = this->create_task("depuncture");
 	auto p2s_Y_N1 = this->template create_socket_in <Q>(p2, "Y_N1", this->N   );
 	auto p2s_Y_N2 = this->template create_socket_out<Q>(p2, "Y_N2", this->N_cw);
-	this->create_codelet(p2, [p2s_Y_N1, p2s_Y_N2](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p2, [p2s_Y_N1, p2s_Y_N2](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &pct = static_cast<Puncturer<B,Q>&>(m);
 
@@ -99,7 +99,7 @@ Puncturer<B,Q>
 		                static_cast<Q*>(t[p2s_Y_N2].get_dataptr()),
 		                frame_id);
 
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 	});
 }
 

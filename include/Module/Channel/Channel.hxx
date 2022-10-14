@@ -11,21 +11,21 @@ namespace module
 {
 
 template <typename R>
-Task& Channel<R>
+runtime::Task& Channel<R>
 ::operator[](const chn::tsk t)
 {
 	return Module::operator[]((size_t)t);
 }
 
 template <typename R>
-Socket& Channel<R>
+runtime::Socket& Channel<R>
 ::operator[](const chn::sck::add_noise s)
 {
 	return Module::operator[]((size_t)chn::tsk::add_noise)[(size_t)s];
 }
 
 template <typename R>
-Socket& Channel<R>
+runtime::Socket& Channel<R>
 ::operator[](const chn::sck::add_noise_wg s)
 {
 	return Module::operator[]((size_t)chn::tsk::add_noise_wg)[(size_t)s];
@@ -51,7 +51,7 @@ Channel<R>
 	auto p1s_CP  = this->template create_socket_in <float>(p1, "CP",        1);
 	auto p1s_X_N = this->template create_socket_in <R    >(p1, "X_N", this->N);
 	auto p1s_Y_N = this->template create_socket_out<R    >(p1, "Y_N", this->N);
-	this->create_codelet(p1, [p1s_CP, p1s_X_N, p1s_Y_N](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p1, [p1s_CP, p1s_X_N, p1s_Y_N](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &chn = static_cast<Channel<R>&>(m);
 
@@ -60,7 +60,7 @@ Channel<R>
 		               static_cast<R    *>(t[p1s_Y_N].get_dataptr()),
 		               frame_id);
 
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 	});
 
 	auto &p2 = this->create_task("add_noise_wg");
@@ -68,7 +68,7 @@ Channel<R>
 	auto p2s_X_N = this->template create_socket_in <R    >(p2, "X_N", this->N);
 	auto p2s_H_N = this->template create_socket_out<R    >(p2, "H_N", this->N);
 	auto p2s_Y_N = this->template create_socket_out<R    >(p2, "Y_N", this->N);
-	this->create_codelet(p2, [p2s_CP, p2s_X_N, p2s_H_N, p2s_Y_N](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p2, [p2s_CP, p2s_X_N, p2s_H_N, p2s_Y_N](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &chn = static_cast<Channel<R>&>(m);
 
@@ -78,7 +78,7 @@ Channel<R>
 		                  static_cast<R    *>(t[p2s_Y_N].get_dataptr()),
 		                  frame_id);
 
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 	});
 }
 

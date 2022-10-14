@@ -10,14 +10,14 @@ namespace module
 {
 
 template <typename B, typename D>
-Task& Coset<B,D>
+runtime::Task& Coset<B,D>
 ::operator[](const cst::tsk t)
 {
 	return Module::operator[]((size_t)t);
 }
 
 template <typename B, typename D>
-Socket& Coset<B,D>
+runtime::Socket& Coset<B,D>
 ::operator[](const cst::sck::apply s)
 {
 	return Module::operator[]((size_t)cst::tsk::apply)[(size_t)s];
@@ -43,7 +43,7 @@ Coset<B,D>
 	auto ps_ref = this->template create_socket_in <B>(p, "ref", this->size);
 	auto ps_in  = this->template create_socket_in <D>(p, "in",  this->size);
 	auto ps_out = this->template create_socket_out<D>(p, "out", this->size);
-	this->create_codelet(p, [ps_ref, ps_in, ps_out](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p, [ps_ref, ps_in, ps_out](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &cst = static_cast<Coset<B,D>&>(m);
 
@@ -52,7 +52,7 @@ Coset<B,D>
 		           static_cast<D*>(t[ps_out].get_dataptr()),
 		           frame_id);
 
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 	});
 }
 

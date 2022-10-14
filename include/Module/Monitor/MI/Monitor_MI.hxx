@@ -10,14 +10,14 @@ namespace module
 {
 
 template <typename B, typename R>
-Task& Monitor_MI<B,R>
+runtime::Task& Monitor_MI<B,R>
 ::operator[](const mnt::tsk t)
 {
 	return Module::operator[]((size_t)t);
 }
 
 template <typename B, typename R>
-Socket& Monitor_MI<B,R>
+runtime::Socket& Monitor_MI<B,R>
 ::operator[](const mnt::sck::get_mutual_info s)
 {
 	return Module::operator[]((size_t)mnt::tsk::get_mutual_info)[(size_t)s];

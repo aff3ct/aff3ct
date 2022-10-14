@@ -12,14 +12,14 @@ namespace module
 {
 
 template <typename B>
-Task& Encoder<B>
+runtime::Task& Encoder<B>
 ::operator[](const enc::tsk t)
 {
 	return Module::operator[]((size_t)t);
 }
 
 template <typename B>
-Socket& Encoder<B>
+runtime::Socket& Encoder<B>
 ::operator[](const enc::sck::encode s)
 {
 	return Module::operator[]((size_t)enc::tsk::encode)[(size_t)s];
@@ -65,7 +65,7 @@ Encoder<B>
 	auto &p = this->create_task("encode");
 	auto ps_U_K = this->template create_socket_in <B>(p, "U_K", this->K);
 	auto ps_X_N = this->template create_socket_out<B>(p, "X_N", this->N);
-	this->create_codelet(p, [ps_U_K, ps_X_N](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p, [ps_U_K, ps_X_N](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &enc = static_cast<Encoder<B>&>(m);
 		if (enc.is_memorizing())
@@ -84,7 +84,7 @@ Encoder<B>
 				          static_cast<B*>(t[ps_X_N].get_dataptr()) + (f +1) * enc.N,
 				          enc.X_N_mem[frame_id + f].begin());
 
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 	});
 
 	std::iota(info_bits_pos.begin(), info_bits_pos.end(), 0);

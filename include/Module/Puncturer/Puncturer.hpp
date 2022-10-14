@@ -9,8 +9,8 @@
 #include <memory>
 #include <vector>
 
-#include "Module/Task.hpp"
-#include "Module/Socket.hpp"
+#include "Runtime/Task/Task.hpp"
+#include "Runtime/Socket/Socket.hpp"
 #include "Module/Module.hpp"
 
 namespace aff3ct
@@ -42,9 +42,9 @@ template <typename B = int, typename Q = float>
 class Puncturer : public Module
 {
 public:
-	inline Task&   operator[](const pct::tsk             t);
-	inline Socket& operator[](const pct::sck::puncture   s);
-	inline Socket& operator[](const pct::sck::depuncture s);
+	inline runtime::Task&   operator[](const pct::tsk             t);
+	inline runtime::Socket& operator[](const pct::sck::puncture   s);
+	inline runtime::Socket& operator[](const pct::sck::depuncture s);
 
 protected:
 	const int K;    /*!< Number of information bits in one frame */

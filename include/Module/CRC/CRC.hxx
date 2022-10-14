@@ -10,28 +10,28 @@ namespace module
 {
 
 template <typename B>
-Task& CRC<B>
+runtime::Task& CRC<B>
 ::operator[](const crc::tsk t)
 {
 	return Module::operator[]((size_t)t);
 }
 
 template <typename B>
-Socket& CRC<B>
+runtime::Socket& CRC<B>
 ::operator[](const crc::sck::build s)
 {
 	return Module::operator[]((size_t)crc::tsk::build)[(size_t)s];
 }
 
 template <typename B>
-Socket& CRC<B>
+runtime::Socket& CRC<B>
 ::operator[](const crc::sck::extract s)
 {
 	return Module::operator[]((size_t)crc::tsk::extract)[(size_t)s];
 }
 
 template <typename B>
-Socket& CRC<B>
+runtime::Socket& CRC<B>
 ::operator[](const crc::sck::check s)
 {
 	return Module::operator[]((size_t)crc::tsk::check)[(size_t)s];
@@ -56,7 +56,7 @@ CRC<B>
 	auto &p1 = this->create_task("build");
 	auto p1s_U_K1 = this->template create_socket_in <B>(p1, "U_K1", this->K             );
 	auto p1s_U_K2 = this->template create_socket_out<B>(p1, "U_K2", this->K + this->size);
-	this->create_codelet(p1, [p1s_U_K1, p1s_U_K2](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p1, [p1s_U_K1, p1s_U_K2](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &crc = static_cast<CRC<B>&>(m);
 
@@ -64,13 +64,13 @@ CRC<B>
 		           static_cast<B*>(t[p1s_U_K2].get_dataptr()),
 		           frame_id);
 
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 	});
 
 	auto &p2 = this->create_task("extract");
 	auto p2s_V_K1 = this->template create_socket_in <B>(p2, "V_K1", this->K + this->size);
 	auto p2s_V_K2 = this->template create_socket_out<B>(p2, "V_K2", this->K             );
-	this->create_codelet(p2, [p2s_V_K1, p2s_V_K2](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p2, [p2s_V_K1, p2s_V_K2](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &crc = static_cast<CRC<B>&>(m);
 
@@ -78,29 +78,29 @@ CRC<B>
 		             static_cast<B*>(t[p2s_V_K2].get_dataptr()),
 		             frame_id);
 
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 	});
 
 	auto &p3 = this->create_task("check");
 	auto p3s_V_K = this->template create_socket_in<B>(p3, "V_K", this->K + this->size);
-	this->create_codelet(p3, [p3s_V_K](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p3, [p3s_V_K](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &crc = static_cast<CRC<B>&>(m);
 
 		auto ret = crc._check(static_cast<B*>(t[p3s_V_K].get_dataptr()), frame_id);
 
-		return ret ? status_t::SUCCESS : status_t::FAILURE_STOP;
+		return ret ? runtime::status_t::SUCCESS : runtime::status_t::FAILURE_STOP;
 	});
 
 	auto &p4 = this->create_task("check_packed");
 	auto p4s_V_K = this->template create_socket_in<B>(p4, "V_K", this->K + this->size);
-	this->create_codelet(p4, [p4s_V_K](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p4, [p4s_V_K](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &crc = static_cast<CRC<B>&>(m);
 
 		auto ret = crc._check_packed(static_cast<B*>(t[p4s_V_K].get_dataptr()), frame_id);
 
-		return ret ? status_t::SUCCESS : status_t::FAILURE_STOP;
+		return ret ? runtime::status_t::SUCCESS : runtime::status_t::FAILURE_STOP;
 	});
 }
 
@@ -176,14 +176,14 @@ bool CRC<B>
 	if (frame_id == -1)
 	{
 		size_t w = 0;
-		while (w < this->get_n_waves() && status[w] == status_t::SUCCESS)
+		while (w < this->get_n_waves() && status[w] == runtime::status_t::SUCCESS)
 			w++;
 		return w == this->get_n_waves();
 	}
 	else
 	{
 		const auto w = (frame_id % this->get_n_frames()) / this->get_n_frames_per_wave();
-		return status[w] == status_t::SUCCESS;
+		return status[w] == runtime::status_t::SUCCESS;
 	}
 }
 
@@ -197,14 +197,14 @@ bool CRC<B>
 	if (frame_id == -1)
 	{
 		size_t w = 0;
-		while (w < this->get_n_waves() && status[w] == status_t::SUCCESS)
+		while (w < this->get_n_waves() && status[w] == runtime::status_t::SUCCESS)
 			w++;
 		return w == this->get_n_waves();
 	}
 	else
 	{
 		const auto w = (frame_id % this->get_n_frames()) / this->get_n_frames_per_wave();
-		return status[w] == status_t::SUCCESS;
+		return status[w] == runtime::status_t::SUCCESS;
 	}
 }
 
@@ -219,14 +219,14 @@ bool CRC<B>
 	if (frame_id == -1)
 	{
 		size_t w = 0;
-		while (w < this->get_n_waves() && status[w] == status_t::SUCCESS)
+		while (w < this->get_n_waves() && status[w] == runtime::status_t::SUCCESS)
 			w++;
 		return w == this->get_n_waves();
 	}
 	else
 	{
 		const auto w = (frame_id % this->get_n_frames()) / this->get_n_frames_per_wave();
-		return status[w] == status_t::SUCCESS;
+		return status[w] == runtime::status_t::SUCCESS;
 	}
 }
 
@@ -240,14 +240,14 @@ bool CRC<B>
 	if (frame_id == -1)
 	{
 		size_t w = 0;
-		while (w < this->get_n_waves() && status[w] == status_t::SUCCESS)
+		while (w < this->get_n_waves() && status[w] == runtime::status_t::SUCCESS)
 			w++;
 		return w == this->get_n_waves();
 	}
 	else
 	{
 		const auto w = (frame_id % this->get_n_frames()) / this->get_n_frames_per_wave();
-		return status[w] == status_t::SUCCESS;
+		return status[w] == runtime::status_t::SUCCESS;
 	}
 }
 

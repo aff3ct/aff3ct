@@ -12,8 +12,8 @@
 
 #include "Tools/Interface/Interface_set_seed.hpp"
 #include "Tools/Noise/Noise.hpp"
-#include "Module/Task.hpp"
-#include "Module/Socket.hpp"
+#include "Runtime/Task/Task.hpp"
+#include "Runtime/Socket/Socket.hpp"
 #include "Module/Module.hpp"
 
 namespace aff3ct
@@ -44,9 +44,9 @@ template <typename R = float>
 class Channel : public Module, public tools::Interface_set_seed
 {
 public:
-	inline Task&   operator[](const chn::tsk               t);
-	inline Socket& operator[](const chn::sck::add_noise    s);
-	inline Socket& operator[](const chn::sck::add_noise_wg s);
+	inline runtime::Task&   operator[](const chn::tsk               t);
+	inline runtime::Socket& operator[](const chn::sck::add_noise    s);
+	inline runtime::Socket& operator[](const chn::sck::add_noise_wg s);
 
 protected:
 	const int N;                 // Size of one frame (= number of bits in one frame)

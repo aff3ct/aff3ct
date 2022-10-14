@@ -9,8 +9,8 @@
 #include <vector>
 #include <cstdint>
 
-#include "Module/Task.hpp"
-#include "Module/Socket.hpp"
+#include "Runtime/Task/Task.hpp"
+#include "Runtime/Socket/Socket.hpp"
 #include "Module/Decoder/Decoder_SIHO.hpp"
 
 namespace aff3ct
@@ -28,13 +28,13 @@ template <typename B = int, typename R = float>
 class Decoder_SISO : public Decoder_SIHO<B,R>
 {
 public:
-	inline Task&   operator[](const dec::tsk                  t);
-	inline Socket& operator[](const dec::sck::decode_hiho     s);
-	inline Socket& operator[](const dec::sck::decode_hiho_cw  s);
-	inline Socket& operator[](const dec::sck::decode_siho     s);
-	inline Socket& operator[](const dec::sck::decode_siho_cw  s);
-	inline Socket& operator[](const dec::sck::decode_siso     s);
-	inline Socket& operator[](const dec::sck::decode_siso_alt s);
+	inline runtime::Task&   operator[](const dec::tsk                  t);
+	inline runtime::Socket& operator[](const dec::sck::decode_hiho     s);
+	inline runtime::Socket& operator[](const dec::sck::decode_hiho_cw  s);
+	inline runtime::Socket& operator[](const dec::sck::decode_siho     s);
+	inline runtime::Socket& operator[](const dec::sck::decode_siho_cw  s);
+	inline runtime::Socket& operator[](const dec::sck::decode_siso     s);
+	inline runtime::Socket& operator[](const dec::sck::decode_siso_alt s);
 
 public:
 	/*!

@@ -11,56 +11,56 @@ namespace module
 {
 
 template <typename B, typename R, typename Q>
-Task& Modem<B,R,Q>
+runtime::Task& Modem<B,R,Q>
 ::operator[](const mdm::tsk t)
 {
 	return Module::operator[]((size_t)t);
 }
 
 template <typename B, typename R, typename Q>
-Socket& Modem<B,R,Q>
+runtime::Socket& Modem<B,R,Q>
 ::operator[](const mdm::sck::modulate s)
 {
 	return Module::operator[]((size_t)mdm::tsk::modulate)[(size_t)s];
 }
 
 template <typename B, typename R, typename Q>
-Socket& Modem<B,R,Q>
+runtime::Socket& Modem<B,R,Q>
 ::operator[](const mdm::sck::tmodulate s)
 {
 	return Module::operator[]((size_t)mdm::tsk::tmodulate)[(size_t)s];
 }
 
 template <typename B, typename R, typename Q>
-Socket& Modem<B,R,Q>
+runtime::Socket& Modem<B,R,Q>
 ::operator[](const mdm::sck::filter s)
 {
 	return Module::operator[]((size_t)mdm::tsk::filter)[(size_t)s];
 }
 
 template <typename B, typename R, typename Q>
-Socket& Modem<B,R,Q>
+runtime::Socket& Modem<B,R,Q>
 ::operator[](const mdm::sck::demodulate s)
 {
 	return Module::operator[]((size_t)mdm::tsk::demodulate)[(size_t)s];
 }
 
 template <typename B, typename R, typename Q>
-Socket& Modem<B,R,Q>
+runtime::Socket& Modem<B,R,Q>
 ::operator[](const mdm::sck::tdemodulate s)
 {
 	return Module::operator[]((size_t)mdm::tsk::tdemodulate)[(size_t)s];
 }
 
 template <typename B, typename R, typename Q>
-Socket& Modem<B,R,Q>
+runtime::Socket& Modem<B,R,Q>
 ::operator[](const mdm::sck::demodulate_wg s)
 {
 	return Module::operator[]((size_t)mdm::tsk::demodulate_wg)[(size_t)s];
 }
 
 template <typename B, typename R, typename Q>
-Socket& Modem<B,R,Q>
+runtime::Socket& Modem<B,R,Q>
 ::operator[](const mdm::sck::tdemodulate_wg s)
 {
 	return Module::operator[]((size_t)mdm::tsk::tdemodulate_wg)[(size_t)s];
@@ -176,7 +176,7 @@ void Modem<B,R,Q>
 	auto &p1 = this->create_task("modulate");
 	auto p1s_X_N1 = this->template create_socket_in <B>(p1, "X_N1", this->N    );
 	auto p1s_X_N2 = this->template create_socket_out<R>(p1, "X_N2", this->N_mod);
-	this->create_codelet(p1, [p1s_X_N1, p1s_X_N2](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p1, [p1s_X_N1, p1s_X_N2](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
 
@@ -184,13 +184,13 @@ void Modem<B,R,Q>
 		              static_cast<R*>(t[p1s_X_N2].get_dataptr()),
 		              frame_id);
 
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 	});
 
 	auto &p7 = this->create_task("tmodulate");
 	auto p7s_X_N1 = this->template create_socket_in <Q>(p7, "X_N1", this->N    );
 	auto p7s_X_N2 = this->template create_socket_out<R>(p7, "X_N2", this->N_mod);
-	this->create_codelet(p7, [p7s_X_N1, p7s_X_N2](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p7, [p7s_X_N1, p7s_X_N2](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
 
@@ -198,14 +198,14 @@ void Modem<B,R,Q>
 		               static_cast<R*>(t[p7s_X_N2].get_dataptr()),
 		               frame_id);
 
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 	});
 
 	auto &p2 = this->create_task("filter");
 	auto p2s_CP   = this->template create_socket_in <float>(p2, "CP",             1);
 	auto p2s_Y_N1 = this->template create_socket_in <R    >(p2, "Y_N1", this->N_mod);
 	auto p2s_Y_N2 = this->template create_socket_out<R    >(p2, "Y_N2", this->N_fil);
-	this->create_codelet(p2, [p2s_CP, p2s_Y_N1, p2s_Y_N2](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p2, [p2s_CP, p2s_Y_N1, p2s_Y_N2](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
 
@@ -216,14 +216,14 @@ void Modem<B,R,Q>
 
 		mdm.last_channel_param = *static_cast<float*>(t[p2s_CP].get_dataptr());
 
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 	});
 
 	auto &p3 = this->create_task("demodulate");
 	auto p3s_CP   = this->template create_socket_in <float>(p3, "CP",             1);
 	auto p3s_Y_N1 = this->template create_socket_in <Q    >(p3, "Y_N1", this->N_fil);
 	auto p3s_Y_N2 = this->template create_socket_out<Q    >(p3, "Y_N2", this->N    );
-	this->create_codelet(p3, [p3s_CP, p3s_Y_N1, p3s_Y_N2](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p3, [p3s_CP, p3s_Y_N1, p3s_Y_N2](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
 
@@ -234,7 +234,7 @@ void Modem<B,R,Q>
 
 		mdm.last_channel_param = *static_cast<float*>(t[p3s_CP].get_dataptr());
 
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 	});
 
 	auto &p4 = this->create_task("tdemodulate");
@@ -242,7 +242,7 @@ void Modem<B,R,Q>
 	auto p4s_Y_N1 = this->template create_socket_in <Q    >(p4, "Y_N1", this->N_fil);
 	auto p4s_Y_N2 = this->template create_socket_in <Q    >(p4, "Y_N2", this->N    );
 	auto p4s_Y_N3 = this->template create_socket_out<Q    >(p4, "Y_N3", this->N    );
-	this->create_codelet(p4, [p4s_CP, p4s_Y_N1, p4s_Y_N2, p4s_Y_N3](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p4, [p4s_CP, p4s_Y_N1, p4s_Y_N2, p4s_Y_N3](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
 
@@ -254,7 +254,7 @@ void Modem<B,R,Q>
 
 		mdm.last_channel_param = *static_cast<float*>(t[p4s_CP].get_dataptr());
 
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 	});
 
 	auto &p5 = this->create_task("demodulate_wg");
@@ -262,7 +262,7 @@ void Modem<B,R,Q>
 	auto p5s_H_N  = this->template create_socket_in <R    >(p5, "H_N",  this->N_fil);
 	auto p5s_Y_N1 = this->template create_socket_in <Q    >(p5, "Y_N1", this->N_fil);
 	auto p5s_Y_N2 = this->template create_socket_out<Q    >(p5, "Y_N2", this->N    );
-	this->create_codelet(p5, [p5s_CP, p5s_H_N, p5s_Y_N1, p5s_Y_N2](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p5, [p5s_CP, p5s_H_N, p5s_Y_N1, p5s_Y_N2](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
 
@@ -274,7 +274,7 @@ void Modem<B,R,Q>
 
 		mdm.last_channel_param = *static_cast<float*>(t[p5s_CP].get_dataptr());
 
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 	});
 
 	auto &p6 = this->create_task("tdemodulate_wg");
@@ -283,7 +283,7 @@ void Modem<B,R,Q>
 	auto p6s_Y_N1 = this->template create_socket_in <Q    >(p6, "Y_N1", this->N_fil);
 	auto p6s_Y_N2 = this->template create_socket_in <Q    >(p6, "Y_N2", this->N    );
 	auto p6s_Y_N3 = this->template create_socket_out<Q    >(p6, "Y_N3", this->N    );
-	this->create_codelet(p6, [p6s_CP, p6s_H_N, p6s_Y_N1, p6s_Y_N2, p6s_Y_N3](Module &m, Task &t, const size_t frame_id)
+	this->create_codelet(p6, [p6s_CP, p6s_H_N, p6s_Y_N1, p6s_Y_N2, p6s_Y_N3](Module &m, runtime::Task &t, const size_t frame_id)
 		-> int
 	{
 		auto &mdm = static_cast<Modem<B,R,Q>&>(m);
@@ -297,7 +297,7 @@ void Modem<B,R,Q>
 
 		mdm.last_channel_param = *static_cast<float*>(t[p6s_CP].get_dataptr());
 
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 	});
 }
 

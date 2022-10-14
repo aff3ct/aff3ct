@@ -172,7 +172,7 @@ assign_source_group(${source_files})
 # ---------------------------------------------------------------------------------------------------------------------
 
 # aff3ct-core
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/aff3ct-core/include/aff3ct_core.hpp")
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/lib/aff3ct-core/include/aff3ct-core.hpp")
     option(AFF3CT_CORE_COMPILE_STATIC_LIB "" OFF)
     option(AFF3CT_CORE_COMPILE_SHARED_LIB "" OFF)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/aff3ct-core/ EXCLUDE_FROM_ALL)

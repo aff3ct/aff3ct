@@ -1,3 +1,4 @@
+
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
@@ -225,7 +226,7 @@ int Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 		{
 			this->_compute_post(Y_N, this->msg_chk_to_var[cur_wave], this->post);
 			packed_synd = this->_check_syndrome_soft_status(this->post);
-			if (packed_synd == status_t::SUCCESS) break;
+			if (packed_synd == runtime::status_t::SUCCESS) break;
 		}
 	}
 	if (ite == this->n_ite)
@@ -384,9 +385,9 @@ int Decoder_LDPC_BP_flooding_inter<B,R,Update_rule>
 			return packed_synd;
 		}
 		else
-			return status_t::SUCCESS;
+			return runtime::status_t::SUCCESS;
 	}
-	return status_t::FAILURE;
+	return runtime::status_t::FAILURE;
 }
 
 template <typename B, typename R, class Update_rule>

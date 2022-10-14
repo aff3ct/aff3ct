@@ -263,7 +263,7 @@ int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 		this->_decode_single_ite<F>(this->var_nodes[cur_wave], this->branches[cur_wave]);
 
 		// stop criterion
-		if (this->enable_syndrome && (packed_synd = this->_check_syndrome_status(frame_id)) == status_t::SUCCESS)
+		if (this->enable_syndrome && (packed_synd = this->_check_syndrome_status(frame_id)) == runtime::status_t::SUCCESS)
 		{
 			cur_syndrome_depth++;
 			if (cur_syndrome_depth == this->syndrome_depth)
@@ -427,7 +427,7 @@ int Decoder_LDPC_BP_horizontal_layered_ONMS_inter<B,R>
 		return packed_synd;
 	}
 	else
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 }
 
 template <typename B, typename R>

@@ -210,16 +210,16 @@ int Decoder_BCH_std<B, R>
 					if (loc[i] < this->N)
 						Y_N[loc[i]] ^= 1;
 
-				return status_t::SUCCESS;
+				return runtime::status_t::SUCCESS;
 			}
 			else
-				return status_t::FAILURE;
+				return runtime::status_t::FAILURE;
 		}
 		else
-			return status_t::FAILURE;
+			return runtime::status_t::FAILURE;
 	}
 	else
-		return status_t::SUCCESS;
+		return runtime::status_t::SUCCESS;
 }
 
 

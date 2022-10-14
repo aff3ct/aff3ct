@@ -31,7 +31,7 @@ Monitor_BFER<B>
 	auto p1s_U = this->template create_socket_in<B>(p1, "U", this->get_K());
 	auto p1s_V = this->template create_socket_in<B>(p1, "V", this->get_K());
 
-	this->create_codelet(p1, [p1s_U, p1s_V](Module &m, Task &t, const size_t frame_id) -> int
+	this->create_codelet(p1, [p1s_U, p1s_V](Module &m, runtime::Task &t, const size_t frame_id) -> int
 	{
 		auto &mnt = static_cast<Monitor_BFER<B>&>(m);
 
@@ -51,7 +51,7 @@ Monitor_BFER<B>
 	auto p2s_BER = this->template create_socket_out<float  >(p2, "BER", 1      );
 	auto p2s_FER = this->template create_socket_out<float  >(p2, "FER", 1      );
 
-	this->create_codelet(p2, [p2s_U, p2s_V, p2s_FRA, p2s_BE, p2s_FE, p2s_BER, p2s_FER](Module &m, Task &t,
+	this->create_codelet(p2, [p2s_U, p2s_V, p2s_FRA, p2s_BE, p2s_FE, p2s_BER, p2s_FER](Module &m, runtime::Task &t,
 	                                                                                   const size_t frame_id) -> int
 	{
 		auto &mnt = static_cast<Monitor_BFER<B>&>(m);

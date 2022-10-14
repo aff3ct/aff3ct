@@ -10,8 +10,8 @@
 #include <memory>
 #include <vector>
 
-#include "Module/Task.hpp"
-#include "Module/Socket.hpp"
+#include "Runtime/Task/Task.hpp"
+#include "Runtime/Socket/Socket.hpp"
 #include "Module/Module.hpp"
 
 namespace aff3ct
@@ -35,11 +35,11 @@ template <typename B = int, typename Q = float>
 class Extractor : public Module
 {
 public:
-	inline Task&   operator[](const ext::tsk                      t);
-	inline Socket& operator[](const ext::sck::get_sys_llr         s);
-	inline Socket& operator[](const ext::sck::get_sys_bit         s);
-	inline Socket& operator[](const ext::sck::get_sys_and_par_llr s);
-	inline Socket& operator[](const ext::sck::add_sys_and_ext_llr s);
+	inline runtime::Task&   operator[](const ext::tsk                      t);
+	inline runtime::Socket& operator[](const ext::sck::get_sys_llr         s);
+	inline runtime::Socket& operator[](const ext::sck::get_sys_bit         s);
+	inline runtime::Socket& operator[](const ext::sck::get_sys_and_par_llr s);
+	inline runtime::Socket& operator[](const ext::sck::add_sys_and_ext_llr s);
 
 protected:
 	const int K;

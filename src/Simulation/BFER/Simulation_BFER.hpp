@@ -7,7 +7,7 @@
 
 #include "Module/Monitor/MI/Monitor_MI.hpp"
 #include "Module/Monitor/BFER/Monitor_BFER.hpp"
-#include "Tools/Sequence/Sequence.hpp"
+#include "Runtime/Sequence/Sequence.hpp"
 #include "Tools/Constellation/Constellation.hpp"
 #include "Tools/Math/Distribution/Distributions.hpp"
 #include "Tools/Reporter/Reporter.hpp"
@@ -43,7 +43,7 @@ protected:
 	// communication sequence
 	std::unique_ptr<module::Monitor_BFER<B    >> monitor_er;
 	std::unique_ptr<module::Monitor_MI  <B,R  >> monitor_mi;
-	std::unique_ptr<tools ::Sequence           > sequence;
+	std::unique_ptr<runtime::Sequence          > sequence;
 
 	std::vector<std::unique_ptr<tools::Reporter>> reporters;
 	std::unique_ptr<tools::Terminal> terminal;

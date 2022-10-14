@@ -11,8 +11,8 @@
 #include <vector>
 
 #include "Tools/Interface/Interface_set_seed.hpp"
-#include "Module/Task.hpp"
-#include "Module/Socket.hpp"
+#include "Runtime/Task/Task.hpp"
+#include "Runtime/Socket/Socket.hpp"
 #include "Module/Module.hpp"
 
 namespace aff3ct
@@ -42,8 +42,8 @@ template <typename B = int>
 class Encoder : public Module, public tools::Interface_set_seed
 {
 public:
-	inline Task&   operator[](const enc::tsk         t);
-	inline Socket& operator[](const enc::sck::encode s);
+	inline runtime::Task&   operator[](const enc::tsk         t);
+	inline runtime::Socket& operator[](const enc::sck::encode s);
 
 protected:
 	const int             K;             /*!< Number of information bits in one frame */
