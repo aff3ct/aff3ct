@@ -8,13 +8,13 @@ then
 fi
 
 cd lib/aff3ct-core
-HASH_CONF=$(git rev-parse --short HEAD)
+HASH_AFF3CT_CORE=$(git rev-parse --short HEAD)
 git checkout ${GIT_BRANCH}
 git pull origin ${GIT_BRANCH}
-CONTAIN_COMMIT_CONF=$(git branch ${GIT_BRANCH} --contains ${HASH_CONF})
-if [ -z "$CONTAIN_COMMIT_CONF" ]
+CONTAIN_COMMIT_AFF3CT_CORE=$(git branch ${GIT_BRANCH} --contains ${HASH_AFF3CT_CORE})
+if [ -z "$CONTAIN_COMMIT_AFF3CT_CORE" ]
 then
-	echo "The '$HASH_CONF' commit of the 'aff3ct-core' submodule does not exist in the '${GIT_BRANCH}' branch."
+	echo "The '$HASH_AFF3CT_CORE' commit of the 'aff3ct-core' submodule does not exist in the '${GIT_BRANCH}' branch."
 	exit 1
 fi
 cd ../..
