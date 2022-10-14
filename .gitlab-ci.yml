@@ -446,6 +446,7 @@ build-macos-clang-x64-sse4.2:
     paths:
       - build_macos_clang_x64_sse4.2
   script:
+    - unset cd
     - export CC="clang"
     - export CXX="clang++"
     - export CFLAGS="-Wall -Wno-overloaded-virtual -funroll-loops -m64 -msse4.2"
