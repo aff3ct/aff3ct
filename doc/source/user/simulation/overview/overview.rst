@@ -15,7 +15,7 @@ emits frames that are **randomly noised by the channel** and then the receiver
 try to decode the noised frames. The transmitter continues to emit frames until
 a fixed number of frame errors in achieved (typically 100 frame errors).
 A frame error occurs when the original frame from the transmitter differs from
-the the receiver decoded frame. As a consequence, when the |SNR| decreases,
+the the receiver decoded frame. As a consequence, when the |SNR| increases,
 the number of frames to simulate increases as well as the simulation time.
 
 Basic Arguments
