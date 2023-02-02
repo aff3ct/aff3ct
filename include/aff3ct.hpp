@@ -1152,15 +1152,6 @@
 #ifndef RANG_FORMAT_H_
 #include <Tools/Display/rang_format/rang_format.h>
 #endif
-#ifndef TERMINAL_DUMP_HPP_
-#include <Tools/Display/Terminal/Dump/Terminal_dump.hpp>
-#endif
-#ifndef TERMINAL_STD_HPP_
-#include <Tools/Display/Terminal/Standard/Terminal_std.hpp>
-#endif
-#ifndef TERMINAL_HPP_
-#include <Tools/Display/Terminal/Terminal.hpp>
-#endif
 #ifndef COMMAND_PARSER_HPP
 #include <Tools/Factory/Command_parser.hpp>
 #endif
