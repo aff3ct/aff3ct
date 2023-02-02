@@ -255,15 +255,15 @@ void Simulation_BFER_ite<B,R,Q>
 
 	if (this->params_BFER_ite.src->type == "AZCW")
 	{
-		auto src_data = (uint8_t*)(src[src::sck::generate  ::U_K ].get_dataptr());
-		auto crc_data = (uint8_t*)(crc[crc::sck::build     ::U_K2].get_dataptr());
-		auto enc_data = (uint8_t*)(enc[enc::sck::encode    ::X_N ].get_dataptr());
-		auto itl_data = (uint8_t*)(itb[itl::sck::interleave::itl ].get_dataptr());
+		auto src_data = (uint8_t*)(src[src::sck::generate  ::out_data].get_dataptr());
+		auto crc_data = (uint8_t*)(crc[crc::sck::build     ::U_K2    ].get_dataptr());
+		auto enc_data = (uint8_t*)(enc[enc::sck::encode    ::X_N     ].get_dataptr());
+		auto itl_data = (uint8_t*)(itb[itl::sck::interleave::itl     ].get_dataptr());
 
-		auto src_bytes = src[src::sck::generate  ::U_K ].get_databytes();
-		auto crc_bytes = crc[crc::sck::build     ::U_K2].get_databytes();
-		auto enc_bytes = enc[enc::sck::encode    ::X_N ].get_databytes();
-		auto itl_bytes = itb[itl::sck::interleave::itl ].get_databytes();
+		auto src_bytes = src[src::sck::generate  ::out_data].get_databytes();
+		auto crc_bytes = crc[crc::sck::build     ::U_K2    ].get_databytes();
+		auto enc_bytes = enc[enc::sck::encode    ::X_N     ].get_databytes();
+		auto itl_bytes = itb[itl::sck::interleave::itl     ].get_databytes();
 
 		std::fill(src_data, src_data + src_bytes, 0);
 		std::fill(crc_data, crc_data + crc_bytes, 0);
@@ -277,14 +277,14 @@ void Simulation_BFER_ite<B,R,Q>
 	else
 	{
 		if (this->params_BFER_ite.crc->type != "NO")
-			crc[crc::sck::build::U_K1] = src[src::sck::generate::U_K];
+			crc[crc::sck::build::U_K1] = src[src::sck::generate::out_data];
 
 		if (this->params_BFER_ite.cdc->enc->type != "NO")
 		{
 			if (this->params_BFER_ite.crc->type != "NO")
 				enc[enc::sck::encode::U_K] = crc[crc::sck::build::U_K2];
 			else
-				enc[enc::sck::encode::U_K] = src[src::sck::generate::U_K];
+				enc[enc::sck::encode::U_K] = src[src::sck::generate::out_data];
 		}
 
 		if (this->params_BFER_ite.cdc->enc->type != "NO")
@@ -292,7 +292,7 @@ void Simulation_BFER_ite<B,R,Q>
 		else if (this->params_BFER_ite.crc->type != "NO")
 			itb[itl::sck::interleave::nat] = crc[crc::sck::build::U_K2];
 		else
-			itb[itl::sck::interleave::nat] = src[src::sck::generate::U_K];
+			itb[itl::sck::interleave::nat] = src[src::sck::generate::out_data];
 
 		mdm1[mdm::sck::modulate::X_N1] = itb[itl::sck::interleave::itl];
 	}
@@ -308,14 +308,14 @@ void Simulation_BFER_ite<B,R,Q>
 			else if (this->params_BFER_ite.crc->type != "NO")
 				csb[cst::sck::apply::ref] = crc[crc::sck::build::U_K2];
 			else
-				csb[cst::sck::apply::ref] = src[src::sck::generate::U_K];
+				csb[cst::sck::apply::ref] = src[src::sck::generate::out_data];
 		}
 		else
 		{
 			if (this->params_BFER_ite.crc->type != "NO")
 				csb[cst::sck::apply::ref] = crc[crc::sck::build::U_K2];
 			else
-				csb[cst::sck::apply::ref] = src[src::sck::generate::U_K];
+				csb[cst::sck::apply::ref] = src[src::sck::generate::out_data];
 		}
 
 		if (this->params_BFER_ite.src->type == "AZCW")
@@ -338,9 +338,9 @@ void Simulation_BFER_ite<B,R,Q>
 		}
 		else
 		{
-			csr1[cst::sck::apply::ref] = src[src::sck::generate::U_K];
-			csr2[cst::sck::apply::ref] = src[src::sck::generate::U_K];
-			csr3[cst::sck::apply::ref] = src[src::sck::generate::U_K];
+			csr1[cst::sck::apply::ref] = src[src::sck::generate::out_data];
+			csr2[cst::sck::apply::ref] = src[src::sck::generate::out_data];
+			csr3[cst::sck::apply::ref] = src[src::sck::generate::out_data];
 		}
 	}
 
@@ -353,10 +353,10 @@ void Simulation_BFER_ite<B,R,Q>
 		else if (this->params_BFER_ite.crc->type != "NO")
 			mnt[mnt::sck::check_errors::U] = crc[crc::sck::build::U_K2];
 		else
-			mnt[mnt::sck::check_errors::U] = src[src::sck::generate::U_K];
+			mnt[mnt::sck::check_errors::U] = src[src::sck::generate::out_data];
 	}
 	else
-		mnt[mnt::sck::check_errors::U] = src[src::sck::generate::U_K];
+		mnt[mnt::sck::check_errors::U] = src[src::sck::generate::out_data];
 
 	const auto is_rayleigh = this->params_BFER_ite.chn->type.find("RAYLEIGH") != std::string::npos;
 	if (is_rayleigh && this->params_BFER_ite.chn->type == "NO")
@@ -711,8 +711,8 @@ void Simulation_BFER_ite<B,R,Q>
 		for (size_t tid = 0; tid < (size_t)this->params_BFER.n_threads; tid++)
 		{
 			auto &source  = sources.size() ? *sources[tid] : *this->source;
-			auto src_data = (B*)(source[module::src::sck::generate::U_K].get_dataptr());
-			auto src_bytes = source[module::src::sck::generate::U_K].get_databytes();
+			auto src_data = (B*)(source[module::src::sck::generate::out_data].get_dataptr());
+			auto src_bytes = source[module::src::sck::generate::out_data].get_databytes();
 			auto src_size = (src_bytes / sizeof(B)) / this->params_BFER_ite.n_frames;
 			this->dumper[tid]->register_data(src_data,
 			                                 (unsigned int)src_size,

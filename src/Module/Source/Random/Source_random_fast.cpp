@@ -37,7 +37,7 @@ void Source_random_fast<B>
 	if (!mipp::isAligned(U_K))
 		throw tools::runtime_error(__FILE__, __LINE__, __func__, "'U_K' is misaligned memory.");
 
-	const auto size = (unsigned)(this->K);
+	const auto size = (unsigned)(this->max_data_size);
 
 	// vectorized loop
 	const auto period = mipp::nElReg<B>() * sizeof(B) * 8;

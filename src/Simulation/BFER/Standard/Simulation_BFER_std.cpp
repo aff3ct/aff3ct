@@ -173,15 +173,15 @@ void Simulation_BFER_std<B,R,Q>
 
 	if (this->params_BFER_std.src->type == "AZCW")
 	{
-		auto src_data = (uint8_t*)(src[src::sck::generate::U_K ].get_dataptr());
-		auto crc_data = (uint8_t*)(crc[crc::sck::build   ::U_K2].get_dataptr());
-		auto enc_data = (uint8_t*)(enc[enc::sck::encode  ::X_N ].get_dataptr());
-		auto pct_data = (uint8_t*)(pct[pct::sck::puncture::X_N2].get_dataptr());
+		auto src_data = (uint8_t*)(src[src::sck::generate::out_data].get_dataptr());
+		auto crc_data = (uint8_t*)(crc[crc::sck::build   ::U_K2    ].get_dataptr());
+		auto enc_data = (uint8_t*)(enc[enc::sck::encode  ::X_N     ].get_dataptr());
+		auto pct_data = (uint8_t*)(pct[pct::sck::puncture::X_N2    ].get_dataptr());
 
-		auto src_bytes = src[src::sck::generate::U_K ].get_databytes();
-		auto crc_bytes = crc[crc::sck::build   ::U_K2].get_databytes();
-		auto enc_bytes = enc[enc::sck::encode  ::X_N ].get_databytes();
-		auto pct_bytes = pct[pct::sck::puncture::X_N2].get_databytes();
+		auto src_bytes = src[src::sck::generate::out_data].get_databytes();
+		auto crc_bytes = crc[crc::sck::build   ::U_K2    ].get_databytes();
+		auto enc_bytes = enc[enc::sck::encode  ::X_N     ].get_databytes();
+		auto pct_bytes = pct[pct::sck::puncture::X_N2    ].get_databytes();
 
 		std::fill(src_data, src_data + src_bytes, 0);
 		std::fill(crc_data, crc_data + crc_bytes, 0);
@@ -195,14 +195,14 @@ void Simulation_BFER_std<B,R,Q>
 	else
 	{
 		if (this->params_BFER_std.crc->type != "NO")
-			crc[crc::sck::build::U_K1] = src[src::sck::generate::U_K];
+			crc[crc::sck::build::U_K1] = src[src::sck::generate::out_data];
 
 		if (this->params_BFER_std.cdc->enc->type != "NO")
 		{
 			if (this->params_BFER_std.crc->type != "NO")
 				enc[enc::sck::encode::U_K] = crc[crc::sck::build::U_K2];
 			else
-				enc[enc::sck::encode::U_K] = src[src::sck::generate::U_K];
+				enc[enc::sck::encode::U_K] = src[src::sck::generate::out_data];
 		}
 
 		if (this->params_BFER_std.cdc->pct != nullptr && this->params_BFER_std.cdc->pct->type != "NO")
@@ -212,7 +212,7 @@ void Simulation_BFER_std<B,R,Q>
 			else if (this->params_BFER_std.crc->type != "NO")
 				pct[pct::sck::puncture::X_N1] = crc[crc::sck::build::U_K2];
 			else
-				pct[pct::sck::puncture::X_N1] = src[src::sck::generate::U_K];
+				pct[pct::sck::puncture::X_N1] = src[src::sck::generate::out_data];
 		}
 
 		if (this->params_BFER_std.cdc->pct != nullptr && this->params_BFER_std.cdc->pct->type != "NO")
@@ -222,7 +222,7 @@ void Simulation_BFER_std<B,R,Q>
 		else if (this->params_BFER_std.crc->type != "NO")
 			mdm[mdm::sck::modulate::X_N1] = crc[crc::sck::build::U_K2];
 		else
-			mdm[mdm::sck::modulate::X_N1] = src[src::sck::generate::U_K];
+			mdm[mdm::sck::modulate::X_N1] = src[src::sck::generate::out_data];
 	}
 
 	const auto is_rayleigh = this->params_BFER_std.chn->type.find("RAYLEIGH") != std::string::npos;
@@ -361,7 +361,7 @@ void Simulation_BFER_std<B,R,Q>
 		else if (this->params_BFER_std.crc->type != "NO")
 			csr[cst::sck::apply::ref] = crc[crc::sck::build::U_K2];
 		else
-			csr[cst::sck::apply::ref] = src[src::sck::generate::U_K];
+			csr[cst::sck::apply::ref] = src[src::sck::generate::out_data];
 
 		if (this->params_BFER_std.cdc->pct != nullptr && this->params_BFER_std.cdc->pct->type != "NO")
 			csr[cst::sck::apply::in] = pct[pct::sck::depuncture::Y_N2];
@@ -395,7 +395,7 @@ void Simulation_BFER_std<B,R,Q>
 			else if (this->params_BFER_std.crc->type != "NO")
 				csb[cst::sck::apply::ref] = crc[crc::sck::build::U_K2];
 			else
-				csb[cst::sck::apply::ref] = src[src::sck::generate::U_K];
+				csb[cst::sck::apply::ref] = src[src::sck::generate::out_data];
 
 			csb[cst::sck::apply::in] = dec[dec::sck::decode_siho_cw::V_N];
 		}
@@ -406,7 +406,7 @@ void Simulation_BFER_std<B,R,Q>
 			if (this->params_BFER_std.crc->type != "NO")
 				csb[cst::sck::apply::ref] = crc[crc::sck::build::U_K2];
 			else
-				csb[cst::sck::apply::ref] = src[src::sck::generate::U_K];
+				csb[cst::sck::apply::ref] = src[src::sck::generate::out_data];
 
 			csb[cst::sck::apply::in] = dec[dec::sck::decode_siho::V_K];
 
@@ -482,7 +482,7 @@ void Simulation_BFER_std<B,R,Q>
 			else if (this->params_BFER_std.crc->type != "NO")
 				mnt[mnt::sck::check_errors::U] = crc[crc::sck::build::U_K2];
 			else
-				mnt[mnt::sck::check_errors::U] = src[src::sck::generate::U_K];
+				mnt[mnt::sck::check_errors::U] = src[src::sck::generate::out_data];
 		}
 
 		if (this->params_BFER_std.coset)
@@ -495,7 +495,7 @@ void Simulation_BFER_std<B,R,Q>
 		if (this->params_BFER_std.src->type == "AZCW")
 			mnt[mnt::sck::check_errors::U] = enc[enc::sck::encode::X_N].get_dataptr();
 		else
-			mnt[mnt::sck::check_errors::U] = src[src::sck::generate::U_K];
+			mnt[mnt::sck::check_errors::U] = src[src::sck::generate::out_data];
 		if (this->params_BFER_std.crc->type != "NO")
 			mnt[mnt::sck::check_errors::V] = crc[crc::sck::extract::V_K2];
 		else if (this->params_BFER_std.coset)
@@ -517,7 +517,7 @@ void Simulation_BFER_std<B,R,Q>
 			else if (this->params_BFER_std.crc->type != "NO")
 				mni[mnt::sck::get_mutual_info::X] = crc[crc::sck::build::U_K2];
 			else
-				mni[mnt::sck::get_mutual_info::X] = src[src::sck::generate::U_K];
+				mni[mnt::sck::get_mutual_info::X] = src[src::sck::generate::out_data];
 		}
 
 		if (mdm.is_demodulator())
@@ -616,8 +616,8 @@ void Simulation_BFER_std<B,R,Q>
 		for (size_t tid = 0; tid < (size_t)this->params_BFER.n_threads; tid++)
 		{
 			auto &source  = sources.size() ? *sources[tid] : *this->source;
-			auto src_data = (B*)(source[module::src::sck::generate::U_K].get_dataptr());
-			auto src_bytes = source[module::src::sck::generate::U_K].get_databytes();
+			auto src_data = (B*)(source[module::src::sck::generate::out_data].get_dataptr());
+			auto src_bytes = source[module::src::sck::generate::out_data].get_databytes();
 			auto src_size = (src_bytes / sizeof(B)) / this->params_BFER_std.n_frames;
 			this->dumper[tid]->register_data(src_data,
 			                                 (unsigned int)src_size,

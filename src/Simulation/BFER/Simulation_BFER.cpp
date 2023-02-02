@@ -325,7 +325,7 @@ void Simulation_BFER<B,R>
 			if (params_BFER.statistics)
 			{
 				std::cout << "#" << std::endl;
-				tools::Stats::show(this->sequence->get_modules_per_types(), true, std::cout);
+				tools::Stats::show(this->sequence->get_modules_per_types(), true, true, std::cout);
 				std::cout << "#" << std::endl;
 			}
 		}
