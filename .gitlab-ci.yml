@@ -425,34 +425,34 @@ build-windows-msvc-avx:
     - $env:NAME="build_windows_msvc_avx"
     - ./ci/build-windows-msvc.bat
 
-build-macos-clang-x64-sse4.2:
-  stage: build
-  variables:
-    GIT_SUBMODULE_STRATEGY: recursive
-  except:
-    - schedules
-  needs:
-    - job: analysis-cppcheck
-      artifacts: false
-    - job: analysis-headers
-      artifacts: false
-    - job: analysis-documentation
-      artifacts: true
-  tags:
-    - x86_64
-    - macos
-  artifacts:
-    name: build-macos-clang-x64-sse4.2
-    paths:
-      - build_macos_clang_x64_sse4.2
-  script:
-    - export CC="clang"
-    - export CXX="clang++"
-    - export CFLAGS="-Wall -Wno-overloaded-virtual -funroll-loops -m64 -msse4.2"
-    - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
-    - export NAME="build_macos_clang_x64_sse4.2"
-    - source ./ci/tools/threads.sh
-    - ./ci/build-linux-macos.sh
+# build-macos-clang-x64-sse4.2:
+#   stage: build
+#   variables:
+#     GIT_SUBMODULE_STRATEGY: recursive
+#   except:
+#     - schedules
+#   needs:
+#     - job: analysis-cppcheck
+#       artifacts: false
+#     - job: analysis-headers
+#       artifacts: false
+#     - job: analysis-documentation
+#       artifacts: true
+#   tags:
+#     - x86_64
+#     - macos
+#   artifacts:
+#     name: build-macos-clang-x64-sse4.2
+#     paths:
+#       - build_macos_clang_x64_sse4.2
+#   script:
+#     - export CC="clang"
+#     - export CXX="clang++"
+#     - export CFLAGS="-Wall -Wno-overloaded-virtual -funroll-loops -m64 -msse4.2"
+#     - export CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
+#     - export NAME="build_macos_clang_x64_sse4.2"
+#     - source ./ci/tools/threads.sh
+#     - ./ci/build-linux-macos.sh
 
 check-debug-parser:
   image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_python:v3.8.5
@@ -926,7 +926,7 @@ deploy-builds-linux:
     - build-linux-gcc-x64-avx2
     - build-windows-gcc-x86-sse4.2
     - build-windows-gcc-x64-avx2
-    - build-macos-clang-x64-sse4.2
+    # - build-macos-clang-x64-sse4.2
   tags:
     - x86_64
     - linux
@@ -958,7 +958,8 @@ deploy-builds-linux:
     - source ./ci/tools/git-message.sh
     - source ./ci/tools/git-author.sh
     - source ./ci/tools/git-version.sh
-    - ./ci/deploy-builds-linux.sh build_linux_gcc_x64_sse4.2 build_linux_gcc_x64_avx2 build_windows_gcc_x86_sse4.2 build_windows_gcc_x64_avx2 build_macos_clang_x64_sse4.2
+    # - ./ci/deploy-builds-linux.sh build_linux_gcc_x64_sse4.2 build_linux_gcc_x64_avx2 build_windows_gcc_x86_sse4.2 build_windows_gcc_x64_avx2 build_macos_clang_x64_sse4.2
+    - ./ci/deploy-builds-linux.sh build_linux_gcc_x64_sse4.2 build_linux_gcc_x64_avx2 build_windows_gcc_x86_sse4.2 build_windows_gcc_x64_avx2
 
 deploy-upload-ppa:
   image: registry.gitlab.com/aff3ct/aff3ct/x86_64_ubuntu_ppa
