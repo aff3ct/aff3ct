@@ -14,7 +14,7 @@ Monitor_BFER<B>
 ::Monitor_BFER(const int K, const unsigned max_fe, const unsigned max_n_frames,
                const bool count_unknown_values)
 : Monitor(), K(K), max_fe(max_fe), max_n_frames(max_n_frames),
-  count_unknown_values(count_unknown_values), err_hist(0), err_hist_activated(false)
+  count_unknown_values(count_unknown_values), no_is_done(false), err_hist(0), err_hist_activated(false)
 {
 	const std::string name = "Monitor_BFER";
 	this->set_name(name);
@@ -283,11 +283,18 @@ bool Monitor_BFER<B>
 	return get_max_n_frames() != 0 && get_n_analyzed_fra() >= get_max_n_frames();
 }
 
+
+template <typename B>
+void Monitor_BFER<B>
+::disable_is_done(const bool no_is_done) {
+	this->no_is_done = no_is_done;
+}
+
 template <typename B>
 bool Monitor_BFER<B>
 ::is_done() const
 {
-	return fe_limit_achieved() || frame_limit_achieved();
+	return !this->no_is_done && (fe_limit_achieved() || frame_limit_achieved());
 }
 
 template <typename B>

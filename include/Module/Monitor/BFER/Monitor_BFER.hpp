@@ -46,6 +46,7 @@ private:
 	const unsigned max_fe;               // max number of wrong frames to get then fe_limit_achieved() returns true else if 0
 	const unsigned max_n_frames;         // max number of frames to check then frame_limit_achieved() returns true else if 0
 	const bool     count_unknown_values; // take into account or not the unknown values as wrong values in the checked frames
+	      bool     no_is_done;           // if set to true, is_done() method always return false
 
 	Attributes vals;
 	tools::Histogram<int> err_hist; // the error histogram record
@@ -143,6 +144,8 @@ public:
 	virtual void copy(const Attributes& v);
 
 	Monitor_BFER<B>& operator=(const Monitor_BFER<B>& m); // not full "copy" call
+
+	void disable_is_done(const bool no_is_done);
 
 protected:
 	const Attributes& get_attributes() const;
