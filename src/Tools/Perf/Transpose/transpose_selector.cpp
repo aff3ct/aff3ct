@@ -25,16 +25,20 @@ bool aff3ct::tools::char_transpose(const signed char *src, signed char *dst, int
 
 	if (n >= min_n)
 	{
+#if defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)
+		return false;
+#elif defined(__AVX2__)
 		if (((uintptr_t)src) % (min_n / 8))
 			throw runtime_error(__FILE__, __LINE__, __func__, "'src' is unaligned memory.");
 		if (((uintptr_t)dst) % (min_n / 8))
 			throw runtime_error(__FILE__, __LINE__, __func__, "'dst' is unaligned memory.");
-#if defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)
-		return false;
-#elif defined(__AVX2__)
 		uchar_transpose_avx((__m256i*) src, (__m256i*) dst, n);
 		return true;
 #elif defined(__SSE4_1__)
+		if (((uintptr_t)src) % (min_n / 8))
+			throw runtime_error(__FILE__, __LINE__, __func__, "'src' is unaligned memory.");
+		if (((uintptr_t)dst) % (min_n / 8))
+			throw runtime_error(__FILE__, __LINE__, __func__, "'dst' is unaligned memory.");
 		uchar_transpose_sse((__m128i*) src, (__m128i*) dst, n);
 		return true;
 #elif (defined(__ARM_NEON__) || defined(__ARM_NEON))
@@ -60,16 +64,20 @@ bool aff3ct::tools::char_itranspose(const signed char *src, signed char *dst, in
 
 	if (n >= min_n)
 	{
+#if defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)
+		return false;
+#elif defined(__AVX2__)
 		if (((uintptr_t)src) % (min_n / 8))
 			throw runtime_error(__FILE__, __LINE__, __func__, "'src' is unaligned memory.");
 		if (((uintptr_t)dst) % (min_n / 8))
 			throw runtime_error(__FILE__, __LINE__, __func__, "'dst' is unaligned memory.");
-#if defined(__MIC__) || defined(__KNCNI__) || defined(__AVX512__) || defined(__AVX512F__)
-		return false;
-#elif defined(__AVX2__)
 		uchar_itranspose_avx((__m256i*) src, (__m256i*) dst, n / 8);
 		return true;
 #elif defined(__SSE4_1__)
+		if (((uintptr_t)src) % (min_n / 8))
+			throw runtime_error(__FILE__, __LINE__, __func__, "'src' is unaligned memory.");
+		if (((uintptr_t)dst) % (min_n / 8))
+			throw runtime_error(__FILE__, __LINE__, __func__, "'dst' is unaligned memory.");
 		uchar_itranspose_sse((__m128i*) src, (__m128i*) dst, n / 8);
 		return true;
 #elif (defined(__ARM_NEON__) || defined(__ARM_NEON))
