@@ -566,8 +566,8 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		}
 
 //	if (!polar_patterns.exist_node_type(polar_node_t::RATE_0_LEFT, r_d +1))
-		for (auto i = 0; i < n_active_paths; i++)
-			API_polar::h0(s[paths[i]], off_s, n_elmts);
+	for (auto i = 0; i < n_active_paths; i++)
+		API_polar::h0(s[paths[i]], off_s, n_elmts);
 }
 
 template <typename B, typename R, class API_polar>
@@ -588,8 +588,8 @@ void Decoder_polar_SCL_fast_sys<B,R,API_polar>
 		}
 
 //	if (!polar_patterns.exist_node_type(polar_node_t::RATE_0_LEFT, REV_D +1))
-		for (auto i = 0; i < n_active_paths; i++)
-			API_polar::template h0<N_ELMTS>(s[paths[i]], off_s, N_ELMTS);
+	for (auto i = 0; i < n_active_paths; i++)
+		API_polar::template h0<N_ELMTS>(s[paths[i]], off_s, N_ELMTS);
 }
 
 template <typename B, typename R, class API_polar>

@@ -508,7 +508,7 @@ R Polar_lambdas<B,R,X,P>
 {
 	bool switch_sign = false;
 	for (size_t i = 0; i < m.size(); i++)
-		switch_sign ^= m[i] & (bool)u[i];
+		switch_sign ^= m[i] && (bool)u[i];
 
 	return switch_sign ? -L : L;
 }

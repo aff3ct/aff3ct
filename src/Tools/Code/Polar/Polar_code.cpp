@@ -384,7 +384,7 @@ bool Polar_code
 			{
 				uint32_t sum_r = 0;
 				for (auto k = 0; k < (int)kernel.size(); k++)
-					sum_r += (uint32_t)(kernel[i][k] & kernel[k][j]);
+					sum_r += (uint32_t)(kernel[i][k] && kernel[k][j]);
 				k_x_k[i][j] = (bool)(sum_r & (uint32_t)1);
 			}
 
