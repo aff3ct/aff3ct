@@ -26,7 +26,7 @@ public:
 	virtual Noise_type get_type() const;
 
 protected:
-	virtual void check();
+	virtual void check() const;
 };
 
 template <typename R = float>

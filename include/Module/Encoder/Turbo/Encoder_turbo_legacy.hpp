@@ -33,7 +33,7 @@ public:
 	virtual void set_n_frames(const size_t n_frames);
 
 protected:
-	virtual void deep_copy(const Encoder_turbo_legacy<B> &m);
+	void deep_copy(const Encoder_turbo_legacy<B> &m);
 	void _encode(const B *U_K, B *X_N, const size_t frame_id);
 };
 }

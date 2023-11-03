@@ -77,9 +77,9 @@ public:
 	virtual const std::vector<bool>& get_frozen_bits() const;
 
 protected:
-	virtual void deep_copy          (const Decoder_polar_MK_SC_naive<B,R>& m );
-	        void recursive_deep_copy(const tools::Generic_node<Contents_MK_SC<B,R>> *nref,
-	                                       tools::Generic_node<Contents_MK_SC<B,R>> *nclone);
+	void deep_copy          (const Decoder_polar_MK_SC_naive<B,R>& m );
+	void recursive_deep_copy(const tools::Generic_node<Contents_MK_SC<B,R>> *nref,
+	                               tools::Generic_node<Contents_MK_SC<B,R>> *nclone);
 
 	        void _load          (const R *Y_N                               );
 	        int  _decode_siho   (const R *Y_N, B *V_K, const size_t frame_id);

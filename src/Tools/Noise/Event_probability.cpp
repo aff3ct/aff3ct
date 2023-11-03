@@ -16,7 +16,7 @@ Event_probability<R>
 
 template <typename R>
 void Event_probability<R>
-::check()
+::check() const
 {
 	auto n = this->get_value();
 	if (n < (R)-0.00001 || n > (R)1.00001)

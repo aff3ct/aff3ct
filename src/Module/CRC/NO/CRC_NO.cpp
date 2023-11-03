@@ -25,7 +25,7 @@ CRC_NO<B>* CRC_NO<B>
 
 template <typename B>
 int CRC_NO<B>
-::get_size() const
+::get_size()
 {
 	return 0;
 }

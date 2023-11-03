@@ -32,7 +32,7 @@ public:
 	virtual void set_n_frames(const size_t n_frames);
 
 protected:
-	virtual void deep_copy(const Codec_SIHO<B,Q> &t);
+	void deep_copy(const Codec_SIHO<B,Q> &t);
 	void set_decoder_siho(module::Decoder_SIHO<B,Q>* dec);
 	void set_decoder_siho(std::shared_ptr<module::Decoder_SIHO<B,Q>> dec);
 };

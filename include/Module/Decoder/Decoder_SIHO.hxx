@@ -255,11 +255,25 @@ int Decoder_SIHO<B,R>
 
 template <typename B, typename R>
 int Decoder_SIHO<B,R>
+::_decode_hiho(const B *Y_N, B *V_K, const size_t frame_id)
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
+}
+
+template <typename B, typename R>
+int Decoder_SIHO<B,R>
 ::_decode_hiho_cw(const B *Y_N, int8_t *CWD, B *V_N, const size_t frame_id)
 {
 	for (size_t i = 0; i < (size_t)this->N * this->get_n_frames_per_wave(); i++)
 		this->Y_N[i] = Y_N[i] ? (R)-1 : (R)1;
 	return this->_decode_siho_cw(this->Y_N.data(), CWD, V_N, frame_id);
+}
+
+template <typename B, typename R>
+int Decoder_SIHO<B,R>
+::_decode_hiho_cw(const B *Y_N, B *V_N, const size_t frame_id)
+{
+	throw tools::unimplemented_error(__FILE__, __LINE__, __func__);
 }
 
 template <typename B, typename R>

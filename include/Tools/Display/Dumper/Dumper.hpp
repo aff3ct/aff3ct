@@ -52,7 +52,7 @@ public:
 	                   std::vector<unsigned> headers = std::vector<unsigned>());
 
 	virtual void dump (const std::string& base_path                   );
-	virtual void add  (const unsigned n_err, const size_t frame_id = 0);
+	        void add  (const unsigned n_err, const size_t frame_id = 0);
 	virtual void clear(                                               );
 
 	void set_write_headers(const bool write_headers);

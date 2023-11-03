@@ -78,7 +78,7 @@ public:
 	virtual void set_n_frames(const size_t n_frames);
 
 protected:
-	virtual void deep_copy(const Codec<B,Q> &t);
+	void deep_copy(const Codec<B,Q> &t);
 
 	virtual void check_noise();
 

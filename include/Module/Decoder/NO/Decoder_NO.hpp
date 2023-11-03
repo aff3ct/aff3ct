@@ -20,6 +20,7 @@ public:
 	virtual Decoder_NO<B,R>* clone() const;
 
 protected:
+	using Decoder_SISO<B,R>::_decode_siso;
 	int _decode_siso   (const R *sys, const R *par, R *ext, const size_t frame_id);
 	int _decode_siso   (const R *Y_K1, R *Y_K2, const size_t frame_id);
 	int _decode_siho   (const R *Y_K,  B *V_K,  const size_t frame_id);

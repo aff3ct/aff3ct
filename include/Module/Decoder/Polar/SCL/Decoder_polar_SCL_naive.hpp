@@ -56,9 +56,9 @@ public:
 	virtual const std::vector<bool>& get_frozen_bits() const;
 
 protected:
-	virtual void deep_copy          (const Decoder_polar_SCL_naive<B,R,F,G>& m);
-	        void recursive_deep_copy(const tools::Binary_node<Contents_SCL<B,R>> *nref,
-	                                       tools::Binary_node<Contents_SCL<B,R>> *nclone);
+	void deep_copy          (const Decoder_polar_SCL_naive<B,R,F,G>& m);
+	void recursive_deep_copy(const tools::Binary_node<Contents_SCL<B,R>> *nref,
+	                               tools::Binary_node<Contents_SCL<B,R>> *nclone);
 
 	        void _load          (const R *Y_N                               );
 	        void _decode        (const size_t frame_id                      );

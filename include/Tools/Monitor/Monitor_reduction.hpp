@@ -144,7 +144,13 @@ public:
 
 	virtual void reduce(bool fully = true);
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+	/*
+	 * Here the is_done interface should be const... There is a problem in the design...
+	 */
 	virtual bool is_done();
+#pragma GCC diagnostic pop
 
 protected:
 	virtual bool _is_done();

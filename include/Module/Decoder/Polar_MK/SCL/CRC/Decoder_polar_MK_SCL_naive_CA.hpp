@@ -44,7 +44,7 @@ public:
 	virtual Decoder_polar_MK_SCL_naive_CA<B,R>* clone() const;
 
 protected:
-	virtual void deep_copy(const Decoder_polar_MK_SCL_naive_CA<B,R>& m);
+	void deep_copy(const Decoder_polar_MK_SCL_naive_CA<B,R>& m);
 	virtual void select_best_path(const size_t frame_id);
 };
 }

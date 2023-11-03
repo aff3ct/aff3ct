@@ -19,7 +19,7 @@ public:
 	virtual ~CRC_NO() = default;
 	virtual CRC_NO<B>* clone() const;
 
-	int get_size() const;
+	int get_size();
 
 protected:
 	virtual void _build       (const B *U_K1, B *U_K2, const size_t frame_id);

@@ -46,7 +46,7 @@ public:
 	virtual Decoder_polar_SCL_fast_CA_sys<B,R,API_polar>* clone() const;
 
 protected:
-	virtual void deep_copy(const Decoder_polar_SCL_fast_CA_sys<B,R,API_polar> &m);
+	void deep_copy(const Decoder_polar_SCL_fast_CA_sys<B,R,API_polar> &m);
 
 	        bool crc_check       (mipp::vector<B> &s, const size_t frame_id);
 	virtual int  select_best_path(const size_t frame_id);
