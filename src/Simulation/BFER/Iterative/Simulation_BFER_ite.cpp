@@ -487,8 +487,8 @@ void Simulation_BFER_ite<B,R,Q>
 		crc[crc::sck::check      ::V_K] = ext[ext::sck::get_sys_bit::V_K   ];
 		uop[uop::sck::perform    ::in ] = crc[crc::sck::check      ::status];
 		red[red::sck::reduce     ::in ] = uop[uop::sck::perform    ::out   ];
-		bop[bop::sck::perform    ::in1] = ite[ite::sck::iterate    ::out   ];
-		bop[bop::sck::perform    ::in2] = red[red::sck::reduce     ::out   ];
+		bop[bop::sck::perform    ::in0] = ite[ite::sck::iterate    ::out   ];
+		bop[bop::sck::perform    ::in1] = red[red::sck::reduce     ::out   ];
 		swi[swi::tsk::commute    ][1  ] = bop[bop::sck::perform    ::out   ];
 	}
 	else
