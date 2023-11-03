@@ -316,7 +316,7 @@ build-linux-clang:
     - ./ci/build-linux-macos.sh
 
 build-linux-icpc:
-  image: intel/oneapi-hpckit
+  image: intel/oneapi-hpckit:2022.2-devel-ubuntu20.04
   stage: build
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
