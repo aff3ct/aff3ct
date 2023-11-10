@@ -14,6 +14,7 @@
 #
 import subprocess
 import os
+import re
 import textwrap
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
@@ -40,10 +41,12 @@ copyright = '2023, AFF3CT team'
 author = 'AFF3CT team'
 
 # get the AFF3CT version from Git
-if (read_the_docs_build):
-    subprocess.call('git fetch --unshallow', shell=True)
-label = subprocess.check_output(["git", "describe"]).strip().decode(encoding='UTF-8')
-split_label = label.split("-")
+label = os.environ.get('AFF3CT_OVERRIDE_VERSION')
+if label is None:
+    if (read_the_docs_build):
+        subprocess.call('git fetch --unshallow', shell=True)
+    label = subprocess.check_output(["git", "describe"]).strip().decode(encoding='UTF-8')
+split_label = re.split('[-+~]', label)
 
 # The short X.Y version
 version = split_label[0]
