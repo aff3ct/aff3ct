@@ -4,8 +4,6 @@
 #include "Tools/Exception/exception.hpp"
 #include "Module/Decoder/RSC_DB/BCJR/Decoder_RSC_DB_BCJR_DVB_RCS1.hpp"
 
-using namespace aff3ct::tools;
-
 namespace aff3ct
 {
 namespace module
