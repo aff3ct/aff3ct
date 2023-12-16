@@ -1,4 +1,5 @@
 #include <limits>
+#include <cstdint>
 
 #include "Tools/Exception/exception.hpp"
 #ifdef __AVX2__
