@@ -127,7 +127,12 @@ class tableStats:
 			else:
 				pw = r[1]
 
-			diff = math.fabs(self.tableCur[i] - self.tableRef[i]) * 10**(-pw)
+			# consider lower error rates as always OK
+			diff = (self.tableCur[i] - self.tableRef[i]) * 10**(-pw)
+			if diff < 0 and (self.name in ("FER", "BER")):
+				diff = float(0)
+			else:
+				diff = math.fabs(diff)
 
 			if diff > self.sensibility:
 				self.errorsPos    .append(i)
