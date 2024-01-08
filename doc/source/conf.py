@@ -37,7 +37,7 @@ if (read_the_docs_build):
 # -- Project information -----------------------------------------------------
 
 project = 'AFF3CT'
-copyright = '2023, AFF3CT team'
+copyright = '2024, AFF3CT team'
 author = 'AFF3CT team'
 
 # get the AFF3CT version from Git
@@ -91,7 +91,7 @@ master_doc = 'index'
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+#language = None
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -457,3 +457,28 @@ if buildername != "latex":
 
     # Tell sphinx what the pygments highlight language should be.
     highlight_language = 'cpp'
+
+# -- Configure "sphinxcontrib.bibtex"
+
+root_bib = 'user/simulation/parameters/'
+bibtex_bibfiles = [root_bib + 'channel/references.bib',
+                   root_bib + 'codec/bch/references.bib',
+                   root_bib + 'codec/common/references.bib',
+                   root_bib + 'codec/ldpc/references.bib',
+                   root_bib + 'codec/polar/references_dec.bib',
+                   root_bib + 'codec/polar/references_enc.bib',
+                   root_bib + 'codec/polar/references_pct.bib',
+                   root_bib + 'codec/polar_mk/references_dec.bib',
+                   root_bib + 'codec/polar_mk/references_enc.bib',
+                   root_bib + 'codec/rs/references.bib',
+                   root_bib + 'codec/rsc/references.bib',
+                   root_bib + 'codec/rsc_db/references.bib',
+                   root_bib + 'codec/turbo/references.bib',
+                   root_bib + 'codec/turbo_db/references.bib',
+                   root_bib + 'codec/turbo_prod/references.bib',
+                   root_bib + 'crc/references.bib',
+                   root_bib + 'interleaver/references.bib',
+                   root_bib + 'modem/references.bib',
+                   root_bib + 'modem/references_scma.bib',
+                   root_bib + 'simulation/references.bib',
+                   root_bib + 'source/references.bib']

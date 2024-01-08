@@ -94,3 +94,4 @@ References
 """"""""""
 
 .. bibliography:: references.bib
+   :labelprefix: Bch-

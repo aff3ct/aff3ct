@@ -20,7 +20,7 @@ Description of the allowed values:
 +-----------+------------------------------------------------------------------+
 | Value     | Description                                                      |
 +===========+==================================================================+
-| ``BCJR``  | Select the |BCJR| |DB| decoder :cite:`Bahl1974`.                 |
+| ``BCJR``  | Select the |BCJR| |DB| decoder :cite:`Bahl1974a`.                |
 +-----------+------------------------------------------------------------------+
 | ``CHASE`` | See the common :ref:`dec-common-dec-type` parameter.             |
 +-----------+------------------------------------------------------------------+
@@ -94,3 +94,4 @@ References
 """"""""""
 
 .. bibliography:: references.bib
+   :labelprefix: Rsdb-

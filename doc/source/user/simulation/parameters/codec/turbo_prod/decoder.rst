@@ -280,4 +280,4 @@ References
 """"""""""
 
 .. bibliography:: references.bib
-
+   :labelprefix: Trbp-

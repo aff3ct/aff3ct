@@ -206,3 +206,4 @@ References
 """"""""""
 
 .. bibliography:: references_dec.bib
+   :labelprefix: Plrd-

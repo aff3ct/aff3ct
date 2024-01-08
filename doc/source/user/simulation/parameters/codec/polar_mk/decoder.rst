@@ -22,10 +22,10 @@ Description of the allowed values:
 +==============+===============================================================+
 | ``SC``       | Select the original |SC| algorithm from :cite:`Arikan2009`.   |
 +--------------+---------------------------------------------------------------+
-| ``SCL``      | Select the |SCL| algorithm from :cite:`Tal2011`, also support |
-|              | the improved |CA|-|SCL| algorithm.                            |
+| ``SCL``      | Select the |SCL| algorithm from :cite:`Tal2011a`, also        |
+|              | support the improved |CA|-|SCL| algorithm.                    |
 +--------------+---------------------------------------------------------------+
-| ``ASCL``     | Select the |A-SCL| algorithm from :cite:`Li2012`, only the    |
+| ``ASCL``     | Select the |A-SCL| algorithm from :cite:`Li2012b`, only the   |
 |              | |PA-SCL| variant is available.                                |
 +--------------+---------------------------------------------------------------+
 | ``CHASE``    | See the common :ref:`dec-common-dec-type` parameter.          |
@@ -45,7 +45,7 @@ polar kernels listed below.
    \end{bmatrix}.
 
 :math:`T2_{Arikan}` is the original :math:`2 \times 2` kernel proposed by Arikan
-:cite:`Arikan2009`. This matrix is invertible and can be used for systematic
+:cite:`Arikan2009a`. This matrix is invertible and can be used for systematic
 encoding/decoding schemes.
 
 .. math::
@@ -170,3 +170,4 @@ References
 """"""""""
 
 .. bibliography:: references_dec.bib
+   :labelprefix: Pmkd-

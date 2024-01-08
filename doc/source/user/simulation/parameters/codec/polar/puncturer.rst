@@ -50,3 +50,4 @@ References
 """"""""""
 
 .. bibliography:: references_pct.bib
+   :labelprefix: Plrp-

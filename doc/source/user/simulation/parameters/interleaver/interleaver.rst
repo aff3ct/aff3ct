@@ -23,42 +23,42 @@ iterative |BFER| chain in :numref:`fig_bferi`).
 
 Description of the allowed values:
 
-+--------------+---------------------------------------------------------------+
-| Value        | Description                                                   |
-+==============+===============================================================+
-| ``NO``       | Disable the interleaving process: the output is the input     |
-|              | (:numref:`fig_itl_no`).                                       |
-+--------------+---------------------------------------------------------------+
-| ``COL_ROW``  | Fill the interleaver by column, read it by row (can be        |
-|              | customized with the :ref:`itl-itl-read-order` parameter)      |
-|              | (:numref:`fig_itl_col_row`).                                  |
-+--------------+---------------------------------------------------------------+
-| ``ROW_COL``  | Fill the interleaver by row, read it by column (can be        |
-|              | customized with the :ref:`itl-itl-read-order` parameter)      |
-|              | (:numref:`fig_itl_row_col`).                                  |
-+--------------+---------------------------------------------------------------+
-| ``RANDOM``   | Generate a random sequence for the entire frame (based on the |
-|              | |MT 19937| |PRNG| :cite:`Matsumoto1998`)                      |
-|              | (:numref:`fig_itl_random`).                                   |
-+--------------+---------------------------------------------------------------+
-| ``RAND_COL`` | Generate multiple random sequences decomposed in independent  |
-|              | columns (based on the |MT 19937| |PRNG| :cite:`Matsumoto1998`)|
-|              | (:numref:`fig_itl_rand_col`).                                 |
-+--------------+---------------------------------------------------------------+
-| ``GOLDEN``   | Select the interleaver described in :cite:`Crozier1999`.      |
-+--------------+---------------------------------------------------------------+
-| ``CCSDS``    | Select the interleaver defined in the |CCSDS| standard.       |
-+--------------+---------------------------------------------------------------+
-| ``LTE``      | Select the interleaver defined in the |LTE| standard.         |
-+--------------+---------------------------------------------------------------+
-| ``DVB-RCS1`` | Select the interleaver defined in the |DVB-RCS1| standard.    |
-+--------------+---------------------------------------------------------------+
-| ``DVB-RCS2`` | Select the interleaver defined in the |DVB-RCS2| standard.    |
-+--------------+---------------------------------------------------------------+
-| ``USER``     | Select the interleaver sequence (|LUT|) from an external file |
-|              | (to use with the :ref:`itl-itl-path` parameter)               |
-|              | (:numref:`fig_itl_user`).                                     |
-+--------------+---------------------------------------------------------------+
++--------------+-----------------------------------------------------------------+
+| Value        | Description                                                     |
++==============+=================================================================+
+| ``NO``       | Disable the interleaving process: the output is the input       |
+|              | (:numref:`fig_itl_no`).                                         |
++--------------+-----------------------------------------------------------------+
+| ``COL_ROW``  | Fill the interleaver by column, read it by row (can be          |
+|              | customized with the :ref:`itl-itl-read-order` parameter)        |
+|              | (:numref:`fig_itl_col_row`).                                    |
++--------------+-----------------------------------------------------------------+
+| ``ROW_COL``  | Fill the interleaver by row, read it by column (can be          |
+|              | customized with the :ref:`itl-itl-read-order` parameter)        |
+|              | (:numref:`fig_itl_row_col`).                                    |
++--------------+-----------------------------------------------------------------+
+| ``RANDOM``   | Generate a random sequence for the entire frame (based on the   |
+|              | |MT 19937| |PRNG| :cite:`Matsumoto1998a`)                       |
+|              | (:numref:`fig_itl_random`).                                     |
++--------------+-----------------------------------------------------------------+
+| ``RAND_COL`` | Generate multiple random sequences decomposed in independent    |
+|              | columns (based on the |MT 19937| |PRNG| :cite:`Matsumoto1998a`) |
+|              | (:numref:`fig_itl_rand_col`).                                   |
++--------------+-----------------------------------------------------------------+
+| ``GOLDEN``   | Select the interleaver described in :cite:`Crozier1999`.        |
++--------------+-----------------------------------------------------------------+
+| ``CCSDS``    | Select the interleaver defined in the |CCSDS| standard.         |
++--------------+-----------------------------------------------------------------+
+| ``LTE``      | Select the interleaver defined in the |LTE| standard.           |
++--------------+-----------------------------------------------------------------+
+| ``DVB-RCS1`` | Select the interleaver defined in the |DVB-RCS1| standard.      |
++--------------+-----------------------------------------------------------------+
+| ``DVB-RCS2`` | Select the interleaver defined in the |DVB-RCS2| standard.      |
++--------------+-----------------------------------------------------------------+
+| ``USER``     | Select the interleaver sequence (|LUT|) from an external file   |
+|              | (to use with the :ref:`itl-itl-path` parameter)                 |
+|              | (:numref:`fig_itl_user`).                                       |
++--------------+-----------------------------------------------------------------+
 
 .. _fig_itl_no:
 
@@ -251,3 +251,4 @@ References
 """"""""""
 
 .. bibliography:: references.bib
+   :labelprefix: Itl-

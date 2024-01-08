@@ -124,9 +124,9 @@ Description of the allowed values:
 +----------+-------------------------------------------------------------------+
 | Value    | Description                                                       |
 +==========+===================================================================+
-| ``GA``   | Select the |GA| method from :cite:`Trifonov2012`.                 |
+| ``GA``   | Select the |GA| method from :cite:`Trifonov2012a`.                |
 +----------+-------------------------------------------------------------------+
-| ``GAA``  | Select the |GA| method from :cite:`Trifonov2012` (works only for  |
+| ``GAA``  | Select the |GA| method from :cite:`Trifonov2012a` (works only for |
 |          | Arikan mono-kernel polar codes).                                  |
 +----------+-------------------------------------------------------------------+
 | ``FILE`` | Read the best channels from an external file, to use with the     |
@@ -192,3 +192,4 @@ References
 """"""""""
 
 .. bibliography:: references_enc.bib
+   :labelprefix: Pmke-

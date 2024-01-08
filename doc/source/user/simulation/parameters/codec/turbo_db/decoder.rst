@@ -235,3 +235,4 @@ References
 """"""""""
 
 .. bibliography:: references.bib
+   :labelprefix: Trdb-

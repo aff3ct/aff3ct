@@ -53,7 +53,7 @@ Description of the allowed values:
 +===========+==================================================================+
 | ``STD``   | Select the |STD| implemenation.                                  |
 +-----------+------------------------------------------------------------------+
-| ``FAST``  | Select the fast implemenation from :cite:`Cassagne2016a`.        |
+| ``FAST``  | Select the fast implemenation from :cite:`Cassagne2016aa`.       |
 +-----------+------------------------------------------------------------------+
 
 .. _dec-turbo-dec-sub-type:
@@ -199,7 +199,7 @@ This is especially useful with the max-log-|MAP| sub-decoders (|BCJR| with the
 performance loss compare to the |MAP| algorithm (|BCJR| with the :math:`\max^*`
 operator).
 
-.. note:: The |SF| technique is detailed in :cite:`Vogt2000`.
+.. note:: The |SF| technique is detailed in :cite:`Vogt2000a`.
 
 Description of the allowed values:
 
@@ -256,3 +256,4 @@ References
 """"""""""
 
 .. bibliography:: references.bib
+   :labelprefix: Trb-

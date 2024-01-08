@@ -80,30 +80,30 @@ Description of the allowed values:
 | ``BCH``        | The `Bose–Chaudhuri–Hocquenghem`_ codes :cite:`Bose1960`.   |
 +----------------+-------------------------------------------------------------+
 | ``LDPC``       | The `Low-Density Parity-Check`_ codes                       |
-|                | :cite:`Gallager1963,MacKay1995`.                            |
+|                | :cite:`Gallager1963,MacKay1995a`.                           |
 +----------------+-------------------------------------------------------------+
-| ``POLAR``      | The `Polar`_ codes :cite:`Arikan2009`.                      |
+| ``POLAR``      | The `Polar`_ codes :cite:`Arikan2009b`.                     |
 +----------------+-------------------------------------------------------------+
 | ``POLAR_MK``   | The Polar mono- or multi-kernel codes :cite:`Benammar2017`. |
 +----------------+-------------------------------------------------------------+
 | ``RA``         | The `Repeat Accumulate`_ codes :cite:`Divsalar1998`.        |
 +----------------+-------------------------------------------------------------+
-| ``REP``        | The `Repetition`_ codes :cite:`Ryan2009`.                   |
+| ``REP``        | The `Repetition`_ codes :cite:`Ryan2009a`.                  |
 +----------------+-------------------------------------------------------------+
 | ``RS``         | The `Reed-Solomon`_ codes :cite:`Reed1960`.                 |
 +----------------+-------------------------------------------------------------+
 | ``RSC``        | The `Recursive Systematic Convolutional`_ codes             |
-|                | :cite:`Ryan2009`.                                           |
+|                | :cite:`Ryan2009a`.                                          |
 +----------------+-------------------------------------------------------------+
 | ``RSC_DB``     | The `Recursive Systematic Convolutional`_ codes with double |
-|                | binary symbols :cite:`Ryan2009`.                            |
+|                | binary symbols :cite:`Ryan2009a`.                           |
 +----------------+-------------------------------------------------------------+
 | ``TURBO``      | The `Turbo`_ codes :cite:`Berrou1993`.                      |
 +----------------+-------------------------------------------------------------+
 | ``TURBO_DB``   | The `Turbo`_ codes with double binary symbols               |
 |                | :cite:`Berrou1993`.                                         |
 +----------------+-------------------------------------------------------------+
-| ``TURBO_PROD`` | The `Turbo Product`_ codes :cite:`Ryan2009`.                |
+| ``TURBO_PROD`` | The `Turbo Product`_ codes :cite:`Ryan2009a`.               |
 +----------------+-------------------------------------------------------------+
 | ``UNCODED``    | An uncoded simulation.                                      |
 +----------------+-------------------------------------------------------------+
@@ -804,3 +804,4 @@ References
 """"""""""
 
 .. bibliography:: references.bib
+   :labelprefix: Sim-

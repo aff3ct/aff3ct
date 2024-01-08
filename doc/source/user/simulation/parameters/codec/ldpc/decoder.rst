@@ -409,3 +409,4 @@ References
 """"""""""
 
 .. bibliography:: references.bib
+   :labelprefix: Ldpc-

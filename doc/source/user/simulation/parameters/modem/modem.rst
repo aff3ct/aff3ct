@@ -469,4 +469,6 @@ References
 """"""""""
 
 .. bibliography:: references.bib
+   :labelprefix: Mdm-
 .. bibliography:: references_scma.bib
+   :labelprefix: Scma-

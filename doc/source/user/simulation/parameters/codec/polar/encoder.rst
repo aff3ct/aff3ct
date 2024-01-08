@@ -154,3 +154,4 @@ References
 """"""""""
 
 .. bibliography:: references_enc.bib
+   :labelprefix: Plre-

@@ -335,3 +335,4 @@ References
 """"""""""
 
 .. bibliography:: references.bib
+   :labelprefix: Chn-

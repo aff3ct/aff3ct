@@ -39,7 +39,7 @@ Description of the allowed values:
 | ``AZCW``     | Set all the information bits to 0.                            |
 +--------------+---------------------------------------------------------------+
 | ``RAND``     | Generate randomly the information bits based on the |MT 19937||
-|              | |PRNG| :cite:`Matsumoto1998`.                                 |
+|              | |PRNG| :cite:`Matsumoto1998b`.                                |
 +--------------+---------------------------------------------------------------+
 | ``USER``     | Read the information bits from a given file, the path can be  |
 |              | set with the :ref:`src-src-path` parameter.                   |
@@ -139,3 +139,4 @@ References
 """"""""""
 
 .. bibliography:: references.bib
+   :labelprefix: Src-

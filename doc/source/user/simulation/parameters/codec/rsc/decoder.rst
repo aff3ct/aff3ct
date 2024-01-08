@@ -138,3 +138,4 @@ References
 """"""""""
 
 .. bibliography:: references.bib
+   :labelprefix: Rsc-

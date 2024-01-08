@@ -9,7 +9,7 @@ decoding process to know if the decoded bit sequence is valid or not.
 
 .. note:: The |CRC| is only available for some specific decoders that have been
           designed to take advantage of the |CRC| like in
-          :cite:`Li2012,Tonnellier2016b`.
+          :cite:`Li2012a,Tonnellier2016ba`.
 
 .. warning:: Using a |CRC| does not guarantee to know if the decoded frame is
              the good one, it can be a *false positive*. It is important to
@@ -89,4 +89,4 @@ References
 """"""""""
 
 .. bibliography:: references.bib
-
+   :labelprefix: Crc-
