@@ -6,6 +6,11 @@
 #include "Tools/Noise/noise_utils.h"
 #include "Tools/Perf/distance/Boolean_diff.h"
 
+namespace aff3ct
+{
+namespace tools
+{
+
 //************************************************************************************** common functions for real types
 
 template <typename R>
@@ -68,14 +73,6 @@ mipp::Reg<R> boolean_diff_unk_sign(const mipp::Reg<R>& in1, const mipp::Reg<R>& 
 	                  | aff3ct::tools::is_unknown_symbol<R>(in2);
 	return mipp::blend(ones, zeros, m_in);
 }
-
-
-
-
-namespace aff3ct
-{
-namespace tools
-{
 
 //******************************************************** type T is integral type (B) and count_unknown_symbols = false
 template<typename B, bool cus>
