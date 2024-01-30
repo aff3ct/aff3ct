@@ -83,7 +83,7 @@ void Decoder_RSC_BCJR<B,R>
 		if (n_frames == 1)
 		{
 			std::copy(Y_N + 0*this->K,          Y_N + 1*this->K + tail/2, sys.begin());
-			std::copy(Y_N + 1*this->K + tail/2, Y_N + 2*this->K + tail/2, par.begin());
+			std::copy(Y_N + 1*this->K + tail/2, Y_N + 2*this->K + tail,   par.begin());
 		}
 		else
 		{
