@@ -308,8 +308,8 @@ endif()
 if(AFF3CT_CORE_COLORS)
     aff3ct_target_compile_definitions(PUBLIC AFF3CT_CORE_COLORS)
 endif()
-if(AFF3CT_CORE_BACKTRACE)
-    aff3ct_target_compile_definitions(PUBLIC AFF3CT_CORE_BACKTRACE)
+if(AFF3CT_CORE_STACKTRACE)
+    aff3ct_target_compile_definitions(PUBLIC AFF3CT_CORE_STACKTRACE)
 endif()
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -359,9 +359,10 @@ aff3ct_target_include_directories(PRIVATE "src"     "aff3ct")
 aff3ct_target_include_directories(PUBLIC  "include" "aff3ct")
 
 # AFF3CT-core headers
-aff3ct_target_include_directories(PUBLIC  "lib/aff3ct-core/include"          "aff3ct")
-aff3ct_target_include_directories(PRIVATE "lib/aff3ct-core/src"              "aff3ct")
-aff3ct_target_include_directories(PUBLIC  "lib/aff3ct-core/lib/rang/include" "rang"  )
+aff3ct_target_include_directories(PUBLIC  "lib/aff3ct-core/include"              "aff3ct"  )
+aff3ct_target_include_directories(PRIVATE "lib/aff3ct-core/src"                  "aff3ct"  )
+aff3ct_target_include_directories(PUBLIC  "lib/aff3ct-core/lib/rang/include"     "rang"    )
+aff3ct_target_include_directories(PUBLIC  "lib/aff3ct-core/lib/cpptrace/include" "cpptrace")
 
 # cli headers
 aff3ct_target_include_directories(PUBLIC "lib/cli/src" "cli")
@@ -471,6 +472,11 @@ if(AFF3CT_MPI)
 
     endif(MPI_CXX_FOUND)
 endif(AFF3CT_MPI)
+
+# cpptrace
+if(AFF3CT_CORE_STACKTRACE)
+    aff3ct_target_link_libraries(PUBLIC cpptrace::cpptrace)
+endif()
 
 # Threads
 set(CMAKE_THREAD_PREFER_PTHREAD ON)

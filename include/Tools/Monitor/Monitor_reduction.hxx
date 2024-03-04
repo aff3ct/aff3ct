@@ -51,11 +51,11 @@ Monitor_reduction<M>
 		{
 			std::stringstream message;
 
-			auto save = tools::exception::no_backtrace;
+			auto save = tools::exception::no_stacktrace;
 
-			tools::exception::no_backtrace = true;
+			tools::exception::no_stacktrace = true;
 			message << "'monitors[0]' and 'monitors[" << m << "]' have to be equivalent: " << e.what();
-			tools::exception::no_backtrace = save;
+			tools::exception::no_stacktrace = save;
 
 			throw tools::logic_error(__FILE__, __LINE__, __func__, message.str());
 

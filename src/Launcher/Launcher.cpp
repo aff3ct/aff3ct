@@ -68,10 +68,10 @@ int Launcher::read_arguments()
 	}
 	catch(const std::exception& e)
 	{
-		auto save = tools::exception::no_backtrace;
-		tools::exception::no_backtrace = true;
+		auto save = tools::exception::no_stacktrace;
+		tools::exception::no_stacktrace = true;
 		cmd_error.emplace_back(e.what());
-		tools::exception::no_backtrace = save;
+		tools::exception::no_stacktrace = save;
 	}
 
 #ifdef AFF3CT_MPI

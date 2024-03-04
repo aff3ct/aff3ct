@@ -70,10 +70,6 @@ Other parameters
        --Help, -H
          Print the help like with the '--help, -h' parameter plus advanced
          arguments (denoted as '{A}').
-   {A} --except-a2l
-         Enhance the backtrace when displaying exception. This change the program
-         addresses into filenames and lines. It may take some seconds to do this
-         work.
    {A} --except-no-bt
          Disable the backtrace display when running an exception.
    {A} --full-legend
@@ -165,17 +161,6 @@ Other parameters
          [factory::Launcher::version,v]
          Print informations about the version of the source code and compilation
          options.
-
-.. _other-except-a2l:
-
-``--except-a2l`` |image_advanced_argument|
-""""""""""""""""""""""""""""""""""""""""""
-
-|factory::Launcher::except-a2l|
-
-.. note:: This option works only on Unix based |OS| and if |AFF3CT| has been
-   :ref:`compiled <compilation_compiler_options>` with debug symbols
-   (``-g`` compile flag) and **without** ``NDEBUG`` macro (``-DNDEBUG`` flag).
 
 .. _other-except-no-bt:
 

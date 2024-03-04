@@ -40,10 +40,10 @@ void Command_parser
 	}
 	catch(const std::exception& e)
 	{
-		auto save = tools::exception::no_backtrace;
-		tools::exception::no_backtrace = true;
+		auto save = tools::exception::no_stacktrace;
+		tools::exception::no_stacktrace = true;
 		errors.push_back(e.what());
-		tools::exception::no_backtrace = save;
+		tools::exception::no_stacktrace = save;
 	}
 
 	if (read_args.exist(Command_parser::help_tag))

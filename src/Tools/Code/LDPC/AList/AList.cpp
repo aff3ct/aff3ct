@@ -23,13 +23,13 @@ Sparse_matrix AList
 	}
 	catch (std::exception const& e1)
 	{
-		auto save = exception::no_backtrace;
-		exception::no_backtrace = true;
+		auto save = exception::no_stacktrace;
+		exception::no_stacktrace = true;
 
 		std::stringstream message;
 		message << "The given stream does not refer to a AList format file: ";
 		message << std::endl << e1.what();
-		exception::no_backtrace = save;
+		exception::no_stacktrace = save;
 
 		try
 		{
@@ -39,10 +39,10 @@ Sparse_matrix AList
 		}
 		catch (std::exception const& e2)
 		{
-			auto save = exception::no_backtrace;
-			exception::no_backtrace = true;
+			auto save = exception::no_stacktrace;
+			exception::no_stacktrace = true;
 			message << std::endl << e2.what();
-			exception::no_backtrace = save;
+			exception::no_stacktrace = save;
 
 			try
 			{
@@ -52,10 +52,10 @@ Sparse_matrix AList
 			}
 			catch (std::exception const& e3)
 			{
-				auto save = exception::no_backtrace;
-				exception::no_backtrace = true;
+				auto save = exception::no_stacktrace;
+				exception::no_stacktrace = true;
 				message << std::endl << e3.what();
-				exception::no_backtrace = save;
+				exception::no_stacktrace = save;
 
 				throw runtime_error(__FILE__, __LINE__, __func__, message.str());
 			}
