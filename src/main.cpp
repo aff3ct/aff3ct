@@ -96,10 +96,10 @@ void print_version()
 	std::string terminal_colors = "off";
 #endif
 
-#if defined(AFF3CT_CORE_BACKTRACE)
-	std::string backtrace = "on";
+#if defined(AFF3CT_CORE_STACKTRACE)
+	std::string stacktrace = "on";
 #else
-	std::string backtrace = "off";
+	std::string stacktrace = "off";
 #endif
 
 #if defined(AFF3CT_EXT_STRINGS)
