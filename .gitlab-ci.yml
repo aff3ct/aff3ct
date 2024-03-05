@@ -421,7 +421,7 @@ build-windows-msvc-avx:
       - build_windows_msvc_avx
   script:
     - $env:CFLAGS="-D_CRT_SECURE_NO_DEPRECATE /MT /EHsc /arch:AVX"
-    - $env:CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_CORE_STACKTRACE=OFF"
+    - $env:CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI"
     - $env:NAME="build_windows_msvc_avx"
     - ./ci/build-windows-msvc.bat
 

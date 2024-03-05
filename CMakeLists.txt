@@ -489,23 +489,19 @@ aff3ct_target_link_libraries(PUBLIC Threads::Threads)
 # ---------------------------------------------------------------------------------------------------------------------
 
 if (AFF3CT_COMPILE_SHARED_LIB AND NOT AFF3CT_COMPILE_STATIC_LIB)
-    export(TARGETS
-           aff3ct-shared-lib
+    export(TARGETS aff3ct-shared-lib ${CPPTRACE_TARGETS}
            NAMESPACE aff3ct::
            FILE "lib/cmake/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct-config.cmake")
 endif()
 
 if (AFF3CT_COMPILE_STATIC_LIB AND NOT AFF3CT_COMPILE_SHARED_LIB)
-    export(TARGETS
-           aff3ct-static-lib
+    export(TARGETS aff3ct-static-lib ${CPPTRACE_TARGETS}
            NAMESPACE aff3ct::
            FILE "lib/cmake/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct-config.cmake")
 endif()
 
 if(AFF3CT_COMPILE_SHARED_LIB AND AFF3CT_COMPILE_STATIC_LIB)
-    export(TARGETS
-           aff3ct-shared-lib
-           aff3ct-static-lib
+    export(TARGETS aff3ct-shared-lib aff3ct-static-lib ${CPPTRACE_TARGETS}
            NAMESPACE aff3ct::
            FILE "lib/cmake/aff3ct-${AFF3CT_VERSION_FULL}/aff3ct-config.cmake")
 endif()
@@ -606,6 +602,12 @@ if (AFF3CT_COMPILE_SHARED_LIB OR AFF3CT_COMPILE_STATIC_LIB)
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/cli
             COMPONENT headers
             FILES_MATCHING PATTERN "*.hxx")
+    if(AFF3CT_CORE_STACKTRACE)
+        install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/aff3ct-core/lib/cpptrace/include/"
+                DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/cpptrace
+                COMPONENT headers
+                FILES_MATCHING PATTERN "*.hpp")
+    endif()
 endif()
 
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc/build/latex/AFF3CT.pdf")
