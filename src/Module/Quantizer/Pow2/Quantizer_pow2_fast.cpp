@@ -1,5 +1,6 @@
 #include <sstream>
 #include <cmath>
+#include <utility>
 #include <mipp.h>
 
 #include "Tools/Exception/exception.hpp"
@@ -161,7 +162,7 @@ void Quantizer_pow2_fast<R,Q>
 ::_process(const R *Y_N1, Q *Y_N2, const size_t frame_id)
 {
 	std::string message = "Supports only 'float' to 'short' and 'float' to 'signed char' conversions.";
-	throw tools::runtime_error(__FILE__, __LINE__, __func__, message);
+	throw tools::runtime_error(__FILE__, __LINE__, __func__, std::move(message));
 }
 
 namespace aff3ct

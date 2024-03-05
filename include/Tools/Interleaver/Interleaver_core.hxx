@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <utility>
 #include <sstream>
 
 #include "Tools/Exception/exception.hpp"
@@ -36,7 +37,7 @@ const std::vector<T>& Interleaver_core<T>
 	if (!this->is_initialized())
 	{
 		std::string message = "The 'init()' method has to be called before trying to get the lookup table.";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message);
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, std::move(message));
 	}
 
 	return pi;
@@ -49,7 +50,7 @@ const std::vector<T>& Interleaver_core<T>
 	if (!this->is_initialized())
 	{
 		std::string message = "The 'init()' method has to be called before trying to get the inverse lookup table.";
-		throw tools::runtime_error(__FILE__, __LINE__, __func__, message);
+		throw tools::runtime_error(__FILE__, __LINE__, __func__, std::move(message));
 	}
 
 	return pi_inv;

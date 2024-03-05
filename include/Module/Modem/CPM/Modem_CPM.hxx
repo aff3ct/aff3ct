@@ -5,6 +5,7 @@
 #include <cmath>
 #include <vector>
 #include <sstream>
+#include <utility>
 
 #include "Tools/Exception/exception.hpp"
 #include "Tools/Math/matrix.h"
@@ -301,7 +302,7 @@ R Modem_CPM<B,R,Q,MAX>
 	else
 	{
 		std::string message = "Unknown CPM wave shape ('cpm->wave_shape' = " + cpm->wave_shape + ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message);
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, std::move(message));
 	}
 }
 
@@ -330,7 +331,7 @@ void Modem_CPM<B,R,Q,MAX>
 	else
 	{
 		std::string message = "Unknown CPM filter bank type ('cpm->filters_type' = " + cpm->filters_type + ").";
-		throw tools::invalid_argument(__FILE__, __LINE__, __func__, message);
+		throw tools::invalid_argument(__FILE__, __LINE__, __func__, std::move(message));
 	}
 }
 }
