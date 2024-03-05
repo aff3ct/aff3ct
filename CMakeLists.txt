@@ -488,6 +488,15 @@ aff3ct_target_link_libraries(PUBLIC Threads::Threads)
 # -------------------------------------------------------------------------------------------------------------- EXPORT
 # ---------------------------------------------------------------------------------------------------------------------
 
+if(AFF3CT_CORE_STACKTRACE)
+    set(CPPTRACE_TARGETS cpptrace-lib)
+    if (CPPTRACE_GET_SYMBOLS_WITH_LIBDWARF)
+        set(CPPTRACE_TARGETS ${CPPTRACE_TARGETS} dwarf)
+    endif()
+else()
+    set(CPPTRACE_TARGETS)
+endif()
+
 if (AFF3CT_COMPILE_SHARED_LIB AND NOT AFF3CT_COMPILE_STATIC_LIB)
     export(TARGETS aff3ct-shared-lib ${CPPTRACE_TARGETS}
            NAMESPACE aff3ct::
