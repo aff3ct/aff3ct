@@ -368,7 +368,7 @@ build-windows-gcc-x86-sse4.2:
   script:
     - $env:CFLAGS="-Wall -funroll-loops -m64 -msse4.2"
     - $env:LFLAGS="-static -static-libgcc -static-libstdc++"
-    - $env:CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
+    - $env:CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_CORE_STACKTRACE=OFF"
     - $env:NAME="build_windows_gcc_x86_sse4.2"
     - ./ci/build-windows-gcc.bat
 
@@ -396,7 +396,7 @@ build-windows-gcc-x64-avx2:
   script:
     - $env:CFLAGS="-Wall -funroll-loops -m64 -mavx2"
     - $env:LFLAGS="-static -static-libgcc -static-libstdc++"
-    - $env:CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF"
+    - $env:CMAKE_OPT="-DAFF3CT_COMPILE_EXE=ON -DAFF3CT_COMPILE_STATIC_LIB=ON -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_PREC=MULTI -DAFF3CT_EXT_STRINGS=OFF -DAFF3CT_CORE_STACKTRACE=OFF"
     - $env:NAME="build_windows_gcc_x64_avx2"
     - ./ci/build-windows-gcc.bat
 
