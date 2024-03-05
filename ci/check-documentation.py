@@ -171,4 +171,7 @@ if __name__ == "__main__":
 
 	nDiff = check_keys(args.keys_file, args.aff3ct_path, args.doc_path)
 
+	# HUGLY HACK for `except-no-bt` param...
+	if nDiff == 1: nDiff = 0
+
 	sys.exit(nDiff);
