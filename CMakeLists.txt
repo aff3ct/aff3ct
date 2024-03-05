@@ -311,6 +311,12 @@ endif()
 if(AFF3CT_CORE_STACKTRACE)
     aff3ct_target_compile_definitions(PUBLIC AFF3CT_CORE_STACKTRACE)
 endif()
+if(AFF3CT_CORE_STACKTRACE_SEGFAULT)
+    aff3ct_target_compile_definitions(PUBLIC AFF3CT_CORE_STACKTRACE_SEGFAULT)
+    if (CPPTRACE_UNWIND_WITH_LIBUNWIND)
+        aff3ct_target_compile_definitions(PUBLIC AFF3CT_CORE_STACKTRACE_SEGFAULT_LIBUNWIND)
+    endif()
+endif()
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------- HEADER ONLY LIBRARIES
@@ -474,7 +480,7 @@ if(AFF3CT_MPI)
 endif(AFF3CT_MPI)
 
 # cpptrace
-if(AFF3CT_CORE_STACKTRACE)
+if(AFF3CT_CORE_STACKTRACE OR AFF3CT_CORE_STACKTRACE_SEGFAULT)
     aff3ct_target_link_libraries(PUBLIC cpptrace::cpptrace)
 endif()
 
@@ -488,7 +494,7 @@ aff3ct_target_link_libraries(PUBLIC Threads::Threads)
 # -------------------------------------------------------------------------------------------------------------- EXPORT
 # ---------------------------------------------------------------------------------------------------------------------
 
-if(AFF3CT_CORE_STACKTRACE)
+if(AFF3CT_CORE_STACKTRACE OR AFF3CT_CORE_STACKTRACE_SEGFAULT)
     set(CPPTRACE_TARGETS cpptrace-lib)
     if (CPPTRACE_GET_SYMBOLS_WITH_LIBDWARF)
         set(CPPTRACE_TARGETS ${CPPTRACE_TARGETS} dwarf)
@@ -611,7 +617,7 @@ if (AFF3CT_COMPILE_SHARED_LIB OR AFF3CT_COMPILE_STATIC_LIB)
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/cli
             COMPONENT headers
             FILES_MATCHING PATTERN "*.hxx")
-    if(AFF3CT_CORE_STACKTRACE)
+    if(AFF3CT_CORE_STACKTRACE OR AFF3CT_CORE_STACKTRACE_SEGFAULT)
         install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib/aff3ct-core/lib/cpptrace/include/"
                 DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aff3ct-${AFF3CT_VERSION_FULL}/cpptrace
                 COMPONENT headers
