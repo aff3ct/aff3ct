@@ -133,7 +133,7 @@ void print_version()
 	std::cout << "  - Polar bit packing: " << bit_packing                                      << std::endl;
 	std::cout << "  - Polar bounds:      " << polar_bounds                                     << std::endl;
 	std::cout << "  - Terminal colors:   " << terminal_colors                                  << std::endl;
-	std::cout << "  - Backtrace:         " << backtrace                                        << std::endl;
+	std::cout << "  - Backtrace:         " << stacktrace                                       << std::endl;
 	std::cout << "  - External strings:  " << ext_strings                                      << std::endl;
 	std::cout << "  - MPI:               " << mpi                                              << std::endl;
 	std::cout << "  - GSL:               " << gsl                                              << std::endl;
