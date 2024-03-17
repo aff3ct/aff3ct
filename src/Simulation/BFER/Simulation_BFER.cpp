@@ -205,9 +205,6 @@ void Simulation_BFER<B,R>
 		                                        this->monitor_er_red.get(),
 		                                        this->monitor_mi_red.get());
 		this->terminal = this->build_terminal(this->reporters);
-
-		if (tools::Terminal::is_over())
-			return;
 	}
 
 	int noise_begin = 0;
@@ -272,9 +269,6 @@ void Simulation_BFER<B,R>
 			                                        this->monitor_er_red.get(),
 			                                        this->monitor_mi_red.get());
 			this->terminal = this->build_terminal(this->reporters);
-
-			if (tools::Terminal::is_over())
-				return;
 		}
 
 #ifdef AFF3CT_MPI
@@ -308,8 +302,6 @@ void Simulation_BFER<B,R>
 			                                   // messages
 			rang::format_on_each_line(std::cerr, std::string(e.what()) + "\n", rang::tag::error);
 			this->simu_error = true;
-
-			tools::Terminal::stop();
 		}
 
 #ifdef AFF3CT_MPI
@@ -329,11 +321,6 @@ void Simulation_BFER<B,R>
 				std::cout << "#" << std::endl;
 			}
 		}
-
-		if (!params_BFER.crit_nostop && !params_BFER.err_track_revert && !tools::Terminal::is_interrupt() &&
-		    !this->monitor_er_red->fe_limit_achieved() &&
-		    (this->monitor_er_red->frame_limit_achieved() || this->stop_time_reached()))
-			tools::Terminal::stop();
 
 		if (params_BFER.mnt_er->err_hist != -1)
 		{
@@ -379,15 +366,11 @@ void Simulation_BFER<B,R>
 			this->dumper_red->clear();
 		}
 
-		if (tools::Terminal::is_over())
-			break;
-
 		for (auto &mod : sequence->get_modules<module::Module>())
 			for (auto &tsk : mod->tasks)
 				tsk->reset();
 
 		tools::Monitor_reduction_static::reset_all();
-		tools::Terminal::reset();
 	}
 }
 
@@ -403,7 +386,7 @@ template <typename B, typename R>
 bool Simulation_BFER<B,R>
 ::stop_condition()
 {
-	return tools::Terminal::is_interrupt() || tools::Monitor_reduction_static::is_done_all() || stop_time_reached();
+	return tools::Monitor_reduction_static::is_done_all() || stop_time_reached();
 }
 
 // ==================================================================================== explicit template instantiation
