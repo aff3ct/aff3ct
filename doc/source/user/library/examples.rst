@@ -868,3 +868,210 @@ modules while in ``u.modules_stats`` the two dimension are switched.
 
 .. note:: The full source code is available here:
   https://github.com/aff3ct/my_project_with_aff3ct/blob/master/examples/openmp/src/main.cpp.
+
+
+Cython Polar
+=============
+
+.. _Cython: https://cython.org/
+
+The main purpose of the cython_polar example is to wrap |AFF3CT| polar code features (frozen bits generation, polar encoding process and polar decoding process) in Python. This example is based on `Cython`_ and can be used as a template to bind C++ |AFF3CT| features to Python.
+Specific compilation steps are given in the corresponding repository.
+
+There are few things to notice, :numref:`codec_pxd` is the Python-C interface
+definition file,
+
+.. code-block:: python
+	:caption: Python-C interface definition
+	:name: codec_pxd
+	:emphasize-lines: 7,9
+	:linenos:
+
+	from libcpp.vector cimport vector
+	from libcpp cimport bool
+
+	cdef extern from "src/codec.hpp":
+	    vector[bool] generate_frozen_bits(const int, const int, const float)
+	    vector[int] polar_encode(const int, const int, const vector[bool] &, const vector[int] &)
+	    vector[vector[int]] polar_encode_multiple(const int, const int, const vector[bool] &, const vector[vector[int]] &)
+	    vector[int] polar_decode(const int, const int, const vector[bool] &, const vector[float] &)
+	    vector[vector[int]] polar_decode_multiple(const int, const int, const vector[bool] &, const vector[vector[float]] &)
+
+Lines ``7,9`` support 2-D [ndarray](https://numpy.org/doc/stable/reference/arrays.ndarray.html) arguments, and return 2-D lists. To learn more about using C++ with Cpython, the readers are refered [here](https://cython.readthedocs.io/en/latest/src/userguide/wrapping_CPlusPlus.html).
+
+A typical Python workflow can be
+
+.. code-block:: python
+	:caption: Typical Python Workflow invoking Cython example
+	:name: workflow
+	:emphasize-lines: 
+	:linenos: 7
+	
+	# generate frozen bits
+	frozen_bits = py_generate_frozen_bits(k, n, snr)
+
+	# generate information bits and encode
+	info_bits = np.random.randint(2, size=(n_frame, k))
+	encoded = np.array(py_polar_encode_multiple(k, n, frozen_bits, info_bits))
+	received = -encoded * 2 + 1
+
+	# decode
+	decoded = np.array(py_polar_decode_multiple(k, n, frozen_bits, received))
+
+Note that ``7`` demonstrate a mapping of bits to symbols like `[0, 1] -> [1, -1]`.
+
+:numref:`codec_hpp-1` implements the C++ to AFF3CT frozen bit generator interface.
+
+.. code-block:: c++
+	:caption: C++-AFF3CT interface -- frozen bits generator
+	:name: codec_hpp-1
+	:emphasize-lines: 
+	:linenos:
+
+	/**
+	 * @brief Generate frozen bits for a specific SNR
+	 *
+	 * @param k The number of information bits
+	 * @param n The codeword length
+	 * @param snr_max Estimated SNR (in dB)
+	 * @return auto std::vector<bool> of frozen bits
+	 */
+	auto generate_frozen_bits(const int k, const int n, const float snr_max) {
+	  // calculate constants
+	  auto r = static_cast<float>(k * 1.0 / n);
+	  const auto esn0 = tools::ebn0_to_esn0(snr_max, r);
+	  const auto ebn0 = tools::esn0_to_ebn0(esn0);
+	  const auto sigma = tools::esn0_to_sigma(esn0);
+
+	  // set noise
+	  tools::Frozenbits_generator_GA_Arikan frozen_bits_generator(k, n);
+	  auto noise = std::unique_ptr<tools::Sigma<>>(new tools::Sigma<>());
+	  noise->set_values(sigma, ebn0, esn0);
+
+	  // generate frozen bits
+	  std::vector<bool> frozen_bits(n);
+	  frozen_bits_generator.set_noise(*noise);
+	  frozen_bits_generator.generate(frozen_bits);
+	  return frozen_bits;
+	}
+
+To reduce the overhead of constructing encoder object, :numref:`codec_hpp-1`
+incorporates a `polar_encode_multiple` function that is able to encode multiple frames 
+at one Python function call, therefore provides better performance than invoking 
+`polar_encode` multiple times through Python `for-loop`.
+
+.. code-block:: c++
+	:caption: C++-AFF3CT interface -- encoder
+	:name: codec_hpp-2
+	:emphasize-lines: 
+	:linenos:
+
+	/**
+	 * @brief Polar encoder for single frame
+	 *
+	 * @param k The number of information bits
+	 * @param n The codeword length
+	 * @param frozen_bits std::vector<bool>, frozen bits (length k)
+	 * @param info_bits std::vector<int>, information bits (length k)
+	 * @return auto Encoded codewords, std::vector<int> of length n
+	 */
+	auto polar_encode(const int k, const int n,
+			  const std::vector<bool> &frozen_bits,
+			  const std::vector<int> &info_bits) {
+	  // populate vector
+	  std::vector<int> encoded_bits(n);
+
+	  // encode
+	  module::Encoder_polar<int> polar_encoder(k, n, frozen_bits);
+	  polar_encoder.encode(info_bits, encoded_bits);
+	  return encoded_bits;
+	}
+
+	/**
+	 * @brief Polar encoder for multiple frames
+	 *
+	 * @param k The number of information bits
+	 * @param n The codeword length
+	 * @param frozen_bits std::vector<bool>, frozen bits (length k)
+	 * @param info_bits std::vector<int>, information bits (length k)
+	 * @return auto Encoded codewords, std::vector<int> of length n
+	 */
+	auto polar_encode_multiple(const int k, const int n,
+				   const std::vector<bool> &frozen_bits,
+				   const std::vector<std::vector<int>> &info_bits) {
+	  // populate vector
+	  std::vector<std::vector<int>> encoded_bits;
+
+	  // encode
+	  module::Encoder_polar<int> polar_encoder(k, n, frozen_bits);
+	  for (auto frame : info_bits) {
+	    std::vector<int> encoded(n);
+	    polar_encoder.encode(frame, encoded);
+	    encoded_bits.push_back(encoded);
+	  }
+	  return encoded_bits;
+	}
+
+Similarly for decoder, `polar_decode_multiple` performs better in terms of 
+throughput.
+
+.. code-block:: c++
+	:caption: C++-AFF3CT interface -- decoder
+	:name: codec_hpp-3
+	:emphasize-lines: 
+	:linenos:
+
+	/**
+	 * @brief Polar decoder for single frame
+	 *
+	 * @param k The number of information bits
+	 * @param n The codeword length
+	 * @param frozen_bits std::vector<bool>, frozen bits (length k)
+	 * @param received std::vector<float> soft symbols, BPSK, length n
+	 * @return auto Decoded information bits, std::vector<int> of length k
+	 */
+	auto polar_decode(const int k, const int n,
+			  const std::vector<bool> &frozen_bits,
+			  const std::vector<float> &received) {
+	  // populate vector
+	  std::vector<int> decoded_bits(k);
+
+	  // decode
+	  module::Decoder_polar_SC_naive<int> polar_decoder(k, n, frozen_bits);
+	  polar_decoder.decode_siho(received, decoded_bits);
+	  return decoded_bits;
+	}
+
+	/**
+	 * @brief Polar decoder for multiframe
+	 *
+	 * @param k The number of information bits
+	 * @param n The codeword length
+	 * @param frozen_bits std::vector<bool>, frozen bits (length k)
+	 * @param received std::vector<float> soft symbols, BPSK, n_frame rows, n
+	 * columns
+	 * @return auto Decoded information bits, std::vector<std::vector<int>> of
+	 * n_frame rows, k columns
+	 */
+	auto polar_decode_multiple(const int k, const int n,
+				   const std::vector<bool> &frozen_bits,
+				   const std::vector<std::vector<float>> &received) {
+	  // populate vectors
+	  std::vector<std::vector<int>> decoded_bits;
+
+	  // encode
+	  module::Decoder_polar_SC_naive<int> polar_decoder(k, n, frozen_bits);
+	  for (auto frame : received) {
+	    std::vector<int> decoded(k);
+	    polar_decoder.decode_siho(frame, decoded);
+	    decoded_bits.push_back(decoded);
+	  }
+	  return decoded_bits;
+	}
+
+Upon successful compilation, a `codec.cpp` source file will be generated by Cython and `codec.cpython*.so` (on Linux)
+dynamic library is present. Now, you are able to try a short demo script by (Python >= 3.6 is required)
+
+```python
+python3 codec_polar.py
+```
