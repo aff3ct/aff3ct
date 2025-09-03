@@ -69,12 +69,12 @@ Encoder_polar_PAC<B>::Encoder_polar_PAC(const int& K,
         conv_reg.push_back(a);
     }
 
-    std::cout << "Inside the encoder conv_reg: " << conv_reg.size() << " ";
-    for (int i = 0; i < conv_reg.size(); i++)
-    {
-        std::cout << (int)conv_reg[i] << ",";
-    }
-    std::cout << std::endl;
+    // std::cout << "Inside the encoder conv_reg: " << conv_reg.size() << " ";
+    // for (int i = 0; i < conv_reg.size(); i++)
+    // {
+    //     std::cout << (int)conv_reg[i] << ",";
+    // }
+    // std::cout << std::endl;
 
     curState.resize(conv_reg.size() - 1);
 

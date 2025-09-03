@@ -125,12 +125,12 @@ Decoder_polar_PAC_SCL_naive<B, R, F, G>::Decoder_polar_PAC_SCL_naive(const int& 
         conv_reg.push_back(a);
     }
 
-    std::cout << "Inside the decoder conv_reg: " << conv_reg.size() << " ";
-    for (int i = 0; i < conv_reg.size(); i++)
-    {
-        std::cout << (int)conv_reg[i] << ",";
-    }
-    std::cout << std::endl;
+    // std::cout << "Inside the decoder conv_reg: " << conv_reg.size() << " ";
+    // for (int i = 0; i < conv_reg.size(); i++)
+    // {
+    //     std::cout << (int)conv_reg[i] << ",";
+    // }
+    // std::cout << std::endl;
 
     for (auto i = 0; i < L; i++)
         curStates.push_back(std::vector<B>(conv_reg.size() - 1, (B)0));
