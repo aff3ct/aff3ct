@@ -55,6 +55,7 @@ class Decoder_polar_SCL_naive
 
     const int L; // maximum paths number
     std::set<int> active_paths;
+    double no_of_ops;
 
     std::vector<tools::Binary_tree_metric<Contents_SCL<B, R>, R>> polar_trees;
     std::vector<std::vector<tools::Binary_node<Contents_SCL<B, R>>*>> leaves_array;

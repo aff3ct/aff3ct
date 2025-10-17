@@ -1,5 +1,6 @@
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
+#include "Module/Decoder/Decoder.hpp"
 #endif
 #include <algorithm>
 #include <cmath>
@@ -63,18 +64,29 @@ Decoder_polar_SCF_naive<B, R, F, G, H>::recursive_decode(const tools::Binary_nod
 
     if (!node_curr->is_leaf()) // stop condition
     {
+        int stage = this->m - node_curr->get_depth();
+        int ln_id = node_curr->get_lane_id();
+        auto uper_limit = ((1 << stage) * (ln_id + 1));
+        if ((current_flip_index != -1) && (current_flip_index > uper_limit))
+        {
+            // std::cout << "current_flip_index: " << current_flip_index << ",stage: " << stage << ",lane_id:" << ln_id
+            //           << ", (1<<stage) * (ln_id + 1): " << uper_limit << std::endl;
+            return;
+        }
         const auto size = (int)node_curr->get_c()->lambda.size();
         const auto size_2 = size / 2;
 
         const auto* node_left = node_curr->get_left();   // get left node
         const auto* node_right = node_curr->get_right(); // get right node
 
+        this->no_of_ops += size_2;
         for (auto i = 0; i < size_2; i++)
             node_left->get_c()->lambda[i] = F(node_curr->get_c()->lambda[i], // apply f()
                                               node_curr->get_c()->lambda[size_2 + i]);
 
         this->recursive_decode(node_left); // recursive call
 
+        this->no_of_ops = this->no_of_ops + (2 * size_2);
         for (auto i = 0; i < size_2; i++)
             node_right->get_c()->lambda[i] = G(node_curr->get_c()->lambda[i], // apply g()
                                                node_curr->get_c()->lambda[size_2 + i],
@@ -120,8 +132,12 @@ Decoder_polar_SCF_naive<B, R, F, G, H>::_decode_siho(const R* Y_N, B* V_K, const
     // DECODE
 
     current_flip_index = -1;
+    scf_start_index = -1;
+    scf_start_stage = -1;
 
+    this->no_of_ops = 0;
     this->recursive_decode(this->polar_tree.get_root());
+    auto m = clone();
 
     // get tree leaves
     auto& leaves = this->polar_tree.get_leaves();
@@ -133,19 +149,37 @@ Decoder_polar_SCF_naive<B, R, F, G, H>::_decode_siho(const R* Y_N, B* V_K, const
                       [&leaves](const int& a, const int& b)
                       { return std::abs(leaves[a]->get_c()->lambda[0]) < std::abs(leaves[b]->get_c()->lambda[0]); });
 
+    this->no_of_ops = (this->no_of_ops + (this->N * std::log2(n_flips)));
     decode_result = this->check_crc(frame_id);
 
     while ((n_ite < n_flips) && (!decode_result))
     {
         current_flip_index = index[n_ite];
 
+        scf_start_stage = (int)std::log2(current_flip_index + 1);
+        scf_start_index = current_flip_index % (scf_start_stage + 1);
+
+        // std::cout << current_flip_index << ",stage: " << scf_start_stage << ", index: " << scf_start_index <<
+        // std::endl;
+
         this->recursive_decode(this->polar_tree.get_root());
+        // this->recursive_decode(m->polar_tree.get_root());
 
         decode_result = this->check_crc(frame_id);
 
         n_ite++;
     }
+
+    std::ofstream o_file("data_mscf.txt", std::ofstream::app);
+    if (o_file.is_open())
+    {
+        o_file << this->no_of_ops << std::endl;
+        o_file.close();
+    }
+
     auto d_decod = std::chrono::steady_clock::now() - t_decod;
+    // auto d_decod =
+    //   std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<double>(this->no_of_ops / 1e6));
 
     //	auto t_store = std::chrono::steady_clock::now(); // ---------------------------------------------------------
     // STORE
@@ -153,6 +187,8 @@ Decoder_polar_SCF_naive<B, R, F, G, H>::_decode_siho(const R* Y_N, B* V_K, const
     //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
     //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
+    (*this)[dec::tsk::decode_siho].update_no_of_ops((size_t)dec::tm::decode_siho::decode, this->no_of_ops, 0);
+    this->no_of_ops = 0;
     (*this)[dec::tsk::decode_siho].update_timer((size_t)dec::tm::decode_siho::decode, d_decod);
     //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
 

@@ -48,6 +48,8 @@ class Decoder_polar_SC_naive
 
     std::vector<bool> frozen_bits;
     tools::Binary_tree<Contents_SC<B, R>> polar_tree;
+    double no_of_ops;
+    double n_calls;
 
   public:
     Decoder_polar_SC_naive(const int& K, const int& N, const std::vector<bool>& frozen_bits);

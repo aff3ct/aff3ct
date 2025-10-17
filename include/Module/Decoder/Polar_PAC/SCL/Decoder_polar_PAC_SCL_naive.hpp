@@ -2,8 +2,8 @@
  * \file
  * \brief Class module::Decoder_polar_PAC_SCL_naive.
  */
-#ifndef DECODER_POLAR_SCL_NAIVE
-#define DECODER_POLAR_SCL_NAIVE
+#ifndef DECODER_POLAR_PAC_SCL_NAIVE
+#define DECODER_POLAR_PAC_SCL_NAIVE
 
 #include <set>
 #include <string>
@@ -60,6 +60,9 @@ class Decoder_polar_PAC_SCL_naive
 
     std::vector<std::vector<B>> curStates;
     std::vector<uint8_t> conv_reg;
+
+    uint64_t no_of_ops;
+    uint64_t no_of_bops;
 
     std::vector<tools::Binary_tree_metric<Contents_PAC_SCL<B, R>, R>> polar_trees;
     std::vector<std::vector<tools::Binary_node<Contents_PAC_SCL<B, R>>*>> leaves_array;

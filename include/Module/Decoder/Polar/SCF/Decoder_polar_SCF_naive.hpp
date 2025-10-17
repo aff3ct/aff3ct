@@ -29,7 +29,11 @@ class Decoder_polar_SCF_naive : public Decoder_polar_SC_naive<B, R, F, G, H>
 
     const int n_flips;
     std::vector<int> index;
+    int scf_start_stage;
+    int scf_start_index;
     int current_flip_index;
+    double no_of_ops;
+    double n_calls;
 
   public:
     Decoder_polar_SCF_naive(const int& K,

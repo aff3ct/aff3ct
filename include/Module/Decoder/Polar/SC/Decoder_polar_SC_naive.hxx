@@ -1,5 +1,8 @@
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
+#include "Module/Decoder/Decoder.hpp"
+#include <chrono>
+#include <fstream>
 #endif
 #include <algorithm>
 #include <cmath>
@@ -57,6 +60,9 @@ Decoder_polar_SC_naive<B, R, F, G, H>::Decoder_polar_SC_naive(const int& K,
 
     for (auto& t : this->tasks)
         t->set_replicability(true);
+
+    this->no_of_ops = 0;
+    this->n_calls = 0;
 }
 
 template<typename B, typename R, tools::proto_f<R> F, tools::proto_g<B, R> G, tools::proto_h<B, R> H>
@@ -136,14 +142,25 @@ Decoder_polar_SC_naive<B, R, F, G, H>::_decode_siho(const R* Y_N, B* V_K, const 
 
     auto t_decod = std::chrono::steady_clock::now(); // --------------------------------------------------------
     // DECODE
+    this->no_of_ops = 0;
     this->recursive_decode(this->polar_tree.get_root());
     auto d_decod = std::chrono::steady_clock::now() - t_decod;
+    // auto d_decod =
+    //   std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<double>(this->no_of_ops / 1e6));
+
+    // std::ofstream o_file("data.txt", std::ofstream::app);
+    // if (o_file.is_open())
+    // {
+    //     o_file << this->no_of_ops << std::endl;
+    //     o_file.close();
+    // }
 
     //	auto t_store = std::chrono::steady_clock::now(); // ---------------------------------------------------------
     // STORE
     this->_store(V_K);
     //	auto d_store = std::chrono::steady_clock::now() - t_store;
 
+    (*this)[dec::tsk::decode_siho].update_no_of_ops((size_t)dec::tm::decode_siho::decode, this->no_of_ops, 20);
     //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,   d_load);
     (*this)[dec::tsk::decode_siho].update_timer((size_t)dec::tm::decode_siho::decode, d_decod);
     //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,  d_store);
@@ -237,12 +254,14 @@ Decoder_polar_SC_naive<B, R, F, G, H>::recursive_decode(const tools::Binary_node
         const auto* node_left = node_curr->get_left();   // get left node
         const auto* node_right = node_curr->get_right(); // get right node
 
+        this->no_of_ops += size_2;
         for (auto i = 0; i < size_2; i++)
             node_left->get_c()->lambda[i] = F(node_curr->get_c()->lambda[i], // apply f()
                                               node_curr->get_c()->lambda[size_2 + i]);
 
         this->recursive_decode(node_left); // recursive call
 
+        this->no_of_ops = (this->no_of_ops + (2 * size_2));
         for (auto i = 0; i < size_2; i++)
             node_right->get_c()->lambda[i] = G(node_curr->get_c()->lambda[i], // apply g()
                                                node_curr->get_c()->lambda[size_2 + i],
@@ -250,6 +269,7 @@ Decoder_polar_SC_naive<B, R, F, G, H>::recursive_decode(const tools::Binary_node
 
         this->recursive_decode(node_right); // recursive call
 
+        // this->no_of_ops += size_2;
         for (auto i = 0; i < size_2; i++)
             node_curr->get_c()->s[i] = node_left->get_c()->s[i] ^ node_right->get_c()->s[i]; // bit xor
 
@@ -258,6 +278,7 @@ Decoder_polar_SC_naive<B, R, F, G, H>::recursive_decode(const tools::Binary_node
     }
     else // specific leaf treatment
     {
+        this->no_of_ops++;
         node_curr->get_c()->s[0] = (!node_curr->get_c()->is_frozen_bit && // if this is a frozen bit then s == 0
                                     H(node_curr->get_c()->lambda[0]));    // apply h()
     }

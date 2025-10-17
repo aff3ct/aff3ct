@@ -18,6 +18,7 @@ CMakeSettings.json
 .scannerwork/
 build*/
 Debug*/
+Release/
 cmake-build*/
 cppcheck/
 src/Tools/version.cpp

@@ -282,6 +282,7 @@ Decoder_polar_PAC_SCL_naive<B, R, F, G>::_decode(const size_t frame_id)
                 cur_leaf->get_c()->s[0] = res.first ? spu::tools::bit_init<B>() : 0;
                 curStates[path] = res.second;
 
+                this->no_of_ops += 1;
                 auto phi_cur = tools::phi<R>(
                   polar_trees[path].get_path_metric(), cur_leaf->get_c()->lambda[0], cur_leaf->get_c()->s[0]);
                 this->polar_trees[path].set_path_metric(phi_cur);
@@ -318,6 +319,7 @@ Decoder_polar_PAC_SCL_naive<B, R, F, G>::_decode(const size_t frame_id)
                 B u1 = u1Pair.first ? spu::tools::bit_init<B>() : 0;
                 ConvType curConv = std::make_tuple(u0Pair, u1Pair);
 
+                this->no_of_ops += 2;
                 R phi0 = tools::phi<B, R>(polar_trees[path].get_path_metric(), cur_leaf->get_c()->lambda[0], u0);
                 R phi1 = tools::phi<B, R>(polar_trees[path].get_path_metric(), cur_leaf->get_c()->lambda[0], u1);
                 metrics_vec.push_back(std::make_tuple(path, u0, phi0, (B)0, ci, curConv));
@@ -354,6 +356,8 @@ Decoder_polar_PAC_SCL_naive<B, R, F, G>::_decode(const size_t frame_id)
             else
             {
                 // sort hypothetic metrics
+                this->no_of_ops += (2 * this->L * std::log(2 * this->L));
+
                 std::sort(metrics_vec.begin(),
                           metrics_vec.end(),
                           [](std::tuple<int, B, R, B, int, ConvType> x, std::tuple<int, B, R, B, int, ConvType> y)
@@ -439,11 +443,13 @@ Decoder_polar_PAC_SCL_naive<B, R, F, G>::_decode_siho(const R* Y_N, B* V_K, cons
     this->_load(Y_N);
     //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
-    // auto t_decod = std::chrono::steady_clock::now(); //
+    auto t_decod = std::chrono::steady_clock::now(); //
     //--------------------------------------------------------
     // DECODE
+    this->no_of_ops = 0;
+    this->no_of_bops = 0;
     this->_decode(frame_id);
-    // auto d_decod = std::chrono::steady_clock::now() - t_decod;
+    auto d_decod = std::chrono::steady_clock::now() - t_decod;
     // auto rvalue = std::chrono::duration_cast<std::chrono::milliseconds>(d_decod).count();
     // std::cout << "The time taken: " << rvalue << std::endl;
 
@@ -456,7 +462,11 @@ Decoder_polar_PAC_SCL_naive<B, R, F, G>::_decode_siho(const R* Y_N, B* V_K, cons
     //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::load,
     // d_load);
     // std::cout << "dec::tm:decode_siho::decode = " << (size_t)dec::tm::decode_siho::decode << std::endl;
-    // (*this)[dec::tsk::decode_siho].update_timer((size_t)dec::tm::decode_siho::decode, d_decod);
+    //
+    // (*this)[dec::tsk::decode_siho].update_no_of_ops((size_t)dec::tm::decode_siho::decode, this->no_of_ops, 20);
+    (*this)[dec::tsk::decode_siho].update_no_of_ops(
+      (size_t)dec::tm::decode_siho::decode, this->no_of_ops, this->no_of_bops);
+    (*this)[dec::tsk::decode_siho].update_timer((size_t)dec::tm::decode_siho::decode, d_decod);
     //	(*this)[dec::tsk::decode_siho].update_timer(dec::tm::decode_siho::store,
     // d_store);
     //
@@ -730,7 +740,7 @@ Decoder_polar_PAC_SCL_naive<B, R, F, G>::apply_f(const tools::Binary_node<Conten
     const auto size_2 = size / 2;
 
     const auto* node_left = node_curr->get_left(); // get left node
-
+    this->no_of_ops += size_2;
     for (auto i = 0; i < size_2; i++)
         node_left->get_c()->lambda[i] = F(node_curr->get_c()->lambda[i], // apply f()
                                           node_curr->get_c()->lambda[size_2 + i]);
@@ -746,6 +756,7 @@ Decoder_polar_PAC_SCL_naive<B, R, F, G>::apply_g(const tools::Binary_node<Conten
     const auto* node_left = node_curr->get_left();   // get left node
     const auto* node_right = node_curr->get_right(); // get right node
 
+    this->no_of_ops += (2 * size_2);
     for (auto i = 0; i < size_2; i++)
         node_right->get_c()->lambda[i] = G(node_curr->get_c()->lambda[i], // apply g()
                                            node_curr->get_c()->lambda[size_2 + i],
@@ -778,6 +789,7 @@ Decoder_polar_PAC_SCL_naive<B, R, F, G>::conv1bitEnc(B cbit, std::vector<B>& sta
     /*B u = spu::tools::bop_and((B)conv_reg[0], (B)cbit);*/
     /*std::cout << "Bit u: " << u << ", conv_reg[0]: " << conv_reg[0] << ",
      * cbit: " << (B)cbit << std::endl;*/
+    this->no_of_bops += conv_reg.size();
     for (int i = 1; i < conv_reg.size(); i++)
     {
         if (conv_reg[i] == (B)1)

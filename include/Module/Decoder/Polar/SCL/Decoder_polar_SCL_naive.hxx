@@ -288,6 +288,7 @@ Decoder_polar_SCL_naive<B, R, F, G>::_decode_siho(const R* Y_N, B* V_K, const si
     this->_load(Y_N);
     //	auto d_load = std::chrono::steady_clock::now() - t_load;
 
+    this->no_of_ops = 0;
     auto t_decod = std::chrono::steady_clock::now(); // --------------------------------------------------------
     // DECODE
     this->_decode(frame_id);
