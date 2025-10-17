@@ -248,10 +248,6 @@ Simulation_BFER_ite<B, R, Q>::bind_sockets()
                                                   &itl2, &csr1, &csr2, &csr3, &csb,  &mnt, &swi, &ite,
                                                   &enc,  &dcs,  &dch,  &ext,  &uop,  &red, &bop };
 
-    for (auto& mod : modules)
-        for (auto& tsk : mod->tasks)
-            tsk->set_autoalloc(true);
-
     if (this->params_BFER_ite.src->type == "AZCW")
     {
         auto src_data = (uint8_t*)(src[spu::module::src::sck::generate ::out_data].get_dataptr());

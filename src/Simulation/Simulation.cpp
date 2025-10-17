@@ -9,6 +9,7 @@ Simulation ::Simulation()
   : simu_error(false)
 {
     spu::tools::Signal_handler::init();
+    spu::tools::Buffer_allocator::set_task_autoalloc(true);
 }
 
 bool
