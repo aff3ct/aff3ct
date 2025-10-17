@@ -14,6 +14,7 @@
   - job: analysis-headers
     artifacts: false
   script:
+    - apt update && apt install -y pkg-config
     - source ./ci/tools/threads.sh
     - ./ci/build-linux-macos.sh
     - if [ "$BUILD_DIR_EXPORT" = "true" ]; then echo "BUILD_DIR=${NAME}" >> build.env; fi

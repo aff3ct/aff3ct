@@ -183,9 +183,6 @@ Simulation_BFER_std<B, R, Q>::bind_sockets()
     std::vector<spu::module::Module*> modules = {
         &src, &crc, &enc, &pct, &mdm, &chn, &qnt, &csr, &dec, &csb, &mnt, &mni
     };
-    for (auto& mod : modules)
-        for (auto& tsk : mod->tasks)
-            tsk->set_autoalloc(true);
 
     if (this->params_BFER_std.src->type == "AZCW")
     {
