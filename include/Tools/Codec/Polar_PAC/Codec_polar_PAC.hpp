@@ -28,6 +28,7 @@ class Codec_polar_PAC
   protected:
     const bool adaptive_fb;
     std::shared_ptr<std::vector<bool>> frozen_bits; // known bits (alias frozen bits) are set to true
+    std::shared_ptr<std::vector<double>> Perr;
 
     std::shared_ptr<Frozenbits_generator> fb_generator;
 

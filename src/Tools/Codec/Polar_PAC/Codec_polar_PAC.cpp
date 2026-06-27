@@ -6,6 +6,7 @@
 #include "Factory/Module/Encoder/Encoder.hpp"
 #include "Factory/Module/Puncturer/Puncturer.hpp"
 #include "Module/Extractor/Polar/Extractor_polar.hpp"
+#include "Tools/Code/Polar/Frozenbits_generator/Frozenbits_generator_GA_Arikan.hpp"
 #include "Tools/Codec/Polar/Codec_polar.hpp"
 #include "Tools/Codec/Polar_PAC/Codec_polar_PAC.hpp"
 #include "Tools/Noise/Event_probability.hpp"
@@ -25,6 +26,7 @@ Codec_polar_PAC<B, Q>::Codec_polar_PAC(const factory::Frozenbits_generator& fb_p
   , frozen_bits(new std::vector<bool>(fb_params.N_cw, true))
   , fb_decoder(nullptr)
   , fb_encoder(nullptr)
+  , Perr(new std::vector<double>(fb_params.N_cw, 0.0))
 {
     // ----------------------------------------------------------------------------------------------------- exceptions
     if (enc_params.K != dec_params.K)
@@ -47,6 +49,12 @@ Codec_polar_PAC<B, Q>::Codec_polar_PAC(const factory::Frozenbits_generator& fb_p
     // build the frozen bits generator
     fb_generator.reset(fb_params.build());
 
+    if (dec_params.type == "FANO")
+    {
+        Frozenbits_generator_GA_Arikan* p_err_gen =
+          new Frozenbits_generator_GA_Arikan(enc_params.K, enc_params.N_cw, fb_params.dump_channels_path);
+        p_err_gen->generate_error_probability(*this->Perr, (double)dec_params.p_err_snr);
+    }
     // ---------------------------------------------------------------------------------------------------- allocations
     std::fill(frozen_bits->begin(), frozen_bits->begin() + this->K, false);
 
@@ -67,7 +75,7 @@ Codec_polar_PAC<B, Q>::Codec_polar_PAC(const factory::Frozenbits_generator& fb_p
         this->set_encoder(static_cast<const factory::Encoder*>(&enc_params)->build<B>());
     }
 
-    this->set_decoder_siho(dec_params.build<B, Q>(*frozen_bits, crc, &this->get_encoder()));
+    this->set_decoder_siho(dec_params.build<B, Q>(*frozen_bits, *Perr, crc, &this->get_encoder()));
     try
     {
         this->fb_decoder = dynamic_cast<Interface_get_set_frozen_bits*>(&this->get_decoder_siho());
