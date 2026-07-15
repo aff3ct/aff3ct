@@ -1,0 +1,36 @@
+#!/bin/bash
+#
+# aff3ct pre-commit hook.
+#
+# Catches the two "analysis" failures that are pure functions of the source
+# tree, before they reach CI:
+#   1. include/aff3ct.hpp out of date  -> BLOCKS (cheap, zero dependencies)
+#   2. clang-format non-compliance     -> ADVISORY (never blocks; CI enforces)
+#
+# Install once with: ./scripts/install-hooks.sh
+#
+repo_root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+cd "$repo_root" || exit 0
+
+# --- 1. Aggregate header (blocking, no external deps) -----------------------
+tmp=$(mktemp)
+trap 'rm -f "$tmp"' EXIT
+if ./scripts/generate_aff3ct_header.sh "$tmp" >/dev/null 2>&1; then
+  if ! diff -q "$tmp" include/aff3ct.hpp >/dev/null 2>&1; then
+    echo "pre-commit: include/aff3ct.hpp is stale (a header under include/ was added/removed/renamed)." >&2
+    echo "            Run:  ./scripts/generate_aff3ct_header.sh  &&  git add include/aff3ct.hpp" >&2
+    exit 1
+  fi
+fi
+
+# --- 2. clang-format (advisory, self-bootstrapping) -------------------------
+if command -v python3 >/dev/null 2>&1; then
+  if ! ./scripts/format.sh --check >/dev/null 2>&1; then
+    echo "pre-commit: clang-format would change some files (advisory -- commit allowed)." >&2
+    echo "            Run:  ./scripts/format.sh   then re-stage. CI enforces this." >&2
+  fi
+else
+  echo "pre-commit: python3 not found; skipping clang-format check (CI will enforce)." >&2
+fi
+
+exit 0
