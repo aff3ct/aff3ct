@@ -41,8 +41,8 @@ struct kv_packer<T, false>
 {
     static inline uint64_t pack(T value, int32_t index)
     {
-        uint32_t biased = static_cast<uint32_t>(
-            static_cast<int64_t>(value) - static_cast<int64_t>(std::numeric_limits<T>::min()));
+        uint32_t biased =
+          static_cast<uint32_t>(static_cast<int64_t>(value) - static_cast<int64_t>(std::numeric_limits<T>::min()));
         return (static_cast<uint64_t>(biased) << 32) | static_cast<uint32_t>(index);
     }
 };
@@ -53,7 +53,8 @@ struct kv_packer<T, false>
 namespace bitonic
 {
 
-static inline __attribute__((always_inline)) void cas(uint64_t& a, uint64_t& b)
+static inline __attribute__((always_inline)) void
+cas(uint64_t& a, uint64_t& b)
 {
     const uint64_t va = a, vb = b;
     const bool do_swap = (va > vb);
@@ -62,12 +63,18 @@ static inline __attribute__((always_inline)) void cas(uint64_t& a, uint64_t& b)
 }
 
 template<int N, int DIST, int DIR>
-struct Bitonic_Merge_Step {
-    static inline void apply(uint64_t* d) {
-        for (int i = 0; i < N; i += 2 * DIST) {
-            for (int j = 0; j < DIST; ++j) {
-                if (DIR == 0) cas(d[i + j], d[i + j + DIST]);
-                else          cas(d[i + j + DIST], d[i + j]);
+struct Bitonic_Merge_Step
+{
+    static inline void apply(uint64_t* d)
+    {
+        for (int i = 0; i < N; i += 2 * DIST)
+        {
+            for (int j = 0; j < DIST; ++j)
+            {
+                if (DIR == 0)
+                    cas(d[i + j], d[i + j + DIST]);
+                else
+                    cas(d[i + j + DIST], d[i + j]);
             }
         }
         Bitonic_Merge_Step<N, DIST / 2, DIR>::apply(d);
@@ -75,20 +82,22 @@ struct Bitonic_Merge_Step {
 };
 
 template<int N, int DIR>
-struct Bitonic_Merge_Step<N, 0, DIR> {
+struct Bitonic_Merge_Step<N, 0, DIR>
+{
     static inline void apply(uint64_t*) {}
 };
 
 template<int N, int DIR>
-struct Bitonic_Merge {
-    static inline void apply(uint64_t* d) {
-        Bitonic_Merge_Step<N, N / 2, DIR>::apply(d);
-    }
+struct Bitonic_Merge
+{
+    static inline void apply(uint64_t* d) { Bitonic_Merge_Step<N, N / 2, DIR>::apply(d); }
 };
 
 template<int N, int DIR>
-struct Bitonic_Sort {
-    static inline void apply(uint64_t* d) {
+struct Bitonic_Sort
+{
+    static inline void apply(uint64_t* d)
+    {
         Bitonic_Sort<N / 2, 0>::apply(d);
         Bitonic_Sort<N / 2, 1>::apply(d + N / 2);
         Bitonic_Merge<N, DIR>::apply(d);
@@ -96,14 +105,18 @@ struct Bitonic_Sort {
 };
 
 template<int DIR>
-struct Bitonic_Sort<1, DIR> {
+struct Bitonic_Sort<1, DIR>
+{
     static inline void apply(uint64_t*) {}
 };
 
 template<int L>
-struct Merge_Prune {
-    static inline void apply(uint64_t* a, uint64_t* b) {
-        for (int i = 0; i < L; ++i) {
+struct Merge_Prune
+{
+    static inline void apply(uint64_t* a, uint64_t* b)
+    {
+        for (int i = 0; i < L; ++i)
+        {
             cas(a[i], b[L - 1 - i]);
         }
         Bitonic_Merge<L, 0>::apply(a);
@@ -111,29 +124,34 @@ struct Merge_Prune {
 };
 
 template<>
-struct Merge_Prune<1> {
-    static inline void apply(uint64_t* a, uint64_t* b) {
-        cas(a[0], b[0]);
-    }
+struct Merge_Prune<1>
+{
+    static inline void apply(uint64_t* a, uint64_t* b) { cas(a[0], b[0]); }
 };
 
 template<int N, int L>
-struct Sort_Blocks {
-    static inline void apply(uint64_t* d) {
+struct Sort_Blocks
+{
+    static inline void apply(uint64_t* d)
+    {
         Bitonic_Sort<L, 0>::apply(d);
         Sort_Blocks<N - L, L>::apply(d + L);
     }
 };
 
 template<int L>
-struct Sort_Blocks<0, L> {
+struct Sort_Blocks<0, L>
+{
     static inline void apply(uint64_t*) {}
 };
 
 template<int N_BLOCKS, int L>
-struct Tree_Merge_Prune {
-    static inline void apply(uint64_t* d) {
-        for (int i = 0; i < N_BLOCKS / 2; ++i) {
+struct Tree_Merge_Prune
+{
+    static inline void apply(uint64_t* d)
+    {
+        for (int i = 0; i < N_BLOCKS / 2; ++i)
+        {
             Merge_Prune<L>::apply(d + i * L, d + (i + N_BLOCKS / 2) * L);
         }
         Tree_Merge_Prune<N_BLOCKS / 2, L>::apply(d);
@@ -141,13 +159,16 @@ struct Tree_Merge_Prune {
 };
 
 template<int L>
-struct Tree_Merge_Prune<1, L> {
+struct Tree_Merge_Prune<1, L>
+{
     static inline void apply(uint64_t*) {}
 };
 
 template<int N, int L>
-struct Partial_Sort {
-    static inline void apply(uint64_t* d) {
+struct Partial_Sort
+{
+    static inline void apply(uint64_t* d)
+    {
         Sort_Blocks<N, L>::apply(d);
         Tree_Merge_Prune<N / L, L>::apply(d);
     }
@@ -165,12 +186,9 @@ class Sorting_network
   private:
     // Max workspace size. 1024 is enough for L=128, n_cands=8 (1024)
     // Adjust if larger L is needed.
-    uint64_t kv[1024]; 
+    uint64_t kv[1024];
 
-    static inline int32_t unpack_index(uint64_t packed)
-    {
-        return static_cast<int32_t>(packed & 0xFFFFFFFF);
-    }
+    static inline int32_t unpack_index(uint64_t packed) { return static_cast<int32_t>(packed & 0xFFFFFFFF); }
 
   public:
     Sorting_network() {}

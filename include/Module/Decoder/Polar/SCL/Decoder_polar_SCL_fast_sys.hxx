@@ -709,15 +709,30 @@ Decoder_polar_SCL_fast_sys<B, R, API_polar>::update_paths_r1(const int r_d,
         // L first of the lists are the L best paths
         const auto n_list = (n_active_paths * 4 >= L) ? L : n_active_paths * 4;
         bool sorted = false;
-        switch (this->L) {
-            case 2:  sorter_net.template partial_sort_template<2,  2*4>(metrics_vec[1].data(), best_idx, n_list); sorted = true; break;
-            case 4:  sorter_net.template partial_sort_template<4,  4*4>(metrics_vec[1].data(), best_idx, n_list); sorted = true; break;
-            case 8:  sorter_net.template partial_sort_template<8,  8*4>(metrics_vec[1].data(), best_idx, n_list); sorted = true; break;
-            case 16: sorter_net.template partial_sort_template<16, 16*4>(metrics_vec[1].data(), best_idx, n_list); sorted = true; break;
-            case 32: sorter_net.template partial_sort_template<32, 32*4>(metrics_vec[1].data(), best_idx, n_list); sorted = true; break;
+        switch (this->L)
+        {
+            case 2:
+                sorter_net.template partial_sort_template<2, 2 * 4>(metrics_vec[1].data(), best_idx, n_list);
+                sorted = true;
+                break;
+            case 4:
+                sorter_net.template partial_sort_template<4, 4 * 4>(metrics_vec[1].data(), best_idx, n_list);
+                sorted = true;
+                break;
+            case 8:
+                sorter_net.template partial_sort_template<8, 8 * 4>(metrics_vec[1].data(), best_idx, n_list);
+                sorted = true;
+                break;
+            case 16:
+                sorter_net.template partial_sort_template<16, 16 * 4>(metrics_vec[1].data(), best_idx, n_list);
+                sorted = true;
+                break;
+            case 32:
+                sorter_net.template partial_sort_template<32, 32 * 4>(metrics_vec[1].data(), best_idx, n_list);
+                sorted = true;
+                break;
         }
-        if (!sorted)
-            sorter.partial_sort(metrics_vec[1].data(), best_idx, L * 4, n_list);
+        if (!sorted) sorter.partial_sort(metrics_vec[1].data(), best_idx, L * 4, n_list);
 
         // count the number of duplications per path
         for (auto i = 0; i < n_list; i++)
@@ -804,15 +819,30 @@ Decoder_polar_SCL_fast_sys<B, R, API_polar>::update_paths_r1(const int off_l, co
         // L first of the lists are the L best paths
         const auto n_list = (n_active_paths * 4 >= L) ? L : n_active_paths * 4;
         bool sorted = false;
-        switch (this->L) {
-            case 2:  sorter_net.template partial_sort_template<2,  2*4>(metrics_vec[1].data(), best_idx, n_list); sorted = true; break;
-            case 4:  sorter_net.template partial_sort_template<4,  4*4>(metrics_vec[1].data(), best_idx, n_list); sorted = true; break;
-            case 8:  sorter_net.template partial_sort_template<8,  8*4>(metrics_vec[1].data(), best_idx, n_list); sorted = true; break;
-            case 16: sorter_net.template partial_sort_template<16, 16*4>(metrics_vec[1].data(), best_idx, n_list); sorted = true; break;
-            case 32: sorter_net.template partial_sort_template<32, 32*4>(metrics_vec[1].data(), best_idx, n_list); sorted = true; break;
+        switch (this->L)
+        {
+            case 2:
+                sorter_net.template partial_sort_template<2, 2 * 4>(metrics_vec[1].data(), best_idx, n_list);
+                sorted = true;
+                break;
+            case 4:
+                sorter_net.template partial_sort_template<4, 4 * 4>(metrics_vec[1].data(), best_idx, n_list);
+                sorted = true;
+                break;
+            case 8:
+                sorter_net.template partial_sort_template<8, 8 * 4>(metrics_vec[1].data(), best_idx, n_list);
+                sorted = true;
+                break;
+            case 16:
+                sorter_net.template partial_sort_template<16, 16 * 4>(metrics_vec[1].data(), best_idx, n_list);
+                sorted = true;
+                break;
+            case 32:
+                sorter_net.template partial_sort_template<32, 32 * 4>(metrics_vec[1].data(), best_idx, n_list);
+                sorted = true;
+                break;
         }
-        if (!sorted)
-            sorter.partial_sort(metrics_vec[1].data(), best_idx, L * 4, n_list);
+        if (!sorted) sorter.partial_sort(metrics_vec[1].data(), best_idx, L * 4, n_list);
 
         // count the number of duplications per path
         for (auto i = 0; i < n_list; i++)
@@ -918,15 +948,30 @@ Decoder_polar_SCL_fast_sys<B, R, API_polar>::update_paths_rep(const int r_d,
     {
         // sort hypothetic metrics
         bool sorted = false;
-        switch (this->L) {
-            case 2:  sorter_net.template partial_sort_template<2,  2*2>(metrics_vec[0].data(), best_idx, L); sorted = true; break;
-            case 4:  sorter_net.template partial_sort_template<4,  4*2>(metrics_vec[0].data(), best_idx, L); sorted = true; break;
-            case 8:  sorter_net.template partial_sort_template<8,  8*2>(metrics_vec[0].data(), best_idx, L); sorted = true; break;
-            case 16: sorter_net.template partial_sort_template<16, 16*2>(metrics_vec[0].data(), best_idx, L); sorted = true; break;
-            case 32: sorter_net.template partial_sort_template<32, 32*2>(metrics_vec[0].data(), best_idx, L); sorted = true; break;
+        switch (this->L)
+        {
+            case 2:
+                sorter_net.template partial_sort_template<2, 2 * 2>(metrics_vec[0].data(), best_idx, L);
+                sorted = true;
+                break;
+            case 4:
+                sorter_net.template partial_sort_template<4, 4 * 2>(metrics_vec[0].data(), best_idx, L);
+                sorted = true;
+                break;
+            case 8:
+                sorter_net.template partial_sort_template<8, 8 * 2>(metrics_vec[0].data(), best_idx, L);
+                sorted = true;
+                break;
+            case 16:
+                sorter_net.template partial_sort_template<16, 16 * 2>(metrics_vec[0].data(), best_idx, L);
+                sorted = true;
+                break;
+            case 32:
+                sorter_net.template partial_sort_template<32, 32 * 2>(metrics_vec[0].data(), best_idx, L);
+                sorted = true;
+                break;
         }
-        if (!sorted)
-            sorter.partial_sort(metrics_vec[0].data(), best_idx, L * 2, L);
+        if (!sorted) sorter.partial_sort(metrics_vec[0].data(), best_idx, L * 2, L);
 
         // count the number of duplications per path
         for (auto i = 0; i < L; i++)
@@ -1003,15 +1048,30 @@ Decoder_polar_SCL_fast_sys<B, R, API_polar>::update_paths_rep(const int off_l, c
     {
         // sort hypothetic metrics
         bool sorted = false;
-        switch (this->L) {
-            case 2:  sorter_net.template partial_sort_template<2,  2*2>(metrics_vec[0].data(), best_idx, L); sorted = true; break;
-            case 4:  sorter_net.template partial_sort_template<4,  4*2>(metrics_vec[0].data(), best_idx, L); sorted = true; break;
-            case 8:  sorter_net.template partial_sort_template<8,  8*2>(metrics_vec[0].data(), best_idx, L); sorted = true; break;
-            case 16: sorter_net.template partial_sort_template<16, 16*2>(metrics_vec[0].data(), best_idx, L); sorted = true; break;
-            case 32: sorter_net.template partial_sort_template<32, 32*2>(metrics_vec[0].data(), best_idx, L); sorted = true; break;
+        switch (this->L)
+        {
+            case 2:
+                sorter_net.template partial_sort_template<2, 2 * 2>(metrics_vec[0].data(), best_idx, L);
+                sorted = true;
+                break;
+            case 4:
+                sorter_net.template partial_sort_template<4, 4 * 2>(metrics_vec[0].data(), best_idx, L);
+                sorted = true;
+                break;
+            case 8:
+                sorter_net.template partial_sort_template<8, 8 * 2>(metrics_vec[0].data(), best_idx, L);
+                sorted = true;
+                break;
+            case 16:
+                sorter_net.template partial_sort_template<16, 16 * 2>(metrics_vec[0].data(), best_idx, L);
+                sorted = true;
+                break;
+            case 32:
+                sorter_net.template partial_sort_template<32, 32 * 2>(metrics_vec[0].data(), best_idx, L);
+                sorted = true;
+                break;
         }
-        if (!sorted)
-            sorter.partial_sort(metrics_vec[0].data(), best_idx, L * 2, L);
+        if (!sorted) sorter.partial_sort(metrics_vec[0].data(), best_idx, L * 2, L);
 
         // count the number of duplications per path
         for (auto i = 0; i < L; i++)
@@ -1144,15 +1204,30 @@ Decoder_polar_SCL_fast_sys<B, R, API_polar>::update_paths_spc(const int r_d,
     // L first of the lists are the L best paths
     const auto n_list = (n_active_paths * n_cands >= L) ? L : n_active_paths * n_cands;
     bool sorted = false;
-    switch (this->L) {
-        case 2:  sorter_net.template partial_sort_template<2,  2*8>(metrics_vec[2].data(), best_idx, n_list); sorted = true; break;
-        case 4:  sorter_net.template partial_sort_template<4,  4*8>(metrics_vec[2].data(), best_idx, n_list); sorted = true; break;
-        case 8:  sorter_net.template partial_sort_template<8,  8*8>(metrics_vec[2].data(), best_idx, n_list); sorted = true; break;
-        case 16: sorter_net.template partial_sort_template<16, 16*8>(metrics_vec[2].data(), best_idx, n_list); sorted = true; break;
-        case 32: sorter_net.template partial_sort_template<32, 32*8>(metrics_vec[2].data(), best_idx, n_list); sorted = true; break;
+    switch (this->L)
+    {
+        case 2:
+            sorter_net.template partial_sort_template<2, 2 * 8>(metrics_vec[2].data(), best_idx, n_list);
+            sorted = true;
+            break;
+        case 4:
+            sorter_net.template partial_sort_template<4, 4 * 8>(metrics_vec[2].data(), best_idx, n_list);
+            sorted = true;
+            break;
+        case 8:
+            sorter_net.template partial_sort_template<8, 8 * 8>(metrics_vec[2].data(), best_idx, n_list);
+            sorted = true;
+            break;
+        case 16:
+            sorter_net.template partial_sort_template<16, 16 * 8>(metrics_vec[2].data(), best_idx, n_list);
+            sorted = true;
+            break;
+        case 32:
+            sorter_net.template partial_sort_template<32, 32 * 8>(metrics_vec[2].data(), best_idx, n_list);
+            sorted = true;
+            break;
     }
-    if (!sorted)
-        sorter.partial_sort(metrics_vec[2].data(), best_idx, n_cands * L, n_list);
+    if (!sorted) sorter.partial_sort(metrics_vec[2].data(), best_idx, n_cands * L, n_list);
 
     // count the number of duplications per path
     for (auto i = 0; i < n_list; i++)
@@ -1274,15 +1349,30 @@ Decoder_polar_SCL_fast_sys<B, R, API_polar>::update_paths_spc(const int off_l, c
     // L first of the lists are the L best paths
     const auto n_list = (n_active_paths * n_cands >= L) ? L : n_active_paths * n_cands;
     bool sorted = false;
-    switch (this->L) {
-        case 2:  sorter_net.template partial_sort_template<2,  2*8>(metrics_vec[2].data(), best_idx, n_list); sorted = true; break;
-        case 4:  sorter_net.template partial_sort_template<4,  4*8>(metrics_vec[2].data(), best_idx, n_list); sorted = true; break;
-        case 8:  sorter_net.template partial_sort_template<8,  8*8>(metrics_vec[2].data(), best_idx, n_list); sorted = true; break;
-        case 16: sorter_net.template partial_sort_template<16, 16*8>(metrics_vec[2].data(), best_idx, n_list); sorted = true; break;
-        case 32: sorter_net.template partial_sort_template<32, 32*8>(metrics_vec[2].data(), best_idx, n_list); sorted = true; break;
+    switch (this->L)
+    {
+        case 2:
+            sorter_net.template partial_sort_template<2, 2 * 8>(metrics_vec[2].data(), best_idx, n_list);
+            sorted = true;
+            break;
+        case 4:
+            sorter_net.template partial_sort_template<4, 4 * 8>(metrics_vec[2].data(), best_idx, n_list);
+            sorted = true;
+            break;
+        case 8:
+            sorter_net.template partial_sort_template<8, 8 * 8>(metrics_vec[2].data(), best_idx, n_list);
+            sorted = true;
+            break;
+        case 16:
+            sorter_net.template partial_sort_template<16, 16 * 8>(metrics_vec[2].data(), best_idx, n_list);
+            sorted = true;
+            break;
+        case 32:
+            sorter_net.template partial_sort_template<32, 32 * 8>(metrics_vec[2].data(), best_idx, n_list);
+            sorted = true;
+            break;
     }
-    if (!sorted)
-        sorter.partial_sort(metrics_vec[2].data(), best_idx, n_cands * L, n_list);
+    if (!sorted) sorter.partial_sort(metrics_vec[2].data(), best_idx, n_cands * L, n_list);
 
     // count the number of duplications per path
     for (auto i = 0; i < n_list; i++)
