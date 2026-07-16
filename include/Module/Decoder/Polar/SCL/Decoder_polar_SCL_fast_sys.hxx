@@ -1207,7 +1207,7 @@ Decoder_polar_SCL_fast_sys<B, R, API_polar>::update_paths_spc(const int r_d,
     switch (this->L)
     {
         case 2:
-            sorter_net.template partial_sort_template<2, 2 * 8>(metrics_vec[2].data(), best_idx, n_list);
+            sorter_net.template partial_sort_template<2, 2 * 4>(metrics_vec[2].data(), best_idx, n_list);
             sorted = true;
             break;
         case 4:
@@ -1352,7 +1352,7 @@ Decoder_polar_SCL_fast_sys<B, R, API_polar>::update_paths_spc(const int off_l, c
     switch (this->L)
     {
         case 2:
-            sorter_net.template partial_sort_template<2, 2 * 8>(metrics_vec[2].data(), best_idx, n_list);
+            sorter_net.template partial_sort_template<2, 2 * 4>(metrics_vec[2].data(), best_idx, n_list);
             sorted = true;
             break;
         case 4:
