@@ -210,6 +210,28 @@ class Sorting_network
         for (int i = 0; i < K; i++)
             pos[i] = unpack_index(kv[i]);
     }
+
+    /*!
+     * \brief Select the indexes of the K smallest elements in ABSOLUTE value,
+     *        among the N first ones.
+     *
+     * Same compile time bitonic network as partial_sort_template, but the
+     * absolute value is folded into the packing loop: no temporary buffer is
+     * needed, contrary to a std::abs() pass followed by a destructive sort.
+     * Used to find the least reliable bits (smallest |LLR|) of Rate-1 and SPC
+     * nodes for the Chase-II candidate generation.
+     */
+    template<int K, int N>
+    inline void partial_sort_abs_template(const T* values, std::vector<int>& pos)
+    {
+        for (int i = 0; i < N; i++)
+            kv[i] = kv_packer<T>::pack(values[i] < 0 ? -values[i] : values[i], i);
+
+        bitonic::Partial_Sort<N, K>::apply(kv);
+
+        for (int i = 0; i < K; i++)
+            pos[i] = unpack_index(kv[i]);
+    }
 };
 
 } // namespace tools

@@ -90,6 +90,15 @@ class Decoder_polar_SCL_fast_sys
 
     inline void recursive_decode(const R* Y_N, const int off_l, const int off_s, const int rev_depth, int& node_id);
 
+    /*!
+     * \brief Fill best_idx with the indexes of the K least reliable LLRs (smallest
+     *        absolute value) among n_elmts, using a compile time bitonic network.
+     * \return false if n_elmts is not one of the supported sizes, in which case
+     *         the caller must fall back to the generic sorter.
+     */
+    template<int K>
+    inline bool select_least_reliable(const R* llrs, const int n_elmts);
+
     inline void update_paths_r0(const int rev_depth, const int off_l, const int off_s, const int n_elmts);
     inline void update_paths_r1(const int rev_depth, const int off_l, const int off_s, const int n_elmts);
     inline void update_paths_rep(const int rev_depth, const int off_l, const int off_s, const int n_elmts);

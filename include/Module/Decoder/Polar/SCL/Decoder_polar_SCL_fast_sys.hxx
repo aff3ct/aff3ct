@@ -601,6 +601,26 @@ Decoder_polar_SCL_fast_sys<B, R, API_polar>::_store_cw(B* V_N) const
 }
 
 template<typename B, typename R, class API_polar>
+template<int K>
+bool
+Decoder_polar_SCL_fast_sys<B, R, API_polar>::select_least_reliable(const R* llrs, const int n_elmts)
+{
+    // Compile time bitonic networks for the node sizes met in practice. Larger
+    // nodes are rare and are left to the generic sorter, which also keeps the
+    // amount of inlined compare-exchanges reasonable.
+    switch (n_elmts)
+    {
+        case 4:   sorter_net.template partial_sort_abs_template<K, 4>(llrs, best_idx);   return true;
+        case 8:   sorter_net.template partial_sort_abs_template<K, 8>(llrs, best_idx);   return true;
+        case 16:  sorter_net.template partial_sort_abs_template<K, 16>(llrs, best_idx);  return true;
+        case 32:  sorter_net.template partial_sort_abs_template<K, 32>(llrs, best_idx);  return true;
+        case 64:  sorter_net.template partial_sort_abs_template<K, 64>(llrs, best_idx);  return true;
+        case 128: sorter_net.template partial_sort_abs_template<K, 128>(llrs, best_idx); return true;
+        default:  return false;
+    }
+}
+
+template<typename B, typename R, class API_polar>
 void
 Decoder_polar_SCL_fast_sys<B, R, API_polar>::update_paths_r0(const int r_d,
                                                              const int off_l,
@@ -684,9 +704,12 @@ Decoder_polar_SCL_fast_sys<B, R, API_polar>::update_paths_r1(const int r_d,
                 const auto path = paths[i];
                 const auto array = path_2_array[path][r_d];
 
-                for (auto i = 0; i < n_elmts; i++)
-                    l_tmp[i] = std::abs(l[array][off_l + i]);
-                sorter.partial_sort_destructive(l_tmp.data(), best_idx, n_elmts, 2);
+                if (!select_least_reliable<2>(&l[array][off_l], n_elmts))
+                {
+                    for (auto i = 0; i < n_elmts; i++)
+                        l_tmp[i] = std::abs(l[array][off_l + i]);
+                    sorter.partial_sort_destructive(l_tmp.data(), best_idx, n_elmts, 2);
+                }
                 //				sorter_simd.partial_sort_abs(l[array].data() + off_l, best_idx, n_elmts,
                 // 2);
 
@@ -794,9 +817,12 @@ Decoder_polar_SCL_fast_sys<B, R, API_polar>::update_paths_r1(const int off_l, co
                 const auto path = paths[i];
                 const auto array = path_2_array[path][REV_D];
 
-                for (auto i = 0; i < N_ELMTS; i++)
-                    l_tmp[i] = std::abs(l[array][off_l + i]);
-                sorter.partial_sort_destructive(l_tmp.data(), best_idx, N_ELMTS, 2);
+                if (!select_least_reliable<2>(&l[array][off_l], N_ELMTS))
+                {
+                    for (auto i = 0; i < N_ELMTS; i++)
+                        l_tmp[i] = std::abs(l[array][off_l + i]);
+                    sorter.partial_sort_destructive(l_tmp.data(), best_idx, N_ELMTS, 2);
+                }
                 //				sorter_simd.partial_sort_abs(l[array].data() + off_l, best_idx, N_ELMTS,
                 // 2);
 
@@ -1161,9 +1187,12 @@ Decoder_polar_SCL_fast_sys<B, R, API_polar>::update_paths_spc(const int r_d,
             const auto path = paths[i];
             const auto array = path_2_array[paths[i]][r_d];
 
-            for (auto i = 0; i < n_elmts; i++)
-                l_tmp[i] = std::abs(l[array][off_l + i]);
-            sorter.partial_sort_destructive(l_tmp.data(), best_idx, n_elmts, 4);
+            if (!select_least_reliable<4>(&l[array][off_l], n_elmts))
+            {
+                for (auto i = 0; i < n_elmts; i++)
+                    l_tmp[i] = std::abs(l[array][off_l + i]);
+                sorter.partial_sort_destructive(l_tmp.data(), best_idx, n_elmts, 4);
+            }
             //			sorter_simd.partial_sort_abs(l[array].data() + off_l, best_idx, n_elmts, 4);
 
             for (auto j = 0; j < 4; j++)
@@ -1306,9 +1335,12 @@ Decoder_polar_SCL_fast_sys<B, R, API_polar>::update_paths_spc(const int off_l, c
             const auto path = paths[i];
             const auto array = path_2_array[paths[i]][REV_D];
 
-            for (auto i = 0; i < N_ELMTS; i++)
-                l_tmp[i] = std::abs(l[array][off_l + i]);
-            sorter.partial_sort_destructive(l_tmp.data(), best_idx, N_ELMTS, 4);
+            if (!select_least_reliable<4>(&l[array][off_l], N_ELMTS))
+            {
+                for (auto i = 0; i < N_ELMTS; i++)
+                    l_tmp[i] = std::abs(l[array][off_l + i]);
+                sorter.partial_sort_destructive(l_tmp.data(), best_idx, N_ELMTS, 4);
+            }
             //			sorter_simd.partial_sort_abs(l[array].data() + off_l, best_idx, N_ELMTS, 4);
 
             for (auto j = 0; j < 4; j++)
