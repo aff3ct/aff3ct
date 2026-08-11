@@ -9,7 +9,7 @@ Polar Encoder parameters
 """"""""""""""
 
    :Type: text
-   :Allowed values: ``POLAR`` ``AZCW`` ``COSET`` ``USER``
+   :Allowed values: ``POLAR`` ``POLAR_UNPACKED`` ``AZCW`` ``COSET`` ``USER``
    :Default: ``POLAR``
    :Examples: ``--enc-type AZCW``
 
@@ -17,19 +17,22 @@ Polar Encoder parameters
 
 Description of the allowed values:
 
-+-----------+------------------------+
-| Value     | Description            |
-+===========+========================+
-| ``POLAR`` | |enc-type_descr_polar| |
-+-----------+------------------------+
-| ``AZCW``  | |enc-type_descr_azcw|  |
-+-----------+------------------------+
-| ``COSET`` | |enc-type_descr_coset| |
-+-----------+------------------------+
-| ``USER``  | |enc-type_descr_user|  |
-+-----------+------------------------+
++--------------------+----------------------------------+
+| Value              | Description                      |
++====================+==================================+
+| ``POLAR``          | |enc-type_descr_polar|           |
++--------------------+----------------------------------+
+| ``POLAR_UNPACKED`` | |enc-type_descr_polar_unpacked|  |
++--------------------+----------------------------------+
+| ``AZCW``           | |enc-type_descr_azcw|            |
++--------------------+----------------------------------+
+| ``COSET``          | |enc-type_descr_coset|           |
++--------------------+----------------------------------+
+| ``USER``           | |enc-type_descr_user|            |
++--------------------+----------------------------------+
 
-.. |enc-type_descr_polar| replace:: Select the standard Polar encoder.
+.. |enc-type_descr_polar| replace:: Select the fast SIMD bitpacked Polar encoder.
+.. |enc-type_descr_polar_unpacked| replace:: Select the legacy bit-by-bit Polar encoder.
 .. |enc-type_descr_azcw| replace:: See the common :ref:`enc-common-enc-type`
    parameter.
 .. |enc-type_descr_coset| replace:: See the common :ref:`enc-common-enc-type`
