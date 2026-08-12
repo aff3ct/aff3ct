@@ -639,6 +639,12 @@
 #ifndef ENCODER_NO_HPP_
 #include <Module/Encoder/NO/Encoder_NO.hpp>
 #endif
+#ifndef ENCODER_POLAR_BITPACKED_HPP_
+#include <Module/Encoder/Polar/Encoder_polar_bitpacked.hpp>
+#endif
+#ifndef ENCODER_POLAR_BITPACKED_SYS_HPP_
+#include <Module/Encoder/Polar/Encoder_polar_bitpacked_sys.hpp>
+#endif
 #ifndef ENCODER_POLAR_HPP_
 #include <Module/Encoder/Polar/Encoder_polar.hpp>
 #endif
