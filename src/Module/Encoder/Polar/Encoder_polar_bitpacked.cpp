@@ -23,7 +23,9 @@ template<typename B>
 bool Encoder_polar_bitpacked<B>::lut_initialized = false;
 
 template<typename B>
-Encoder_polar_bitpacked<B>::Encoder_polar_bitpacked(const int& K, const int& N, const std::vector<bool>& frozen_bits)
+Encoder_polar_bitpacked<B>::Encoder_polar_bitpacked(const int& K,
+                                                     const int& N,
+                                                     const std::vector<bool>& frozen_bits)
   : Encoder_polar<B>(K, N, frozen_bits)
   , packed_frozen_bits(this->N >> 6, 0)
   , pack_buffer(this->N >> 6, 0)

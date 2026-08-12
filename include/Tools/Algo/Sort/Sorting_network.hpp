@@ -47,13 +47,21 @@ struct kv_packer<T, false>
     }
 };
 
+#if defined(_MSC_VER)
+#define BITONIC_INLINE __forceinline
+#elif defined(__GNUC__) || defined(__clang__)
+#define BITONIC_INLINE inline __attribute__((always_inline))
+#else
+#define BITONIC_INLINE inline
+#endif
+
 // ============================================================================
 // Bitonic Sorting Network Metaprogramming (C++11 compatible)
 // ============================================================================
 namespace bitonic
 {
 
-static inline __attribute__((always_inline)) void
+static BITONIC_INLINE void
 cas(uint64_t& a, uint64_t& b)
 {
     const uint64_t va = a, vb = b;
