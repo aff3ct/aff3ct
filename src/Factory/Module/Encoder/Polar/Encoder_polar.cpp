@@ -16,7 +16,7 @@ const std::string aff3ct::factory::Encoder_polar_prefix = "enc";
 Encoder_polar ::Encoder_polar(const std::string& prefix)
   : Encoder(Encoder_polar_name, prefix)
 {
-    this->type = "POLAR";
+    this->type = "FAST";
 }
 
 Encoder_polar*
@@ -33,7 +33,7 @@ Encoder_polar ::get_description(cli::Argument_map_info& args) const
     auto p = this->get_prefix();
     const std::string class_name = "factory::Encoder_polar::";
 
-    cli::add_options(args.at({ p + "-type" }), 0, "POLAR", "POLAR_UNPACKED");
+    cli::add_options(args.at({ p + "-type" }), 0, "FAST", "NAIVE", "POLAR", "POLAR_UNPACKED");
 
     tools::add_arg(args, p, class_name + "p+no-sys", cli::None());
 }
@@ -54,13 +54,13 @@ template<typename B>
 module::Encoder_polar<B>*
 Encoder_polar ::build(const std::vector<bool>& frozen_bits) const
 {
-    if (this->type == "POLAR" && !this->systematic)
+    if ((this->type == "FAST" || this->type == "POLAR") && !this->systematic)
         return new module::Encoder_polar_bitpacked<B>(this->K, this->N_cw, frozen_bits);
-    if (this->type == "POLAR" && this->systematic)
+    if ((this->type == "FAST" || this->type == "POLAR") && this->systematic)
         return new module::Encoder_polar_bitpacked_sys<B>(this->K, this->N_cw, frozen_bits);
-    if (this->type == "POLAR_UNPACKED" && !this->systematic)
+    if ((this->type == "NAIVE" || this->type == "POLAR_UNPACKED") && !this->systematic)
         return new module::Encoder_polar<B>(this->K, this->N_cw, frozen_bits);
-    if (this->type == "POLAR_UNPACKED" && this->systematic)
+    if ((this->type == "NAIVE" || this->type == "POLAR_UNPACKED") && this->systematic)
         return new module::Encoder_polar_sys<B>(this->K, this->N_cw, frozen_bits);
 
     throw spu::tools::cannot_allocate(__FILE__, __LINE__, __func__);

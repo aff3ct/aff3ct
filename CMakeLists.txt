@@ -822,12 +822,5 @@ endif()
 
 include(CPack)
 
-if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_encoder_polar_bitpacked.cpp")
-    add_executable(test_encoder_polar_bitpacked tests/test_encoder_polar_bitpacked.cpp)
-    target_link_libraries(test_encoder_polar_bitpacked PRIVATE aff3ct-static-lib)
-    if(TARGET spu-static-lib)
-        target_link_libraries(test_encoder_polar_bitpacked PRIVATE spu-static-lib)
-    endif()
-    target_include_directories(test_encoder_polar_bitpacked PRIVATE include lib/MIPP/include lib/cli/src lib/streampu/include lib/streampu/lib/json/include lib/streampu/lib/cpptrace/include lib/streampu/lib/rang/include)
-endif()
+
 

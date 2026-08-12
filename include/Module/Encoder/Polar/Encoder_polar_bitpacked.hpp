@@ -18,9 +18,18 @@ namespace module
 template<typename B = int>
 class Encoder_polar_bitpacked : public Encoder_polar<B>
 {
+public:
+    struct Tree_node_info {
+        int type;       // Pattern type (R0, R1, REP, SPC, STD)
+        int size;       // Node size N_sub
+        int off_bit;    // Bit offset in codeword
+        int off_u;      // Offset in information vector U_K
+    };
+
 protected:
     mipp::vector<uint64_t> packed_frozen_bits;
     mipp::vector<uint64_t> pack_buffer;
+    std::vector<Tree_node_info> execution_plan;
 
     alignas(64) static uint8_t bit_expand_lut[256][8];
     static bool lut_initialized;
@@ -37,6 +46,9 @@ public:
 
 protected:
     virtual void _encode(const B* U_K, B* X_N, const size_t frame_id);
+
+    void build_tree_execution_plan();
+    void encode_tree_bitpacked(const B* U_K, uint64_t* pack_data);
 
     static void init_lut();
     static void pack(const B* bits_in, uint64_t* pack_out, const size_t N);

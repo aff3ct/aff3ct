@@ -36,21 +36,18 @@ Encoder_polar_bitpacked_sys<B>::_encode(const B* U_K, B* X_N, const size_t /*fra
         return;
     }
 
-    // 1. Pack U_K directly into pack_buffer (fused convert + pack)
-    this->pack_systematic(U_K, this->pack_buffer.data(), this->N);
+    // 1. Tree-pattern conversion + 1st pass transform (with Rate-0 pruning & REP broadcast)
+    this->encode_tree_bitpacked(U_K, this->pack_buffer.data());
 
-    // 2. First transform
-    this->transform_packed(this->pack_buffer.data(), this->N);
-
-    // 3. Mask frozen bits in packed domain
+    // 2. Mask frozen bits (packed_frozen_bits has 1s at info positions and 0s at frozen positions)
     const size_t n_words = this->N >> 6;
     for (size_t i = 0; i < n_words; ++i)
         this->pack_buffer[i] &= this->packed_frozen_bits[i];
 
-    // 4. Second transform
+    // 3. Second pass butterfly transform
     this->transform_packed(this->pack_buffer.data(), this->N);
 
-    // 5. Unpack result to X_N
+    // 4. SIMD unpack result to X_N
     this->unpack(this->pack_buffer.data(), X_N, this->N);
 }
 

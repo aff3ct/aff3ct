@@ -6,8 +6,15 @@
 
 #include "Module/Encoder/Polar/Encoder_polar_bitpacked.hpp"
 #include "Tools/Code/Polar/fb_assert.h"
+#include "Tools/Code/Polar/Pattern_polar_parser.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_r0.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_r1.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_rep.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_spc.hpp"
+#include "Tools/Code/Polar/Patterns/Pattern_polar_std.hpp"
 
 using namespace aff3ct::module;
+using namespace aff3ct::tools;
 
 template<typename B>
 alignas(64) uint8_t Encoder_polar_bitpacked<B>::bit_expand_lut[256][8];
@@ -64,6 +71,138 @@ Encoder_polar_bitpacked<B>::set_frozen_bits(const std::vector<bool>& frozen_bits
         notfb[i] = !this->frozen_bits[i];
 
     pack(notfb.data(), this->packed_frozen_bits.data(), this->N);
+
+    build_tree_execution_plan();
+}
+
+template<typename B>
+void
+Encoder_polar_bitpacked<B>::build_tree_execution_plan()
+{
+    this->execution_plan.clear();
+
+    std::vector<aff3ct::tools::Pattern_polar_i*> patterns = {
+        new aff3ct::tools::Pattern_polar_r0(),
+        new aff3ct::tools::Pattern_polar_r1(),
+        new aff3ct::tools::Pattern_polar_rep(),
+        new aff3ct::tools::Pattern_polar_spc(),
+        new aff3ct::tools::Pattern_polar_std()
+    };
+
+    aff3ct::tools::Pattern_polar_parser parser(this->frozen_bits, patterns, 0, 1, true);
+    const auto& leaves = parser.get_leaves_pattern_types();
+
+    int bit_offset = 0;
+    int u_offset = 0;
+
+    for (const auto& leaf : leaves)
+    {
+        polar_node_t p_type = static_cast<polar_node_t>(leaf.first);
+        int p_size = leaf.second;
+
+        Tree_node_info info;
+        info.type = static_cast<int>(p_type);
+        info.size = p_size;
+        info.off_bit = bit_offset;
+        info.off_u = u_offset;
+
+        this->execution_plan.push_back(info);
+
+        bit_offset += p_size;
+
+        if (p_type == polar_node_t::RATE_0 || p_type == polar_node_t::RATE_0_LEFT)
+        {
+            // 0 info bits
+        }
+        else if (p_type == polar_node_t::RATE_1)
+        {
+            u_offset += p_size;
+        }
+        else if (p_type == polar_node_t::REP || p_type == polar_node_t::REP_LEFT)
+        {
+            u_offset += 1;
+        }
+        else if (p_type == polar_node_t::SPC)
+        {
+            u_offset += (p_size - 1);
+        }
+        else // STANDARD
+        {
+            for (int i = 0; i < p_size; ++i)
+                if (!this->frozen_bits[info.off_bit + i])
+                    u_offset++;
+        }
+    }
+}
+
+template<typename B>
+void
+Encoder_polar_bitpacked<B>::encode_tree_bitpacked(const B* U_K, uint64_t* pack_data)
+{
+    const size_t n_words = this->N >> 6;
+    std::fill(pack_data, pack_data + n_words, 0ULL);
+
+    int u_idx = 0;
+
+    for (const auto& node : this->execution_plan)
+    {
+        polar_node_t p_type = static_cast<polar_node_t>(node.type);
+
+        if (p_type == polar_node_t::RATE_0 || p_type == polar_node_t::RATE_0_LEFT) // R0 Node: all frozen (0s). Complete skip!
+        {
+            continue;
+        }
+        else if (p_type == polar_node_t::REP || p_type == polar_node_t::REP_LEFT) // REP Node: last bit is info bit
+        {
+            uint64_t u_last = static_cast<uint64_t>(U_K[u_idx++]) & 1u;
+            int pos = node.off_bit + node.size - 1;
+            size_t w = pos >> 6;
+            size_t bit_pos = 63 - (pos & 63);
+            pack_data[w] |= (u_last << bit_pos);
+        }
+        else if (p_type == polar_node_t::RATE_1) // R1 Node: all bits are information bits
+        {
+            for (int i = 0; i < node.size; ++i)
+            {
+                int pos = node.off_bit + i;
+                uint64_t b = static_cast<uint64_t>(U_K[u_idx++]) & 1u;
+                size_t w = pos >> 6;
+                size_t bit_pos = 63 - (pos & 63);
+                pack_data[w] |= (b << bit_pos);
+            }
+        }
+        else if (p_type == polar_node_t::SPC) // SPC Node: first bit is frozen, remaining are info bits
+        {
+            for (int i = 0; i < node.size; ++i)
+            {
+                int pos = node.off_bit + i;
+                if (i > 0)
+                {
+                    uint64_t b = static_cast<uint64_t>(U_K[u_idx++]) & 1u;
+                    size_t w = pos >> 6;
+                    size_t bit_pos = 63 - (pos & 63);
+                    pack_data[w] |= (b << bit_pos);
+                }
+            }
+        }
+        else // STANDARD Node: mixed frozen/info node
+        {
+            for (int i = 0; i < node.size; ++i)
+            {
+                int pos = node.off_bit + i;
+                if (!this->frozen_bits[pos])
+                {
+                    uint64_t b = static_cast<uint64_t>(U_K[u_idx++]) & 1u;
+                    size_t w = pos >> 6;
+                    size_t bit_pos = 63 - (pos & 63);
+                    pack_data[w] |= (b << bit_pos);
+                }
+            }
+        }
+    }
+
+    // Single SIMD Bitpacked Butterfly Transformation pass over the packed sequence
+    this->transform_packed(pack_data, this->N);
 }
 
 template<typename B>
@@ -351,8 +490,14 @@ template<typename B>
 void
 Encoder_polar_bitpacked<B>::_encode(const B* U_K, B* X_N, const size_t /*frame_id*/)
 {
-    this->convert(U_K, X_N);
-    this->light_encode(X_N);
+    if (this->N < 64)
+    {
+        Encoder_polar<B>::_encode(U_K, X_N, 0);
+        return;
+    }
+
+    encode_tree_bitpacked(U_K, this->pack_buffer.data());
+    unpack(this->pack_buffer.data(), X_N, this->N);
 }
 
 // ==================================================================================== explicit template instantiation
