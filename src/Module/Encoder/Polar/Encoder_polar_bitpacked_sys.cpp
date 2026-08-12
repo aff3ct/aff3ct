@@ -36,10 +36,8 @@ Encoder_polar_bitpacked_sys<B>::_encode(const B* U_K, B* X_N, const size_t /*fra
         return;
     }
 
-    this->convert(U_K, X_N);
-
-    // 1. Pack U_N into pack_buffer
-    this->pack(X_N, this->pack_buffer.data(), this->N);
+    // 1. Pack U_K directly into pack_buffer (fused convert + pack)
+    this->pack_systematic(U_K, this->pack_buffer.data(), this->N);
 
     // 2. First transform
     this->transform_packed(this->pack_buffer.data(), this->N);

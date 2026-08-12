@@ -86,6 +86,28 @@ Encoder_polar_bitpacked<B>::pack(const B* bits_in, uint64_t* pack_out, const siz
 
 template<typename B>
 void
+Encoder_polar_bitpacked<B>::pack_systematic(const B* U_K, uint64_t* pack_out, const size_t N) const
+{
+    const size_t n_words = N >> 6;
+    size_t k_idx = 0;
+    for (size_t w = 0; w < n_words; ++w)
+    {
+        uint64_t symb = 0;
+        const size_t base_idx = w << 6;
+        for (size_t j = 0; j < 64; ++j)
+        {
+            symb <<= 1;
+            if (!this->frozen_bits[base_idx + j])
+            {
+                symb |= (static_cast<uint64_t>(U_K[k_idx++]) & 1u);
+            }
+        }
+        pack_out[w] = symb;
+    }
+}
+
+template<typename B>
+void
 Encoder_polar_bitpacked<B>::unpack(const uint64_t* pack_in, B* bits_out, const size_t N)
 {
     const size_t n_words = N >> 6;
@@ -124,18 +146,25 @@ Encoder_polar_bitpacked<B>::transform_packed(uint64_t* pack_data, const size_t N
 
     if (n_simd > 0)
     {
-        for (int s = 0; s < 6; ++s)
+        const mipp::Reg<uint64_t> m0 = masks[0];
+        const mipp::Reg<uint64_t> m1 = masks[1];
+        const mipp::Reg<uint64_t> m2 = masks[2];
+        const mipp::Reg<uint64_t> m3 = masks[3];
+        const mipp::Reg<uint64_t> m4 = masks[4];
+        const mipp::Reg<uint64_t> m5 = masks[5];
+
+        for (size_t r = 0; r < n_simd; ++r)
         {
-            const int d = 1 << s;
-            const mipp::Reg<uint64_t> mask = masks[s];
-            for (size_t r = 0; r < n_simd; ++r)
-            {
-                uint64_t* ptr = pack_data + r * W_reg;
-                mipp::Reg<uint64_t> reg;
-                reg.loadu(ptr);
-                reg ^= ((reg << d) & mask);
-                reg.storeu(ptr);
-            }
+            uint64_t* ptr = pack_data + r * W_reg;
+            mipp::Reg<uint64_t> reg;
+            reg.loadu(ptr);
+            reg ^= ((reg << 1) & m0);
+            reg ^= ((reg << 2) & m1);
+            reg ^= ((reg << 4) & m2);
+            reg ^= ((reg << 8) & m3);
+            reg ^= ((reg << 16) & m4);
+            reg ^= ((reg << 32) & m5);
+            reg.storeu(ptr);
         }
 
         for (size_t d_words = 1; d_words < n_words; d_words <<= 1)

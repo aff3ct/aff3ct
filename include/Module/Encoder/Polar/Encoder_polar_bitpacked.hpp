@@ -40,6 +40,7 @@ protected:
 
     static void init_lut();
     static void pack(const B* bits_in, uint64_t* pack_out, const size_t N);
+    void pack_systematic(const B* U_K, uint64_t* pack_out, const size_t N) const;
     static void unpack(const uint64_t* pack_in, B* bits_out, const size_t N);
     static void transform_packed(uint64_t* pack_data, const size_t N);
 };
