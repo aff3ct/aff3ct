@@ -231,10 +231,50 @@ Encoder_polar_bitpacked<B>::transform_packed(uint64_t* pack_data, const size_t N
             reg ^= ((reg << 8) & m3);
             reg ^= ((reg << 16) & m4);
             reg ^= ((reg << 32) & m5);
+
+#if defined(__AVX512F__)
+            if (W_reg == 8)
+            {
+                __m512i vreg = *reinterpret_cast<__m512i*>(&reg.r);
+                static const __m512i idx_d1 = _mm512_setr_epi64(1, 0, 3, 2, 5, 4, 7, 6);
+                static const __m512i mask_d1 = _mm512_setr_epi64(-1LL, 0LL, -1LL, 0LL, -1LL, 0LL, -1LL, 0LL);
+                __m512i perm_d1 = _mm512_permutexvar_epi64(idx_d1, vreg);
+                vreg = _mm512_xor_si512(vreg, _mm512_and_si512(perm_d1, mask_d1));
+
+                static const __m512i idx_d2 = _mm512_setr_epi64(2, 3, 0, 1, 6, 7, 4, 5);
+                static const __m512i mask_d2 = _mm512_setr_epi64(-1LL, -1LL, 0LL, 0LL, -1LL, -1LL, 0LL, 0LL);
+                __m512i perm_d2 = _mm512_permutexvar_epi64(idx_d2, vreg);
+                vreg = _mm512_xor_si512(vreg, _mm512_and_si512(perm_d2, mask_d2));
+
+                static const __m512i idx_d4 = _mm512_setr_epi64(4, 5, 6, 7, 0, 1, 2, 3);
+                static const __m512i mask_d4 = _mm512_setr_epi64(-1LL, -1LL, -1LL, -1LL, 0LL, 0LL, 0LL, 0LL);
+                __m512i perm_d4 = _mm512_permutexvar_epi64(idx_d4, vreg);
+                vreg = _mm512_xor_si512(vreg, _mm512_and_si512(perm_d4, mask_d4));
+
+                *reinterpret_cast<__m512i*>(&reg.r) = vreg;
+            }
+#elif defined(__AVX2__)
+            if (W_reg == 4)
+            {
+                __m256i vreg = *reinterpret_cast<__m256i*>(&reg.r);
+                __m256i perm_d1 = _mm256_permute4x64_epi64(vreg, _MM_SHUFFLE(2, 3, 0, 1));
+                static const __m256i mask_d1 = _mm256_setr_epi64x(-1LL, 0LL, -1LL, 0LL);
+                vreg = _mm256_xor_si256(vreg, _mm256_and_si256(perm_d1, mask_d1));
+
+                __m256i perm_d2 = _mm256_permute4x64_epi64(vreg, _MM_SHUFFLE(1, 0, 3, 2));
+                static const __m256i mask_d2 = _mm256_setr_epi64x(-1LL, -1LL, 0LL, 0LL);
+                vreg = _mm256_xor_si256(vreg, _mm256_and_si256(perm_d2, mask_d2));
+
+                *reinterpret_cast<__m256i*>(&reg.r) = vreg;
+            }
+#endif
+
             reg.storeu(ptr);
         }
 
-        for (size_t d_words = 1; d_words < n_words; d_words <<= 1)
+        const size_t start_d_words = (W_reg >= 4) ? W_reg : 1;
+
+        for (size_t d_words = start_d_words; d_words < n_words; d_words <<= 1)
         {
             if (d_words < static_cast<size_t>(W_reg))
             {
