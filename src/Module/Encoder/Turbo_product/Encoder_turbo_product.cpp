@@ -58,8 +58,8 @@ Encoder_turbo_product<B>::Encoder_turbo_product(const Encoder<B>& enc_r,
     if ((size_t)(enc_r.get_N() + par) != enc_c.get_n_frames())
     {
         std::stringstream message;
-        message << "'enc_r.get_K() + par' has to be equal to 'enc_c.get_n_frames()' ('enc_r.get_K()' = "
-                << enc_r.get_K() << ", 'enc_c.get_n_frames()' = " << enc_c.get_n_frames()
+        message << "'enc_r.get_N() + par' has to be equal to 'enc_c.get_n_frames()' ('enc_r.get_N()' = "
+                << enc_r.get_N() << ", 'enc_c.get_n_frames()' = " << enc_c.get_n_frames()
                 << ", 'parity_extended' = " << this->parity_extended << ").";
         throw spu::tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
     }
@@ -67,8 +67,8 @@ Encoder_turbo_product<B>::Encoder_turbo_product(const Encoder<B>& enc_r,
     if ((size_t)(enc_c.get_N() + par) != enc_r.get_n_frames())
     {
         std::stringstream message;
-        message << "'enc_c.get_K() + par' has to be equal to 'enc_r.get_n_frames()' ('enc_c.get_K()' = "
-                << enc_c.get_K() << ", 'enc_r.get_n_frames()' = " << enc_r.get_n_frames()
+        message << "'enc_c.get_N() + par' has to be equal to 'enc_r.get_n_frames()' ('enc_c.get_N()' = "
+                << enc_c.get_N() << ", 'enc_r.get_n_frames()' = " << enc_r.get_n_frames()
                 << ", 'parity_extended' = " << this->parity_extended << ").";
         throw spu::tools::runtime_error(__FILE__, __LINE__, __func__, message.str());
     }
