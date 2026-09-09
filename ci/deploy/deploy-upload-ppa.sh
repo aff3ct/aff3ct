@@ -37,6 +37,18 @@ then
 	NAME="build_deploy_upload_ppa"
 fi
 
+# These flags end up in the generated 'debian/rules' (see UploadPPA.cmake) and
+# are the ones actually used by the Launchpad builders. Without them the
+# packages are compiled for the bare x86-64 baseline (SSE2), where MIPP has no
+# implementation for a number of 8-bit and 32-bit integer operations and aborts
+# at run time with "mipp::<op> (SSE2) is undefined!" as soon as a simulation
+# starts. SSE4.2 is the level already used for the other published binaries.
+if [ -z "$CFLAGS" ]
+then
+	echo "The 'CFLAGS' environment variable is not set, default value = '-Wall -funroll-loops -m64 -msse4.2 -faligned-new'."
+	CFLAGS="-Wall -funroll-loops -m64 -msse4.2 -faligned-new"
+fi
+
 if [ -z "$PPA_DRY_RUN" ]
 then
 	echo "The 'PPA_DRY_RUN' environment variable is not set, default value = 'ON' (safe default, no upload)."
