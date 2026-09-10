@@ -63,28 +63,21 @@ Windows, macOS and Linux.
 
 On Debian / Ubuntu
 """"""""""""""""""
-Each new version of |AFF3CT| is deployed on |PPA| repositories for the aptitude
-package manager. Two different repositories are available. The first one,
-``stable``, holds versions that are released after a lot of testing to ensure
-performance and stability. The second one, ``dev``, holds the latest development
-versions of |AFF3CT|.
+Each new release of |AFF3CT| is deployed on a |PPA| repository for the aptitude
+package manager.
 
-Select the channel to use (``stable`` **or** ``dev``, **not both!**):
+Add the repository and update the package list:
 
 .. code-block:: bash
 
-   # stable
-   sudo add-apt-repository ppa:aff3ct/aff3ct-stable
+   sudo add-apt-repository ppa:aff3ct/aff3ct
+   sudo apt update
 
-   # dev
-   sudo add-apt-repository ppa:aff3ct/aff3ct-dev
-
-Update package list and install:
+Then install the packages:
 
 .. code-block:: bash
 
-   sudo apt-get update
-   sudo apt-get install aff3ct-bin aff3ct-doc libaff3ct libaff3ct-dev
+   sudo apt install aff3ct-bin aff3ct-doc libaff3ct libaff3ct-dev
 
 * The package ``aff3ct-bin`` contains the ``bin/``, ``conf/`` and ``refs/`` folders.
 
@@ -94,9 +87,15 @@ Update package list and install:
 
 * The package ``libaff3ct-dev`` contains the ``include/`` folder and depends on the ``libaff3ct`` package.
 
-.. note:: Only LTS releases of Ubuntu are officially supported, starting from
-          16.04. For other releases, you may try to use `the pinning method
+.. note:: Only the following Ubuntu LTS releases are officially supported:
+          22.04 (``jammy``), 24.04 (``noble``) and 26.04 (``resolute``). For
+          other releases, you may try to use `the pinning method
           <https://help.ubuntu.com/community/PinningHowto>`_.
+
+.. note:: The packages are compiled for the |SSE| 4.2 instruction set, which is
+          available on the x86-64 processors released from 2009 on. To target a
+          more recent instruction set such as |AVX|\ 2, compile |AFF3CT| from the
+          source code (see the :ref:`user_installation_guide_compilation` section).
 
 Contents
 --------
