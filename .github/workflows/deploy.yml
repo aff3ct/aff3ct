@@ -2,12 +2,13 @@ name: Deploy
 
 on:
   # Real publish (PPA dput, GitHub Release, website CSV) happens only on
-  # v* tags. Every branch push and every pull request runs a dry-run
-  # (build + package + generate docs, but no external push) to validate
-  # packaging early.
+  # v* tags. Pushes to develop and master and every pull request run a
+  # dry-run (build + package + generate docs, but no external push) to
+  # validate packaging early.
   push:
     branches:
-      - "**"
+      - develop
+      - master
     tags:
       - "v*"
   pull_request:
