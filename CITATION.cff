@@ -1,0 +1,68 @@
+cff-version: 1.2.0
+message: >-
+  If you use AFF3CT in your research, please cite the SoftwareX article
+  below (preferred citation).
+title: "AFF3CT: A Fast Forward Error Correction Toolbox!"
+type: software
+version: 4.7.1
+date-released: 2026-09-09
+license: MIT
+repository-code: "https://github.com/aff3ct/aff3ct"
+url: "https://aff3ct.github.io"
+abstract: >-
+  AFF3CT is an open source toolbox dedicated to Forward Error Correction
+  (FEC or channel coding). It supports a broad range of codes, from turbo
+  codes and Low-Density Parity-Check (LDPC) codes to polar codes. Written in
+  C++, it can be used as a simulator to evaluate algorithm characteristics, or
+  as a library in Software Defined Radio (SDR) systems. Most decoder
+  implementations target low latency and high throughput (multiple Gb/s on
+  modern CPUs) through multi-threading and SIMD vectorization.
+keywords:
+  - forward error correction
+  - channel coding
+  - LDPC codes
+  - polar codes
+  - turbo codes
+  - Monte Carlo simulation
+  - software defined radio
+  - SIMD
+  - C++
+authors: &authors
+  - given-names: Adrien
+    family-names: Cassagne
+  - given-names: Olivier
+    family-names: Hartmann
+  - given-names: Mathieu
+    family-names: Léonardon
+  - given-names: Kun
+    family-names: He
+  - given-names: Camille
+    family-names: Leroux
+  - given-names: Romain
+    family-names: Tajan
+  - given-names: Olivier
+    family-names: Aumage
+  - given-names: Denis
+    family-names: Barthou
+  - given-names: Thibaud
+    family-names: Tonnellier
+  - given-names: Vincent
+    family-names: Pignoly
+  - given-names: Bertrand
+    family-names: Le Gal
+  - given-names: Christophe
+    family-names: Jégo
+preferred-citation:
+  type: article
+  title: "AFF3CT: A Fast Forward Error Correction Toolbox!"
+  authors: *authors
+  journal: SoftwareX
+  publisher:
+    name: Elsevier
+  volume: 10
+  start: 100345
+  year: 2019
+  month: 10
+  issn: 2352-7110
+  doi: 10.1016/j.softx.2019.100345
+  url: "https://doi.org/10.1016/j.softx.2019.100345"

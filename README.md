@@ -104,9 +104,31 @@ The project is licensed under the MIT license.
 
 ## How to cite AFF3CT
 
-We recommend you to cite the SoftwareX journal article: A. Cassagne et al.,
-“[AFF3CT: A Fast Forward Error Correction Toolbox!](https://doi.org/10.1016/j.softx.2019.100345),“
-Elsevier SoftwareX, 2019 [[Bibtex Entry](https://aff3ct.github.io/resources/bibtex/Cassagne2019a%20-%20AFF3CT:%20A%20Fast%20Forward%20Error%20Correction%20Toolbox.bib)].
+If AFF3CT contributes to your research (simulations, BER/FER curves, decoder
+implementations, SDR prototypes), please cite the SoftwareX journal article:
+A. Cassagne et al.,
+"[AFF3CT: A Fast Forward Error Correction Toolbox!](https://doi.org/10.1016/j.softx.2019.100345),"
+Elsevier SoftwareX, vol. 10, 2019.
+
+```bibtex
+@article{Cassagne2019a,
+  author  = {Cassagne, Adrien and Hartmann, Olivier and L{\'e}onardon, Mathieu and
+             He, Kun and Leroux, Camille and Tajan, Romain and Aumage, Olivier and
+             Barthou, Denis and Tonnellier, Thibaud and Pignoly, Vincent and
+             {Le Gal}, Bertrand and J{\'e}go, Christophe},
+  title   = {{AFF3CT}: A Fast Forward Error Correction Toolbox!},
+  journal = {Elsevier SoftwareX},
+  volume  = {10},
+  pages   = {100345},
+  year    = {2019},
+  month   = oct,
+  issn    = {2352-7110},
+  doi     = {10.1016/j.softx.2019.100345}
+}
+```
+
+The same reference is available in [`CITATION.cff`](./CITATION.cff) (GitHub
+"Cite this repository" button, APA and BibTeX export).
 
 External Links
 --------------
