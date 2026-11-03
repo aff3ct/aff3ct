@@ -507,6 +507,20 @@ if(SPU_LINK_HWLOC)
     endif(Hwloc_FOUND)
 endif(SPU_LINK_HWLOC)
 
+# julia
+if(SPU_LINK_JULIA)
+    if(AFF3CT_INCLUDE_SPU_LIB)
+        aff3ct_target_compile_definitions(PUBLIC "SPU_JULIA")
+        list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/lib/streampu/cmake/Modules/")
+    endif()
+
+    find_package(Julia 1.10.9 REQUIRED QUIET)
+    if(Julia_FOUND)
+        aff3ct_target_include_directories2(PUBLIC "${JULIA_INCLUDE_DIR}")
+        aff3ct_target_link_libraries(PUBLIC "${JULIA_LIBRARY}")
+    endif(Julia_FOUND)
+endif(SPU_LINK_JULIA)
+
 # MPI
 if(AFF3CT_MPI)
     aff3ct_target_compile_definitions(PUBLIC "AFF3CT_MPI")
