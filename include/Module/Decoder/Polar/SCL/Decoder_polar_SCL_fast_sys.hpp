@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "Tools/Algo/Sort/LC_sorter.hpp"
+#include "Tools/Algo/Sort/Prune_compact.hpp"
 #include "Tools/Algo/Sort/Sorting_network.hpp"
 #include "Tools/Code/Polar/API/API_polar_dynamic_seq.hpp"
 #include "Tools/Code/Polar/Pattern_polar_parser.hpp"
@@ -63,6 +64,14 @@ class Decoder_polar_SCL_fast_sys
     std::vector<int> best_idx;
     mipp::vector<R> l_tmp;
 
+    // Exact pruning of the candidate set before the Rate-1 and SPC selections (see prune_select)
+    std::vector<R> prune_val;   // candidates that survive the threshold, then padding
+    std::vector<int> prune_idx; // their positions in the full candidate set
+    std::vector<int> prune_pos; // output of the sorting network on the reduced set
+    // Smallest list size for which pruning pays off: below it, the full network is small (at most 32 inputs at the
+    // Rate-1 nodes) and the threshold and the compaction cost about as much as they save.
+    static constexpr int prune_min_L = 8;
+
   public:
     Decoder_polar_SCL_fast_sys(const int& K, const int& N, const int& L, const std::vector<bool>& frozen_bits);
 
@@ -98,6 +107,16 @@ class Decoder_polar_SCL_fast_sys
      */
     template<int K>
     inline bool select_least_reliable(const R* llrs, const int n_elmts);
+
+    /*!
+     * \brief Fill best_idx with the indexes of the n_list best of the L * n_cands candidate metrics, after an exact
+     *        pruning of the candidates that cannot be selected.
+     * \return false if pruning does not apply (list size), in which case the caller must sort all the candidates.
+     */
+    inline bool prune_select(const R* cand_metrics, const int n_cands, const int n_list);
+
+    template<int LL>
+    inline void prune_sort(const int n, const int n_list);
 
     inline void update_paths_r0(const int rev_depth, const int off_l, const int off_s, const int n_elmts);
     inline void update_paths_r1(const int rev_depth, const int off_l, const int off_s, const int n_elmts);

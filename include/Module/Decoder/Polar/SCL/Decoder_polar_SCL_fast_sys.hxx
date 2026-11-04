@@ -105,6 +105,9 @@ Decoder_polar_SCL_fast_sys<B, R, API_polar>::Decoder_polar_SCL_fast_sys(const in
   //, sorter_simd(N)
   , best_idx(L)
   , l_tmp(N)
+  , prune_val(8 * L + 16)
+  , prune_idx(8 * L + 16)
+  , prune_pos(8 * L + 8)
 {
     const std::string name = "Decoder_polar_SCL_fast_sys";
     this->set_name(name);
@@ -194,6 +197,9 @@ Decoder_polar_SCL_fast_sys<B, R, API_polar>::Decoder_polar_SCL_fast_sys(
   //, sorter_simd(N)
   , best_idx(L)
   , l_tmp(N)
+  , prune_val(8 * L + 16)
+  , prune_idx(8 * L + 16)
+  , prune_pos(8 * L + 8)
 {
     const std::string name = "Decoder_polar_SCL_fast_sys";
     this->set_name(name);
@@ -601,6 +607,68 @@ Decoder_polar_SCL_fast_sys<B, R, API_polar>::_store_cw(B* V_N) const
 }
 
 template<typename B, typename R, class API_polar>
+template<int LL>
+void
+Decoder_polar_SCL_fast_sys<B, R, API_polar>::prune_sort(const int n, const int n_list)
+{
+    // smallest network that holds the n survivors, padded with the largest metric after them
+    const R pad = std::numeric_limits<R>::max();
+    if (n <= LL)
+    {
+        std::fill(prune_val.begin() + n, prune_val.begin() + LL, pad);
+        sorter_net.template partial_sort_template<LL, LL>(prune_val.data(), prune_pos, n_list);
+    }
+    else if (n <= 2 * LL)
+    {
+        std::fill(prune_val.begin() + n, prune_val.begin() + 2 * LL, pad);
+        sorter_net.template partial_sort_template<LL, 2 * LL>(prune_val.data(), prune_pos, n_list);
+    }
+    else if (n <= 4 * LL)
+    {
+        std::fill(prune_val.begin() + n, prune_val.begin() + 4 * LL, pad);
+        sorter_net.template partial_sort_template<LL, 4 * LL>(prune_val.data(), prune_pos, n_list);
+    }
+    else
+    {
+        std::fill(prune_val.begin() + n, prune_val.begin() + 8 * LL, pad);
+        sorter_net.template partial_sort_template<LL, 8 * LL>(prune_val.data(), prune_pos, n_list);
+    }
+}
+
+template<typename B, typename R, class API_polar>
+bool
+Decoder_polar_SCL_fast_sys<B, R, API_polar>::prune_select(const R* cand_metrics, const int n_cands, const int n_list)
+{
+    // The first candidate of each path is one of the L * n_cands candidates: the L-th smallest candidate is thus not
+    // larger than tau, the largest of these L representatives, and the candidates above tau cannot be selected. The
+    // bound is tightest when the representative is the best candidate of its path (Rate-1 nodes, SPC nodes of more
+    // than four bits). The survivors keep their original order and the padding comes after them, so that ties are
+    // broken as with the full network: the selected candidates are exactly the same.
+    if (this->L < prune_min_L) return false;
+
+    using PC = tools::prune_compact<R>;
+    const R tau = PC::tau(cand_metrics, this->L, n_cands);
+    const int n = PC::compact(cand_metrics, n_cands * this->L, tau, prune_val.data(), prune_idx.data());
+    switch (this->L)
+    {
+        case 8:
+            prune_sort<8>(n, n_list);
+            break;
+        case 16:
+            prune_sort<16>(n, n_list);
+            break;
+        case 32:
+            prune_sort<32>(n, n_list);
+            break;
+        default:
+            return false;
+    }
+    for (auto i = 0; i < n_list; i++)
+        best_idx[i] = prune_idx[prune_pos[i]];
+    return true;
+}
+
+template<typename B, typename R, class API_polar>
 template<int K>
 bool
 Decoder_polar_SCL_fast_sys<B, R, API_polar>::select_least_reliable(const R* llrs, const int n_elmts)
@@ -744,29 +812,32 @@ Decoder_polar_SCL_fast_sys<B, R, API_polar>::update_paths_r1(const int r_d,
 
         // L first of the lists are the L best paths
         const auto n_list = (n_active_paths * 4 >= L) ? L : n_active_paths * 4;
-        bool sorted = false;
-        switch (this->L)
+        bool sorted = n_active_paths == this->L && prune_select(metrics_vec[1].data(), 4, n_list);
+        if (!sorted)
         {
-            case 2:
-                sorter_net.template partial_sort_template<2, 2 * 4>(metrics_vec[1].data(), best_idx, n_list);
-                sorted = true;
-                break;
-            case 4:
-                sorter_net.template partial_sort_template<4, 4 * 4>(metrics_vec[1].data(), best_idx, n_list);
-                sorted = true;
-                break;
-            case 8:
-                sorter_net.template partial_sort_template<8, 8 * 4>(metrics_vec[1].data(), best_idx, n_list);
-                sorted = true;
-                break;
-            case 16:
-                sorter_net.template partial_sort_template<16, 16 * 4>(metrics_vec[1].data(), best_idx, n_list);
-                sorted = true;
-                break;
-            case 32:
-                sorter_net.template partial_sort_template<32, 32 * 4>(metrics_vec[1].data(), best_idx, n_list);
-                sorted = true;
-                break;
+            switch (this->L)
+            {
+                case 2:
+                    sorter_net.template partial_sort_template<2, 2 * 4>(metrics_vec[1].data(), best_idx, n_list);
+                    sorted = true;
+                    break;
+                case 4:
+                    sorter_net.template partial_sort_template<4, 4 * 4>(metrics_vec[1].data(), best_idx, n_list);
+                    sorted = true;
+                    break;
+                case 8:
+                    sorter_net.template partial_sort_template<8, 8 * 4>(metrics_vec[1].data(), best_idx, n_list);
+                    sorted = true;
+                    break;
+                case 16:
+                    sorter_net.template partial_sort_template<16, 16 * 4>(metrics_vec[1].data(), best_idx, n_list);
+                    sorted = true;
+                    break;
+                case 32:
+                    sorter_net.template partial_sort_template<32, 32 * 4>(metrics_vec[1].data(), best_idx, n_list);
+                    sorted = true;
+                    break;
+            }
         }
         if (!sorted) sorter.partial_sort(metrics_vec[1].data(), best_idx, L * 4, n_list);
 
@@ -857,29 +928,32 @@ Decoder_polar_SCL_fast_sys<B, R, API_polar>::update_paths_r1(const int off_l, co
 
         // L first of the lists are the L best paths
         const auto n_list = (n_active_paths * 4 >= L) ? L : n_active_paths * 4;
-        bool sorted = false;
-        switch (this->L)
+        bool sorted = n_active_paths == this->L && prune_select(metrics_vec[1].data(), 4, n_list);
+        if (!sorted)
         {
-            case 2:
-                sorter_net.template partial_sort_template<2, 2 * 4>(metrics_vec[1].data(), best_idx, n_list);
-                sorted = true;
-                break;
-            case 4:
-                sorter_net.template partial_sort_template<4, 4 * 4>(metrics_vec[1].data(), best_idx, n_list);
-                sorted = true;
-                break;
-            case 8:
-                sorter_net.template partial_sort_template<8, 8 * 4>(metrics_vec[1].data(), best_idx, n_list);
-                sorted = true;
-                break;
-            case 16:
-                sorter_net.template partial_sort_template<16, 16 * 4>(metrics_vec[1].data(), best_idx, n_list);
-                sorted = true;
-                break;
-            case 32:
-                sorter_net.template partial_sort_template<32, 32 * 4>(metrics_vec[1].data(), best_idx, n_list);
-                sorted = true;
-                break;
+            switch (this->L)
+            {
+                case 2:
+                    sorter_net.template partial_sort_template<2, 2 * 4>(metrics_vec[1].data(), best_idx, n_list);
+                    sorted = true;
+                    break;
+                case 4:
+                    sorter_net.template partial_sort_template<4, 4 * 4>(metrics_vec[1].data(), best_idx, n_list);
+                    sorted = true;
+                    break;
+                case 8:
+                    sorter_net.template partial_sort_template<8, 8 * 4>(metrics_vec[1].data(), best_idx, n_list);
+                    sorted = true;
+                    break;
+                case 16:
+                    sorter_net.template partial_sort_template<16, 16 * 4>(metrics_vec[1].data(), best_idx, n_list);
+                    sorted = true;
+                    break;
+                case 32:
+                    sorter_net.template partial_sort_template<32, 32 * 4>(metrics_vec[1].data(), best_idx, n_list);
+                    sorted = true;
+                    break;
+            }
         }
         if (!sorted) sorter.partial_sort(metrics_vec[1].data(), best_idx, L * 4, n_list);
 
@@ -1245,29 +1319,32 @@ Decoder_polar_SCL_fast_sys<B, R, API_polar>::update_paths_spc(const int r_d,
 
     // L first of the lists are the L best paths
     const auto n_list = (n_active_paths * n_cands >= L) ? L : n_active_paths * n_cands;
-    bool sorted = false;
-    switch (this->L)
+    bool sorted = n_active_paths == this->L && prune_select(metrics_vec[2].data(), n_cands, n_list);
+    if (!sorted)
     {
-        case 2:
-            sorter_net.template partial_sort_template<2, 2 * 4>(metrics_vec[2].data(), best_idx, n_list);
-            sorted = true;
-            break;
-        case 4:
-            sorter_net.template partial_sort_template<4, 4 * 8>(metrics_vec[2].data(), best_idx, n_list);
-            sorted = true;
-            break;
-        case 8:
-            sorter_net.template partial_sort_template<8, 8 * 8>(metrics_vec[2].data(), best_idx, n_list);
-            sorted = true;
-            break;
-        case 16:
-            sorter_net.template partial_sort_template<16, 16 * 8>(metrics_vec[2].data(), best_idx, n_list);
-            sorted = true;
-            break;
-        case 32:
-            sorter_net.template partial_sort_template<32, 32 * 8>(metrics_vec[2].data(), best_idx, n_list);
-            sorted = true;
-            break;
+        switch (this->L)
+        {
+            case 2:
+                sorter_net.template partial_sort_template<2, 2 * 4>(metrics_vec[2].data(), best_idx, n_list);
+                sorted = true;
+                break;
+            case 4:
+                sorter_net.template partial_sort_template<4, 4 * 8>(metrics_vec[2].data(), best_idx, n_list);
+                sorted = true;
+                break;
+            case 8:
+                sorter_net.template partial_sort_template<8, 8 * 8>(metrics_vec[2].data(), best_idx, n_list);
+                sorted = true;
+                break;
+            case 16:
+                sorter_net.template partial_sort_template<16, 16 * 8>(metrics_vec[2].data(), best_idx, n_list);
+                sorted = true;
+                break;
+            case 32:
+                sorter_net.template partial_sort_template<32, 32 * 8>(metrics_vec[2].data(), best_idx, n_list);
+                sorted = true;
+                break;
+        }
     }
     if (!sorted) sorter.partial_sort(metrics_vec[2].data(), best_idx, n_cands * L, n_list);
 
@@ -1393,29 +1470,32 @@ Decoder_polar_SCL_fast_sys<B, R, API_polar>::update_paths_spc(const int off_l, c
 
     // L first of the lists are the L best paths
     const auto n_list = (n_active_paths * n_cands >= L) ? L : n_active_paths * n_cands;
-    bool sorted = false;
-    switch (this->L)
+    bool sorted = n_active_paths == this->L && prune_select(metrics_vec[2].data(), n_cands, n_list);
+    if (!sorted)
     {
-        case 2:
-            sorter_net.template partial_sort_template<2, 2 * 4>(metrics_vec[2].data(), best_idx, n_list);
-            sorted = true;
-            break;
-        case 4:
-            sorter_net.template partial_sort_template<4, 4 * 8>(metrics_vec[2].data(), best_idx, n_list);
-            sorted = true;
-            break;
-        case 8:
-            sorter_net.template partial_sort_template<8, 8 * 8>(metrics_vec[2].data(), best_idx, n_list);
-            sorted = true;
-            break;
-        case 16:
-            sorter_net.template partial_sort_template<16, 16 * 8>(metrics_vec[2].data(), best_idx, n_list);
-            sorted = true;
-            break;
-        case 32:
-            sorter_net.template partial_sort_template<32, 32 * 8>(metrics_vec[2].data(), best_idx, n_list);
-            sorted = true;
-            break;
+        switch (this->L)
+        {
+            case 2:
+                sorter_net.template partial_sort_template<2, 2 * 4>(metrics_vec[2].data(), best_idx, n_list);
+                sorted = true;
+                break;
+            case 4:
+                sorter_net.template partial_sort_template<4, 4 * 8>(metrics_vec[2].data(), best_idx, n_list);
+                sorted = true;
+                break;
+            case 8:
+                sorter_net.template partial_sort_template<8, 8 * 8>(metrics_vec[2].data(), best_idx, n_list);
+                sorted = true;
+                break;
+            case 16:
+                sorter_net.template partial_sort_template<16, 16 * 8>(metrics_vec[2].data(), best_idx, n_list);
+                sorted = true;
+                break;
+            case 32:
+                sorter_net.template partial_sort_template<32, 32 * 8>(metrics_vec[2].data(), best_idx, n_list);
+                sorted = true;
+                break;
+        }
     }
     if (!sorted) sorter.partial_sort(metrics_vec[2].data(), best_idx, n_cands * L, n_list);
 
