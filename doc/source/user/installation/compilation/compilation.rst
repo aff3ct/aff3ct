@@ -273,6 +273,8 @@ this feature and provides the following options:
 +-------------------------------+---------+---------+---------------------------------+
 | ``AFF3CT_PREC``               | STRING  | MULTI   | |cmake-opt-prec|                |
 +-------------------------------+---------+---------+---------------------------------+
+| ``AFF3CT_HWCAPS``             | STRING  |         | |cmake-opt-hwcaps|              |
++-------------------------------+---------+---------+---------------------------------+
 
 .. |cmake-opt-compile_exe| replace:: Compile the executable.
 .. |cmake-opt-compile_static_lib| replace:: Compile the static library.
@@ -294,6 +296,12 @@ this feature and provides the following options:
    On |MSVC| this option is not available and automatically set to ``ON``.
 .. |cmake-opt-prec| replace:: Select the precision in bits (can be '8', '16',
    '32', '64' or 'MULTI').
+.. |cmake-opt-hwcaps| replace:: Linux only, requires
+   ``AFF3CT_COMPILE_SHARED_LIB=ON``. Compile the shared library once more for
+   each of the given x86-64 levels (e.g. 'x86-64-v3;x86-64-v4') and install it
+   in ``lib/glibc-hwcaps/<level>/``: at run time, the dynamic loader (glibc
+   2.33 or newer) picks the best level for the CPU. The base library is
+   compiled with ``CMAKE_CXX_FLAGS``.
 
 Considering an option ``AFF3CT_OPTION`` we want to set to ``ON``, here is the
 syntax to follow:

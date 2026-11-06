@@ -120,6 +120,8 @@ jobs:
             cflags_spe: "-m64 -msse4.2 -faligned-new"
           - compiler: gcc-x64-avx2
             cflags_spe: "-m64 -mavx2 -mfma -faligned-new"
+          - compiler: gcc-x64-avx512
+            cflags_spe: "-m64 -mavx512f -mavx512bw -mavx512cd -mavx512dq -mavx512vl -mavx2 -mfma -faligned-new"
     env:
       CC: gcc
       CXX: g++
@@ -153,10 +155,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - compiler: gcc-x86-sse4.2
-            msystem: MINGW32
-            cflags_spe: "-m32 -msse4.2 -faligned-new"
-            package: "mingw-w64-i686-gcc mingw-w64-i686-cmake make"
           - compiler: gcc-x64-avx2
             msystem: MINGW64
             cflags_spe: "-m64 -mavx2 -mfma -faligned-new"
