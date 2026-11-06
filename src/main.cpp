@@ -190,7 +190,7 @@ read_arguments(const int argc, const char** argv, factory::Launcher& params)
 }
 
 int
-main(int argc, char** argv)
+aff3ct_sim_main(int argc, char** argv)
 {
     int exit_code = EXIT_SUCCESS;
 #ifdef AFF3CT_MPI
@@ -242,3 +242,11 @@ main(int argc, char** argv)
 
     return exit_code;
 }
+
+#ifndef AFF3CT_HWCAPS
+int
+main(int argc, char** argv)
+{
+    return aff3ct_sim_main(argc, argv);
+}
+#endif

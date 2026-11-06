@@ -25,6 +25,7 @@ option(AFF3CT_POLAR_BIT_PACKING  "Enable the bit packing technique for Polar cod
 option(AFF3CT_POLAR_BOUNDS       "Enable the use of the external Tal & Vardy Polar best channels generator" OFF)
 option(AFF3CT_OVERRIDE_VERSION   "Compile without .git directory, provided a version and hash"              OFF)
 option(AFF3CT_INCLUDE_SPU_LIB    "Include the StreamPU library inside the AFF3CT library"                   ON )
+set(AFF3CT_HWCAPS "" CACHE STRING "Additional glibc-hwcaps levels of the shared library (e.g. 'x86-64-v3;x86-64-v4')")
 
 if (AFF3CT_COMPILE_EXE OR AFF3CT_COMPILE_STATIC_LIB OR AFF3CT_COMPILE_SHARED_LIB)
     set(AFF3CT_COMPILE_OBJ ON)
@@ -50,6 +51,10 @@ if(AFF3CT_MPI AND (AFF3CT_COMPILE_STATIC_LIB OR AFF3CT_COMPILE_SHARED_LIB))
     message(FATAL_ERROR "Building AFF3CT with the MPI support is incompatible with the library mode.")
 endif()
 
+if(AFF3CT_HWCAPS AND NOT (CMAKE_SYSTEM_NAME STREQUAL "Linux" AND AFF3CT_COMPILE_SHARED_LIB))
+    message(FATAL_ERROR "AFF3CT_HWCAPS requires Linux and AFF3CT_COMPILE_SHARED_LIB=ON.")
+endif()
+
 # ---------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------- CMAKE CONFIGURATION
 # ---------------------------------------------------------------------------------------------------------------------
@@ -70,6 +75,7 @@ set(LIBRARY_OUTPUT_PATH lib/)
 
 # Generate the source files list
 file(GLOB_RECURSE source_files ${CMAKE_CURRENT_SOURCE_DIR}/src/*)
+list(REMOVE_ITEM source_files "${CMAKE_CURRENT_SOURCE_DIR}/src/main_hwcaps.cpp")
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------ GET VERSION FROM GIT
@@ -211,11 +217,19 @@ if(AFF3CT_COMPILE_OBJ)
     add_library(aff3ct-obj OBJECT ${source_files})
     set_target_properties(aff3ct-obj PROPERTIES
                                      POSITION_INDEPENDENT_CODE ON) # set -fpic
+    if(AFF3CT_HWCAPS)
+        target_compile_definitions(aff3ct-obj PRIVATE AFF3CT_HWCAPS) # 'main' is in 'aff3ct-bin' only
+    endif()
 endif()
 
 # Binary
 if(AFF3CT_COMPILE_EXE)
-    if(AFF3CT_INCLUDE_SPU_LIB)
+    if(AFF3CT_HWCAPS)
+        # the simulator is in the shared library: the dynamic loader picks the best glibc-hwcaps level
+        add_executable(aff3ct-bin "${CMAKE_CURRENT_SOURCE_DIR}/src/main_hwcaps.cpp")
+        target_link_libraries(aff3ct-bin PRIVATE aff3ct-shared-lib)
+        set_target_properties(aff3ct-bin PROPERTIES INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
+    elseif(AFF3CT_INCLUDE_SPU_LIB)
         add_executable(aff3ct-bin $<TARGET_OBJECTS:aff3ct-obj> $<TARGET_OBJECTS:cli-obj> $<TARGET_OBJECTS:spu-obj>)
     else()
         add_executable(aff3ct-bin $<TARGET_OBJECTS:aff3ct-obj> $<TARGET_OBJECTS:cli-obj>)
@@ -238,6 +252,25 @@ if(AFF3CT_COMPILE_SHARED_LIB)
                                             POSITION_INDEPENDENT_CODE ON) # set -fpic
     message(STATUS "AFF3CT - Compile: shared library")
 endif(AFF3CT_COMPILE_SHARED_LIB)
+foreach(_level IN LISTS AFF3CT_HWCAPS)
+    add_library(aff3ct-obj-${_level} OBJECT ${source_files})
+    target_compile_options(aff3ct-obj-${_level} PRIVATE -march=${_level})
+    foreach(_prop COMPILE_DEFINITIONS INCLUDE_DIRECTORIES COMPILE_OPTIONS)
+        set_property(TARGET aff3ct-obj-${_level} APPEND PROPERTY ${_prop} $<TARGET_PROPERTY:aff3ct-obj,${_prop}>)
+    endforeach()
+    set_target_properties(aff3ct-obj-${_level} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+    if(AFF3CT_INCLUDE_SPU_LIB)
+        add_library(aff3ct-shared-lib-${_level} SHARED $<TARGET_OBJECTS:aff3ct-obj-${_level}> $<TARGET_OBJECTS:cli-obj> $<TARGET_OBJECTS:spu-obj>)
+    else()
+        add_library(aff3ct-shared-lib-${_level} SHARED $<TARGET_OBJECTS:aff3ct-obj-${_level}> $<TARGET_OBJECTS:cli-obj>)
+    endif()
+    target_link_libraries(aff3ct-shared-lib-${_level} PRIVATE $<TARGET_PROPERTY:aff3ct-shared-lib,LINK_LIBRARIES>)
+    set_target_properties(aff3ct-shared-lib-${_level} PROPERTIES
+                          OUTPUT_NAME aff3ct-${AFF3CT_VERSION_FULL}
+                          LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib/glibc-hwcaps/${_level}")
+    message(STATUS "AFF3CT - Compile: shared library (glibc-hwcaps level '${_level}')")
+endforeach()
 if(AFF3CT_COMPILE_STATIC_LIB)
     if(AFF3CT_INCLUDE_SPU_LIB)
         add_library(aff3ct-static-lib STATIC $<TARGET_OBJECTS:aff3ct-obj> $<TARGET_OBJECTS:cli-obj> $<TARGET_OBJECTS:spu-obj>)
@@ -621,6 +654,11 @@ if(AFF3CT_COMPILE_SHARED_LIB)
                 COMPONENT library)
     endif()
 endif()
+foreach(_level IN LISTS AFF3CT_HWCAPS)
+    install(TARGETS aff3ct-shared-lib-${_level}
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/glibc-hwcaps/${_level}/
+            COMPONENT library)
+endforeach()
 if(AFF3CT_COMPILE_STATIC_LIB)
     install(TARGETS aff3ct-static-lib
             EXPORT aff3ct-config
