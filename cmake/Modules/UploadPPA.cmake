@@ -108,7 +108,7 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
          "#!/usr/bin/make -f\n"
          "\nexport DH_VERBOSE=1"
          "\n\n%:\n"
-         "\tdh  $@ --buildsystem=cmake\n"
+         "\tdh  $@ --buildsystem=cmake --parallel\n"
          "\noverride_dh_auto_configure:\n"
          "\tDESTDIR=\"$(CURDIR)\" dh_auto_configure"
          " -- -DCMAKE_BUILD_TYPE=Release -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_EXT_STRINGS=OFF "
