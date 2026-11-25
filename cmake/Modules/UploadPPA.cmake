@@ -73,7 +73,7 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
          "\n"
          "Package: lib${CPACK_DEBIAN_PACKAGE_NAME}-dev\n"
          "Architecture: ${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}\n"
-         "Depends: lib${CPACK_DEBIAN_PACKAGE_NAME}, ${bin_depends}, \${shlibs:Depends}, \${misc:Depends}\n"
+         "Depends: lib${CPACK_DEBIAN_PACKAGE_NAME} (= \${binary:Version}), ${bin_depends}, \${shlibs:Depends}, \${misc:Depends}\n"
          "Description: ${CPACK_PACKAGE_DESCRIPTION_SUMMARY}\n"
          "${DEBIAN_LONG_DESCRIPTION}\n"
          "\n"
@@ -84,15 +84,17 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
          "${DEBIAN_LONG_DESCRIPTION}\n")
 
     file(WRITE "${DEBIAN_SOURCE_DIR}/debian/${CPACK_DEBIAN_PACKAGE_NAME}-bin.install"
-         "usr/bin/*\n"
+         "usr/bin/aff3ct*\n"
          "usr/share/aff3ct-${AFF3CT_VERSION_FULL}/conf/*\n"
          "usr/share/aff3ct-${AFF3CT_VERSION_FULL}/refs/*\n")
 
     file(WRITE "${DEBIAN_SOURCE_DIR}/debian/lib${CPACK_DEBIAN_PACKAGE_NAME}.install"
-         "usr/lib/x86_64-linux-gnu/*\n")
+         "usr/lib/*/libaff3ct-*.so\n"
+         "usr/lib/*/glibc-hwcaps\n")
 
     file(WRITE "${DEBIAN_SOURCE_DIR}/debian/lib${CPACK_DEBIAN_PACKAGE_NAME}-dev.install"
-         "usr/include/aff3ct-${AFF3CT_VERSION_FULL}/*\n")
+         "usr/include/aff3ct-${AFF3CT_VERSION_FULL}/*\n"
+         "usr/lib/*/cmake\n")
 
     file(WRITE "${DEBIAN_SOURCE_DIR}/debian/${CPACK_DEBIAN_PACKAGE_NAME}-doc.install"
          "doc/built/html/* usr/share/aff3ct-${AFF3CT_VERSION_FULL}/doc/html\n")
@@ -112,7 +114,7 @@ foreach(DISTRI ${AFF3CT_PPA_DISTRIB})
          "\noverride_dh_auto_configure:\n"
          "\tDESTDIR=\"$(CURDIR)\" dh_auto_configure"
          " -- -DCMAKE_BUILD_TYPE=Release -DAFF3CT_COMPILE_SHARED_LIB=ON -DAFF3CT_EXT_STRINGS=OFF "
-         "-DAFF3CT_HWCAPS='x86-64-v3;x86-64-v4' "
+         "-DAFF3CT_HWCAPS='x86-64-v3;x86-64-v4' -DSPU_TESTS=OFF -DSPU_BENCHMARK=OFF -DSPU_STACKTRACE=OFF "
          "-DAFF3CT_OVERRIDE_VERSION=${GIT_VERSION} -DCMAKE_CXX_FLAGS='${CMAKE_CXX_FLAGS}'"
          "\n\noverride_dh_auto_install:\n"
          "\tdh_auto_install --destdir=\"$(CURDIR)\" --buildsystem=cmake"
